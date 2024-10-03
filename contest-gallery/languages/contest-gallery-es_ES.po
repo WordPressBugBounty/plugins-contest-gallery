@@ -1,0 +1,1188 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Contest Gallery\n"
+"POT-Creation-Date: 2024-08-22 07:07+0200\n"
+"PO-Revision-Date: 2024-08-22 07:08+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: index.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: check-language-ecommerce.php:41
+msgid "Shopping cart"
+msgstr "Carro de la compra"
+
+#: check-language-ecommerce.php:43
+msgid "Close shopping cart"
+msgstr "Cerrar carrito de compras"
+
+#: check-language-ecommerce.php:45
+msgid "Invoice"
+msgstr "Factura"
+
+#: check-language-ecommerce.php:47
+msgid "Download invoice"
+msgstr "Descargar factura"
+
+#: check-language-ecommerce.php:49
+msgid "Billing address different from delivery address?"
+msgstr "¿Dirección de facturación diferente de la dirección de entrega?"
+
+#: check-language-ecommerce.php:51
+msgid "Country"
+msgstr "País"
+
+#: check-language-ecommerce.php:53
+msgid "Price"
+msgstr "Precio"
+
+#: check-language-ecommerce.php:55
+msgid "Quantity"
+msgstr "Cantidad"
+
+#: check-language-ecommerce.php:57
+msgid "Shipping"
+msgstr "Envío"
+
+#: check-language-ecommerce.php:59 check-language-ecommerce.php:61
+msgid "Alternative shipping"
+msgstr "Envío alternativo"
+
+#: check-language-ecommerce.php:63
+msgid "Alternative shipping costs"
+msgstr "Costos de envío alternativos"
+
+#: check-language-ecommerce.php:65
+msgid "Standard shipping costs"
+msgstr "Costos de envío estándar"
+
+#: check-language-ecommerce.php:67
+msgid "Free shipping"
+msgstr "Envío gratis"
+
+#: check-language-ecommerce.php:69 check-language.php:126
+msgid "Download"
+msgstr "Download"
+
+#: check-language-ecommerce.php:71
+msgid "Please check agreement"
+msgstr "Por favor verifique el acuerdo"
+
+#: check-language-ecommerce.php:73
+msgid "Shipping country not allowed"
+msgstr "País de envío no permitido"
+
+#: check-language-ecommerce.php:76
+msgid "Select country"
+msgstr "Select country"
+
+#: check-language-ecommerce.php:78
+msgid "Shipping only possible for the following countries"
+msgstr "Envío sólo posible para los siguientes países"
+
+#: check-language-ecommerce.php:80
+msgid "Shipping address"
+msgstr "Shipping address"
+
+#: check-language-ecommerce.php:84
+msgid "Billing address"
+msgstr "Dirección de Envio"
+
+#: check-language-ecommerce.php:86
+msgid "First Name"
+msgstr "Nombre de pila"
+
+#: check-language-ecommerce.php:88
+msgid "Last Name"
+msgstr "Apellido"
+
+#: check-language-ecommerce.php:90
+msgid "Company"
+msgstr "Compañía"
+
+#: check-language-ecommerce.php:92
+msgid "Address Line 1"
+msgstr "Línea de dirección 1"
+
+#: check-language-ecommerce.php:94
+msgid "Address Line 2"
+msgstr "Línea de dirección 2"
+
+#: check-language-ecommerce.php:96
+msgid "City"
+msgstr "Ciudad"
+
+#: check-language-ecommerce.php:98
+msgid "Postal Code"
+msgstr "Código Postal"
+
+#: check-language-ecommerce.php:100
+msgid "Select state/territory"
+msgstr "Seleccionar estado/territorio"
+
+#: check-language-ecommerce.php:102
+msgid "Billing address identical to delivery address"
+msgstr "Dirección de facturación idéntica a la dirección de entrega"
+
+#: check-language-ecommerce.php:104
+msgid "Date of invoice"
+msgstr "Fecha de la factura"
+
+#: check-language-ecommerce.php:106
+msgid "Payment date"
+msgstr "Fecha de pago"
+
+#: check-language-ecommerce.php:108
+msgid "Paid via"
+msgstr "Pagado vía"
+
+#: check-language-ecommerce.php:110
+msgid "PayPal"
+msgstr "PayPal"
+
+#: check-language-ecommerce.php:112
+msgid "Nr."
+msgstr "Nro."
+
+#: check-language-ecommerce.php:114
+msgid "Tax rate"
+msgstr "Tasa de impuesto"
+
+#: check-language-ecommerce.php:116
+msgid "VAT Number"
+msgstr "Número de valor agregado"
+
+#: check-language-ecommerce.php:118
+msgid "optional"
+msgstr "opcional"
+
+#: check-language-ecommerce.php:120
+msgid "Price unit net"
+msgstr "Precio unitario neto"
+
+#: check-language-ecommerce.php:122
+msgid "Price total net"
+msgstr "Precio total neto"
+
+#: check-language-ecommerce.php:124
+msgid "Total net"
+msgstr "Neto total"
+
+#: check-language-ecommerce.php:126
+msgid "Total gross"
+msgstr "Bruto total"
+
+#: check-language-ecommerce.php:128
+msgid "Total price"
+msgstr "Precio total"
+
+#: check-language-ecommerce.php:130
+msgid "Added to shopping cart"
+msgstr "Añadido al carrito de compras"
+
+#: check-language-ecommerce.php:132
+msgid "To shopping cart"
+msgstr "Al carrito de compras"
+
+#: check-language-ecommerce.php:134
+msgid "Title"
+msgstr "Título"
+
+#: check-language-ecommerce.php:136
+msgid "Key"
+msgstr "Llave"
+
+#: check-language-ecommerce.php:138
+msgid "Copy Key"
+msgstr "Copiar clave"
+
+#: check-language-ecommerce.php:140
+msgid "No products selected"
+msgstr "No hay productos seleccionados"
+
+#: check-language-ecommerce.php:142
+msgid "Full order details"
+msgstr "Detalles completos del pedido"
+
+#: check-language-ecommerce.php:144
+msgid "Order number"
+msgstr "Número de orden"
+
+#: check-language-ecommerce.php:146
+msgid "Your order was successful. You will be redirected."
+msgstr "Tu pedido fue exitoso. Serás redirigido."
+
+#: check-language-ecommerce.php:148
+msgid "Order failed. Please contact administrator."
+msgstr "El pedido falló. Por favor contacte al administrador."
+
+#: check-language-ecommerce.php:150
+msgid "Checkout processing impossible. No internet connection."
+msgstr "Procesamiento de pago imposible. Sin conexión a Internet."
+
+#: check-language-ecommerce.php:152
+msgid "Maximum uploads"
+msgstr "Cargas máximas"
+
+#: check-language-ecommerce.php:154
+msgid "Uploaded"
+msgstr "Uploaded"
+
+#: check-language-ecommerce.php:156
+msgid "All uploads used"
+msgstr "Todas las cargas utilizadas"
+
+#: check-language-general.php:40
+#: functions/general/registry/cg-registry-functions.php:74
+msgid "Account"
+msgstr "Cuenta"
+
+#: check-language-general.php:42
+msgid "Edit Profile"
+msgstr "Editar perfil"
+
+#: check-language-general.php:44
+msgid "Log Out"
+msgstr "Cerrar sesión"
+
+#: check-language-general.php:46
+msgid "Back To Gallery"
+msgstr "Volver a la galería"
+
+#: check-language-general.php:48 check-language.php:369
+msgid "This nickname is already taken"
+msgstr "Este apodo ya está en uso"
+
+#: check-language-general.php:50
+msgid "Contest Gallery profile information"
+msgstr "Información del perfil de la galería del concurso"
+
+#: check-language-general.php:52
+msgid "Remove profile image"
+msgstr "Quitar imagen de perfil"
+
+#: check-language-general.php:54 check-language.php:277
+msgid "This file type is not allowed"
+msgstr "Este tipo de archivo no está permitido"
+
+#: check-language-general.php:56 check-language.php:279
+msgid "The selected file is too large, max allowed size"
+msgstr ""
+"El archivo seleccionado es demasiado grande, el tamaño máximo permitido"
+
+#: check-language-general.php:58
+msgid "Select your image"
+msgstr "Seleccione su imagen"
+
+#: check-language-general.php:60
+msgid "Required"
+msgstr "Requerido"
+
+#: check-language-general.php:62
+msgid "Remove"
+msgstr "Eliminar"
+
+#: check-language-general.php:64
+msgid "content blocked"
+msgstr "contenido bloqueado"
+
+#: check-language-general.php:66
+msgid "To view the content you must agree privacy policy"
+msgstr "Para ver el contenido debes aceptar la política de privacidad."
+
+#: check-language-general.php:68
+msgid "I Agree"
+msgstr "Estoy de acuerdo"
+
+#: check-language-general.php:70
+msgid ""
+"By agreeing all content on this page gets unblocked during current session"
+msgstr ""
+"Al aceptar, todo el contenido de esta página se desbloquea durante la sesión "
+"actual."
+
+#: check-language-general.php:72
+msgid "content"
+msgstr "contenido"
+
+#: check-language-general.php:74
+msgid "Until current tab gets closed"
+msgstr "Hasta que se cierre la pestaña actual"
+
+#: check-language.php:56
+msgid "Participation form"
+msgstr "Formulario de participación"
+
+#: check-language.php:58
+msgid "Minimize participation form"
+msgstr "Minimizar formulario de participación"
+
+#: check-language.php:60
+msgid "Further entry"
+msgstr "Entrada adicional"
+
+#: check-language.php:62
+msgid "Search"
+msgstr "Buscar en"
+
+#: check-language.php:64
+msgid "Sort by"
+msgstr "Ordenar por"
+
+#: check-language.php:66
+msgid "Random sort"
+msgstr "Clasificación aleatoria"
+
+#: check-language.php:68
+msgid "Show all categories"
+msgstr "Mostrar todas las categorías"
+
+#: check-language.php:70
+msgid "Show less categories"
+msgstr "Mostrar menos categorías"
+
+#: check-language.php:72
+msgid "Height view"
+msgstr "Vista de la altura"
+
+#: check-language.php:74
+msgid "Thumb view"
+msgstr "Thumb ver más"
+
+#: check-language.php:76
+msgid "Row view"
+msgstr "Vista de la fila"
+
+#: check-language.php:78
+msgid "Slider view"
+msgstr "Vista deslizante"
+
+#: check-language.php:80
+msgid "Blog view"
+msgstr "Vista del blog"
+
+#: check-language.php:82
+msgid "Dark style"
+msgstr "Estilo oscuro"
+
+#: check-language.php:84
+msgid "Bright style"
+msgstr "Estilo brillante"
+
+#: check-language.php:86
+msgid "Select page"
+msgstr "Seleccione la página"
+
+#: check-language.php:88
+msgid "Previous page"
+msgstr "Página anterior"
+
+#: check-language.php:90
+msgid "Next page"
+msgstr "Página siguiente"
+
+#: check-language.php:92
+msgid "Previous entry"
+msgstr "Entrada anterior"
+
+#: check-language.php:94
+msgid "Next entry"
+msgstr "Siguiente entrada"
+
+#: check-language.php:96
+msgid "Previous file in entry"
+msgstr "Archivo anterior en la entrada"
+
+#: check-language.php:98
+msgid "Next file in entry"
+msgstr "Siguiente archivo en la entrada"
+
+#: check-language.php:100
+msgid "Go to top of the gallery"
+msgstr "Ir al principio de la galería"
+
+#: check-language.php:102
+msgid "Search or sort"
+msgstr "Buscar u ordenar"
+
+#: check-language.php:104
+msgid "Close"
+msgstr "Cerrar"
+
+#: check-language.php:106
+msgid "Open gallery in full window"
+msgstr "Abrir galería en ventana completa"
+
+#: check-language.php:108
+msgid "Close view"
+msgstr "Cerrar vista"
+
+#: check-language.php:110
+msgid "Full screen mode"
+msgstr "Modo de pantalla completa"
+
+#: check-language.php:112
+msgid "Close full screen mode"
+msgstr "Cerrar el modo de pantalla completa"
+
+#: check-language.php:114
+msgid "Copy gallery file link"
+msgstr "Copiar enlace de archivo de galería"
+
+#: check-language.php:116
+msgid "Copy gallery entry link"
+msgstr "Copiar enlace de entrada a la galería"
+
+#: check-language.php:118
+msgid "Copy original file source link"
+msgstr "Copiar el enlace de origen del archivo original"
+
+#: check-language.php:120
+msgid "Share to"
+msgstr "Compartir a"
+
+#: check-language.php:122
+msgid "Open original file in new tab"
+msgstr "Abrir archivo original en una pestaña nueva"
+
+#: check-language.php:124
+msgid "Download original file"
+msgstr "Descargar archivo original"
+
+#: check-language.php:128
+msgid "Service"
+msgstr "Servicio"
+
+#: check-language.php:130
+msgid "Delete entry"
+msgstr "Eliminar la entrada"
+
+#: check-language.php:132
+msgid "Delete entries"
+msgstr "Eliminar entradas"
+
+#: check-language.php:134
+msgid "Show more info"
+msgstr "Mostrar más información"
+
+#: check-language.php:136
+msgid "Show less info"
+msgstr "Mostrar menos información"
+
+#: check-language.php:138
+msgid "Add comment"
+msgstr "Añadir un comentario"
+
+#: check-language.php:140
+msgid "Show more comments"
+msgstr "Mostrar más comentarios"
+
+#: check-language.php:142
+msgid "Show less comments"
+msgstr "Mostrar menos comentarios"
+
+#: check-language.php:144
+msgid "Add an emoji"
+msgstr "Añadir un emoji"
+
+#: check-language.php:146
+msgid "Hide emojis"
+msgstr "Ocultar emojis"
+
+#: check-language.php:148
+msgid "Vote"
+msgstr "Votar"
+
+#: check-language.php:150
+msgid "Thank you for voting"
+msgstr "Gracias por votar"
+
+#: check-language.php:152
+msgid "Undo your last vote"
+msgstr "Deshacer el último voto"
+
+#: check-language.php:155
+msgid "of"
+msgstr "de"
+
+#: check-language.php:157
+msgid "No files found"
+msgstr "No se encontraron archivos"
+
+#: check-language.php:159
+msgid "No entries found"
+msgstr "entradas no encontradas"
+
+#: check-language.php:161
+msgid "Random"
+msgstr "Aleatorio"
+
+#: check-language.php:163
+msgid "Custom"
+msgstr "Disfraz"
+
+#: check-language.php:165
+msgid "Date descend"
+msgstr "Fecha de descenso"
+
+#: check-language.php:167
+msgid "Date ascend"
+msgstr "Fecha de ascenso"
+
+#: check-language.php:169
+msgid "Comments descend"
+msgstr "Comentarios bajar"
+
+#: check-language.php:171
+msgid "Comments ascend"
+msgstr "Comentarios asc"
+
+#: check-language.php:173
+msgid "Rating descend"
+msgstr "Puntuación descendente"
+
+#: check-language.php:175
+msgid "Rating ascend"
+msgstr "Puntuación ascend"
+
+#: check-language.php:177
+msgid "Rating quantity descend"
+msgstr "Clasificación cantidad descender"
+
+#: check-language.php:179
+msgid "Rating quantity ascend"
+msgstr "Cantidad de ascenso"
+
+#: check-language.php:181
+msgid "Rating sum descend"
+msgstr "Suma de calificación descender"
+
+#: check-language.php:183
+msgid "Rating sum ascend"
+msgstr "Suma de calificación ascender"
+
+#: check-language.php:185
+msgid "Full size"
+msgstr "Tamaño completo"
+
+#: check-language.php:187
+msgid "Picture comments"
+msgstr "Comentarios de la imagen"
+
+#: check-language.php:189
+msgid "Comments"
+msgstr "Comentarios"
+
+#: check-language.php:191
+msgid "Your comment"
+msgstr "Tu comentario"
+
+#: check-language.php:193
+msgid "Name"
+msgstr "Nombre"
+
+#: check-language.php:195
+msgid "Comment"
+msgstr "Comentario"
+
+#: check-language.php:197
+msgid "I am not a robot"
+msgstr "No soy un robot"
+
+#: check-language.php:199
+msgid "You can not vote in own gallery"
+msgstr "No puedes votar en galería propia"
+
+#: check-language.php:201
+msgid "You can not comment in own gallery"
+msgstr "No puedes comentar en la propia galería"
+
+#: check-language.php:203
+msgid "You have to be logged in to comment"
+msgstr "Tienes que estar conectado para comentar"
+
+#: check-language.php:205
+msgid "Please use available emojis"
+msgstr "Utilice los emojis disponibles"
+
+#: check-language.php:207
+msgid "Emojis are not allowed"
+msgstr "Los emojis no están permitidos"
+
+#: check-language.php:209
+msgid "Send"
+msgstr "Enviar"
+
+#: check-language.php:212
+msgid "File was deleted"
+msgstr "El archivo fue eliminado"
+
+#: check-language.php:215
+msgid "Files were deleted"
+msgstr "Los archivos fueron eliminados"
+
+#: check-language.php:218
+msgid "Successfully logged in via Google. Page will be reloaded..."
+msgstr ""
+"Iniciar sesión correctamente a través de Google. La página se recargará ..."
+
+#: check-language.php:223
+msgid "Delete entry?"
+msgstr "¿Eliminar la entrada?"
+
+#: check-language.php:225
+msgid "Delete entries?"
+msgstr "¿Eliminar entradas?"
+
+#: check-language.php:227
+msgid "Entry successfully deleted"
+msgstr "Entrada eliminada con éxito"
+
+#: check-language.php:229
+msgid "Entries successfully deleted"
+msgstr "Entradas eliminadas con éxito"
+
+#: check-language.php:231
+msgid "Edit"
+msgstr "Editar"
+
+#: check-language.php:232
+msgid "Save"
+msgstr "Salvar"
+
+#: check-language.php:234
+msgid "Data saved"
+msgstr "Datos guardados"
+
+#: check-language.php:236
+msgid "Only visible to registered and logged in owner of the entry"
+msgstr "Sólo visible para el propietario registrado y conectado de la entrada"
+
+#: check-language.php:238
+msgid "Original file source link copied"
+msgstr "Enlace de origen del archivo original copiado"
+
+#: check-language.php:240
+msgid "Gallery file link copied"
+msgstr "Enlace del archivo de la galería copiado"
+
+#: check-language.php:242
+msgid "Gallery entry link copied"
+msgstr "Enlace de entrada a la galería copiado"
+
+#: check-language.php:244
+msgid "Sum"
+msgstr "Suma"
+
+#: check-language.php:246
+msgid "Your vote"
+msgstr "Tu voto"
+
+#: check-language.php:249
+msgid "The name field must contain two characters or more"
+msgstr "El campo de nombre debe contener dos caracteres o más"
+
+#: check-language.php:251
+msgid "The comment field must contain three characters or more"
+msgstr "El campo de comentario debe contener tres caracteres o más"
+
+#: check-language.php:253
+msgid "Plz check the checkbox to prove that you are not a robot"
+msgstr ""
+"Plz marque la casilla de verificación para probar que usted no es un robot"
+
+#: check-language.php:255
+msgid "Your comment will be reviewed"
+msgstr "Tu comentario será revisado"
+
+#: check-language.php:257 check-language.php:259
+msgid "Thank you for your comment"
+msgstr "Gracias por tu comentario"
+
+#: check-language.php:261
+msgid "You have already voted for this entry"
+msgstr "Ya has votado por esta entrada"
+
+#: check-language.php:263
+msgid "This entry is not a winner"
+msgstr "Esta entrada no es ganadora"
+
+#: check-language.php:265
+msgid "You have already voted for this category"
+msgstr "Ya has votado por esta categoría"
+
+#: check-language.php:267
+msgid "You have no more votes in this category"
+msgstr "No tienes más votos en esta categoría"
+
+#: check-language.php:269
+msgid "You have already used all your votes"
+msgstr "Ya has utilizado todos tus votos"
+
+#: check-language.php:273
+msgid "It is not allowed to vote for your own file"
+msgstr "No está permitido votar por su propio archivo"
+
+#: check-language.php:275
+msgid "Only registered users are allowed to vote"
+msgstr "Solo los usuarios registrados pueden votar"
+
+#: check-language.php:281
+msgid "The resolution of this image is"
+msgstr "La resolución de esta imagen es"
+
+#: check-language.php:283
+msgid "Maximum number of files for one upload is"
+msgstr "El número máximo de archivos para una carga es"
+
+#: check-language.php:284
+msgid "Minimum number of files for one upload is"
+msgstr "El número mínimo de archivos para una carga es"
+
+#: check-language.php:286
+msgid "Maximum allowed resolution for JPG is"
+msgstr "La resolución máxima permitida para JPG es"
+
+#: check-language.php:288
+msgid "Maximum allowed width for JPG is"
+msgstr "El ancho máximo permitido para JPG es"
+
+#: check-language.php:290
+msgid "Maximum allowed height for JPG is"
+msgstr "La altura máxima permitida para JPG es"
+
+#: check-language.php:292
+msgid "Minimum required width for JPG is"
+msgstr "El ancho mínimo requerido para JPG es"
+
+#: check-language.php:294
+msgid "Minimum required height for JPG is"
+msgstr "La altura mínima requerida para JPG es"
+
+#: check-language.php:296
+msgid "Maximum allowed resolution for PNG is"
+msgstr "La resolución máxima permitida para PNG es"
+
+#: check-language.php:298
+msgid "Maximum allowed width for PNG is"
+msgstr "El ancho máximo permitido para PNG es"
+
+#: check-language.php:300
+msgid "Maximum allowed height for PNG is"
+msgstr "La altura máxima permitida para PNG es"
+
+#: check-language.php:302
+msgid "Minimum required width for PNG is"
+msgstr "El ancho mínimo requerido para PNG es"
+
+#: check-language.php:304
+msgid "Minimum required height for PNG is"
+msgstr "La altura mínima requerida para PNG es"
+
+#: check-language.php:306
+msgid "Maximum allowed resolution for GIF is"
+msgstr "La resolución máxima permitida para GIF es"
+
+#: check-language.php:308
+msgid "Maximum allowed width for GIF is"
+msgstr "El ancho máximo permitido para GIF es"
+
+#: check-language.php:310
+msgid "Maximum allowed height for GIF is"
+msgstr "La altura máxima permitida para GIF es"
+
+#: check-language.php:312
+msgid "Minimum required width for GIF is"
+msgstr "El ancho mínimo requerido para GIF es"
+
+#: check-language.php:314
+msgid "Minimum required height for GIF is"
+msgstr "La altura mínima requerida para GIF es"
+
+#: check-language.php:316
+msgid "Maximum allowed width for ICO is"
+msgstr "El ancho máximo permitido para ICO es"
+
+#: check-language.php:318
+msgid "Maximum allowed height for ICO is"
+msgstr "La altura máxima permitida para ICO es"
+
+#: check-language.php:320
+msgid "You have to check this agreement"
+msgstr "Usted tiene que comprobar este acuerdo"
+
+#: check-language.php:322
+msgid "This email is not valid"
+msgstr "Este correo electrónico no es válido"
+
+#: check-language.php:324
+msgid "Reset password link is not valid anymore"
+msgstr "El enlace para restablecer la contraseña ya no es válido"
+
+#: check-language.php:326
+msgid "Password successfully changed"
+msgstr "Contraseña cambiada correctamente"
+
+#: check-language.php:328
+msgid "Back to login form"
+msgstr "Volver al formulario de inicio de sesión"
+
+#: check-language.php:330
+msgid "Min amount of characters"
+msgstr "Cantidad mínima de caracteres"
+
+#: check-language.php:332
+msgid "Max amount of characters"
+msgstr "Cantidad máxima de caracteres"
+
+#: check-language.php:334
+msgid "Select your file"
+msgstr "Seleccione su archivo"
+
+#: check-language.php:336
+msgid "The photo contest has not started yet"
+msgstr "El concurso de fotografía aún no ha comenzado"
+
+#: check-language.php:338
+msgid "The photo contest is over"
+msgstr "El concurso fotográfico ha terminado"
+
+#: check-language.php:340
+msgid "Hold left mouse to see user info"
+msgstr ""
+"Mantenga pulsado el botón izquierdo del ratón para ver la información del "
+"usuario"
+
+#: check-language.php:342
+msgid "Maximum amount of uploads per user is"
+msgstr "La cantidad máxima de cargas por usuario es"
+
+#: check-language.php:344
+msgid "Maximum amount of uploads per category is"
+msgstr "La cantidad máxima de cargas por categoría es"
+
+#: check-language.php:346
+msgid "You have already uploaded"
+msgstr "Ya has subido"
+
+#: check-language.php:348
+msgid "You have already uploaded in category"
+msgstr "Ya has subido en la categoría"
+
+#: check-language.php:350
+msgid "Maximum amount of uploads left for you"
+msgstr "Cantidad máxima de cargas que te quedan"
+
+#: check-language.php:355
+msgid "Lost password?"
+msgstr "¿Contraseña perdida?"
+
+#: check-language.php:357
+msgid "This email address is already registered"
+msgstr "Esta dirección de correo electrónico ya está registrada"
+
+#: check-language.php:359
+msgid "This username is already taken"
+msgstr "Este nombre de usuario ya está en uso"
+
+#: check-language.php:361
+msgid "Username or email"
+msgstr "Nombre de usuario o correo electrónico"
+
+#: check-language.php:363
+msgid "Username or email required"
+msgstr "Nombre de usuario o correo electrónico requerido"
+
+#: check-language.php:365
+msgid "Username or email does not exist"
+msgstr "El nombre de usuario o correo electrónico no existe"
+
+#: check-language.php:367
+msgid "This username already exists"
+msgstr "Este nombre de usuario ya existe"
+
+#: check-language.php:371
+msgid "Email"
+msgstr "Correo electronico"
+
+#: check-language.php:373
+msgid "An email was sent to reset password"
+msgstr "Se envió un correo electrónico para restablecer la contraseña"
+
+#: check-language.php:375
+msgid "Type in your e-mail to receive link for resetting your password"
+msgstr "Type in your e-mail to receive link for resetting your password"
+
+#: check-language.php:377
+msgid "Email required"
+msgstr "Correo electronico requerido"
+
+#: check-language.php:379
+msgid "Password"
+msgstr "Contraseña"
+
+#: check-language.php:381
+msgid "New Password"
+msgstr "Nueva contraseña"
+
+#: check-language.php:383
+msgid "New Password repeat"
+msgstr "Nueva contraseña repetida"
+
+#: check-language.php:385
+msgid "Password required"
+msgstr "Se requiere contraseña"
+
+#: check-language.php:387
+msgid "Email and password do not match"
+msgstr "Correo electrónico y contraseña no coinciden"
+
+#: check-language.php:389
+msgid "Login and password do not match"
+msgstr "El nombre de usuario y la contraseña no coinciden"
+
+#: check-language.php:391
+msgid "Please fill out"
+msgstr "Por favor complete"
+
+#: check-language.php:393
+msgid "Passwords do not match"
+msgstr "Las contraseñas no coinciden"
+
+#: check-language.php:395
+msgid "Upload"
+msgstr "Subir"
+
+#: check-language.php:397
+msgid "Register"
+msgstr "Para registrarse"
+
+#: check-language.php:399
+msgid "Login"
+msgstr "Iniciar sesión"
+
+#: check-language.php:401
+msgid "Please select"
+msgstr "Por favor selecciona"
+
+#: check-language.php:403
+msgid "You have not selected"
+msgstr "No has seleccionado"
+
+#: check-language.php:405
+msgid "Please confirm"
+msgstr "Por favor confirme"
+
+#: check-language.php:407
+msgid "File is not activated"
+msgstr "El archivo no está activado"
+
+#: check-language.php:409
+msgid "Your email could not be confirmed."
+msgstr "Su correo electrónico no pudo ser confirmado."
+
+#: check-language.php:411
+msgid "Please enter a valid URL"
+msgstr "Por favor introduzca un URL válido"
+
+#: check-language.php:413
+msgid "Other"
+msgstr "Otro"
+
+#: check-language.php:416
+msgid "Yes"
+msgstr "Si"
+
+#: check-language.php:417
+msgid "No"
+msgstr "No"
+
+#: functions/general/registry/cg-registry-functions.php:75
+msgid "Logout?"
+msgstr "¿Cierre de sesión?"
+
+#: functions/general/registry/create/cg-registry-create-functions.php:7
+msgid "Contest Gallery User since v14"
+msgstr ""
+
+#: register_post_type.php:16
+msgctxt "plural"
+msgid "Cgallery"
+msgstr ""
+
+#: register_post_type.php:17
+msgctxt "singular"
+msgid "Cgallery"
+msgstr ""
+
+#: register_post_type.php:18
+msgctxt "admin menu"
+msgid "Cgallery"
+msgstr ""
+
+#: register_post_type.php:19
+msgctxt "admin bar"
+msgid "Cgallery"
+msgstr ""
+
+#: register_post_type.php:20
+msgctxt "add new"
+msgid "Add New"
+msgstr ""
+
+#: register_post_type.php:21
+msgid "Add New Cgallery"
+msgstr ""
+
+#: register_post_type.php:22
+msgid "New Cgallery"
+msgstr ""
+
+#: register_post_type.php:23
+msgid "Edit Page (Contest Gallery Custom Post Type)"
+msgstr ""
+
+#: register_post_type.php:24
+msgid "View Cgallery"
+msgstr ""
+
+#: register_post_type.php:25
+msgid "All Cgallery"
+msgstr ""
+
+#: register_post_type.php:26
+msgid "Search Cgallery"
+msgstr ""
+
+#: register_post_type.php:27
+msgid "No contest gallery pages found."
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Contest Gallery - PRO Version"
+msgstr "Contest Gallery - PRO Version"
+
+#. Description of the plugin/theme
+msgid ""
+"Contact form, files, photos and videos upload contest gallery plugin for "
+"WordPress. Create contact forms for entries with or without file/image "
+"upload. Create user registration form. Create login form. Create responsive "
+"galleries and allow to vote for any kind of entries."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Contest Gallery - PRO"
+msgstr "Contest Gallery - PRO"
+
+#. Author URI of the plugin/theme
+msgid "http://www.contest-gallery.com/"
+msgstr ""
+
+#~ msgid "Rating average descend"
+#~ msgstr "Calificación promedio descender"
+
+#~ msgid "Rating average ascend"
+#~ msgstr "Calificación promedio ascender"
+
+#~ msgid "Same as Billing address"
+#~ msgstr "La misma que la dirección de facturación"
+
+#~ msgid "Date"
+#~ msgstr "Fecha"
+
+#~ msgid "Added to basket"
+#~ msgstr "Añadido a la cesta"
+
+#~ msgid "Go to basket"
+#~ msgstr "Ir a la cesta"
+
+#~ msgid "Address Line 3"
+#~ msgstr "Línea de dirección 3"
+
+#~ msgid "Previous file"
+#~ msgstr "Archivo anterior"
+
+#~ msgid "Next file"
+#~ msgstr "Archivo siguiente"
+
+#~ msgid "You have already voted for this file"
+#~ msgstr "Ya has votado por este archivo"
+
+#~ msgid "You have already voted for this files"
+#~ msgstr "Ya has votado por estos archivos"
+
+#~ msgid "Upload file"
+#~ msgstr "Subir archivo"
+
+#~ msgid "Further upload"
+#~ msgstr "Más carga"
+
+#~ msgid "Copy file link"
+#~ msgstr "Copiar enlace de archivo"
+
+#~ msgid "Upload image"
+#~ msgstr "Cargar imagen"
+
+#~ msgid "Previous image"
+#~ msgstr "Imagen anterior"
+
+#~ msgid "Next image"
+#~ msgstr "Siguiente imagen"
+
+#~ msgid "Copy image link"
+#~ msgstr "Copiar el enlace de la imagen"
+
+#~ msgid "Delete image"
+#~ msgstr "Eliminar Imagen"
+
+#~ msgid "File comments"
+#~ msgstr "Comentarios del archivo"
+
+#~ msgid "Image was deleted"
+#~ msgstr "La imagen fue eliminada"
+
+#~ msgid "Delete image?"
+#~ msgstr "Eliminar Imagen?"
+
+#~ msgid "Image successfully deleted"
+#~ msgstr "Imagen eliminada con éxito"
+
+#~ msgid "Image link copied"
+#~ msgstr "Enlace de imagen copiado"
+
+#~ msgid "You have already voted for this picture"
+#~ msgstr "Ya has votado por esta foto"
+
+#~ msgid "It is not allowed to vote for your own picture"
+#~ msgstr "No está permitido votar por tu propia foto"
+
+#~ msgid "Image is not activated"
+#~ msgstr "La imagen no está activada"
+
+#~ msgid "Email does not exist"
+#~ msgstr "El correo electrónico no existe"
+
+#~ msgid "Password is wrong"
+#~ msgstr "La contraseña es incorrecta"
+
+#~ msgid "Image upload"
+#~ msgstr "Carga de imágenes"
+
+#~ msgid "Image download"
+#~ msgstr "Descarga de imágenes"
+
+#~ msgid "Vote first"
+#~ msgstr "Votar primero"
