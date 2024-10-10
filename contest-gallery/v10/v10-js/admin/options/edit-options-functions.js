@@ -61,6 +61,7 @@ cgJsClassAdmin.options.functions = {
         cgJsClassAdmin.options.vars.$cg_main_options = $('#cg_main_options');
         cgJsClassAdmin.options.vars.$cg_main_options_content = $('#cg_main_options_content');
         cgJsClassAdmin.options.vars.$cg_view_select_objects = cgJsClassAdmin.options.vars.$cg_main_options_tab.find('.cg_view_select');
+        cgJsClassAdmin.options.vars.$cgSlugNamesRowContainer = cgJsClassAdmin.options.vars.$cg_main_options.find('#cgSlugNamesRowContainer');
         cgJsClassAdmin.options.vars.$wpadminbar = $('#wpadminbar');
         cgJsClassAdmin.options.vars.windowHeight = $(window).height();
         cgJsClassAdmin.options.vars.lastScrollTop = 0;
@@ -143,7 +144,7 @@ cgJsClassAdmin.options.functions = {
 
         cgJsClassAdmin.options.functions.initOptionsClickEvents();
 
-        var goToArray = ['cgTranslationOther','cgTranslationShippingPossible','cgTranslationLanguageEmail','cgTranslationLanguageEmail','cgEditGalleryNameRow','cgTranslationLanguagePassword','l_ThankVote','TranslationsCommentFormArea','l_AllVotesUsed','YourCommentWillBeReviewedRow','cgContactFormShortcodeConfigurationArea'];
+        var goToArray = ['cgTranslationOther','cgTranslationShippingPossible','cgTranslationLanguageEmail','cgTranslationLanguageEmail','cgEditGalleryNameRow','cgTranslationLanguagePassword','l_ThankVote','l_BackToGallery','TranslationsCommentFormArea','l_AllVotesUsed','YourCommentWillBeReviewedRow','cgContactFormShortcodeConfigurationArea'];
         debugger
         $(goToArray).each(function (index,value){
             if(location.hash.indexOf(value) >= 0 || location.search.indexOf(value) >= 0){
@@ -919,7 +920,7 @@ cgJsClassAdmin.options.functions = {
 
         var $cg_view = $element.closest('.cg_view');
 
-        if($cg_view.find(".AllowGalleryScript:not(.cg_shortcode_checkbox_clone)").prop( "checked" ) || $cg_view.find(".SliderFullWindow:not(.cg_shortcode_checkbox_clone)").prop( "checked" )  || $cg_view.find(".BlogLookFullWindow:not(.cg_shortcode_checkbox_clone)").prop( "checked" ) ){
+        if($cg_view.find(".AllowGalleryScript:not(.cg_shortcode_checkbox_clone)").prop( "checked" ) || $cg_view.find(".SliderFullWindow:not(.cg_shortcode_checkbox_clone)").prop( "checked" )  || $cg_view.find(".BlogLookFullWindow:not(.cg_shortcode_checkbox_clone)").prop( "checked" )  || $cg_view.find(".ForwardToWpPageEntry:not(.cg_shortcode_checkbox_clone)").prop( "checked" )){
 
             $cg_view.removeClass('cg_FullSizeImageOutGallery_checked');
             $cg_view.removeClass('cg_OnlyGalleryView_checked');
@@ -1123,6 +1124,9 @@ cgJsClassAdmin.options.functions = {
             $cg_view.find(".BlogLookFullWindow").prop('checked',false);
             $cg_view.find(".BlogLookFullWindowContainer").find('.cg_view_option_radio_multiple_input').addClass('cg_view_option_unchecked');
             $cg_view.find(".BlogLookFullWindowContainer").find('.cg_view_option_radio_multiple_input').removeClass('cg_view_option_checked');
+            $cg_view.find(".ForwardToWpPageEntry").prop('checked',false);
+            $cg_view.find(".ForwardToWpPageEntryContainer").find('.cg_view_option_radio_multiple_input').addClass('cg_view_option_unchecked');
+            $cg_view.find(".ForwardToWpPageEntryContainer").find('.cg_view_option_radio_multiple_input').removeClass('cg_view_option_checked');
 
             $cg_view.find(".GallerySlideOutSliderViewBlogViewContainer").addClass('cg_disabled');// full main container disable
             $cg_view.find(".AllowCommentsParentContainer").addClass('cg_disabled');
@@ -1175,6 +1179,9 @@ cgJsClassAdmin.options.functions = {
             $cg_view.find(".BlogLookFullWindow").removeAttr('checked');
             $cg_view.find(".BlogLookFullWindowContainer").find('.cg_view_option_radio_multiple_input').addClass('cg_view_option_unchecked');
             $cg_view.find(".BlogLookFullWindowContainer").find('.cg_view_option_radio_multiple_input').removeClass('cg_view_option_checked');
+            $cg_view.find(".ForwardToWpPageEntry").removeAttr('checked');
+            $cg_view.find(".ForwardToWpPageEntryContainer").find('.cg_view_option_radio_multiple_input').addClass('cg_view_option_unchecked');
+            $cg_view.find(".ForwardToWpPageEntryContainer").find('.cg_view_option_radio_multiple_input').removeClass('cg_view_option_checked');
             //$("#FullSizeSlideOutStart").addClass('cg_disabled');
             //    cg_FullSizeGallery(); // Beeinflusst FullSizeSlideOutStart
 

@@ -1,66 +1,173 @@
 <?php
 
+if(!function_exists('cg_create_slug_name_galleries_posts_if_required')){
+    function cg_create_slug_name_galleries_posts_if_required(){
+
+        global $wpdb;
+        $tablename_posts = $wpdb->prefix . "posts";
+
+        $wp_upload_dir = wp_upload_dir();
+
+        /*
+var_dump(	get_page_by_path( 'contest-gallery', OBJECT, 'page' ));
+var_dump(	get_page_by_path( 'contest-gallery-id-213/aaa', OBJECT, 'contest-gallery' ));
+die;*/
+
+        /*$CgEntriesOwnSlugNameGalleries = get_option('CgEntriesOwnSlugNameGalleries');
+        $CgEntriesOwnSlugNameGalleries = (!empty($CgEntriesOwnSlugNameGalleries)) ? $CgEntriesOwnSlugNameGalleries : 'contest-galleries';
+        $page = get_page_by_path( $CgEntriesOwnSlugNameGalleries, OBJECT, 'page');*/
+
+        //'post_mime_type'=>'contest-gallery-plugin-page-galleries-'.$mimeType.'slug',
+
+        $pagesArray = [];
+
+        $WpID = $wpdb->get_var( "SELECT ID FROM $tablename_posts WHERE post_mime_type='contest-gallery-plugin-page-galleries-slug'" );// seems to be more reliable method to check as get_page_by_path
+        //$page = get_page_by_path( 'contest-galleries', OBJECT, 'page');
+
+        if(empty($WpID)){
+            $array = cg_post_type_page_galleries_slug_array();
+            $WpID = wp_insert_post($array);
+        }
+
+        $pagesArray['contest-galleries'] = intval($WpID);
+
+        /*$CgEntriesOwnSlugNameGalleriesUser = get_option('CgEntriesOwnSlugNameGalleriesUser');
+        $CgEntriesOwnSlugNameGalleriesUser = (!empty($CgEntriesOwnSlugNameGalleriesUser)) ? $CgEntriesOwnSlugNameGalleriesUser : 'contest-galleries-user';
+        $page = get_page_by_path( $CgEntriesOwnSlugNameGalleriesUser, OBJECT, 'page');*/
+
+        $WpID = $wpdb->get_var( "SELECT ID FROM $tablename_posts WHERE post_mime_type='contest-gallery-plugin-page-galleries-user-slug'" );
+        if(empty($WpID)){
+            $array = cg_post_type_page_galleries_slug_array('user');
+            $WpID = wp_insert_post($array);
+        }
+
+        $pagesArray['contest-galleries-user'] = intval($WpID);
+
+        /*$CgEntriesOwnSlugNameGalleriesNoVoting = get_option('CgEntriesOwnSlugNameGalleriesNoVoting');
+        $CgEntriesOwnSlugNameGalleriesNoVoting = (!empty($CgEntriesOwnSlugNameGalleriesNoVoting)) ? $CgEntriesOwnSlugNameGalleriesNoVoting : 'contest-galleries-no-voting';
+        $page = get_page_by_path( $CgEntriesOwnSlugNameGalleriesNoVoting, OBJECT, 'page');*/
+
+        $WpID = $wpdb->get_var( "SELECT ID FROM $tablename_posts WHERE post_mime_type='contest-gallery-plugin-page-galleries-no-voting-slug'" );
+        if(empty($WpID)){
+            $array = cg_post_type_page_galleries_slug_array('no-voting');
+            $WpID = wp_insert_post($array);
+        }
+
+        $pagesArray['contest-galleries-no-voting'] = intval($WpID);
+
+        /*$CgEntriesOwnSlugNameGalleriesWinner = get_option('CgEntriesOwnSlugNameGalleriesWinner');
+        $CgEntriesOwnSlugNameGalleriesWinner = (!empty($CgEntriesOwnSlugNameGalleriesWinner)) ? $CgEntriesOwnSlugNameGalleriesWinner : 'contest-galleries-winner';
+        $page = get_page_by_path( $CgEntriesOwnSlugNameGalleriesWinner, OBJECT, 'page');*/
+
+        $WpID = $wpdb->get_var( "SELECT ID FROM $tablename_posts WHERE post_mime_type='contest-gallery-plugin-page-galleries-winner-slug'" );
+        if(empty($WpID)){
+            $array = cg_post_type_page_galleries_slug_array('winner');
+            $WpID = wp_insert_post($array);
+        }
+
+        $pagesArray['contest-galleries-winner'] = intval($WpID);
+
+        /*$CgEntriesOwnSlugNameGalleriesEcommerce = get_option('CgEntriesOwnSlugNameGalleriesEcommerce');
+        $CgEntriesOwnSlugNameGalleriesEcommerce = (!empty($CgEntriesOwnSlugNameGalleriesEcommerce)) ? $CgEntriesOwnSlugNameGalleriesEcommerce : 'contest-galleries-ecommerce';
+        $page = get_page_by_path( $CgEntriesOwnSlugNameGalleriesEcommerce, OBJECT, 'page');*/
+
+        $WpID = $wpdb->get_var( "SELECT ID FROM $tablename_posts WHERE post_mime_type='contest-gallery-plugin-page-galleries-ecommerce-slug'" );
+        if(empty($WpID)){
+            $array = cg_post_type_page_galleries_slug_array('ecommerce');
+            $WpID = wp_insert_post($array);
+        }
+
+        $pagesArray['contest-galleries-ecommerce'] = intval($WpID);
+
+        $jsonDir = $wp_upload_dir['basedir'] . '/contest-gallery/gallery-general/json';
+        if(!is_dir($jsonDir)){
+            mkdir($jsonDir,0755);
+        }
+
+        file_put_contents($jsonDir.'/galleries-pages.json',json_encode($pagesArray));
+
+    }
+}
+
+
+if(!function_exists('cg_insert_into_contest_gal1ery_wp_pages')){
+    function cg_insert_into_contest_gal1ery_wp_pages($WpPage){
+        global $wpdb;
+        $tablename_wp_pages = $wpdb->prefix . "contest_gal1ery_wp_pages";
+        $wpdb->query( $wpdb->prepare(
+            "
+				INSERT INTO $tablename_wp_pages
+					( id,WpPage
+					 )
+					VALUES ( %s,%d
+					)
+				",
+            '',$WpPage
+        ) );
+    }
+}
+
 if(!function_exists('cg_get_filename_clean_from_url_or_url_part')){
-	function cg_get_filename_clean_from_url_or_url_part($url){
-		if(strpos($url,'/')!==false){
-			$url = substr($url,strrpos($url,'/')+1,strlen($url));
-		}
-		$filenameClean = substr($url,0,strrpos($url,'.'));
+    function cg_get_filename_clean_from_url_or_url_part($url){
+        if(strpos($url,'/')!==false){
+            $url = substr($url,strrpos($url,'/')+1,strlen($url));
+        }
+        $filenameClean = substr($url,0,strrpos($url,'.'));
         return $filenameClean;
-	}
+    }
 }
 
 if(!function_exists('cg_add_replace_to_url_filename')){
-	function cg_add_replace_to_url_filename($path,$url){
-		// example cg_add_replace_to_url_filename('2024/05/test.jpg','/var/www/html/contest-gallery-pro/wp-content/plugins/contest-gallery-pro/functions/general')
-		$filenameClean = cg_get_filename_clean_from_url_or_url_part($url);
-		$fileType = substr($url,strrpos($url,'.')+1,strlen($url));
-		$urlLeftPart = '';
-		if(strpos($url,'/')!==false){
-			$urlLeftPart = substr($url,0,(strrpos($url,'/')+1));
-		}
-        if(strpos($filenameClean,'-replaced')!==false){
-	        $exploded = explode('-replaced',$filenameClean);
-	        $filenameClean = $exploded[0];// then rest must be something like replaced-kasdfjaksldfj whatever, simply construct new then
-	        if(empty($filenameClean)){
-		        $filenameClean = 'xyz';// simply to have something at the begging if was -replaced... before only
-	        }
+    function cg_add_replace_to_url_filename($path,$url){
+        // example cg_add_replace_to_url_filename('2024/05/test.jpg','/var/www/html/contest-gallery-pro/wp-content/plugins/contest-gallery-pro/functions/general')
+        $filenameClean = cg_get_filename_clean_from_url_or_url_part($url);
+        $fileType = substr($url,strrpos($url,'.')+1,strlen($url));
+        $urlLeftPart = '';
+        if(strpos($url,'/')!==false){
+            $urlLeftPart = substr($url,0,(strrpos($url,'/')+1));
         }
-		$add = 'replaced';
-		$urlNew = $urlLeftPart.$filenameClean.'-'.$add.'.'.$fileType;
-		$filenameCleanNew = $filenameClean.'-'.$add;
-		if(file_exists($path.'/'.$urlNew)){
-			for ($i = 2; $i <= 10000; $i++){
-				$add = 'replaced-'.$i;
-				$urlNew = $urlLeftPart.$filenameClean.'-'.$add.'.'.$fileType;
-				$filenameCleanNew = $filenameClean.'-'.$add;
-				if(!file_exists($path.'/'.$urlNew)){
-					break;
-				}
-			}
-		}
+        if(strpos($filenameClean,'-replaced')!==false){
+            $exploded = explode('-replaced',$filenameClean);
+            $filenameClean = $exploded[0];// then rest must be something like replaced-kasdfjaksldfj whatever, simply construct new then
+            if(empty($filenameClean)){
+                $filenameClean = 'xyz';// simply to have something at the begging if was -replaced... before only
+            }
+        }
+        $add = 'replaced';
+        $urlNew = $urlLeftPart.$filenameClean.'-'.$add.'.'.$fileType;
+        $filenameCleanNew = $filenameClean.'-'.$add;
+        if(file_exists($path.'/'.$urlNew)){
+            for ($i = 2; $i <= 10000; $i++){
+                $add = 'replaced-'.$i;
+                $urlNew = $urlLeftPart.$filenameClean.'-'.$add.'.'.$fileType;
+                $filenameCleanNew = $filenameClean.'-'.$add;
+                if(!file_exists($path.'/'.$urlNew)){
+                    break;
+                }
+            }
+        }
         return [
-                'add' => $add,
-                'filenameCleanNew' => $filenameCleanNew,
-                'urlNew' => $urlNew
+            'add' => $add,
+            'filenameCleanNew' => $filenameCleanNew,
+            'urlNew' => $urlNew
         ];
-	}
+    }
 }
 
 if(!function_exists('cg_replace_url_filename_with_replaced')){
-	function cg_replace_url_filename_with_replaced($filename,$filenameNew){
-		$filenameNewRightPart = $filenameNew;
-		if(strpos($filenameNew,'/')!==false){
-			$filenameNewRightPart = substr($filenameNew,strrpos($filenameNew,'/')+1,strlen($filenameNew));
-		}
-		if(strpos($filename,'/')!==false){
-			$filenameReplacedLeftPart = substr($filename,0,(strrpos($filename,'/')+1));
-			$filenameReplaced = $filenameReplacedLeftPart.$filenameNewRightPart;
-		}else{
-			$filenameReplaced = $filenameNewRightPart;
-		}
+    function cg_replace_url_filename_with_replaced($filename,$filenameNew){
+        $filenameNewRightPart = $filenameNew;
+        if(strpos($filenameNew,'/')!==false){
+            $filenameNewRightPart = substr($filenameNew,strrpos($filenameNew,'/')+1,strlen($filenameNew));
+        }
+        if(strpos($filename,'/')!==false){
+            $filenameReplacedLeftPart = substr($filename,0,(strrpos($filename,'/')+1));
+            $filenameReplaced = $filenameReplacedLeftPart.$filenameNewRightPart;
+        }else{
+            $filenameReplaced = $filenameNewRightPart;
+        }
         return $filenameReplaced;
-	}
+    }
 }
 
 if(!function_exists('cg_get_guid')){
@@ -68,37 +175,37 @@ if(!function_exists('cg_get_guid')){
     // so in gallery... when user upload in frontend or user edit input field in frontend
     // otherwise use get_permalink cause it is page by WordPress and should be faster
     // since version 24 changing permalink is not possible so or so
-	function cg_get_guid($postId,$domain = '',$CgEntriesOwnSlugNameOption = 'contest-gallery', $Version = 0,$permalink_structure = ''){
-		// get_permalink always most safest way to retrieve current url
-		return get_permalink($postId);
+    function cg_get_guid($postId,$domain = '',$CgEntriesOwnSlugNameOption = 'contest-gallery', $Version = 0,$permalink_structure = ''){
+        // get_permalink always most safest way to retrieve current url
+        return get_permalink($postId);
 
         global $wpdb;
         $table_posts = $wpdb->prefix."posts";
-		if(!empty($permalink_structure)){
-			if(intval($Version) < 24){
-        $guid = $wpdb->get_var("SELECT guid FROM $table_posts WHERE ID = '$postId'");
-			$lastChar = substr($domain, -1);
-			if($lastChar=='/'){
-				$domain = substr($domain, 0, -1);
-			}
-			if(strpos($guid,$domain."/$CgEntriesOwnSlugNameOption/")!==0){
-				$lastPart = substr($guid,strlen($domain.'/'),strlen($guid));
-				$lastPart = substr($lastPart,strpos($lastPart,'/')+1,strlen($lastPart));
-				$guid = $domain."/$CgEntriesOwnSlugNameOption/".$lastPart;
-			}
-				return get_permalink($postId);
+        if(!empty($permalink_structure)){
+            if(intval($Version) < 24){
+                $guid = $wpdb->get_var("SELECT guid FROM $table_posts WHERE ID = '$postId'");
+                $lastChar = substr($domain, -1);
+                if($lastChar=='/'){
+                    $domain = substr($domain, 0, -1);
+                }
+                if(strpos($guid,$domain."/$CgEntriesOwnSlugNameOption/")!==0){
+                    $lastPart = substr($guid,strlen($domain.'/'),strlen($guid));
+                    $lastPart = substr($lastPart,strpos($lastPart,'/')+1,strlen($lastPart));
+                    $guid = $domain."/$CgEntriesOwnSlugNameOption/".$lastPart;
+                }
+                return get_permalink($postId);
 
-				//return $guid;
-			}else{
-				return get_permalink($postId);
-			}
-		}else{
-			$lastChar = substr($domain, -1);
-			if($lastChar=='/'){
-				$domain = substr($domain, 0, -1);
-		}
-			return get_permalink($postId);
-			//return $domain.'?p='.$postId;// that doesn't work at all
+                //return $guid;
+            }else{
+                return get_permalink($postId);
+            }
+        }else{
+            $lastChar = substr($domain, -1);
+            if($lastChar=='/'){
+                $domain = substr($domain, 0, -1);
+            }
+            return get_permalink($postId);
+            //return $domain.'?p='.$postId;// that doesn't work at all
         }
     }
 }
@@ -113,7 +220,7 @@ if(!function_exists('cg_get_post_name')){
 }
 
 if(!function_exists('cg_update_custom_post_type_name')){
-    function cg_update_custom_post_type_name($postId,$title_original,$title_modified,$postParent,$checkIfExists = false,$IsFromCopyGalleryOrActualizeAll=false){
+    function cg_update_custom_post_type_name($postId,$Version,$title_original,$title_modified,$postParent,$checkIfExists = false,$IsFromCopyGalleryOrActualizeAll=false){
 
         //echo "<pre>";
         //print_r(debug_backtrace(6));
@@ -125,7 +232,7 @@ if(!function_exists('cg_update_custom_post_type_name')){
         global $wpdb;
         $table_posts = $wpdb->prefix."posts";
 
-        if($checkIfExists){// check if exists is always for first check wpPage to determine $title_modified
+        if($checkIfExists){// check if exists is always for first check WpPage to determine $title_modified
 
             // only numbers like 3333, then has to be 3333-2 otherwise wordpress will always redirect to the parent site
             if(is_numeric($title_original)){
@@ -136,13 +243,19 @@ if(!function_exists('cg_update_custom_post_type_name')){
                 $cg_post_names_for_a_title_numbers[$title_original] = [];
             }
 
-            $postExistsCount = $wpdb->get_var("SELECT COUNT(*) as NumberOfRows FROM $table_posts WHERE post_title = '$title_original' AND post_parent = '$postParent' AND post_type ='contest-gallery'  AND ID != $postId  LIMIT 1 ");
+            if($Version >= 24){
+                $post_type = 'contest-g';
+            }else{
+                $post_type = 'contest-gallery';
+            }
+
+            $postExistsCount = $wpdb->get_var("SELECT COUNT(*) as NumberOfRows FROM $table_posts WHERE post_title = '$title_original' AND post_parent = '$postParent' AND post_type = '$post_type' AND ID != $postId  LIMIT 1 ");
 
             if($postExistsCount){
 
                 if(!isset($cg_post_names_for_a_title[$title_original])){
                     $cg_post_names_for_a_title[$title_original] = [];
-                    $post_names = $wpdb->get_results("SELECT post_name, id FROM $table_posts WHERE post_title = '$title_original' AND post_parent = '$postParent' AND post_type ='contest-gallery' AND ID != $postId");
+                    $post_names = $wpdb->get_results("SELECT post_name, id FROM $table_posts WHERE post_title = '$title_original' AND post_parent = '$postParent' AND post_type = '$post_type' AND ID != $postId");
                     foreach ($post_names as $post_name){
                         $cg_post_names_for_a_title[$title_original][$post_name->id] = $post_name->post_name;
                     }
@@ -211,17 +324,17 @@ if(!function_exists('cg_update_custom_post_type_name')){
 
         $post_update = array(
             'ID'         => $postId,
-			'post_title' => $title_original, // original has to be set, so count always correct above!!!
-			'post_name' => $title_modified, // has to be updated here!!! so wordpress reset the permalink immediately!
+            'post_title' => $title_original, // original has to be set, so count always correct above!!!
+            'post_name' => $title_modified, // has to be updated here!!! so wordpress reset the permalink immediately!
             // also post_name has to be updated below for correct count
-			//'guid' => $guid // original has to be set, so count always correct above!!!
+            //'guid' => $guid // original has to be set, so count always correct above!!!
         );
         wp_update_post( $post_update );
-		//wp_cache_flush();// works but reset the whole cache completely
+        //wp_cache_flush();// works but reset the whole cache completely
 
         $wpdb->update(
             "$table_posts",
-			array('post_name' => $title_modified,'guid' => $guid),// $title_modified has be set immediately here so it is possible to  count correctly if same title ... cause wp_update_post above don't update immediately...
+            array('post_name' => $title_modified,'guid' => $guid),// $title_modified has be set immediately here so it is possible to  count correctly if same title ... cause wp_update_post above don't update immediately...
             // updating post_name above and here combination works
             // post_title can remain as original... it is easier to add count to post title if original
             array('id' => $postId),
@@ -231,7 +344,6 @@ if(!function_exists('cg_update_custom_post_type_name')){
 
         //$wpdb->show_errors();
         //$wpdb->print_error();
-
 
         return $title_modified;
 
@@ -275,7 +387,7 @@ if(!function_exists('cg_remove_emoji')){
 
 if(!function_exists('cg_pre_process_name_for_url_name')){
     function cg_pre_process_name_for_url_name($name){
-		$array = ['@','.',',',';','(',')','{','}','[',']','!','?','§','$','%','&','*','/','\\',' ','<','>','|','^','"','\'','#','+','´','~','~',' ','\'','"','^','´','`','’'];
+        $array = ['@','.',',',';','(',')','{','}','[',']','!','?','§','$','%','&','*','/','\\',' ','<','>','|','^','"','\'','#','+','´','~','~',' ','\'','"','^','´','`','’'];
         // name example
         // $name = 'e/$%//\\\'"$%&/-.,;rr_rff.lala';
         $name = str_replace($array,'-',sanitize_text_field($name));
@@ -756,116 +868,126 @@ if(!function_exists('cg_check_if_development')){
 }
 
 if(!function_exists('cg_get_blockquote_from_post_content')){
-	function cg_get_blockquote_from_post_content($post_content){
-		$blockquote = substr($post_content,(strpos($post_content,'blockquote:')+strlen('blockquote:')),strlen($post_content));
-		$blockquote = substr($blockquote,0, -1);
+    function cg_get_blockquote_from_post_content($post_content){
+        $blockquote = substr($post_content,(strpos($post_content,'blockquote:')+strlen('blockquote:')),strlen($post_content));
+        $blockquote = substr($blockquote,0, -1);
         return contest_gal1ery_convert_for_html_output_without_nl2br($blockquote);
-	}
-}
-
-if(!function_exists('cg_create_wp_pages')){
-	function cg_create_wp_pages($GalleryID,$nextId,$post_title,$options,$cgVersion){
-
-		global $wpdb;
-		$tablename = $wpdb->prefix . "contest_gal1ery";
-
-		// cg_gallery shortcode
-		$array = [
-			'post_title'=> $post_title,
-			'post_type'=>'contest-gallery',
-			'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-			                "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
-			                "[cg_gallery id=\"$GalleryID\" entry_id=\"$nextId\"]"."\r\n".
-			                "<!-- /wp:shortcode -->",
-			'post_mime_type'=>'contest-gallery-plugin-page',
-			'post_status'=>'publish',
-			'post_parent'=>$options->WpPageParent
-		];
-		$WpPage = wp_insert_post($array);
-
-		// cg_gallery_user shortcode
-		$array = [
-			'post_title'=> $post_title,
-			'post_type'=>'contest-gallery',
-			'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-			                "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
-			                "[cg_gallery_user id=\"$GalleryID\" entry_id=\"$nextId\"]"."\r\n".
-			                "<!-- /wp:shortcode -->",
-			'post_mime_type'=>'contest-gallery-plugin-page',
-			'post_status'=>'publish',
-			'post_parent'=>$options->WpPageParentUser
-		];
-		$WpPageUser = wp_insert_post($array);
-
-		// cg_gallery_no_voting shortcode
-		$array = [
-			'post_title'=> $post_title,
-			'post_type'=>'contest-gallery',
-			'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-			                "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
-			                "[cg_gallery_no_voting id=\"$GalleryID\" entry_id=\"$nextId\"]"."\r\n".
-			                "<!-- /wp:shortcode -->",
-			'post_mime_type'=>'contest-gallery-plugin-page',
-			'post_status'=>'publish',
-			'post_parent'=>$options->WpPageParentNoVoting
-		];
-		$WpPageNoVoting = wp_insert_post($array);
-
-		// cg_gallery_winner shortcode
-		$array = [
-			'post_title'=> $post_title,
-			'post_type'=>'contest-gallery',
-			'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-			                "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
-			                "[cg_gallery_winner id=\"$GalleryID\" entry_id=\"$nextId\"]"."\r\n".
-			                "<!-- /wp:shortcode -->",
-			'post_mime_type'=>'contest-gallery-plugin-page',
-			'post_status'=>'publish',
-			'post_parent'=>$options->WpPageParentWinner
-		];
-		$WpPageWinner = wp_insert_post($array);
-
-		// cg_gallery_ecommerce shortcode
-		$WpPageEcommerce = 0;
-		if(intval($cgVersion)>=22){
-			$array = [
-				'post_title'=> $post_title,
-				'post_type'=>'contest-gallery',
-				'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-				                "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
-				                "[cg_gallery_ecommerce id=\"$GalleryID\" entry_id=\"$nextId\"]"."\r\n".
-				                "<!-- /wp:shortcode -->",
-				'post_mime_type'=>'contest-gallery-plugin-page',
-				'post_status'=>'publish',
-				'post_parent'=>$options->WpPageParentEcommerce
-			];
-			$WpPageEcommerce = wp_insert_post($array);
-		}
-
-		$wpdb->update(
-			"$tablename",
-			array('WpPage' => $WpPage,'WpPageUser' => $WpPageUser,'WpPageNoVoting' => $WpPageNoVoting,'WpPageWinner' => $WpPageWinner,'WpPageEcommerce' => $WpPageEcommerce),
-			array('id' => $nextId),
-			array('%d','%d','%d','%d','%d'),
-			array('%d')
-		);
-
-	}
+    }
 }
 
 if(!function_exists('cg_get_gallery_slug_name')){
-	function cg_get_gallery_slug_name(){
-		if (is_multisite()) {
-			$CgEntriesOwnSlugName = cg_get_blog_option( get_current_blog_id(),'CgEntriesOwnSlugName');
-		}else{
-			$CgEntriesOwnSlugName = get_option('CgEntriesOwnSlugName');
-		}
-		if(!empty($CgEntriesOwnSlugName)){
-			return $CgEntriesOwnSlugName;
-		}else{
-			return 'contest-gallery';
-		}
-	}
+    function cg_get_gallery_slug_name(){
+        if (is_multisite()) {
+            $CgEntriesOwnSlugName = cg_get_blog_option( get_current_blog_id(),'CgEntriesOwnSlugName');
+        }else{
+            $CgEntriesOwnSlugName = get_option('CgEntriesOwnSlugName');
+        }
+        if(!empty($CgEntriesOwnSlugName)){
+            return $CgEntriesOwnSlugName;
+        }else{
+            return 'contest-gallery';
+        }
+    }
+}
+
+// was created for v24 but will be not used because changing of slug name is not possible since v24
+if(!function_exists('cg_get_galleries_slug_name')){
+    function cg_get_galleries_slug_name($shortcode_name = '',$post_mime_type = ''){
+
+        $gType = '';
+        $gTypeLowerCase = '';
+        if($shortcode_name=='cg_gallery_user' || $post_mime_type == 'contest-gallery-plugin-page-galleries-user-slug'){
+            $gType = 'User';
+            $gTypeLowerCase = '-user';
+        }else if($shortcode_name=='cg_gallery_winner' || $post_mime_type == 'contest-gallery-plugin-page-galleries-winner-slug'){
+            $gType = 'Winner';
+            $gTypeLowerCase = '-winner';
+        }else if($shortcode_name=='cg_gallery_no_voting' || $post_mime_type == 'contest-gallery-plugin-page-galleries-no-voting-slug'){
+            $gType = 'NoVoting';
+            $gTypeLowerCase = '-no-voting';
+        }else if($shortcode_name=='cg_gallery_ecommerce' || $post_mime_type == 'contest-gallery-plugin-page-galleries-ecommerce-slug'){
+            $gType = 'Ecommerce';
+            $gTypeLowerCase = '-ecommerce';
+        }
+
+        if (is_multisite()) {
+            $CgEntriesOwnSlugNameGalleries = cg_get_blog_option( get_current_blog_id(),'CgEntriesOwnSlugNameGalleries'.$gType);
+        }else{
+            $CgEntriesOwnSlugNameGalleries = get_option('CgEntriesOwnSlugNameGalleries'.$gType);
+        }
+
+        $CgEntriesOwnSlugNameGalleries = (!empty($CgEntriesOwnSlugNameGalleries)) ? $CgEntriesOwnSlugNameGalleries : 'contest-galleries'.$gTypeLowerCase;
+
+        return $CgEntriesOwnSlugNameGalleries;
+    }
+}
+
+if(!function_exists('cg_galleries_options')){
+    function cg_galleries_options($wp_upload_dir,$shortcode_name = '',$post_mime_type = ''){
+        $gType = 'g';
+        if($shortcode_name=='cg_gallery_user' || $post_mime_type == 'contest-gallery-plugin-page-galleries-user-slug'){
+            $gType = 'u';
+        }else if($shortcode_name=='cg_gallery_winner' || $post_mime_type == 'contest-gallery-plugin-page-galleries-winner-slug'){
+            $gType = 'w';
+        }else if($shortcode_name=='cg_gallery_no_voting' || $post_mime_type == 'contest-gallery-plugin-page-galleries-no-voting-slug'){
+            $gType = 'nv';
+        }else if($shortcode_name=='cg_gallery_ecommerce' || $post_mime_type == 'contest-gallery-plugin-page-galleries-ecommerce-slug'){
+            $gType = 'ec';
+        }
+
+        $galleriesOptions = cg_get_galleries_options_all();
+
+        $galleriesOptions = $galleriesOptions[$gType];
+
+        return $galleriesOptions;
+    }
+}
+
+if(!function_exists('cg_get_galleries_options_all')){
+    function cg_get_galleries_options_all(){
+
+        $uploadFolder = wp_upload_dir();
+
+        // get cg_galleries options here
+        $galleriesOptionsPath = $uploadFolder['basedir'].'/contest-gallery/gallery-general/json/galleries-options.json';
+        if(file_exists($galleriesOptionsPath)){
+            $galleriesOptions = json_decode(file_get_contents($galleriesOptionsPath),true);
+            $galleriesOptionsForEcommerce = cg_get_24_version_values();
+            // because might be saved in older gallery created in version 21 before cg_ecommerce shortcode
+            if(!isset($galleriesOptions['ec']['PicsPerSite'])){
+                $galleriesOptions['ec']['PicsPerSite'] = $galleriesOptionsForEcommerce['ec']['PicsPerSite'];
+            }
+            if(!isset($galleriesOptions['ec']['WidthThumb'])){
+                $galleriesOptions['ec']['WidthThumb'] = $galleriesOptionsForEcommerce['ec']['WidthThumb'];
+            }
+            if(!isset($galleriesOptions['ec']['HeightThumb'])){
+                $galleriesOptions['ec']['HeightThumb'] = $galleriesOptionsForEcommerce['ec']['HeightThumb'];
+            }
+            if(!isset($galleriesOptions['ec']['DistancePics'])){
+                $galleriesOptions['ec']['DistancePics'] = $galleriesOptionsForEcommerce['ec']['DistancePics'];
+            }
+            if(!isset($galleriesOptions['ec']['DistancePicsV'])){
+                $galleriesOptions['ec']['DistancePicsV'] = $galleriesOptionsForEcommerce['ec']['DistancePicsV'];
+            }
+			if(!isset($galleriesOptions['ec']['PreviewLastAdded'])){
+				$galleriesOptions['ec']['PreviewLastAdded'] = $galleriesOptionsForEcommerce['ec']['PreviewLastAdded'];
+			}
+			if(!isset($galleriesOptions['ec']['BorderRadius'])){
+				$galleriesOptions['ec']['BorderRadius'] = $galleriesOptionsForEcommerce['ec']['BorderRadius'];
+			}
+			if(!isset($galleriesOptions['ec']['FeControlsStyle'])){
+				$galleriesOptions['ec']['FeControlsStyle'] = $galleriesOptionsForEcommerce['ec']['FeControlsStyle'];
+			}
+            if($galleriesOptions['ec']['PreviewLastAdded']=='0' && $galleriesOptions['ec']['PreviewHighestRated']=='0' && $galleriesOptions['ec']['PreviewMostCommented']=='0'){// do not remove this condition, this case might happen using saving in galleries created before 22 (cg_galleries_ecommerce) shortcode
+	            $galleriesOptions['ec']['PreviewLastAdded']=1;
+            }
+        }else{
+            $galleriesOptions = cg_get_24_version_values();
+        }
+
+        return $galleriesOptions;
+
+    }
 }
 
 ?>

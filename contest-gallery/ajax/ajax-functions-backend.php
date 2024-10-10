@@ -499,6 +499,18 @@ if (!function_exists('post_cg_social_platform_input')) {
 		            $post_content = '';
 	            }
 	            $guid = $_POST['guid'];
+	            $GalleryID = intval($_POST['gid']);
+
+	            global $wpdb;
+	            $table_posts = $wpdb->prefix . "posts";
+	            $tablename_options = $wpdb->prefix . "contest_gal1ery_options";
+
+	            $galleryDbVersion = $wpdb->get_var( "SELECT Version FROM $tablename_options WHERE id='$GalleryID'");
+
+                $post_type = 'contest-gallery';
+                if(intval($galleryDbVersion)>=24){
+	                $post_type = 'contest-galleries';
+                }
 
                 $post_title = substr(cg_pre_process_name_for_url_name($post_title),0,100);
 
@@ -506,7 +518,7 @@ if (!function_exists('post_cg_social_platform_input')) {
                     'post_title'=> $post_title,
 	            'post_name'=> $post_name,
                     'guid'=> $guid,
-	            'post_type'=>'contest-gallery',
+                    'post_type'=>$post_type,
                     'post_content'=>$post_content,
                     'post_mime_type'=>$post_mime_type,
 	            'post_status'=>'publish'
@@ -514,8 +526,6 @@ if (!function_exists('post_cg_social_platform_input')) {
 
 	            $postId = wp_insert_post($array);
 
-	            global $wpdb;
-	            $table_posts = $wpdb->prefix . "posts";
 
 				// by default post_name will be converted to lowercase, so has to be update to original (which is with uppercases mostly) here
 	            // also wordpress replace post_name by adding -1 and so on if same by defaul

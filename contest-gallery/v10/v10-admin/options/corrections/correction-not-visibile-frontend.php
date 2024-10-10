@@ -7,6 +7,10 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 	// check if parent pages exists and required before
 	if(floatval($options->Version)>=21){
 
+		if(floatval($options->Version)>=24){
+			cg_create_slug_name_galleries_posts_if_required();
+		}
+
 		$jsonFile = $upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/".$GalleryID."-options.json";
 		$optionsArray = json_decode(file_get_contents($jsonFile),true);
 
@@ -28,17 +32,14 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 		if(empty($WpPageParent)){
 			$hasParentPageRepaired = true;
 			// cg_gallery shortcode
-			$array = [
-				'post_title'=>'Contest Gallery ID '.$options->id,
-				'post_type'=>'contest-gallery',
-				'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-				                "<!--This is a comment: cg_galley... shortcode is required to display Contest Gallery on a Contest Gallery Custom Post Type page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode also on any other of your pages.-->"."\r\n".
-				                "[cg_gallery id=\"$GalleryID\"]"."\r\n".
-				                "<!-- /wp:shortcode -->",
-				'post_mime_type'=>'contest-gallery-plugin-page',
-				'post_status'=>'publish',
-			];
+			if(intval($options->Version)>=24){
+				$array = cg_post_type_parent_galleries_array($options->id);
+			}else{
+				$array = cg_post_type_parent_gallery_array($options->id);
+			}
+
 			$WpPageParent = wp_insert_post($array);
+			cg_insert_into_contest_gal1ery_wp_pages($WpPageParent);
 			$options->WpPageParent = $WpPageParent;
 			$wpdb->update(
 				"$tablenameOptions",
@@ -47,16 +48,6 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 				array('%d'),
 				array('%d')
 			);
-			$wpdb->query( $wpdb->prepare(
-				"
-				INSERT INTO $tablename_wp_pages
-					( id,WpPage
-					 )
-					VALUES ( %s,%d
-					)
-				",
-				'',$WpPageParent
-			) );
 
 			$picsSQL = $wpdb->get_results( "SELECT DISTINCT id, WpPage FROM $tablename WHERE GalleryID = '$GalleryID'");
 
@@ -100,18 +91,13 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 		// cg_gallery_user shortcode
 		if(empty($WpPageParentUser)){
 			$hasParentPageRepaired = true;
-			$array = [
-				'post_title'=>'Contest Gallery ID '.$options->id.' user',
-				'post_type'=>'contest-gallery',
-				'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-				                "<!--This is a comment: cg_galley... shortcode is required to display Contest Gallery on a Contest Gallery Custom Post Type page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode also on any other of your pages.-->"."\r\n".
-				                "[cg_gallery_user id=\"$GalleryID\"]"."\r\n".
-				                "<!-- /wp:shortcode -->",
-				'post_mime_type'=>'contest-gallery-plugin-page',
-				'post_status'=>'publish',
-			];
-
+			if(intval($options->Version)>=24){
+				$array = cg_post_type_parent_galleries_array($options->id,'user');
+			}else{
+				$array = cg_post_type_parent_gallery_array($options->id,'user');
+			}
 			$WpPageParentUser = wp_insert_post($array);
+			cg_insert_into_contest_gal1ery_wp_pages($WpPageParentUser);
 			$options->WpPageParentUser = $WpPageParentUser;
 			$wpdb->update(
 				"$tablenameOptions",
@@ -120,16 +106,6 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 				array('%d'),
 				array('%d')
 			);
-			$wpdb->query( $wpdb->prepare(
-				"
-				INSERT INTO $tablename_wp_pages
-					( id,WpPage
-					 )
-					VALUES ( %s,%d
-					)
-				",
-				'',$WpPageParentUser
-			) );
 
 			$picsSQL = $wpdb->get_results( "SELECT DISTINCT id, WpPageUser FROM $tablename WHERE GalleryID = '$GalleryID'");
 
@@ -173,18 +149,14 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 		// cg_gallery_no_voting shortcode
 		if(empty($WpPageParentNoVoting)){
 			$hasParentPageRepaired = true;
-			$array = [
-				'post_title'=>'Contest Gallery ID '.$options->id.' no voting',
-				'post_type'=>'contest-gallery',
-				'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-				                "<!--This is a comment: cg_galley... shortcode is required to display Contest Gallery on a Contest Gallery Custom Post Type page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode also on any other of your pages.-->"."\r\n".
-				                "[cg_gallery_no_voting id=\"$GalleryID\"]"."\r\n".
-				                "<!-- /wp:shortcode -->",
-				'post_mime_type'=>'contest-gallery-plugin-page',
-				'post_status'=>'publish',
-			];
+			if(intval($options->Version)>=24){
+				$array = cg_post_type_parent_galleries_array($options->id,'no-voting');
+			}else{
+				$array = cg_post_type_parent_gallery_array($options->id,'no-voting');
+			}
 
 			$WpPageParentNoVoting = wp_insert_post($array);
+			cg_insert_into_contest_gal1ery_wp_pages($WpPageParentNoVoting);
 			$options->WpPageParentNoVoting = $WpPageParentNoVoting;
 			$wpdb->update(
 				"$tablenameOptions",
@@ -193,16 +165,6 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 				array('%d'),
 				array('%d')
 			);
-			$wpdb->query( $wpdb->prepare(
-				"
-				INSERT INTO $tablename_wp_pages
-					( id,WpPage
-					 )
-					VALUES ( %s,%d
-					)
-				",
-				'',$WpPageParentNoVoting
-			) );
 
 			$picsSQL = $wpdb->get_results( "SELECT DISTINCT id, WpPageNoVoting FROM $tablename WHERE GalleryID = '$GalleryID'");
 
@@ -246,18 +208,14 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 		// cg_gallery_winner shortcode
 		if(empty($WpPageParentWinner)){
 			$hasParentPageRepaired = true;
-			$array = [
-				'post_title'=>'Contest Gallery ID '.$options->id.' winner',
-				'post_type'=>'contest-gallery',
-				'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-				                "<!--This is a comment: cg_galley... shortcode is required to display Contest Gallery on a Contest Gallery Custom Post Type page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode also on any other of your pages.-->"."\r\n".
-				                "[cg_gallery_winner id=\"$GalleryID\"]"."\r\n".
-				                "<!-- /wp:shortcode -->",
-				'post_mime_type'=>'contest-gallery-plugin-page',
-				'post_status'=>'publish',
-			];
+			if(intval($options->Version)>=24){
+				$array = cg_post_type_parent_galleries_array($options->id,'winner');
+			}else{
+				$array = cg_post_type_parent_gallery_array($options->id,'winner');
+			}
 
 			$WpPageParentWinner = wp_insert_post($array);
+			cg_insert_into_contest_gal1ery_wp_pages($WpPageParentWinner);
 			$options->WpPageParentWinner = $WpPageParentWinner;
 			$wpdb->update(
 				"$tablenameOptions",
@@ -266,16 +224,6 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 				array('%d'),
 				array('%d')
 			);
-			$wpdb->query( $wpdb->prepare(
-				"
-				INSERT INTO $tablename_wp_pages
-					( id,WpPage
-					 )
-					VALUES ( %s,%d
-					)
-				",
-				'',$WpPageParentWinner
-			) );
 
 			$picsSQL = $wpdb->get_results( "SELECT DISTINCT id, WpPageWinner FROM $tablename WHERE GalleryID = '$GalleryID'");
 
@@ -319,18 +267,14 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 			// cg_gallery_ecommerce shortcode
 			if(empty($WpPageParentEcommerce)){
 				$hasParentPageRepaired = true;
-				$array = [
-					'post_title'=>'Contest Gallery ID '.$options->id.' ecommerce',
-					'post_type'=>'contest-gallery',
-					'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-					                "<!--This is a comment: cg_galley... shortcode is required to display Contest Gallery on a Contest Gallery Custom Post Type page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode also on any other of your pages.-->"."\r\n".
-					                "[cg_gallery_ecommerce id=\"$GalleryID\"]"."\r\n".
-					                "<!-- /wp:shortcode -->",
-					'post_mime_type'=>'contest-gallery-plugin-page',
-					'post_status'=>'publish',
-				];
+				if(intval($options->Version)>=24){
+					$array = cg_post_type_parent_galleries_array($options->id,'ecommerce');
+				}else{
+					$array = cg_post_type_parent_gallery_array($options->id,'ecommerce');
+				}
 
 				$WpPageParentEcommerce = wp_insert_post($array);
+				cg_insert_into_contest_gal1ery_wp_pages($WpPageParentEcommerce);
 				$options->WpPageParentEcommerce = $WpPageParentEcommerce;
 				$wpdb->update(
 					"$tablenameOptions",
@@ -339,16 +283,6 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 					array('%d'),
 					array('%d')
 				);
-				$wpdb->query( $wpdb->prepare(
-					"
-				INSERT INTO $tablename_wp_pages
-					( id,WpPage
-					 )
-					VALUES ( %s,%d
-					)
-				",
-					'',$WpPageParentEcommerce
-				) );
 
 				$picsSQL = $wpdb->get_results( "SELECT DISTINCT id, WpPageEcommerce FROM $tablename WHERE GalleryID = '$GalleryID'");
 
@@ -472,11 +406,18 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 			if(empty($post_title)){$post_title='entry';}// if both variants above not available then simply the word "entry" will be taken
 			// cg_gallery shortcode
 			$post_title = substr($post_title,0,100);
-			if(in_array('WpPage',$WpPageTypeNamesArray)!==false){
+
+            if(in_array('WpPage',$WpPageTypeNamesArray)!==false){
+
+				$post_type = 'contest-gallery';
+				if(intval($options->Version)>=24){
+                    $post_type = 'contest-g';
+				}
+
 				// cg_gallery shortcode
 				$array = [
 					'post_title'=> $post_title,
-					'post_type'=>'contest-gallery',
+					'post_type'=>$post_type,
 					'post_content'=>"<!-- wp:shortcode -->"."\r\n".
 					                "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
 					                "[cg_gallery id=\"$GalleryID\" entry_id=\"$rowObjectID\"]"."\r\n".
@@ -496,10 +437,16 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 			}
 			// cg_gallery_user shortcode
 			if(in_array('WpPageUser',$WpPageTypeNamesArray)!==false){
+
+                $post_type = 'contest-gallery';
+                if(intval($options->Version)>=24){
+                    $post_type = 'contest-g-user';
+                }
+
 				// cg_gallery shortcode
 				$array = [
 					'post_title'=> $post_title,
-					'post_type'=>'contest-gallery',
+					'post_type'=>$post_type,
 					'post_content'=>"<!-- wp:shortcode -->"."\r\n".
 					                "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
 					                "[cg_gallery_user id=\"$GalleryID\" entry_id=\"$rowObjectID\"]"."\r\n".
@@ -520,10 +467,16 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 			}
 			// cg_gallery_no_voting shortcode
 			if(in_array('WpPageNoVoting',$WpPageTypeNamesArray)!==false){
+
+                $post_type = 'contest-gallery';
+                if(intval($options->Version)>=24){
+                    $post_type = 'contest-g-no-voting';
+                }
+
 				// cg_gallery shortcode
 				$array = [
 					'post_title'=> $post_title,
-					'post_type'=>'contest-gallery',
+					'post_type'=>$post_type,
 					'post_content'=>"<!-- wp:shortcode -->"."\r\n".
 					                "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
 					                "[cg_gallery_no_voting id=\"$GalleryID\" entry_id=\"$rowObjectID\"]"."\r\n".
@@ -543,10 +496,16 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 			}
 			// cg_gallery_winner shortcode
 			if(in_array('WpPageWinner',$WpPageTypeNamesArray)!==false){
+
+                $post_type = 'contest-gallery';
+                if(intval($options->Version)>=24){
+                    $post_type = 'contest-g-winner';
+                }
+
 				// cg_gallery shortcode
 				$array = [
 					'post_title'=> $post_title,
-					'post_type'=>'contest-gallery',
+					'post_type'=>$post_type,
 					'post_content'=>"<!-- wp:shortcode -->"."\r\n".
 					                "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
 					                "[cg_gallery_winner id=\"$GalleryID\" entry_id=\"$rowObjectID\"]"."\r\n".
@@ -568,10 +527,17 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 			if(intval($options->Version)>=22){
 				// cg_gallery_ecommerce shortcode
 				if(in_array('WpPageEcommerce',$WpPageTypeNamesArray)!==false){
+
+                    $post_type = 'contest-gallery';
+
+                    if(intval($options->Version)>=24){
+                        $post_type = 'contest-g-ecommerce';
+                    }
+
 					// cg_gallery shortcode
 					$array = [
 						'post_title'=> $post_title,
-						'post_type'=>'contest-gallery',
+						'post_type'=>$post_type,
 						'post_content'=>"<!-- wp:shortcode -->"."\r\n".
 						                "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
 						                "[cg_gallery_ecommerce id=\"$GalleryID\" entry_id=\"$rowObjectID\"]"."\r\n".

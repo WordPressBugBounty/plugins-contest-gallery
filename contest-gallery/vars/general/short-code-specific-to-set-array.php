@@ -12,5 +12,5 @@ return ['AllowSortOptions','PicsPerSite','FullSizeGallery','FullSize','Search','
     'CopyOriginalFileLink','ForwardOriginalFile','InformUserVote','InformUserVote','InformUserComment','InformUserCommentMailInterval',
     'ShareButtons','BackToGalleryButtonText','BackToGalleryButtonURL','TextBeforeWpPageEntry','TextAfterWpPageEntry',
     'ShowBackToGalleryButton','WpPageParentRedirectURL','RedirectURLdeletedEntry','TextDeactivatedEntry','ForwardToWpPageEntry','ForwardToWpPageEntryInNewTab',
-    'AdditionalCssGalleryPage','AdditionalCssEntryLandingPage','WpPageParent','WpPageParentUser','WpPageParentNoVoting','WpPageParentWinner','WpPageParentEcommerce'
+    'AdditionalCssGalleryPage','AdditionalCssEntryLandingPage','WpPageParent','WpPageParentUser','WpPageParentNoVoting','WpPageParentWinner','WpPageParentEcommerce','MainTitleGalleriesView','SubTitleGalleriesView','ThirdTitleGalleriesView'
 ];

@@ -660,6 +660,296 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
         }
     }
 
+	$isCGalleriesForwardToWpPageEntry = false;
+    if(!empty($isGalleriesMainPage)){
+	    $isCGalleriesForwardToWpPageEntry = true;
+    }
+
+    if(!empty($isCGalleries)){
+
+	    $WinnerIdsArray = [];
+
+	    if($shortcode_name == 'cg_gallery_winner'){
+		    $WinnerIds = $wpdb->get_results("
+							SELECT id 
+							FROM $tablename 
+							WHERE Winner = 1 ORDER BY id DESC 
+						");
+            foreach($WinnerIds as $WinnerObject){
+	            $WinnerIdsArray[] = $WinnerObject->id;
+            }
+	    }
+
+	    $EcommerceIdsArray = [];
+
+	    if($shortcode_name == 'cg_gallery_ecommerce'){
+		    $EcommerceIds = $wpdb->get_results("SELECT id 
+							FROM $tablename 
+							WHERE EcommerceEntry > 0 ORDER BY id DESC" );
+            foreach($EcommerceIds as $EcommerceObject){
+	            $EcommerceIdsArray[] = $EcommerceObject->id;
+            }
+	    }
+
+        $imagesFullData = [];
+
+	    function cgSortArray($a1, $a2){
+		    if ($a1 == $a2) return 0;
+		    return ($a1 > $a2) ? -1 : 1;
+	    }
+
+	    if(empty($galleriesIds)){
+		    usort($galleryNumbers, "cgSortArray");
+	    }// else simply the order give by user for ids in cg_galleries shortcode
+
+	    $dirs = [];
+
+        //var_dump('$galleryNumbers');
+        //var_dump($galleryNumbers);
+
+	    foreach ($galleryNumbers as $galleryIdForArray) {
+		    $dirs[] = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdForArray;
+	    }
+
+	    function cgGetNotEmptyJsonFileData($index,$imageIDs,$galleryIdToCheck, $imageId, $wp_upload_dir){
+		    $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdToCheck.'/json/image-data/image-data-'.$imageId.'.json';
+		    $jsonFileData = json_decode(file_get_contents($jsonFile),true);
+            if(!empty($jsonFileData)){
+	            $jsonFileData['id'] = $imageId;// set it for sure because of previous versions
+                return $jsonFileData;
+            }else{
+	            $index++;
+                if(!empty($imageIDs[$index])){
+	                return cgGetNotEmptyJsonFileData($index,$imageIDs,$galleryIdToCheck, $imageIDs[$index], $wp_upload_dir);
+                }else{
+	                return [];
+                }
+            }
+	    }
+
+	    function cgGetHighestRating($a1, $a2, $AllowRating){
+		    // $a1 == previous file
+		    // $a2 == current file
+		    if($AllowRating=='2'){
+			    if ($a1['CountS'] == $a2['CountS']) return $a1;// return previous always, which means higher id
+			    return ($a1['CountS'] > $a2['CountS']) ? $a1 : $a2;
+		    }else if($AllowRating>='12'){
+			    $array = [12,13,14,15,16,17,18,19,20];
+			    $sumA1 = 0;
+			    $sumA2 = 0;
+			    foreach ($array as $option){
+				    if($AllowRating==$option){
+					    for($i=1;$i<=($option-10);$i++){
+						    if(!empty($a1['CountR'.$i])){
+							    $sumA1 += intval($a1['CountR'.$i])*$i;// *$i because count and not sum is saved
+						    }
+						    if(!empty($a2['CountR'.$i])){
+							    $sumA2 += intval($a2['CountR'.$i]*$i);//  *$i because count and not sum is saved
+						    }
+					    }
+				    }
+			    }
+			    if ($sumA1 == $sumA2) return $a1;// return previous always, which means higher id
+			    return ($sumA1 > $sumA2) ? $a1 : $a2;
+		    }
+	    }
+
+	    function cgGetHighestComments($a1, $a2){
+		    // $a1 == previous file
+		    // $a2 == current file
+		    if ($a1['CountC'] == $a2['CountC']) return $a1;// return previous always, which means higher id
+		    return ($a1['CountC'] > $a2['CountC']) ? $a1 : $a2;
+	    }
+
+        $time = time();
+	    $structure = get_option( 'permalink_structure' );
+
+	    $PositionNumber = 1;
+
+	    foreach ($dirs as $dir) {
+		    $galleryIdToCheck = substr($dir,strrpos($dir,'-')+1, strlen($dir));
+		    $optionsFileToCheck = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdToCheck.'/json/'.$galleryIdToCheck.'-options.json';
+		    if(file_exists($optionsFileToCheck)){// only v10 and later
+			    $optionsToCheck = json_decode(file_get_contents($optionsFileToCheck),true);
+			    if(!empty($optionsToCheck[$galleryIdToCheck])){
+				    $optionsToCheck = $optionsToCheck[$galleryIdToCheck];
+			    }
+			    $imageDataJsonFiles = glob($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdToCheck.'/json/image-data/*.json');
+
+			    $imageIDs = [];
+			    foreach ($imageDataJsonFiles as $imageDataJsonFile) {
+				    $imageId = substr(substr($imageDataJsonFile,strrpos($imageDataJsonFile,'-')+1, 30),0,-5);// do it for sure for eventually very old galleries, which might have only rowid or so
+				    $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdToCheck.'/json/image-data/image-data-'.$imageId.'.json';
+				    if(file_exists($jsonFile) && filesize($jsonFile)>10){// size is in bytes... empty array is two chars => 2 byte
+					    if(!empty($isOnlyGalleryUser) && $is_user_logged_in){
+                            if(in_array($imageId,$wpUserImageIdsArray)!==false){
+	                            $imageIDs[] = $imageId;
+                            }
+					    }else if($shortcode_name == 'cg_gallery_winner'){
+                            if(in_array($imageId,$WinnerIdsArray)!==false){
+	                            $imageIDs[] = $imageId;
+                            }
+					    }else if($shortcode_name == 'cg_gallery_ecommerce'){
+                            if(in_array($imageId,$EcommerceIdsArray)!==false){
+	                            $imageIDs[] = $imageId;
+                            }
+					    }else{
+						    $imageIDs[] = $imageId;
+					    }
+                    }
+			    }
+
+			    if(count($imageIDs)){
+				    usort($imageIDs, "cgSortArray");
+				    $AllowRatingToCheck = $optionsToCheck['general']['AllowRating'];
+				    if(!($AllowRatingToCheck==2 || $AllowRatingToCheck>=12)){
+					    if($galleriesOptions['PreviewHighestRated']==1){
+						    $galleriesOptions['PreviewHighestRated']=0;
+						    $galleriesOptions['PreviewLastAdded']=1;
+					    }
+                    }
+				    if($galleriesOptions['PreviewLastAdded']==1){
+	                    $imageId = $imageIDs[0];
+	                    $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdToCheck.'/json/image-data/image-data-'.$imageId.'.json';
+	                    $jsonFileData = json_decode(file_get_contents($jsonFile),true);
+	                    if(empty($jsonFileData)){
+		                    // 1 because previously 0 is used
+		                    $jsonFileData = cgGetNotEmptyJsonFileData(1,$imageIDs,$galleryIdToCheck, $imageIDs[1], $wp_upload_dir);
+		                    if(empty($jsonFileData)){// then image-data files with content in that gallery
+			                    continue;
+		                    }
+		                    $imageId = $jsonFileData['id'];
+	                    }
+                    }else if($galleriesOptions['PreviewHighestRated']==1 || $galleriesOptions['PreviewMostCommented']==1){
+                        $previousHighestFileData = [];
+                        foreach ($imageIDs as $imageID){
+	                        $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdToCheck.'/json/image-data/image-data-'.$imageID.'.json';
+                            if(!file_exists($jsonFile)){
+                                continue;
+                            }else{
+	                            $jsonFileData = json_decode(file_get_contents($jsonFile),true);
+	                            if(empty($jsonFileData)){
+		                            continue;
+	                            }
+	                            if(!empty($previousHighestFileData)){
+	                                $jsonFileData['id'] = $imageID;// for sure because of previous versions
+                                    if($galleriesOptions['PreviewHighestRated']==1 ){
+	                                    $jsonFileTemp = cgGetHighestRating($previousHighestFileData, $jsonFileData, $AllowRatingToCheck);
+                                    }else if($galleriesOptions['PreviewMostCommented']==1){
+	                                    $jsonFileTemp = cgGetHighestComments($previousHighestFileData, $jsonFileData);
+                                    }
+		                            $previousHighestFileData = $jsonFileTemp;
+	                                $jsonFileData = $jsonFileTemp;
+                                }else{
+	                                $jsonFileData = json_decode(file_get_contents($jsonFile),true);
+	                                $jsonFileData['id'] = $imageID;// for sure because of previous versions
+		                            $previousHighestFileData = $jsonFileData;
+                                }
+                            }
+                        }
+                    }
+
+                    $jsonFileData['PositionNumber'] = $PositionNumber;
+
+                    if(!empty($optionsToCheck['pro']['MainTitleGalleriesView'])){
+	                    $jsonFileData['MainTitleGalleriesView'] = $optionsToCheck['pro']['MainTitleGalleriesView'];
+                    }
+                    if(!empty($optionsToCheck['pro']['SubTitleGalleriesView'])){
+	                    $jsonFileData['SubTitleGalleriesView'] = $optionsToCheck['pro']['SubTitleGalleriesView'];
+                    }
+                    if(!empty($optionsToCheck['pro']['ThirdTitleGalleriesView'])){
+	                    $jsonFileData['ThirdTitleGalleriesView'] = $optionsToCheck['pro']['ThirdTitleGalleriesView'];
+                    }
+
+                    if(!empty($optionsToCheck['pro']['ConsentYoutube'])){
+	                    $jsonFileData['isCGalleriesConsentYoutube'] = $optionsToCheck['pro']['ConsentYoutube'];
+                    }
+                    if(!empty($optionsToCheck['pro']['ConsentInstagram'])){
+	                    $jsonFileData['isCGalleriesConsentInstagram'] = $optionsToCheck['pro']['ConsentInstagram'];
+                    }
+                    if(!empty($optionsToCheck['pro']['ConsentTwitter'])){
+	                    $jsonFileData['isCGalleriesConsentTwitter'] = $optionsToCheck['pro']['ConsentTwitter'];
+                    }
+                    if(!empty($optionsToCheck['pro']['ConsentTikTok'])){
+	                    $jsonFileData['isCGalleriesConsentTikTok'] = $optionsToCheck['pro']['ConsentTikTok'];
+                    }
+
+				    $rowObject = $wpdb->get_row( "SELECT id, MultipleFiles FROM $tablename WHERE id = $imageId LIMIT 0, 1" );
+
+                    if(!empty($rowObject->MultipleFiles) && $rowObject->MultipleFiles!='""') {
+	                    $queryDataArray[$rowObject->id] = [];
+	                    $queryDataArray[$rowObject->id]['MultipleFiles'] = unserialize($rowObject->MultipleFiles);
+                    }
+				    $jsonFileData['gidToShow'] = $galleryIdToCheck;
+				    if(!empty($jsonFileData['ImgType']) && $jsonFileData['ImgType'] == 'con'){
+                        // continue here with $optionsToCheck
+                        $entryIdToDisplay = 0;
+                        if(!empty($optionsToCheck['visual']['Field1IdGalleryView'])){
+	                        $entryIdToDisplay = $optionsToCheck['visual']['Field1IdGalleryView'];
+                        }else if(!empty($optionsToCheck['visual']['SubTitle'])){
+	                        $entryIdToDisplay = $optionsToCheck['visual']['SubTitle'];
+                        }else if(!empty($optionsToCheck['visual']['ThirdTitle'])){
+	                        $entryIdToDisplay = $optionsToCheck['visual']['ThirdTitle'];
+                        }
+                        if($entryIdToDisplay){
+	                        $InfoDataFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdToCheck.'/json/image-info/image-info-'.$imageId.'.json';
+                            if(file_exists($InfoDataFile)){
+	                            $InfoData = json_decode(file_get_contents($InfoDataFile),true);
+                            }
+                            if(!empty($InfoData[$entryIdToDisplay])){
+	                            $jsonFileData['infoToShowIfGalleriesCon'] = $InfoData[$entryIdToDisplay]['field-content'];
+                            }
+                        }
+				    }
+
+				    $imagesFullData[$imageId] = $jsonFileData;
+
+				    if(!empty($isGalleriesMainPage)){
+					    if(!empty($optionsToCheck['general'][$WpPageParentShortCodeType])){
+						    if(!empty($structure)){
+							    $imagesFullData[$imageId]['entryGuid'] = get_permalink($optionsToCheck['general'][$WpPageParentShortCodeType]);
+						    }else{
+							    $imagesFullData[$imageId]['entryGuid'] = get_permalink($optionsToCheck['general'][$WpPageParentShortCodeType]);
+						    }
+					    }
+				    }
+                }else{
+                    //var_dump('set no entries');
+                    $time = $time+1;// does not work with ++ no clue why
+				    $imagesFullData[$time] = cg_get_empty_entry_values();
+				    $imagesFullData[$time]['PositionNumber'] = $PositionNumber;
+				    if(!empty($optionsToCheck['pro']['MainTitleGalleriesView'])){
+					    $imagesFullData[$time]['MainTitleGalleriesView'] = $optionsToCheck['pro']['MainTitleGalleriesView'];
+				    }
+				    if(!empty($optionsToCheck['pro']['SubTitleGalleriesView'])){
+					    $imagesFullData[$time]['SubTitleGalleriesView'] = $optionsToCheck['pro']['SubTitleGalleriesView'];
+				    }
+				    if(!empty($optionsToCheck['pro']['ThirdTitleGalleriesView'])){
+					    $imagesFullData[$time]['ThirdTitleGalleriesView'] = $optionsToCheck['pro']['ThirdTitleGalleriesView'];
+				    }
+				    $imagesFullData[$time]['gidToShow'] = $time;
+                    if(!empty($optionsToCheck['general'][$WpPageParentShortCodeType])){
+	                    $imagesFullData[$time]['entryGuid'] = get_permalink($optionsToCheck['general'][$WpPageParentShortCodeType]);
+                    }
+				    $GalleryName = 'Gallery ID '.$galleryIdToCheck;
+				    if(!empty($optionsToCheck['general']['GalleryName'])){
+					    $GalleryName = $optionsToCheck['general']['GalleryName'];
+				    }
+				    $imagesFullData[$time]['GalleryName'] = $GalleryName;
+				    $imagesFullData[$time]['isCGalleriesNoGalleryGid']  = $galleryIdToCheck;
+				    $imagesFullData[$time]['isCGalleriesNoGalleryEntries']  = true;
+				    $imagesFullData[$time]['isCGalleriesNoGalleryEntriesText']  = $language_NoGalleryEntries;
+			    }
+			    $PositionNumber++;
+		    }
+	    }
+    }
+
+    /*
+    var_dump('$imagesFullData123');
+    echo "<pre>";
+	    print_r($imagesFullData);
+	echo "</pre>";*/
 
     ?>
 <pre>
@@ -670,7 +960,11 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
             cgJsData = {};
             cgJsData[gid] = {};
         }
+        cgJsData[gid].galleriesOptions = <?php echo json_encode($galleriesOptions); ?>;
+        cgJsData[gid].isCGalleriesForwardToWpPageEntry = <?php echo json_encode($isCGalleriesForwardToWpPageEntry); ?>;
         cgJsData[gid].imagesFullData = <?php echo json_encode($imagesFullData); ?>;
+        debugger
+        cgJsData[gid].vars.queryDataArray = <?php echo json_encode($queryDataArray); ?>;// has to be set here after cg_galleries processing
 
     </script>
     </pre>

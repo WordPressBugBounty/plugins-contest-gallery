@@ -61,7 +61,7 @@ echo "<div class='td_gallery_info_content'>";
 
 echo "<div class='td_gallery_info_shortcode' style='min-height: 62px; '>";
 echo "<div>
-      <div class='td_gallery_info_name_title' style='font-size: 15px;'>Main gallery</div>
+      <div class='td_gallery_info_name_title' style='font-size: 15px;'>Voting gallery</div>
       <div class='td_gallery_info_name_span'>[cg_gallery id=\"".$galeryNR."\"]</div>
         <div>
             <span class=\"cg-info-icon\">read info</span>
@@ -70,7 +70,7 @@ echo "<div>
         </div>
     </div>
     <div class='td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div>
-    <div class='td_gallery_info_shortcode_conf   cg_tooltip'  data-cg-shortcode='cg_gallery'  data-cg-title-main='Main gallery' data-cg-title-sub='[cg_gallery id=\"".$galeryNR."\"]'></div>
+    <div class='td_gallery_info_shortcode_conf   cg_tooltip'  data-cg-shortcode='cg_gallery'  data-cg-title-main='Voting gallery' data-cg-title-sub='[cg_gallery id=\"".$galeryNR."\"]'></div>
     <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide'   data-cg-shortcode='cg_gallery'  ></div>
     <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide'   data-cg-shortcode='cg_gallery'  ></div>
 </div>";
@@ -243,7 +243,7 @@ echo "<div>
     <div class='td_gallery_info_name_span' style='padding-left: 0;white-space: pre;'>[cg_gallery_ecommerce id=\"".$galeryNR."\"]</div>
         <div>
             <span class=\"cg-info-icon\">read info</span>
-            <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;top:67px;\">Display only entries activated for selling<br>Every entry can be activated for selling<br>Use \"Sell settings\" button to activate an entry for selling<br>\"In gallery contact form button\" is not available<br>Voting can be enabled/diabled<br>Can be added multiple times on a page with different id’s<br> add <b>test=\"true\"</b> to shortcode to activate test environment<br>Example: <b>[cg_gallery_ecommerce id=\"".$galeryNR."\" test=\"true\"]</b></span>
+            <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;top:67px;\">Display only entries activated for selling<br>Every entry can be activated for selling<br>Use \"Sell settings\" button to activate an entry for selling<br>\"In gallery contact form button\" is not available<br>Voting can be enabled/disabled<br>Can be added multiple times on a page with different id’s<br> add <b>test=\"true\"</b> to shortcode to activate test environment<br>Example: <b>[cg_gallery_ecommerce id=\"".$galeryNR."\" test=\"true\"]</b></span>
         </div>
     </div>
     <div class='td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div>

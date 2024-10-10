@@ -262,6 +262,7 @@ $countCommentsTotal = $countCommentsSQL + $fileImageCommentsDirCount;
 
 $ratingCommentsData['CountC'] = $countCommentsTotal;
 
+// the rest will be done in cg_actualize_all_images_data_sort_values_file
 $wpdb->update(
     "$tablename",
     array('CountC' => $countCommentsTotal, 'CountCtoReview' => $countCountCtoReview),

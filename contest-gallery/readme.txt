@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, upload, voting, youtube
 Requires at least: 5.6
-Stable tag: 23.1.8
+Stable tag: 24.0.0
 Tested up to: 6.6.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -228,6 +228,14 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V24.0.0 =
+* NEW: cg_galleries... shortcode types. Place cg_galleries shortcode on your page and click through galleries without page reload.
+* NEW: Add ids to a cg_galleries... shortcode if you like to display only certain galleries.
+* NEW: Either latest added, highest rated or highest commented entry can be displayed in galleries view as preview for a gallery.
+* NEW: Main title, sub title and third title can be configured as preview for a gallery in galleries view.
+* FIXED: Some special chars were not showing correctly in title of gallery view.
+* FIXED: Gallery title was not displayed in no voting gallery if comments for no voting gallery were deactivated.
 
 = V23.1.8 =
 * FIXED: Wrong entries URLs were displayed in certain cases in backend entries area.

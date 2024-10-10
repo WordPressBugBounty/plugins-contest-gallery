@@ -50,7 +50,7 @@ if(intval($galleryDbVersion)>=21){
         $permalink = get_permalink($optionsSQL->WpPageParent);
         if($permalink===false){
             echo "<a href='#' target='_blank' class='cg_entry_page_url cg_disabled_background_color_e0e0e0' style='margin-bottom: 15px;'>";
-            echo "cg_gallery page <b>deleted</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
+            echo "cg_gallery page <b>&nbsp;deleted&nbsp;</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
             echo "</a>";
         }else{
 /*            echo "<a href='".$permalink."' target='_blank' class='cg_entry_page_url' style='margin-bottom: 15px;'>";
@@ -69,7 +69,7 @@ if(intval($galleryDbVersion)>=21){
         $permalink = get_permalink($optionsSQL->WpPageParentUser);
         if($permalink===false){
             echo "<a href='#' target='_blank' class='cg_entry_page_url cg_disabled_background_color_e0e0e0' style='margin-bottom: 15px;'>";
-            echo "cg_gallery_user page <b>deleted</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
+            echo "cg_gallery_user page <b>&nbsp;deleted&nbsp;</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
             echo "</a>";
         }else{
 /*            echo "<a href='".$permalink."' target='_blank' class='cg_entry_page_url' style='margin-bottom: 15px;'>";
@@ -88,7 +88,7 @@ if(intval($galleryDbVersion)>=21){
         $permalink = get_permalink($optionsSQL->WpPageParentNoVoting);
         if($permalink===false){
             echo "<a href='#' target='_blank' class='cg_entry_page_url cg_disabled_background_color_e0e0e0' style='margin-bottom: 15px;'>";
-            echo "cg_gallery_no_voting page <b>deleted</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
+            echo "cg_gallery_no_voting page <b>&nbsp;deleted&nbsp;</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
             echo "</a>";
         }else{
 /*            echo "<a href='".$permalink."' target='_blank' class='cg_entry_page_url' style='margin-bottom: 15px;'>";
@@ -107,7 +107,7 @@ if(intval($galleryDbVersion)>=21){
         $permalink = get_permalink($optionsSQL->WpPageParentWinner);
         if($permalink===false){
             echo "<a href='#' target='_blank' class='cg_entry_page_url cg_disabled_background_color_e0e0e0' style='margin-bottom: 15px;'>";
-            echo "cg_gallery_winner page <b>deleted</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
+            echo "cg_gallery_winner page <b>&nbsp;deleted&nbsp;</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
             echo "</a>";
         }else{
 /*            echo "<a href='".$permalink."' target='_blank' class='cg_entry_page_url' style='margin-bottom: 15px;'>";
@@ -117,6 +117,7 @@ if(intval($galleryDbVersion)>=21){
     }
 }
 
+// cg_gallery_ecommerce since 22 only available
 if(intval($galleryDbVersion)>=22){
     if(get_post_status( $optionsSQL->WpPageParentEcommerce ) == 'trash'){
         echo "<a href='".get_bloginfo('wpurl') . "/wp-admin/edit.php?post_status=trash&post_type=contest-gallery' target='_blank' class='cg_entry_page_url' style='margin-bottom: 15px;'>";
@@ -126,7 +127,7 @@ if(intval($galleryDbVersion)>=22){
         $permalink = get_permalink($optionsSQL->WpPageParentEcommerce);
         if($permalink===false){
             echo "<a href='#' target='_blank' class='cg_entry_page_url cg_disabled_background_color_e0e0e0' style='margin-bottom: 15px;'>";
-            echo "cg_gallery_ecommerce page <b>deleted</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
+            echo "cg_gallery_ecommerce page <b>&nbsp;deleted&nbsp;</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
             echo "</a>";
         }else{
 /*            echo "<a href='".$permalink."' target='_blank' class='cg_entry_page_url' style='margin-bottom: 15px;'>";

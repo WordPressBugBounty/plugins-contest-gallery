@@ -125,8 +125,9 @@ if (!is_dir($galleryUploadFolder)) {
     mkdir($galleryUploadFolder, 0755, true);
 }
 
-if(!empty($_POST['CgEntriesOwnSlugNameChanged'])){
     $wp_upload_dir = wp_upload_dir();
+
+	if(!empty($_POST['CgEntriesOwnSlugNameChanged'])){
     $slugNameFilePath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/post-type-slug-name-do-not-edit-or-remove.txt';
     if (is_multisite()) {
         $CgEntriesOwnSlugNameOption = cg_get_blog_option(get_current_blog_id(),'CgEntriesOwnSlugName');
@@ -166,6 +167,61 @@ if(!empty($_POST['CgEntriesOwnSlugNameChanged'])){
     file_put_contents($rewriteRulesChangedFilePath,'changed');// register_post_type has to be executed in register_post_type.php, which will be executed on init, after register_post_type()
 }
 
+	/*$types = ['galleries','galleries-user','galleries-no-voting','galleries-winner','galleries-ecommerce'];
+
+	foreach ($types as $type){
+        $ucFirstPrefix = 'Galleries';
+		$typeWithSuffix = $type.'-';
+        if($type=='gallery-user'){
+	        $ucFirstPrefix = 'GalleriesUser';
+        }else if($type=='gallery-no-voting'){
+	        $ucFirstPrefix = 'GalleriesNoVoting';
+        }else if($type=='gallery-winner'){
+	        $ucFirstPrefix = 'GalleriesWinner';
+        }else if($type=='gallery-ecommerce'){
+	        $ucFirstPrefix = 'GalleriesEcommerce';
+        }
+
+		if(!empty($_POST['CgEntriesOwnSlugName'.$ucFirstPrefix.'Changed'])){
+			$slugNameFilePath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/post-type-slug-name-'.$typeWithSuffix.'do-not-edit-or-remove.txt';
+			if (is_multisite()) {
+				$CgEntriesOwnSlugNameOption = cg_get_blog_option(get_current_blog_id(),'CgEntriesOwnSlugName'.$ucFirstPrefix);
+			}else{
+				$CgEntriesOwnSlugNameOption = get_option('CgEntriesOwnSlugName'.$ucFirstPrefix);
+			}
+			if(!empty($_POST['CgEntriesOwnSlugName'.$ucFirstPrefix])){
+				$CgEntriesOwnSlugNameValue = trim(sanitize_text_field($_POST['CgEntriesOwnSlugName'.$ucFirstPrefix]));
+				file_put_contents($slugNameFilePath,$CgEntriesOwnSlugNameValue);
+				if($CgEntriesOwnSlugNameOption===false){
+					if (is_multisite()) {
+						cg_add_blog_option(get_current_blog_id(),'CgEntriesOwnSlugName'.$ucFirstPrefix,$CgEntriesOwnSlugNameValue);
+					}else{
+						add_option('CgEntriesOwnSlugName'.$ucFirstPrefix,$CgEntriesOwnSlugNameValue);
+					}
+				}else{
+					if (is_multisite()) {
+						cg_update_blog_option(get_current_blog_id(),'CgEntriesOwnSlugName'.$ucFirstPrefix,$CgEntriesOwnSlugNameValue);
+					}else{
+						update_option('CgEntriesOwnSlugName'.$ucFirstPrefix,$CgEntriesOwnSlugNameValue);
+					}
+				}
+			}else{// if empty
+				if(file_exists($slugNameFilePath)){
+					unlink($slugNameFilePath);
+				}
+				if($CgEntriesOwnSlugNameOption!==false){
+					if (is_multisite()) {
+						cg_delete_blog_option(get_current_blog_id(),'CgEntriesOwnSlugName'.$ucFirstPrefix);
+					}else{
+						delete_option('CgEntriesOwnSlugName'.$ucFirstPrefix);
+					}
+				}
+			}
+			$wp_upload_dir = wp_upload_dir();
+			$rewriteRulesChangedFilePath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/rewrite-rules-changed-'.$typeWithSuffix.'do-not-edit-or-remove.txt';
+			file_put_contents($rewriteRulesChangedFilePath,'changed');// register_post_type has to be executed in register_post_type.php, which will be executed on init, after register_post_type()
+		}
+	}*/
 
 $isResetVotes = false;
 $isResetVotesViaManipulationOneStar = false;
@@ -194,6 +250,7 @@ if (!empty($_GET['reset_votes'])) {
         array('%d')
     );
 
+        // image data has to be actualized before later bottom cg_actualize_all_images_data_sort_values_file will be executed
     $imageDataJsonFiles = glob($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$id.'/json/image-data/*.json');
 
     foreach ($imageDataJsonFiles as $jsonFile) {
@@ -258,6 +315,7 @@ if (!empty($_GET['reset_votes2'])) {
         array('%d')
     );
 
+        // image data has to be actualized before later bottom cg_actualize_all_images_data_sort_values_file will be executed
     $imageDataJsonFiles = glob($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$id.'/json/image-data/*.json');
 
     foreach ($imageDataJsonFiles as $jsonFile) {
@@ -305,6 +363,7 @@ if (!empty($_GET['reset_admin_votes'])) {
         array('%d')
     );
 
+        // image data has to be actualized before later bottom cg_actualize_all_images_data_sort_values_file will be executed
     $imageDataJsonFiles = glob($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$id.'/json/image-data/*.json');
 
     foreach ($imageDataJsonFiles as $jsonFile) {
@@ -363,6 +422,7 @@ if (!empty($_GET['reset_admin_votes2'])) {
         array('%d')
     );
 
+        // image data has to be actualized before later bottom cg_actualize_all_images_data_sort_values_file will be executed
     $imageDataJsonFiles = glob($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$id.'/json/image-data/*.json');
 
     foreach ($imageDataJsonFiles as $jsonFile) {
@@ -764,7 +824,7 @@ if (!empty($_POST['changeSize'])) {
 
     $RowViewBorderOpacity = 1;
 
-    $GalleryName = (isset($_POST['GalleryName'])) ? trim(sanitize_text_field(contest_gal1ery_htmlentities_and_preg_replace($_POST['GalleryName']))) : $GalleryName;
+        $GalleryName = (isset($_POST['GalleryName'])) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['GalleryName']) : $GalleryName;
 
     $RowViewBorderWidth = (isset($_POST['RowViewBorderWidth'])) ? $_POST['RowViewBorderWidth'] : $RowViewBorderWidth;
     $RowViewBorderRadius = (isset($_POST['RowViewBorderRadius'])) ? $_POST['RowViewBorderRadius'] : $RowViewBorderRadius;
@@ -2169,14 +2229,6 @@ if (!empty($_POST['changeSize'])) {
 		        $_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['TextAfterWpPageEntry'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['TextAfterWpPageEntry']);
 	        }
 
-        $_POST['multiple-pics']['cg_gallery']['visual']['BackToGalleryButtonText'] = $BackToGalleryButtonText;
-        $_POST['multiple-pics']['cg_gallery_user']['visual']['BackToGalleryButtonText'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_user']['visual']['BackToGalleryButtonText']);
-        $_POST['multiple-pics']['cg_gallery_no_voting']['visual']['BackToGalleryButtonText'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_no_voting']['visual']['BackToGalleryButtonText']);
-        $_POST['multiple-pics']['cg_gallery_winner']['visual']['BackToGalleryButtonText'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_winner']['visual']['BackToGalleryButtonText']);
-	        if($dbVersion>=22){
-		        $_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['BackToGalleryButtonText'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['BackToGalleryButtonText']);
-	        }
-
         $_POST['multiple-pics']['cg_gallery']['visual']['TextDeactivatedEntry'] = $TextDeactivatedEntry;
         $_POST['multiple-pics']['cg_gallery_user']['visual']['TextDeactivatedEntry'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_user']['visual']['TextDeactivatedEntry']);
         $_POST['multiple-pics']['cg_gallery_no_voting']['visual']['TextDeactivatedEntry'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_no_voting']['visual']['TextDeactivatedEntry']);
@@ -2237,6 +2289,34 @@ if (!empty($_POST['changeSize'])) {
 
     $EnableEmojis = (!empty($_POST['multiple-pics']['cg_gallery']['visual']['EnableEmojis'])) ? 1 : 0;
     $CheckLoginComment = (!empty($_POST['multiple-pics']['cg_gallery']['pro']['CheckLoginComment'])) ? 1 : 0;
+
+        // has to be set before cg_gallery for json-options.php
+	    $MainTitleGalleriesView = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery']['pro']['MainTitleGalleriesView']);
+	    $_POST['multiple-pics']['cg_gallery_user']['pro']['MainTitleGalleriesView'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_user']['pro']['MainTitleGalleriesView']);
+	    $_POST['multiple-pics']['cg_gallery_no_voting']['pro']['MainTitleGalleriesView'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_no_voting']['pro']['MainTitleGalleriesView']);
+	    $_POST['multiple-pics']['cg_gallery_winner']['pro']['MainTitleGalleriesView'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_winner']['pro']['MainTitleGalleriesView']);
+
+	    if($dbVersion>=22){
+	    $_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['MainTitleGalleriesView'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['MainTitleGalleriesView']);
+	    }
+
+	    $SubTitleGalleriesView = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery']['pro']['SubTitleGalleriesView']);
+	    $_POST['multiple-pics']['cg_gallery_user']['pro']['SubTitleGalleriesView'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_user']['pro']['SubTitleGalleriesView']);
+	    $_POST['multiple-pics']['cg_gallery_no_voting']['pro']['SubTitleGalleriesView'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_no_voting']['pro']['SubTitleGalleriesView']);
+	    $_POST['multiple-pics']['cg_gallery_winner']['pro']['SubTitleGalleriesView'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_winner']['pro']['SubTitleGalleriesView']);
+
+	    if($dbVersion>=22){
+	    $_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['SubTitleGalleriesView'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['SubTitleGalleriesView']);
+	    }
+
+	    $ThirdTitleGalleriesView = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery']['pro']['ThirdTitleGalleriesView']);
+	    $_POST['multiple-pics']['cg_gallery_user']['pro']['ThirdTitleGalleriesView'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_user']['pro']['ThirdTitleGalleriesView']);
+	    $_POST['multiple-pics']['cg_gallery_no_voting']['pro']['ThirdTitleGalleriesView'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_no_voting']['pro']['ThirdTitleGalleriesView']);
+	    $_POST['multiple-pics']['cg_gallery_winner']['pro']['ThirdTitleGalleriesView'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_winner']['pro']['ThirdTitleGalleriesView']);
+
+	    if($dbVersion>=22){
+	    $_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['ThirdTitleGalleriesView'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['ThirdTitleGalleriesView']);
+	    }
 
     include('json-options.php');
 
@@ -2526,7 +2606,7 @@ if (!empty($_POST['changeSize'])) {
                 if ($_POST['multiple-pics']['cg_gallery_user'][$type][$key] == 'on') {
                     $jsonOptionsAllGalleryVariants[$GalleryID . '-u'][$type][$key] = 1;
                 } else {
-                    if (in_array($key, $shortcodeSpecificToSetArray)) {
+	                    if (in_array($key, $shortcodeSpecificToSetArray)!==false) {
                         $jsonOptionsAllGalleryVariants[$GalleryID . '-u'][$type][$key] = $_POST['multiple-pics']['cg_gallery_user'][$type][$key];
                     } else {
                         $jsonOptionsAllGalleryVariants[$GalleryID . '-u'][$type][$key] = $jsonOptionsAllGalleryVariants[$GalleryID][$type][$key] ;
@@ -2553,7 +2633,7 @@ if (!empty($_POST['changeSize'])) {
                 if ($_POST['multiple-pics']['cg_gallery_no_voting'][$type][$key] == 'on') {
                     $jsonOptionsAllGalleryVariants[$GalleryID . '-nv'][$type][$key] = 1;
                 } else {
-                    if (in_array($key, $shortcodeSpecificToSetArray)) {
+                        if (in_array($key, $shortcodeSpecificToSetArray)!==false) {
                         $jsonOptionsAllGalleryVariants[$GalleryID . '-nv'][$type][$key] = $_POST['multiple-pics']['cg_gallery_no_voting'][$type][$key];
                     } else {
                         $jsonOptionsAllGalleryVariants[$GalleryID . '-nv'][$type][$key] = $jsonOptionsAllGalleryVariants[$GalleryID][$type][$key] ;
@@ -2576,7 +2656,7 @@ if (!empty($_POST['changeSize'])) {
                 if ($_POST['multiple-pics']['cg_gallery_winner'][$type][$key] == 'on') {
                     $jsonOptionsAllGalleryVariants[$GalleryID . '-w'][$type][$key] = 1;
                 } else {
-                    if (in_array($key, $shortcodeSpecificToSetArray)) {
+                        if (in_array($key, $shortcodeSpecificToSetArray)!==false) {
                         $jsonOptionsAllGalleryVariants[$GalleryID . '-w'][$type][$key] = $_POST['multiple-pics']['cg_gallery_winner'][$type][$key];
                     } else {
                         $jsonOptionsAllGalleryVariants[$GalleryID . '-w'][$type][$key] = $jsonOptionsAllGalleryVariants[$GalleryID][$type][$key] ;
@@ -2599,7 +2679,7 @@ if (!empty($_POST['changeSize'])) {
                     if ($_POST['multiple-pics']['cg_gallery_ecommerce'][$type][$key] == 'on') {
                         $jsonOptionsAllGalleryVariants[$GalleryID . '-ec'][$type][$key] = 1;
                     } else {
-                        if (in_array($key, $shortcodeSpecificToSetArray)) {
+                        if (in_array($key, $shortcodeSpecificToSetArray)!==false) {
                             $jsonOptionsAllGalleryVariants[$GalleryID . '-ec'][$type][$key] = $_POST['multiple-pics']['cg_gallery_ecommerce'][$type][$key];
                         } else {
                             $jsonOptionsAllGalleryVariants[$GalleryID . '-ec'][$type][$key] = $jsonOptionsAllGalleryVariants[$GalleryID][$type][$key] ;
@@ -2742,14 +2822,66 @@ if (!empty($_POST['changeSize'])) {
             unset($jsonOptionsAllGalleryVariants[$GalleryID.'-ec']);
 	    }
 
-    $fp = fopen($galleryUploadFolder . '/json/' . $GalleryID . '-options.json', 'w');
-    fwrite($fp, json_encode($jsonOptionsAllGalleryVariants));
-    fclose($fp);
+	    file_put_contents($galleryUploadFolder . '/json/' . $GalleryID . '-options.json',json_encode($jsonOptionsAllGalleryVariants));
 
-    $tstampFile = $wp_upload_dir["basedir"] . "/contest-gallery/gallery-id-$id/json/$id-gallery-tstamp.json";
-    $fp = fopen($tstampFile, 'w');
-    fwrite($fp, time());
-    fclose($fp);
+	    // save cg_galleries
+        if(!empty($_POST['cg_galleries'])){
+	        $galleryTypes = [ 'g', 'u', 'nv', 'w','ec'];
+	        $namesBool = [ 'BorderRadius','ShowGalleryNameAsTitle', 'PreviewLastAdded', 'PreviewHighestRated', 'PreviewMostCommented'];
+	        $namesInt = [ 'WidthThumb', 'HeightThumb', 'DistancePicsV', 'DistancePics', 'PicsPerSite'];
+	        $namesString = [ 'GalleriesPageRedirectURL','FeControlsStyle'];
+
+            // unset first
+            foreach ($galleryTypes as $type){
+                foreach ($namesBool as $nameBool){
+                    if(array_search($nameBool,$namesBool)===false){
+	                    unset($_POST['cg_galleries'][$type][$nameBool]);// unset for sure if others are sent
+                    }
+                }
+                foreach ($namesInt as $nameInt){
+                    if(array_search($nameInt,$namesInt)===false){
+	                    unset($_POST['cg_galleries'][$type][$nameInt]);// unset for sure if others are sent
+                    }
+                }
+                foreach ($namesString as $nameString){
+                    if(array_search($nameString,$namesString)===false){
+	                    unset($_POST['cg_galleries'][$type][$nameString]);// unset for sure if others are sent
+                    }
+                }
+            }
+
+            // set by type, bool, int, string
+            foreach ($galleryTypes as $type){
+                foreach ($namesBool as $nameBool){
+                    if(!empty($_POST['cg_galleries'][$type][$nameBool])){
+	                    $_POST['cg_galleries'][$type][$nameBool] = 1;
+                    }else{// have to be set for sure, might not be sent for version 24 or lower
+	                    $_POST['cg_galleries'][$type][$nameBool] = 0;
+                    }
+                }
+            }
+            foreach ($galleryTypes as $type){
+                foreach ($namesInt as $nameInt){
+                    if(!empty($_POST['cg_galleries'][$type][$nameInt])){
+	                    $_POST['cg_galleries'][$type][$nameInt] = intval($_POST['cg_galleries'][$type][$nameInt]);
+                    }else{// have to be set for sure, might not be sent for version 24 or lower
+	                    $_POST['cg_galleries'][$type][$nameString] = 0;
+                    }
+                }
+            }
+            foreach ($galleryTypes as $type){
+                foreach ($namesString as $nameString){
+                    if(!empty($_POST['cg_galleries'][$type][$nameString])){
+	                    $_POST['cg_galleries'][$type][$nameString] = contest_gal1ery_htmlentities_and_preg_replace(cg1l_sanitize_method($_POST['cg_galleries'][$type][$nameString]));
+                    }else{// have to be set for sure, might not be sent for version 24 or lower
+	                    $_POST['cg_galleries'][$type][$nameString] = '';
+                    }
+                }
+            }
+	        $galleriesOptionsPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/json/galleries-options.json';
+	        file_put_contents($galleriesOptionsPath,json_encode($_POST['cg_galleries']));
+        }
+        // save cg_galleries --- END
 
     $isChangeFbLikeOnlyShare = false;
     if ($FbLikeOnlyShare != $FbLikeOnlyShareBefore) {

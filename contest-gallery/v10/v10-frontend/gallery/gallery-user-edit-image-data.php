@@ -258,11 +258,15 @@ echo "</pre>";
 
         $entryUrlAfterEdit = '';
 
-	    $domain = get_bloginfo('wpurl');
-	    $CgEntriesOwnSlugName = cg_get_gallery_slug_name();
-
         if(!empty($isCgWpPageEntryLandingPage) && !empty($WpPageUser)){
+	    $domain = get_bloginfo('wpurl');
+	        if(intval($galeryrow->Version)>=24){
+		        $CgEntriesOwnSlugNameGalleriesUser = cg_get_galleries_slug_name('CgEntriesOwnSlugNameGalleriesUser');
+		        $entryUrlAfterEdit = cg_get_guid($WpPageUser,$domain,$CgEntriesOwnSlugNameGalleriesUser,$galeryrow->Version);
+            }else{
+	    $CgEntriesOwnSlugName = cg_get_gallery_slug_name();
 	        $entryUrlAfterEdit = cg_get_guid($WpPageUser,$domain,$CgEntriesOwnSlugName,$galeryrow->Version);
+        }
         }
 
         ?>

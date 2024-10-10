@@ -69,7 +69,7 @@ if(!function_exists('cg_sell_ecommerce_container')){
         echo '</div>';
 
         echo <<<HEREDOC
-   <div class="cg_shortcode_conf_title_container cg_hide" style="margin-top: 25px;margin-bottom: 15px;"><div class="cg_shortcode_conf_title_main">Main gallery</div><div class="cg_shortcode_conf_title_sub">[cg_gallery id="56"]</div></div>
+   <div class="cg_shortcode_conf_title_container cg_hide" style="margin-top: 25px;margin-bottom: 15px;"><div class="cg_shortcode_conf_title_main">Voting gallery</div><div class="cg_shortcode_conf_title_sub">[cg_gallery id="56"]</div></div>
 HEREDOC;
 
         // form start has to be done after get data!!!

@@ -1149,7 +1149,7 @@ div#cg_main_container div.cgEcommerceCheckoutBodyContainer div.cg-ecommerce-uplo
     padding-bottom: 15px;
 }
 
-#cgViewControl {
+#cgViewControl, #cgGalleriesShortcodes {
     display: flex;
     align-items: center;
     color: #000;

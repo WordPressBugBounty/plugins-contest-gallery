@@ -40,11 +40,9 @@ if(file_exists($translationsFile)){
 // PROFILE translations for since v14 contest gallery user group
 __('Account');$l_Account = "Account";$language_Account = (!empty($translations[$l_Account]) && $is_frontend) ? $translations[$l_Account] : ((empty(trim(__($l_Account,$domain)))) ? __($l_Account,$domainDefault) : __($l_Account,$domain)); if(empty($translations[$l_Account])){$translations[$l_Account]='';}
 
-__('Edit Profile');$l_EditProfile = "Edit Profile";$language_EditProfile = (!empty($translations[$l_EditProfile]) && $is_frontend) ? $translations[$l_EditProfile] : ((empty(trim(__($l_EditProfile,$domain)))) ? __($l_EditProfile,$domainDefault) : __($l_EditProfile,$domain)); if(empty($translations[$l_EditProfile])){$translations[$l_EditProfile]='';}
+__('Edit profile');$l_EditProfile = "Edit profile";$language_EditProfile = (!empty($translations[$l_EditProfile]) && $is_frontend) ? $translations[$l_EditProfile] : ((empty(trim(__($l_EditProfile,$domain)))) ? __($l_EditProfile,$domainDefault) : __($l_EditProfile,$domain)); if(empty($translations[$l_EditProfile])){$translations[$l_EditProfile]='';}
 
-__('Log Out');$l_LogOut = "Log Out";$language_LogOut = (!empty($translations[$l_LogOut]) && $is_frontend) ? $translations[$l_LogOut] : ((empty(trim(__($l_LogOut,$domain)))) ? __($l_LogOut,$domainDefault) : __($l_LogOut,$domain)); if(empty($translations[$l_LogOut])){$translations[$l_LogOut]='';}
-
-__('Back To Gallery');$l_BackToGallery = "Back To Gallery";$language_BackToGallery = (!empty($translations[$l_BackToGallery]) && $is_frontend) ? $translations[$l_BackToGallery] : ((empty(trim(__($l_BackToGallery,$domain)))) ? __($l_BackToGallery,$domainDefault) : __($l_BackToGallery,$domain)); if(empty($translations[$l_BackToGallery])){$translations[$l_BackToGallery]='';}
+__('Log out');$l_LogOut = "Log out";$language_LogOut = (!empty($translations[$l_LogOut]) && $is_frontend) ? $translations[$l_LogOut] : ((empty(trim(__($l_LogOut,$domain)))) ? __($l_LogOut,$domainDefault) : __($l_LogOut,$domain)); if(empty($translations[$l_LogOut])){$translations[$l_LogOut]='';}
 
 __('This nickname is already taken');$l_ThisNicknameAlreadyExistsGeneral= "This nickname is already taken";$language_ThisNicknameAlreadyExistsGeneral = (!empty($translations[$l_ThisNicknameAlreadyExistsGeneral]) && $is_frontend) ? $translations[$l_ThisNicknameAlreadyExistsGeneral] : ((empty(trim(__($l_ThisNicknameAlreadyExistsGeneral,$domain)))) ? __($l_ThisNicknameAlreadyExistsGeneral,$domainDefault) : __($l_ThisNicknameAlreadyExistsGeneral,$domain)); if(empty($translations[$l_ThisNicknameAlreadyExistsGeneral])){$translations[$l_ThisNicknameAlreadyExistsGeneral]='';}
 
@@ -73,5 +71,11 @@ __('By agreeing all content on this page gets unblocked during current session')
 __('content');$l_content = "content";$language_content = (!empty($translations[$l_content]) && $is_frontend) ? $translations[$l_content] : ((empty(trim(__($l_content,$domain)))) ? __($l_content,$domainDefault) : __($l_content,$domain)); if(empty($translations[$l_content])){$translations[$l_content]='';}
 
 __('Until current tab gets closed');$l_UntilCurrentTabGetsClosed = "Until current tab gets closed";$language_UntilCurrentTabGetsClosed = (!empty($translations[$l_UntilCurrentTabGetsClosed]) && $is_frontend) ? $translations[$l_UntilCurrentTabGetsClosed] : ((empty(trim(__($l_UntilCurrentTabGetsClosed,$domain)))) ? __($l_UntilCurrentTabGetsClosed,$domainDefault) : __($l_UntilCurrentTabGetsClosed,$domain)); if(empty($translations[$l_UntilCurrentTabGetsClosed])){$translations[$l_UntilCurrentTabGetsClosed]='';}
+
+__('Back to gallery');$l_BackToGallery = "Back to gallery";$language_BackToGallery = (!empty($translations[$l_BackToGallery]) && $is_frontend) ? $translations[$l_BackToGallery] : ((empty(trim(__($l_BackToGallery,$domain)))) ? __($l_UntilCurrentTabGetsClosed,$domainDefault) : __($l_BackToGallery,$domain)); if(empty($translations[$l_BackToGallery])){$translations[$l_BackToGallery]='';}
+
+__('Back to galleries');$l_BackToGalleries = "Back to galleries";$language_BackToGalleries = (!empty($translations[$l_BackToGalleries]) && $is_frontend) ? $translations[$l_BackToGalleries] : ((empty(trim(__($l_BackToGalleries,$domain)))) ? __($l_UntilCurrentTabGetsClosed,$domainDefault) : __($l_BackToGalleries,$domain)); if(empty($translations[$l_BackToGalleries])){$translations[$l_BackToGalleries]='';}
+
+__('No gallery entries');$l_NoGalleryEntries = "No gallery entries";$language_NoGalleryEntries = (!empty($translations[$l_NoGalleryEntries]) && $is_frontend) ? $translations[$l_NoGalleryEntries] : ((empty(trim(__($l_NoGalleryEntries,$domain)))) ? __($l_UntilCurrentTabGetsClosed,$domainDefault) : __($l_NoGalleryEntries,$domain)); if(empty($translations[$l_NoGalleryEntries])){$translations[$l_NoGalleryEntries]='';}
 
 ?>

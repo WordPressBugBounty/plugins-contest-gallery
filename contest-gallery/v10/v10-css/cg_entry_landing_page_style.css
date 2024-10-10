@@ -18,3 +18,7 @@ body[data-cg-is-logged-in="true"]{
 #wp-admin-bar-edit{
     display: none !important;
 }
+
+.wp-core-ui.wp-ui-notification{/*otherwise will float visibly under header and over the body*/
+    display: none !important;
+}

@@ -22,7 +22,7 @@ include(__DIR__ . "/../../../check-language-ecommerce.php");
 
 //$_GET['order_id'] = 1;
 if(empty($_GET['cg_order'])){
-	echo "<p style='text-align: center;'>No order ID provided</p>";
+	echo "<p style='text-align: center;'><b>No order ID provided</b></p>";
 	return;
 }
 

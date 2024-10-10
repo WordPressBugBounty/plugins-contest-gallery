@@ -16,6 +16,8 @@ $blogname = get_option('blogname');
 $postId = $post->ID;
 $permalink = get_permalink($postId);
 $rowObject = null;
+global $cgShortCodeType;
+$shortCodeType = $cgShortCodeType;
 /*
     $isParentPage = false;
     if(empty($postParent)){

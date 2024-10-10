@@ -52,8 +52,8 @@ HEREDOC;
                 <div id="cg_main_options_tab_second_row">
                     <div id="cg_main_options_tab_second_row_inner" class="cg_main_options_tab_row">
                       <div class='cg_view_select cg_view_select_icons' cg-data-view="#view20" data-count="20"><a class="cg_view_select_link" cg-data-view="#view20" cg-data-href="cgViewHelper20">Social embed</a></div>
-                        <div class='cg_view_select cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view10" data-count="10"><a class="cg_view_select_link" cg-data-view="#view10" cg-data-href="cgViewHelper10">General</a></div>
-                      <div class='cg_view_select cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#statusRepairMail" data-count="16"><a class="cg_view_select_link" cg-data-view="#statusRepairMail" cg-data-href="statusRepairMail">Status, repair, mail</a></div>
+                        <div class='cg_view_select cg_view_select_general cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view10" data-count="10"><a class="cg_view_select_link" cg-data-view="#view10" cg-data-href="cgViewHelper10">General</a></div>
+                      <div class='cg_view_select cg_view_select_status_repair cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#statusRepairMail" data-count="16"><a class="cg_view_select_link" cg-data-view="#statusRepairMail" cg-data-href="statusRepairMail">Status, repair, mail</a></div>
                       <div class='cg_view_select cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view11" data-count="11"><a class="cg_view_select_link" cg-data-view="#view11" cg-data-href="cgViewHelper11">Registration</a></div>
                       <div class='cg_view_select cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view12" data-count="12"><a class="cg_view_select_link" cg-data-view="#view12" cg-data-href="cgViewHelper12">Login</a></div>
 HEREDOC;
@@ -88,7 +88,7 @@ HEREDOC;
                 <div id="cg_main_options_tab_second_row">
                     <div id="cg_main_options_tab_second_row_inner" class="cg_main_options_tab_row">
                       <div class='cg_view_select' cg-data-view="#view20" data-count="20"><a class="cg_view_select_link" cg-data-view="#view20" cg-data-href="cgViewHelper20">Social embed</a></div>
-                       <div class='cg_view_select cg_v14_note_caret' cg-data-view="#statusRepairMail" data-count="14"><a class="cg_view_select_link" cg-data-view="#statusRepairMail" cg-data-href="statusRepairMail" id="statusRepairMail">Status, repair, mail</a></div>
+                       <div class='cg_view_select cg_view_select_status_repair cg_v14_note_caret' cg-data-view="#statusRepairMail" data-count="14"><a class="cg_view_select_link" cg-data-view="#statusRepairMail" cg-data-href="statusRepairMail" id="statusRepairMail">Status, repair, mail</a></div>
                       <div class='cg_view_select $cg_v14_note_caret' cg-data-view="#view10" data-count="10"><a class="cg_view_select_link" cg-data-view="#view10" cg-data-href="cgViewHelper10" style="$cg_v14_email_confirmation_disabled_style">E-mail confirmation e-mail</a></div>
                       <div class='cg_view_select $cg_v14_note_caret' cg-data-view="#view11" data-count="11"><a class="cg_view_select_link" cg-data-view="#view11" cg-data-href="cgViewHelper11">Registration</a></div>
                       <div class='cg_view_select $cg_v14_note_caret' cg-data-view="#view12" data-count="12"><a class="cg_view_select_link" cg-data-view="#view12" cg-data-href="cgViewHelper12">Login</a></div>
@@ -137,7 +137,7 @@ HEREDOC;
 
     if(intval($galleryDbVersion)>=22) {
         echo <<<HEREDOC
-                 <div class='cg_view_select cg_view_select_ecommerce cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view13" data-count="13"><a class="cg_view_select_link" cg-data-view="#view13" cg-data-href="cgViewHelper13">General</a></div>
+                 <div class='cg_view_select cg_view_select_general cg_view_select_ecommerce cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view13" data-count="13"><a class="cg_view_select_link" cg-data-view="#view13" cg-data-href="cgViewHelper13">General</a></div>
                  <div class='cg_view_select cg_view_select_ecommerce cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view14" data-count="14"><a class="cg_view_select_link" cg-data-view="#view14" cg-data-href="cgViewHelper14">Invoice</a></div>
                   <div cg-data-view="#view15" data-count="75" id="cgSaveOptionsNavButton">
                     <span cg-data-view="#view15" cg-data-href="cgViewHelper15" class="cg_backend_button_gallery_action" ><strong>Save options</strong></span>
@@ -157,10 +157,6 @@ HEREDOC;
 $cg_short_code_multiple_pics_configuration_cg_gallery_winner = '';
 $cg_short_code_multiple_pics_configuration_cg_gallery_ecommerce = '';
 
-if(intval($galleryDbVersion)>=22){
-    $cg_short_code_multiple_pics_configuration_cg_gallery_ecommerce = '<div class="cg_short_code_multiple_pics_configuration cg_short_code_multiple_pics_configuration_cg_gallery_ecommerce '.$cg_since_v22.'">cg_gallery_ecommerce</div>';
-}
-
 echo <<<HEREDOC
             </div>
         </div>
@@ -170,6 +166,11 @@ HEREDOC;
 
 if($isEditOptionsOnly){
 
+	$cg_short_code_multiple_pics_configuration_cg_gallery_ecommerce = '';
+
+	if(intval($galleryDbVersion)>=22){
+		$cg_short_code_multiple_pics_configuration_cg_gallery_ecommerce = '<div class="cg_short_code_multiple_pics_configuration cg_short_code_multiple_pics_configuration_cg_gallery_ecommerce '.$cg_since_v22.'">cg_gallery_ecommerce</div>';
+	}
 
     echo <<<HEREDOC
             <h4 id="view1" class="cg_view_header">Gallery view options</h4>
@@ -416,11 +417,46 @@ HEREDOC;
 }else{
 
     if($isEditOptionsOnly){
+
+
+	    $cg_short_code_galleries_configuration_cg_gallery_ecommerce = '';
+
+	    if(intval($galleryDbVersion)>=22){
+		    $cg_short_code_galleries_configuration_cg_gallery_ecommerce = '<div class="cg_short_code_galleries_configuration cg_short_code_galleries_configuration_cg_gallery_ecommerce '.$cg_since_v22.'">cg_galleries_ecommerce</div>';
+	    }
+
+
         echo <<<HEREDOC
-        <h4 id="view10" class="cg_view_header">General options</h4>
+        <h4 id="view10" class="cg_view_header cg_view_header_general">General options</h4>
 <div class="cg_view cgGeneralOptions cgViewHelper10">
 HEREDOC;
         include(__DIR__.'/views-content/view-general-options.php');
+
+		echo "<p style='text-align: center; font-size: 18px; line-height: 26px;margin-bottom: 30px;'>General options for <b>cg_galleries shortcodes</b></p>";
+
+	    echo <<<HEREDOC
+<div class="cg_short_code_galleries_configuration_buttons">
+    <div class="cg_short_code_galleries_configuration_buttons_container">
+        <div class="cg_short_code_galleries_configuration cg_short_code_galleries_configuration_cg_gallery cg_active $cg_since_v22">cg_galleries</div>
+        <div class="cg_short_code_galleries_configuration cg_short_code_galleries_configuration_cg_gallery_user $cg_since_v22" >cg_galleries_user</div>
+        <div class="cg_short_code_galleries_configuration cg_short_code_galleries_configuration_cg_gallery_no_voting $cg_since_v22">cg_galleries_no_voting</div>
+        <div class="cg_short_code_galleries_configuration cg_short_code_galleries_configuration_cg_gallery_winner $cg_since_v22">cg_galleries_winner</div>
+        $cg_short_code_galleries_configuration_cg_gallery_ecommerce
+    </div>
+</div>
+<div class="cg_short_code_galleries_configuration_note" >
+<div class="cg_arrow_up"></div>
+<b>NOTE:</b> "Gallery view options" can be configured for every gallery shortcode</div>
+HEREDOC;
+
+	    include(__DIR__.'/shortcodes-configuration/shortcodes-galleries/shortcode-cg-galleries.php');
+	    include(__DIR__.'/shortcodes-configuration/shortcodes-galleries/shortcode-cg-galleries-user.php');
+	    include(__DIR__.'/shortcodes-configuration/shortcodes-galleries/shortcode-cg-galleries-no-voting.php');
+	    include(__DIR__.'/shortcodes-configuration/shortcodes-galleries/shortcode-cg-galleries-winner.php');
+	    if(intval($galleryDbVersion)>=22){
+		    include(__DIR__.'/shortcodes-configuration/shortcodes-galleries/shortcode-cg-galleries-ecommerce.php');
+	    }
+
         echo "</div>";
 
         // status, repair, mail
@@ -471,7 +507,7 @@ HEREDOC;
     if($isEditEcommerceOnly){
         if(intval($galleryDbVersion)>=22) {
             echo <<<HEREDOC
-        <h4 id="view13" class="cg_view_header">General</h4>
+        <h4 id="view13" class="cg_view_header cg_view_header_general">General</h4>
 <div class="cg_view cgEcommerceGeneralOptions cgViewHelper13">
 HEREDOC;
             echo <<<HEREDOC

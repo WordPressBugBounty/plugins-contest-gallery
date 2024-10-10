@@ -2,7 +2,7 @@
 /*
 Plugin Name: Contest Gallery
 Description: Contact form, files, photos and videos upload contest gallery plugin for WordPress. Create contact forms for entries with or without file/image upload. Create user registration form. Create login form. Create responsive galleries and allow to vote for any kind of entries.
-Version: 23.1.8
+Version: 24.0.0
 Author: Contest Gallery
 Author URI: http://www.contest-gallery.com/
 Text Domain: contest-gallery
@@ -33,6 +33,30 @@ function wpb_new_gravatar ($avatar_defaults) {
 }*/
 
 if(!defined('ABSPATH')){exit;}
+
+add_filter('parse_query', 'cg_hide_slugs_page_area');
+if (!function_exists('cg_hide_slugs_page_area')) {
+    function cg_hide_slugs_page_area($query) {
+        if(!is_admin()) return;
+        if(!empty($_GET['post_type']) && $_GET['post_type']=='page'){
+            // Create array of all the slugs you wanna hide
+            // only for new "galleries" types
+            //$hidden_slugs = ['contest-galleries', 'contest-galleries-user', 'contest-galleries-no-voting', 'contest-galleries-winner', 'contest-galleries-ecommerce'];
+            $hidden_slugs = [];
+            $wp_upload_dir = wp_upload_dir();
+            $pagesFile = $wp_upload_dir['basedir'] . '/contest-gallery/gallery-general/json/galleries-pages.json';
+            if(file_exists($pagesFile)){
+                $hidden_slugs = json_decode(file_get_contents($pagesFile),true);
+            }
+            // Loop through slugs & pass each slug as page path value
+            //$hidden_slugs = []; // for test
+            foreach ($hidden_slugs as $key => $ID ) {
+                $hidden_slugs[] = $ID;
+            }
+            $query->query_vars['post__not_in'] =  $hidden_slugs;
+        }
+    }
+}
 
 /**###NORMAL###**/
 if(!function_exists('cg_normal_version_register_activation_hook')){
@@ -77,6 +101,7 @@ include('functions/general/cg-create-json-files-when-activating.php');
 include('functions/general/convert-values.php');
 include('functions/general/cg-hash.php');
 include('functions/general/cg-general-functions.php');
+include('functions/general/cg-contest-gallery-plugin-page-functions.php');
 include('functions/frontend/cg-create-noscript-html.php');
 include('functions/frontend/cg-shortcode-interval-check.php');
 include('functions/google/cg-create-get-google-options.php');
@@ -232,6 +257,12 @@ add_shortcode( 'cg_gallery_winner', 'contest_gal1ery_frontend_gallery_winner' );
 include(__DIR__.'/shortcodes/cg_gallery_winner.php');
 add_shortcode( 'cg_gallery_ecommerce', 'contest_gal1ery_frontend_gallery_ecommerce' );
 include(__DIR__.'/shortcodes/cg_gallery_ecommerce.php');
+add_shortcode('cg_galleries', 'contest_gal1ery_frontend_galleries');
+add_shortcode('cg_galleries_user', 'contest_gal1ery_frontend_galleries_user');
+add_shortcode('cg_galleries_no_voting', 'contest_gal1ery_frontend_galleries_no_voting');
+add_shortcode('cg_galleries_winner', 'contest_gal1ery_frontend_galleries_winner');
+add_shortcode('cg_galleries_ecommerce', 'contest_gal1ery_frontend_galleries_ecommerce');
+include(__DIR__ . '/shortcodes/cg_galleries.php');
 add_shortcode( 'cg_users_upload', 'contest_gal1ery_users_upload' );
 include(__DIR__.'/shortcodes/cg_users_upload.php');
 add_shortcode('cg_users_contact', 'contest_gal1ery_users_contact');
@@ -369,6 +400,7 @@ include('functions/general/cg-create-exif-data.php');
 include('functions/general/cg-get-user-ip.php');
 include('functions/general/cg-get-user-ip-type.php');
 include('functions/general/cg-edit-image.php');
+include('functions/general/cg-get-24-version-values.php');
 include('functions/general/cg-delete-images.php');
 include('functions/general/cg-deactivate-images.php');
 include('functions/general/cg-plugin-mce-css-to-add.php');
@@ -512,7 +544,39 @@ add_filter ('template_include', 'cg_template_include_for_cg_post_type');
 if(!function_exists('cg_template_include_for_cg_post_type')){
     function cg_template_include_for_cg_post_type ($template) {
         global $post;
-        if(!empty($post) && $post->post_type=='contest-gallery'){
+	    if(!empty($post) && ($post->post_mime_type == 'contest-gallery-plugin-page-galleries-slug' || $post->post_mime_type == 'contest-gallery-plugin-page-galleries-user-slug' || $post->post_mime_type == 'contest-gallery-plugin-page-galleries-ecommerce-slug' || $post->post_mime_type == 'contest-gallery-plugin-page-galleries-winner-slug' || $post->post_mime_type == 'contest-gallery-plugin-page-galleries-no-voting-slug')){
+
+		    $isCGalleries = 1;
+		    $shortcode_name = 'cg_gallery';
+		    $shortCodeType = 'cg_gallery';
+
+		    global $cgShortCodeType;
+		    $cgShortCodeType = $shortCodeType;
+		    global $isGalleriesMainPage;
+		    $isGalleriesMainPage = true;
+
+		    global $wpdb;
+		    $tablename_options = $wpdb->prefix . "contest_gal1ery_options";
+		    $galeryID = $wpdb->get_var( "SELECT id FROM $tablename_options ORDER BY id DESC LIMIT 0, 1" );
+
+		    $frontend_gallery = '';
+
+		    $wp_upload_dir = wp_upload_dir();
+
+		    $galleriesOptions = cg_galleries_options($wp_upload_dir,$shortcode_name,$post->post_mime_type);
+
+		    if(!empty($galleriesOptions['GalleriesPageRedirectURL'])){
+			    wp_redirect($galleriesOptions['GalleriesPageRedirectURL'], 301);
+		    }
+
+		    $optionsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/'.$galeryID.'-options.json';
+
+		    $template = __DIR__ . '/templates/landing.php';
+
+		    return $template;
+
+	    }else if(!empty($post) && ($post->post_type=='contest-gallery' || $post->post_type=='contest-g' || $post->post_type=='contest-g-user' || $post->post_type=='contest-g-no-voting' || $post->post_type=='contest-g-winner' || $post->post_type=='contest-g-ecommerce')){
+
             global $wpdb;
             global $wp;
             $tablename = $wpdb->prefix . "contest_gal1ery";
@@ -589,27 +653,31 @@ if(!function_exists('cg_template_include_for_cg_post_type')){
 include (__DIR__.'/register_post_type.php');
 
 if(!function_exists('cg_check_and_add_post_type_file_if_required')){
-    function cg_check_and_add_post_type_file_if_required($slugNameFilePath,$CgEntriesOwnSlugNameOption) {
+    function cg_check_and_add_post_type_file_if_required($slugNameFilePath,$CgEntriesOwnSlugNameOption,$galleriesType = '') {
         if(!empty($CgEntriesOwnSlugNameOption) && !file_exists($slugNameFilePath)){
             $CgEntriesOwnSlugNameValue = trim(sanitize_text_field($CgEntriesOwnSlugNameOption));
             file_put_contents($slugNameFilePath,$CgEntriesOwnSlugNameValue);
             $wp_upload_dir = wp_upload_dir();
-            $rewriteRulesChangedFilePath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/rewrite-rules-changed-do-not-edit-or-remove.txt';
+			if($galleriesType){
+				$galleriesType = $galleriesType.'-';
+			}
+            $rewriteRulesChangedFilePath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/rewrite-rules-changed-'.$galleriesType.'do-not-edit-or-remove.txt';
             // do it for sure, so flush_rewrite_rules(false) will be executed in register_post_type.php one time for sure
             file_put_contents($rewriteRulesChangedFilePath,'changed');// register_post_type has to be executed in register_post_type.php, which will be executed on init, after register_post_type()
         }
     }
 }
 
-add_action( 'upgrader_process_complete', 'cg_wp_upe_upgrade_completed_post_type_check', 10, 2 );
-if(!function_exists('cg_wp_upe_upgrade_completed_post_type_check')){
+add_action( 'upgrader_process_complete', 'cg_wp_upe_upgrade_completed_post_type_check_old', 10, 2 );
+// for gallery versions before 24... post type slug could be changed
+if(!function_exists('cg_wp_upe_upgrade_completed_post_type_check_old')){
     /**
      * This function runs when WordPress completes its upgrade process
      * It iterates through each plugin updated to see if ours is included
      * @param $upgrader_object Array
      * @param $options Array
      */
-    function cg_wp_upe_upgrade_completed_post_type_check( $upgrader_object, $options ) {
+	function cg_wp_upe_upgrade_completed_post_type_check_old( $upgrader_object, $options ) {
         // The path to our plugin's main file
         $our_plugin = plugin_basename( __FILE__ );
         // If an update has taken place and the updated type is plugins and the plugins element exists
@@ -625,6 +693,60 @@ if(!function_exists('cg_wp_upe_upgrade_completed_post_type_check')){
                         $CgEntriesOwnSlugNameOption = get_option('CgEntriesOwnSlugName');
                     }
                     cg_check_and_add_post_type_file_if_required($slugNameFilePath,$CgEntriesOwnSlugNameOption);
+                }
+            }
+        }
+    }
+}
+
+// was developed for v24 but not required, cause post type slug can not be changed anymore
+if(!function_exists('cg_wp_upe_upgrade_completed_post_type_check_new')){
+    /**
+     * This function runs when WordPress completes its upgrade process
+     * It iterates through each plugin updated to see if ours is included
+     * @param $upgrader_object Array
+     * @param $options Array
+     */
+    function cg_wp_upe_upgrade_completed_post_type_check_new( $upgrader_object, $options ) {
+        // The path to our plugin's main file
+        $our_plugin = plugin_basename( __FILE__ );
+        // If an update has taken place and the updated type is plugins and the plugins element exists
+        if( $options['action'] == 'update' && $options['type'] == 'plugin' && isset( $options['plugins'] ) ) {
+            // Iterate through the plugins being updated and check if ours is there
+            foreach( $options['plugins'] as $plugin ) {
+                if( $plugin == $our_plugin ) {
+                    $wp_upload_dir = wp_upload_dir();
+
+					$types = ['gallery','galleries','galleries-user','galleries-no-voting','galleries-winner','galleries-ecommerce'];
+
+					foreach ($types as $type){
+						$galleriesType = '';
+						$galleriesTypeWitSuffix = '';
+						$slugNameSuffix = '';
+						if($type!='gallery'){
+							$galleriesType = $type;
+							$galleriesTypeWitSuffix = $type.'-';
+							if($type=='galleries'){
+								$slugNameSuffix = 'Galleries';
+							}else if($type=='galleries-user'){
+								$slugNameSuffix = 'GalleriesUser';
+							}else if($type=='galleries-no-voting'){
+								$slugNameSuffix = 'GalleriesNoVoting';
+							}else if($type=='galleries-winner'){
+								$slugNameSuffix = 'GalleriesWinner';
+							}else if($type=='galleries-ecommerce'){
+								$slugNameSuffix = 'GalleriesEcommerce';
+							}
+						}
+						$slugNameFilePath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/post-type-slug-name-'.$galleriesTypeWitSuffix.'do-not-edit-or-remove.txt';
+						if (is_multisite()) {
+							$CgEntriesOwnSlugNameOption = cg_get_blog_option(get_current_blog_id(),'CgEntriesOwnSlugName'.$slugNameSuffix);
+						}else{
+							$CgEntriesOwnSlugNameOption = get_option('CgEntriesOwnSlugName'.$slugNameSuffix);
+						}
+						cg_check_and_add_post_type_file_if_required($slugNameFilePath,$CgEntriesOwnSlugNameOption,$galleriesType);
+					}
+
                 }
             }
         }

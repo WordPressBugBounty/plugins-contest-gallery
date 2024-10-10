@@ -106,6 +106,10 @@
                cgJsData[index].vars.profileImages = <?php echo json_encode($profileImagesArray); ?>;
                cgJsData[index].vars.ecommerceFilesData = <?php echo json_encode($ecommerceFilesData); ?>;
                cgJsData[index].vars.isEcommerceTest = <?php echo json_encode($isEcommerceTest); ?>;
+               cgJsData[index].vars.isCGalleries = <?php echo json_encode($isCGalleries); ?>;
+               cgJsData[index].vars.galleriesIds = <?php echo json_encode($galleriesIds); ?>;
+               cgJsData[index].vars.hasGalleriesIds = <?php echo json_encode($hasGalleriesIds); ?>;
+               cgJsData[index].vars.isGalleriesMainPage = <?php echo json_encode($isGalleriesMainPage); ?>;
            }
 
     </script>

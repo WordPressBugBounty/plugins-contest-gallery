@@ -214,33 +214,10 @@ if(!function_exists('cgDropTables')){
             }
         }
 
-        $wpdb->query($wpdb->prepare(
+	    $wpdb->query(
             "
-				DELETE FROM $posts WHERE post_mime_type = %s
-			",
-            'contest-gallery-youtube'
-        ));
-
-        $wpdb->query($wpdb->prepare(
-            "
-				DELETE FROM $posts WHERE post_mime_type = %s
-			",
-            'contest-gallery-twitter'
-        ));
-
-        $wpdb->query($wpdb->prepare(
-            "
-				DELETE FROM $posts WHERE post_mime_type = %s
-			",
-            'contest-gallery-instagram'
-        ));
-
-        $wpdb->query($wpdb->prepare(
-            "
-				DELETE FROM $posts WHERE post_mime_type = %s
-			",
-            'contest-gallery-tiktok'
-        ));
+				DELETE FROM $posts WHERE post_mime_type = 'contest-gallery-youtube' || post_mime_type = 'contest-gallery-twitter' || post_mime_type = 'contest-gallery-instagram' || post_mime_type = 'contest-gallery-tiktok' || post_mime_type = 'contest-gallery-plugin-page' || post_mime_type = 'contest-gallery-plugin-page-galleries-slug' || post_mime_type = 'contest-gallery-plugin-page-galleries-user-slug' || post_mime_type = 'contest-gallery-plugin-page-galleries-no-voting-slug' || post_mime_type = 'contest-gallery-plugin-page-galleries-winner-slug' || post_mime_type = 'contest-gallery-plugin-page-galleries-ecommerce-slug'
+			");
 
         $wpdb->query($sql23);
 

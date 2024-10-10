@@ -30,8 +30,6 @@ if(!function_exists('contest_gal1ery_frontend_gallery')){
 
         if(file_exists($optionsFile)){
 
-	        $isReallyGallery = true;
-
             $options = json_decode(file_get_contents($optionsFile),true);
             include(__DIR__.'/../v10/include-scripts-v10.php');
         }

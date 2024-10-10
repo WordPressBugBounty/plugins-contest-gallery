@@ -14,8 +14,25 @@ global $galeryIDuextender;
 global $galeryIDnvextender;
 global $galeryIDwextender;
 global $galeryIDecextender;
+global $isCgParentPage;
+global $isGalleriesMainPage;
 
-//global $cgEcommerceUniqueDataLoaded;
+$CGalleriesMainPageClass = '';
+if(!empty($isGalleriesMainPage)){
+	$CGalleriesMainPageClass = 'cg_galleries_main_page';
+}
+
+if(!isset($isCGalleries)){
+	$isCGalleries = false;
+}
+
+if(empty($galleriesIds)){// has to be done with empty
+	$galleriesIds = [];
+}
+
+if(!isset($hasGalleriesIds)){
+	$hasGalleriesIds = false;
+}
 
 if(!empty($galeryIDset)){
     if(!isset($galeryIDextender)){
@@ -57,7 +74,10 @@ if(!empty($galeryIDecset)){
     }
 }
 
+$postId = 0;
+if(!empty($postId)){
 $postId = $post->ID;
+}
 
 $tablename = $wpdb->prefix . "contest_gal1ery";
 $tablenameOptions = $wpdb->prefix . "contest_gal1ery_options";
@@ -88,10 +108,15 @@ $galeryIDuser = $galeryID;
 $galeryIDuserForJs = $galeryIDuser;
 $galeryIDshort = '';
 
-if(!empty($isReallyGallery)){
+$shortcode_name_plural = '';
+if($shortcode_name == 'cg_gallery'){
+	$shortcode_name_plural = 'cg_galleries';
     $galeryIDshort = '';
     if(!empty($galeryIDset)){
         $galeryIDuserForJs = $galeryIDuser.'-ext-'.$galeryIDextender;
+    }
+    if(!empty($isCGalleries)){
+	    $galeryIDuserForJs = 'main';
     }
     $galeryIDset = true;
 }
@@ -111,7 +136,8 @@ $ecommerceFilesData = '';
 if((!empty($_GET['test'])) || (!empty($atts) && !empty($atts['test']))){
 	$isEcommerceTest = true;
 }
-if(!empty($isReallyGalleryUser)){
+if($shortcode_name == 'cg_gallery_user'){
+	$shortcode_name_plural = 'cg_galleries_user';
     $isUserGallery = true; // will be used both :)
     $isOnlyGalleryUser = true;// will be used both :)
     $galeryIDshort = 'u';
@@ -120,11 +146,15 @@ if(!empty($isReallyGalleryUser)){
     if(!empty($galeryIDuset)){
         $galeryIDuserForJs = $galeryIDuser.'-ext-'.$galeryIDuextender;
     }
+	if(!empty($isCGalleries)){
+		$galeryIDuserForJs = 'main';
+	}
     $galeryIDuset = true;
     $WpPageShortCodeType = 'WpPageUser';
     $WpPageParentShortCodeType = 'WpPageParentUser';
     $cg_gallery_shortcode_type = 'cg_gallery_user';
-} else if(!empty($isReallyGalleryNoVoting)){
+} else if($shortcode_name == 'cg_gallery_no_voting'){
+	$shortcode_name_plural = 'cg_galleries_no_voting';
     $isOnlyGalleryNoVoting = true;
     $galeryIDshort = 'nv';
     $galeryIDuser = $galeryID.'-nv';
@@ -132,11 +162,15 @@ if(!empty($isReallyGalleryUser)){
     if(!empty($galeryIDnvset)){
         $galeryIDuserForJs = $galeryIDuser.'-ext-'.$galeryIDnvextender;
     }
+	if(!empty($isCGalleries)){
+		$galeryIDuserForJs = 'main';
+	}
     $galeryIDnvset = true;
     $WpPageShortCodeType = 'WpPageNoVoting';
     $WpPageParentShortCodeType = 'WpPageParentNoVoting';
     $cg_gallery_shortcode_type = 'cg_gallery_no_voting';
-} else if(!empty($isReallyGalleryWinner)){
+} else if($shortcode_name == 'cg_gallery_winner'){
+	$shortcode_name_plural = 'cg_galleries_winner';
     $isOnlyGalleryWinner = true;
     $galeryIDshort = 'w';
     $galeryIDuser = $galeryID.'-w';
@@ -144,11 +178,15 @@ if(!empty($isReallyGalleryUser)){
     if(!empty($galeryIDwset)){
         $galeryIDuserForJs = $galeryIDuser.'-ext-'.$galeryIDwextender;
     }
+	if(!empty($isCGalleries)){
+		$galeryIDuserForJs = 'main';
+	}
     $galeryIDwset = true;
     $WpPageShortCodeType = 'WpPageWinner';
     $WpPageParentShortCodeType = 'WpPageParentWinner';
     $cg_gallery_shortcode_type = 'cg_gallery_winner';
-}else if(!empty($isReallyGalleryEcommerce)){
+}else if($shortcode_name == 'cg_gallery_ecommerce'){
+	$shortcode_name_plural = 'cg_galleries_ecommerce';
     $isOnlyGalleryEcommerce = true;
     $galeryIDshort = 'ec';
     $galeryIDuser = $galeryID.'-ec';
@@ -156,6 +194,9 @@ if(!empty($isReallyGalleryUser)){
     if(!empty($galeryIDecset)){
         $galeryIDuserForJs = $galeryIDuser.'-ext-'.$galeryIDecextender;
     }
+	if(!empty($isCGalleries)){
+		$galeryIDuserForJs = 'main';
+	}
     $galeryIDecset = true;
     $WpPageShortCodeType = 'WpPageEcommerce';
     $WpPageParentShortCodeType = 'WpPageParentEcommerce';
@@ -175,6 +216,13 @@ if(!empty($isReallyGalleryUser)){
     $galeryIDuser = $galeryID.'-cf';
     $galeryIDuserForJs = $galeryIDuser;
     $cg_gallery_shortcode_type = 'cg_users_contact';
+}
+
+$is_user_logged_in = is_user_logged_in();
+$logged_in_user = null;
+$wpUserId = get_current_user_id();
+if($is_user_logged_in){
+	$logged_in_user = get_userdata($wpUserId);
 }
 
 $isProVersion = false;
@@ -277,7 +325,7 @@ foreach ($imageDataJsonFiles as $jsonFile) {
 }
 
 // don't change the order with deactivated check, this is so far the best order logic combination
-if(!empty($isReallyGalleryEcommerce) && $isNotActivatedForSelling){
+if($shortcode_name == 'cg_gallery_ecommerce' && $isNotActivatedForSelling){
 			echo '<p style="text-align: center;margin-top: 50px;font-size: 22px;"><b>Not activated for selling</b></p>';
 			return;
 }
@@ -330,11 +378,75 @@ if($intervalConf['shortcodeIsActive'] && empty($isFromOrderSummary)){
     }
 }
 
+$galleriesOptions = [];
+$galleryNumbers = [];
+$previousGalleryID = 0;
+$hasOlderVersionsOnMainCGalleriesPage = false;
+
+//('$galleriesIds');
+//var_dump($galleriesIds);
+
+// have to be checked already here... if no galleries then message
+if(!empty($isCGalleries)){
+	$galleriesOptions = cg_galleries_options($wp_upload_dir,$shortcode_name);
+	$dirs = array_filter(glob($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-*'), 'is_dir');
+	foreach ($dirs as $dir) {
+		$galleryIdToCheck = substr($dir,strrpos($dir,'-')+1, strlen($dir));
+		$optionsFileToCheck = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdToCheck.'/json/'.$galleryIdToCheck.'-options.json';
+		$isOlderVersion = false;
+		$hasNoVersion = false;
+		if($galleryIdToCheck!='0' && file_exists($optionsFileToCheck)){
+            if(!empty($isGalleriesMainPage)){
+	            $optionsFullDataToCheck = json_decode(file_get_contents($optionsFileToCheck),true);
+                if(!empty($optionsFullDataToCheck['general']['Version']) &&  intval($optionsFullDataToCheck['general']['Version'])<24){
+	                $hasOlderVersionsOnMainCGalleriesPage = true;
+	                $isOlderVersion = true;
+                }else if(empty($optionsFullDataToCheck['general']['Version'])){
+	                $hasNoVersion = true;
+                }
+            }
+			if(!empty($isGalleriesMainPage) && $isOlderVersion){
+				continue;
+			}else if($hasNoVersion){
+				continue;
+			}else{
+				if(!empty($galleriesIds) && in_array($galleryIdToCheck,$galleriesIds)!==false){
+					if(!$previousGalleryID){
+						$previousGalleryID = $galleryIdToCheck;
+						$galleryNumbers[] = $galleryIdToCheck;
+					}else{
+						if(array_search($galleryIdToCheck,$galleriesIds)>array_search($previousGalleryID,$galleriesIds)){
+							$galleryNumbers[] = $galleryIdToCheck;
+						}else{
+							array_unshift( $galleryNumbers, $galleryIdToCheck );
+						}
+					}
+				}else if(empty($galleriesIds)){
+					$galleryNumbers[] = $galleryIdToCheck;
+				}
+            }
+		}
+	}
+}
+
+//('$galleryNumbers');
+//var_dump($galleryNumbers);
+
+if(!empty($isCGalleries) && empty($galleryNumbers)){
+		echo "<p style='text-align: center; font-weight: bold;'>No galleries available</p>";
+		return;
+}
+
+
 $isCgWpPageEntryLandingPage = false;
 $cgWpPageEntryLandingPageGid = false;
+$cgWpPageEntryLandingPageRealGid = false;
+$cgWpPageEntryLandingPageShortCodeName = '';
 if(!empty($entryId) && !empty($cgEntryId)  && $entryId==$cgEntryId){
     $isCgWpPageEntryLandingPage = true;
     $cgWpPageEntryLandingPageGid = $galeryIDuserForJs;
+    $cgWpPageEntryLandingPageRealGid = $galeryID;
+	$cgWpPageEntryLandingPageShortCodeName = $shortcode_name;
 }
 
 /*FBLIKE-WIDTH-CORRECTION-START*/
@@ -375,7 +487,6 @@ if($options['general']['FbLike']==1){
 }
 /*FBLIKE-WIDTH-CORRECTION-END*/
 
-$is_user_logged_in = is_user_logged_in();
 $isShowGallery = true;
 
 
@@ -504,8 +615,6 @@ if($isShowGallery == true){
     }
 
     $cgFeControlsStyle = 'cg_fe_controls_style_white';
-    $cgFeControlsStyleHideBlackSites ='';
-    $cgFeControlsStyleHideWhiteSites ='cg_hide';
     $BorderRadiusClass = '';
     if(!empty($isOnlyContactForm)){
 
@@ -515,8 +624,6 @@ if($isShowGallery == true){
 
         if($FeControlsStyleUpload=='black'){
             $cgFeControlsStyle='cg_fe_controls_style_black';
-            $cgFeControlsStyleHideBlackSites ='cg_hide';
-            $cgFeControlsStyleHideWhiteSites ='';
         }
         if($BorderRadiusUpload=='1' || empty($optionsVisual->FeControlsStyleUpload)){
             $BorderRadiusClass = 'cg_border_radius_controls_and_containers';
@@ -525,8 +632,6 @@ if($isShowGallery == true){
         if(!empty($options['visual']['FeControlsStyle'])){
             if($options['visual']['FeControlsStyle']=='black'){
                 $cgFeControlsStyle='cg_fe_controls_style_black';
-                $cgFeControlsStyleHideBlackSites ='cg_hide';
-                $cgFeControlsStyleHideWhiteSites ='';
             }
         }
         if(!empty($options['visual']['BorderRadius'])){
@@ -535,6 +640,17 @@ if($isShowGallery == true){
             }
         }
     }
+
+	if(!empty($isCGalleries)){
+		$cgFeControlsStyle = 'cg_fe_controls_style_white';
+		$BorderRadiusClass = '';
+        if($galleriesOptions['FeControlsStyle']=='black'){
+	        $cgFeControlsStyle='cg_fe_controls_style_black';
+        }
+        if($galleriesOptions['BorderRadius']=='1'){
+	        $BorderRadiusClass = 'cg_border_radius_controls_and_containers';
+        }
+	}
 
     $cgHideDivContainerClass = '';
 
@@ -587,7 +703,14 @@ if($isShowGallery == true){
             $isCgWpPageEntryLandingPageClass = 'isCgWpPageEntryLandingPageClass';
         }
 
-        echo "<div id='mainCGdiv$galeryIDuserForJs' class='mainCGdiv $isOnlyGalleryEcommerceClass $isCgWpPageEntryLandingPageClass $cgFeControlsStyle $BorderRadiusClass' data-cg-gid='$galeryIDuserForJs'>";
+	    $cgAjaxClass = '';
+	    if(!empty($isAjax)){
+	        $cgAjaxClass = 'cg_is_ajax';
+        }
+
+        $Version = $options['general']['Version'];
+
+        echo "<div id='mainCGdiv$galeryIDuserForJs' class='mainCGdiv $CGalleriesMainPageClass $cgAjaxClass $isOnlyGalleryEcommerceClass $isCgWpPageEntryLandingPageClass $cgFeControlsStyle $BorderRadiusClass' data-cg-gid='$galeryIDuserForJs' data-cg-version='$Version'>";
 
     $options['visual']['BlogLook'] = (!empty($options['visual']['BlogLook']) )? $options['visual']['BlogLook'] : 0;
     $BlogLookOrder = (!empty($options['visual']['BlogLookOrder']) )? $options['visual']['BlogLookOrder'] : 5;
@@ -717,7 +840,8 @@ if($isShowGallery == true){
    }
 
     if(!empty($entryId) && !empty($options['visual']['ShowBackToGalleryButton'])){
-        if(!isset($options['visual']['BackToGalleryButtonText'])){$options['visual']['BackToGalleryButtonText']='';}
+
+            $options['visual']['BackToGalleryButtonText']=$language_BackToGallery;
         if(!empty($options['pro']['BackToGalleryButtonURL'])){
             $entryPermalink = contest_gal1ery_convert_for_html_output_without_nl2br($options['pro']['BackToGalleryButtonURL']);
         }else{
@@ -737,6 +861,28 @@ if($isShowGallery == true){
                 echo "<div id='mainCGBackToGalleryButton$galeryIDuserForJs' class=' mainCGBackToGalleryButton'>".contest_gal1ery_convert_for_html_output_without_nl2br($options['visual']['BackToGalleryButtonText'])."</div>";
             echo "</a>";
         echo "</div>";
+
+        }
+
+        if(!empty($isFromGalleriesSelect) || !empty($is_from_single_view_for_cg_galleries)){
+	        echo "<div class='mainCGBackToGalleryButtonHrefContainer isCGalleries'>";
+                echo "<a href='' class='mainCGBackToGalleryButtonHref isCGalleries' data-cg-gid='$galeryIDuserForJs'>";
+                    echo "<div id='mainCGBackToGalleryButton$galeryIDuserForJs' class=' mainCGBackToGalleryButton isCGalleries'>$language_BackToGalleries</div>";
+                echo "</a>";
+	        echo "</div>";
+        }else if(!empty($isCgParentPage) && intval($options['general']['Version'])>=24){
+		    //$galleriesOptions = cg_galleries_options($wp_upload_dir,$shortcode_name);
+		    $slugName = cg_get_galleries_slug_name($shortcode_name);
+		    $page = get_page_by_path( $slugName, OBJECT, 'page');
+            if(!empty($page)){
+		    $pageGalleries = get_permalink($page->ID);
+
+		    echo "<div class='mainCGBackToGalleryButtonHrefContainer'>";
+                echo "<a href='$pageGalleries' class='mainCGBackToGalleryButtonHref' data-cg-gid='$galeryIDuserForJs'>";
+                echo "<div id='mainCGBackToGalleryButton$galeryIDuserForJs' class='mainCGBackToGalleryButton'>$language_BackToGalleries</div>";
+                echo "</a>";
+		    echo "</div>";
+            }
     }
 
     if(is_user_logged_in()){
@@ -857,6 +1003,30 @@ if($isShowGallery == true){
     }
 
 include('load-data-ajax.php');
+
+
+if(!empty($isGalleriesMainPage) && $hasOlderVersionsOnMainCGalleriesPage){
+    if($is_user_logged_in &&
+       is_super_admin($logged_in_user->ID) ||
+       in_array( 'administrator', (array) $logged_in_user->roles ) ||
+       in_array( 'editor', (array) $logged_in_user->roles ) ||
+       in_array( 'author', (array) $logged_in_user->roles )
+    ){
+        $recognizedFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/cg-galleries-main-page-information-recognized.txt';
+        if(!file_exists($recognizedFile)){
+            echo <<<HEREDOC
+<p style="text-align: center;background-color: white;max-width: 800px;border-radius: 8px;margin-left: auto; margin-right: auto;" id="cgGalleriesMainPageRecognizedContainer"><b>Information - only visible for administrators</b><br><br>
+Galleries copied or created before version 24 are not visible here on auto generated Contest Gallery Galleries page<br><br>
+If you place [$shortcode_name_plural] on of your custom pages<br>
+you will see all your galleries<br><br>
+You can also add ids to display certain galleries<br>
+Example: [$shortcode_name_plural ids="1,2,3"]<br><br>
+<span id="cgGalleriesMainPageRecognized">Got it</span>
+</p>
+HEREDOC;
+        }
+    }
+}
 
 }
 else{

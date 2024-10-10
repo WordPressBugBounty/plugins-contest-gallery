@@ -92,11 +92,11 @@ else {
         return;
     }
 	if(isset($optionsSource[$galeryID.'-ec'])){
-		$RatingVisibleForGalleryEcommerce = $optionsSource[$galeryID.'-ec']['general']['RatingVisibleForGalleryEcommerce'];
-		$AllowRatingForGalleryEcommerce = $optionsSource[$galeryID.'-ec']['general']['AllowRatingForGalleryEcommerce'];
+		$RatingVisibleForGalleryEcommerce = (!empty($optionsSource[$galeryID.'-ec']['general']['RatingVisibleForGalleryEcommerce'])) ? 1 : 0;
+		$AllowRatingForGalleryEcommerce = (!empty($optionsSource[$galeryID.'-ec']['general']['AllowRatingForGalleryEcommerce'])) ? 1 : 0;
 	}else{
-		$RatingVisibleForGalleryEcommerce = $optionsSource['general']['RatingVisibleForGalleryEcommerce'];
-		$AllowRatingForGalleryEcommerce = $optionsSource['general']['AllowRatingForGalleryEcommerce'];
+		$RatingVisibleForGalleryEcommerce = (!empty($optionsSource['general']['RatingVisibleForGalleryEcommerce'])) ? 1 : 0;
+		$AllowRatingForGalleryEcommerce = (!empty($optionsSource['general']['AllowRatingForGalleryEcommerce'])) ? 1 : 0;
 	}
 
     if(strpos($explodeHash[1],$galeryID.'-ec')!==false &&

@@ -8,9 +8,17 @@ $cgRecaptchaIconUrl = $iconsURL.'/backend/re-captcha.png';
 $cgDragIcon = $iconsURL.'/backend/cg-drag-icon.png';
 
 if (is_multisite()) {
+    if(floatval($dbGalleryVersion)>=24){
+	    $CgEntriesOwnSlugName = cg_get_blog_option( get_current_blog_id(),'CgEntriesOwnSlugNameGalleries');
+    }else{
 	$CgEntriesOwnSlugName = cg_get_blog_option( get_current_blog_id(),'CgEntriesOwnSlugName');
+    }
+}else{
+    if(floatval($dbGalleryVersion)>=24){
+	    $CgEntriesOwnSlugName = get_option('CgEntriesOwnSlugNameGalleries');
 }else{
 	$CgEntriesOwnSlugName = get_option('CgEntriesOwnSlugName');
+}
 }
 if(empty($CgEntriesOwnSlugName)){$CgEntriesOwnSlugName='contest-gallery';}
 $bloginfo_wpurl = get_bloginfo('wpurl');
@@ -19,8 +27,8 @@ cg_backend_background_drop();
 
 $cgIsV22OrHigher = '';
 if(floatval($dbGalleryVersion)>=22){
-	cg_is_for_wp_page_title_unchecked($GalleryID,$bloginfo_wpurl,$CgEntriesOwnSlugName);
-	cg_is_for_wp_page_title_checked($GalleryID,$bloginfo_wpurl,$CgEntriesOwnSlugName);
+	cg_is_for_wp_page_title_unchecked($GalleryID,$bloginfo_wpurl,$CgEntriesOwnSlugName,$dbGalleryVersion);
+	cg_is_for_wp_page_title_checked($GalleryID,$bloginfo_wpurl,$CgEntriesOwnSlugName,$dbGalleryVersion);
 	$cgIsV22OrHigher = '1';
 }
 

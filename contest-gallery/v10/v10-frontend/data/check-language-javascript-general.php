@@ -14,6 +14,7 @@
            cgJsClass.gallery.language.general.EditProfile = <?php echo json_encode($language_EditProfile); ?>;
            cgJsClass.gallery.language.general.LogOut = <?php echo json_encode($language_LogOut); ?>;
            cgJsClass.gallery.language.general.BackToGallery = <?php echo json_encode($language_BackToGallery); ?>;
+           cgJsClass.gallery.language.general.BackToGalleries = <?php echo json_encode($language_BackToGalleries); ?>;
            cgJsClass.gallery.language.general.ThisNicknameAlreadyExistsGeneral = <?php echo json_encode($language_ThisNicknameAlreadyExistsGeneral); ?>;
            cgJsClass.gallery.language.general.CGProfileInformation = <?php echo json_encode($language_CGProfileInformation); ?>;
            cgJsClass.gallery.language.general.RemoveProfileImage = <?php echo json_encode($language_RemoveProfileImage); ?>;

@@ -45,6 +45,7 @@ if($imageData->Active==1){
     $imageArray = cg_create_json_files_when_activating($GalleryID,$objectRow,$thumbSizesWp,$uploadFolder,$imageArray);
 
 // take care of order!
+    //cg_set_data_in_images_files_with_all_data($GalleryID,$imageArray);
     //cg_json_upload_form_info_data_files($GalleryID,null);
 
 }

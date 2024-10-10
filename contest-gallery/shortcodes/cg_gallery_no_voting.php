@@ -31,8 +31,6 @@ if(!function_exists('contest_gal1ery_frontend_gallery_no_voting')){
         $optionsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/'.$galeryID.'-options.json';
 
         if(file_exists($optionsFile)){
-            $isReallyGalleryNoVoting = true;
-
             $options = json_decode(file_get_contents($optionsFile),true);
 
             include(__DIR__.'/../v10/include-scripts-v10.php');

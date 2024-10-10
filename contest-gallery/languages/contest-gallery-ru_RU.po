@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Contest Gallery\n"
-"POT-Creation-Date: 2024-08-22 07:12+0200\n"
-"PO-Revision-Date: 2024-08-22 07:12+0200\n"
+"POT-Creation-Date: 2024-09-28 08:21+0200\n"
+"PO-Revision-Date: 2024-09-28 08:21+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -252,76 +252,88 @@ msgid "Account"
 msgstr "Счет"
 
 #: check-language-general.php:42
-msgid "Edit Profile"
+#, fuzzy
+#| msgid "Edit Profile"
+msgid "Edit profile"
 msgstr "Редактировать профиль"
 
 #: check-language-general.php:44
-msgid "Log Out"
+#, fuzzy
+#| msgid "Log Out"
+msgid "Log out"
 msgstr "Выйти"
 
-#: check-language-general.php:46
-msgid "Back To Gallery"
-msgstr "Вернуться в галерею"
-
-#: check-language-general.php:48 check-language.php:369
+#: check-language-general.php:46 check-language.php:369
 msgid "This nickname is already taken"
 msgstr "Этот ник уже занят"
 
-#: check-language-general.php:50
+#: check-language-general.php:48
 msgid "Contest Gallery profile information"
 msgstr "Информация о профиле галереи конкурса"
 
-#: check-language-general.php:52
+#: check-language-general.php:50
 msgid "Remove profile image"
 msgstr "Удалить изображение профиля"
 
-#: check-language-general.php:54 check-language.php:277
+#: check-language-general.php:52 check-language.php:277
 msgid "This file type is not allowed"
 msgstr "Этот тип файла не допускается"
 
-#: check-language-general.php:56 check-language.php:279
+#: check-language-general.php:54 check-language.php:279
 msgid "The selected file is too large, max allowed size"
 msgstr "Файл, который вы выбрали слишком большой. Макс допустимый размер"
 
-#: check-language-general.php:58
+#: check-language-general.php:56
 msgid "Select your image"
 msgstr "Не выбраны изображения"
 
-#: check-language-general.php:60
+#: check-language-general.php:58
 msgid "Required"
 msgstr "Необходимый"
 
-#: check-language-general.php:62
+#: check-language-general.php:60
 msgid "Remove"
 msgstr "Удалять"
 
-#: check-language-general.php:64
+#: check-language-general.php:62
 msgid "content blocked"
 msgstr "контент заблокирован"
 
-#: check-language-general.php:66
+#: check-language-general.php:64
 msgid "To view the content you must agree privacy policy"
 msgstr ""
 "Для просмотра контента необходимо согласиться с политикой конфиденциальности"
 
-#: check-language-general.php:68
+#: check-language-general.php:66
 msgid "I Agree"
 msgstr "Я согласен"
 
-#: check-language-general.php:70
+#: check-language-general.php:68
 msgid ""
 "By agreeing all content on this page gets unblocked during current session"
 msgstr ""
 "При согласии весь контент на этой странице разблокируется во время текущего "
 "сеанса."
 
-#: check-language-general.php:72
+#: check-language-general.php:70
 msgid "content"
 msgstr "содержание"
 
-#: check-language-general.php:74
+#: check-language-general.php:72
 msgid "Until current tab gets closed"
 msgstr "Пока текущая вкладка не закроется"
+
+#: check-language-general.php:74
+msgid "Back to gallery"
+msgstr "Вернуться в галерею"
+
+#: check-language-general.php:76
+msgid "Back to galleries"
+msgstr "Вернуться к галереям"
+
+#: check-language-general.php:78
+msgid "No gallery entries"
+msgstr "Нет записей в галерее"
 
 #: check-language.php:56
 msgid "Participation form"
@@ -1018,56 +1030,56 @@ msgstr "Выйти из системы?"
 msgid "Contest Gallery User since v14"
 msgstr ""
 
-#: register_post_type.php:16
+#: register_post_type.php:24
 msgctxt "plural"
 msgid "Cgallery"
 msgstr ""
 
-#: register_post_type.php:17
+#: register_post_type.php:25
 msgctxt "singular"
 msgid "Cgallery"
 msgstr ""
 
-#: register_post_type.php:18
+#: register_post_type.php:26
 msgctxt "admin menu"
 msgid "Cgallery"
 msgstr ""
 
-#: register_post_type.php:19
+#: register_post_type.php:27
 msgctxt "admin bar"
 msgid "Cgallery"
 msgstr ""
 
-#: register_post_type.php:20
+#: register_post_type.php:28
 msgctxt "add new"
 msgid "Add New"
 msgstr ""
 
-#: register_post_type.php:21
+#: register_post_type.php:29
 msgid "Add New Cgallery"
 msgstr ""
 
-#: register_post_type.php:22
+#: register_post_type.php:30
 msgid "New Cgallery"
 msgstr ""
 
-#: register_post_type.php:23
+#: register_post_type.php:31
 msgid "Edit Page (Contest Gallery Custom Post Type)"
 msgstr ""
 
-#: register_post_type.php:24
+#: register_post_type.php:32
 msgid "View Cgallery"
 msgstr ""
 
-#: register_post_type.php:25
+#: register_post_type.php:33
 msgid "All Cgallery"
 msgstr ""
 
-#: register_post_type.php:26
+#: register_post_type.php:34
 msgid "Search Cgallery"
 msgstr ""
 
-#: register_post_type.php:27
+#: register_post_type.php:35
 msgid "No contest gallery pages found."
 msgstr ""
 

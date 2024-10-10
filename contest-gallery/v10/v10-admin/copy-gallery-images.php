@@ -188,7 +188,7 @@ foreach($galleryToCopy as $key => $rowObject){
     // cg_gallery shortcode
     $array = [
         'post_title'=> $post_title,
-        'post_type'=>'contest-gallery',
+        'post_type'=>'contest-g',
         'post_content'=>"<!-- wp:shortcode -->"."\r\n".
             "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
             "[cg_gallery id=\"$nextIDgallery\" entry_id=\"$nextId\"]"."\r\n".
@@ -203,7 +203,7 @@ foreach($galleryToCopy as $key => $rowObject){
     // cg_gallery_user shortcode
     $array = [
         'post_title'=> $post_title,
-        'post_type'=>'contest-gallery',
+        'post_type'=>'contest-g-user',
         'post_content'=>"<!-- wp:shortcode -->"."\r\n".
             "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
             "[cg_gallery_user id=\"$nextIDgallery\" entry_id=\"$nextId\"]"."\r\n".
@@ -218,7 +218,7 @@ foreach($galleryToCopy as $key => $rowObject){
     // cg_gallery_no_voting shortcode
     $array = [
         'post_title'=> $post_title,
-        'post_type'=>'contest-gallery',
+        'post_type'=>'contest-g-no-voting',
         'post_content'=>"<!-- wp:shortcode -->"."\r\n".
             "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
             "[cg_gallery_no_voting id=\"$nextIDgallery\" entry_id=\"$nextId\"]"."\r\n".
@@ -233,7 +233,7 @@ foreach($galleryToCopy as $key => $rowObject){
     // cg_gallery_winner shortcode
     $array = [
         'post_title'=> $post_title,
-        'post_type'=>'contest-gallery',
+        'post_type'=>'contest-g-winner',
         'post_content'=>"<!-- wp:shortcode -->"."\r\n".
             "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
             "[cg_gallery_winner id=\"$nextIDgallery\" entry_id=\"$nextId\"]"."\r\n".
@@ -248,7 +248,7 @@ foreach($galleryToCopy as $key => $rowObject){
     // cg_gallery_ecommerce shortcode
     $array = [
         'post_title'=> $post_title,
-        'post_type'=>'contest-gallery',
+        'post_type'=>'contest-g-ecommerce',
         'post_content'=>"<!-- wp:shortcode -->"."\r\n".
             "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
             "[cg_gallery_ecommerce id=\"$nextIDgallery\" entry_id=\"$nextId\"]"."\r\n".
@@ -295,6 +295,8 @@ foreach($galleryToCopy as $key => $rowObject){
     $valueCollect = array();
 
 }
+
+//cg_set_data_in_images_files_with_all_data($nextIDgallery,$imagesDataArray);
 
 // since 17.0.0 not used anymore, no share button anymore
 //cg_create_fb_sites($idToCopy,$nextIDgallery);// IMAGE ID Will be considered in this case. Thats why it is done so!
@@ -451,22 +453,21 @@ var_dump ($newIdsToCopyStringCollect);
 echo "<br>";
 
 die;*/
+
 //do_action('cg_json_upload_form_info_data_files',$nextIDgallery,$newIdsToCopyStringCollect);
-cg_json_upload_form_info_data_files_new($nextIDgallery,[],true);
+//cg_json_upload_form_info_data_files_new($nextIDgallery,[],true);// not required since 24.0.0 ... will be inserted in correct way so or so
 // has to be done twice for correct url order
-cg_json_upload_form_info_data_files_new($nextIDgallery,[],true);
+//cg_json_upload_form_info_data_files_new($nextIDgallery,[],true);// not required since 24.0.0 ... will be inserted in correct way so or so
+cg_json_upload_form_info_data_files_new($nextIDgallery,[]);// simply actualize only contest gallery image info files since 24.0.0
 
 if($cgCopyType=='cg_copy_type_all'){
-
     // copy rating here
     cg_copy_rating($cg_copy_start,$idToCopy,$nextIDgallery,$collectImageIdsArray);
-
     // copy comments here
     cg_copy_comments($cg_copy_start,$idToCopy,$nextIDgallery,$collectImageIdsArray);
 }
 
 // forward
-
 if($cg_processed_images<$imagesToProcess){
 
     //   ?page=".cg_get_version()."/index.php&option_id=137

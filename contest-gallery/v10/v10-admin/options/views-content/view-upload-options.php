@@ -16,7 +16,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row cg_margin_bottom_30'>
             <div class='cg_view_option cg_view_option_100_percent cg_border_radius_8_px' id="ActivateUploadContainer">
                 <div class='cg_view_option_title' >
-                    <p>Automatically activate users entries in frontend after frontend contact</p>
+                    <p>Automatically activate users entries in frontend after frontend contact/upload</p>
                 </div>
                 <div class='cg_view_option_checkbox'>
                     <input type="checkbox" name="ActivateUpload" id="ActivateUpload" $ActivateUpload>
@@ -746,7 +746,7 @@ $InformUserUploadContentInfoWithoutFileSource = ($selectSQLemailUserUpload->Cont
 
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
-        <p class='cg_view_options_rows_container_title'>E-mail to frontend user after frontend contact
+        <p class='cg_view_options_rows_container_title'>E-mail to frontend user after frontend contact/upload
         <br><span class="cg_view_options_rows_container_title_note"><span class="cg_color_red">NOTE:</span> relating testing - e-mail where is send to should not contain $cgYourDomainName.<br>Many servers can not send to own domain.</span></p>
         $mailExceptionUserUploadMail
         <div class='cg_view_options_row'>

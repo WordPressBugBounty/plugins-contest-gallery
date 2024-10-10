@@ -43,8 +43,25 @@ if(!function_exists('cg_move_to_another_gallery_container')){
 
 
 if(!function_exists('cg_is_for_wp_page_title_unchecked')){
-	function cg_is_for_wp_page_title_unchecked($GalleryID,$bloginfo_wpurl,$CgEntriesOwnSlugName){
-		echo <<<HEREDOC
+	function cg_is_for_wp_page_title_unchecked($GalleryID,$bloginfo_wpurl,$CgEntriesOwnSlugName,$dbGalleryVersion){
+
+        if(floatval($dbGalleryVersion)>=24){
+            echo <<<HEREDOC
+<div id='cgIsForWpPageTitleUnchecked' class='cg_hide cg_height_auto cg_backend_action_container  cg_backend_action_container_high_overlay cg_overflow_y_hidden' style='z-index: 9999999;width: fit-content;'>
+	<span  class='cg_message_close '></span>
+	<div class='cg_main_options' style='margin-bottom: 0;margin-top: 20px; box-shadow: unset;'>
+	        <div class='cg_view_options_row ' >
+	            <div class='cg_view_option cg_view_option_full_width cg_border_radius_8_px '>
+	                    <p>Unchecking<br><b>Use as entry page title</b><br>will change the URLs of all current and future entry pages<br><b>from</b><br>
+	                  $bloginfo_wpurl/contest-galleries/contest-gallery-$GalleryID/<b>{input_field_content}</b><br><b>to</b><br>$bloginfo_wpurl/contest-galleries/contest-gallery-$GalleryID/<b>{filename}</b>
+	                    </p>
+	            </div>
+	        </div>
+	 </div>
+ </div>
+HEREDOC;
+        }else{
+            echo <<<HEREDOC
 <div id='cgIsForWpPageTitleUnchecked' class='cg_hide cg_height_auto cg_backend_action_container  cg_backend_action_container_high_overlay cg_overflow_y_hidden' style='z-index: 9999999;width: fit-content;'>
 	<span  class='cg_message_close '></span>
 	<div class='cg_main_options' style='margin-bottom: 0;margin-top: 20px; box-shadow: unset;'>
@@ -58,11 +75,32 @@ if(!function_exists('cg_is_for_wp_page_title_unchecked')){
 	 </div>
  </div>
 HEREDOC;
+        }
+
 	}
 }
 if(!function_exists('cg_is_for_wp_page_title_checked')){
-	function cg_is_for_wp_page_title_checked($GalleryID,$bloginfo_wpurl,$CgEntriesOwnSlugName){
-		echo <<<HEREDOC
+	function cg_is_for_wp_page_title_checked($GalleryID,$bloginfo_wpurl,$CgEntriesOwnSlugName,$dbGalleryVersion){
+
+        if(floatval($dbGalleryVersion)>=24){
+            echo <<<HEREDOC
+<div id='cgIsForWpPageTitleChecked' class='cg_hide cg_height_auto cg_backend_action_container  cg_backend_action_container_high_overlay cg_overflow_y_hidden' style='z-index: 9999999;width: fit-content;'>
+	<span  class='cg_message_close '></span>
+	<div class='cg_main_options' style='margin-bottom: 0;margin-top: 20px; box-shadow: unset;'>
+	        <div class='cg_view_options_row ' >
+	            <div class='cg_view_option cg_view_option_full_width cg_border_radius_8_px '>
+	                    <p>Checking<br><b>Use as entry page title</b><br>will change the URLs of all current and future entry pages<br><b>from</b><br>
+	                  $bloginfo_wpurl/contest-galleries/contest-gallery-$GalleryID/<b>{filename}</b><br><b>to</b><br>
+$bloginfo_wpurl/contest-galleries/contest-gallery-$GalleryID/<b>{input_field_content}</b><br>
+					if no <b>{input_field_content}</b> set then <b>{filename}</b> will be taken
+	                    </p>
+	            </div>
+	        </div>
+	 </div>
+ </div>
+HEREDOC;
+        }else{
+            echo <<<HEREDOC
 <div id='cgIsForWpPageTitleChecked' class='cg_hide cg_height_auto cg_backend_action_container  cg_backend_action_container_high_overlay cg_overflow_y_hidden' style='z-index: 9999999;width: fit-content;'>
 	<span  class='cg_message_close '></span>
 	<div class='cg_main_options' style='margin-bottom: 0;margin-top: 20px; box-shadow: unset;'>
@@ -78,6 +116,8 @@ $bloginfo_wpurl/$CgEntriesOwnSlugName/contest-gallery-id-$GalleryID/<b>{input_fi
 	 </div>
  </div>
 HEREDOC;
+        }
+
 	}
 }
 

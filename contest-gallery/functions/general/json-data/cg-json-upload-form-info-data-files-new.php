@@ -70,7 +70,9 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 		    $entries = $wpdb->get_results("SELECT * FROM $tablename_entries WHERE GalleryID = $GalleryID ORDER BY pid ASC");
 	    }
 
-	    if(intval($options->Version)>=22 && $IsForWpPageTitleInputId && !empty($isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized)  && empty($IsForWpPageTitleInputDeleted)){
+        $Version = intval($options->Version);
+
+	    if($Version>=22 && $IsForWpPageTitleInputId && !empty($isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized)  && empty($IsForWpPageTitleInputDeleted)){
 
 		    // var_dump('change 1');
 
@@ -134,22 +136,22 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
                             $galleryEntriesProcessed[] = $galleryEntry->id;
 							// var_dump('same pid');
 							if(!empty($galleryEntry->WpPage)){
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPage,$field_content_original,$field_content_modified,$options->WpPageParent,true,$IsFromCopyGalleryOrActualizeAll);
+								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPage,$Version,$field_content_original,$field_content_modified,$options->WpPageParent,true,$IsFromCopyGalleryOrActualizeAll);
 							}
 							if(!empty($galleryEntry->WpPageUser)){
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageUser,$field_content_original,$field_content_modified,$options->WpPageParentUser);
+								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageUser,$Version,$field_content_original,$field_content_modified,$options->WpPageParentUser);
 							}
 							if(!empty($galleryEntry->WpPageNoVoting)){
 
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageNoVoting,$field_content_original,$field_content_modified,$options->WpPageParentNoVoting);
+								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageNoVoting,$Version,$field_content_original,$field_content_modified,$options->WpPageParentNoVoting);
 							}
 							if(!empty($galleryEntry->WpPageWinner)){
 
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageWinner,$field_content_original,$field_content_modified,$options->WpPageParentWinner);
+								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageWinner,$Version,$field_content_original,$field_content_modified,$options->WpPageParentWinner);
 							}
 							if(!empty($galleryEntry->WpPageEcommerce)){
 
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageEcommerce,$field_content_original,$field_content_modified,$options->WpPageParentEcommerce);
+								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageEcommerce,$Version,$field_content_original,$field_content_modified,$options->WpPageParentEcommerce);
 							}
 						}
 					}
@@ -190,19 +192,19 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 							// echo "<br>";
 
 							if(!empty($galleryEntry->WpPage)){
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPage,$field_content_original,$field_content_modified,$options->WpPageParent,true,$IsFromCopyGalleryOrActualizeAll);
+								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPage,$Version,$field_content_original,$field_content_modified,$options->WpPageParent,true,$IsFromCopyGalleryOrActualizeAll);
 							}
 							if(!empty($galleryEntry->WpPageUser)){
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageUser,$field_content_original,$field_content_modified,$options->WpPageParentUser);
+								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageUser,$Version,$field_content_original,$field_content_modified,$options->WpPageParentUser);
 							}
 							if(!empty($galleryEntry->WpPageNoVoting)){
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageNoVoting,$field_content_original,$field_content_modified,$options->WpPageParentNoVoting);
+								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageNoVoting,$Version,$field_content_original,$field_content_modified,$options->WpPageParentNoVoting);
 							}
 							if(!empty($galleryEntry->WpPageWinner)){
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageWinner,$field_content_original,$field_content_modified,$options->WpPageParentWinner);
+								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageWinner,$Version,$field_content_original,$field_content_modified,$options->WpPageParentWinner);
 							}
 							if(!empty($galleryEntry->WpPageEcommerce)){
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageEcommerce,$field_content_original,$field_content_modified,$options->WpPageParentEcommerce);
+								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageEcommerce,$Version,$field_content_original,$field_content_modified,$options->WpPageParentEcommerce);
 							}
 						}
 				  }
@@ -233,19 +235,19 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
                         $field_content_modified = $field_content;
 
                         if(!empty($galleryEntry->WpPage)){
-                            $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPage,$field_content_original,$field_content_modified,$options->WpPageParent,true,$IsFromCopyGalleryOrActualizeAll);
+                            $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPage,$Version,$field_content_original,$field_content_modified,$options->WpPageParent,true,$IsFromCopyGalleryOrActualizeAll);
                         }
                         if(!empty($galleryEntry->WpPageUser)){
-                            $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageUser,$field_content_original,$field_content_modified,$options->WpPageParentUser);
+                            $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageUser,$Version,$field_content_original,$field_content_modified,$options->WpPageParentUser);
                         }
                         if(!empty($galleryEntry->WpPageNoVoting)){
-                            $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageNoVoting,$field_content_original,$field_content_modified,$options->WpPageParentNoVoting);
+                            $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageNoVoting,$Version,$field_content_original,$field_content_modified,$options->WpPageParentNoVoting);
                         }
                         if(!empty($galleryEntry->WpPageWinner)){
-                            $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageWinner,$field_content_original,$field_content_modified,$options->WpPageParentWinner);
+                            $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageWinner,$Version,$field_content_original,$field_content_modified,$options->WpPageParentWinner);
                         }
                         if(!empty($galleryEntry->WpPageEcommerce)){
-                            $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageEcommerce,$field_content_original,$field_content_modified,$options->WpPageParentEcommerce);
+                            $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageEcommerce,$Version,$field_content_original,$field_content_modified,$options->WpPageParentEcommerce);
                         }
                     }
                 }
@@ -253,7 +255,7 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 
 
         }
-		else if ((intval($options->Version)>=22 && $IsForWpPageTitleInputDeleted) || (intval($options->Version)>=22 && empty($IsForWpPageTitleInputId) && !empty($isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized) && empty($IsForWpPageTitleInputDeleted))){//  $IsForWpPageTitleInputDeleted can only be from edit contact form
+		else if (($Version>=22 && $IsForWpPageTitleInputDeleted) || ($Version>=22 && empty($IsForWpPageTitleInputId) && !empty($isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized) && empty($IsForWpPageTitleInputDeleted))){//  $IsForWpPageTitleInputDeleted can only be from edit contact form
 		    // IsForWpPageTitle might be unchecked then this condition here will be used
 
 			// var_dump('change 2');
@@ -274,19 +276,19 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 			    $field_content_modified = $field_content;
 
 			    if(!empty($galleryEntry->WpPage)){
-				    $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPage,$field_content_original,$field_content_modified,$options->WpPageParent,true,$IsFromCopyGalleryOrActualizeAll);
+				    $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPage,$Version,$field_content_original,$field_content_modified,$options->WpPageParent,true,$IsFromCopyGalleryOrActualizeAll);
 			    }
 			    if(!empty($galleryEntry->WpPageUser)){
-				    $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageUser,$field_content_original,$field_content_modified,$options->WpPageParentUser);
+				    $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageUser,$Version,$field_content_original,$field_content_modified,$options->WpPageParentUser);
 			    }
 			    if(!empty($galleryEntry->WpPageNoVoting)){
-				    $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageNoVoting,$field_content_original,$field_content_modified,$options->WpPageParentNoVoting);
+				    $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageNoVoting,$Version,$field_content_original,$field_content_modified,$options->WpPageParentNoVoting);
 			    }
 			    if(!empty($galleryEntry->WpPageWinner)){
-				    $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageWinner,$field_content_original,$field_content_modified,$options->WpPageParentWinner);
+				    $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageWinner,$Version,$field_content_original,$field_content_modified,$options->WpPageParentWinner);
 			    }
 			    if(!empty($galleryEntry->WpPageEcommerce)){
-				    $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageEcommerce,$field_content_original,$field_content_modified,$options->WpPageParentEcommerce);
+				    $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageEcommerce,$Version,$field_content_original,$field_content_modified,$options->WpPageParentEcommerce);
 			    }
 
 		    }

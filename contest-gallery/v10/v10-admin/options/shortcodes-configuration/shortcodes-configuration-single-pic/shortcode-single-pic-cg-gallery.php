@@ -89,7 +89,7 @@ HEREDOC;
         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px' style="$EventuallyPadding">
                     <div class='cg_view_option_title'>
-                        <p>Open file image style<br><span class="cg_view_option_title_note">Select how an entry should be opened on click in a gallery</span></p>
+                        <p>Open entry style<br><span class="cg_view_option_title_note">Select how an entry should be opened on click in a gallery</span></p>
                     </div>
                     <div class='cg_view_option_radio_multiple'>
                         <div class='cg_view_option_radio_multiple_container BlogLookFullWindowContainer'>
@@ -755,10 +755,9 @@ $BackToGalleryButtonTextRow = <<<HEREDOC
     <div class='cg_view_options_row'>
         <div class='cg_view_option cg_view_option_full_width  cg_border_top_none '>
             <div class='cg_view_option_title '>
-                <p>Back to gallery button text</p>
-            </div>
-            <div class='cg_view_option_input '>
-                <input type="text" name="BackToGalleryButtonText" class="BackToGalleryButtonText"  value="$BackToGalleryButtonText"  >
+            <p>Back to gallery button text<br>
+            <span class="cg_view_option_title_note">Translation can be found <a class="cg_no_outline_and_shadow_on_focus" href="{$editTranslationLink}l_BackToGallery"  target="_blank">here</a></span>
+            </p>
             </div>
         </div>
     </div>

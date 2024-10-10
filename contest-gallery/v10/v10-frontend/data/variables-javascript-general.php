@@ -40,7 +40,10 @@
            cgJsClass.gallery.vars.large_size_w = <?php echo json_encode(get_option("large_size_w")); ?>;
            cgJsClass.gallery.vars.isCgWpPageEntryLandingPage = <?php echo json_encode($isCgWpPageEntryLandingPage); ?>;
            cgJsClass.gallery.vars.cgWpPageEntryLandingPageGid = <?php echo json_encode($cgWpPageEntryLandingPageGid); ?>;
+           cgJsClass.gallery.vars.cgWpPageEntryLandingPageRealGid = <?php echo json_encode($cgWpPageEntryLandingPageRealGid); ?>;
+           cgJsClass.gallery.vars.cgWpPageEntryLandingPageShortCodeName = <?php echo json_encode($cgWpPageEntryLandingPageShortCodeName); ?>;
            cgJsClass.gallery.vars.domain = <?php echo json_encode(get_bloginfo('wpurl')); ?>;
+           //cgJsClass.gallery.vars.galleriesIds;// will be set and has to be set in init-get-json
            cgJsClass.gallery.vars.ecommerce.is_admin = <?php echo json_encode(is_admin()); ?>;
            cgJsClass.gallery.vars.ecommerce.isFromOrderSummary = <?php echo json_encode($isFromOrderSummary); ?>;
            if(!cgJsClass.gallery.vars.ecommerce.isFromOrderSummary){

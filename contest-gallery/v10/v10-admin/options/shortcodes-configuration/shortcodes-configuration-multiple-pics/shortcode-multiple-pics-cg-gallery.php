@@ -10,7 +10,7 @@ echo <<<HEREDOC
 <div class='cg_view_options_row'>
     <div class='cg_view_option'>
         <div class='cg_view_option_title'>
-        <p>Number of files per screen<br><span class="cg_view_option_title_note">Pagination</span></p>
+        <p>Number of entries per screen<br><span class="cg_view_option_title_note">Pagination</span></p>
         </div>
         <div class='cg_view_option_input'>
         <input type="text" name="PicsPerSite" class="PicsPerSite" maxlength="3" value="$PicsPerSite"><br/>
@@ -637,6 +637,68 @@ HEREDOC;
 echo <<<HEREDOC
 
 </div>
+HEREDOC;
+
+if(!isset($jsonOptions[$GalleryID]['pro']['MainTitleGalleriesView'])){
+	$MainTitleGalleriesView = '';
+}else{
+	$MainTitleGalleriesView = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID]['pro']['MainTitleGalleriesView']);
+}
+
+echo <<<HEREDOC
+    <div class='cg_view_options_row ' style="margin-top: -15px;"  >
+        <div class='cg_view_option cg_view_option_full_width cg_border_border_top_left_radius_8_px  cg_border_border_top_right_radius_8_px cg_go_to_target' data-cg-go-to-target="MainTitleGalleriesViewArea">
+            <div class='cg_view_option_title '>
+                <p>Main title cg_galleries view</p>
+            </div>
+            <div class='cg_view_option_input '>
+                <input type="text" name='multiple-pics[cg_gallery][pro][MainTitleGalleriesView]' class="MainTitleGalleriesView"  value="$MainTitleGalleriesView"  >
+            </div>
+        </div>
+    </div>
+HEREDOC;
+
+if(!isset($jsonOptions[$GalleryID]['pro']['SubTitleGalleriesView'])){
+	$SubTitleGalleriesView = '';
+}else{
+	$SubTitleGalleriesView = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID]['pro']['SubTitleGalleriesView']);
+}
+
+echo <<<HEREDOC
+    <div class='cg_view_options_row'>
+        <div class='cg_view_option cg_view_option_full_width cg_border_top_none cg_go_to_target' data-cg-go-to-target="SubTitleGalleriesViewArea">
+            <div class='cg_view_option_title '>
+                <p>Sub title cg_galleries view</p>
+            </div>
+            <div class='cg_view_option_input '>
+                <input type="text" name='multiple-pics[cg_gallery][pro][SubTitleGalleriesView]' class="SubTitleGalleriesView"  value="$SubTitleGalleriesView"  >
+            </div>
+        </div>
+    </div>
+HEREDOC;
+
+if(!isset($jsonOptions[$GalleryID]['pro']['ThirdTitleGalleriesView'])){
+	$ThirdTitleGalleriesView = '';
+}else{
+	$ThirdTitleGalleriesView = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID]['pro']['ThirdTitleGalleriesView']);
+}
+
+echo <<<HEREDOC
+    <div class='cg_view_options_row'>
+        <div class='cg_view_option cg_view_option_full_width cg_border_top_none  cg_border_border_bottom_left_radius_8_px  cg_border_border_bottom_right_radius_8_px cg_go_to_target $cgProFalse' data-cg-go-to-target="ThirdTitleGalleriesViewArea">
+            <div class='cg_view_option_title '>
+                <p>Third title cg_galleries view</p>
+            </div>
+            <div class='cg_view_option_input '>
+                <input type="text" name='multiple-pics[cg_gallery][pro][ThirdTitleGalleriesView]' class="ThirdTitleGalleriesView"  value="$ThirdTitleGalleriesView"  >
+            </div>
+        </div>
+    </div>
+HEREDOC;
+
+echo "<br><br>";
+
+echo <<<HEREDOC
 </div>
 
 HEREDOC;

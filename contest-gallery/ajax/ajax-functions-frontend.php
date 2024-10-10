@@ -1,5 +1,65 @@
 <?php
 
+// show gallery frontend from main cg_galleries
+add_action( 'wp_ajax_nopriv_post_cg_galleries_show_cg_gallery', 'post_cg_galleries_show_cg_gallery' );
+add_action( 'wp_ajax_post_cg_galleries_show_cg_gallery', 'post_cg_galleries_show_cg_gallery' );
+if(!function_exists('post_cg_galleries_show_cg_gallery')){
+	function post_cg_galleries_show_cg_gallery() {
+
+		global $wpdb;
+
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+
+			// PLUGIN VERSION CHECK HERE
+			contest_gal1ery_db_check();
+			$galeryID = intval($_POST['gidToShow']);
+
+			if($galeryID==9999999){
+				global $wpdb;
+				$tablename_options = $wpdb->prefix . "contest_gal1ery_options";
+				$galeryID = $wpdb->get_var( "SELECT id FROM $tablename_options ORDER BY id DESC LIMIT 0, 1" );
+				$isCGalleries = true;
+				$isFromGalleriesSelect = false;
+			}else{
+				$isCGalleries = false;
+				$isFromGalleriesSelect = true;
+			}
+
+			$galleriesIds = [];
+			$hasGalleriesIds = false;
+
+			if(!empty($_POST['cgIds'])){
+				$galleriesIds = [];
+				foreach ($_POST['cgIds'] as $idToSet){
+					$galleriesIds[] = intval($idToSet);
+				}
+				$hasGalleriesIds = true;
+			}
+
+			$shortcode_name = cg1l_sanitize_method($_POST['shortcode_name']);
+
+			$entryId = 0;
+
+			$frontend_gallery = '';
+
+			$isCGalleriesAjax = true;
+
+			$wp_upload_dir = wp_upload_dir();
+			$optionsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/'.$galeryID.'-options.json';
+
+			$options = json_decode(file_get_contents($optionsFile),true);
+
+			include(__DIR__.'/../v10/include-scripts-v10.php');
+
+			exit();
+		}else {
+			exit();
+		}
+	}
+
+}
+// show gallery frontend from main cg_galleries --- ENDE
+
 add_action('wp_ajax_nopriv_post_cg_check_if_online', 'post_cg_check_if_online');
 add_action('wp_ajax_post_cg_check_if_online', 'post_cg_check_if_online');
 if (!function_exists('post_cg_check_if_online')) {
@@ -204,8 +264,6 @@ if(!function_exists('post_cg_changes_recognized')){
         if(!is_user_logged_in()){
             return;
         }
-
-        global $wpdb;
 
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 

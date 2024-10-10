@@ -159,9 +159,10 @@ if($isAjaxCall){
 
 	$addedEcommerceImageForDownload = [];
 
-	$Version = $optionsSQL->Version;
 	$domain = get_bloginfo('wpurl');
 	$CgEntriesOwnSlugName = cg_get_gallery_slug_name();
+
+	$Version = intval($optionsSQL->Version);
 
 	foreach($selectSQL as $value){
 
@@ -825,8 +826,8 @@ if($isAjaxCall){
 					$fileWidth = 0;
 					$cg_ecom_video = 'cg_ecom_video';
 				}else{
-					$fileHeight = $fileData['height'];
-					$fileWidth = $fileData['width'];
+					$fileHeight = (!empty($fileData['height'])) ? $fileData['height'] : 0;
+					$fileWidth = (!empty($fileData['width'])) ? $fileData['width'] : 0;
 				}
 			}
 
@@ -2069,9 +2070,9 @@ if($isAjaxCall){
 				echo "</a>";
 			}else{
 				$permalink = cg_get_guid($WpPage,$domain,$CgEntriesOwnSlugName,$Version);
-				if($permalink===false){
-					echo "<a href='#' target='_blank' class='cg_entry_page_url cg_disabled_background_color_e0e0e0 cg_display_inline_block'>";
-					echo "cg_gallery <b>deleted</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
+				if(empty($permalink)){
+					echo "<a href='#' target='_blank' class='cg_entry_page_url cg_disabled_background_color_e0e0e0 '>";
+					echo "cg_gallery <b>&nbsp;deleted&nbsp;</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
 					echo "</a>";
 				}else{
 					echo "<span data-cg-shortcode='[cg_gallery id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".$permalink."' target='_blank' class='cg_entry_page_url''>";
@@ -2085,9 +2086,9 @@ if($isAjaxCall){
 				echo "</a>";
 			}else{
 				$permalink = cg_get_guid($WpPageUser,$domain,$CgEntriesOwnSlugName,$Version);
-				if($permalink===false){
-					echo "<a href='#' target='_blank' class='cg_entry_page_url cg_disabled_background_color_e0e0e0 cg_display_inline_block'>";
-					echo "cg_gallery_user <b>deleted</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
+				if(empty($permalink)){
+					echo "<a href='#' target='_blank' class='cg_entry_page_url cg_disabled_background_color_e0e0e0 '>";
+					echo "cg_gallery_user <b>&nbsp;deleted&nbsp;</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
 					echo "</a>";
 				}else{
 					echo "<span data-cg-shortcode='[cg_gallery_user id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".$permalink."' target='_blank' class='cg_entry_page_url'>";
@@ -2101,9 +2102,9 @@ if($isAjaxCall){
 				echo "</a>";
 			}else{
 				$permalink = cg_get_guid($WpPageNoVoting,$domain,$CgEntriesOwnSlugName,$Version);
-				if($permalink===false){
-					echo "<a href='#' target='_blank' class='cg_entry_page_url cg_disabled_background_color_e0e0e0 cg_display_inline_block'>";
-					echo "cg_gallery_no_voting <b>deleted</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
+				if(empty($permalink)){
+					echo "<a href='#' target='_blank' class='cg_entry_page_url cg_disabled_background_color_e0e0e0 '>";
+					echo "cg_gallery_no_voting <b>&nbsp;deleted&nbsp;</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
 					echo "</a>";
 				}else{
 					echo "<span data-cg-shortcode='[cg_gallery_no_voting id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".$permalink."' target='_blank' class='cg_entry_page_url'>";
@@ -2117,9 +2118,9 @@ if($isAjaxCall){
 				echo "</a>";
 			}else{
 				$permalink = cg_get_guid($WpPageWinner,$domain,$CgEntriesOwnSlugName,$Version);
-				if($permalink===false){
-					echo "<a href='#' target='_blank' class='cg_entry_page_url cg_disabled_background_color_e0e0e0 cg_display_inline_block'>";
-					echo "cg_gallery_winner <b>deleted</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
+				if(empty($permalink)){
+					echo "<a href='#' target='_blank' class='cg_entry_page_url cg_disabled_background_color_e0e0e0 '>";
+					echo "cg_gallery_winner <b>&nbsp;deleted&nbsp;</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
 					echo "</a>";
 				}else{
 					echo "<span data-cg-shortcode='[cg_gallery_winner id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".$permalink."' target='_blank' class='cg_entry_page_url'>";
@@ -2134,9 +2135,9 @@ if($isAjaxCall){
 					echo "</a>";
 				}else{
 					$permalink = cg_get_guid($WpPageEcommerce,$domain,$CgEntriesOwnSlugName,$Version);
-					if($permalink===false){
-						echo "<a href='#' target='_blank' class='cg_entry_page_url cg_disabled_background_color_e0e0e0 cg_display_inline_block'>";
-						echo "cg_gallery_ecommerce <b>deleted</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
+					if(empty($permalink)){
+						echo "<a href='#' target='_blank' class='cg_entry_page_url cg_disabled_background_color_e0e0e0 '>";
+						echo "cg_gallery_ecommerce <b>&nbsp;deleted&nbsp;</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
 						echo "</a>";
 					}else{
 						if($ImgTypeToShow!='con'){

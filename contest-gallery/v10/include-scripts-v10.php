@@ -61,8 +61,14 @@ wp_enqueue_script( 'jquery-ui-sortable' );
         'cg_check_if_online_ajax_url' => admin_url( 'admin-ajax.php' )
     ));
 
+	wp_localize_script( 'cg_v10_js_cg_gallery', 'post_cg_galleries_show_cg_gallery_wordpress_ajax_script_function_name', array(
+		'cg_galleries_show_cg_gallery_ajax_url' => admin_url( 'admin-ajax.php' )
+	));
+
 if(empty($isFromOrderSummary)){
+	if(empty($isCGalleriesAjax)){
 ob_start();
+	}
 echo "<pre class='cg_main_pre  cg_10 cg_20' >";
 }
 
@@ -70,9 +76,10 @@ include("v10-frontend/v10-get-data.php");
 
 if(empty($isFromOrderSummary)){
 echo "</pre>";
-
+	if(empty($isCGalleriesAjax)){
 $frontend_gallery = ob_get_clean();
 
 apply_filters( 'cg_filter_frontend_gallery', $frontend_gallery );
+}
 }
 

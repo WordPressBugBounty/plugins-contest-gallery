@@ -1358,104 +1358,20 @@ if(!$isManipulated){
                 $post_title_to_insert = substr($post_title_to_insert,0,100);
 
                 if(!empty($selectSQL1->WpPageParent)){
-                    // cg_gallery shortcode
-                    $array = [
-                        'post_title'=> $post_title_to_insert,
-                        'post_type'=>'contest-gallery',
-                        'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-                            "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
-                            "[cg_gallery id=\"$GalleryID\" entry_id=\"$nextId\"]"."\r\n".
-                            "<!-- /wp:shortcode -->",
-                        'post_mime_type'=>'contest-gallery-plugin-page',
-                        'post_status'=>'publish',
-                        'post_parent'=>$selectSQL1->WpPageParent
-                    ];
-
-                    $WpPage = wp_insert_post($array);
-
-                    // cg_gallery_user shortcode
-                    $array = [
-                        'post_title'=> $post_title_to_insert,
-                        'post_type'=>'contest-gallery',
-                        'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-                            "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
-                            "[cg_gallery_user id=\"$GalleryID\" entry_id=\"$nextId\"]"."\r\n".
-                            "<!-- /wp:shortcode -->",
-                        'post_mime_type'=>'contest-gallery-plugin-page',
-                        'post_status'=>'publish',
-                        'post_parent'=>$selectSQL1->WpPageParentUser
-                    ];
-
-                    $WpPageUser = wp_insert_post($array);
-
-                    // cg_gallery_no_voting shortcode
-                    $array = [
-                        'post_title'=> $post_title_to_insert,
-                        'post_type'=>'contest-gallery',
-                        'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-                            "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
-                            "[cg_gallery_no_voting id=\"$GalleryID\" entry_id=\"$nextId\"]"."\r\n".
-                            "<!-- /wp:shortcode -->",
-                        'post_mime_type'=>'contest-gallery-plugin-page',
-                        'post_status'=>'publish',
-                        'post_parent'=>$selectSQL1->WpPageParentNoVoting
-                    ];
-
-                    $WpPageNoVoting = wp_insert_post($array);
-
-                    // cg_gallery_winner shortcode
-                    $array = [
-                        'post_title'=> $post_title_to_insert,
-                        'post_type'=>'contest-gallery',
-                        'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-                            "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
-                            "[cg_gallery_winner id=\"$GalleryID\" entry_id=\"$nextId\"]"."\r\n".
-                            "<!-- /wp:shortcode -->",
-                        'post_mime_type'=>'contest-gallery-plugin-page',
-                        'post_status'=>'publish',
-                        'post_parent'=>$selectSQL1->WpPageParentWinner
-                    ];
-                    $WpPageWinner = wp_insert_post($array);
-
-                    // cg_gallery_ecommerce shortcode
-                    $WpPageEcommerce = 0;
-                    if(intval($cgVersion)>=22){
-                        $array = [
-                            'post_title'=> $post_title_to_insert,
-                            'post_type'=>'contest-gallery',
-                            'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-                                "<!--This is a comment: cg_galley... shortcode with entry id is required to display Contest Gallery entry on a Contest Gallery Custom Post Type entry page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode with entry_id also on any other of your pages. -->"."\r\n".
-                                "[cg_gallery_ecommerce id=\"$GalleryID\" entry_id=\"$nextId\"]"."\r\n".
-                                "<!-- /wp:shortcode -->",
-                            'post_mime_type'=>'contest-gallery-plugin-page',
-                            'post_status'=>'publish',
-                            'post_parent'=>$selectSQL1->WpPageParentEcommerce
-                        ];
-                        $WpPageEcommerce = wp_insert_post($array);
-                    }
-
-                    $wpdb->update(
-                        "$tablename1",
-                        array('WpPage' => $WpPage,'WpPageUser' => $WpPageUser,'WpPageNoVoting' => $WpPageNoVoting,'WpPageWinner' => $WpPageWinner,'WpPageEcommerce' => $WpPageEcommerce),
-                        array('id' => $nextId),
-                        array('%d','%d','%d','%d'),
-                        array('%d')
-                    );
-
+	                $WpPages = cg_create_wp_pages($GalleryID,$nextId,$post_title_to_insert,$selectSQL1,$cgVersion);
                     if(strpos($galeryIDuser,'-uf')!==false || strpos($galeryIDuser,'-cf')!==false){
-	                    $newImagesPermalinksArray[$nextId] = cg_get_guid($WpPage,$domain,$CgEntriesOwnSlugName,$cgVersion);
+	                    $newImagesPermalinksArray[$nextId] = cg_get_guid($WpPages['WpPage'],$domain,$CgEntriesOwnSlugName,$cgVersion);
                     }else{
                         if(strpos($galeryIDuser,'-u')!==false){
-	                        $newImagesPermalinksArray[$nextId] = cg_get_guid($WpPageUser,$domain,$CgEntriesOwnSlugName,$cgVersion);
+	                        $newImagesPermalinksArray[$nextId] = cg_get_guid($WpPages['WpPageUser'],$domain,$CgEntriesOwnSlugName,$cgVersion);
                         }else if(strpos($galeryIDuser,'-nv')!==false){
-	                        $newImagesPermalinksArray[$nextId] = cg_get_guid($WpPageNoVoting,$domain,$CgEntriesOwnSlugName,$cgVersion);
+	                        $newImagesPermalinksArray[$nextId] = cg_get_guid($WpPages['WpPageNoVoting'],$domain,$CgEntriesOwnSlugName,$cgVersion);
                         }else if(strpos($galeryIDuser,'-w')!==false){
-	                        $newImagesPermalinksArray[$nextId] = cg_get_guid($WpPageWinner,$domain,$CgEntriesOwnSlugName,$cgVersion);
+	                        $newImagesPermalinksArray[$nextId] = cg_get_guid($WpPages['WpPageWinner'],$domain,$CgEntriesOwnSlugName,$cgVersion);
                         }else if(strpos($galeryIDuser,'-ec')!==false && intval($cgVersion)>=22){
-	                        $newImagesPermalinksArray[$nextId] = cg_get_guid($WpPageEcommerce,$domain,$CgEntriesOwnSlugName,$cgVersion);
-
+	                        $newImagesPermalinksArray[$nextId] = cg_get_guid($WpPages['WpPageEcommerce'],$domain,$CgEntriesOwnSlugName,$cgVersion);
                         } else{
-	                        $newImagesPermalinksArray[$nextId] = cg_get_guid($WpPage,$domain,$CgEntriesOwnSlugName,$cgVersion);
+	                        $newImagesPermalinksArray[$nextId] = cg_get_guid($WpPages['WpPage'],$domain,$CgEntriesOwnSlugName,$cgVersion);
                         }
                     }
 

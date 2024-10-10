@@ -141,77 +141,33 @@ if((empty($valueCollect['HeightLook']) && empty($valueCollect['ThumbLook']) && e
 
 $nextIDgallery = cg_copy_table_row('contest_gal1ery_options',$idToCopy,['contest_gal1ery_options' => $valueCollect]);
 
-// cg_gallery shortcode
-$array = [
-    'post_title'=>'Contest Gallery ID '.$nextIDgallery,
-    'post_type'=>'contest-gallery',
-    'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-        "<!--This is a comment: cg_galley... shortcode is required to display Contest Gallery on a Contest Gallery Custom Post Type page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode also on any other of your pages.-->"."\r\n".
-        "[cg_gallery id=\"$nextIDgallery\"]"."\r\n".
-        "<!-- /wp:shortcode -->",
-    'post_mime_type'=>'contest-gallery-plugin-page',
-    'post_status'=>'publish',
-];
+cg_create_slug_name_galleries_posts_if_required();
 
+// cg_gallery shortcode
+$array = cg_post_type_parent_galleries_array($nextIDgallery);
 $WpPageParent = wp_insert_post($array);
 $jsonOptions['general']['WpPageParent'] = $WpPageParent;
 
 
 // cg_gallery_user shortcode
-$array = [
-    'post_title'=>'Contest Gallery ID '.$nextIDgallery.' user',
-    'post_type'=>'contest-gallery',
-    'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-        "<!--This is a comment: cg_galley... shortcode is required to display Contest Gallery on a Contest Gallery Custom Post Type page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode also on any other of your pages.-->"."\r\n".
-        "[cg_gallery_user id=\"$nextIDgallery\"]"."\r\n".
-        "<!-- /wp:shortcode -->",
-    'post_mime_type'=>'contest-gallery-plugin-page',
-    'post_status'=>'publish',
-];
+$array = cg_post_type_parent_galleries_array($nextIDgallery,'user');
 $WpPageParentUser = wp_insert_post($array);
 $jsonOptions['general']['WpPageParentUser'] = $WpPageParentUser ;
 
 
 // cg_gallery_no_voting shortcode
-$array = [
-    'post_title'=>'Contest Gallery ID '.$nextIDgallery.' no voting',
-    'post_type'=>'contest-gallery',
-    'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-        "<!--This is a comment: cg_galley... shortcode is required to display Contest Gallery on a Contest Gallery Custom Post Type page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode also on any other of your pages.-->"."\r\n".
-        "[cg_gallery_no_voting id=\"$nextIDgallery\"]"."\r\n".
-        "<!-- /wp:shortcode -->",
-    'post_mime_type'=>'contest-gallery-plugin-page',
-    'post_status'=>'publish',
-];
+$array = cg_post_type_parent_galleries_array($nextIDgallery,'no_voting');
 $WpPageParentNoVoting = wp_insert_post($array);
 $jsonOptions['general']['WpPageParentNoVoting'] = $WpPageParentNoVoting ;
 
 
 // cg_gallery_winner shortcode
-$array = [
-    'post_title'=>'Contest Gallery ID '.$nextIDgallery.' winner',
-    'post_type'=>'contest-gallery',
-    'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-        "<!--This is a comment: cg_galley... shortcode is required to display Contest Gallery on a Contest Gallery Custom Post Type page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode also on any other of your pages.-->"."\r\n".
-        "[cg_gallery_winner id=\"$nextIDgallery\"]"."\r\n".
-        "<!-- /wp:shortcode -->",
-    'post_mime_type'=>'contest-gallery-plugin-page',
-    'post_status'=>'publish',
-];
+$array = cg_post_type_parent_galleries_array($nextIDgallery,'winner');
 $WpPageParentWinner = wp_insert_post($array);
 $jsonOptions['general']['WpPageParentWinner'] = $WpPageParentWinner ;
 
 // cg_gallery_ecommerce shortcode
-$array = [
-    'post_title'=>'Contest Gallery ID '.$nextIDgallery.' ecommerce',
-    'post_type'=>'contest-gallery',
-    'post_content'=>"<!-- wp:shortcode -->"."\r\n".
-        "<!--This is a comment: cg_galley... shortcode is required to display Contest Gallery on a Contest Gallery Custom Post Type page. You can place your own content before and after this shortcode, whatever you like. You can place cg_gallery... shortcode also on any other of your pages.-->"."\r\n".
-        "[cg_gallery_ecommerce id=\"$nextIDgallery\"]"."\r\n".
-        "<!-- /wp:shortcode -->",
-    'post_mime_type'=>'contest-gallery-plugin-page',
-    'post_status'=>'publish',
-];
+$array = cg_post_type_parent_galleries_array($nextIDgallery,'ecommerce');
 $WpPageParentEcommerce = wp_insert_post($array);
 $jsonOptions['general']['WpPageParentEcommerce'] = $WpPageParentEcommerce ;
 
@@ -233,61 +189,11 @@ if(empty($tag)){
     $term_id = $tag->term_id;
 }
 
-$wpdb->query( $wpdb->prepare(
-    "
-                    INSERT INTO $tablename_wp_pages
-                        ( id,WpPage
-                         )
-                        VALUES ( %s,%d
-                        )
-                    ",
-    '',$WpPageParent
-) );
-
-$wpdb->query( $wpdb->prepare(
-    "
-                    INSERT INTO $tablename_wp_pages
-                        ( id,WpPage
-                         )
-                        VALUES ( %s,%d
-                        )
-                    ",
-    '',$WpPageParentUser
-) );
-
-$wpdb->query( $wpdb->prepare(
-    "
-                    INSERT INTO $tablename_wp_pages
-                        ( id,WpPage
-                         )
-                        VALUES ( %s,%d
-                        )
-                    ",
-    '',$WpPageParentNoVoting
-) );
-
-$wpdb->query( $wpdb->prepare(
-    "
-                    INSERT INTO $tablename_wp_pages
-                        ( id,WpPage
-                         )
-                        VALUES ( %s,%d
-                        )
-                    ",
-    '',$WpPageParentWinner
-) );
-
-$wpdb->query( $wpdb->prepare(
-    "
-                    INSERT INTO $tablename_wp_pages
-                        ( id,WpPage
-                         )
-                        VALUES ( %s,%d
-                        )
-                    ",
-    '',$WpPageParentEcommerce
-) );
-
+cg_insert_into_contest_gal1ery_wp_pages($WpPageParent);
+cg_insert_into_contest_gal1ery_wp_pages($WpPageParentUser);
+cg_insert_into_contest_gal1ery_wp_pages($WpPageParentNoVoting);
+cg_insert_into_contest_gal1ery_wp_pages($WpPageParentWinner);
+cg_insert_into_contest_gal1ery_wp_pages($WpPageParentEcommerce);
 
 // Erschaffen eines Galerieordners
 $galleryUpload = $uploadFolder['basedir'] . '/contest-gallery/gallery-id-' . $nextIDgallery . '';

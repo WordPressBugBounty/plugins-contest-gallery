@@ -69,6 +69,26 @@ echo <<<HEREDOC
       <div class='cg_view_options_row' >
             <div class='cg_view_option cg_view_option_full_width cg_border_top_none $beforeSinceV14Disabled' >
                 <div class='cg_view_option_title'>
+                    <p>$language_BackToGalleries$cgShortcodeCopy</span></p>
+                </div>
+                <div class='cg_view_option_input'>
+                    <input type="text" name="translations[general][$l_BackToGalleries]" maxlength="100" value="$translations[$l_BackToGalleries]">
+                    </div>
+                </div>
+      </div>
+      <div class='cg_view_options_row' >
+            <div class='cg_view_option cg_view_option_full_width cg_border_top_none $beforeSinceV14Disabled' >
+                <div class='cg_view_option_title'>
+                    <p>$language_NoGalleryEntries$cgShortcodeCopy</span></p>
+                </div>
+                <div class='cg_view_option_input'>
+                    <input type="text" name="translations[general][$l_NoGalleryEntries]" maxlength="100" value="$translations[$l_NoGalleryEntries]">
+                    </div>
+                </div>
+      </div>
+      <div class='cg_view_options_row' >
+            <div class='cg_view_option cg_view_option_full_width cg_border_top_none $beforeSinceV14Disabled' >
+                <div class='cg_view_option_title'>
                     <p>$language_CGProfileInformation$cgShortcodeCopy</span></p>
                 </div>
                 <div class='cg_view_option_input'>
@@ -196,6 +216,19 @@ echo <<<HEREDOC
                 </div>
                 <div class='cg_view_option_input'>
                     <input type="text" name="translations[general][$l_UntilCurrentTabGetsClosed]" maxlength="100" value="$translations[$l_UntilCurrentTabGetsClosed]">
+                    </div>
+                </div>
+      </div>
+HEREDOC;
+
+echo <<<HEREDOC
+        <div class='cg_view_options_row cg_go_to_target' data-cg-go-to-target="l_BackToGallery">
+            <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+                <div class='cg_view_option_title'>
+                    <p>$language_BackToGallery$cgShortcodeCopy</span></p>
+                </div>
+                <div class='cg_view_option_input'>
+                    <input type="text" name="translations[general][$l_BackToGallery]" maxlength="100" value="$translations[$l_BackToGallery]">
                     </div>
                 </div>
       </div>

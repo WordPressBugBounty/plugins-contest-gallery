@@ -429,7 +429,7 @@ $ContentUserVoteMail = contest_gal1ery_convert_for_html_output_without_nl2br($Co
 
 $selectedCheckComments = ($selectSQL1->AllowComments==1) ? 'checked' : '';
 $AllowRating = $selectSQL1->AllowRating;
-    if($AllowRating==1){
+    if($AllowRating==1){// because of old logic, where 1 = 5 stars
         $AllowRating = 15;
     }
 $selectedCheckRating = ($selectSQL1->AllowRating==1 OR ($selectSQL1->AllowRating>=12 && $selectSQL1->AllowRating<=20)) ? 'checked' : '';
@@ -985,6 +985,8 @@ if(floatval($galleryDbVersion)>=12.10){
     $deprecatedGalleryHoverDisabledForever = 'cg_disabled_forever';
 }
 
+$galleriesOptions = cg_get_galleries_options_all();
+
 require_once(dirname(__FILE__) . "/../nav-menu.php");
 
 echo "<form id='cgEditOptionsForm' action='?page=".cg_get_version()."/index.php&edit_options=true&option_id=$galeryNR' method='post'  data-cg-submit-message='Options saved'  class='cg_load_backend_submit cg_load_backend_submit_save_data'>";
@@ -1003,6 +1005,46 @@ wp_nonce_field( 'cg_admin');
 
 //echo '<input type="hidden" name="editOptions" value="true" >';
 echo '<input type="hidden" name="option_id" value="'.$galeryNR.'" >';
+
+if(empty($_POST['cg_edit_ecommerce']) && empty($_GET['cg_edit_ecommerce'])){
+
+	if(intval($galleryDbVersion)>=24){
+		if (is_multisite()) {
+			$CgEntriesOwnSlugNameGalleries = cg_get_blog_option( get_current_blog_id(),'CgEntriesOwnSlugNameGalleries');
+		}else{
+			$CgEntriesOwnSlugNameGalleries = get_option('CgEntriesOwnSlugNameGalleries');
+		}
+		if(empty($CgEntriesOwnSlugNameGalleries)){$CgEntriesOwnSlugNameGalleries='';}
+
+		if (is_multisite()) {
+			$CgEntriesOwnSlugNameGalleriesUser = cg_get_blog_option( get_current_blog_id(),'CgEntriesOwnSlugNameGalleriesUser');
+		}else{
+			$CgEntriesOwnSlugNameGalleriesUser = get_option('CgEntriesOwnSlugNameGalleriesUser');
+		}
+		if(empty($CgEntriesOwnSlugNameGalleriesUser)){$CgEntriesOwnSlugNameGalleriesUser='';}
+
+		if (is_multisite()) {
+			$CgEntriesOwnSlugNameGalleriesNoVoting = cg_get_blog_option( get_current_blog_id(),'CgEntriesOwnSlugNameGalleriesNoVoting');
+		}else{
+			$CgEntriesOwnSlugNameGalleriesNoVoting = get_option('CgEntriesOwnSlugNameGalleriesNoVoting');
+		}
+		if(empty($CgEntriesOwnSlugNameGalleriesNoVoting)){$CgEntriesOwnSlugNameGalleriesNoVoting='';}
+
+		if (is_multisite()) {
+			$CgEntriesOwnSlugNameGalleriesWinner = cg_get_blog_option( get_current_blog_id(),'CgEntriesOwnSlugNameGalleriesWinner');
+		}else{
+			$CgEntriesOwnSlugNameGalleriesWinner = get_option('CgEntriesOwnSlugNameGalleriesWinner');
+		}
+		if(empty($CgEntriesOwnSlugNameGalleriesWinner)){$CgEntriesOwnSlugNameGalleriesWinner='';}
+
+		if (is_multisite()) {
+			$CgEntriesOwnSlugNameGalleriesEcommerce = cg_get_blog_option( get_current_blog_id(),'CgEntriesOwnSlugNameGalleriesEcommerce');
+		}else{
+			$CgEntriesOwnSlugNameGalleriesEcommerce = get_option('CgEntriesOwnSlugNameGalleriesEcommerce');
+		}
+		if(empty($CgEntriesOwnSlugNameGalleriesEcommerce)){$CgEntriesOwnSlugNameGalleriesEcommerce='';}
+
+	}else{
 if (is_multisite()) {
     $CgEntriesOwnSlugName = cg_get_blog_option( get_current_blog_id(),'CgEntriesOwnSlugName');
 }else{
@@ -1010,6 +1052,8 @@ if (is_multisite()) {
 }
 
 if(empty($CgEntriesOwnSlugName)){$CgEntriesOwnSlugName='';}
+	}
+}
 
 $cgHideUrlEntryFieldsForMails = '';
 if(intval($galleryDbVersion)>=21){
