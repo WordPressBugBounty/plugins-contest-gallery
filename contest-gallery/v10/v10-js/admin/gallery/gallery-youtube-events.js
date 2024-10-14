@@ -104,7 +104,7 @@ jQuery(document).ready(function ($) {
                     if(object.post_mime_type=='contest-gallery-youtube'){
                         cgJsClassAdmin.gallery.vars.embedById[object['ID']] = object.guid;
                         cg_ytb_only = 'cg_ytb_only';
-                        $frame = $('<iframe  class="cg_ytb_media" width="270px" height="202px" src="' + object['guid'] + '" ></iframe>');
+                        $frame = $('<iframe  class="cg_ytb_media" width="270px" height="165px" src="' + object['guid'] + '" ></iframe>');
                     }
                     if(object.post_mime_type=='contest-gallery-twitter'){
                         cgJsClassAdmin.gallery.vars.embedById[object['ID']] = object.blockquote;
@@ -309,18 +309,76 @@ jQuery(document).ready(function ($) {
                 if(urlPart){
                     var vidurl = 'https://www.youtube.com/watch?v='+urlPart;
 
+                    var cgGetSecondsStartTime = function (url) {
+
+                        //console.log('url to check')
+                        //console.log(url)
+
+                        //var url ="https://www.youtube.com/watch?v=RG9TMn1FJzc?lala=33&t=2h5m16s&blabla=3";
+                        var timeStamp = new RegExp('t=(.)*?[&|(\s)]', 'i').exec(url);
+
+                        //console.log('timeStamp')
+                        //console.log(timeStamp)
+
+                        var totalTimeInSeconds = 0;
+
+                        if(timeStamp){
+
+                            var hours = new RegExp(/(\d)+h/, 'i').exec(timeStamp[0]);
+
+                            //console.log('hours')
+                            //console.log(hours)
+
+                            var minutes = new RegExp(/(\d)+m/, 'i').exec(timeStamp[0]);
+
+                            //console.log('minutes')
+                            //console.log(minutes)
+
+                            var seconds = new RegExp(/(\d)+s/, 'i').exec(timeStamp[0]);
+
+                            //console.log('seconds')
+                            //console.log(seconds)
+
+                            if (hours) {
+                                totalTimeInSeconds += parseInt(hours[0]) * 60 * 60;
+                            }
+
+                            if (minutes) {
+                                totalTimeInSeconds += parseInt(minutes[0]) * 60;
+                            }
+
+                            if (seconds) {
+                                totalTimeInSeconds += parseInt(seconds[0]) * 1;
+                            }
+
+                        }
+
+                        return totalTimeInSeconds;
+
+                    }
+
+                    var secondsStartTime = cgGetSecondsStartTime(url);
+
+                    //console.log('secondsStartTime')
+                    //console.log(secondsStartTime)
+
                     var cgAsyncCallYoutube = async function () {
                         try {
                             await fetch('https://noembed.com/embed?dataType=json&url='+vidurl )
                                 .then(res => res.json())
                                 .then(function (data){
-                                    debugger
-                                    console.log('urlPart')
-                                    console.log(urlPart)
+                                    //debugger
+                                    //console.log('urlPart')
+                                    //console.log(urlPart)
                                     embed =  'https://www.youtube.com/embed/'+urlPart;
+                                    if(secondsStartTime){
+                                        embed += '?start='+secondsStartTime;
+                                    }
+                                    //console.log('embed done')
+                                    //console.log(embed)
                                     if(data.title){
-                                        console.log('youtube data')
-                                        console.log(data)
+                                        //console.log('youtube data')
+                                        //console.log(data)
                                         $cgAddYoutubeLoader.addClass('cg_hide');
                                         $cgNoUrlMatch.addClass('cg_hide');
                                         $cgAddYoutubePreview.empty().removeClass('cg_hide');

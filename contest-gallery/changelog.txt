@@ -1,5 +1,9 @@
 Contest Gallery
 
+= V24.0.1 =
+* NEW: YouTube media start time is now possible to add when "Add social embed".
+* FIXED: Undefined array key error when adding social embed.
+
 = V24.0.0 =
 * NEW: cg_galleries... shortcode types. Place cg_galleries shortcode on your page and click through galleries without page reload.
 * NEW: Add ids to a cg_galleries... shortcode if you like to display only certain galleries.

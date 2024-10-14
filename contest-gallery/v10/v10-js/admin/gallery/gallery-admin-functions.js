@@ -931,7 +931,7 @@ cgJsClassAdmin.gallery.functions = {
         cgJsClassAdmin.gallery.vars.file_frame = file_frame;
         // should not be named same name as official wordpress class "media-menu-item" otherwise media library from wordpress not loaded,
         // if trick around with same class names then site freeze might happen
-        file_frame.$el.find('.media-frame-router').append('<button class="cg_media_menu_item" id="cgAddYoutube" >Add Social embed</button>');
+        file_frame.$el.find('.media-frame-router').append('<button class="cg_media_menu_item" id="cgAddYoutube" >Add social embed</button>');
         file_frame.$el.find('.media-frame-router').append('<button class="cg_media_menu_item" id="cgYoutubeLibrary" >Social embed library<span id="cgYoutubeLibraryNewAddedCount" class="cg_hide" >0</span></button>');
         if(isReplace){
             file_frame.$el.addClass('cg_is_replace');

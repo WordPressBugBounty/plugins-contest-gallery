@@ -235,12 +235,20 @@ HEREDOC;
 
         foreach($saleOrders as $saleOrder){
 
+	        if(empty($saleItemsIdsByParentOrderArray[$saleOrder->id])){// can happen only on test systems, if it is missing
+		        continue;
+	        }
+
+	        $LogForDatabase =  unserialize($saleOrder->LogForDatabase);
+	        if(empty($LogForDatabase['purchase_units'][0]['amount']['value'])){// can happen only on test systems, if it is missing
+		        continue;
+	        }
+
             $purchaseTime = cg_get_time_based_on_wp_timezone_conf($saleOrder->Tstamp,'Y-M-d H:i:s');
             $PayPalTransactionId =  $saleOrder->PayPalTransactionId;
             $PayerEmail =  $saleOrder->PayerEmail;
             $ParentOrder =  $saleOrder->id;
             $OrderNumber =  $saleOrder->OrderNumber;
-            $LogForDatabase =  unserialize($saleOrder->LogForDatabase);
             $TotalValue = $LogForDatabase['purchase_units'][0]['amount']['value'];
             $PriceDivider = $LogForDatabase['PriceDivider'];
             $CurrencyShort = $LogForDatabase['CurrencyShort'];

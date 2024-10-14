@@ -499,18 +499,18 @@ if (!function_exists('post_cg_social_platform_input')) {
 		            $post_content = '';
 	            }
 	            $guid = $_POST['guid'];
-	            $GalleryID = intval($_POST['gid']);
+	            //$GalleryID = intval($_POST['gid']);
 
 	            global $wpdb;
 	            $table_posts = $wpdb->prefix . "posts";
-	            $tablename_options = $wpdb->prefix . "contest_gal1ery_options";
+	            //$tablename_options = $wpdb->prefix . "contest_gal1ery_options";
 
-	            $galleryDbVersion = $wpdb->get_var( "SELECT Version FROM $tablename_options WHERE id='$GalleryID'");
+	            //$galleryDbVersion = $wpdb->get_var( "SELECT Version FROM $tablename_options WHERE id='$GalleryID'");
 
                 $post_type = 'contest-gallery';
-                if(intval($galleryDbVersion)>=24){
-	                $post_type = 'contest-galleries';
-                }
+                //if(intval($galleryDbVersion)>=24){
+	                //$post_type = 'contest-galleries';
+                //}
 
                 $post_title = substr(cg_pre_process_name_for_url_name($post_title),0,100);
 

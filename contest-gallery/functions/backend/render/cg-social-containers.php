@@ -12,6 +12,7 @@ if(!function_exists('cg_social_input_container')){
             <input type='hidden' name='action' value='post_cg_social_platform_input'>
             <span id="cgAddYoutubeLabel">Add YouTube/Twitter/Instagram/TikTok URL</span><br>
             <span class="cg_url_example">Example <b>YouTube</b>: https://www.youtube.com/watch?v=RG9TMn1FJzc</span><br>
+            <span class="cg_url_example">Example <b>YouTube start time</b>: https://www.youtube.com/watch?v=RG9TMn1FJzc<b>&t=1m15s</b></span><br>
             <span class="cg_url_example">Example <b>Twitter (X)</b>: https://x.com/Interior/status/463440424141459456</span><br>
             <span class="cg_url_example">Example <b>Instagram</b>: https://www.instagram.com/p/C9fYTSPyPfp</span><br>
             <span class="cg_url_example">Example <b>TikTok</b>: https://www.tiktok.com/@scout2015/video/6718335390845095173</span><br>

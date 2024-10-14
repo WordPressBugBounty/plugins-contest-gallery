@@ -933,6 +933,7 @@ jQuery(document).ready(function ($) {
                                 }*/
                 var $cg_backend_image_full_size_target_alternative_file_type = $(this).find('.cg_backend_image_full_size_target_alternative_file_type');
 
+
                 if($cg_backend_image_full_size_target_alternative_file_type.length){
                     var fileType = $cg_backend_image_full_size_target_alternative_file_type.attr('data-cg-file-type');
                     $element.addClass('cg_backend_image_full_size_target_container_'+fileType+' cg_backend_image_full_size_target_container_alternative_file_type');
@@ -957,6 +958,13 @@ jQuery(document).ready(function ($) {
 
                 if(isVideo){
                     $divContainer.wrap('<a href="'+$(this).attr('data-original-src')+'" target="_blank" class="cg_backend_image_full_size_target_container_href"></a>');
+                }
+
+                if($element.attr('data-file-type')=='ytb'){
+                    $element.find('iframe').css({
+                        'width':'100%',
+                        'height':'100%',
+                    });
                 }
 
             });

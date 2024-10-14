@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, upload, voting, youtube
 Requires at least: 5.6
-Stable tag: 24.0.0
+Stable tag: 24.0.1
 Tested up to: 6.6.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -228,6 +228,10 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V24.0.1 =
+* NEW: YouTube media start time is now possible to add when "Add social embed".
+* FIXED: Undefined array key error when adding social embed.
 
 = V24.0.0 =
 * NEW: cg_galleries... shortcode types. Place cg_galleries shortcode on your page and click through galleries without page reload.

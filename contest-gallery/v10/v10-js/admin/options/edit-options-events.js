@@ -1162,7 +1162,12 @@ jQuery(document).ready(function($){
 
     $(document).on('click','#cgGoTopOptions',function (e) {
         //cgViewOptionCheck(this,e);
-        $('#cg_shortcode_table').get(0).scrollIntoView();
+        var $cgGalleriesShortcodes = $('#cgGalleriesShortcodes');
+        if($cgGalleriesShortcodes.length){
+            $cgGalleriesShortcodes.get(0).scrollIntoView();
+        }else{
+            $('#cg_shortcode_table').get(0).scrollIntoView();
+        }
     });
 
     $(document).on('click','#cgSaveOptionsNavButton',function (e) {
