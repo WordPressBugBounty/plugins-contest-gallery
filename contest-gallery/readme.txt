@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, upload, voting, youtube
 Requires at least: 5.6
-Stable tag: 24.0.1
+Stable tag: 24.0.2
 Tested up to: 6.6.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -228,6 +228,11 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V24.0.2 =
+* NEW: When using cg_galleries... shortcodes and main title for a gallery is given to appear in galleries view, then the main title is also shown for the gallery if gallery is clicked from cg_galleries... shortcode type.
+* FIXED: cg_galleries... shortcodes were not always displayed correctly.
+* FIXED: When loading a gallery from cg_galleries... view below content jumped to the top of gallery container when loading.
 
 = V24.0.1 =
 * NEW: YouTube media start time is now possible to add when "Add social embed".

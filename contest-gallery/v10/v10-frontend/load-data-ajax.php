@@ -700,7 +700,15 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
 
 	    if(empty($galleriesIds)){
 		    usort($galleryNumbers, "cgSortArray");
-	    }// else simply the order give by user for ids in cg_galleries shortcode
+	    }else{// else sort by user given galleryIds
+		    $galleryNumbersNew = [];
+		    foreach ($galleriesIds as $galleriesIdToCheck) {
+			    if(in_array($galleriesIdToCheck,$galleryNumbers)!==false){
+				    $galleryNumbersNew[] = $galleriesIdToCheck;
+			    }
+		    }
+		    $galleryNumbers = $galleryNumbersNew;
+	    }
 
 	    $dirs = [];
 

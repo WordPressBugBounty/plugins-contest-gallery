@@ -843,6 +843,7 @@ if($isShowGallery == true){
 
             $options['visual']['BackToGalleryButtonText']=$language_BackToGallery;
         if(!empty($options['pro']['BackToGalleryButtonURL'])){
+
             $entryPermalink = contest_gal1ery_convert_for_html_output_without_nl2br($options['pro']['BackToGalleryButtonURL']);
         }else{
             $entryPermalink = get_permalink(wp_get_post_parent_id($jsonImagesData[$entryId][$WpPageShortCodeType]));
@@ -865,8 +866,19 @@ if($isShowGallery == true){
         }
 
         if(!empty($isFromGalleriesSelect) || !empty($is_from_single_view_for_cg_galleries)){
+            if(!empty($options['pro']['MainTitleGalleriesView'])){
+	            echo "<div class='cgGalleryName'>";
+	                echo contest_gal1ery_convert_for_html_output_without_nl2br($options['pro']['MainTitleGalleriesView']);
+	            echo "</div>";
+            }
+
+	        $is_from_single_view_for_cg_galleries_class = '';
+            if(!empty($is_from_single_view_for_cg_galleries)){
+	            $is_from_single_view_for_cg_galleries_class = 'cg_is_from_single_view_for_cg_galleries_class';
+            }
+
 	        echo "<div class='mainCGBackToGalleryButtonHrefContainer isCGalleries'>";
-                echo "<a href='' class='mainCGBackToGalleryButtonHref isCGalleries' data-cg-gid='$galeryIDuserForJs'>";
+                echo "<a href='' class='mainCGBackToGalleryButtonHref isCGalleries $is_from_single_view_for_cg_galleries_class' data-cg-gid='$galeryIDuserForJs'>";
                     echo "<div id='mainCGBackToGalleryButton$galeryIDuserForJs' class=' mainCGBackToGalleryButton isCGalleries'>$language_BackToGalleries</div>";
                 echo "</a>";
 	        echo "</div>";
@@ -876,7 +888,6 @@ if($isShowGallery == true){
 		    $page = get_page_by_path( $slugName, OBJECT, 'page');
             if(!empty($page)){
 		    $pageGalleries = get_permalink($page->ID);
-
 		    echo "<div class='mainCGBackToGalleryButtonHrefContainer'>";
                 echo "<a href='$pageGalleries' class='mainCGBackToGalleryButtonHref' data-cg-gid='$galeryIDuserForJs'>";
                 echo "<div id='mainCGBackToGalleryButton$galeryIDuserForJs' class='mainCGBackToGalleryButton'>$language_BackToGalleries</div>";
