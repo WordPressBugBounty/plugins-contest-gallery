@@ -42,7 +42,8 @@ if($imageData->Active==1){
     $thumbSizesWp['large_size_w'] = get_option("large_size_w");
     $imageArray = array();
 
-    $imageArray = cg_create_json_files_when_activating($GalleryID,$objectRow,$thumbSizesWp,$uploadFolder,$imageArray);
+	$RatingOverviewArray = cg_get_correct_rating_overview($GalleryID);
+	$imageArray = cg_create_json_files_when_activating($GalleryID,$objectRow,$thumbSizesWp,$uploadFolder,$imageArray,floatval($generalOptions->Version),$RatingOverviewArray);
 
 // take care of order!
     //cg_set_data_in_images_files_with_all_data($GalleryID,$imageArray);

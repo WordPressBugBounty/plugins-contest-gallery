@@ -1,5 +1,9 @@
 Contest Gallery
 
+= V24.0.3 =
+* FIXED: Delete votes and delete comments did not work properly.
+* FIXED: Images counter in opened blog view did not work always properly on scroll if "Number of entries per screen" was higher then 20.
+
 = V24.0.2 =
 * NEW: When using cg_galleries... shortcodes and main title for a gallery is given to appear in galleries view, then the main title is also shown for the gallery if gallery is clicked from cg_galleries... shortcode type.
 * FIXED: cg_galleries... shortcodes were not always displayed correctly.

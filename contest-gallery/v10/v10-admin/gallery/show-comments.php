@@ -61,20 +61,56 @@ $dirImageComments = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$ga
                 }
             }
 
+            /*
+		var_dump("delete-comment");
+		var_dump($_POST['delete-comment']);
+        echo "<br>";
+            var_dump('$commentsArray');
+
+            echo "<pre>";
+                print_r($commentsArray);
+            echo "</pre>";*/
+
+
             if (!empty($_POST['delete-comment'])) {
                 foreach($_POST['delete-comment'] as $key => $commentId){
+
+	                /*var_dump('$commentId to delete');
+	                var_dump($commentId);
+                    echo "<br>";*/
+
+                    if(!empty($commentsArray[$commentId]['insert_id'])){
+                        $insert_id_to_delete = absint($commentsArray[$commentId]['insert_id']);
+
+	                    /*var_dump('$insert_id_to_delete');
+	                    var_dump($insert_id_to_delete);
+	                    echo "<br>";*/
+
                         // if old comment then still might be in the database, this why delete
                         $deleteQuery = 'DELETE FROM ' . $tablename_comments . ' WHERE';
                         $deleteQuery .= ' id = %d';
 
                         $deleteParameters = '';
-                        $deleteParameters .= $commentId;
+	                    $deleteParameters .= $insert_id_to_delete;
                         $wpdb->query( $wpdb->prepare(
                             "
                                 $deleteQuery
                             ",
                                 $deleteParameters
                         ));
+
+	                    /*
+						var_dump('$deleteQuery');
+						var_dump($deleteQuery);
+
+						echo "<br>";
+
+						var_dump('$deleteParameters');
+							var_dump($deleteParameters);
+
+						echo "<br>";*/
+
+                    }
 
                         unset($commentsArray[$commentId]);
                         $fileImageComment = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryNR.'/json/image-comments/ids/'.$pid.'/'.$commentId.'.json';
@@ -166,14 +202,27 @@ $dirImageComments = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$ga
             }
 
             // check if there were some database entries of before version 16
-            $countCommentsSQL = $wpdb->get_var( $wpdb->prepare(
+            /*$countCommentsSQL = $wpdb->get_var( $wpdb->prepare(
             "
                 SELECT COUNT(1)
                 FROM $tablename_comments 
                 WHERE pid = %d
             ",
             $pid
-            ) );
+            ) );*/
+		    $pid = absint($pid);
+            $countCommentsSQL = $wpdb->get_var(
+            "
+                SELECT COUNT(*) AS NumberOfRows 
+                FROM $tablename_comments 
+                WHERE pid = $pid
+            ",);
+
+            /*
+            var_dump('$countCommentsSQL');
+            var_dump($countCommentsSQL);
+
+		echo "<br>";*/
 
             $fileImageCommentsDirCount = 0;
 
@@ -519,8 +568,19 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
             }
 		}
 
+        /*
+        var_dump('$select_comments_array');
+        echo "<pre>";
+        print_r($select_comments_array);
+	      echo "</pre>";*/
+
 		foreach($select_comments_array as $key => $value){
 	//	$id = $value->id;
+        /*if(empty($value['id'])){
+	        $id = $value['insert_id'];
+        }else{
+        }*/
+
 		$id = $value['id'];
 	//	$pid = $value->pid;
 
