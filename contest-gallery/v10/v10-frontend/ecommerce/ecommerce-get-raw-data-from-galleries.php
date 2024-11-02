@@ -15,6 +15,8 @@ $EcommerceFilesDataEachGallery = [];
 if(isset($_POST['realGidsAndIdsDeletedOrFromOtherGalleries'])){
 	foreach($_POST['realGidsAndIdsDeletedOrFromOtherGalleries'] as $GalleryID => $realIds){
 
+		$GalleryID = absint($GalleryID);
+
 		$RawDataEachGallery[$GalleryID] = [];
 		$InfoDataEachGallery[$GalleryID] = [];
 		$OptionsDataEachGallery[$GalleryID] = [];
@@ -51,6 +53,7 @@ if(isset($_POST['realGidsAndIdsDeletedOrFromOtherGalleries'])){
 		$ecommerceFilesData = [];
 		$collectedIds = '';
 		foreach ($realIds as $realId){
+			$realId = absint($realId);
 			if(empty($collectedIds)){
 				$collectedIds = "pid = $realId";
 			}else{

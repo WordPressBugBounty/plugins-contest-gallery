@@ -1,5 +1,5 @@
 <script data-cg-processing="true">
-debugger
+
        if(typeof cgJsClass == 'undefined' ){ // required in JavaScript for first initialisation cgJsClass = cgJsClass || {}; would not work
            cgJsClass = {};
        }

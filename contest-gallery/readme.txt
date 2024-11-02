@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, upload, voting, youtube
 Requires at least: 5.6
-Stable tag: 24.0.3
+Stable tag: 24.0.4
 Tested up to: 6.6.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -30,15 +30,14 @@ File types: **JPG, PNG, GIF, PDF, ZIP, WEBM, MP4, MOV, TXT, DOC, DOCX, XLS, XLSX
 * Some options available in PRO version only
 * To have all options available please purchase [PRO version](https://www.contest-gallery.com/pro-version/)
 
-== Frontend video examples (previous versions style) ==
+== Frontend video example ==
 
-https://www.youtube.com/watch?v=vWaZbh8jh84
-
-https://www.youtube.com/watch?v=TFl11Qz3q2k
+https://www.youtube.com/watch?v=lHgbHkDzRnk
 
 = Contact form and gallery examples =
 * [Different file types contact form and gallery](https://www.contest-gallery.com/different-file-types-upload-form-and-gallery/)
 * [Different galleries with different options on same page](https://www.contest-gallery.com/multiple-photo-contests/)
+* [Click through galleries on same page](https://www.contest-gallery.com/click-through-galleries-on-same-page/)
 
 == Amazing contest for your WordPress page ==
 
@@ -228,6 +227,9 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V24.0.4 =
+* FIXED: Security issues.
 
 = V24.0.3 =
 * FIXED: Delete votes and delete comments did not work properly.

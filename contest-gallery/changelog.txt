@@ -1,5 +1,8 @@
 Contest Gallery
 
+= V24.0.4 =
+* FIXED: Security issues.
+
 = V24.0.3 =
 * FIXED: Delete votes and delete comments did not work properly.
 * FIXED: Images counter in opened blog view did not work always properly on scroll if "Number of entries per screen" was higher then 20.

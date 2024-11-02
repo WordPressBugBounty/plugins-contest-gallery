@@ -8,6 +8,10 @@ if(!function_exists('contest_gal1ery_htmlentities_and_preg_replace')){
             $content = '';
         }
 
+		if(!current_user_can( 'unfiltered_html' ) ){
+			$content = wp_kses_post($content);// script tags will be removed
+		}
+
         $content = str_replace("&zwj;", "", $content);// might be inserted by html parser
         $content = htmlentities($content, ENT_QUOTES);
         $content = str_replace("&zwj;", "", $content);// might be inserted by html parser
@@ -29,6 +33,10 @@ if(!function_exists('contest_gal1ery_htmlentities_and_preg_replace_textarea')){
         }else{
             $content = '';
         }
+
+	    if(!current_user_can( 'unfiltered_html' ) ){
+		    $content = wp_kses_post($content);// script tags will be removed
+	    }
 
         $content = str_replace("&zwj;", "", $content);// might be inserted by html parser
         $content = htmlentities($content, ENT_QUOTES);
