@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Contest Gallery\n"
-"POT-Creation-Date: 2024-09-28 08:19+0200\n"
-"PO-Revision-Date: 2024-09-28 08:19+0200\n"
+"POT-Creation-Date: 2024-11-13 15:38+0100\n"
+"PO-Revision-Date: 2024-11-13 15:38+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -23,7 +23,7 @@ msgstr ""
 
 #: check-language-ecommerce.php:41
 msgid "Shopping cart"
-msgstr "Koszyk"
+msgstr "Aktualne hasło"
 
 #: check-language-ecommerce.php:43
 msgid "Close shopping cart"
@@ -943,78 +943,84 @@ msgid "Password"
 msgstr "Hasło"
 
 #: check-language.php:381
-msgid "New Password"
+#, fuzzy
+#| msgid "New Password"
+msgid "Current Password"
 msgstr "Nowe hasło"
 
 #: check-language.php:383
+msgid "New Password"
+msgstr "Nowe hasło"
+
+#: check-language.php:385
 msgid "New Password repeat"
 msgstr "Powtórz nowe hasło"
 
-#: check-language.php:385
+#: check-language.php:387
 msgid "Password required"
 msgstr "WYmagane hasło"
 
-#: check-language.php:387
+#: check-language.php:389
 msgid "Email and password do not match"
 msgstr "Email i hasło nie pasują"
 
-#: check-language.php:389
+#: check-language.php:391
 msgid "Login and password do not match"
 msgstr "Login ai hasło nie pasują"
 
-#: check-language.php:391
+#: check-language.php:393
 msgid "Please fill out"
 msgstr "Wypełnij"
 
-#: check-language.php:393
+#: check-language.php:395
 msgid "Passwords do not match"
 msgstr "Hasła różnią się od siebie"
 
-#: check-language.php:395
+#: check-language.php:397
 msgid "Upload"
 msgstr "Wyślij"
 
-#: check-language.php:397
+#: check-language.php:399
 msgid "Register"
 msgstr "Zarejestruj"
 
-#: check-language.php:399
+#: check-language.php:401
 msgid "Login"
 msgstr "Zaloguj"
 
-#: check-language.php:401
+#: check-language.php:403
 msgid "Please select"
 msgstr "Wybierz"
 
-#: check-language.php:403
+#: check-language.php:405
 msgid "You have not selected"
 msgstr "Nie wybrałeś"
 
-#: check-language.php:405
+#: check-language.php:407
 msgid "Please confirm"
 msgstr "Potwierdź"
 
-#: check-language.php:407
+#: check-language.php:409
 msgid "File is not activated"
 msgstr "Plik nie aktywowany"
 
-#: check-language.php:409
+#: check-language.php:411
 msgid "Your email could not be confirmed."
 msgstr "Twój email nie może być potwierdzony."
 
-#: check-language.php:411
+#: check-language.php:413
 msgid "Please enter a valid URL"
 msgstr "Wprowadź poprawny adres URL"
 
-#: check-language.php:413
+#: check-language.php:415
 msgid "Other"
 msgstr "Inne"
 
-#: check-language.php:416
+#: check-language.php:418
 msgid "Yes"
 msgstr "Tak"
 
-#: check-language.php:417
+#: check-language.php:419
 msgid "No"
 msgstr "Nie"
 

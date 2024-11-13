@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Contest Gallery\n"
-"POT-Creation-Date: 2024-09-28 08:15+0200\n"
-"PO-Revision-Date: 2024-09-28 08:17+0200\n"
+"POT-Creation-Date: 2024-11-13 15:35+0100\n"
+"PO-Revision-Date: 2024-11-13 15:36+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -947,78 +947,82 @@ msgid "Password"
 msgstr "Contraseña"
 
 #: check-language.php:381
+msgid "Current Password"
+msgstr "Contraseña actual"
+
+#: check-language.php:383
 msgid "New Password"
 msgstr "Nueva contraseña"
 
-#: check-language.php:383
+#: check-language.php:385
 msgid "New Password repeat"
 msgstr "Nueva contraseña repetida"
 
-#: check-language.php:385
+#: check-language.php:387
 msgid "Password required"
 msgstr "Se requiere contraseña"
 
-#: check-language.php:387
+#: check-language.php:389
 msgid "Email and password do not match"
 msgstr "Correo electrónico y contraseña no coinciden"
 
-#: check-language.php:389
+#: check-language.php:391
 msgid "Login and password do not match"
 msgstr "El nombre de usuario y la contraseña no coinciden"
 
-#: check-language.php:391
+#: check-language.php:393
 msgid "Please fill out"
 msgstr "Por favor complete"
 
-#: check-language.php:393
+#: check-language.php:395
 msgid "Passwords do not match"
 msgstr "Las contraseñas no coinciden"
 
-#: check-language.php:395
+#: check-language.php:397
 msgid "Upload"
 msgstr "Subir"
 
-#: check-language.php:397
+#: check-language.php:399
 msgid "Register"
 msgstr "Para registrarse"
 
-#: check-language.php:399
+#: check-language.php:401
 msgid "Login"
 msgstr "Iniciar sesión"
 
-#: check-language.php:401
+#: check-language.php:403
 msgid "Please select"
 msgstr "Por favor selecciona"
 
-#: check-language.php:403
+#: check-language.php:405
 msgid "You have not selected"
 msgstr "No has seleccionado"
 
-#: check-language.php:405
+#: check-language.php:407
 msgid "Please confirm"
 msgstr "Por favor confirme"
 
-#: check-language.php:407
+#: check-language.php:409
 msgid "File is not activated"
 msgstr "El archivo no está activado"
 
-#: check-language.php:409
+#: check-language.php:411
 msgid "Your email could not be confirmed."
 msgstr "Su correo electrónico no pudo ser confirmado."
 
-#: check-language.php:411
+#: check-language.php:413
 msgid "Please enter a valid URL"
 msgstr "Por favor introduzca un URL válido"
 
-#: check-language.php:413
+#: check-language.php:415
 msgid "Other"
 msgstr "Otro"
 
-#: check-language.php:416
+#: check-language.php:418
 msgid "Yes"
 msgstr "Si"
 
-#: check-language.php:417
+#: check-language.php:419
 msgid "No"
 msgstr "No"
 

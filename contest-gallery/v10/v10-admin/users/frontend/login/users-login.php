@@ -53,6 +53,7 @@ if(empty($_SESSION["cg_start_time"])){
 $is_frontend = true;
 
 include(__DIR__ ."/../../../../../check-language.php");
+include(__DIR__ ."/../../../../../check-language-general.php");
 
 global $wpdb;
 $tablename_options = $wpdb->prefix . "contest_gal1ery_options";

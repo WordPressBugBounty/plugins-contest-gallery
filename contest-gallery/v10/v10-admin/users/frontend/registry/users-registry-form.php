@@ -322,7 +322,6 @@ $ForwardAfterRegText
     echo "<input type='hidden' id='cg_max_characters_text' value='$language_MaxAmountOfCharacters'>";
     echo "<input type='hidden' id='cg_no_picture_is_choosed' value='$language_ChooseYourImage'>";
 
-
     echo "<input type='hidden' id='cg_language_BulkUploadQuantityIs' value='$language_BulkUploadQuantityIs'>";
     echo "<input type='hidden' id='cg_language_BulkUploadLowQuantityIs' value='$language_BulkUploadLowQuantityIs'>";
 

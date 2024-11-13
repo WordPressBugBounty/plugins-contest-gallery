@@ -378,6 +378,8 @@ __('Email required');$l_EmailRequired= "Email required";$language_EmailRequired 
 
 __('Password');$l_Password = "Password";$language_Password = (!empty($translations[$l_Password]) && $is_frontend) ? $translations[$l_Password] : ((empty(trim(__($l_Password,$domain)))) ? __($l_Password,$domainDefault) : __($l_Password,$domain)); if(empty($translations[$l_Password])){$translations[$l_Password]='';}
 
+__('Current Password');$l_CurrentPassword = "Current Password";$language_CurrentPassword = (!empty($translations[$l_CurrentPassword]) && $is_frontend) ? $translations[$l_CurrentPassword] : ((empty(trim(__($l_CurrentPassword,$domain)))) ? __($l_CurrentPassword,$domainDefault) : __($l_CurrentPassword,$domain)); if(empty($translations[$l_CurrentPassword])){$translations[$l_CurrentPassword]='';}
+
 __('New Password');$l_NewPassword = "New Password";$language_NewPassword = (!empty($translations[$l_NewPassword]) && $is_frontend) ? $translations[$l_NewPassword] : ((empty(trim(__($l_NewPassword,$domain)))) ? __($l_NewPassword,$domainDefault) : __($l_NewPassword,$domain)); if(empty($translations[$l_NewPassword])){$translations[$l_NewPassword]='';}
 
 __('New Password repeat');$l_NewPasswordRepeat = "New Password repeat";$language_NewPasswordRepeat = (!empty($translations[$l_NewPasswordRepeat]) && $is_frontend) ? $translations[$l_NewPasswordRepeat] : ((empty(trim(__($l_NewPasswordRepeat,$domain)))) ? __($l_NewPasswordRepeat,$domainDefault) : __($l_NewPasswordRepeat,$domain)); if(empty($translations[$l_NewPasswordRepeat])){$translations[$l_NewPasswordRepeat]='';}

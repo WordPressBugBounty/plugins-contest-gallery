@@ -65,20 +65,36 @@ if(!$intervalConf['shortcodeIsActive']){
 
         $wpUserID = $wpdb->get_var("SELECT ID FROM $tablenameWpUsers WHERE ID = '".$cgResetPasswordWpUserID."'");
 
+	    if(empty($_GET['cgResetPasswordKey'])){
+		    $cgResetPasswordLinkNotValidAnymore = true;
+		    $cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
+	    }else{
+		    $cgResetPasswordKey = sanitize_text_field(urldecode($_GET['cgResetPasswordKey']));
+		    if($cgResetPasswordKey !== get_the_author_meta( 'cgResetPasswordKey', $wpUserID )){
+			    $cgResetPasswordLinkNotValidAnymore = true;
+			    $cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
+		    }
+	    }
+
+		if(!$cgResetPasswordLinkNotValidAnymore){
         $cgLostPasswordMailTimestamp = intval(get_the_author_meta( 'cgLostPasswordMailTimestamp', $wpUserID ) );
         if(empty($cgLostPasswordMailTimestamp)){
             $cgResetPasswordLinkNotValidAnymore = true;
             $cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
         }else{
-            if($cgLostPasswordMailTimestamp+(60*60*24)<time()){// 24 hours valid
+				if($cgLostPasswordMailTimestamp+(60*5)<time()){// 5 minutes valid (5 minutes for link and 5 minutes for entering new password)
                 $cgResetPasswordLinkNotValidAnymore = true;
                 $cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
                 delete_user_meta($wpUserID,'cgLostPasswordMailTimestamp');
+					delete_user_meta($wpUserID,'cgResetPasswordKey');
             }else{
+					$cgResetPasswordTimestamp = intval(get_the_author_meta( 'cgResetPasswordTimestamp', $wpUserID ) );
+					update_user_meta( $wpUserID, 'cgResetPasswordTimestamp', time());// 5 minutes valid (5 minutes for link and 5 minutes for entering new password)
                 $cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
                 include(__DIR__.'/forms/users-login-form-reset-password.php');
             }
         }
+		}
 
     }
 
@@ -148,6 +164,7 @@ if(!$intervalConf['shortcodeIsActive']){
     echo "<input type='hidden' id='cg_language_EmailAndPasswordDoNotMatch' value='$language_EmailAndPasswordDoNotMatch'>";
     echo "<input type='hidden' id='cg_language_LoginAndPasswordDoNotMatch' value='$language_LoginAndPasswordDoNotMatch'>";
     echo "<input type='hidden' id='cg_language_PleaseFillOut' value='$language_PleaseFillOut'>";
+    echo "<input type='hidden' id='cg_language_Required' value='$language_Required'>";
     echo "<input type='hidden' id='cg_language_PasswordsDoNotMatch' value='$language_PasswordsDoNotMatch'>";
     echo "<input type='hidden' id='cg_language_LostPasswordUrlIsNotValidAnymore' value='$language_LostPasswordUrlIsNotValidAnymore'>";
     echo "<input type='hidden' id='cg_language_ResetPasswordSuccessfully' value='$language_ResetPasswordSuccessfully'>";

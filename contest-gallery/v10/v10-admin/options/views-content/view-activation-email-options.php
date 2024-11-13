@@ -98,7 +98,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none cg_file_activation_email_option $cgProFalse'  id="wp-InformUsersContent-wrap-Container" >
                     <div class='cg_view_option_title cg_copyable'>
-                        <p>Mail content<br><span class="cg_view_option_title_note">Put this variable in the mail content editor: <span style="font-weight:bold;">\$url$</span><br>Link to users file in confirmation mail will appear when the entry is activated<br><a href="https://www.contest-gallery.com/documentation/#cgDisplayConfirmationURL" target="_blank" class="cg-documentation-link">Documentation: How to make the link clickable in e-mail</a></span></p>
+                        <p>Mail content<br><span class="cg_view_option_title_note">Put this variable in the mail content editor: <span style="font-weight:bold;user-select: all;">\$url$</span><br>Link to users file in confirmation mail will appear when the entry is activated<br><a href="https://www.contest-gallery.com/documentation/#cgDisplayConfirmationURL" target="_blank" class="cg-documentation-link">Documentation: How to make the link clickable in e-mail</a></span></p>
                     </div>
                     <div class='cg_view_option_html'>
                         <textarea class='cg-wp-editor-template' id='InformUsersContent'  name='cgEmailImageActivating'>$InformUsersContent</textarea>

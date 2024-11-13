@@ -9,7 +9,7 @@ echo <<<HEREDOC
       <div class='cg_view_options_row' >
             <div class='cg_view_option cg_view_option_full_width' >
                 <div class='cg_view_option_title'>
-                    <p>$language_LostPasswordExplanation$cgShortcodeCopy<br><span style='font-weight:normal;'>(login field)</span></p>
+                    <p>$language_LostPasswordExplanation$cgShortcodeCopy<br><span style='font-weight:normal;'></span></p>
                 </div>
                 <div class='cg_view_option_input'>
                     <input type="text" name="translations[$l_LostPasswordExplanation]" maxlength="100" value="$translations[$l_LostPasswordExplanation]">
@@ -29,7 +29,17 @@ echo <<<HEREDOC
       <div class='cg_view_options_row' >
             <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                 <div class='cg_view_option_title'>
-                    <p>$language_NewPassword$cgShortcodeCopy<br><span style='font-weight:normal;'>(login field)</span></p>
+                    <p>$language_CurrentPassword$cgShortcodeCopy<br><span style='font-weight:normal;'></span></p>
+                </div>
+                <div class='cg_view_option_input'>
+                    <input type="text" name="translations[$l_CurrentPassword]" maxlength="100" value="$translations[$l_CurrentPassword]">
+                    </div>
+                </div>
+      </div>
+      <div class='cg_view_options_row' >
+            <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+                <div class='cg_view_option_title'>
+                    <p>$language_NewPassword$cgShortcodeCopy<br><span style='font-weight:normal;'></span></p>
                 </div>
                 <div class='cg_view_option_input'>
                     <input type="text" name="translations[$l_NewPassword]" maxlength="100" value="$translations[$l_NewPassword]">
@@ -39,7 +49,7 @@ echo <<<HEREDOC
       <div class='cg_view_options_row' >
             <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                 <div class='cg_view_option_title'>
-                    <p>$language_NewPasswordRepeat$cgShortcodeCopy<br><span style='font-weight:normal;'>(login field)</span></p>
+                    <p>$language_NewPasswordRepeat$cgShortcodeCopy<br><span style='font-weight:normal;'></span></p>
                 </div>
                 <div class='cg_view_option_input'>
                     <input type="text" name="translations[$l_NewPasswordRepeat]" maxlength="100" value="$translations[$l_NewPasswordRepeat]">
@@ -49,7 +59,7 @@ echo <<<HEREDOC
       <div class='cg_view_options_row' >
             <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                 <div class='cg_view_option_title'>
-                    <p>$language_EmailLostPasswordSent$cgShortcodeCopy<br><span style='font-weight:normal;'>(login field)</span></p>
+                    <p>$language_EmailLostPasswordSent$cgShortcodeCopy<br><span style='font-weight:normal;'></span></p>
                 </div>
                 <div class='cg_view_option_input'>
                     <input type="text" name="translations[$l_EmailLostPasswordSent]" maxlength="100" value="$translations[$l_EmailLostPasswordSent]">
@@ -59,7 +69,7 @@ echo <<<HEREDOC
       <div class='cg_view_options_row' >
             <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                 <div class='cg_view_option_title'>
-                    <p>$language_LostPasswordUrlIsNotValidAnymore$cgShortcodeCopy<br><span style='font-weight:normal;'>(login field)</span></p>
+                    <p>$language_LostPasswordUrlIsNotValidAnymore$cgShortcodeCopy<br><span style='font-weight:normal;'></span></p>
                 </div>
                 <div class='cg_view_option_input'>
                     <input type="text" name="translations[$l_LostPasswordUrlIsNotValidAnymore]" maxlength="100" value="$translations[$l_LostPasswordUrlIsNotValidAnymore]">
@@ -69,7 +79,7 @@ echo <<<HEREDOC
       <div class='cg_view_options_row' >
             <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                 <div class='cg_view_option_title'>
-                    <p>$language_BackToLoginForm$cgShortcodeCopy<br><span style='font-weight:normal;'>(login field)</span></p>
+                    <p>$language_BackToLoginForm$cgShortcodeCopy<br><span style='font-weight:normal;'></span></p>
                 </div>
                 <div class='cg_view_option_input'>
                     <input type="text" name="translations[$l_BackToLoginForm]" maxlength="100" value="$translations[$l_BackToLoginForm]">
