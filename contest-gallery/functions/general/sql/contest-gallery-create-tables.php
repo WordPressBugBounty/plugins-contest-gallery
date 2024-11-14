@@ -119,7 +119,8 @@ if(!function_exists('contest_gal1ery_create_table')){
 		WpPageEcommerce BIGINT(20) DEFAULT 0,
 		WpPageEcommerceTagTermTaxonomyId BIGINT(20) DEFAULT 0,
 		EcommerceEntry BIGINT(20) DEFAULT 0,
-		OrderItem INT(11) DEFAULT 0
+		OrderItem INT(11) DEFAULT 0,
+        INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);

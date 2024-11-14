@@ -1,5 +1,8 @@
 Contest Gallery
 
+= V24.0.6 =
+* FIXED: Sorting of entries was only working till 127 entries correctly, due to TINYINT was used as SQL field type. Changed to INT(11).
+
 = V24.0.5 =
 * FIXED: Security issue.
 * FIXED: Sorted images in backend were not all visible in frontend if "Custom sorting" was activated, as preselect or select, in frontend.

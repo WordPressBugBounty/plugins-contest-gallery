@@ -63,7 +63,7 @@ return array(
         'IsProfileImage' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 26.12.2021
         'MultipleFiles' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 28.07.2022
         'CountCtoReview' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 11.09.2022
-        'PositionNumber' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 23.09.2022
+        'PositionNumber' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update ab 23.09.2022
         'WpPage' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0),// Update ab 31.12.2022
         'WpPageUser' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0),// Update ab 31.12.2022
         'WpPageNoVoting' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0),// Update ab 31.12.2022
