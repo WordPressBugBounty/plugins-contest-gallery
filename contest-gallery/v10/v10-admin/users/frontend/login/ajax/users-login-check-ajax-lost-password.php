@@ -28,7 +28,6 @@ if(true){
 
     if(!empty($wpUserID)){
 
-        delete_user_meta( $wpUserID, 'cgResetPasswordTimestamp');// will be reseted then when new mail is sent
         update_user_meta( $wpUserID, 'cgLostPasswordMailTimestamp', time());
 	    $cgResetPasswordKey = cg_hash_function('---cgResetPasswordKey---'.time());
 	    update_user_meta( $wpUserID, 'cgResetPasswordKey', $cgResetPasswordKey);
@@ -52,7 +51,7 @@ if(true){
 
         if (stripos($LostPasswordMailConfirmation, $posUrl) !== false) {
             $cgLostPasswordSiteUrl = (strpos($cgLostPasswordSiteUrl, '?')) ? $cgLostPasswordSiteUrl . '&' : $cgLostPasswordSiteUrl . '?';
-            $LostPasswordMailConfirmation = str_ireplace($posUrl, $cgLostPasswordSiteUrl . "cgResetPassword=$wpUserID&cgResetPasswordKey=$cgResetPasswordKey#cgResetPassword", $LostPasswordMailConfirmation);
+            $LostPasswordMailConfirmation = str_ireplace($posUrl, $cgLostPasswordSiteUrl . "cgResetPassword=$wpUserID&cgResetPasswordKey=$cgResetPasswordKey", $LostPasswordMailConfirmation);
         } else {
             ?>
             <script data-cg-processing="true">

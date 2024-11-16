@@ -1,15 +1,16 @@
 <?php
 
 echo "<div id='mainCGdivLostPasswordResetContainer' class='mainCGdivUploadFormContainer mainCGdivLostPasswordContainer'>";
-echo "<div class='cg_form_div' id='cgLostPasswordCurrentContainer'>";
+/*echo "<div class='cg_form_div' id='cgLostPasswordCurrentContainer'>";
 	echo "<label for='cgLostPasswordCurrent'>$language_CurrentPassword</label>";
 	echo "<input type='password'  id='cgLostPasswordCurrent' name='cgLostPasswordCurrent'>";
 	echo "<p id='cgLostPasswordCurrentValidationMessage' class='cg_input_error cg_hide' ></p>";
-echo "</div>";
-echo "<div class='cg_form_div' id='cgLostPasswordNewContainer'>";
+echo "</div>";*/
+echo "<div class='cg_form_div' id='cgResetPassword'>";
 echo "<label for='cgLostPasswordNew'>$language_NewPassword</label>";
 echo "<input type='password'  id='cgLostPasswordNew' name='cgLostPasswordNew'>";
 echo "<input type='hidden'  id='cgResetPasswordWpUserID' value='$cgResetPasswordWpUserID'>";
+	echo "<input type='hidden'  id='cgResetPasswordKey' value='$cgResetPasswordKey'>";
 	echo "<p id='cgLostPasswordNewValidationMessage' class='cg_input_error cg_hide' ></p>";
 echo "</div>";
 echo "<div class='cg_form_div' id='cgLostPasswordNewRepeatContainer'>";
@@ -26,6 +27,7 @@ echo "<p id='cgLostPasswordUrlIsNotValidAnymore' class='cg_input_error cg_hide' 
 echo "<p id='cgLostPasswordUrlIsNotValidAnymore' class='cg_input_error cg_hide' ></p>";
 echo '<div class="cg_form_div_image_upload_preview_loader_container cg_hide"><div class="cg_form_div_image_upload_preview_loader cg-lds-dual-ring-gallery-hide cg-lds-dual-ring-gallery-hide-mainCGallery"></div></div>';
 echo "</div>";
+echo "<div><a href='' class='cgLostPasswordBackToLoginFormButton'>$language_BackToLoginForm</a></div>";
 echo "</div>";// mainCGdivUploadFormContainer close
 
 ?>

@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, upload, voting, youtube
 Requires at least: 5.6
-Stable tag: 24.0.6
+Stable tag: 24.0.7
 Tested up to: 6.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -227,6 +227,10 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V24.0.7 =
+* NEW: Lost password login area logic improved.
+* NEW: PositionNumber changed when creating tables from TINYINT to INT(11).
 
 = V24.0.6 =
 * FIXED: Sorting of entries was only working till 127 entries correctly, due to TINYINT was used as SQL field type. Changed to INT(11).

@@ -107,7 +107,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		IsProfileImage TINYINT DEFAULT 0,
 		MultipleFiles TEXT DEFAULT '',
 		CountCtoReview TINYINT DEFAULT 0,
-		PositionNumber TINYINT DEFAULT 0,
+		PositionNumber INT(11) DEFAULT 0,
 		WpPage BIGINT(20) DEFAULT 0,
 		WpPageTagTermTaxonomyId BIGINT(20) DEFAULT 0,
 		WpPageUser BIGINT(20) DEFAULT 0,

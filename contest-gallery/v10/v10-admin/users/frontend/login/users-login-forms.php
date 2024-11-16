@@ -70,7 +70,8 @@ if(!$intervalConf['shortcodeIsActive']){
 		    $cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
 	    }else{
 		    $cgResetPasswordKey = sanitize_text_field(urldecode($_GET['cgResetPasswordKey']));
-		    if($cgResetPasswordKey !== get_the_author_meta( 'cgResetPasswordKey', $wpUserID )){
+		    $cgResetPasswordKeyAuthor = get_the_author_meta( 'cgResetPasswordKey', $wpUserID );
+		    if(empty($cgResetPasswordKeyAuthor) || $cgResetPasswordKey !== $cgResetPasswordKeyAuthor){
 			    $cgResetPasswordLinkNotValidAnymore = true;
 			    $cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
 		    }
@@ -82,14 +83,10 @@ if(!$intervalConf['shortcodeIsActive']){
             $cgResetPasswordLinkNotValidAnymore = true;
             $cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
         }else{
-				if($cgLostPasswordMailTimestamp+(60*5)<time()){// 5 minutes valid (5 minutes for link and 5 minutes for entering new password)
+				if($cgLostPasswordMailTimestamp+(60*10)<time()){// 10 minutes valid
                 $cgResetPasswordLinkNotValidAnymore = true;
                 $cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
-                delete_user_meta($wpUserID,'cgLostPasswordMailTimestamp');
-					delete_user_meta($wpUserID,'cgResetPasswordKey');
             }else{
-					$cgResetPasswordTimestamp = intval(get_the_author_meta( 'cgResetPasswordTimestamp', $wpUserID ) );
-					update_user_meta( $wpUserID, 'cgResetPasswordTimestamp', time());// 5 minutes valid (5 minutes for link and 5 minutes for entering new password)
                 $cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
                 include(__DIR__.'/forms/users-login-form-reset-password.php');
             }

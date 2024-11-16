@@ -3,9 +3,7 @@
 $tablenameWpUsers = $wpdb->base_prefix . "users";
 $tablenameCreateUserForm = $wpdb->prefix . "contest_gal1ery_create_user_form";
 
-$cgResetPasswordWpUserID = absint(sanitize_text_field($_REQUEST['cgResetPasswordWpUserID']));
-
-if(empty($cgResetPasswordWpUserID)){
+if(empty($_REQUEST['cgResetPasswordKey']) || empty($_REQUEST['cgResetPasswordWpUserID'])){
     ?>
     <script data-cg-processing="true">
         var cg_language_LostPasswordUrlIsNotValidAnymore = document.getElementById("cg_language_LostPasswordUrlIsNotValidAnymore").value;
@@ -16,6 +14,8 @@ if(empty($cgResetPasswordWpUserID)){
     <?php
     return;
 }
+
+$cgResetPasswordWpUserID = absint(sanitize_text_field($_REQUEST['cgResetPasswordWpUserID']));
 
 $cgWpData = $wpdb->get_row("SELECT ID, user_login, user_pass FROM $tablenameWpUsers WHERE ID = '".$cgResetPasswordWpUserID."'");
 
@@ -33,9 +33,24 @@ if(empty($cgWpData)){
 
 $wpUserID = $cgWpData->ID;
 
-$cgResetPasswordTimestamp = intval(get_the_author_meta( 'cgResetPasswordTimestamp', $wpUserID) );
-if(empty($cgResetPasswordTimestamp) || $cgResetPasswordTimestamp+(60*5)<time()){// 5 minutes valid (5 minutes for link and 5 minutes for entering new password)
-	delete_user_meta($wpUserID,'cgResetPasswordTimestamp');
+$cgResetPasswordKey = sanitize_text_field(urldecode($_REQUEST['cgResetPasswordKey']));
+$cgResetPasswordKeyAuthor = get_the_author_meta( 'cgResetPasswordKey', $wpUserID );
+
+if(empty($cgResetPasswordKeyAuthor) || $cgResetPasswordKey !== $cgResetPasswordKeyAuthor){
+	?>
+    <script data-cg-processing="true">
+        var cg_language_LostPasswordUrlIsNotValidAnymore = document.getElementById("cg_language_LostPasswordUrlIsNotValidAnymore").value;
+        var cgLostPasswordUrlIsNotValidAnymore = document.getElementById('cgLostPasswordUrlIsNotValidAnymore');
+        cgLostPasswordUrlIsNotValidAnymore.innerHTML = cg_language_LostPasswordUrlIsNotValidAnymore;
+        cgLostPasswordUrlIsNotValidAnymore.classList.remove('cg_hide');
+    </script>
+	<?php
+	return;
+}
+
+$cgLostPasswordMailTimestamp = intval(get_the_author_meta( 'cgLostPasswordMailTimestamp', $wpUserID) );
+
+if(empty($cgLostPasswordMailTimestamp) || $cgLostPasswordMailTimestamp+(60*10)<time()){// 10 minutes valid
     ?>
     <script data-cg-processing="true">
         var cg_language_LostPasswordUrlIsNotValidAnymore = document.getElementById("cg_language_LostPasswordUrlIsNotValidAnymore").value;
@@ -47,13 +62,13 @@ if(empty($cgResetPasswordTimestamp) || $cgResetPasswordTimestamp+(60*5)<time()){
     return;
 }
 
-$cgLostPasswordCurrent = sanitize_text_field($_REQUEST['cgLostPasswordCurrent']);
+//$cgLostPasswordCurrent = sanitize_text_field($_REQUEST['cgLostPasswordCurrent']);
 $cgLostPasswordNew = sanitize_text_field($_REQUEST['cgLostPasswordNew']);
 $cgLostPasswordNewRepeat = sanitize_text_field($_REQUEST['cgLostPasswordNewRepeat']);
 
 $passwordField = $wpdb->get_row("SELECT Max_Char, Min_Char FROM $tablenameCreateUserForm WHERE GeneralID = '1' && Field_Type = 'password' ORDER BY Field_Order ASC LIMIT 1");
 
-if(empty($cgLostPasswordCurrent) || empty($cgLostPasswordNew) || strlen($cgLostPasswordNew)<$passwordField->Min_Char){
+if(empty($cgLostPasswordNew) || strlen($cgLostPasswordNew)<$passwordField->Min_Char){
 	?>
     <script data-cg-processing="true">
         var language_MinAmountOfCharacters = document.getElementById("cg_min_characters_text").value;
@@ -78,7 +93,7 @@ if(strlen($cgLostPasswordNew)>$passwordField->Max_Char){
 }
 
 
-require_once(ABSPATH ."wp-load.php");
+/*require_once(ABSPATH ."wp-load.php");
 $cgCheckPw = (wp_check_password($cgLostPasswordCurrent, $cgWpData->user_pass));
 
 if($cgCheckPw==false){
@@ -91,7 +106,7 @@ if($cgCheckPw==false){
     </script>
     <?php
     return;
-}
+}*/
 
 if($cgLostPasswordNew!=$cgLostPasswordNewRepeat){
         ?>
@@ -118,6 +133,7 @@ if($cgLostPasswordNew!=$cgLostPasswordNewRepeat){
         );
 
         delete_user_meta($wpUserID,'cgLostPasswordMailTimestamp');
+        delete_user_meta($wpUserID,'cgResetPasswordKey');
 
         ?>
         <script data-cg-processing="true">

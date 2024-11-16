@@ -1,7 +1,7 @@
 <?php
 
 echo "<div style='visibility: hidden;'  id='mainCGdivLoginFormContainer' class='mainCGdivUploadFormContainer $cgResetPasswordLinkHideLoginFormClass'>";
-echo "<p id='mainCGdivResetPasswordSuccessfullyExplanation' class='cg_hide'>$language_ResetPasswordSuccessfully</p>";
+echo "<p id='mainCGdivResetPasswordSuccessfullyExplanation' class='cg_hide'><b>$language_ResetPasswordSuccessfully</b></p>";
 echo "<input type='hidden' id='cg_check_mail_name_value_for_login' value='0'>";
 echo "<input type='hidden' id='cg_site_url' value='".get_site_url()."'/>";
 echo "<input type='hidden' id='cg_gallery_id_login' value='$GalleryID'/>";
