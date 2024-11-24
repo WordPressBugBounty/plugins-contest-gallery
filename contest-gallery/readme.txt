@@ -3,8 +3,8 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, upload, voting, youtube
 Requires at least: 5.6
-Stable tag: 24.0.7
-Tested up to: 6.7
+Stable tag: 24.0.8
+Tested up to: 6.7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -227,6 +227,9 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V24.0.8 =
+* NEW: Security improvements.
 
 = V24.0.7 =
 * NEW: Lost password login area logic improved.

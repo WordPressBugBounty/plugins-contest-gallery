@@ -1,12 +1,11 @@
 <?php
 
-$cgLostPasswordSiteUrl = get_permalink();
+//cg_add_blog_option( get_current_blog_id(),'cgLostPasswordPermalink', get_permalink());
 echo "<div id='mainCGdivLostPasswordContainer' class='mainCGdivUploadFormContainer mainCGdivLostPasswordContainer cg_hide'>";
 echo "<p id='mainCGdivLostPasswordExplanation'>$language_LostPasswordExplanation</p>";
 echo "<div class='cg_form_div' id='cgLostPasswordEmailContainer'>";
 echo "<label for='cgLostPasswordEmail'>$language_Email</label>";
 echo "<input type='text'  id='cgLostPasswordEmail' name='cgLostPasswordEmail'>";
-echo "<input type='hidden'  id='cgLostPasswordSiteUrl' value='$cgLostPasswordSiteUrl'>";
 echo "<p id='cgLostPasswordEmailValidationMessage' class='cg_input_error cg_hide' ></p>";// Fehlermeldung erscheint hier
 
 echo "</div>";

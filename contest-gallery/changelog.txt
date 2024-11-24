@@ -1,5 +1,8 @@
 Contest Gallery
 
+= V24.0.8 =
+* NEW: Security improvements.
+
 = V24.0.7 =
 * NEW: Lost password login area logic improved.
 * NEW: PositionNumber changed when creating tables from TINYINT to INT(11).

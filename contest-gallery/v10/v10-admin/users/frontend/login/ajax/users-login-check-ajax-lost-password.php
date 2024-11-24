@@ -29,15 +29,16 @@ if(true){
     if(!empty($wpUserID)){
 
         update_user_meta( $wpUserID, 'cgLostPasswordMailTimestamp', time());
-	    $cgResetPasswordKey = cg_hash_function('---cgResetPasswordKey---'.time());
+	    //$cgResetPasswordKey = cg_hash_function('---cgResetPasswordKey---'.time());
+	    $cgResetPasswordKey = wp_generate_password(32,false);
 	    update_user_meta( $wpUserID, 'cgResetPasswordKey', $cgResetPasswordKey);
+	    //$cgLostPasswordSiteUrl = cg_get_blog_option( get_current_blog_id(),'cgLostPasswordPermalink');
+	    $cgLostPasswordSiteUrl = wp_get_referer();
 
         $LostPasswordMailAddressor = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailAddressor);
         $LostPasswordMailReply = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailReply);
         $LostPasswordMailSubject = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailSubject);
         $LostPasswordMailConfirmation = contest_gal1ery_convert_for_html_output($registryAndLoginOptions->LostPasswordMailConfirmation);
-
-        $cgLostPasswordSiteUrl = sanitize_text_field($_REQUEST['cgLostPasswordSiteUrl']);
 
         $headers = array();
         $headers[] = "From: " . html_entity_decode(strip_tags($LostPasswordMailAddressor)) . " <" . strip_tags($LostPasswordMailReply) . ">";
