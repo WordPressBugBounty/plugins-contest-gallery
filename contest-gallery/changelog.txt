@@ -1,5 +1,8 @@
 Contest Gallery
 
+= V24.0.9 =
+* FIXED: Apostrophe was visible as html entity in comments section in frontend after page reload.
+
 = V24.0.8 =
 * NEW: Security improvements.
 
