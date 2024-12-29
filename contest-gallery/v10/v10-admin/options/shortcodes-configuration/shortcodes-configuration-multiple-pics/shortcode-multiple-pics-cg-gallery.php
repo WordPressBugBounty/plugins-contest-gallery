@@ -691,7 +691,7 @@ echo <<<HEREDOC
                 <p>Third title cg_galleries view</p>
             </div>
             <div class='cg_view_option_input '>
-                <input type="text" name='multiple-pics[cg_gallery][pro][ThirdTitleGalleriesView]' class="ThirdTitleGalleriesView"  value="$ThirdTitleGalleriesView"  >
+                <textarea type="text" name='multiple-pics[cg_gallery][pro][ThirdTitleGalleriesView]' class="ThirdTitleGalleriesView" rows="5" style="width:100%;" >$ThirdTitleGalleriesView</textarea>
             </div>
         </div>
     </div>

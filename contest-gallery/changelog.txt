@@ -1,5 +1,9 @@
 Contest Gallery
 
+= V25.0.1 =
+* NEW: Long descriptions can be added now as third title for cg_galleries... shortcodes view.
+* FIXED: If no entries for a gallery in cg_galleries... view then gallery was unclickable.
+
 = V25.0.0 =
 * NEW: Masonry cards view for frontend. Modern responsive view with modern look.
 * NEW: Thumb view will be converted in masonry view.

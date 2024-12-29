@@ -583,15 +583,17 @@ HEREDOC;
             <div class="cg_options_order_change_order cg_move_view_to_bottom"><i></i></div>
                 <div class="cg_options_order_change_order cg_move_view_to_top"><i></i></div>
                 <div class='cg_view_options_row'>
-                    <div class='cg_view_option  cg_border_right_none ThumbLookContainer'>
+                    <div class='cg_view_option  cg_view_option_100_percent ThumbLookContainer cg_border_radius_8_px'>
                         <div class='cg_view_option_title'>
                                 <input type="hidden" name="multiple-pics[cg_gallery_ecommerce][general][order][]" value="t" >
-                                <p>Activate <u>Thumb View</u></p>
+                                <p>Activate <u>Masonry View</u></p>
                          </div>
                          <div  class='cg_view_option_checkbox'>
                             <input type="checkbox" name="multiple-pics[cg_gallery_ecommerce][general][ThumbLook]" class="cg_shortcode_checkbox ThumbLook" checked="{$jsonOptions[$GalleryID.'-ec']['general']['ThumbLook']}">
                          </div>
                     </div>
+                </div>
+                <div class='cg_view_options_row cg_hide'>
                     <div class='cg_view_option  cg_border_right_none WidthThumbContainer'>
                         <div class='cg_view_option_title'>
                                 <p>Width thumbs (px)</p>
@@ -609,7 +611,7 @@ HEREDOC;
                          </div>
                     </div>
                 </div>
-                <div class='cg_view_options_row'>
+                <div class='cg_view_options_row cg_hide'>
                     <div class='cg_view_option  cg_view_option_50_percent cg_border_top_right_none DistancePicsContainer'>
                         <div class='cg_view_option_title'>
                                 <p>Distance between thumbs horizontal (px)</p>
@@ -799,11 +801,11 @@ if(!isset($jsonOptions[$GalleryID.'-ec']['pro']['ThirdTitleGalleriesView'])){
 echo <<<HEREDOC
     <div class='cg_view_options_row'>
         <div class='cg_view_option cg_view_option_full_width cg_border_top_none  cg_border_border_bottom_left_radius_8_px  cg_border_border_bottom_right_radius_8_px cg_go_to_target $cgProFalse' data-cg-go-to-target="ThirdTitleGalleriesViewArea">
-            <div class='cg_view_option_title'>
+            <div class='cg_view_option_title '>
                 <p>Third title cg_galleries_ecommerce view</p>
             </div>
             <div class='cg_view_option_input '>
-                <input type="text" name='multiple-pics[cg_gallery_ecommerce][pro][ThirdTitleGalleriesView]' class="ThirdTitleGalleriesView"  value="$ThirdTitleGalleriesView"  >
+                <textarea type="text" name='multiple-pics[cg_gallery_ecommerce][pro][ThirdTitleGalleriesView]' class="ThirdTitleGalleriesView"  rows="5" style="width:100%;"  >$ThirdTitleGalleriesView</textarea>
             </div>
         </div>
     </div>
