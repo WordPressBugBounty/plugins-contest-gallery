@@ -323,19 +323,19 @@ $jsonOptions['pro']['ConsentTikTok'] = $ConsentTikTok;
 
 // will be set only in change-options-and-sizes.php if sent
 if(!empty($MainTitleGalleriesView)){
-    $jsonOptions['pro']['MainTitleGalleriesView'] = $MainTitleGalleriesView;
+	$jsonOptions['pro']['MainTitleGalleriesView'] = $MainTitleGalleriesView;
 }else{
-    $jsonOptions['pro']['MainTitleGalleriesView'] = '';// has to be simply set for other type galleries processing
+	$jsonOptions['pro']['MainTitleGalleriesView'] = '';// has to be simply set for other type galleries processing
 }
 if(!empty($SubTitleGalleriesView)){
-    $jsonOptions['pro']['SubTitleGalleriesView'] = $SubTitleGalleriesView;
+	$jsonOptions['pro']['SubTitleGalleriesView'] = $SubTitleGalleriesView;
 }else{
-    $jsonOptions['pro']['SubTitleGalleriesView'] = '';// has to be simply set for other type galleries processing
+	$jsonOptions['pro']['SubTitleGalleriesView'] = '';// has to be simply set for other type galleries processing
 }
 if(!empty($ThirdTitleGalleriesView)){
-    $jsonOptions['pro']['ThirdTitleGalleriesView'] = $ThirdTitleGalleriesView;
+	$jsonOptions['pro']['ThirdTitleGalleriesView'] = $ThirdTitleGalleriesView;
 }else{
-    $jsonOptions['pro']['ThirdTitleGalleriesView'] = '';// has to be simply set for other type galleries processing
+	$jsonOptions['pro']['ThirdTitleGalleriesView'] = '';// has to be simply set for other type galleries processing
 }
 
 $jsonOptions['pro']['AllowUploadJPG'] = $AllowUploadJPG;

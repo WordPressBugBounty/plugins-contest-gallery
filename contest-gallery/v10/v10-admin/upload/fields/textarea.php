@@ -236,7 +236,7 @@ echo <<<HEREDOC
     </div>    
      <div class='$cgProFalse cg_view_option $cg_disabled_sub_and_third_title cg_view_option_25_percent cg_border_bottom_none cg_border_right_none cg_info_show_gallery_third_title'>
         <div class='cg_view_option_title cg_view_option_title_full_width'>
-            <p>Show as third title in gallery view<br>(only 1 allowed)<br><span class="cg_view_option_title_note"><b>NOTE:</b> modern design, will be displayed under the main title in italic font</span></p>
+            <p>Show as third title (description) in gallery view<br>(only 1 allowed)<br><span class="cg_view_option_title_note"><b>NOTE:</b> perfect to use as description, 20 text rows will be displayed as preview in masonry gallery view</span></p>
         </div>
         <div class="cg_view_option_checkbox">
               <input type="checkbox" name="upload[$id][ThirdTitle]" $checkedThirdTitle>

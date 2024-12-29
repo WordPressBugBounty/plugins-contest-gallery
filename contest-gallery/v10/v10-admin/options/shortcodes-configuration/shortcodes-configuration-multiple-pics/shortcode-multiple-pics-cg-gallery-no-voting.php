@@ -572,15 +572,17 @@ HEREDOC;
             <div class="cg_options_order_change_order cg_move_view_to_bottom"><i></i></div>
                 <div class="cg_options_order_change_order cg_move_view_to_top"><i></i></div>
                 <div class='cg_view_options_row'>
-                    <div class='cg_view_option cg_view_options_and_order_checkbox_container cg_border_right_none ThumbLookContainer cg_border_border_top_left_radius_8_px'>
+                    <div class='cg_view_option  cg_view_option_100_percent ThumbLookContainer cg_border_radius_8_px'>
                         <div class='cg_view_option_title'>
                                 <input type="hidden" name="multiple-pics[cg_gallery_no_voting][general][order][]" value="t" >
-                                <p>Activate <u>Thumb View</u></p>
+                                <p>Activate <u>Masonry View</u></p>
                          </div>
-                         <div  class='cg_view_option_checkbox cg_view_options_and_order_checkbox'>
+                         <div  class='cg_view_option_checkbox'>
                             <input type="checkbox" name="multiple-pics[cg_gallery_no_voting][general][ThumbLook]" class="cg_shortcode_checkbox ThumbLook" checked="{$jsonOptions[$GalleryID.'-nv']['general']['ThumbLook']}">
                          </div>
                     </div>
+                </div>
+                <div class='cg_view_options_row cg_hide'>
                     <div class='cg_view_option cg_border_right_none WidthThumbContainer'>
                         <div class='cg_view_option_title'>
                                 <p>Width thumbs (px)</p>
@@ -598,7 +600,7 @@ HEREDOC;
                          </div>
                     </div>
                 </div>
-                <div class='cg_view_options_row'>
+                <div class='cg_view_options_row cg_hide'>
                     <div class='cg_view_option cg_view_option_50_percent cg_border_top_right_none DistancePicsContainer cg_border_border_bottom_left_radius_8_px'>
                         <div class='cg_view_option_title'>
                                 <p>Distance between thumbs horizontal (px)</p>
@@ -740,6 +742,7 @@ HEREDOC;
     }
 
 }
+
 
 echo <<<HEREDOC
 </div>

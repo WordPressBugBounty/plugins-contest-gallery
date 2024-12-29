@@ -347,6 +347,7 @@ if(!empty($_POST['cg_multiple_files_for_post'])){
 	$queryArgsCounter = 0;
 	$queryArgsArray1 = [];
 
+
 	foreach ($_POST['cg_multiple_files_for_post'] as $id => $fileDataForPost){
 
 		$id = absint($id);
@@ -398,7 +399,6 @@ if(!empty($_POST['cg_multiple_files_for_post'])){
 					// echo "</pre>";
 					// var_dump('$WpUploadFilesForSale');
 					// var_dump($WpUploadFilesForSale);
-
 
 					cg_move_file_ecommerce_sale_folder($id, $GalleryID,$sqlObjectFile,$ecommerceEntry,$WpUploadFilesForSale,$removedWpUploadIdsFromSale);
 

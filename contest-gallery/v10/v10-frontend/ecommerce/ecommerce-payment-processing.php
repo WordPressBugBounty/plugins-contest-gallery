@@ -12,12 +12,14 @@ foreach ($_POST['orderData']['purchase_units'][0]['items'] as $key => $item){
 }
 
 $_POST = cg1l_sanitize_post($_POST);
+
 $SENT_POST = $_POST;
 $SENT_POST['ownKeys'] = [];
 
 $beforeFilter = apply_filters( 'cg_filter_before_ecommerce_payment_processing', $SENT_POST);
 
-/*echo "<pre>";
+/*
+echo "<pre>";
 print_r($_POST);
 echo "<pre>";
 die;*/
@@ -333,7 +335,7 @@ if(true){
 	 //  $wpdb->show_errors(); //setting the Show or Display errors option to true
 	//	var_dump(3344555);
 	   //var_dump('$wpdb-> ORDER print_error();');
-	    //var_dump($wpdb->print_error());
+	// var_dump($wpdb->print_error());
 
 	    $OrderId = $wpdb->insert_id;
     $ParentOrder = $OrderId;

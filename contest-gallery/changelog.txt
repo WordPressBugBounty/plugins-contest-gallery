@@ -1,5 +1,10 @@
 Contest Gallery
 
+= V25.0.0 =
+* NEW: Masonry cards view for frontend. Modern responsive view with modern look.
+* NEW: Thumb view will be converted in masonry view.
+* NEW: Adding long descriptions now possible in masonry view. Check third title (description) for a field in "Edit contact form" area.
+
 = V24.0.9 =
 * FIXED: Apostrophe was visible as html entity in comments section in frontend after page reload.
 

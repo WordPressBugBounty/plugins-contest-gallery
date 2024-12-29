@@ -1,5 +1,4 @@
 <?php
-
 if ($informORnot == 1) {
 
 //echo "Post:";

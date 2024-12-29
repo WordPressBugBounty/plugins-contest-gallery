@@ -47,7 +47,7 @@ if(!function_exists('cg_post_type_parent_gallery_array')){
 			}
 		}
 
-        // old logic for old galleries with ID in title
+		// old logic for old galleries with ID in title
 		$array = [
 			'post_title'=>'Contest Gallery ID '.$GalleryID.$postTitle,
 			'post_type'=>"contest-gallery",

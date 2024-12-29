@@ -61,9 +61,8 @@ if(!$intervalConf['shortcodeIsActive']){
 
     if(!empty($_GET['cgResetPassword'])){
 
-        $cgResetPasswordWpUserID = intval(sanitize_text_field(urldecode($_GET['cgResetPassword'])));
-
-        $wpUserID = $wpdb->get_var("SELECT ID FROM $tablenameWpUsers WHERE ID = '".$cgResetPasswordWpUserID."'");
+	    $cgResetPasswordWpUserID = intval(sanitize_text_field(urldecode($_GET['cgResetPassword'])));
+	    $wpUserID = $wpdb->get_var("SELECT ID FROM $tablenameWpUsers WHERE ID = '".$cgResetPasswordWpUserID."'");
 
 	    if(empty($_GET['cgResetPasswordKey'])){
 		    $cgResetPasswordLinkNotValidAnymore = true;
@@ -78,19 +77,20 @@ if(!$intervalConf['shortcodeIsActive']){
 	    }
 
 		if(!$cgResetPasswordLinkNotValidAnymore){
-        $cgLostPasswordMailTimestamp = intval(get_the_author_meta( 'cgLostPasswordMailTimestamp', $wpUserID ) );
-        if(empty($cgLostPasswordMailTimestamp)){
-            $cgResetPasswordLinkNotValidAnymore = true;
-            $cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
-        }else{
+			$cgLostPasswordMailTimestamp = intval(get_the_author_meta( 'cgLostPasswordMailTimestamp', $wpUserID ) );
+
+			if(empty($cgLostPasswordMailTimestamp)){
+				$cgResetPasswordLinkNotValidAnymore = true;
+				$cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
+			}else{
 				if($cgLostPasswordMailTimestamp+(60*10)<time()){// 10 minutes valid
-                $cgResetPasswordLinkNotValidAnymore = true;
-                $cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
-            }else{
-                $cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
-                include(__DIR__.'/forms/users-login-form-reset-password.php');
-            }
-        }
+					$cgResetPasswordLinkNotValidAnymore = true;
+					$cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
+				}else{
+					$cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
+					include(__DIR__.'/forms/users-login-form-reset-password.php');
+				}
+			}
 		}
 
     }

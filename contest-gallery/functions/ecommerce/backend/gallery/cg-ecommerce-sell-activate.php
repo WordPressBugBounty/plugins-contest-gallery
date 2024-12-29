@@ -11,7 +11,7 @@ if(!function_exists('cg_ecommerce_sale_activate')){
         print_r($_POST);
         echo "</pre>";*/
 
-        if(!empty($_FILES['cgSellContainer']) && !empty($_FILES['cgSellContainer']['name']) && (!empty($_FILES['cgSellContainer']['name']['ServiceKey']) || !empty($_FILES['cgSellContainer']['name']['DownloadKey']))){
+	    if(!empty($_FILES['cgSellContainer']) && !empty($_FILES['cgSellContainer']['name']) && (!empty($_FILES['cgSellContainer']['name']['ServiceKey']) || !empty($_FILES['cgSellContainer']['name']['DownloadKey']))){
 
             if(!empty($_FILES['cgSellContainer']['name']['ServiceKey']['type']) &&  $_FILES['cgSellContainer']['name']['ServiceKey']['type']!='text/csv'){
                 echo 'not allowed download key file type';
@@ -148,7 +148,6 @@ HEREDOC;
         print_r($_POST['cgSellContainer']);
         echo "</pre>";*/
 
-
         $sqlObjectFile = $wpdb->get_row("SELECT * FROM $tablename WHERE id = '$realId'");
 
         $IsShipping = false;
@@ -168,7 +167,7 @@ HEREDOC;
 
 	    $AllUploadsUsedText = (!empty(trim($_POST['cgSellContainer']['AllUploadsUsedText']))) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['cgSellContainer']['AllUploadsUsedText']) : '';
 
-        if($IsDownload){
+	    if($IsDownload){
             cg_move_file_ecommerce_sale_folder($realId, $GalleryID,$sqlObjectFile,$sqlObjectFileEcommerceEntry);
         }
         // update of set values can be done even if activated or deactivated

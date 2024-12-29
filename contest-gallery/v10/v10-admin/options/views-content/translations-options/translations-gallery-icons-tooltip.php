@@ -89,30 +89,10 @@ echo <<<HEREDOC
          <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
-                        <p>$language_HeightView$cgShortcodeCopy</p>
+                        <p>$language_MasonryView$cgShortcodeCopy</p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" name="translations[$l_HeightView]" maxlength="100" value="$translations[$l_HeightView]">
-                    </div>
-                </div>
-        </div>
-         <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
-                    <div class='cg_view_option_title'>
-                        <p>$language_ThumbView$cgShortcodeCopy</p>
-                    </div>
-                    <div class='cg_view_option_input'>
-                        <input type="text" name="translations[$l_ThumbView]" maxlength="100" value="$translations[$l_ThumbView]">
-                    </div>
-                </div>
-        </div>
-         <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
-                    <div class='cg_view_option_title'>
-                        <p>$language_RowView$cgShortcodeCopy</p>
-                    </div>
-                    <div class='cg_view_option_input'>
-                        <input type="text" name="translations[$l_RowView]" maxlength="100" value="$translations[$l_RowView]">
+                        <input type="text" name="translations[$l_MasonryView]" maxlength="100" value="$translations[$l_MasonryView]">
                     </div>
                 </div>
         </div>

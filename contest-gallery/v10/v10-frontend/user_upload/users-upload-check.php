@@ -1374,9 +1374,7 @@ if(!$isManipulated){
 	                        $newImagesPermalinksArray[$nextId] = cg_get_guid($WpPages['WpPage'],$domain,$CgEntriesOwnSlugName,$cgVersion);
                         }
                     }
-
                 }
-
 
                 if(is_user_logged_in()==true){
                     $userData = $wpdb->get_row("SELECT user_email FROM $wpUsers WHERE ID = $WpUserId");

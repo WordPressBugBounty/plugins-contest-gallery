@@ -86,18 +86,18 @@ $dirImageComments = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$ga
 	                    var_dump($insert_id_to_delete);
 	                    echo "<br>";*/
 
-                        // if old comment then still might be in the database, this why delete
-                        $deleteQuery = 'DELETE FROM ' . $tablename_comments . ' WHERE';
-                        $deleteQuery .= ' id = %d';
+	                    // if old comment then still might be in the database, this why delete
+	                    $deleteQuery = 'DELETE FROM ' . $tablename_comments . ' WHERE';
+	                    $deleteQuery .= ' id = %d';
 
-                        $deleteParameters = '';
+	                    $deleteParameters = '';
 	                    $deleteParameters .= $insert_id_to_delete;
-                        $wpdb->query( $wpdb->prepare(
-                            "
+	                    $wpdb->query( $wpdb->prepare(
+		                    "
                                 $deleteQuery
                             ",
-                                $deleteParameters
-                        ));
+		                    $deleteParameters
+	                    ));
 
 	                    /*
 						var_dump('$deleteQuery');
@@ -112,7 +112,7 @@ $dirImageComments = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$ga
 
                     }
 
-                        unset($commentsArray[$commentId]);
+	                unset($commentsArray[$commentId]);
                         $fileImageComment = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryNR.'/json/image-comments/ids/'.$pid.'/'.$commentId.'.json';
                         if(file_exists($fileImageComment)){
                             unlink($fileImageComment);
@@ -148,7 +148,6 @@ $dirImageComments = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$ga
 
                         $fileImageCommentArray[key($fileImageCommentArray)]['Active'] = 1;
                         if(empty($fileImageCommentArray[key($fileImageCommentArray)]['ReviewTstamp'])){
-
                             $fileImageCommentArray[key($fileImageCommentArray)]['ReviewTstamp'] = $unix;
                             $commentsArray[$commentId]['ReviewTstamp'] = $unix;
                             $countCtoReview--;
@@ -224,7 +223,7 @@ $dirImageComments = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$ga
 
 		echo "<br>";*/
 
-            $fileImageCommentsDirCount = 0;
+		$fileImageCommentsDirCount = 0;
 
             if(is_dir($fileImageCommentsDir)){
                 $fileImageCommentsDirCount = count(glob($fileImageCommentsDir.'/*.json'));
@@ -423,7 +422,7 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
 	                $blockquote = cg_get_blockquote_from_post_content($post_description);
 	                echo '<div id="cgCommentsImageVisualContent">';
 	                    echo '<div class="cg_backend_image cg_backend_image_tkt"  id="cg_backend_image_tkt'.$pid.'"></div>';
-                    echo "</div>";
+	                echo "</div>";
 	                ?>
 	                <script  data-cg-processing="true">
                         cg_tiktok_blockquotes = {};
@@ -524,8 +523,8 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
 		                  }
 		                  $collectWpUserIdsArray[] = $commentEntry->WpUserId;
 	                  }
+                  }
               }
-          }
           }
 
           $wpNickNamesArray = [];
@@ -558,8 +557,6 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
 
         echo "<div id='cgShowComments' class='cg_border_top_none' >";
 
-
-
 		foreach($select_comments_array as $key => $value){
             if(!empty($value['insert_id']) && !empty($collectInsertIdsWithWpUserIdsAndIps[$value['insert_id']])){
 	            $value['userIP'] = $collectInsertIdsWithWpUserIdsAndIps[$value['insert_id']]['IP'];
@@ -574,15 +571,15 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
         print_r($select_comments_array);
 	      echo "</pre>";*/
 
-		foreach($select_comments_array as $key => $value){
+      foreach($select_comments_array as $key => $value){
 	//	$id = $value->id;
         /*if(empty($value['id'])){
 	        $id = $value['insert_id'];
         }else{
         }*/
 
-		$id = $value['id'];
-	//	$pid = $value->pid;
+	      $id = $value['id'];
+      //	$pid = $value->pid;
 
 	//	$id = $value->id;
 	//	$pid = $value->pid;
@@ -668,9 +665,7 @@ echo "</div>";
 		echo "</div>";
             echo '</form>';
 
-        }
-
-		else{
+        }else{
 		echo "<div style='box-shadow: 2px 4px 12px rgba(0,0,0,.08);border-radius: 8px;box-sizing:border-box;width:100%;padding:20px;background-color:#fff;margin-bottom:0px !important;margin-bottom:0;text-align:center;'>";
 		echo "<p style=\"font-size: 16px;\"><b>No comments for this entry</b></p>";
 		echo "</div>";

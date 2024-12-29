@@ -28,13 +28,11 @@ if(!function_exists('contest_gal1ery_frontend_gallery_user_images')){
 
         $wp_upload_dir = wp_upload_dir();
         $optionsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/'.$galeryID.'-options.json';
-
         if(file_exists($optionsFile)){
             $options = json_decode(file_get_contents($optionsFile),true);
             include(__DIR__.'/../v10/include-scripts-v10.php');
 
-        }
-        else{
+        } else{
 
             $usedShortcode = 'cg_gallery_user';
 

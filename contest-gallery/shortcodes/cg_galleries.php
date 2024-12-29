@@ -13,13 +13,13 @@ if(!function_exists('cg_load_galleries_shortcode')){
 	    $galleriesIds = [];
 	    $is_from_single_view_for_cg_galleries = 0;
 	    $hasGalleriesIds = false;
-        if(!empty($atts['ids'])){
-            $galleriesIds = explode(',',$atts['ids']);
-            $hasGalleriesIds = true;
-        }else if(!empty($atts['id'])){
-            $galleriesIds = explode(',',$atts['id']);
-            $hasGalleriesIds = true;
-        }
+	    if(!empty($atts['ids'])){
+		    $galleriesIds = explode(',',$atts['ids']);
+		    $hasGalleriesIds = true;
+	    }else if(!empty($atts['id'])){
+		    $galleriesIds = explode(',',$atts['id']);
+		    $hasGalleriesIds = true;
+	    }
 
 	    if(!empty($_GET['cg_gallery_id'])){
 		    $galeryID = intval($_GET['cg_gallery_id']);
@@ -37,9 +37,9 @@ if(!function_exists('cg_load_galleries_shortcode')){
 	    $optionsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/'.$galeryID.'-options.json';
 
 	    if(file_exists($optionsFile)){
-            if($shortcode_name=='cg_gallery_ecommerce'){
-                $isReallyGalleryEcommerce = true;
-            }
+			if($shortcode_name=='cg_gallery_ecommerce'){
+				$isReallyGalleryEcommerce = true;
+			}
 		    $options = json_decode(file_get_contents($optionsFile),true);
 		    include(__DIR__.'/../v10/include-scripts-v10.php');
 	    }else{

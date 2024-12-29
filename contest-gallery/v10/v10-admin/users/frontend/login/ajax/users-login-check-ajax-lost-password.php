@@ -35,12 +35,12 @@ if(true){
 	    //$cgLostPasswordSiteUrl = cg_get_blog_option( get_current_blog_id(),'cgLostPasswordPermalink');
 	    $cgLostPasswordSiteUrl = wp_get_referer();
 
-        $LostPasswordMailAddressor = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailAddressor);
+	    $LostPasswordMailAddressor = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailAddressor);
         $LostPasswordMailReply = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailReply);
         $LostPasswordMailSubject = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailSubject);
         $LostPasswordMailConfirmation = contest_gal1ery_convert_for_html_output($registryAndLoginOptions->LostPasswordMailConfirmation);
 
-        $headers = array();
+	    $headers = array();
         $headers[] = "From: " . html_entity_decode(strip_tags($LostPasswordMailAddressor)) . " <" . strip_tags($LostPasswordMailReply) . ">";
         $headers[] = "Reply-To: " . strip_tags($LostPasswordMailReply) . "";
         $headers[] = "MIME-Version: 1.0";
@@ -91,7 +91,7 @@ if(true){
         }
 
     }else{
-        ?>
+	    ?>
         <script data-cg-processing="true"  data-cg-processing-success="true">
             var mainCGdivLostPasswordContainer = document.getElementById('mainCGdivLostPasswordContainer');
             mainCGdivLostPasswordContainer.classList.add('cg_hide');

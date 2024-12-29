@@ -69,15 +69,17 @@ __('Show all categories');$l_ShowAllCategories = "Show all categories"; $languag
 
 __('Show less categories');$l_ShowLessCategories = "Show less categories"; $language_ShowLessCategories = (!empty($translations[$l_ShowLessCategories]) && $is_frontend) ? $translations[$l_ShowLessCategories] : ((empty(trim(__($l_ShowLessCategories,$domain)))) ? __($l_ShowLessCategories,$domainDefault) : __($l_ShowLessCategories,$domain)); if(empty($translations[$l_ShowLessCategories])){$translations[$l_ShowLessCategories]='';}
 
-__('Height view');$l_HeightView = "Height view"; $language_HeightView = (!empty($translations[$l_HeightView]) && $is_frontend) ? $translations[$l_HeightView] : ((empty(trim(__($l_HeightView,$domain)))) ? __($l_HeightView,$domainDefault) : __($l_HeightView,$domain)); if(empty($translations[$l_HeightView])){$translations[$l_HeightView]='';}
-
-__('Thumb view');$l_ThumbView = "Thumb view"; $language_ThumbView = (!empty($translations[$l_ThumbView]) && $is_frontend) ? $translations[$l_ThumbView] : ((empty(trim(__($l_ThumbView,$domain)))) ? __($l_ThumbView,$domainDefault) : __($l_ThumbView,$domain)); if(empty($translations[$l_ThumbView])){$translations[$l_ThumbView]='';}
-
-__('Row view');$l_RowView = "Row view"; $language_RowView = (!empty($translations[$l_RowView]) && $is_frontend) ? $translations[$l_RowView] : ((empty(trim(__($l_RowView,$domain)))) ? __($l_RowView,$domainDefault) : __($l_RowView,$domain)); if(empty($translations[$l_RowView])){$translations[$l_RowView]='';}
+__('Masonry');$l_MasonryView = "Masonry"; $language_MasonryView = (!empty($translations[$l_MasonryView]) && $is_frontend) ? $translations[$l_MasonryView] : ((empty(trim(__($l_MasonryView,$domain)))) ? __($l_MasonryView,$domainDefault) : __($l_MasonryView,$domain)); if(empty($translations[$l_MasonryView])){$translations[$l_MasonryView]='';}
 
 __('Slider view');$l_SliderView = "Slider view"; $language_SliderView = (!empty($translations[$l_SliderView]) && $is_frontend) ? $translations[$l_SliderView] : ((empty(trim(__($l_SliderView,$domain)))) ? __($l_SliderView,$domainDefault) : __($l_SliderView,$domain)); if(empty($translations[$l_SliderView])){$translations[$l_SliderView]='';}
 
 __('Blog view');$l_BlogView = "Blog view"; $language_BlogView = (!empty($translations[$l_BlogView]) && $is_frontend) ? $translations[$l_BlogView] : ((empty(trim(__($l_BlogView,$domain)))) ? __($l_BlogView,$domainDefault) : __($l_BlogView,$domain)); if(empty($translations[$l_BlogView])){$translations[$l_BlogView]='';}
+
+__('Thumb view');$l_ThumbView = "Thumb view"; $language_ThumbView = (!empty($translations[$l_ThumbView]) && $is_frontend) ? $translations[$l_ThumbView] : ((empty(trim(__($l_ThumbView,$domain)))) ? __($l_ThumbView,$domainDefault) : __($l_ThumbView,$domain)); if(empty($translations[$l_ThumbView])){$translations[$l_ThumbView]='';}
+
+__('Height view');$l_HeightView = "Height view"; $language_HeightView = (!empty($translations[$l_HeightView]) && $is_frontend) ? $translations[$l_HeightView] : ((empty(trim(__($l_HeightView,$domain)))) ? __($l_HeightView,$domainDefault) : __($l_HeightView,$domain)); if(empty($translations[$l_HeightView])){$translations[$l_HeightView]='';}
+
+__('Row view');$l_RowView = "Row view"; $language_RowView = (!empty($translations[$l_RowView]) && $is_frontend) ? $translations[$l_RowView] : ((empty(trim(__($l_RowView,$domain)))) ? __($l_RowView,$domainDefault) : __($l_RowView,$domain)); if(empty($translations[$l_RowView])){$translations[$l_RowView]='';}
 
 __('Dark style');$l_DarkStyle = "Dark style"; $language_DarkStyle = (!empty($translations[$l_DarkStyle]) && $is_frontend) ? $translations[$l_DarkStyle] : ((empty(trim(__($l_DarkStyle,$domain)))) ? __($l_DarkStyle,$domainDefault) : __($l_DarkStyle,$domain)); if(empty($translations[$l_DarkStyle])){$translations[$l_DarkStyle]='';}
 

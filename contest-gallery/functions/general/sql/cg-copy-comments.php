@@ -12,7 +12,7 @@ if(!function_exists('cg_copy_comments')){
             if($cg_copy_start==0){
                 $query = "INSERT INTO $tablename_comments
     SELECT NULL, pid, $nextGalleryID, Name, Date, Comment, Timestamp, IP, WpUserId, ReviewTstamp, Active
-    FROM $tablename_comments
+    FROM $tablename_comments 
     WHERE GalleryID IN ($oldGalleryID)";
                 $wpdb->query($query);
             }
@@ -31,7 +31,7 @@ if(!function_exists('cg_copy_comments')){
 
 	        $all_insert_ids = $wpdb->get_results("SELECT id, Timestamp FROM $tablename_comments WHERE GalleryID = '$nextGalleryID'");
 
-            // image files first, because must be newer, released in 16.0.0
+	        // image files first, because must be newer, released in 16.0.0
             if(is_dir($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$oldGalleryID.'/json/image-comments/ids')){
                 if(!is_dir($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$nextGalleryID.'/json/image-comments/ids')){
                     mkdir($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$nextGalleryID.'/json/image-comments/ids',0755,true);
@@ -49,7 +49,7 @@ if(!function_exists('cg_copy_comments')){
                                 $fileImageCommentDirFileContent = json_decode(file_get_contents($fileImageCommentDirFile));
                                 $randomAdder = md5(uniqid('cg-comment'));
                                 $newCommentId = $time.'-'.substr($randomAdder,0,6);
-                                    $imageCommentNewArray = array();
+	                            $imageCommentNewArray = array();
 	                            foreach ($fileImageCommentDirFileContent as $fileImageCommentDirFileKey => $fileImageCommentDirFileValue){
                                     $imageCommentNewArray[$newCommentId] = array();
                                     $imageCommentNewArray[$newCommentId]['date'] = date("Y/m/d, G:i",$fileImageCommentDirFileValue->timestamp);

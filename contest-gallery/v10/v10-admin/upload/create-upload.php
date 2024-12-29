@@ -11,14 +11,14 @@ if (is_multisite()) {
     if(floatval($dbGalleryVersion)>=24){
 	    $CgEntriesOwnSlugName = cg_get_blog_option( get_current_blog_id(),'CgEntriesOwnSlugNameGalleries');
     }else{
-	$CgEntriesOwnSlugName = cg_get_blog_option( get_current_blog_id(),'CgEntriesOwnSlugName');
+	    $CgEntriesOwnSlugName = cg_get_blog_option( get_current_blog_id(),'CgEntriesOwnSlugName');
     }
 }else{
     if(floatval($dbGalleryVersion)>=24){
 	    $CgEntriesOwnSlugName = get_option('CgEntriesOwnSlugNameGalleries');
-}else{
-	$CgEntriesOwnSlugName = get_option('CgEntriesOwnSlugName');
-}
+    }else{
+	    $CgEntriesOwnSlugName = get_option('CgEntriesOwnSlugName');
+    }
 }
 if(empty($CgEntriesOwnSlugName)){$CgEntriesOwnSlugName='contest-gallery';}
 $bloginfo_wpurl = get_bloginfo('wpurl');
@@ -66,7 +66,6 @@ echo '</select>';
 
 
 echo '<div id="cg_main_options" style="margin-top: 0;box-shadow: unset;" class="cg_main_options">';
-
 
 echo '<div id="cgUploadFieldsSelect">';
 echo '<p class="cg_edit_form_options_label">Contact form</p>';

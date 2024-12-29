@@ -8,6 +8,8 @@ wp_enqueue_script( 'jquery-ui-sortable' );
 
     wp_enqueue_style( 'cg_v10_css_cg_gallery', plugins_url('/v10-css-min/cg_gallery.min.css', __FILE__), false, cg_get_version_for_scripts() );
     
+    wp_enqueue_script( 'cg_v10_js_masonry', plugins_url( '/v10-js/libs/masonry.pkgd.min.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts());
+
     wp_enqueue_script( 'cg_v10_js_cg_gallery', plugins_url( '/v10-js-min/cg_gallery.min.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts());
 
 // Achtung! Nicht von hier verschieben und die Reihenfolge beachten. Wp_enque kommt for wp_localize

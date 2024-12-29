@@ -10,7 +10,7 @@ HEREDOC;
 
 echo <<<HEREDOC
 <p class="cg_view_options_rows_container_title">
-    <strong>NOTE:</strong> General options are valid for all galleries.<br>
+    <strong>NOTE:</strong> Galleries options are valid for all galleries.<br>
 </p>
 HEREDOC;
 
@@ -21,7 +21,7 @@ if($galleryDbVersion<21){
     echo <<<HEREDOC
 <p class="cg_view_options_rows_container_title">
     <strong style="color:red;">NOTE:</strong> 
-    General options are only available for galleries created or copied in version 21.0.0 and higher.
+    Galleries options are only available for galleries created or copied in version 21.0.0 and higher.
     <br>Copy this gallery or create a new one to release the full potential of plugin.<br>
     Real Custom Post Type pages with URLs behind the entries will be available and improved gallery frontend look.<br>
     Further Gallery and Entry options will get visible.

@@ -20,15 +20,15 @@ $cgResetPasswordWpUserID = absint(sanitize_text_field($_REQUEST['cgResetPassword
 $cgWpData = $wpdb->get_row("SELECT ID, user_login, user_pass FROM $tablenameWpUsers WHERE ID = '".$cgResetPasswordWpUserID."'");
 
 if(empty($cgWpData)){
-    ?>
+	?>
     <script data-cg-processing="true">
         var cg_language_LostPasswordUrlIsNotValidAnymore = document.getElementById("cg_language_LostPasswordUrlIsNotValidAnymore").value;
         var cgLostPasswordUrlIsNotValidAnymore = document.getElementById('cgLostPasswordUrlIsNotValidAnymore');
         cgLostPasswordUrlIsNotValidAnymore.innerHTML = cg_language_LostPasswordUrlIsNotValidAnymore;
         cgLostPasswordUrlIsNotValidAnymore.classList.remove('cg_hide');
     </script>
-    <?php
-    return;
+	<?php
+	return;
 }
 
 $wpUserID = $cgWpData->ID;
@@ -51,15 +51,15 @@ if(empty($cgResetPasswordKeyAuthor) || $cgResetPasswordKey !== $cgResetPasswordK
 $cgLostPasswordMailTimestamp = intval(get_the_author_meta( 'cgLostPasswordMailTimestamp', $wpUserID) );
 
 if(empty($cgLostPasswordMailTimestamp) || $cgLostPasswordMailTimestamp+(60*10)<time()){// 10 minutes valid
-    ?>
+	?>
     <script data-cg-processing="true">
         var cg_language_LostPasswordUrlIsNotValidAnymore = document.getElementById("cg_language_LostPasswordUrlIsNotValidAnymore").value;
         var cgLostPasswordUrlIsNotValidAnymore = document.getElementById('cgLostPasswordUrlIsNotValidAnymore');
         cgLostPasswordUrlIsNotValidAnymore.innerHTML = cg_language_LostPasswordUrlIsNotValidAnymore;
         cgLostPasswordUrlIsNotValidAnymore.classList.remove('cg_hide');
     </script>
-    <?php
-    return;
+	<?php
+	return;
 }
 
 //$cgLostPasswordCurrent = sanitize_text_field($_REQUEST['cgLostPasswordCurrent']);
@@ -92,34 +92,33 @@ if(strlen($cgLostPasswordNew)>$passwordField->Max_Char){
 	return;
 }
 
-
-/*require_once(ABSPATH ."wp-load.php");
+/*
+require_once(ABSPATH ."wp-load.php");
 $cgCheckPw = (wp_check_password($cgLostPasswordCurrent, $cgWpData->user_pass));
 
 if($cgCheckPw==false){
-    ?>
+	?>
     <script data-cg-processing="true">
         var cg_language_LoginAndPasswordDoNotMatch = document.getElementById("cg_language_LoginAndPasswordDoNotMatch").value;
         var cgLostPasswordCurrentValidationMessage = document.getElementById('cgLostPasswordCurrentValidationMessage');
         cgLostPasswordCurrentValidationMessage.innerHTML = cg_language_LoginAndPasswordDoNotMatch;
         cgLostPasswordCurrentValidationMessage.classList.remove('cg_hide');
     </script>
-    <?php
-    return;
+	<?php
+	return;
 }*/
 
 if($cgLostPasswordNew!=$cgLostPasswordNewRepeat){
-        ?>
-        <script data-cg-processing="true">
+    ?>
+    <script data-cg-processing="true">
         var cg_language_PasswordsDoNotMatch = document.getElementById("cg_language_PasswordsDoNotMatch").value;
         var cgLostPasswordPasswordsDoNotMatch = document.getElementById('cgLostPasswordPasswordsDoNotMatch');
         cgLostPasswordPasswordsDoNotMatch.innerHTML = cg_language_PasswordsDoNotMatch;
         cgLostPasswordPasswordsDoNotMatch.classList.remove('cg_hide');
-        </script>
-        <?php
-        return;
+    </script>
+    <?php
+    return;
 }
-
 
         $user_pass = wp_hash_password($cgLostPasswordNew);
 

@@ -127,7 +127,8 @@ if($isAjaxCall){
 	echo "<input type='hidden' name='changeGalery' value='changeGalery'>";
 
 
-	echo "<ul id='cgSortable' >";
+
+	echo "<ul id='cgSortable'>";
 	?>
     <script  data-cg-processing="true">
         cg_embed_post_titles = {};
@@ -333,7 +334,6 @@ if($isAjaxCall){
 			$MultipleFilesUnserialized = unserialize($value->MultipleFiles);
 			if(!empty($MultipleFilesUnserialized)){//check for sure if really exists and unserialize went right, because might happen that "" was in database from earlier versions
 				$MultipleFiles = $MultipleFilesUnserialized;
-
 				foreach ($MultipleFiles as $MultipleFileKey => $MultipleFile){
 					if(empty($allWpPostsByWpUploadIdArray[$MultipleFile['WpUpload']])){
 						$MultipleFiles[$MultipleFileKey]['WpUploadRemoved'] = true;
@@ -436,7 +436,6 @@ if($isAjaxCall){
 			}
 
 		}
-
 		$emailStatus = false;
 
 		if(!$rating){$rating=0;}
@@ -626,7 +625,6 @@ if($isAjaxCall){
 			echo '<div style="padding-top:2px;position: relative;margin-bottom: 10px;text-align:center;" class="'.$ytbHintInfo.'"><span class="cg-info-icon" >info</span>
     <span class="cg-info-container cg-info-container-gallery-user" style="top: 34px; margin-left: -132px; display: none;">cg_gallery_ecommerce and "Sell settings"<br>are not available for '.$ytbHintText.' entries</span>
     </div>';
-
 			echo '</div></div>';
 		}
 
@@ -731,7 +729,7 @@ if($isAjaxCall){
 		}
 
 
-		// hidden inputs zur bestimmung der Reihenfolge ENDE
+        // hidden inputs zur bestimmung der Reihenfolge ENDE
 
 		// ------ Bild wird mittig und passend zum Div angezeigt
 
@@ -806,7 +804,6 @@ if($isAjaxCall){
 				$imgSrcLarge=$imgSrcLarge[0];
 			}
 		}
-
 		// ----------- Ermitteln der Sprache des Blogs, um das Upload Datum in richtiger schreibweise anzuzeigen
 
 		//$uploadTime = date('d-M-Y H:i', $value->Timestamp);
@@ -1029,7 +1026,6 @@ if($isAjaxCall){
 		echo "<input type='hidden' class='IsAlternativeShipping' value='$IsAlternativeShipping'>";
 		echo "<input type='hidden' class='imgSrcFullWidth' value='$imgSrcFullWidth'>";
 		echo "<input type='hidden' class='imgSrcFullHeight' value='$imgSrcFullHeight'>";
-
 		echo '<div class="cg_backend_image_full_size_target '.$cg_ecom_video.'" data-file-type="'.$ImgTypeToShow.'"  data-name-pic="'.$NamePicToShow.'" data-original-src="'.$sourceOriginalImgShow.'" >';
 
 		if(empty($allWpPostsByWpUploadIdArray[$WpUpload]) && $ImgTypeToShow!='con'){
@@ -1098,14 +1094,14 @@ if($isAjaxCall){
 		echo '<div class="cg_display_flex cg_rotate_info cg_hide" style="align-items: center;margin-bottom: 15px;">';
             echo '<div class="cg_backend_info_upload_date_container cg_backend_rotate_css_based " style="pointer-events: none;">';
             echo "<div class=\"cg_image_action_href\" style=\"/* float:right; */width: 131px;margin: 15px auto 5px;\"><div class=\"\" style=\"
-        width: 121px; text-align: center;\"><b>NOTE:</b> Image rotation is CSS based. The original image source will not be rotated.</div>";
-		echo '</div>';
-		echo '</div>';
-		echo '<div class="cg_backend_info_upload_date_container cg_backend_save_changes cg_hide">';
-		echo "<div class=\"cg_image_action_href cg_go_to_save_button\" style=\"/* float:right; */width: 131px;margin: 15px auto 5px;\"><div class=\"cg_image_action_span\" style=\"
-        width: 121px; text-align: center;\">Save changes</div>";
-		echo '</div>';
-		echo '</div>';
+            width: 121px; text-align: center;\"><b>NOTE:</b> Image rotation is CSS based. The original image source will not be rotated.</div>";
+            echo '</div>';
+            echo '</div>';
+            echo '<div class="cg_backend_info_upload_date_container cg_backend_save_changes cg_hide">';
+            echo "<div class=\"cg_image_action_href cg_go_to_save_button\" style=\"/* float:right; */width: 131px;margin: 15px auto 5px;\"><div class=\"cg_image_action_span\" style=\"
+            width: 121px; text-align: center;\">Save changes</div>";
+            echo '</div>';
+            echo '</div>';
 		echo "</div>";
 
 		### cg_display_flex open ###
@@ -1450,8 +1446,7 @@ if($isAjaxCall){
 			echo '</div>';
 
 
-		}
-		else if($AllowRating==2){
+		}else if($AllowRating==2){
 
 			$countS = $wpdb->get_var( $wpdb->prepare(
 				"
@@ -1506,7 +1501,6 @@ if($isAjaxCall){
 				$cg_hide = ($addCountS>=1) ? '' : 'cg_hide';
 				echo "<div class='cg_rating_value_countR_additional_votes $cg_hide'>".$addCountS."</div>";
 			}
-
 			echo '</div>';
 
 			echo "<div class='cg-show-votes'><a class='cg_image_action_href cg_load_backend_link' href='?page=".cg_get_version()."/index.php&image_id=$id&show_votes=true&option_id=$GalleryID'><div class='cg_image_action_span' style='width: 100px;text-align: center;margin-left: auto;margin-right: auto;'>Show votes</div></a></div>";
@@ -1582,7 +1576,6 @@ if($isAjaxCall){
 			echo "</div>";
 			echo "</div>";
 
-
 		}
 
 		if($CountC>0 || true){ echo "<div class='cg_comments' ><a class=\"cg_image_action_href cg_load_backend_link\" href=\"?page=".cg_get_version()."/index.php&option_id=$GalleryID&show_comments=true&id=$id\"><div class=\"cg_image_action_span cg_image_action_comments\" style='font-size:14px;width:100px;text-align:center;'>Comments: <b>$CountC</b><br><span style='font-size: 12px;'>To review: <b>$CountCtoReview</b></span></div></a></div>"; }
@@ -1591,11 +1584,11 @@ if($isAjaxCall){
 		### cg_voting_column ###
 		echo '</div>';
         ### cg_display_flex close ###
-				echo '</div>';
+		echo '</div>';
 
         echo "<div style='padding-top: 10px; border-top: thin solid #dedede;margin-top: auto;'><a class=\"cg_move_to_another_gallery cg_image_action_href\" href=\"?page=".cg_get_version()."/index.php&option_id=$GalleryID&show_comments=true&id=$id\"><div class=\"cg_image_action_span\" style='font-size:14px;width: fit-content;text-align:center;margin: 0 auto;padding: 5px 10px;'>Move to another gallery</div></a></div>";
 
-		echo "</div>";
+	    echo "</div>";
 
 		echo "<div class='cg_fields_div'>";
 
@@ -1833,7 +1826,7 @@ if($isAjaxCall){
 
 							$emailStatusText = 'Confirmed (registered user)';
 							$mailReadonly = "readonly";
-							$registeredUserMail = "(registered user email)";
+							$registeredUserMail = " (registered user email)";
 						}
 						else{
 
@@ -1859,8 +1852,8 @@ if($isAjaxCall){
 
 						$formvalue = html_entity_decode(stripslashes($formvalue));
 
-						echo "<div >";
-						echo "$formvalue $registeredUserMail:<br/>";
+						echo "<div>";
+						echo "$formvalue$registeredUserMail:<br/>";
 						echo "<input type='text' value='$getEntriesMail' class='email cg_short_text cg_input_by_search_sort_$formFieldId'  maxlength='1000' $mailReadonly >";
 						echo "</div>";
 
@@ -2159,6 +2152,7 @@ if($isAjaxCall){
 		}
 
 		echo "</div>";
+
 
 		echo "</li>";
 

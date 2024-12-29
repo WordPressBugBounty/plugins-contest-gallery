@@ -212,7 +212,7 @@ HEREDOC;
                         </div>
                 </div>
             </div>
-</div>
+</div> 
 HEREDOC;
 $cgContactFormShortcodeConfigurationAreaLinkPart = '?page='.cg_get_version().'/index.php&edit_options=true&cg_go_to=cgContactFormShortcodeConfigurationArea';
 echo <<<HEREDOC

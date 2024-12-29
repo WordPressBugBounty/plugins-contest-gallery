@@ -141,7 +141,7 @@ if ($_POST['contest_gal1ery_create_zip']==true or ($_POST['chooseAction1'] == 4 
 
         $selectSQLall = $wpdb->get_results( "SELECT * FROM $tablename WHERE GalleryID = '$GalleryID' AND WpUpload>0 AND NOT (ImgType = 'ytb' OR ImgType = 'inst' OR ImgType = 'tkt' OR ImgType = 'twt')");
 
-        foreach($selectSQLall as $value){
+	    foreach($selectSQLall as $value){
                 if(!empty($value->MultipleFiles) && $value->MultipleFiles!='""'){
                     $MultipleFilesUnserialized = unserialize($value->MultipleFiles);
                     if(!empty($MultipleFilesUnserialized)){//check for sure if really exists and unserialize went right, because might happen that "" was in database from earlier versions
@@ -186,6 +186,7 @@ if ($_POST['contest_gal1ery_create_zip']==true or ($_POST['chooseAction1'] == 4 
                     }
 
                     $check = explode($baseurl,$image_url);
+
                     $dl_image_original = $pfad.$check[1];
 
                     $allPics[] = $dl_image_original;

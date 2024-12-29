@@ -4,7 +4,6 @@ if(!function_exists('contest_gal1ery_frontend_gallery')){
     function contest_gal1ery_frontend_gallery($atts){
 
         // PLUGIN VERSION CHECK HERE
-
         contest_gal1ery_db_check();
 
         if(is_admin()){
@@ -34,6 +33,7 @@ if(!function_exists('contest_gal1ery_frontend_gallery')){
             include(__DIR__.'/../v10/include-scripts-v10.php');
         }
         else{
+
             $usedShortcode = 'cg_gallery';
             include(__DIR__.'/../prev10/information.php');
         }

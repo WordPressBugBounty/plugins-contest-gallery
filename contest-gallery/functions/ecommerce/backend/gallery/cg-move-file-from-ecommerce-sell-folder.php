@@ -129,7 +129,6 @@ if(!function_exists('cg_move_file_from_ecommerce_sale_folder')){
 	        //contest-gallery-pro-replaced-3dir-replaced-31lala
 	        //contest-gallery-pro-replaced-3dir-replaced-31lala-replaced
 	        $isRenameSuccess = true;
-
 	        if(file_exists($ecommerceFileFolderWpUploadFolder.'/'.$filename)){
 		        // this processing (when a file will be replaced with file with same name) not for images so far!!! images always new name will be created. Because WordPress creates for images always new link (not like for other file types) despite same name uploaded.
 		        if(file_exists($wp_upload_dir_of_file.'/'.$filename) && empty($WpUploadFilePostMeta['_wp_attachment_metadata']['sizes'])){
@@ -187,7 +186,7 @@ if(!function_exists('cg_move_file_from_ecommerce_sale_folder')){
 			        ///             $WpMetaAttachedFiles = $wpdb->get_results( "SELECT meta_value, post_id FROM $tablePostMeta WHERE meta_key = '_wp_attached_file' AND ($collectIDsWpUploadMeta)" );
 			        //            $WpMetaAttachedFileMetas = $wpdb->get_results( "SELECT meta_value, post_id FROM $tablePostMeta WHERE meta_key = '_wp_attachment_metadata' AND ($collectIDsWpUploadMeta)" );
 		        }else{
-		        $isRenameSuccess = rename($ecommerceFileFolderWpUploadFolder.'/'.$filename, $wp_upload_dir_of_file.'/'.$filename);// $sizeArray['file] is without / at the beginning
+			        $isRenameSuccess = rename($ecommerceFileFolderWpUploadFolder.'/'.$filename, $wp_upload_dir_of_file.'/'.$filename);// $sizeArray['file] is without / at the beginning
 		        }
 
 	        }
@@ -236,10 +235,10 @@ if(!function_exists('cg_move_file_from_ecommerce_sale_folder')){
 			                $isReplacedFile = true;
 
 		                }else{
-		                rename($ecommerceFileFolderWpUploadFolder.'/'.$sizeArray['file'], $wp_upload_dir_of_file.'/'.$sizeArray['file']);// $sizeArray['file] is without / at the beginning
+			                rename($ecommerceFileFolderWpUploadFolder.'/'.$sizeArray['file'], $wp_upload_dir_of_file.'/'.$sizeArray['file']);// $sizeArray['file] is without / at the beginning
+		                }
 	                }
                 }
-            }
 
 	            // this processing not for images so far!!! images always new name will be created because always visible as attachement when watermarked
 				if($isReplacedFile){

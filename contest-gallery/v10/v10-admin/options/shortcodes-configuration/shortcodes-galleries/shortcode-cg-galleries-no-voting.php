@@ -101,7 +101,14 @@ echo <<<HEREDOC
 HEREDOC;
 
 echo <<<HEREDOC
-<div class='cg_view_options_row'>
+<div class="cg_view_options_row">
+        <div class="cg_view_option cg_view_option_100_percent" id="BorderRadiusContainer">
+            <div class="cg_view_option_title">
+                <p>Masonry view is always activated for cg_galleries... shortcodes</p>
+            </div>
+        </div>
+</div>
+<div class='cg_view_options_row hide'>
 	<div class='cg_view_option cg_view_option_50_percent cg_border_right_none'>
 	    <div class='cg_view_option_title'>
 	            <p>Width thumbs (px)</p>
@@ -119,7 +126,7 @@ echo <<<HEREDOC
 	     </div>
 	</div>
 </div>
-<div class='cg_view_options_row'>
+<div class='cg_view_options_row hide'>
 	<div class='cg_view_option cg_view_option_50_percent cg_border_top_right_none DistancePicsContainer'>
 	    <div class='cg_view_option_title'>
 	            <p>Distance between thumbs horizontal (px)</p>

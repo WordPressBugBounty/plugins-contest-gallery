@@ -109,7 +109,6 @@ if(strpos($galeryIDuser,'-')!==false){
 }else{
     $galeryIDuser = intval($galeryIDuser);
 }
-
 $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/'.$galeryID.'-options.json';
 $fp = fopen($jsonFile, 'r');
 $options = json_decode(fread($fp, filesize($jsonFile)),true);
@@ -935,6 +934,7 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
 				    if(!empty($optionsToCheck['pro']['ThirdTitleGalleriesView'])){
 					    $imagesFullData[$time]['ThirdTitleGalleriesView'] = $optionsToCheck['pro']['ThirdTitleGalleriesView'];
 				    }
+
 				    $imagesFullData[$time]['gidToShow'] = $time;
                     if(!empty($optionsToCheck['general'][$WpPageParentShortCodeType])){
 	                    $imagesFullData[$time]['entryGuid'] = get_permalink($optionsToCheck['general'][$WpPageParentShortCodeType]);
@@ -1032,10 +1032,10 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
                 continue;
             }else{
                 $jsonCommentsData[$imageId] = $jsonFileData;
-                        foreach ($jsonCommentsData[$imageId] as $key => $array){
+	            foreach ($jsonCommentsData[$imageId] as $key => $array){
 		            if(!empty($jsonCommentsData[$imageId][$key]['insert_id']) && !empty($commentsWpUserIdsArray[$jsonCommentsData[$imageId][$key]['insert_id']])){
 			            $jsonCommentsData[$imageId][$key]['WpUserId'] = $commentsWpUserIdsArray[$jsonCommentsData[$imageId][$key]['insert_id']];
-                    }
+		            }
 	            }
             }
         }
@@ -1074,7 +1074,7 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
 
     ?>
 <pre>
-    <script data-cg-processing="true">
+    <script data-cg-processing="true" >
         var gid = <?php echo json_encode($galeryIDuserForJs); ?>;
         if(typeof cgJsData == 'undefined' ){ // required in JavaScript for first initialisation cgJsData = cgJsData || {}; would not work;
             cgJsData = {};

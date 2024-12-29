@@ -520,7 +520,7 @@ foreach ($order as $key => $value) {
               <div class="cg_options_order_change_order cg_move_view_to_bottom"><i></i></div>
                <div class="cg_options_order_change_order cg_move_view_to_top"><i></i></div>
                 <div class='cg_view_options_row'>
-                    <div class='cg_view_option  cg_view_option_100_percent BlogLookContainer'>
+                    <div class='cg_view_option  cg_view_option_100_percent BlogLookContainer cg_border_radius_8_px'>
                         <div class='cg_view_option_title'>
                                 <input type="hidden" name="multiple-pics[cg_gallery_ecommerce][general][order][]" value="b" >
                                 <p>Activate <u>Blog View</u></p>
@@ -550,7 +550,7 @@ HEREDOC;
             <div class="cg_options_order_change_order cg_move_view_to_bottom"><i></i></div>
                 <div class="cg_options_order_change_order cg_move_view_to_top"><i></i></div>
                 <div class='cg_view_options_row'>
-                    <div class='cg_view_option  cg_border_right_none cg_view_option_50_percent SliderLookContainer'>
+                    <div class='cg_view_option  cg_view_options_and_order_checkbox_container cg_border_right_none cg_view_option_50_percent SliderLookContainer cg_border_border_bottom_left_radius_8_px'>
                         <div class='cg_view_option_title'>
                                 <input type="hidden" name="multiple-pics[cg_gallery_ecommerce][general][order][]" value="s" >
                                 <p>Activate <u>Slider View</u></p>
@@ -559,7 +559,7 @@ HEREDOC;
                             <input type="checkbox" name="multiple-pics[cg_gallery_ecommerce][general][SliderLook]" class="cg_shortcode_checkbox SliderLook" checked="{$jsonOptions[$GalleryID.'-ec']['general']['SliderLook']}">
                          </div>
                     </div>
-                    <div class='cg_view_option cg_view_option_50_percent SliderThumbNavContainer'>
+                    <div class='cg_view_option cg_view_option_50_percent SliderThumbNavContainer cg_border_border_top_right_radius_8_px cg_border_border_bottom_right_radius_8_px'>
                         <div class='cg_view_option_title'>
                                 <p>Enable thumbnail navigation</p>
                          </div>

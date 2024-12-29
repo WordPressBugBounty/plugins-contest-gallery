@@ -18,10 +18,10 @@ $tablenameOptions = $wpdb->prefix . "contest_gal1ery_options";
 $options = $wpdb->get_row( "SELECT * FROM $tablenameOptions WHERE id = '$nextIDgallery'" );
 
 $imagesToProcess = $wpdb->get_var( $wpdb->prepare(
-    "
+	"
 						SELECT COUNT(*) AS NumberOfRows
 						FROM $tablename WHERE EcommerceEntry = 0 AND GalleryID = %d",
-    $idToCopy
+	$idToCopy
 ));
 
 // var_dump('$idToCopy');
@@ -66,7 +66,7 @@ foreach ($galleryToCopy as $rowObject){
 $post_titles_array = [];
 $WpPostTitles = [];
 if(!empty($collectForPostTitle)){
-    $WpPostTitles = $wpdb->get_results( "SELECT DISTINCT ID, post_title FROM $table_posts WHERE ($collectForPostTitle)");
+	$WpPostTitles = $wpdb->get_results( "SELECT DISTINCT ID, post_title FROM $table_posts WHERE ($collectForPostTitle)");
 }
 
 foreach ($WpPostTitles as $WpPostTitle){
@@ -243,9 +243,9 @@ foreach($galleryToCopy as $key => $rowObject){
         'post_parent'=>$options->WpPageParentWinner
     ];
 
-    $WpPageWinner = wp_insert_post($array);
+	$WpPageWinner = wp_insert_post($array);
 
-    // cg_gallery_ecommerce shortcode
+	// cg_gallery_ecommerce shortcode
     $array = [
         'post_title'=> $post_title,
         'post_type'=>'contest-g-ecommerce',
@@ -258,7 +258,7 @@ foreach($galleryToCopy as $key => $rowObject){
         'post_parent'=>$options->WpPageParentEcommerce
     ];
 
-    $WpPageEcommerce = wp_insert_post($array);
+	$WpPageEcommerce = wp_insert_post($array);
 
     $wpdb->update(
         "$tablename",
@@ -407,14 +407,14 @@ if(!empty($galleryToCopy)){
             )
         ); // the last two are*/
 
-        /*   echo "<pre>";
-           print_r($collectInputIdsArray);
-           echo "</pre>";
+     /*   echo "<pre>";
+        print_r($collectInputIdsArray);
+        echo "</pre>";
 
-           var_dump($rowObject->pid);*/
+        var_dump($rowObject->pid);*/
 
         $nextPid = (!empty($collectImageIdsArray[$rowObject->pid])) ? $collectImageIdsArray[$rowObject->pid] : 0;
-        // var_dump('$nextPid');
+       // var_dump('$nextPid');
         //var_dump($nextPid);
         //$nextId = cg_copy_table_row('contest_gal1ery_entries',$rowObject->id,$nextIDgallery,$cgCopyType,$nextPid,$columns,$collectInputIdsArray[$lastInputIdOld]);
 
@@ -453,7 +453,6 @@ var_dump ($newIdsToCopyStringCollect);
 echo "<br>";
 
 die;*/
-
 //do_action('cg_json_upload_form_info_data_files',$nextIDgallery,$newIdsToCopyStringCollect);
 //cg_json_upload_form_info_data_files_new($nextIDgallery,[],true);// not required since 24.0.0 ... will be inserted in correct way so or so
 // has to be done twice for correct url order
@@ -461,8 +460,10 @@ die;*/
 cg_json_upload_form_info_data_files_new($nextIDgallery,[]);// simply actualize only contest gallery image info files since 24.0.0
 
 if($cgCopyType=='cg_copy_type_all'){
+
     // copy rating here
     cg_copy_rating($cg_copy_start,$idToCopy,$nextIDgallery,$collectImageIdsArray);
+
     // copy comments here
     cg_copy_comments($cg_copy_start,$idToCopy,$nextIDgallery,$collectImageIdsArray);
 }

@@ -42,6 +42,7 @@ if(!empty($_POST['cg_position'])){
     foreach($picsSQL as $object){
         $imageArray = cg_create_json_files_when_activating($GalleryID,$object,[],$wp_upload_dir,$imageArray,$galleryDBversion);
     }
+
 }
 
 $galleryFiles = $wpdb->get_results( "SELECT id, WpUpload, NamePic, ImgType, rThumb, MultipleFiles FROM $tablename WHERE GalleryID = '$GalleryID' ORDER BY PositionNumber ASC, id DESC");

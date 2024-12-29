@@ -44,7 +44,8 @@ if(!function_exists('cg_post_type_args')){
             // 'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt', 'author' ),
             'supports' => $supports,
             'labels' => $labels,
-            'public' => true,
+			'public' => true,// important, has to be set to true, otherwise not work
+			'show_in_nav_menus' => false,// otherwise appears in menus unnecessary
             'show_in_menu' => false,
             'query_var' => true,
             //'rewrite'      => array( 'slug' => 'contest-gallery', 'with_front' => true, 'hierarchical' => true ),

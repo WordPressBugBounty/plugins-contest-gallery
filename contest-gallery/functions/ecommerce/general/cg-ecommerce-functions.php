@@ -234,7 +234,6 @@ if(!function_exists('cg_get_ecommerce_files_data')){
 		}
 
 		foreach ($ecommerceFilesSQL as $ecommerceFilesRow){
-
 			$ecommerceFilesData[$ecommerceFilesRow->pid] = json_decode(json_encode($ecommerceFilesRow),true);
 
 			// has to be unserialized because is unserialized otherwise jsond_decode processing error later

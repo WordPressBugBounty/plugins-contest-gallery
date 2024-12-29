@@ -25,6 +25,7 @@
         cgJsClass.gallery.language[index].ShowAllCategories = <?php echo json_encode($language_ShowAllCategories); ?>;
         cgJsClass.gallery.language[index].ShowLessCategories = <?php echo json_encode($language_ShowLessCategories); ?>;
 
+        cgJsClass.gallery.language[index].MasonryView = <?php echo json_encode($language_MasonryView); ?>;
         cgJsClass.gallery.language[index].ThumbView = <?php echo json_encode($language_ThumbView); ?>;
         cgJsClass.gallery.language[index].HeightView = <?php echo json_encode($language_HeightView); ?>;
         cgJsClass.gallery.language[index].RowView = <?php echo json_encode($language_RowView); ?>;

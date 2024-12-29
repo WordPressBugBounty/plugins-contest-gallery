@@ -751,16 +751,16 @@ if(floatval($galleryDbVersion)>=21){
     </div>
 HEREDOC;
 
-$BackToGalleryButtonTextRow = <<<HEREDOC
-    <div class='cg_view_options_row'>
-        <div class='cg_view_option cg_view_option_full_width  cg_border_top_none '>
-            <div class='cg_view_option_title '>
+	$BackToGalleryButtonTextRow = <<<HEREDOC
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width  cg_border_top_none '>
+        <div class='cg_view_option_title '>
             <p>Back to gallery button text<br>
             <span class="cg_view_option_title_note">Translation can be found <a class="cg_no_outline_and_shadow_on_focus" href="{$editTranslationLink}l_BackToGallery"  target="_blank">here</a></span>
             </p>
-            </div>
         </div>
     </div>
+</div>
 HEREDOC;
 
     $BackToGalleryButtonURLRow = <<<HEREDOC

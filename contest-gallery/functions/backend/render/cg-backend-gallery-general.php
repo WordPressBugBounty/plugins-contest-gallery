@@ -61,7 +61,7 @@ if(!function_exists('cg_is_for_wp_page_title_unchecked')){
  </div>
 HEREDOC;
         }else{
-            echo <<<HEREDOC
+		echo <<<HEREDOC
 <div id='cgIsForWpPageTitleUnchecked' class='cg_hide cg_height_auto cg_backend_action_container  cg_backend_action_container_high_overlay cg_overflow_y_hidden' style='z-index: 9999999;width: fit-content;'>
 	<span  class='cg_message_close '></span>
 	<div class='cg_main_options' style='margin-bottom: 0;margin-top: 20px; box-shadow: unset;'>
@@ -75,7 +75,7 @@ HEREDOC;
 	 </div>
  </div>
 HEREDOC;
-        }
+	}
 
 	}
 }
@@ -100,7 +100,7 @@ $bloginfo_wpurl/contest-galleries/contest-gallery-$GalleryID/<b>{input_field_con
  </div>
 HEREDOC;
         }else{
-            echo <<<HEREDOC
+		echo <<<HEREDOC
 <div id='cgIsForWpPageTitleChecked' class='cg_hide cg_height_auto cg_backend_action_container  cg_backend_action_container_high_overlay cg_overflow_y_hidden' style='z-index: 9999999;width: fit-content;'>
 	<span  class='cg_message_close '></span>
 	<div class='cg_main_options' style='margin-bottom: 0;margin-top: 20px; box-shadow: unset;'>
@@ -116,7 +116,7 @@ $bloginfo_wpurl/$CgEntriesOwnSlugName/contest-gallery-id-$GalleryID/<b>{input_fi
 	 </div>
  </div>
 HEREDOC;
-        }
+	}
 
 	}
 }

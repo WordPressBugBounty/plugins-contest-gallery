@@ -244,7 +244,7 @@ HEREDOC;
 		        continue;
 	        }
 
-            $purchaseTime = cg_get_time_based_on_wp_timezone_conf($saleOrder->Tstamp,'Y-M-d H:i:s');
+	        $purchaseTime = cg_get_time_based_on_wp_timezone_conf($saleOrder->Tstamp,'Y-M-d H:i:s');
             $PayPalTransactionId =  $saleOrder->PayPalTransactionId;
             $PayerEmail =  $saleOrder->PayerEmail;
             $ParentOrder =  $saleOrder->id;

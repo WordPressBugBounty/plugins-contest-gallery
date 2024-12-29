@@ -7,9 +7,9 @@ if(!function_exists('cg_delete_images')){
         global $wpdb;
 
 // Set table names
-        $tablename = $wpdb->prefix . "contest_gal1ery";
+	    $tablename = $wpdb->prefix . "contest_gal1ery";
 	    $tablename_posts = $wpdb->prefix . "posts";
-        $tablenameEntries = $wpdb->prefix . "contest_gal1ery_entries";
+	    $tablenameEntries = $wpdb->prefix . "contest_gal1ery_entries";
         $tablenameComments = $wpdb->prefix . "contest_gal1ery_comments";
         $tablenameIp = $wpdb->prefix . "contest_gal1ery_ip";
         $tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
@@ -191,15 +191,15 @@ if(!function_exists('cg_delete_images')){
 						$imageData->WpUpload
 					));
 				}else{
-                wp_delete_attachment($imageData->WpUpload);
-                $deletedWpUploads[] = $imageData->WpUpload;
+					wp_delete_attachment($imageData->WpUpload);
+					$deletedWpUploads[] = $imageData->WpUpload;
+				}
+
             }
 
         }
 
-        }
-
-        if((!empty($MultipleFilesToDelete)) && ((!empty($_POST['cgDeleteOriginalImageSourceAlso']) OR $DeleteFromStorageIfDeletedInFrontend) AND !$isConsecutiveDeletionOfDeletedWpUploads)){
+	    if((!empty($MultipleFilesToDelete)) && ((!empty($_POST['cgDeleteOriginalImageSourceAlso']) OR $DeleteFromStorageIfDeletedInFrontend) AND !$isConsecutiveDeletionOfDeletedWpUploads)){
             foreach ($MultipleFilesToDelete as $id => $fileDataForPost){
                 foreach ($fileDataForPost as $order => $fileData){
                     if(in_array($fileData['WpUpload'],$deletedWpUploads)===false){

@@ -1,7 +1,6 @@
 <?php
 if(!function_exists('cg_votes_csv_export_all')){
     function cg_votes_csv_export_all(){
-
          if(!current_user_can('manage_options')){
             echo "Logged in user have to be able to manage_options to execute export votes.";die;
          }

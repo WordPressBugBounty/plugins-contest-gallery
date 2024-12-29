@@ -39,7 +39,6 @@ $tablenameEcommerceOptions = $wpdb->prefix . "contest_gal1ery_ecommerce_options"
 
 $OrderIdHash = sanitize_text_field($_GET['cg_order']);
 //$optionsNormal = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_orders WHERE id='$OrderId'");
-
 $SaleOrder = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_orders WHERE OrderIdHash = '$OrderIdHash' LIMIT 1");
 
 if(empty($SaleOrder)){

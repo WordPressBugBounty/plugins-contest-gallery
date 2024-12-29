@@ -277,8 +277,8 @@ if(true){
 
                     //echo "<option value='1' $selected_look_thumb>View $i</option>";
                     //echo "<a href='$siteURL&1=1&2=".$getOrder."&3=".$start."'><img title='Thumb view' src='$selected_look_thumb' style='float:left;margin-left:5px;' /></a> ";
-                    echo "<span data-cg-tooltip='$language_ThumbView' class='$cgFeControlsStyle cg_view_switcher cg_hover_effect cg_view_thumb cg_view_switcher_off $cg_hide_off' ></span>";
-                    echo "<span  id='cg_view_switcher_on_$key' data-cg-tooltip='$language_ThumbView' class='$cgFeControlsStyle cg_hover_effect cg_view_switcher cg_view_thumb cg_view_switcher_on $cg_hide_on' ></span>";
+                    echo "<span data-cg-tooltip='$language_MasonryView' class='$cgFeControlsStyle cg_view_switcher cg_hover_effect cg_view_thumb cg_view_switcher_off $cg_hide_off' ></span>";
+                    echo "<span  id='cg_view_switcher_on_$key' data-cg-tooltip='$language_MasonryView' class='$cgFeControlsStyle cg_hover_effect cg_view_switcher cg_view_thumb cg_view_switcher_on $cg_hide_on' ></span>";
                 }
                 if($value=="HeightLookOrder" AND $options['general']['HeightLook'] == 1 AND ($options['general']['ThumbLook'] == 1 or $options['general']['RowLook'] == 1 or $options['general']['SliderLook'] == 1 or $options['visual']['BlogLook'] == 1)){
                     $i++;

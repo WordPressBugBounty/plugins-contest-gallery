@@ -322,9 +322,9 @@ echo "<div id='cgVotesImage'>";
                 echo '<a href="'.$sourceOriginalImgShow.'" target="_blank" title="Show full size"><img class="cg'.$rThumb.'degree" src="'.$imageThumb.'" style="'.$padding.';position: absolute !important;max-width:none !important;" width="'.$WidthThumbPic.'"></a>';
             echo "</div>";
         }else if($ImgType=='ytb'){
-            echo '<div id="cgVotesImageVisualContent">';
-                echo '<iframe  width="300" height="200" src="'.$image_url.'"  ></iframe>';
-            echo "</div>";
+	        echo '<div id="cgVotesImageVisualContent">';
+	            echo '<iframe  width="300" height="200" src="'.$image_url.'"  ></iframe>';
+	        echo "</div>";
         }else if($ImgType=='inst'){
 	        echo '<div id="cgVotesImageVisualContent">';
 	            echo '<iframe  width="300" height="200" src="'.$image_url.'"  ></iframe>';

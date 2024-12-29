@@ -14,7 +14,7 @@ if(!function_exists('contest_gal1ery_order_summary')){
         $shortcode_name = 'cg_order_summary';
 	    $isFromOrderSummary = true;
 
-        // PLUGIN VERSION CHECK HERE --- END
+	    // PLUGIN VERSION CHECK HERE --- END
 
         global $wp_version;
         $sanitize_textarea_field = ($wp_version<4.7) ? 'sanitize_text_field' : 'sanitize_textarea_field';
@@ -36,6 +36,7 @@ if(!function_exists('contest_gal1ery_order_summary')){
 		    'cg_set_frontend_cookie_ajax_url' => admin_url( 'admin-ajax.php' )
 	    ));
 
+
         ob_start();
 
 	    $hasUploadSell = false;
@@ -45,19 +46,19 @@ if(!function_exists('contest_gal1ery_order_summary')){
 
 	    echo "<pre class='cg_main_pre  cg_10 cg_20' >";
 	        include(__DIR__.'/../v10/v10-frontend/ecommerce/ecommerce-show-order-frontend.php');
-			if(!empty($hasUploadSell) && empty($isPayPalResponseError)){
+	    if(!empty($hasUploadSell) && empty($isPayPalResponseError)){
 				foreach ($UploadGalleries as $OrderItemID => $UploadGallery){
 					if(!empty($UploadGallery)){
-					$galeryID = $UploadGallery;
-					$GalleryID = $UploadGallery;
-					$wp_upload_dir = wp_upload_dir();
-					$optionsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/'.$galeryID.'-options.json';
-					$shortcode_name = 'cg_users_contact';
-					$isReallyContactForm = true;
-					$options = json_decode(file_get_contents($optionsFile),true);
-					include(__DIR__.'/../v10/include-scripts-v10.php');
+						$galeryID = $UploadGallery;
+						$GalleryID = $UploadGallery;
+						$wp_upload_dir = wp_upload_dir();
+						$optionsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/'.$galeryID.'-options.json';
+						$shortcode_name = 'cg_users_contact';
+						$isReallyContactForm = true;
+						$options = json_decode(file_get_contents($optionsFile),true);
+						include(__DIR__.'/../v10/include-scripts-v10.php');
+					}
 				}
-			}
 			}
 	    echo "</pre>";
 

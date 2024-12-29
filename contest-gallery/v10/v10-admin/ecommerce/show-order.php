@@ -29,47 +29,46 @@ if(empty($Order)){
 </div>";
 }else{
 
-    $OrderIdHash = $Order->OrderIdHash;
-    $OrderNumber = $Order->OrderNumber;
-    $LogForDatabase = unserialize($Order->LogForDatabase);
-    $wp_upload_dir = wp_upload_dir();
+	$OrderIdHash = $Order->OrderIdHash;
+	$OrderNumber = $Order->OrderNumber;
+	$LogForDatabase = unserialize($Order->LogForDatabase);
+	$wp_upload_dir = wp_upload_dir();
 
-    $PayPalTransactionId = $Order->PayPalTransactionId;
-    $PayerEmail = $Order->PayerEmail;
+	$PayPalTransactionId = $Order->PayPalTransactionId;
+	$PayerEmail = $Order->PayerEmail;
 
-    $OrderItems = $wpdb->get_results("SELECT * FROM $tablename_ecommerce_orders_items WHERE ParentOrder = '$OrderId' ");
+	$OrderItems = $wpdb->get_results("SELECT * FROM $tablename_ecommerce_orders_items WHERE ParentOrder = '$OrderId' ");
 
-    $RawData = [];
-    $ecommerceFilesDataArray = [];
-    $GalleryIDs = [];
+	$RawData = [];
+	$ecommerceFilesDataArray = [];
+	$GalleryIDs = [];
 	$uploadedEntries = [];
 	$uploadedEntriesData = [];
 
-    foreach ($OrderItems as $OrderItem){
-        if(in_array($OrderItem->GalleryID,$GalleryIDs)===false){
-            $GalleryIDs[] = $OrderItem->GalleryID;
-        }
-    }
+	foreach ($OrderItems as $OrderItem){
+		if(in_array($OrderItem->GalleryID,$GalleryIDs)===false){
+			$GalleryIDs[] = $OrderItem->GalleryID;
+		}
+	}
 
-    $jsonInfoData = [];
-    $dataForOrder = [];
-    $queryDataArray = [];
-    $options = [];
-    foreach ($GalleryIDs as $GalleryID){
-        $dataForOrder[$GalleryID] = cg_get_query_data_and_options($wp_upload_dir,$GalleryID);
-        $queryDataArray[$GalleryID]  = $dataForOrder[$GalleryID]['queryDataArray'];
-        $options[$GalleryID]  = $dataForOrder[$GalleryID]['options'];
-    }
+	$jsonInfoData = [];
+	$dataForOrder = [];
+	$queryDataArray = [];
+	$options = [];
+	foreach ($GalleryIDs as $GalleryID){
+		$dataForOrder[$GalleryID] = cg_get_query_data_and_options($wp_upload_dir,$GalleryID);
+		$queryDataArray[$GalleryID]  = $dataForOrder[$GalleryID]['queryDataArray'];
+		$options[$GalleryID]  = $dataForOrder[$GalleryID]['options'];
+	}
 
 	$OrderItemsByEntryPid = [];
 
-    foreach ($OrderItems as $OrderItem){
+	foreach ($OrderItems as $OrderItem){
 
 		$OrderItemID = $OrderItem->id;
 		$OrderItemsByEntryPid[$OrderItem->pid] = $OrderItem;
-        $RawDataWhenBuyed[$OrderItem->pid] = unserialize($OrderItem->RawData);
-
-        $dataForOrder = cg_get_data_for_order($wp_upload_dir,$OrderItem,$RawData);
+		$RawDataWhenBuyed[$OrderItem->pid] = unserialize($OrderItem->RawData);
+		$dataForOrder = cg_get_data_for_order($wp_upload_dir,$OrderItem,$RawData);
 
 		if(!empty($OrderItem->Uploaded)){
 			$uploaded = $wpdb->get_results("SELECT * FROM $tablename WHERE OrderItem = '$OrderItemID' ORDER BY id DESC");
@@ -81,105 +80,105 @@ if(empty($Order)){
 			}
 		}
 
-        if(empty($dataForOrder['RawData'])){// then gallery must be deleted
-            $jsonInfoData[$OrderItem->pid]  = [];
-            $RawData[$OrderItem->pid] = $RawDataWhenBuyed[$OrderItem->pid] ;
-            $RawData[$OrderItem->pid]['isRemovedRealIdOrGallery'] = true;
-            $RawDataWhenBuyed[$OrderItem->pid]['isRemovedRealIdOrGallery'] = true;// also important to set will be set for shipping or service in cgJsClass.gallery.ecommerce.functions.showSaleOrder condition
-        }else{
-            if(!empty($dataForOrder['RawData'][$OrderItem->pid])){
-                $RawData[$OrderItem->pid] = $dataForOrder['RawData'][$OrderItem->pid];
-            }
-            if(!empty($dataForOrder['jsonInfoData'][$OrderItem->pid])){
-                $jsonInfoData[$OrderItem->pid] = $dataForOrder['jsonInfoData'][$OrderItem->pid];
-            }else{
-                $jsonInfoData[$OrderItem->pid]  = [];
-            }
-        }
+		if(empty($dataForOrder['RawData'])){// then gallery must be deleted
+			$jsonInfoData[$OrderItem->pid]  = [];
+			$RawData[$OrderItem->pid] = $RawDataWhenBuyed[$OrderItem->pid] ;
+			$RawData[$OrderItem->pid]['isRemovedRealIdOrGallery'] = true;
+			$RawDataWhenBuyed[$OrderItem->pid]['isRemovedRealIdOrGallery'] = true;// also important to set will be set for shipping or service in cgJsClass.gallery.ecommerce.functions.showSaleOrder condition
+		}else{
+			if(!empty($dataForOrder['RawData'][$OrderItem->pid])){
+				$RawData[$OrderItem->pid] = $dataForOrder['RawData'][$OrderItem->pid];
+			}
+			if(!empty($dataForOrder['jsonInfoData'][$OrderItem->pid])){
+				$jsonInfoData[$OrderItem->pid] = $dataForOrder['jsonInfoData'][$OrderItem->pid];
+			}else{
+				$jsonInfoData[$OrderItem->pid]  = [];
+			}
+		}
 
-        $ecommerceFilesData = cg_get_ecommerce_files_data($OrderItem->GalleryID,$OrderItem->pid);
-        if(!empty($ecommerceFilesData[$OrderItem->pid])){
-            $ecommerceFilesDataArray[$OrderItem->pid] = $ecommerceFilesData[$OrderItem->pid];
-        }
+		$ecommerceFilesData = cg_get_ecommerce_files_data($OrderItem->GalleryID,$OrderItem->pid);
+		if(!empty($ecommerceFilesData[$OrderItem->pid])){
+			$ecommerceFilesDataArray[$OrderItem->pid] = $ecommerceFilesData[$OrderItem->pid];
+		}
 
-        foreach ($LogForDatabase['purchase_units'][0]['items'] as $key => $item){
-            if($OrderItem->pid==$item['realId']){
-                if(!empty($OrderItem->DownloadKey)){
-                    $LogForDatabase['purchase_units'][0]['items'][$key]['DownloadKey'] = $OrderItem->DownloadKey;
-                }
-                if(!empty($OrderItem->ServiceKey)){
-                    $LogForDatabase['purchase_units'][0]['items'][$key]['ServiceKey'] = $OrderItem->ServiceKey;
-                }
-                if(!empty($OrderItem->WpUploadFilesForSale)){
-                    $LogForDatabase['purchase_units'][0]['items'][$key]['WpUploadFilesForSale'] = unserialize($OrderItem->WpUploadFilesForSale);
-                }
-            }
-        }
-    }
+		foreach ($LogForDatabase['purchase_units'][0]['items'] as $key => $item){
+			if($OrderItem->pid==$item['realId']){
+				if(!empty($OrderItem->DownloadKey)){
+					$LogForDatabase['purchase_units'][0]['items'][$key]['DownloadKey'] = $OrderItem->DownloadKey;
+				}
+				if(!empty($OrderItem->ServiceKey)){
+					$LogForDatabase['purchase_units'][0]['items'][$key]['ServiceKey'] = $OrderItem->ServiceKey;
+				}
+				if(!empty($OrderItem->WpUploadFilesForSale)){
+					$LogForDatabase['purchase_units'][0]['items'][$key]['WpUploadFilesForSale'] = unserialize($OrderItem->WpUploadFilesForSale);
+				}
+			}
+		}
+	}
 
 	if(!empty($uploadedEntries)){
 		$uploadedEntriesData = cg_get_data_for_order_items($uploadedEntries);
 	}
 
-    if(!empty($LogForDatabase)){
+	if(!empty($LogForDatabase)){
 
-        $ecommerceOptions = json_decode(json_encode($wpdb->get_row( "SELECT * FROM $tablename_ecommerce_options WHERE GeneralID = 1")),true);
-        $currenciesArray = cg_get_ecommerce_currencies_array_formatted_by_short_key();
-        $ecommerceCountries = cg_get_countries();
+		$ecommerceOptions = json_decode(json_encode($wpdb->get_row( "SELECT * FROM $tablename_ecommerce_options WHERE GeneralID = 1")),true);
+		$currenciesArray = cg_get_ecommerce_currencies_array_formatted_by_short_key();
+		$ecommerceCountries = cg_get_countries();
 
 //var_dump('$SaleOrder->IsTest');
 //var_dump($SaleOrder->IsTest);
 //die;
-        if($Order->IsTest){
-            $accessToken = cg_paypal_get_access_token($ecommerceOptions['PayPalSandboxClientId'],$ecommerceOptions['PayPalSandboxSecret'],true);
-        }else{
-            $accessToken = cg_paypal_get_access_token($ecommerceOptions['PayPalLiveClientId'],$ecommerceOptions['PayPalLiveSecret']);
-        }
+		if($Order->IsTest){
+			$accessToken = cg_paypal_get_access_token($ecommerceOptions['PayPalSandboxClientId'],$ecommerceOptions['PayPalSandboxSecret'],true);
+		}else{
+			$accessToken = cg_paypal_get_access_token($ecommerceOptions['PayPalLiveClientId'],$ecommerceOptions['PayPalLiveSecret']);
+		}
 
-        if($accessToken=='no-internet'){
-            // Access Token could not be created. Wrong client id or wrong secret
+		if($accessToken=='no-internet'){
+			// Access Token could not be created. Wrong client id or wrong secret
 			echo "<div  id='mainCGdivOrderContainer'  class='mainCGdivOrderContainer'>
 <p style='text-align: center;margin:10px;'>No internet connection</p>
 </div>"; return;
-        }else if($accessToken=='error'){
-            //Access Token could not be created. Wrong client id or wrong secret.
+		}else if($accessToken=='error'){
+			//Access Token could not be created. Wrong client id or wrong secret.
 			echo "<div  id='mainCGdivOrderContainer' class='mainCGdivOrderContainer' >
 <p style='text-align: center;margin:10px;'>PayPal client authentication failed</p>
 </div>"; return;
-        }
+		}
 
-        $PayPalOrderResponse = cg_get_paypal_order($accessToken,$Order->PayPalTransactionId,$Order->IsTest);
-        if(empty($PayPalOrderResponse['status'])){
+		$PayPalOrderResponse = cg_get_paypal_order($accessToken,$Order->PayPalTransactionId,$Order->IsTest);
+		if(empty($PayPalOrderResponse['status'])){
 			echo "<div  id='mainCGdivOrderContainer' class='mainCGdivOrderContainer'>
 <p style='text-align: center;margin-bottom: 0;'><b>Error getting PayPal order. Reload this page to try again.</b></p>
 </div>"; return;
-        }
-        $status = $PayPalOrderResponse['status'];
-        $explanation = 'Status unknown';
-        // status explanation source // https://developer.paypal.com/docs/api/payments/v2/
-        if($status=='COMPLETED'){
-            $explanation = 'the funds for this captured payment were credited to the payee\'s PayPal account';
-        }
-        if($status=='DECLINED'){
-            $explanation = 'the funds could not be captured';
-        }
-        if($status=='PARTIALLY_REFUNDED'){
-            $explanation = 'an amount less than this captured payment\'s amount was partially refunded to the payer';
-        }
-        if($status=='PENDING'){
-            $explanation = 'the funds for this captured payment was not yet credited to the payee\'s PayPal account. For more information, see status.details';
-        }
-        if($status=='REFUNDED'){
-            $explanation = 'an amount greater than or equal to this captured payment\'s amount was refunded to the payer';
-        }
-        if($status=='FAILED'){
-            $explanation = 'there was an error while capturing payment';
-        }
+		}
+		$status = $PayPalOrderResponse['status'];
+		$explanation = 'Status unknown';
+		// status explanation source // https://developer.paypal.com/docs/api/payments/v2/
+		if($status=='COMPLETED'){
+			$explanation = 'the funds for this captured payment were credited to the payee\'s PayPal account';
+		}
+		if($status=='DECLINED'){
+			$explanation = 'the funds could not be captured';
+		}
+		if($status=='PARTIALLY_REFUNDED'){
+			$explanation = 'an amount less than this captured payment\'s amount was partially refunded to the payer';
+		}
+		if($status=='PENDING'){
+			$explanation = 'the funds for this captured payment was not yet credited to the payee\'s PayPal account. For more information, see status.details';
+		}
+		if($status=='REFUNDED'){
+			$explanation = 'an amount greater than or equal to this captured payment\'s amount was refunded to the payer';
+		}
+		if($status=='FAILED'){
+			$explanation = 'there was an error while capturing payment';
+		}
 
-        unset($ecommerceOptions['PayPalLiveSecret']);
-        unset($ecommerceOptions['PayPalSandboxSecret']);
+		unset($ecommerceOptions['PayPalLiveSecret']);
+		unset($ecommerceOptions['PayPalSandboxSecret']);
 
-        ?>
+		?>
         <script data-cg-processing="true">
 
             if(typeof cgJsData == 'undefined' ){ // required in JavaScript for first initialisation cgJsData = cgJsData || {}; would not work
@@ -266,21 +265,21 @@ if(empty($Order)){
             cgJsClass.gallery.vars.ecommerce.ecommerceCountries = <?php echo json_encode($ecommerceCountries); ?>;
             cgJsClass.gallery.vars.ecommerce.LogForDatabase = <?php echo json_encode($LogForDatabase);?>;
         </script>
-        <?php
-    } else {
-        ?>
+		<?php
+	} else {
+		?>
         <script data-cg-processing="true">
             var gid = <?php echo json_encode($GalleryID);?>;
             cgJsClass.gallery.function.message.show(gid,'Order id could not be found');
         </script>
-        <?php
-        return;
-    }
+		<?php
+		return;
+	}
 
     $environment = ' (live environment)';
-    if($Order->IsTest){
-        $environment = ' (test environment)';
-    }
+	if($Order->IsTest){
+		$environment = ' (test environment)';
+	}
 
 
 	echo "<div style='visibility: hidden;' id='mainCGdivOrderContainer' class='mainCGdivOrderContainer' >
@@ -296,17 +295,17 @@ All possible captured payment status can be found <a target='_blank' href='https
 </div>
 </div>";
 
-    cg_ecommerce_show_api_response();
+	cg_ecommerce_show_api_response();
 
-    $galeryIDuserForJs = $GalleryID;
+	$galeryIDuserForJs = $GalleryID;
 
-    include(__DIR__ . "/../../../check-language.php");
-    include(__DIR__ . "/../../../check-language-ecommerce.php");
+	include(__DIR__ . "/../../../check-language.php");
+	include(__DIR__ . "/../../../check-language-ecommerce.php");
 
-    include(__DIR__.'/../../../v10/v10-frontend/data/check-language-javascript.php');
-    include(__DIR__.'/../../../v10/v10-frontend/data/check-language-javascript-ecommerce.php');
+	include(__DIR__.'/../../../v10/v10-frontend/data/check-language-javascript.php');
+	include(__DIR__.'/../../../v10/v10-frontend/data/check-language-javascript-ecommerce.php');
 
-    ?>
+	?>
 
     <script data-cg-processing="true">
         cgJsClass.gallery.vars.ecommerce.cgVersion = <?php echo json_encode(cg_get_version());?>;
@@ -326,7 +325,7 @@ All possible captured payment status can be found <a target='_blank' href='https
             cgJsClass.gallery.ecommerce.functions.showSaleOrder();
         }
     </script>
-    <?php
+	<?php
 
 
 }

@@ -19,9 +19,7 @@ if(floatval($galleryDbVersion)<15.05){
 
     echo <<<HEREDOC
 <div class='cg_view_options_rows_container'>
-
-        <p class='cg_view_options_rows_container_title'>Gallery slide out, slider view or blog view</p>
-        
+        <p class='cg_view_options_rows_container_title'>Gallery slide out, slider view or blog view</p>        
         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width'>
                     <div class='cg_view_option_title'>
@@ -863,7 +861,7 @@ if(floatval($galleryDbVersion)>=21){
 </div>
 HEREDOC;
 
-$BackToGalleryButtonTextRow = <<<HEREDOC
+	$BackToGalleryButtonTextRow = <<<HEREDOC
 <div class='cg_view_options_row'>
     <div class='cg_view_option cg_view_option_full_width  cg_border_top_none '>
         <div class='cg_view_option_title '>

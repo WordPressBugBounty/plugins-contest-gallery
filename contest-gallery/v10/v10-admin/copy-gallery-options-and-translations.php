@@ -148,18 +148,15 @@ $array = cg_post_type_parent_galleries_array($nextIDgallery);
 $WpPageParent = wp_insert_post($array);
 $jsonOptions['general']['WpPageParent'] = $WpPageParent;
 
-
 // cg_gallery_user shortcode
 $array = cg_post_type_parent_galleries_array($nextIDgallery,'user');
 $WpPageParentUser = wp_insert_post($array);
 $jsonOptions['general']['WpPageParentUser'] = $WpPageParentUser ;
 
-
 // cg_gallery_no_voting shortcode
 $array = cg_post_type_parent_galleries_array($nextIDgallery,'no_voting');
 $WpPageParentNoVoting = wp_insert_post($array);
 $jsonOptions['general']['WpPageParentNoVoting'] = $WpPageParentNoVoting ;
-
 
 // cg_gallery_winner shortcode
 $array = cg_post_type_parent_galleries_array($nextIDgallery,'winner');
@@ -1120,6 +1117,7 @@ if(file_exists($jsonOptionsGalleryPrev)){
 	    }else{
 		    $jsonOptions[$nextIDgallery.'-ec'] = $jsonOptionsPrev[$idToCopy.'-ec'];
 	    }
+
         if(!empty($Field1IdGalleryView)){
             $jsonOptions[$nextIDgallery]['visual']['Field1IdGalleryView'] = $Field1IdGalleryView;
             $jsonOptions[$nextIDgallery.'-u']['visual']['Field1IdGalleryView'] = $Field1IdGalleryView;

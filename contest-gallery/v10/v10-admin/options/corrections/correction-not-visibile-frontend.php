@@ -29,8 +29,10 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 		}
 
 		$hasParentPageRepaired = false;
+
 		if(empty($WpPageParent)){
 			$hasParentPageRepaired = true;
+
 			// cg_gallery shortcode
 			if(intval($options->Version)>=24){
 				$array = cg_post_type_parent_galleries_array($options->id);
@@ -41,6 +43,7 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 			$WpPageParent = wp_insert_post($array);
 			cg_insert_into_contest_gal1ery_wp_pages($WpPageParent);
 			$options->WpPageParent = $WpPageParent;
+
 			$wpdb->update(
 				"$tablenameOptions",
 				array('WpPageParent' => $WpPageParent),
@@ -99,6 +102,7 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 			$WpPageParentUser = wp_insert_post($array);
 			cg_insert_into_contest_gal1ery_wp_pages($WpPageParentUser);
 			$options->WpPageParentUser = $WpPageParentUser;
+
 			$wpdb->update(
 				"$tablenameOptions",
 				array('WpPageParentUser' => $WpPageParentUser),
@@ -158,6 +162,7 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 			$WpPageParentNoVoting = wp_insert_post($array);
 			cg_insert_into_contest_gal1ery_wp_pages($WpPageParentNoVoting);
 			$options->WpPageParentNoVoting = $WpPageParentNoVoting;
+
 			$wpdb->update(
 				"$tablenameOptions",
 				array('WpPageParentNoVoting' => $WpPageParentNoVoting),
@@ -217,6 +222,7 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 			$WpPageParentWinner = wp_insert_post($array);
 			cg_insert_into_contest_gal1ery_wp_pages($WpPageParentWinner);
 			$options->WpPageParentWinner = $WpPageParentWinner;
+
 			$wpdb->update(
 				"$tablenameOptions",
 				array('WpPageParentWinner' => $WpPageParentWinner),
@@ -276,6 +282,7 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 				$WpPageParentEcommerce = wp_insert_post($array);
 				cg_insert_into_contest_gal1ery_wp_pages($WpPageParentEcommerce);
 				$options->WpPageParentEcommerce = $WpPageParentEcommerce;
+
 				$wpdb->update(
 					"$tablenameOptions",
 					array('WpPageParentEcommerce' => $WpPageParentEcommerce),
@@ -284,7 +291,7 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 					array('%d')
 				);
 
-				$picsSQL = $wpdb->get_results( "SELECT DISTINCT id, WpPageEcommerce FROM $tablename WHERE GalleryID = '$GalleryID'");
+     			$picsSQL = $wpdb->get_results( "SELECT DISTINCT id, WpPageEcommerce FROM $tablename WHERE GalleryID = '$GalleryID'");
 
 				$querySETrowForPostIds = 'UPDATE ' . $table_posts . ' SET post_parent = CASE ID ';
 				$querySETaddRowForPostIds = ' ELSE post_parent END WHERE ID IN (';
@@ -406,9 +413,7 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 			if(empty($post_title)){$post_title='entry';}// if both variants above not available then simply the word "entry" will be taken
 			// cg_gallery shortcode
 			$post_title = substr($post_title,0,100);
-
-            if(in_array('WpPage',$WpPageTypeNamesArray)!==false){
-
+			if(in_array('WpPage',$WpPageTypeNamesArray)!==false){
 				$post_type = 'contest-gallery';
 				if(intval($options->Version)>=24){
                     $post_type = 'contest-g';

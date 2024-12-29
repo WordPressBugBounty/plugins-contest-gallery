@@ -2,7 +2,6 @@
 
 global $wpdb;
 
-
 $tablename = $wpdb->base_prefix . "$i"."contest_gal1ery";
 $tablename_ip = $wpdb->base_prefix . "$i"."contest_gal1ery_ip";
 $tablename_comments = $wpdb->base_prefix . "$i"."contest_gal1ery_comments";

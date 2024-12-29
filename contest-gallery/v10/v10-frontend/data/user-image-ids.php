@@ -1,5 +1,6 @@
 <?php
 
+
 if($is_user_logged_in){
     if(!empty($isCGalleries)){
 	    $wpUserImageIds = $wpdb->get_results( $wpdb->prepare(
@@ -11,15 +12,15 @@ if($is_user_logged_in){
 		    $WpUserId
 	    ) );
     }else{
-    $wpUserImageIds = $wpdb->get_results( $wpdb->prepare(
-        "
+	    $wpUserImageIds = $wpdb->get_results( $wpdb->prepare(
+		    "
 							SELECT id
 							FROM $tablename
 							WHERE GalleryID = %d and WpUserId = %d ORDER BY id DESC
 						",
-        $galeryID,$WpUserId
-    ) );
-}
+		    $galeryID,$WpUserId
+	    ) );
+    }
 
 }
 
@@ -43,17 +44,16 @@ if(empty($wpUserImageIds)){
 if(!empty($wpUserImageIds)){
     if(count($wpUserImageIds)){
 	        $wpUserImageIdsArray = [];
-        foreach($wpUserImageIds as $row){
+            foreach($wpUserImageIds as $row){
 	            $wpUserImageIdsArray[] = intval($row->id);// intval important for javascript indexOf
             }
             ?>
             <pre>
-            <script data-cg-processing="true">
-
-                var index = <?php echo json_encode($galeryIDuserForJs) ?>;
+                <script data-cg-processing="true">
+                    var index = <?php echo json_encode($galeryIDuserForJs) ?>;
                     cgJsData[index].wpUserImageIds = <?php echo json_encode($wpUserImageIdsArray) ?>;// intval so later indexOf check goes right
-            </script>
+                </script>
             </pre>
             <?php
-        }
     }
+}

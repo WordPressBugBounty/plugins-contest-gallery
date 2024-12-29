@@ -266,9 +266,9 @@ HEREDOC;
             if(!empty($WpUploadFilePostMeta['_wp_attachment_metadata']['sizes'])){
                 foreach ($WpUploadFilePostMeta['_wp_attachment_metadata']['sizes'] as $sizeName => $sizeArray){
 					if(file_exists($attached_file_dir.'/'.$sizeArray['file'])){// do not remove this check
-                    rename($attached_file_dir.'/'.$sizeArray['file'], $ecommerceFileFolderWpUploadFolder.'/'.$sizeArray['file']);// $sizeArray['file] is without / at the beginning
+						rename($attached_file_dir.'/'.$sizeArray['file'], $ecommerceFileFolderWpUploadFolder.'/'.$sizeArray['file']);// $sizeArray['file] is without / at the beginning
+					}
                 }
-            }
             }
 
             // add own post meta for javascript media.frame attachment, to avoid that user add a ecommerce sale file to a gallery as add images or multiple file
