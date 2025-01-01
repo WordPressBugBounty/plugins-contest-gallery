@@ -28,7 +28,6 @@ if(empty($_POST['cg_edit_translations']) && empty($_POST['cg_edit_ecommerce']) &
 }else if(!empty($_POST['cg_edit_ecommerce']) || !empty($_GET['cg_edit_ecommerce'])){
     $isEditEcommerceOnly = true;
 }
-
 if($isEditOptionsOnly){
     if(intval($galleryDbVersion)>=14){
         $styleTabContents="style='border-radius:none !important;position:relative;'";
@@ -48,7 +47,8 @@ if($isEditOptionsOnly){
                           <div class='cg_view_select cg_view_select_icons' cg-data-view="#view8" data-count="8"><a class="cg_view_select_link" cg-data-view="#view8" cg-data-href="cgViewHelper8">Icons</a></div>
                 </div>
 HEREDOC;
-        echo <<<HEREDOC
+
+    echo <<<HEREDOC
                 <div id="cg_main_options_tab_second_row">
                     <div id="cg_main_options_tab_second_row_inner" class="cg_main_options_tab_row">
                       <div class='cg_view_select cg_view_select_icons' cg-data-view="#view20" data-count="20"><a class="cg_view_select_link" cg-data-view="#view20" cg-data-href="cgViewHelper20">Social embed</a></div>
@@ -57,7 +57,7 @@ HEREDOC;
                       <div class='cg_view_select cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view11" data-count="11"><a class="cg_view_select_link" cg-data-view="#view11" cg-data-href="cgViewHelper11">Registration</a></div>
                       <div class='cg_view_select cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view12" data-count="12"><a class="cg_view_select_link" cg-data-view="#view12" cg-data-href="cgViewHelper12">Login</a></div>
 HEREDOC;
-        echo <<<HEREDOC
+echo <<<HEREDOC
                        <div class='cg_view_select cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view15" data-count="15"><a class="cg_view_select_link" cg-data-view="#view15" cg-data-href="cgViewHelper15" id="cgSignInOptionsTabLink">Login Google</a></div>
 
                       <div cg-data-view="#view17" data-count="17" id="cgSaveOptionsNavButton">
@@ -68,7 +68,7 @@ HEREDOC;
 HEREDOC;
     }else {
         $styleTabContents = "style='border-radius:none !important;position:relative;'";
-        echo <<<HEREDOC
+echo <<<HEREDOC
     <div id="cg_main_options" class="cg_main_options cg_hidden">
         <div id="cg_main_options_tab">
              <div id="cg_tabs_container" >
@@ -163,7 +163,6 @@ echo <<<HEREDOC
         </div>
         <div id="cg_main_options_content" class="tabcontents" $styleTabContents>
 HEREDOC;
-
 if($isEditOptionsOnly){
 
 	$cg_short_code_multiple_pics_configuration_cg_gallery_ecommerce = '';
@@ -310,13 +309,10 @@ HEREDOC;
     echo "</div>";
 
     echo <<<HEREDOC
-
             <h4 id="view8" class="cg_view_header">Icons</h4>
             <div class="cg_view cgViewHelper8" >
 HEREDOC;
-
     include(__DIR__.'/views-content/view-icons-options.php');
-
     echo "</div>";
 
     echo <<<HEREDOC
@@ -415,7 +411,6 @@ HEREDOC;
     }
 
 }else{
-
     if($isEditOptionsOnly){
 
 
@@ -459,7 +454,7 @@ HEREDOC;
 
         echo "</div>";
 
-        // status, repair, mail
+	    // status, repair, mail
         echo <<<HEREDOC
     <h4 id="statusRepairMail" class="cg_view_header">Status, repair, mail</h4>
 <div class="cg_view  statusRepairMail" style="padding-bottom:5px;">

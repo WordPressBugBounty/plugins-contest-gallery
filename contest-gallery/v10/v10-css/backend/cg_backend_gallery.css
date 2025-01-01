@@ -65,6 +65,33 @@
     font-size: 16px !important;
 }
 
+#cgSortable .cg_added_by{
+    margin-bottom: 4px !important;
+    margin-top: 2px;
+}
+
+#cgSortable .cg_for_id_wp_username_by_search_sort{
+    width: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#cgSortable .cg_attach_to_another_user{
+    width: 100px;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+}
+
+#cgSortable .cg_mail_not_confirmed{
+    margin-top:7px;
+    font-weight:600;
+}
+
 #cgSortable .cg_backend_info_upload_date_container .cg_backend_info_details_small{
     font-size: 11px;
     display:block;
@@ -2051,6 +2078,10 @@ select.cg_action_select:disabled{
 }
 
 #cgPreviewImagesToDeleteContainer .cg_preview_images_to_delete_button_container#cgPreviewImagesToDeleteButtonGoBackToEdit span{
+    background: #fff;
+}
+
+#cgPreviewImagesToDeleteContainer .cg_preview_images_to_delete_button_container#cgPreviewImagesToDeleteButtonContinue span{
     background: #f1f1f1;
 }
 
@@ -4114,4 +4145,54 @@ select.cg_action_select:focus,
     text-align: center;
     font-size: 16px;
     margin-bottom: 5px;
+}
+
+#cgAttachToAnotherUserExplanation{
+    margin-top: 35px;
+}
+
+#cgAttachToAnotherUserSelect{
+    padding: 5px 25px;
+    min-width: fit-content;
+    min-height: min-content;
+    border-radius: 8px !important;
+    margin-top: 20px;
+}
+
+#cgAttachToAnotherUserSubmitButton{
+    margin: 20px auto;
+}
+
+#cgAttachToAnotherUserDetachButton{
+    margin: 25px auto 0;
+    background: linear-gradient(0deg , #fef050 50%, #fef050 50%);
+}
+
+#cgAttachToAnotherUserDetachButton{
+    margin: 25px auto 0;
+    padding-left: 30px;
+    padding-right: 30px;
+    width: fit-content;
+    background: linear-gradient(0deg , #fef050 50%, #fef050 50%);
+}
+
+.cg_move_to_another_gallery_container {
+    padding-top: 10px;
+    border-top: thin solid #dedede;
+    margin-top: auto;
+}
+
+.cg_move_to_another_gallery {
+    font-size:14px;
+    width: fit-content;
+    text-align:center;
+    margin: 0 auto;
+    padding: 0;
+    display: block;
+    border-radius: 8px;
+}
+
+#cgGalleryBackendContainer #cgSortable .cg_move_to_another_gallery .cg_image_action_span {
+    padding: 5px 10px;
+    position: relative;
 }

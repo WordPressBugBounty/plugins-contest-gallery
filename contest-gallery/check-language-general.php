@@ -6,7 +6,6 @@ if(empty($is_frontend)){
     $is_frontend = false;
 }
 
-
 $domainDefault = 'default';
 $domain = 'contest-gallery';
 $domainBackend = 'contest-gallery';

@@ -446,10 +446,10 @@ if(!empty($_POST['cg_create'])){
     $wpdb->query( $wpdb->prepare(
         "
 							INSERT INTO $tablename_form_input
-							( id, GalleryID, Field_Type, Field_Order, Field_Content,Show_Slider,Use_as_URL,Active,IsForWpPageDescription)
-							VALUES ( %s,%d,%s,%d,%s,%d,%d,%d,%d )
+							( id, GalleryID, Field_Type, Field_Order, Field_Content,Show_Slider,Use_as_URL,Active,IsForWpPageDescription,ThirdTitle)
+							VALUES ( %s,%d,%s,%d,%s,%d,%d,%d,%d,%d )
 						",
-        '',$nextIDgallery,'comment-f',3,$kfFieldsArray,1,0,1,1
+        '',$nextIDgallery,'comment-f',3,$kfFieldsArray,1,0,1,1,1
     ) );
 
     $commentIdFormInput = $wpdb->insert_id;
@@ -648,6 +648,7 @@ if(!empty($_POST['cg_create'])){
         $jsonOptions['visual']['IsForWpPageTitleID'] = $textIdFormInput;
         $jsonOptions['visual']['IsForWpPageDescriptionID'] = $commentIdFormInput;
         $jsonOptions['visual']['EcommerceTitle'] = $EcommerceTitleToSet;
+        $jsonOptions['visual']['ThirdTitle'] = $commentIdFormInput;
 
         $fp = fopen($galleryUpload.'/json/'.$nextIDgallery.'-options.json', 'w');
         fwrite($fp, json_encode($jsonOptions));

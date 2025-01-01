@@ -796,7 +796,9 @@ echo <<<HEREDOC
     <div class='cg_view_options_row'>
         <div class='cg_view_option cg_view_option_full_width cg_border_top_none  cg_border_border_bottom_left_radius_8_px  cg_border_border_bottom_right_radius_8_px cg_go_to_target $cgProFalse' data-cg-go-to-target="ThirdTitleGalleriesViewArea">
             <div class='cg_view_option_title '>
-                <p>Third title cg_galleries_no_voting view</p>
+                <p>Third title cg_galleries_no_voting view
+                <br>
+                <span class="cg_view_option_title_note"><b>NOTE:</b> perfect to use as description, 20 text rows will be displayed as preview in masonry galleries view</span></p>
             </div>
             <div class='cg_view_option_input '>
                 <textarea type="text" name='multiple-pics[cg_gallery_no_voting][pro][ThirdTitleGalleriesView]' class="ThirdTitleGalleriesView"  rows="5" style="width:100%;"  >$ThirdTitleGalleriesView</textarea>

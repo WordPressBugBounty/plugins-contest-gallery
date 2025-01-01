@@ -1931,12 +1931,10 @@ jQuery(document).ready(function ($) {
                 }
 
             }).fail(function (xhr, status, error) {
-
-                console.log('response error');
-                console.log(response);
-
-                return;
-
+                console.log('response cg_sort_files_form_button');
+                console.log(xhr);
+                console.log(status);
+                console.log(error);
             }).always(function () {
 
                 var test = 1;
@@ -1944,6 +1942,136 @@ jQuery(document).ready(function ($) {
             });
 
         }, 1000);
+
+    });
+
+    // attach to another user open select
+    $(document).on('click', '#cgSortable .cg_attach_to_another_user', function (e) {
+        debugger
+        e.preventDefault();
+        var cgEntryId = $(this).closest('.cg_backend_info_container').attr('data-cg-real-id');
+        var $cg_backend_info_user_link_container = $(this).closest('.cg_backend_info_user_link_container');
+        cgJsClassAdmin.gallery.vars.$cg_backend_info_user_link_container = $cg_backend_info_user_link_container;
+        var gid = $('#cgBackendGalleryId').val();
+        cgJsClassAdmin.gallery.functions.showCgBackendBackgroundDrop();
+        var $cgAttachToAnotherUserContainer = $('#cgAttachToAnotherUserContainer');
+        $cgAttachToAnotherUserContainer.removeClass('cg_hide').find('.cg-lds-dual-ring-gallery-hide').removeClass('cg_hide');
+        $cgAttachToAnotherUserContainer.find('#cgAttachToAnotherUserSubmitButtonContainer').addClass('cg_hide');
+        $cgAttachToAnotherUserContainer.find('#cgAttachToAnotherUserExplanationEntryId').text(cgEntryId);
+
+        var form = document.getElementById('cgAttachToAnotherUserForm');
+        var $cgAttachToAnotherUserForm = $(form);
+        $cgAttachToAnotherUserForm.find('input[name="action"]').val('post_cg_attach_to_another_user_select');
+        var formPostData = new FormData(form);
+        var cg_nonce = $('#cg_nonce').val();
+
+        $cgAttachToAnotherUserForm.find('input[name="cgEntryId"]').val(cgEntryId);
+        $cgAttachToAnotherUserForm.addClass('cg_hide');
+
+        if($cg_backend_info_user_link_container.find('.cg_added_by_username').length){
+            var current_user_login = $cg_backend_info_user_link_container.find('.cg_added_by_username').text();
+            $cgAttachToAnotherUserForm.find('#cgAttachToAnotherUserDetachButton').text('Detach from '+current_user_login).removeClass('cg_hide');
+        }else{
+            $cgAttachToAnotherUserForm.find('#cgAttachToAnotherUserDetachButton').addClass('cg_hide');
+        }
+
+        if($cgAttachToAnotherUserForm.find('#cgAttachToAnotherUserSelect').length){
+            $cgAttachToAnotherUserContainer.find('.cg-lds-dual-ring-gallery-hide').addClass('cg_hide');
+            $cgAttachToAnotherUserContainer.find('#cgAttachToAnotherUserSubmitButtonContainer').removeClass('cg_hide');
+            $cgAttachToAnotherUserForm.removeClass('cg_hide');
+            return;
+        }
+
+        $.ajax({
+            url: 'admin-ajax.php',
+            method: 'post',
+            data: formPostData,
+            dataType: null,
+            contentType: false,
+            processData: false
+        }).done(function (response) {
+            console.log('response success');
+            console.log(response);
+            var htmlDom = new DOMParser().parseFromString(response, 'text/html');
+            var $cgAttachToAnotherUserSelect = $(htmlDom.getElementById('cgAttachToAnotherUserSelect'));
+            $cgAttachToAnotherUserForm.prepend($cgAttachToAnotherUserSelect);
+            $cgAttachToAnotherUserForm.removeClass('cg_hide');
+            $cgAttachToAnotherUserContainer.find('.cg-lds-dual-ring-gallery-hide').addClass('cg_hide');
+            $cgAttachToAnotherUserContainer.find('#cgAttachToAnotherUserSubmitButtonContainer').removeClass('cg_hide');
+        }).fail(function (xhr, status, error) {
+            console.log('response error cg_attach_to_another_user');
+            console.log(xhr);
+            console.log(status);
+            console.log(error);
+        }).always(function () {
+            var test = 1;
+        });
+    });
+
+    // attach to another user
+
+    $(document).on('click','#cgAttachToAnotherUserSubmitButton,#cgAttachToAnotherUserDetachButton',function (e){
+        debugger
+        e.preventDefault();
+        var $el = $(this);
+        var $cgAttachToAnotherUserForm = $el.closest('form');
+        $cgAttachToAnotherUserForm.find('input[name="action"]').val('post_cg_attach_to_another_user');
+        var $cgAttachToAnotherUserContainer = $(this).closest('#cgAttachToAnotherUserContainer');
+        var $cg_backend_info_user_link_container = cgJsClassAdmin.gallery.vars.$cg_backend_info_user_link_container;
+        var formPostData = new FormData($cgAttachToAnotherUserForm.get(0));
+        $cgAttachToAnotherUserContainer.find('.cg-lds-dual-ring-gallery-hide').removeClass('cg_hide');
+        $cgAttachToAnotherUserForm.addClass('cg_hide');
+        var $option = $cgAttachToAnotherUserForm.find('select option:selected');
+        var WpUserId = $option.val();
+        var text = $option.text();
+        var user_login = $option.attr('data-user_login');
+        var cg_nonce = $('#cg_nonce').val();
+        var gid = $('#cgBackendGalleryId').val();
+
+        if($el.attr('id')=='cgAttachToAnotherUserDetachButton'){
+            formPostData.append('cgAttachToAnotherUserId',0);
+        }
+
+        $.ajax({
+            url: 'admin-ajax.php',
+            method: 'post',
+            data: formPostData,
+            dataType: null,
+            contentType: false,
+            processData: false
+        }).done(function (response) {
+
+            $cgAttachToAnotherUserContainer.find('.cg-lds-dual-ring-gallery-hide').addClass('cg_hide');
+            $cgAttachToAnotherUserContainer.addClass('cg_hide');
+            cgJsClassAdmin.gallery.functions.hideCgBackendBackgroundDropAndContainer();
+
+            if($el.attr('id')=='cgAttachToAnotherUserDetachButton'){
+                text = $cg_backend_info_user_link_container.find('.cg_added_by_username').text();
+                $cg_backend_info_user_link_container.find('.cg_added_by, .cg_image_action_href.cg_load_backend_link, .cg_attach_to_another_user').remove();
+                var $cg_attach_to_another_user = $('<div class="cg_action_button cg_attach_to_another_user ">Attach to registered user</div>');
+                $cg_backend_info_user_link_container.prepend($cg_attach_to_another_user);
+                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Entry dettached from <br><b style="color: black !important;">'+text+'</b>',true);
+            }else{
+                var $cg_added_by = $('<span class="cg_added_by">Added by (username)</span>');
+                var $cg_action_href = $('<a class="cg_image_action_href cg_load_backend_link" href="?page=contest-gallery-pro/index.php&users_management=true&option_id='+gid+'&wp_user_id='+WpUserId+'&cg_nonce='+cg_nonce+'">'+
+                    '<div class="cg_image_action_span cg_for_id_wp_username_by_search_sort cg_added_by_username">'+user_login+'</div></a>');
+                var $cg_attach_to_another_user = $('<div class="cg_action_button cg_attach_to_another_user">Attach to another user<br>or detach<br>from user</div>');
+                $cg_backend_info_user_link_container.find('.cg_added_by, .cg_image_action_href.cg_load_backend_link, .cg_attach_to_another_user').remove();
+                $cg_backend_info_user_link_container.prepend($cg_attach_to_another_user);
+                $cg_backend_info_user_link_container.prepend($cg_action_href);
+                $cg_backend_info_user_link_container.prepend($cg_added_by);
+                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Entry attached to <br><b style="color: black !important;">'+text+'</b>',true);
+            }
+
+
+        }).fail(function (xhr, status, error) {
+            console.log('response error cgAttachToAnotherUserForm');
+            console.log(xhr);
+            console.log(status);
+            console.log(error);
+        }).always(function () {
+
+        });
 
     });
 

@@ -46,9 +46,7 @@ __('Invoice');$l_Invoice = "Invoice";$language_Invoice = (!empty($translations[$
 
 __('Download invoice');$l_DownloadInvoice = "Download invoice";$language_DownloadInvoice = (!empty($translations[$l_DownloadInvoice]) && $is_frontend) ? $translations[$l_DownloadInvoice] : ((empty(trim(__($l_DownloadInvoice,$domain)))) ? __($l_DownloadInvoice,$domainDefault) : __($l_DownloadInvoice,$domain)); if(empty($translations[$l_DownloadInvoice])){$translations[$l_DownloadInvoice]='';}
 
-
 __('Billing address different from delivery address?');$l_ShipToDifferentAddress = "Billing address different from delivery address?";$language_ShipToDifferentAddress = (!empty($translations[$l_ShipToDifferentAddress]) && $is_frontend) ? $translations[$l_ShipToDifferentAddress] : ((empty(trim(__($l_ShipToDifferentAddress,$domain)))) ? __($l_ShipToDifferentAddress,$domainDefault) : __($l_ShipToDifferentAddress,$domain)); if(empty($translations[$l_ShipToDifferentAddress])){$translations[$l_ShipToDifferentAddress]='';}
-
 
 __('Country');$l_Country = "Country";$language_Country = (!empty($translations[$l_Country]) && $is_frontend) ? $translations[$l_Country] : ((empty(trim(__($l_Country,$domain)))) ? __($l_Country,$domainDefault) : __($l_Country,$domain)); if(empty($translations[$l_Country])){$translations[$l_Country]='';}
 

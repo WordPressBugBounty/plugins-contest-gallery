@@ -18,7 +18,7 @@ $translationsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/
 /*if(file_exists($translationsFileGeneralPrevious)){
 	$translationsFile = $translationsFileGeneralPrevious;
 }else{
-$translationsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/'.$galeryID.'-translations.json';
+	$translationsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/'.$galeryID.'-translations.json';
 }*/
 
 $translations = array();

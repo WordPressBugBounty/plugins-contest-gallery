@@ -247,7 +247,7 @@ echo <<<HEREDOC
               <input type="checkbox" name="upload[$id][infoInGallery]" $checked>
         </div>
     </div>
-     <div class='$cgProFalse cg_pro_false_unset cg_view_option $cg_disabled_sub_and_third_title cg_view_option_25_percent cg_border_bottom_none cg_border_right_none cg_info_show_gallery_sub_title'>
+     <div class='$cgProFalse  cg_view_option $cg_disabled_sub_and_third_title cg_view_option_25_percent cg_border_bottom_none cg_border_right_none cg_info_show_gallery_sub_title'>
         <div class='cg_view_option_title cg_view_option_title_full_width'>
             <p>Show as sub title in gallery view<br>(only 1 allowed)<br><span class="cg_view_option_title_note"><b>NOTE:</b> modern design, sub title will be displayed above main title in smaller font size</span>$cg_disabled_sub_and_third_title_note</p>
         </div>
@@ -255,7 +255,7 @@ echo <<<HEREDOC
               <input type="checkbox" name="upload[$id][SubTitle]" $checkedSubTitle>
         </div>
     </div>    
-     <div class='$cgProFalse cg_view_option $cg_disabled_sub_and_third_title cg_view_option_25_percent cg_border_bottom_none cg_border_right_none cg_info_show_gallery_third_title'>
+     <div class=' cg_view_option $cg_disabled_sub_and_third_title cg_view_option_25_percent cg_border_bottom_none cg_border_right_none cg_info_show_gallery_third_title'>
         <div class='cg_view_option_title cg_view_option_title_full_width'>
             <p>Show as third title (description) in gallery view<br>(only 1 allowed)<br><span class="cg_view_option_title_note"><b>NOTE:</b> perfect to use as description, 20 text rows will be displayed as preview in masonry gallery view</span>$cg_disabled_sub_and_third_title_note</p>
         </div>

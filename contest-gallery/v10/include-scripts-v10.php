@@ -5,7 +5,6 @@ wp_enqueue_script( 'jquery-ui-slider' );
 wp_enqueue_script( 'jquery-ui-datepicker' );
 wp_enqueue_script( 'jquery-ui-sortable' );
 
-
     wp_enqueue_style( 'cg_v10_css_cg_gallery', plugins_url('/v10-css-min/cg_gallery.min.css', __FILE__), false, cg_get_version_for_scripts() );
     
     wp_enqueue_script( 'cg_v10_js_masonry', plugins_url( '/v10-js/libs/masonry.pkgd.min.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts());
@@ -69,19 +68,18 @@ wp_enqueue_script( 'jquery-ui-sortable' );
 
 if(empty($isFromOrderSummary)){
 	if(empty($isCGalleriesAjax)){
-ob_start();
+		ob_start();
 	}
-echo "<pre class='cg_main_pre  cg_10 cg_20' >";
+	echo "<pre class='cg_main_pre  cg_10 cg_20' >";
 }
 
 include("v10-frontend/v10-get-data.php");
 
 if(empty($isFromOrderSummary)){
-echo "</pre>";
+	echo "</pre>";
 	if(empty($isCGalleriesAjax)){
-$frontend_gallery = ob_get_clean();
-
-apply_filters( 'cg_filter_frontend_gallery', $frontend_gallery );
-}
+		$frontend_gallery = ob_get_clean();
+		apply_filters( 'cg_filter_frontend_gallery', $frontend_gallery );
+	}
 }
 

@@ -170,7 +170,9 @@ cg_total_images_shown_in_frontend_zero();
     echo "</form>";
 }
 
+if(!$cgProFalse){
 cg_move_to_another_gallery_container($GalleryID);
+}
 
 cg_backend_gallery_render_reload_entry_loader();
 
@@ -183,6 +185,10 @@ cg_social_input_container($GalleryID);
 cg_social_library($GalleryID);
 
 cg_sort_gallery_files_container($GalleryID,$optionsSQL->Version);
+
+if(!$cgProFalse){
+	cg_attach_to_another_user_container($GalleryID);
+}
 
 cg_multiple_files_for_post_container();
 

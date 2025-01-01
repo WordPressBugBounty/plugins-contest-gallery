@@ -32,9 +32,9 @@ HEREDOC;
 //if(intval($galleryDbVersion)>=24){
 if(false){
 
-$CgEntriesOwnSlugNameMultisiteNote = '';
+	$CgEntriesOwnSlugNameMultisiteNote = '';
 //if(is_multisite()){
-    //$CgEntriesOwnSlugNameMultisiteNote = '<span class="cg_font_weight_500" style="color: red;">NOTE FOR MULTISITE:</span> The "slug name" is valid for all sites of a multisite.<br>';
+	//$CgEntriesOwnSlugNameMultisiteNote = '<span class="cg_font_weight_500" style="color: red;">NOTE FOR MULTISITE:</span> The "slug name" is valid for all sites of a multisite.<br>';
 //}
 
 	$CgEntriesOwnSlugNameYoursExample = '';
@@ -166,15 +166,15 @@ HEREDOC;
 //if(is_multisite()){
 	//$CgEntriesOwnSlugNameMultisiteNote = '<span class="cg_font_weight_500" style="color: red;">NOTE FOR MULTISITE:</span> The "slug name" is valid for all sites of a multisite.<br>';
 //}
-$CgEntriesOwnSlugNameYoursExample = '';
-if(!empty($CgEntriesOwnSlugName)){
-    $CgEntriesOwnSlugNameYoursExample = "<span class=\"cg_font_weight_500\">Yours example:</span> $bloginfo_wpurl/<span class=\"cg_font_weight_500\">$CgEntriesOwnSlugName</span>/contest-gallery-id-{gallery_id}/example-entry<br>";
+	$CgEntriesOwnSlugNameYoursExample = '';
+	if(!empty($CgEntriesOwnSlugName)){
+		$CgEntriesOwnSlugNameYoursExample = "<span class=\"cg_font_weight_500\">Yours example:</span> $bloginfo_wpurl/<span class=\"cg_font_weight_500\">$CgEntriesOwnSlugName</span>/contest-gallery-id-{gallery_id}/example-entry<br>";
 	}else{
 		$CgEntriesOwnSlugName = '';
-}
+	}
 
 	if(intval($galleryDbVersion)<24){
-echo <<<HEREDOC
+		echo <<<HEREDOC
         <div class='cg_view_options_row cg_margin_bottom_30' >
             <div class='cg_view_option cg_view_option_full_width $CgEntriesOwnSlugNameDisabled '>
                 <div class='cg_view_option_title'>

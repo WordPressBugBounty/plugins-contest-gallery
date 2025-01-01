@@ -1167,9 +1167,11 @@ if($isAjaxCall){
 		echo '</div>';
 
 		// Link zum Wordpress User in WP Management
+		$isUserShown = false;
 		if($WpUserId>0){
 
 			if(!empty($allWpUsersByIdArray[$WpUserId])){
+				$isUserShown = true;
 
 				$cgAddedByGoogleUser = '';
 
@@ -1179,16 +1181,25 @@ if($isAjaxCall){
 
 				echo "<div class='cg_backend_info_user_link_container'>";
 				echo $cgAddedByGoogleUser;
-				echo "<span style='margin-bottom: 4px !important;margin-top: 2px;'>Added by (username)</span><a class=\"cg_image_action_href cg_load_backend_link\" href='?page=".cg_get_version()."/index.php&users_management=true&option_id=$GalleryID&wp_user_id=".$allWpUsersByIdArray[$WpUserId]['ID']."'>
-<div class=\"cg_image_action_span cg_for_id_wp_username_by_search_sort\" style='width:100px;margin-left:auto;margin-right:auto;text-align:center;overflow:hidden;text-overflow: ellipsis;'>".$allWpUsersByIdArray[$WpUserId]['user_login']."</div></a>";
+				echo "<span class='cg_added_by'>Added by (username)</span><a class=\"cg_image_action_href cg_load_backend_link\" href='?page=".cg_get_version()."/index.php&users_management=true&option_id=$GalleryID&wp_user_id=".$allWpUsersByIdArray[$WpUserId]['ID']."'>
+<div class=\"cg_image_action_span cg_for_id_wp_username_by_search_sort cg_added_by_username\" >".$allWpUsersByIdArray[$WpUserId]['user_login']."</div></a>";
 
 				if(in_array($WpUserId,$wpUsersIdsWithNotConfirmedMailArray)){
-					echo "<div style='margin-top:7px;font-weight:600;'>Mail not confirmed</div>";
+					echo "<div class='cg_mail_not_confirmed' >Mail not confirmed</div>";
 				}
-
+                    echo "<div class='cg_action_button cg_attach_to_another_user $cgProFalse' >";
+                        echo "Attach to another user<br>or detach<br>from user";
+                    echo '</div>';
 				echo '</div>';
 			}
 		}
+        if(!$isUserShown){
+	        echo "<div class='cg_backend_info_user_link_container'>";
+                echo "<div class='cg_action_button cg_attach_to_another_user $cgProFalse' >";
+                echo "Attach to registered user";
+                echo '</div>';
+	        echo '</div>';
+        }
 		// Link zum Wordpress User in WP Management ---- ENDE
 
 		echo '</div>';
@@ -1586,7 +1597,7 @@ if($isAjaxCall){
         ### cg_display_flex close ###
 		echo '</div>';
 
-        echo "<div style='padding-top: 10px; border-top: thin solid #dedede;margin-top: auto;'><a class=\"cg_move_to_another_gallery cg_image_action_href\" href=\"?page=".cg_get_version()."/index.php&option_id=$GalleryID&show_comments=true&id=$id\"><div class=\"cg_image_action_span\" style='font-size:14px;width: fit-content;text-align:center;margin: 0 auto;padding: 5px 10px;'>Move to another gallery</div></a></div>";
+		echo "<div class='cg_move_to_another_gallery_container $GalleryID' ><a class=\"cg_move_to_another_gallery cg_image_action_href $cgProFalse\" href=\"?page=".cg_get_version()."/index.php&option_id=&show_comments=true&id=$id\"><div class=\"cg_image_action_span $cgProFalse\" >Move to another gallery</div></a></div>";
 
 	    echo "</div>";
 

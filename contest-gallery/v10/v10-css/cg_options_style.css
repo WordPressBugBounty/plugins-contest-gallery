@@ -89,6 +89,9 @@ select{
 	border-radius: unset !important;
 	font-size: 14px !important;
 }
+.cg_min_height_fit_content {
+	min-height: fit-content !important;
+}
 .cg_overflow_hidden {
 	overflow: hidden !important;
 }
@@ -4833,7 +4836,9 @@ td input, td input:focus, td input:hover{
 .td_gallery_info_shortcode.cg-pro-false:after,
 #cgProEcomFalseContainer.cg-pro-false:after,
 .cgEcommerceGeneralOptions .cg-pro-false:after,
-.cgInvoiceGeneralOptions .cg-pro-false:after
+.cgInvoiceGeneralOptions .cg-pro-false:after,
+.cg_attach_to_another_user.cg-pro-false:after,
+.cg_move_to_another_gallery.cg-pro-false .cg_image_action_span:after
 {
 	content: "PRO";
 	background-color: #95ff79 !important;

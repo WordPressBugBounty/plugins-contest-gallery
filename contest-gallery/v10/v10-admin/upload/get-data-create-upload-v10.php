@@ -524,10 +524,6 @@ if(!empty($_POST['upload'])){
 					$ThirdTitle = 0;
 				}
 
-				if(strpos($Version,'-PRO')===false){
-					$ThirdTitle = 0;
-				}
-
 				if(!empty($field['EcommerceDescription'])){
 					$EcommerceDescription = 1;
 				}else{
@@ -669,9 +665,7 @@ if(!empty($_POST['upload'])){
 				}else{
 					$ThirdTitle = 0;
 				}
-				if(strpos($Version,'-PRO')===false){
-					$ThirdTitle = 0;
-				}
+
 				if(empty($field['new'])){
 					$wpdb->update(
 						"$tablename_form_input",
@@ -889,9 +883,6 @@ if(!empty($_POST['upload'])){
 				if(!empty($field['ThirdTitle'])){
 					$ThirdTitle = 1;
 				}else{
-					$ThirdTitle = 0;
-				}
-				if(strpos($Version,'-PRO')===false){
 					$ThirdTitle = 0;
 				}
 
@@ -1167,9 +1158,7 @@ if(!empty($_POST['upload'])){
 				}else{
 					$ThirdTitle = 0;
 				}
-				if(strpos($Version,'-PRO')===false){
-					$ThirdTitle = 0;
-				}
+
 				if(empty($field['new'])){
 					$wpdb->update(
 						"$tablename_form_input",
@@ -1256,9 +1245,7 @@ if(!empty($_POST['upload'])){
 				}else{
 					$ThirdTitle = 0;
 				}
-				if(strpos($Version,'-PRO')===false){
-					$ThirdTitle = 0;
-				}
+
 				if(empty($field['new'])){
 					$wpdb->update(
 						"$tablename_form_input",

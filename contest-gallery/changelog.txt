@@ -1,5 +1,9 @@
 Contest Gallery
 
+= V25.0.2 =
+* NEW: Long descriptions for entries, "Third title" in "Edit contact form", now available in normal version.
+* NEW: Attach an entry to a registered user of your choice.
+
 = V25.0.1 =
 * NEW: Long descriptions can be added now as third title for cg_galleries... shortcodes view.
 * FIXED: If no entries for a gallery in cg_galleries... view then gallery was unclickable.

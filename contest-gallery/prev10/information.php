@@ -1,25 +1,25 @@
 <?php
 
 extract( shortcode_atts( array(
-    'id' => ''
+	'id' => ''
 ), $atts ) );
 
 if(!empty($atts['id'])){
 
-    $galeryID = absint(trim($atts['id']));
+	$galeryID = absint(trim($atts['id']));
 
-    global $wpdb;
+	global $wpdb;
 
-    $tablenameOptions = $wpdb->prefix . "contest_gal1ery_options";
+	$tablenameOptions = $wpdb->prefix . "contest_gal1ery_options";
 
-    $optionsSQL = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablenameOptions WHERE id= %d ",[$galeryID]));
+	$optionsSQL = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablenameOptions WHERE id= %d ",[$galeryID]));
 
-    if(empty($optionsSQL)){
-        @ob_start();// Wichtig!!! Anonsten kommt es zu Fehler im Backend beim speichern!
-        $checkIfGalleryExists = false;
-        echo "<p class='cg-error-shortcode cg-error-shortcode-id-not-found'>Contest Gallery: Please check your gallery shortcode. The id does not exists.</p>";
+	if(empty($optionsSQL)){
+		@ob_start();// Wichtig!!! Anonsten kommt es zu Fehler im Backend beim speichern!
+		$checkIfGalleryExists = false;
+		echo "<p class='cg-error-shortcode cg-error-shortcode-id-not-found'>Contest Gallery: Please check your gallery shortcode. The id does not exists.</p>";
 
-        ?>
+		?>
 
         <script>
 
@@ -27,23 +27,23 @@ if(!empty($atts['id'])){
 
         </script>
 
-        <?php
+		<?php
 
-        return;
+		return;
 
-    }else{
+	}else{
 
-        if(empty($optionsSQL->Version) OR intval($optionsSQL->Version)<10){
-            echo "<p class='cg-error-shortcode' style='text-align:center;font-weight:bold;'>You are using a gallery with old engine.<br>Please copy this gallery to use new engine and full Contest Gallery abilities.</p>";
-        }else{
-            echo "<p class='cg-error-shortcode' style='text-align:center;font-weight:bold;'>$usedShortcode shortcode information:
+		if(empty($optionsSQL->Version) OR intval($optionsSQL->Version)<10){
+			echo "<p class='cg-error-shortcode' style='text-align:center;font-weight:bold;'>You are using a gallery with old engine.<br>Please copy this gallery to use new engine and full Contest Gallery abilities.</p>";
+		}else{
+			echo "<p class='cg-error-shortcode' style='text-align:center;font-weight:bold;'>$usedShortcode shortcode information:
 <br>wp-content/uploads/contest-gallery... folder and files can not be found or read.<br>They might be deleted by someone manually or wrong files/folders permissions are set.
 </p>";
-        }
-    }
+		}
+	}
 
 }else{
-    ?>
+	?>
 
     <script>
 
@@ -51,9 +51,9 @@ if(!empty($atts['id'])){
 
     </script>
 
-    <?php
+	<?php
 
-    return;
+	return;
 }
 
 

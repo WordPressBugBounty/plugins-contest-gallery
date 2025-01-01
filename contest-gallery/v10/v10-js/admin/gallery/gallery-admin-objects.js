@@ -18,6 +18,7 @@ cgJsClassAdmin.gallery.vars = {
     moveContactFieldsAssigns: {},
     moveSelected: '',
     WpUploadFilesForSaleArrayLoaded: [],
+    $cg_backend_info_user_link_container: [],
     setStarOnStarOffSrc: function(){
         this.setStarOnSrc = jQuery('#cg_rating_star_on').val();
         this.setStarOffSrc = jQuery('#cg_rating_star_off').val();

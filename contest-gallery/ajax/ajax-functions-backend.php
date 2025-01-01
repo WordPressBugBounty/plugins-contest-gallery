@@ -740,6 +740,100 @@ if (!function_exists('post_cg_gallery_sort_files')) {
 }
 // sort files ---- END
 
+// attach to another user select
+add_action('wp_ajax_post_cg_attach_to_another_user_select', 'post_cg_attach_to_another_user_select');
+if (!function_exists('post_cg_attach_to_another_user_select')) {
+	function post_cg_attach_to_another_user_select()
+	{
+		if (defined('DOING_AJAX') && DOING_AJAX) {
+
+			$user = wp_get_current_user();
+
+			if (
+				is_super_admin($user->ID) ||
+				in_array('administrator', (array)$user->roles) ||
+				in_array('editor', (array)$user->roles) ||
+				in_array('author', (array)$user->roles)
+			) {
+				global $wpdb;
+
+				$wpUsers = $wpdb->base_prefix . "users";
+				$selectWPusers = $wpdb->get_results("SELECT ID, user_login, user_email FROM $wpUsers WHERE ID > 0 ORDER BY ID ASC");
+
+                echo "<select id='cgAttachToAnotherUserSelect' name='cgAttachToAnotherUserId'>";
+                    foreach ($selectWPusers as $user){
+                        echo "<option value='$user->ID' data-user_login='$user->user_login'>$user->user_login - $user->user_email (ID: $user->ID)</option>";
+                    }
+                echo "</select>";
+
+			} else {
+				echo "<div ><h2>MISSINGRIGHTS<br>This area can be edited only as administrator, editor or author.</h2></div>";
+				exit();
+			}
+
+			exit();
+		} else {
+			exit();
+		}
+	}
+}
+// attach to another user select --- END
+
+// attach to another user
+add_action('wp_ajax_post_cg_attach_to_another_user', 'post_cg_attach_to_another_user');
+if (!function_exists('post_cg_attach_to_another_user')) {
+	function post_cg_attach_to_another_user()
+	{
+		if (defined('DOING_AJAX') && DOING_AJAX) {
+
+			$user = wp_get_current_user();
+
+			if (
+				is_super_admin($user->ID) ||
+				in_array('administrator', (array)$user->roles) ||
+				in_array('editor', (array)$user->roles) ||
+				in_array('author', (array)$user->roles)
+			) {
+				global $wpdb;
+
+				$tablename = $wpdb->prefix . "contest_gal1ery";
+				$table_posts = $wpdb->prefix . "posts";
+				#$wpUsers = $wpdb->prefix . "users";
+
+				$WpUserId = absint($_POST['cgAttachToAnotherUserId']);
+				$pid = absint($_POST['cgEntryId']);
+				$GalleryID = absint($_POST['GalleryID']);
+
+				$wpdb->query("UPDATE $tablename SET WpUserId=$WpUserId WHERE id = $pid");
+
+				$Active = $wpdb->get_var( "SELECT Active FROM $tablename WHERE id = $pid");
+
+                if($Active==1){
+	                $row = $wpdb->get_row( "SELECT DISTINCT $table_posts.*, $tablename.* FROM $table_posts, $tablename WHERE 
+                          (($tablename.id = $pid) AND $tablename.GalleryID='$GalleryID' AND $tablename.Active='1' and $table_posts.ID = $tablename.WpUpload) 
+                          OR 
+                          (($tablename.id = $pid) AND $tablename.GalleryID='$GalleryID' AND $tablename.Active='1' AND $tablename.WpUpload = 0) 
+                          GROUP BY $tablename.id  ORDER BY $tablename.id DESC LIMIT 0, 1");
+	                cg_create_json_files_when_activating($GalleryID,$row);
+                }
+
+				#$wpUser = $wpdb->get_row("SELECT user_login, user_email FROM $wpUsers WHERE ID = $WpUserId");
+				//echo "###".$wpUser->user_login." - ".$wpUser->user_email."###";
+				echo "###post_cg_attach_to_another_user successful###";
+
+			} else {
+				echo "<div ><h2>MISSINGRIGHTS<br>This area can be edited only as administrator, editor or author.</h2></div>";
+				exit();
+			}
+
+			exit();
+		} else {
+			exit();
+		}
+	}
+}
+// attach to another user --- END
+
 // sort files
 add_action('wp_ajax_post_cg_test_ecom_keys', 'post_cg_test_ecom_keys');
 if (!function_exists('post_cg_test_ecom_keys')) {
