@@ -302,6 +302,7 @@ foreach ($commentsDataJsonFiles as $jsonFile) {
         var ratingCommentsDataFromJustCommented = <?php echo json_encode($ratingCommentsData);?>;
 
         cgJsData[galeryIDuser].jsonCommentsData = <?php echo json_encode($jsonCommentsData); ?>;
+        cgJsData[galeryIDuser].vars.commentUnix = <?php echo json_encode($unix); ?>;
         cgJsClass.gallery.comment.setComments(galeryIDuser);
         if(Active!=2){
             cgJsClass.gallery.comment.setComment(pictureID,0,galeryIDuser,false,false,false,ratingCommentsDataFromJustCommented);

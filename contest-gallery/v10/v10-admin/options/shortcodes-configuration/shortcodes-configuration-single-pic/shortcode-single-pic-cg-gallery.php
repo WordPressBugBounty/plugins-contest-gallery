@@ -159,7 +159,6 @@ echo <<<HEREDOC
         </div>
 HEREDOC;
 
-
 echo <<<HEREDOC
 <div class='cg_view_options_row'>
     <div  class='cg_view_option cg_border_top_none  cg_view_option_full_width  cg_view_option_flex_flow_column AllowCommentsContainer'>
@@ -170,16 +169,15 @@ echo <<<HEREDOC
         <select name="CommentsDateFormat">
 HEREDOC;
 
-foreach($CommentsDateFormatNamePathSelectedValuesArray as $CommentsDateFormatNamePathSelectedValuesArrayValue){
+foreach($CommentsDateFormatNamePathSelectedValuesArray as $key =>   $CommentsDateFormatNamePathSelectedValuesArrayValue){
     $CommentsDateFormatNamePathSelectedValuesArrayValueSelected = '';
-    if($CommentsDateFormatNamePathSelectedValuesArrayValue==$CommentsDateFormat){
+    if($key==$CommentsDateFormat){
         $CommentsDateFormatNamePathSelectedValuesArrayValueSelected = 'selected';
     }
-    echo "<option value='$CommentsDateFormatNamePathSelectedValuesArrayValue' $CommentsDateFormatNamePathSelectedValuesArrayValueSelected >$CommentsDateFormatNamePathSelectedValuesArrayValue</option>";
+    echo "<option value='$key' $CommentsDateFormatNamePathSelectedValuesArrayValueSelected >$CommentsDateFormatNamePathSelectedValuesArrayValue</option>";
 }
 
 echo <<<HEREDOC
-                        <option value="YYYY-MM-DD">YYYY-MM-DD</option><option value="DD-MM-YYYY">DD-MM-YYYY</option><option value="MM-DD-YYYY">MM-DD-YYYY</option><option value="YYYY/MM/DD">YYYY/MM/DD</option><option value="DD/MM/YYYY">DD/MM/YYYY</option><option value="MM/DD/YYYY">MM/DD/YYYY</option><option value="YYYY.MM.DD">YYYY.MM.DD</option><option value="DD.MM.YYYY">DD.MM.YYYY</option><option value="MM.DD.YYYY">MM.DD.YYYY</option>
                                </select>
         </div>
     </div>

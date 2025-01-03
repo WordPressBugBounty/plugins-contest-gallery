@@ -4255,9 +4255,11 @@ td input, td input:focus, td input:hover{
 	padding-bottom: 55px;
 }
 
-.cg_no_outline_and_shadow_on_focus:focus{
+.cg_no_outline_and_shadow_on_focus:focus,
+.cg_no_outline_and_shadow_on_focus:hover{
 	outline: none;
 	box-shadow: none;
+	color: #000 !important;
 }
 
 .cg_go_to_image_view_background_style:focus{

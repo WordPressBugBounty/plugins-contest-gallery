@@ -171,7 +171,7 @@ cg_total_images_shown_in_frontend_zero();
 }
 
 if(!$cgProFalse){
-cg_move_to_another_gallery_container($GalleryID);
+	cg_move_to_another_gallery_container($GalleryID);
 }
 
 cg_backend_gallery_render_reload_entry_loader();

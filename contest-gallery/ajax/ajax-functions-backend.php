@@ -760,7 +760,7 @@ if (!function_exists('post_cg_attach_to_another_user_select')) {
 				$wpUsers = $wpdb->base_prefix . "users";
 				$selectWPusers = $wpdb->get_results("SELECT ID, user_login, user_email FROM $wpUsers WHERE ID > 0 ORDER BY ID ASC");
 
-                echo "<select id='cgAttachToAnotherUserSelect' name='cgAttachToAnotherUserId'>";
+                echo "<select id='cgAttachToAnotherUserSelect' name='cgAttachToAnotherUserId' class='cg_no_outline_and_shadow_on_focus'>";
                     foreach ($selectWPusers as $user){
                         echo "<option value='$user->ID' data-user_login='$user->user_login'>$user->user_login - $user->user_email (ID: $user->ID)</option>";
                     }

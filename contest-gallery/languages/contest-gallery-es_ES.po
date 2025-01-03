@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Contest Gallery\n"
-"POT-Creation-Date: 2024-12-28 21:15+0100\n"
-"PO-Revision-Date: 2024-12-28 21:19+0100\n"
+"POT-Creation-Date: 2025-01-03 21:29+0100\n"
+"PO-Revision-Date: 2025-01-03 21:37+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -37,300 +37,300 @@ msgstr "Factura"
 msgid "Download invoice"
 msgstr "Descargar factura"
 
-#: check-language-ecommerce.php:50
+#: check-language-ecommerce.php:49
 msgid "Billing address different from delivery address?"
 msgstr "¿Dirección de facturación diferente de la dirección de entrega?"
 
-#: check-language-ecommerce.php:53
+#: check-language-ecommerce.php:51
 msgid "Country"
 msgstr "País"
 
-#: check-language-ecommerce.php:55
+#: check-language-ecommerce.php:53
 msgid "Price"
 msgstr "Precio"
 
-#: check-language-ecommerce.php:57
+#: check-language-ecommerce.php:55
 msgid "Quantity"
 msgstr "Cantidad"
 
-#: check-language-ecommerce.php:59
+#: check-language-ecommerce.php:57
 msgid "Shipping"
 msgstr "Envío"
 
-#: check-language-ecommerce.php:61 check-language-ecommerce.php:63
+#: check-language-ecommerce.php:59 check-language-ecommerce.php:61
 msgid "Alternative shipping"
 msgstr "Envío alternativo"
 
-#: check-language-ecommerce.php:65
+#: check-language-ecommerce.php:63
 msgid "Alternative shipping costs"
 msgstr "Costos de envío alternativos"
 
-#: check-language-ecommerce.php:67
+#: check-language-ecommerce.php:65
 msgid "Standard shipping costs"
 msgstr "Costos de envío estándar"
 
-#: check-language-ecommerce.php:69
+#: check-language-ecommerce.php:67
 msgid "Free shipping"
 msgstr "Envío gratis"
 
-#: check-language-ecommerce.php:71 check-language.php:128
+#: check-language-ecommerce.php:69 check-language.php:128
 msgid "Download"
 msgstr "Download"
 
-#: check-language-ecommerce.php:73
+#: check-language-ecommerce.php:71
 msgid "Please check agreement"
 msgstr "Por favor verifique el acuerdo"
 
-#: check-language-ecommerce.php:75
+#: check-language-ecommerce.php:73
 msgid "Shipping country not allowed"
 msgstr "País de envío no permitido"
 
-#: check-language-ecommerce.php:78
+#: check-language-ecommerce.php:76
 msgid "Select country"
 msgstr "Select country"
 
-#: check-language-ecommerce.php:80
+#: check-language-ecommerce.php:78
 msgid "Shipping only possible for the following countries"
 msgstr "Envío sólo posible para los siguientes países"
 
-#: check-language-ecommerce.php:82
+#: check-language-ecommerce.php:80
 msgid "Shipping address"
 msgstr "Shipping address"
 
-#: check-language-ecommerce.php:86
+#: check-language-ecommerce.php:84
 msgid "Billing address"
 msgstr "Dirección de Envio"
 
-#: check-language-ecommerce.php:88
+#: check-language-ecommerce.php:86
 msgid "First Name"
 msgstr "Nombre de pila"
 
-#: check-language-ecommerce.php:90
+#: check-language-ecommerce.php:88
 msgid "Last Name"
 msgstr "Apellido"
 
-#: check-language-ecommerce.php:92
+#: check-language-ecommerce.php:90
 msgid "Company"
 msgstr "Compañía"
 
-#: check-language-ecommerce.php:94
+#: check-language-ecommerce.php:92
 msgid "Address Line 1"
 msgstr "Línea de dirección 1"
 
-#: check-language-ecommerce.php:96
+#: check-language-ecommerce.php:94
 msgid "Address Line 2"
 msgstr "Línea de dirección 2"
 
-#: check-language-ecommerce.php:98
+#: check-language-ecommerce.php:96
 msgid "City"
 msgstr "Ciudad"
 
-#: check-language-ecommerce.php:100
+#: check-language-ecommerce.php:98
 msgid "Postal Code"
 msgstr "Código Postal"
 
-#: check-language-ecommerce.php:102
+#: check-language-ecommerce.php:100
 msgid "Select state/territory"
 msgstr "Seleccionar estado/territorio"
 
-#: check-language-ecommerce.php:104
+#: check-language-ecommerce.php:102
 msgid "Billing address identical to delivery address"
 msgstr "Dirección de facturación idéntica a la dirección de entrega"
 
-#: check-language-ecommerce.php:106
+#: check-language-ecommerce.php:104
 msgid "Date of invoice"
 msgstr "Fecha de la factura"
 
-#: check-language-ecommerce.php:108
+#: check-language-ecommerce.php:106
 msgid "Payment date"
 msgstr "Fecha de pago"
 
-#: check-language-ecommerce.php:110
+#: check-language-ecommerce.php:108
 msgid "Paid via"
 msgstr "Pagado vía"
 
-#: check-language-ecommerce.php:112
+#: check-language-ecommerce.php:110
 msgid "PayPal"
 msgstr "PayPal"
 
-#: check-language-ecommerce.php:114
+#: check-language-ecommerce.php:112
 msgid "Nr."
 msgstr "Nro."
 
-#: check-language-ecommerce.php:116
+#: check-language-ecommerce.php:114
 msgid "Tax rate"
 msgstr "Tasa de impuesto"
 
-#: check-language-ecommerce.php:118
+#: check-language-ecommerce.php:116
 msgid "VAT Number"
 msgstr "Número de valor agregado"
 
-#: check-language-ecommerce.php:120
+#: check-language-ecommerce.php:118
 msgid "optional"
 msgstr "opcional"
 
-#: check-language-ecommerce.php:122
+#: check-language-ecommerce.php:120
 msgid "Price unit net"
 msgstr "Precio unitario neto"
 
-#: check-language-ecommerce.php:124
+#: check-language-ecommerce.php:122
 msgid "Price total net"
 msgstr "Precio total neto"
 
-#: check-language-ecommerce.php:126
+#: check-language-ecommerce.php:124
 msgid "Total net"
 msgstr "Neto total"
 
-#: check-language-ecommerce.php:128
+#: check-language-ecommerce.php:126
 msgid "Total gross"
 msgstr "Bruto total"
 
-#: check-language-ecommerce.php:130
+#: check-language-ecommerce.php:128
 msgid "Total price"
 msgstr "Precio total"
 
-#: check-language-ecommerce.php:132
+#: check-language-ecommerce.php:130
 msgid "Added to shopping cart"
 msgstr "Añadido al carrito de compras"
 
-#: check-language-ecommerce.php:134
+#: check-language-ecommerce.php:132
 msgid "To shopping cart"
 msgstr "Al carrito de compras"
 
-#: check-language-ecommerce.php:136
+#: check-language-ecommerce.php:134
 msgid "Title"
 msgstr "Título"
 
-#: check-language-ecommerce.php:138
+#: check-language-ecommerce.php:136
 msgid "Key"
 msgstr "Llave"
 
-#: check-language-ecommerce.php:140
+#: check-language-ecommerce.php:138
 msgid "Copy Key"
 msgstr "Copiar clave"
 
-#: check-language-ecommerce.php:142
+#: check-language-ecommerce.php:140
 msgid "No products selected"
 msgstr "No hay productos seleccionados"
 
-#: check-language-ecommerce.php:144
+#: check-language-ecommerce.php:142
 msgid "Full order details"
 msgstr "Detalles completos del pedido"
 
-#: check-language-ecommerce.php:146
+#: check-language-ecommerce.php:144
 msgid "Order number"
 msgstr "Número de orden"
 
-#: check-language-ecommerce.php:148
+#: check-language-ecommerce.php:146
 msgid "Your order was successful. You will be redirected."
 msgstr "Tu pedido fue exitoso. Serás redirigido."
 
-#: check-language-ecommerce.php:150
+#: check-language-ecommerce.php:148
 msgid "Order failed. Please contact administrator."
 msgstr "El pedido falló. Por favor contacte al administrador."
 
-#: check-language-ecommerce.php:152
+#: check-language-ecommerce.php:150
 msgid "Checkout processing impossible. No internet connection."
 msgstr "Procesamiento de pago imposible. Sin conexión a Internet."
 
-#: check-language-ecommerce.php:154
+#: check-language-ecommerce.php:152
 msgid "Maximum uploads"
 msgstr "Cargas máximas"
 
-#: check-language-ecommerce.php:156
+#: check-language-ecommerce.php:154
 msgid "Uploaded"
 msgstr "Uploaded"
 
-#: check-language-ecommerce.php:158
+#: check-language-ecommerce.php:156
 msgid "All uploads used"
 msgstr "Todas las cargas utilizadas"
 
-#: check-language-general.php:41
+#: check-language-general.php:40
 #: functions/general/registry/cg-registry-functions.php:74
 msgid "Account"
 msgstr "Cuenta"
 
-#: check-language-general.php:43
+#: check-language-general.php:42
 #, fuzzy
 #| msgid "Edit Profile"
 msgid "Edit profile"
 msgstr "Editar perfil"
 
-#: check-language-general.php:45
+#: check-language-general.php:44
 #, fuzzy
 #| msgid "Log Out"
 msgid "Log out"
 msgstr "Cerrar sesión"
 
-#: check-language-general.php:47 check-language.php:371
+#: check-language-general.php:46 check-language.php:400
 msgid "This nickname is already taken"
 msgstr "Este apodo ya está en uso"
 
-#: check-language-general.php:49
+#: check-language-general.php:48
 msgid "Contest Gallery profile information"
 msgstr "Información del perfil de la galería del concurso"
 
-#: check-language-general.php:51
+#: check-language-general.php:50
 msgid "Remove profile image"
 msgstr "Quitar imagen de perfil"
 
-#: check-language-general.php:53 check-language.php:279
+#: check-language-general.php:52 check-language.php:308
 msgid "This file type is not allowed"
 msgstr "Este tipo de archivo no está permitido"
 
-#: check-language-general.php:55 check-language.php:281
+#: check-language-general.php:54 check-language.php:310
 msgid "The selected file is too large, max allowed size"
 msgstr ""
 "El archivo seleccionado es demasiado grande, el tamaño máximo permitido"
 
-#: check-language-general.php:57
+#: check-language-general.php:56
 msgid "Select your image"
 msgstr "Seleccione su imagen"
 
-#: check-language-general.php:59
+#: check-language-general.php:58
 msgid "Required"
 msgstr "Requerido"
 
-#: check-language-general.php:61
+#: check-language-general.php:60
 msgid "Remove"
 msgstr "Eliminar"
 
-#: check-language-general.php:63
+#: check-language-general.php:62
 msgid "content blocked"
 msgstr "contenido bloqueado"
 
-#: check-language-general.php:65
+#: check-language-general.php:64
 msgid "To view the content you must agree privacy policy"
 msgstr "Para ver el contenido debes aceptar la política de privacidad."
 
-#: check-language-general.php:67
+#: check-language-general.php:66
 msgid "I Agree"
 msgstr "Estoy de acuerdo"
 
-#: check-language-general.php:69
+#: check-language-general.php:68
 msgid ""
 "By agreeing all content on this page gets unblocked during current session"
 msgstr ""
 "Al aceptar, todo el contenido de esta página se desbloquea durante la sesión "
 "actual."
 
-#: check-language-general.php:71
+#: check-language-general.php:70
 msgid "content"
 msgstr "contenido"
 
-#: check-language-general.php:73
+#: check-language-general.php:72
 msgid "Until current tab gets closed"
 msgstr "Hasta que se cierre la pestaña actual"
 
-#: check-language-general.php:75
+#: check-language-general.php:74
 msgid "Back to gallery"
 msgstr "Volver a la galería"
 
-#: check-language-general.php:77
+#: check-language-general.php:76
 msgid "Back to galleries"
 msgstr "Volver a las galerías"
 
-#: check-language-general.php:79
+#: check-language-general.php:78
 msgid "No gallery entries"
 msgstr "No hay entradas en la galería"
 
@@ -655,378 +655,434 @@ msgid "Successfully logged in via Google. Page will be reloaded..."
 msgstr ""
 "Iniciar sesión correctamente a través de Google. La página se recargará ..."
 
-#: check-language.php:225
+#: check-language.php:224
+msgid "Second"
+msgstr "Segundo"
+
+#: check-language.php:226
+msgid "Seconds"
+msgstr "Segundos"
+
+#: check-language.php:228
+msgid "Minute"
+msgstr "Minuto"
+
+#: check-language.php:230
+msgid "Minutes"
+msgstr "Minutos"
+
+#: check-language.php:232
+msgid "Hour"
+msgstr "Hora"
+
+#: check-language.php:234
+msgid "Hours"
+msgstr "Horas"
+
+#: check-language.php:236
+msgid "Day"
+msgstr "Día"
+
+#: check-language.php:238
+msgid "Days"
+msgstr "Días"
+
+#: check-language.php:240
+msgid "Week"
+msgstr "Semana"
+
+#: check-language.php:242
+msgid "Weeks"
+msgstr "Semanas"
+
+#: check-language.php:244
+msgid "Month"
+msgstr "Mes"
+
+#: check-language.php:246
+msgid "Months"
+msgstr "Meses"
+
+#: check-language.php:248
+msgid "Year"
+msgstr "Año"
+
+#: check-language.php:250
+msgid "Years"
+msgstr "Años"
+
+#: check-language.php:254
 msgid "Delete entry?"
 msgstr "¿Eliminar la entrada?"
 
-#: check-language.php:227
+#: check-language.php:256
 msgid "Delete entries?"
 msgstr "¿Eliminar entradas?"
 
-#: check-language.php:229
+#: check-language.php:258
 msgid "Entry successfully deleted"
 msgstr "Entrada eliminada con éxito"
 
-#: check-language.php:231
+#: check-language.php:260
 msgid "Entries successfully deleted"
 msgstr "Entradas eliminadas con éxito"
 
-#: check-language.php:233
+#: check-language.php:262
 msgid "Edit"
 msgstr "Editar"
 
-#: check-language.php:234
+#: check-language.php:263
 msgid "Save"
 msgstr "Salvar"
 
-#: check-language.php:236
+#: check-language.php:265
 msgid "Data saved"
 msgstr "Datos guardados"
 
-#: check-language.php:238
+#: check-language.php:267
 msgid "Only visible to registered and logged in owner of the entry"
 msgstr "Sólo visible para el propietario registrado y conectado de la entrada"
 
-#: check-language.php:240
+#: check-language.php:269
 msgid "Original file source link copied"
 msgstr "Enlace de origen del archivo original copiado"
 
-#: check-language.php:242
+#: check-language.php:271
 msgid "Gallery file link copied"
 msgstr "Enlace del archivo de la galería copiado"
 
-#: check-language.php:244
+#: check-language.php:273
 msgid "Gallery entry link copied"
 msgstr "Enlace de entrada a la galería copiado"
 
-#: check-language.php:246
+#: check-language.php:275
 msgid "Sum"
 msgstr "Suma"
 
-#: check-language.php:248
+#: check-language.php:277
 msgid "Your vote"
 msgstr "Tu voto"
 
-#: check-language.php:251
+#: check-language.php:280
 msgid "The name field must contain two characters or more"
 msgstr "El campo de nombre debe contener dos caracteres o más"
 
-#: check-language.php:253
+#: check-language.php:282
 msgid "The comment field must contain three characters or more"
 msgstr "El campo de comentario debe contener tres caracteres o más"
 
-#: check-language.php:255
+#: check-language.php:284
 msgid "Plz check the checkbox to prove that you are not a robot"
 msgstr ""
 "Plz marque la casilla de verificación para probar que usted no es un robot"
 
-#: check-language.php:257
+#: check-language.php:286
 msgid "Your comment will be reviewed"
 msgstr "Tu comentario será revisado"
 
-#: check-language.php:259 check-language.php:261
+#: check-language.php:288 check-language.php:290
 msgid "Thank you for your comment"
 msgstr "Gracias por tu comentario"
 
-#: check-language.php:263
+#: check-language.php:292
 msgid "You have already voted for this entry"
 msgstr "Ya has votado por esta entrada"
 
-#: check-language.php:265
+#: check-language.php:294
 msgid "This entry is not a winner"
 msgstr "Esta entrada no es ganadora"
 
-#: check-language.php:267
+#: check-language.php:296
 msgid "You have already voted for this category"
 msgstr "Ya has votado por esta categoría"
 
-#: check-language.php:269
+#: check-language.php:298
 msgid "You have no more votes in this category"
 msgstr "No tienes más votos en esta categoría"
 
-#: check-language.php:271
+#: check-language.php:300
 msgid "You have already used all your votes"
 msgstr "Ya has utilizado todos tus votos"
 
-#: check-language.php:275
+#: check-language.php:304
 msgid "It is not allowed to vote for your own file"
 msgstr "No está permitido votar por su propio archivo"
 
-#: check-language.php:277
+#: check-language.php:306
 msgid "Only registered users are allowed to vote"
 msgstr "Solo los usuarios registrados pueden votar"
 
-#: check-language.php:283
+#: check-language.php:312
 msgid "The resolution of this image is"
 msgstr "La resolución de esta imagen es"
 
-#: check-language.php:285
+#: check-language.php:314
 msgid "Maximum number of files for one upload is"
 msgstr "El número máximo de archivos para una carga es"
 
-#: check-language.php:286
+#: check-language.php:315
 msgid "Minimum number of files for one upload is"
 msgstr "El número mínimo de archivos para una carga es"
 
-#: check-language.php:288
+#: check-language.php:317
 msgid "Maximum allowed resolution for JPG is"
 msgstr "La resolución máxima permitida para JPG es"
 
-#: check-language.php:290
+#: check-language.php:319
 msgid "Maximum allowed width for JPG is"
 msgstr "El ancho máximo permitido para JPG es"
 
-#: check-language.php:292
+#: check-language.php:321
 msgid "Maximum allowed height for JPG is"
 msgstr "La altura máxima permitida para JPG es"
 
-#: check-language.php:294
+#: check-language.php:323
 msgid "Minimum required width for JPG is"
 msgstr "El ancho mínimo requerido para JPG es"
 
-#: check-language.php:296
+#: check-language.php:325
 msgid "Minimum required height for JPG is"
 msgstr "La altura mínima requerida para JPG es"
 
-#: check-language.php:298
+#: check-language.php:327
 msgid "Maximum allowed resolution for PNG is"
 msgstr "La resolución máxima permitida para PNG es"
 
-#: check-language.php:300
+#: check-language.php:329
 msgid "Maximum allowed width for PNG is"
 msgstr "El ancho máximo permitido para PNG es"
 
-#: check-language.php:302
+#: check-language.php:331
 msgid "Maximum allowed height for PNG is"
 msgstr "La altura máxima permitida para PNG es"
 
-#: check-language.php:304
+#: check-language.php:333
 msgid "Minimum required width for PNG is"
 msgstr "El ancho mínimo requerido para PNG es"
 
-#: check-language.php:306
+#: check-language.php:335
 msgid "Minimum required height for PNG is"
 msgstr "La altura mínima requerida para PNG es"
 
-#: check-language.php:308
+#: check-language.php:337
 msgid "Maximum allowed resolution for GIF is"
 msgstr "La resolución máxima permitida para GIF es"
 
-#: check-language.php:310
+#: check-language.php:339
 msgid "Maximum allowed width for GIF is"
 msgstr "El ancho máximo permitido para GIF es"
 
-#: check-language.php:312
+#: check-language.php:341
 msgid "Maximum allowed height for GIF is"
 msgstr "La altura máxima permitida para GIF es"
 
-#: check-language.php:314
+#: check-language.php:343
 msgid "Minimum required width for GIF is"
 msgstr "El ancho mínimo requerido para GIF es"
 
-#: check-language.php:316
+#: check-language.php:345
 msgid "Minimum required height for GIF is"
 msgstr "La altura mínima requerida para GIF es"
 
-#: check-language.php:318
+#: check-language.php:347
 msgid "Maximum allowed width for ICO is"
 msgstr "El ancho máximo permitido para ICO es"
 
-#: check-language.php:320
+#: check-language.php:349
 msgid "Maximum allowed height for ICO is"
 msgstr "La altura máxima permitida para ICO es"
 
-#: check-language.php:322
+#: check-language.php:351
 msgid "You have to check this agreement"
 msgstr "Usted tiene que comprobar este acuerdo"
 
-#: check-language.php:324
+#: check-language.php:353
 msgid "This email is not valid"
 msgstr "Este correo electrónico no es válido"
 
-#: check-language.php:326
+#: check-language.php:355
 msgid "Reset password link is not valid anymore"
 msgstr "El enlace para restablecer la contraseña ya no es válido"
 
-#: check-language.php:328
+#: check-language.php:357
 msgid "Password successfully changed"
 msgstr "Contraseña cambiada correctamente"
 
-#: check-language.php:330
+#: check-language.php:359
 msgid "Back to login form"
 msgstr "Volver al formulario de inicio de sesión"
 
-#: check-language.php:332
+#: check-language.php:361
 msgid "Min amount of characters"
 msgstr "Cantidad mínima de caracteres"
 
-#: check-language.php:334
+#: check-language.php:363
 msgid "Max amount of characters"
 msgstr "Cantidad máxima de caracteres"
 
-#: check-language.php:336
+#: check-language.php:365
 msgid "Select your file"
 msgstr "Seleccione su archivo"
 
-#: check-language.php:338
+#: check-language.php:367
 msgid "The photo contest has not started yet"
 msgstr "El concurso de fotografía aún no ha comenzado"
 
-#: check-language.php:340
+#: check-language.php:369
 msgid "The photo contest is over"
 msgstr "El concurso fotográfico ha terminado"
 
-#: check-language.php:342
+#: check-language.php:371
 msgid "Hold left mouse to see user info"
 msgstr ""
 "Mantenga pulsado el botón izquierdo del ratón para ver la información del "
 "usuario"
 
-#: check-language.php:344
+#: check-language.php:373
 msgid "Maximum amount of uploads per user is"
 msgstr "La cantidad máxima de cargas por usuario es"
 
-#: check-language.php:346
+#: check-language.php:375
 msgid "Maximum amount of uploads per category is"
 msgstr "La cantidad máxima de cargas por categoría es"
 
-#: check-language.php:348
+#: check-language.php:377
 msgid "You have already uploaded"
 msgstr "Ya has subido"
 
-#: check-language.php:350
+#: check-language.php:379
 msgid "You have already uploaded in category"
 msgstr "Ya has subido en la categoría"
 
-#: check-language.php:352
+#: check-language.php:381
 msgid "Maximum amount of uploads left for you"
 msgstr "Cantidad máxima de cargas que te quedan"
 
-#: check-language.php:357
+#: check-language.php:386
 msgid "Lost password?"
 msgstr "¿Contraseña perdida?"
 
-#: check-language.php:359
+#: check-language.php:388
 msgid "This email address is already registered"
 msgstr "Esta dirección de correo electrónico ya está registrada"
 
-#: check-language.php:361
+#: check-language.php:390
 msgid "This username is already taken"
 msgstr "Este nombre de usuario ya está en uso"
 
-#: check-language.php:363
+#: check-language.php:392
 msgid "Username or email"
 msgstr "Nombre de usuario o correo electrónico"
 
-#: check-language.php:365
+#: check-language.php:394
 msgid "Username or email required"
 msgstr "Nombre de usuario o correo electrónico requerido"
 
-#: check-language.php:367
+#: check-language.php:396
 msgid "Username or email does not exist"
 msgstr "El nombre de usuario o correo electrónico no existe"
 
-#: check-language.php:369
+#: check-language.php:398
 msgid "This username already exists"
 msgstr "Este nombre de usuario ya existe"
 
-#: check-language.php:373
+#: check-language.php:402
 msgid "Email"
 msgstr "Correo electronico"
 
-#: check-language.php:375
+#: check-language.php:404
 msgid "An email was sent to reset password"
 msgstr "Se envió un correo electrónico para restablecer la contraseña"
 
-#: check-language.php:377
+#: check-language.php:406
 msgid "Type in your e-mail to receive link for resetting your password"
 msgstr "Type in your e-mail to receive link for resetting your password"
 
-#: check-language.php:379
+#: check-language.php:408
 msgid "Email required"
 msgstr "Correo electronico requerido"
 
-#: check-language.php:381
+#: check-language.php:410
 msgid "Password"
 msgstr "Contraseña"
 
-#: check-language.php:383
+#: check-language.php:412
 msgid "Current Password"
 msgstr "Contraseña actual"
 
-#: check-language.php:385
+#: check-language.php:414
 msgid "New Password"
 msgstr "Nueva contraseña"
 
-#: check-language.php:387
+#: check-language.php:416
 msgid "New Password repeat"
 msgstr "Nueva contraseña repetida"
 
-#: check-language.php:389
+#: check-language.php:418
 msgid "Password required"
 msgstr "Se requiere contraseña"
 
-#: check-language.php:391
+#: check-language.php:420
 msgid "Email and password do not match"
 msgstr "Correo electrónico y contraseña no coinciden"
 
-#: check-language.php:393
+#: check-language.php:422
 msgid "Login and password do not match"
 msgstr "El nombre de usuario y la contraseña no coinciden"
 
-#: check-language.php:395
+#: check-language.php:424
 msgid "Please fill out"
 msgstr "Por favor complete"
 
-#: check-language.php:397
+#: check-language.php:426
 msgid "Passwords do not match"
 msgstr "Las contraseñas no coinciden"
 
-#: check-language.php:399
+#: check-language.php:428
 msgid "Upload"
 msgstr "Subir"
 
-#: check-language.php:401
+#: check-language.php:430
 msgid "Register"
 msgstr "Para registrarse"
 
-#: check-language.php:403
+#: check-language.php:432
 msgid "Login"
 msgstr "Iniciar sesión"
 
-#: check-language.php:405
+#: check-language.php:434
 msgid "Please select"
 msgstr "Por favor selecciona"
 
-#: check-language.php:407
+#: check-language.php:436
 msgid "You have not selected"
 msgstr "No has seleccionado"
 
-#: check-language.php:409
+#: check-language.php:438
 msgid "Please confirm"
 msgstr "Por favor confirme"
 
-#: check-language.php:411
+#: check-language.php:440
 msgid "File is not activated"
 msgstr "El archivo no está activado"
 
-#: check-language.php:413
+#: check-language.php:442
 msgid "Your email could not be confirmed."
 msgstr "Su correo electrónico no pudo ser confirmado."
 
-#: check-language.php:415
+#: check-language.php:444
 msgid "Please enter a valid URL"
 msgstr "Por favor introduzca un URL válido"
 
-#: check-language.php:417
+#: check-language.php:446
 msgid "Other"
 msgstr "Otro"
 
-#: check-language.php:420
+#: check-language.php:449
 msgid "Yes"
 msgstr "Si"
 
-#: check-language.php:421
+#: check-language.php:450
 msgid "No"
 msgstr "No"
 

@@ -266,7 +266,8 @@ $ConsentInstagram = 0;
 $ConsentTikTok = 0;
 ###NORMAL---END###
 $ShowExifDateTimeOriginalFormat = 'YYYY-MM-DD';
-$CommentsDateFormat = 'YYYY-MM-DD';
+$CommentsDateFormat = 'modern';
+$ShowDateFormat = 'modern';
 
 $VoteMessageSuccessActive = 0;
 $VoteMessageWarningActive = 0;
@@ -300,6 +301,7 @@ $ThankVote = 1;
 $GoogleSignInUserUploadOnlyText = 'Please sign in via Google to upload your files.';
 
 $EnableEmojis = 1;
+$ShowDate = 1;
 $CheckLoginComment = 0;// only json option, not in database
 
 $AllowUploadJPG = 1;

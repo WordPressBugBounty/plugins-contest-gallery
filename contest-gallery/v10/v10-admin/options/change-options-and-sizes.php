@@ -2070,6 +2070,19 @@ if (!empty($_POST['changeSize'])) {
     $_POST['multiple-pics']['cg_gallery_winner']['visual']['EnableEmojis'] = (!empty($_POST['multiple-pics']['cg_gallery_winner']['visual']['EnableEmojis'])) ? 1 : 0;
         $_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['EnableEmojis'] = (!empty($_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['EnableEmojis'])) ? 1 : 0;
 
+        $_POST['multiple-pics']['cg_gallery']['visual']['ShowDate'] = (!empty($_POST['multiple-pics']['cg_gallery']['visual']['ShowDate'])) ? 1 : 0;
+        $_POST['multiple-pics']['cg_gallery_user']['visual']['ShowDate'] = (!empty($_POST['multiple-pics']['cg_gallery_user']['visual']['ShowDate'])) ? 1 : 0;
+        $_POST['multiple-pics']['cg_gallery_no_voting']['visual']['ShowDate'] = (!empty($_POST['multiple-pics']['cg_gallery_no_voting']['visual']['ShowDate'])) ? 1 : 0;
+        $_POST['multiple-pics']['cg_gallery_winner']['visual']['ShowDate'] = (!empty($_POST['multiple-pics']['cg_gallery_winner']['visual']['ShowDate'])) ? 1 : 0;
+        $_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['ShowDate'] = (!empty($_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['ShowDate'])) ? 1 : 0;
+
+        $_POST['multiple-pics']['cg_gallery']['visual']['ShowDateFormat'] = (!empty($_POST['multiple-pics']['cg_gallery']['visual']['ShowDateFormat'])) ? $_POST['multiple-pics']['cg_gallery']['visual']['ShowDateFormat'] : 'modern';
+	    $ShowDateFormat = $_POST['multiple-pics']['cg_gallery']['visual']['ShowDateFormat'];
+        $_POST['multiple-pics']['cg_gallery_user']['visual']['ShowDateFormat'] = (!empty($_POST['multiple-pics']['cg_gallery_user']['visual']['ShowDateFormat'])) ? $_POST['multiple-pics']['cg_gallery_user']['visual']['ShowDateFormat'] : 'modern';
+        $_POST['multiple-pics']['cg_gallery_no_voting']['visual']['ShowDateFormat'] = (!empty($_POST['multiple-pics']['cg_gallery_no_voting']['visual']['ShowDateFormat'])) ? $_POST['multiple-pics']['cg_gallery_no_voting']['visual']['ShowDateFormat'] : 'modern';
+        $_POST['multiple-pics']['cg_gallery_winner']['visual']['ShowDateFormat'] = (!empty($_POST['multiple-pics']['cg_gallery_winner']['visual']['ShowDateFormat'])) ? $_POST['multiple-pics']['cg_gallery_winner']['visual']['ShowDateFormat'] : 'modern';
+        $_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['ShowDateFormat'] = (!empty($_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['ShowDateFormat'])) ? $_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['ShowDateFormat'] : 'modern';
+
     $_POST['multiple-pics']['cg_gallery']['pro']['CheckLoginComment'] = (!empty($_POST['multiple-pics']['cg_gallery']['pro']['CheckLoginComment'])) ? 1 : 0;
     $_POST['multiple-pics']['cg_gallery_user']['pro']['CheckLoginComment'] = (!empty($_POST['multiple-pics']['cg_gallery_user']['pro']['CheckLoginComment'])) ? 1 : 0;
     $_POST['multiple-pics']['cg_gallery_no_voting']['pro']['CheckLoginComment'] = (!empty($_POST['multiple-pics']['cg_gallery_no_voting']['pro']['CheckLoginComment'])) ? 1 : 0;
@@ -2288,6 +2301,7 @@ if (!empty($_POST['changeSize'])) {
     $GalleryID = $id;
 
     $EnableEmojis = (!empty($_POST['multiple-pics']['cg_gallery']['visual']['EnableEmojis'])) ? 1 : 0;
+        $ShowDate = (!empty($_POST['multiple-pics']['cg_gallery']['visual']['ShowDate'])) ? 1 : 0;
     $CheckLoginComment = (!empty($_POST['multiple-pics']['cg_gallery']['pro']['CheckLoginComment'])) ? 1 : 0;
 
         // has to be set before cg_gallery for json-options.php

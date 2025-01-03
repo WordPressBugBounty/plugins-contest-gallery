@@ -125,7 +125,7 @@ echo <<<HEREDOC
             <p>Preselect order<br>on page load<br><span class="cgPreselectSortMessage cg_view_option_title_note">Random sort has to be deactivated</span></p>
         </div>
         <div class='cg_view_option_select'>
-        <select name='multiple-pics[cg_gallery_user][pro][PreselectSort]' class='PreselectSort'>
+        <select name='multiple-pics[cg_gallery_user][pro][PreselectSort]' class='PreselectSort cg_no_outline_and_shadow_on_focus'>
 HEREDOC;
 
 
@@ -256,7 +256,61 @@ echo <<<HEREDOC
             </div>
 </div>
 </div>
+HEREDOC;
 
+// only json option, not in database available
+if(!empty($jsonOptions[$GalleryID.'-u']['visual']['ShowDate'])){
+	$ShowDate = '1';
+}else{
+	$ShowDate = '0';
+}
+
+echo <<<HEREDOC
+        <div class="cg_view_options_row">
+                <div class="cg_view_option cg_view_option_50_percent cg_border_top_none cg_border_right_none" >
+                    <div class="cg_view_option_title">
+                        <p>Show date since added/uploaded to gallery</p>
+                    </div>
+                    <div class="cg_view_option_checkbox cg_view_option_checked">
+                        <input type="checkbox" name="multiple-pics[cg_gallery_user][visual][ShowDate]" class="cg_shortcode_checkbox" checked="$ShowDate">
+                    </div>
+                </div>
+HEREDOC;
+
+echo <<<HEREDOC
+    <div  class='cg_view_option cg_border_top_none cg_border_left_none  cg_view_option_50_percent  cg_view_option_flex_flow_column '>
+        <div class='cg_view_option_title cg_view_option_title_full_width'>
+        <p>Show date format
+                    <br><span class="cg_view_option_title_note">Translation for seconds, minutes, hours, days<br>weeks, months, years can be found <a class="cg_no_outline_and_shadow_on_focus" href="{$editTranslationLink}l_GalleryDateFormat"  target="_blank">here</a></span>
+        </p>
+        </div>
+        <div class="cg_view_option_select">
+        <select name="multiple-pics[cg_gallery_user][visual][ShowDateFormat]" class="cg_no_outline_and_shadow_on_focus">
+HEREDOC;
+
+// only json option, not in database available
+if(!empty($jsonOptions[$GalleryID.'-u']['visual']['ShowDateFormat'])){
+	$ShowDateFormat = $jsonOptions[$GalleryID.'-u']['visual']['ShowDateFormat'];
+}else{
+	$ShowDateFormat = 'modern';
+}
+
+foreach($CommentsDateFormatNamePathSelectedValuesArray as  $key =>  $value){
+	$ShowDateFormatSelected = '';
+	if($key==$ShowDateFormat){
+		$ShowDateFormatSelected = 'selected';
+	}
+	echo "<option value='$key' $ShowDateFormatSelected >$value</option>";
+}
+
+echo <<<HEREDOC
+                               </select>
+        </div>
+    </div>
+</div>
+HEREDOC;
+
+echo <<<HEREDOC
 <div class='cg_view_options_row'>
     <div class='cg_view_option cg_view_option_50_percent cg_border_top_right_none GalleryUploadContainer'>
         <div class='cg_view_option_title'>

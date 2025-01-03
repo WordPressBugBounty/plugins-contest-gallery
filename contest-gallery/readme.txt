@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, upload, voting, youtube
 Requires at least: 5.6
-Stable tag: 25.0.2
+Stable tag: 25.0.3
 Tested up to: 6.7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -227,6 +227,9 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V25.0.3 =
+* NEW: "Show date entry added/uploaded to gallery" in frontend. Can be configured in "Gallery view" options.
 
 = V25.0.2 =
 * NEW: Long descriptions for entries, "Third title" in "Edit contact form", now available in normal version.

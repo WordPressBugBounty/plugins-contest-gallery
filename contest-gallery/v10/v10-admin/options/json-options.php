@@ -308,6 +308,7 @@ $jsonOptions['pro']['VoteMessageSuccessText'] = $VoteMessageSuccessText;
 $jsonOptions['pro']['VoteMessageWarningText'] = $VoteMessageWarningText;
 
 $jsonOptions['visual']['CommentsDateFormat'] = $CommentsDateFormat;
+$jsonOptions['visual']['ShowDateFormat'] = $ShowDateFormat;
 $jsonOptions['general']['HideCommentNameField'] = $HideCommentNameField;
 $jsonOptions['general']['RatingVisibleForGalleryNoVoting'] = $RatingVisibleForGalleryNoVoting;
 $jsonOptions['general']['RatingVisibleForGalleryEcommerce'] = $RatingVisibleForGalleryEcommerce;
@@ -364,6 +365,7 @@ $jsonOptions['visual']['AdditionalCssGalleryPage'] = $AdditionalCssGalleryPage;
 $jsonOptions['visual']['EnableSwitchStyleImageViewButton'] = $EnableSwitchStyleImageViewButton;
 $jsonOptions['visual']['SwitchStyleImageViewButtonOnlyImageView'] = $SwitchStyleImageViewButtonOnlyImageView;
 $jsonOptions['visual']['EnableEmojis'] = $EnableEmojis;// only json option, not in database
+$jsonOptions['visual']['ShowDate'] = $ShowDate;// only json option, not in database
 $jsonOptions['pro']['CheckLoginComment'] = $CheckLoginComment;// only json option, not in database
 $jsonOptions['pro']['InformUserVote'] = $InformUserVote;// is in contest_gal1ery_mail_user_vote table
 $jsonOptions['pro']['InformUserVoteMailInterval'] = $InformUserVoteMailInterval;// is in contest_gal1ery_mail_user_vote table

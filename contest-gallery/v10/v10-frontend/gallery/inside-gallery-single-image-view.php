@@ -176,8 +176,10 @@ echo <<<HEREDOC
                                         
                                     </span> 
                                 </div>
-                                
-                                <div id="cgCenterImageInfoSaveIconTextContainer$galeryIDuserForJs" class="cg-center-image-info-save-icon-text-container">
+HEREDOC;
+
+echo <<<HEREDOC
+<div id="cgCenterImageInfoSaveIconTextContainer$galeryIDuserForJs" class="cg-center-image-info-save-icon-text-container">
                                     <div id="cgCenterImageInfoSaveIcon$galeryIDuserForJs" class="cg-center-image-info-save-icon">                                        
                                     </div>
                                     <div id="cgCenterImageInfoSaveText$galeryIDuserForJs" class="cg-center-image-info-save-text">
@@ -197,12 +199,27 @@ echo <<<HEREDOC
                                 </span>                        
                                                 
                                 <div id="cgCenterImageCommentsDivParentParent$galeryIDuserForJs" class="cg-scroll-info-single-image-view cg-center-image-comments-div-parent-parent cg_hide">
+                                            <div class="cg_comment_loader_container cg_hide" >
+                                                 <div class="cg_comment_loader" style="width: 35%;margin-bottom: 10px;">
+                                    
+                                    			</div>
+                                                 <div class="cg_comment_loader" style="width: 45%;margin-bottom: 10px;">
+                                    
+                                    			</div>
+                                                 <div class="cg_comment_loader" style="width: 55%;margin-bottom: 10px;">
+                                    
+                                    			</div>
+                                                 <div class="cg_comment_loader" style="width: 65%;">
+                                    
+                                    			</div>
+                                    		</div>
                                    <span class="cg-top-bottom-arrow cg_hide cg_no_scroll" data-cg-gid="$galeryIDuserForJs">
                                    
                                     </span> 
                                     <div id="cgCenterImageCommentsDiv$galeryIDuserForJs" class="cg-center-image-comments-div-parent">
-                                    
+
                                     </div>
+
                                     <span class="cg-top-bottom-arrow cg_hide" data-cg-gid="$galeryIDuserForJs">
                                    
                                     </span> 

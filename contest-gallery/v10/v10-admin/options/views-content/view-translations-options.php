@@ -18,6 +18,7 @@ $cgShortcodeCopy = '<span class="td_gallery_info_shortcode_edit cg_shortcode_cop
 include(__DIR__.'/translations-options/translations-gallery-upload.php');
 include(__DIR__.'/translations-options/translations-gallery-icons-tooltip.php');
 include(__DIR__.'/translations-options/translations-gallery.php');
+include(__DIR__.'/translations-options/translations-date-gallery.php');
 include(__DIR__.'/translations-options/translations-user-gallery.php');
 include(__DIR__.'/translations-options/translations-comment.php');
 include(__DIR__.'/translations-options/translations-upload-registry.php');

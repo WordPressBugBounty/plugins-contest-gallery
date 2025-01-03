@@ -2,144 +2,144 @@
 
 echo <<<HEREDOC
 <div class='cg_view_options_rows_container'>
-         <p class='cg_view_options_rows_container_title'>User Gallery<br><span class="cg_view_options_rows_container_title_note">when using cg_gallery_user shortcode</span></p>
+         <p class='cg_view_options_rows_container_title'  data-cg-go-to-target="l_GalleryDateFormat">Gallery date format<br><span class="cg_view_options_rows_container_title_note">When using "Modern way => format like Instagram: ascending seconds, minutes, hours, days, weeks, months and years"</span></p>
          <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width' >
                     <div class='cg_view_option_title'>
-                        <p>$language_DeleteImage$cgShortcodeCopy</p>
+                        <p>$language_Second$cgShortcodeCopy</p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" name="translations[$l_DeleteImage]" maxlength="100" value="$translations[$l_DeleteImage]">
+                        <input type="text" name="translations[$l_Second]" maxlength="100" value="$translations[$l_Second]">
                     </div>
                 </div>
         </div>
         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
-                        <p>$language_DeleteImages$cgShortcodeCopy</p>
+                        <p>$language_Seconds$cgShortcodeCopy</p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" name="translations[$l_DeleteImages]" maxlength="100" value="$translations[$l_DeleteImages]">
+                        <input type="text" name="translations[$l_Seconds]" maxlength="100" value="$translations[$l_Seconds]">
                     </div>
                 </div>
         </div>
          <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
-                        <p>$language_DeleteImageQuestion$cgShortcodeCopy</p>
+                        <p>$language_Minute$cgShortcodeCopy</p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" name="translations[$l_DeleteImageQuestion]" maxlength="100" value="$translations[$l_DeleteImageQuestion]">
+                        <input type="text" name="translations[$l_Minute]" maxlength="100" value="$translations[$l_Minute]">
                     </div>
                 </div>
         </div>
          <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
-                        <p>$language_DeleteImagesQuestion$cgShortcodeCopy</p>
+                        <p>$language_Minutes$cgShortcodeCopy</p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" name="translations[$l_DeleteImagesQuestion]" maxlength="100" value="$translations[$l_DeleteImagesQuestion]">
+                        <input type="text" name="translations[$l_Minutes]" maxlength="100" value="$translations[$l_Minutes]">
                     </div>
                 </div>
         </div>
          <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
-                        <p>$language_DeleteImageConfirm$cgShortcodeCopy</p>
+                        <p>$language_Hour$cgShortcodeCopy</p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" name="translations[$l_DeleteImageConfirm]" maxlength="100" value="$translations[$l_DeleteImageConfirm]">
+                        <input type="text" name="translations[$l_Hour]" maxlength="100" value="$translations[$l_Hour]">
                     </div>
                 </div>
         </div>
          <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
-                        <p>$language_DeleteImagesConfirm$cgShortcodeCopy</p>
+                        <p>$language_Hours$cgShortcodeCopy</p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" name="translations[$l_DeleteImagesConfirm]" maxlength="100" value="$translations[$l_DeleteImagesConfirm]">
+                        <input type="text" name="translations[$l_Hours]" maxlength="100" value="$translations[$l_Hours]">
                     </div>
                 </div>
         </div>
          <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
-                        <p>$language_ImageDeleted$cgShortcodeCopy<span class="cg-info-icon">info</span><span class="cg-info-container">Appears when a file was clicked which was deleted by administrator or in user gallery</span></p>
+                        <p>$language_Day$cgShortcodeCopy</p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" name="translations[$l_ImageDeleted]" maxlength="100" value="$translations[$l_ImageDeleted]">
+                        <input type="text" name="translations[$l_Day]" maxlength="100" value="$translations[$l_Day]">
                     </div>
                 </div>
         </div>
          <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
-                        <p>$language_ImagesDeleted$cgShortcodeCopy<span class="cg-info-icon">info</span><span class="cg-info-container">Appears when a file, which contained additional files, was clicked which was deleted by administrator or in user gallery</span></p>
+                        <p>$language_Days$cgShortcodeCopy</p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" name="translations[$l_ImagesDeleted]" maxlength="100" value="$translations[$l_ImagesDeleted]">
+                        <input type="text" name="translations[$l_Days]" maxlength="100" value="$translations[$l_Days]">
                     </div>
                 </div>
         </div>
          <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
-                        <p>$language_YouCanNotVoteInOwnGallery$cgShortcodeCopy<span class="cg-info-icon">info</span><span class="cg-info-container">This message will appear if <b>cg_gallery_user</b> shortcode is used and user try to vote own images</span></p>
+                        <p>$language_Week$cgShortcodeCopy</p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" name="translations[$l_YouCanNotVoteInOwnGallery]" maxlength="100" value="$translations[$l_YouCanNotVoteInOwnGallery]">
+                        <input type="text" name="translations[$l_Week]" maxlength="100" value="$translations[$l_Week]">
                     </div>
                 </div>
         </div>
          <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
-                        <p>$language_YouCanNotCommentInOwnGallery$cgShortcodeCopy<span class="cg-info-icon">info</span><span class="cg-info-container">This message will appear if <b>cg_gallery_user</b> shortcode is used and user try to comment own images</span></p>
+                        <p>$language_Weeks$cgShortcodeCopy</p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" name="translations[$l_YouCanNotCommentInOwnGallery]" maxlength="100" value="$translations[$l_YouCanNotCommentInOwnGallery]">
+                        <input type="text" name="translations[$l_Weeks]" maxlength="100" value="$translations[$l_Weeks]">
                     </div>
                 </div>
         </div>
          <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
-                        <p>$language_Edit$cgShortcodeCopy</p>
+                        <p>$language_Month$cgShortcodeCopy</p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" name="translations[$l_Edit]" maxlength="100" value="$translations[$l_Edit]">
+                        <input type="text" name="translations[$l_Month]" maxlength="100" value="$translations[$l_Month]">
                     </div>
                 </div>
         </div>
          <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
-                        <p>$language_Save$cgShortcodeCopy</p>
+                        <p>$language_Months$cgShortcodeCopy</p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" name="translations[$l_Save]" maxlength="100" value="$translations[$l_Save]">
+                        <input type="text" name="translations[$l_Months]" maxlength="100" value="$translations[$l_Months]">
                     </div>
                 </div>
         </div>
          <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
-                        <p>$language_DataSaved$cgShortcodeCopy</p>
+                        <p>$language_Year$cgShortcodeCopy</p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" name="translations[$l_DataSaved]" maxlength="100" value="$translations[$l_DataSaved]">
+                        <input type="text" name="translations[$l_Year]" maxlength="100" value="$translations[$l_Year]">
                     </div>
                 </div>
         </div>
          <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
-                        <p>$language_OnlyVisibleForRegisteredAndLoggedInOwner$cgShortcodeCopy</p>
+                        <p>$language_Years$cgShortcodeCopy</p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" name="translations[$l_OnlyVisibleForRegisteredAndLoggedInOwner]" maxlength="100" value="$translations[$l_OnlyVisibleForRegisteredAndLoggedInOwner]">
+                        <input type="text" name="translations[$l_Years]" maxlength="100" value="$translations[$l_Years]">
                     </div>
                 </div>
         </div>

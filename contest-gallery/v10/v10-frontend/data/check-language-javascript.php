@@ -225,6 +225,21 @@
 
         cgJsClass.gallery.language[index].ShareTo = <?php echo json_encode($language_ShareTo); ?>;
 
+        cgJsClass.gallery.language[index].Second = <?php echo json_encode($language_Second); ?>;
+        cgJsClass.gallery.language[index].Seconds = <?php echo json_encode($language_Seconds); ?>;
+        cgJsClass.gallery.language[index].Minute = <?php echo json_encode($language_Minute); ?>;
+        cgJsClass.gallery.language[index].Minutes = <?php echo json_encode($language_Minutes); ?>;
+        cgJsClass.gallery.language[index].Hour = <?php echo json_encode($language_Hour); ?>;
+        cgJsClass.gallery.language[index].Hours = <?php echo json_encode($language_Hours); ?>;
+        cgJsClass.gallery.language[index].Day = <?php echo json_encode($language_Day); ?>;
+        cgJsClass.gallery.language[index].Days = <?php echo json_encode($language_Days); ?>;
+        cgJsClass.gallery.language[index].Week = <?php echo json_encode($language_Week); ?>;
+        cgJsClass.gallery.language[index].Weeks = <?php echo json_encode($language_Weeks); ?>;
+        cgJsClass.gallery.language[index].Month = <?php echo json_encode($language_Month); ?>;
+        cgJsClass.gallery.language[index].Months = <?php echo json_encode($language_Months); ?>;
+        cgJsClass.gallery.language[index].Year = <?php echo json_encode($language_Year); ?>;
+        cgJsClass.gallery.language[index].Years = <?php echo json_encode($language_Years); ?>;
+
     </script>
     </pre>
 

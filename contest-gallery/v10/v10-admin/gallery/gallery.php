@@ -73,6 +73,8 @@ echo '<input type="hidden"  id="cgGalleryID" value="'. $GalleryID .'">';
 include(dirname(__FILE__) . "/../nav-gallery.php");
 include("header-1.php");
 
+$gmt_offset = get_option('gmt_offset');
+
 if($isCopyGalleryRightNow){
 
 	?>
@@ -310,11 +312,11 @@ if($isAjaxCall){
 
 		if(function_exists('exif_read_data')){
 			if(!empty($exifData)){
-                if(strlen($exifData)>10){
-	                $exifData = unserialize($exifData);
-                }else{// otherwise some sort of corrupt string
-	                $exifData = '';
-                }
+				if(strlen($exifData)>10){
+					$exifData = unserialize($exifData);
+				}else{// otherwise some sort of corrupt string
+					$exifData = '';
+				}
 				if(!empty($exifData)){
 					$exifDataStringForInput = json_encode($exifData);
 				}
@@ -352,7 +354,7 @@ if($isAjaxCall){
 					}
 				}
 				//if(!empty($EcommerceEntryAndWpUploadIds)){
-					//$MultipleFilesString = json_encode($EcommerceEntryAndWpUploadIds);
+				//$MultipleFilesString = json_encode($EcommerceEntryAndWpUploadIds);
 				//}
 
 			}
@@ -456,9 +458,9 @@ if($isAjaxCall){
 
 		echo "<li id='div$id' data-cg-real-id='$id' class='cgSortableDiv cg_sortable_div $cg_is_for_sale $cg_sortable_div_status'>";
 
-        /*echo "<pre>";
-            print_r($MultipleFiles);
-        echo "</pre>";*/
+		/*echo "<pre>";
+			print_r($MultipleFiles);
+		echo "</pre>";*/
 
 		foreach($MultipleFiles as $order => $MultipleFile){
 			if(!empty($MultipleFile['isRealIdSource'])){
@@ -470,9 +472,9 @@ if($isAjaxCall){
 			}
 			if(!empty($MultipleFile['ImgType']) && ($MultipleFile['ImgType']=='twt' || $MultipleFile['ImgType']=='ytb' || $MultipleFile['ImgType']=='tkt' ||  $MultipleFile['ImgType']=='inst')){
 
-                /*echo "<pre>";
-                    print_r($MultipleFile);
-                echo "</pre>";*/
+				/*echo "<pre>";
+					print_r($MultipleFile);
+				echo "</pre>";*/
 
 				$WpUploadMultipleFile = $MultipleFile['WpUpload'];
 				$post_content = '';
@@ -481,10 +483,10 @@ if($isAjaxCall){
 					$post_title = $MultipleFile['post_title'];
 					unset($MultipleFiles[$order]['post_title']);
 				}
-                if(isset($MultipleFiles[$order]['post_content'])){// check has to be done
-	                $post_content = $MultipleFile['post_content'];
-	                unset($MultipleFiles[$order]['post_content']);
-                }
+				if(isset($MultipleFiles[$order]['post_content'])){// check has to be done
+					$post_content = $MultipleFile['post_content'];
+					unset($MultipleFiles[$order]['post_content']);
+				}
 				$MultipleFiles[$order]['type'] = 'embed';// have to be set here
 				?>
                 <script  data-cg-processing="true" data-cg-processing-for-reload-entry="true">
@@ -536,10 +538,10 @@ if($isAjaxCall){
 			}
 		}
 
-        if(count($MultipleFiles)){
-            // to be done here after unset($MultipleFiles[$order]['post_content']); is done
-	        $MultipleFilesString = json_encode($MultipleFiles);
-        }
+		if(count($MultipleFiles)){
+			// to be done here after unset($MultipleFiles[$order]['post_content']); is done
+			$MultipleFilesString = json_encode($MultipleFiles);
+		}
 
 		echo "<div class='cg_drag_area' ><img class='cg_drag_area_icon' src='$cgDragIcon'></div>";
 
@@ -633,11 +635,11 @@ if($isAjaxCall){
 
 		echo "</div>";
 
-        $ifInformedCss = 'margin-top: -15px;';
+		$ifInformedCss = 'margin-top: -15px;';
 		if($Informed==1){
 			$ifInformedCss = 'margin-top: -5px;';
 			echo "<div style='width: 100%;padding-left: 20px;margin: -15px 0 10px;'><b>Informed about activated image</b></div>";
-        }
+		}
 
 		if(!empty($selectContentFieldArray)){
 			foreach($selectContentFieldArray as $key => $formvalue){
@@ -729,7 +731,7 @@ if($isAjaxCall){
 		}
 
 
-        // hidden inputs zur bestimmung der Reihenfolge ENDE
+		// hidden inputs zur bestimmung der Reihenfolge ENDE
 
 		// ------ Bild wird mittig und passend zum Div angezeigt
 
@@ -848,13 +850,13 @@ if($isAjaxCall){
              data-cg-file-height='$fileHeight' data-cg-file-width='$fileWidth'  data-cg-exif='$exifDataStringForInput' data-cg-wp-upload='$WpUpload' 
             >";
 
-        if(!empty($OrderItem)){
-            $OrderId = $wpdb->get_var("SELECT ParentOrder FROM $tablename_ecommerce_orders_items WHERE id = $OrderItem");
-            $PayerEmail = $wpdb->get_var("SELECT PayerEmail FROM $tablename_ecommerce_orders WHERE id = $OrderId");
-	        echo '<a target="_blank" href="?page='.cg_get_version().'/index.php&option_id='.$GalleryID.'&cg_show_order=true&cg_order_id='.$OrderId.'">';
-	            echo "<div class='cg_order_item'>Upload order by<br><span  class='cg_order_item_span'>$PayerEmail</span></div>";
-            echo '</a>';
-        }
+		if(!empty($OrderItem)){
+			$OrderId = $wpdb->get_var("SELECT ParentOrder FROM $tablename_ecommerce_orders_items WHERE id = $OrderItem");
+			$PayerEmail = $wpdb->get_var("SELECT PayerEmail FROM $tablename_ecommerce_orders WHERE id = $OrderId");
+			echo '<a target="_blank" href="?page='.cg_get_version().'/index.php&option_id='.$GalleryID.'&cg_show_order=true&cg_order_id='.$OrderId.'">';
+			echo "<div class='cg_order_item'>Upload order by<br><span  class='cg_order_item_span'>$PayerEmail</span></div>";
+			echo '</a>';
+		}
 
 		// Add additional files released in v18 and available for all galleries copied or created since v17
 		if((float)$optionsSQL->Version>=17){
@@ -869,7 +871,7 @@ if($isAjaxCall){
 		if($ImgType!='con'){
 			if($ImgType=='ytb' || $ImgType=='twt' || $ImgType=='inst' || $ImgType=='tkt'){
 				$ytbHintText = $ImgType;
-                //$ytbHint = '<br><span class="cg_ytb_hint">Not available for '.$socialTypeName.' type entry so far</span>';
+				//$ytbHint = '<br><span class="cg_ytb_hint">Not available for '.$socialTypeName.' type entry so far</span>';
 			}
 			echo "<div class='cg_manage_multiple_files $ytbDisabled' >Add, manage, replace<br>file/s$ytbHint or social embed</div>";
 		}
@@ -1090,24 +1092,24 @@ if($isAjaxCall){
 		}
 		echo "</div>";
 
-        ### cg_display_flex open ###
+		### cg_display_flex open ###
 		echo '<div class="cg_display_flex cg_rotate_info cg_hide" style="align-items: center;margin-bottom: 15px;">';
-            echo '<div class="cg_backend_info_upload_date_container cg_backend_rotate_css_based " style="pointer-events: none;">';
-            echo "<div class=\"cg_image_action_href\" style=\"/* float:right; */width: 131px;margin: 15px auto 5px;\"><div class=\"\" style=\"
+		echo '<div class="cg_backend_info_upload_date_container cg_backend_rotate_css_based " style="pointer-events: none;">';
+		echo "<div class=\"cg_image_action_href\" style=\"/* float:right; */width: 131px;margin: 15px auto 5px;\"><div class=\"\" style=\"
             width: 121px; text-align: center;\"><b>NOTE:</b> Image rotation is CSS based. The original image source will not be rotated.</div>";
-            echo '</div>';
-            echo '</div>';
-            echo '<div class="cg_backend_info_upload_date_container cg_backend_save_changes cg_hide">';
-            echo "<div class=\"cg_image_action_href cg_go_to_save_button\" style=\"/* float:right; */width: 131px;margin: 15px auto 5px;\"><div class=\"cg_image_action_span\" style=\"
+		echo '</div>';
+		echo '</div>';
+		echo '<div class="cg_backend_info_upload_date_container cg_backend_save_changes cg_hide">';
+		echo "<div class=\"cg_image_action_href cg_go_to_save_button\" style=\"/* float:right; */width: 131px;margin: 15px auto 5px;\"><div class=\"cg_image_action_span\" style=\"
             width: 121px; text-align: center;\">Save changes</div>";
-            echo '</div>';
-            echo '</div>';
+		echo '</div>';
+		echo '</div>';
 		echo "</div>";
 
 		### cg_display_flex open ###
 		echo '<div class="cg_display_flex cg_entry_data">';
 		echo '<div class="cg_backend_info_upload_date_container">
-<span class="cg_backend_info_details_small"><b>Entry ID: '.$id.'</b><br>Added on<br>'.$uploadTime.'</span>';
+<span class="cg_backend_info_details_small"><b>Entry ID: '.$id.'</b><br>Added on<br>(WP Timezone: UTC'.$gmt_offset.')<br>'.$uploadTime.'</span>';
 
 		$cg_ecommerce_sale_download_original_source_container_cg_hide = ($EcommerceEntry>0) ? '' : 'cg_hide';
 
@@ -1151,8 +1153,8 @@ if($isAjaxCall){
 		echo '<div class="cg_ecommerce_sale_download_original_source_helper">';
 		echo "</div>";
 		echo "</div>";
-		echo '<div class="cg_backend_info_upload_date_container">
-<span class="cg_backend_info_details_small">Added on (server-time)<br>'.$uploadTime.'</span>';
+		echo '<div class="cg_backend_info_upload_date_container">';
+		//echo '<span class="cg_backend_info_details_small">Added on (server-time)<br>'.$uploadTime.'</span>';
 
 		if($RegUserUploadOnly==3){
 			echo '<span class="cg_backend_info_details_small">IP '.$IP.'</span>';
@@ -1204,13 +1206,13 @@ if($isAjaxCall){
 
 		echo '</div>';
 
-        $cg_voting_open = 'cg_voting_open_one_star';
+		$cg_voting_open = 'cg_voting_open_one_star';
 
 		if(($AllowRating>=12 && $AllowRating<=20)){
 			$cg_voting_open = 'cg_voting_open_five_star';
 		}
 
-        ### cg_voting_open ###
+		### cg_voting_open ###
 		echo '<div class="cg_voting_open '.$cg_voting_open.'">';
 // eventually for future versions
 		if(false){
@@ -1594,12 +1596,12 @@ if($isAjaxCall){
 
 		### cg_voting_column ###
 		echo '</div>';
-        ### cg_display_flex close ###
+		### cg_display_flex close ###
 		echo '</div>';
 
 		echo "<div class='cg_move_to_another_gallery_container $GalleryID' ><a class=\"cg_move_to_another_gallery cg_image_action_href $cgProFalse\" href=\"?page=".cg_get_version()."/index.php&option_id=&show_comments=true&id=$id\"><div class=\"cg_image_action_span $cgProFalse\" >Move to another gallery</div></a></div>";
 
-	    echo "</div>";
+		echo "</div>";
 
 		echo "<div class='cg_fields_div'>";
 

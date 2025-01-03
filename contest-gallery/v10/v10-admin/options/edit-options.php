@@ -923,19 +923,25 @@ if(empty($jsonOptions[$galeryID.'-u'])){
 // already converted for html output here (in check-language) if exists
 $VotesPerUserAllVotesUsedHtmlMessage = (!empty($translations['pro']['VotesPerUserAllVotesUsedHtmlMessage'])) ? $translations['pro']['VotesPerUserAllVotesUsedHtmlMessage'] : '';
 
-$CommentsDateFormatNamePathSelectedValuesArray = array(
-    'YYYY-MM-DD','DD-MM-YYYY','MM-DD-YYYY','YYYY/MM/DD',
-    'DD/MM/YYYY','MM/DD/YYYY',
-    'YYYY.MM.DD','DD.MM.YYYY',
-    'MM.DD.YYYY'
-);
+$CommentsDateFormatNamePathSelectedValuesArray = [
+	'modern' => 'Modern way => format like Instagram: ascending seconds, minutes, hours, days, weeks, months and years',
+	'YYYY-MM-DD' => 'YYYY-MM-DD Hours:Minutes',
+	'DD-MM-YYYY' => 'DD-MM-YYYY Hours:Minutes',
+	'MM-DD-YYYY' => 'MM-DD-YYYY Hours:Minutes',
+	'YYYY/MM/DD' => 'YYYY/MM/DD Hours:Minutes',
+	'DD/MM/YYYY' => 'DD/MM/YYYY Hours:Minutes',
+	'MM/DD/YYYY' => 'MM/DD/YYYY Hours:Minutes',
+	'YYYY.MM.DD' => 'YYYY.MM.DD Hours:Minutes',
+	'DD.MM.YYYY' => 'DD.MM.YYYY Hours:Minutes',
+	'MM.DD.YYYY' => 'MM.DD.YYYY Hours:Minutes'
+];
 
-$ShowExifDateTimeOriginalFormatNamePathSelectedValuesArray = array(
+$ShowExifDateTimeOriginalFormatNamePathSelectedValuesArray = [
     'YYYY-MM-DD','DD-MM-YYYY','MM-DD-YYYY','YYYY/MM/DD',
     'DD/MM/YYYY','MM/DD/YYYY',
     'YYYY.MM.DD','DD.MM.YYYY',
     'MM.DD.YYYY'
-);
+];
 
 //$content = html_entity_decode(stripslashes($content));
 

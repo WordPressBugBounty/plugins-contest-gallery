@@ -220,6 +220,35 @@ if(empty($translations[$l_ImagesDeleted])){$translations[$l_ImagesDeleted]='';}
 __('Successfully logged in via Google. Page will be reloaded...');$l_GoogleSignSuccessfull = "Successfully logged in via Google. Page will be reloaded..."; $language_GoogleSignSuccessfull = (!empty($translations[$l_GoogleSignSuccessfull]) && $is_frontend) ? $translations[$l_GoogleSignSuccessfull] : ((empty(trim(__($l_GoogleSignSuccessfull,$domain)))) ? __($l_GoogleSignSuccessfull,$domainDefault) : __($l_GoogleSignSuccessfull,$domain));
 if(empty($translations[$l_GoogleSignSuccessfull])){$translations[$l_GoogleSignSuccessfull]='';}
 
+// Show date parameters
+__('Second');$l_Second = "Second"; $language_Second = (!empty($translations[$l_Second]) && $is_frontend) ? $translations[$l_Second] : ((empty(trim(__($l_Second,$domain)))) ? __($l_Second,$domainDefault) : __($l_Second,$domain)); if(empty($translations[$l_Second])){$translations[$l_Second]='';}
+
+__('Seconds');$l_Seconds = "Seconds"; $language_Seconds = (!empty($translations[$l_Seconds]) && $is_frontend) ? $translations[$l_Seconds] : ((empty(trim(__($l_Seconds,$domain)))) ? __($l_Seconds,$domainDefault) : __($l_Seconds,$domain)); if(empty($translations[$l_Seconds])){$translations[$l_Seconds]='';}
+
+__('Minute');$l_Minute = "Minute"; $language_Minute = (!empty($translations[$l_Minute]) && $is_frontend) ? $translations[$l_Minute] : ((empty(trim(__($l_Minute,$domain)))) ? __($l_Minute,$domainDefault) : __($l_Minute,$domain)); if(empty($translations[$l_Minute])){$translations[$l_Minute]='';}
+
+__('Minutes');$l_Minutes = "Minutes"; $language_Minutes = (!empty($translations[$l_Minutes]) && $is_frontend) ? $translations[$l_Minutes] : ((empty(trim(__($l_Minutes,$domain)))) ? __($l_Minutes,$domainDefault) : __($l_Minutes,$domain)); if(empty($translations[$l_Minutes])){$translations[$l_Minutes]='';}
+
+__('Hour');$l_Hour = "Hour"; $language_Hour = (!empty($translations[$l_Hour]) && $is_frontend) ? $translations[$l_Hour] : ((empty(trim(__($l_Hour,$domain)))) ? __($l_Hour,$domainDefault) : __($l_Hour,$domain)); if(empty($translations[$l_Hour])){$translations[$l_Hour]='';}
+
+__('Hours');$l_Hours = "Hours"; $language_Hours = (!empty($translations[$l_Hours]) && $is_frontend) ? $translations[$l_Hours] : ((empty(trim(__($l_Hours,$domain)))) ? __($l_Hours,$domainDefault) : __($l_Hours,$domain)); if(empty($translations[$l_Hours])){$translations[$l_Hours]='';}
+
+__('Day');$l_Day = "Day"; $language_Day = (!empty($translations[$l_Day]) && $is_frontend) ? $translations[$l_Day] : ((empty(trim(__($l_Day,$domain)))) ? __($l_Day,$domainDefault) : __($l_Day,$domain)); if(empty($translations[$l_Day])){$translations[$l_Day]='';}
+
+__('Days');$l_Days = "Days"; $language_Days = (!empty($translations[$l_Days]) && $is_frontend) ? $translations[$l_Days] : ((empty(trim(__($l_Days,$domain)))) ? __($l_Days,$domainDefault) : __($l_Days,$domain)); if(empty($translations[$l_Days])){$translations[$l_Days]='';}
+
+__('Week');$l_Week = "Week"; $language_Week = (!empty($translations[$l_Week]) && $is_frontend) ? $translations[$l_Week] : ((empty(trim(__($l_Week,$domain)))) ? __($l_Week,$domainDefault) : __($l_Week,$domain)); if(empty($translations[$l_Week])){$translations[$l_Week]='';}
+
+__('Weeks');$l_Weeks = "Weeks"; $language_Weeks = (!empty($translations[$l_Weeks]) && $is_frontend) ? $translations[$l_Weeks] : ((empty(trim(__($l_Weeks,$domain)))) ? __($l_Weeks,$domainDefault) : __($l_Weeks,$domain)); if(empty($translations[$l_Weeks])){$translations[$l_Weeks]='';}
+
+__('Month');$l_Month = "Month"; $language_Month = (!empty($translations[$l_Month]) && $is_frontend) ? $translations[$l_Month] : ((empty(trim(__($l_Month,$domain)))) ? __($l_Month,$domainDefault) : __($l_Month,$domain)); if(empty($translations[$l_Month])){$translations[$l_Month]='';}
+
+__('Months');$l_Months = "Months"; $language_Months = (!empty($translations[$l_Months]) && $is_frontend) ? $translations[$l_Months] : ((empty(trim(__($l_Months,$domain)))) ? __($l_Months,$domainDefault) : __($l_Months,$domain)); if(empty($translations[$l_Months])){$translations[$l_Months]='';}
+
+__('Year');$l_Year = "Year"; $language_Year = (!empty($translations[$l_Year]) && $is_frontend) ? $translations[$l_Year] : ((empty(trim(__($l_Year,$domain)))) ? __($l_Year,$domainDefault) : __($l_Year,$domain)); if(empty($translations[$l_Year])){$translations[$l_Year]='';}
+
+__('Years');$l_Years = "Years"; $language_Years = (!empty($translations[$l_Years]) && $is_frontend) ? $translations[$l_Years] : ((empty(trim(__($l_Years,$domain)))) ? __($l_Years,$domainDefault) : __($l_Years,$domain)); if(empty($translations[$l_Years])){$translations[$l_Years]='';}
+
 // Gallery User
 
 __('Delete entry?');$l_DeleteImageQuestion = "Delete entry?"; $language_DeleteImageQuestion = (!empty($translations[$l_DeleteImageQuestion]) && $is_frontend) ? $translations[$l_DeleteImageQuestion] : ((empty(trim(__($l_DeleteImageQuestion,$domain)))) ? __($l_DeleteImageQuestion,$domainDefault) : __($l_DeleteImageQuestion,$domain)); if(empty($translations[$l_DeleteImageQuestion])){$translations[$l_DeleteImageQuestion]='';}
