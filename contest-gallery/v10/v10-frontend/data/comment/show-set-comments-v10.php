@@ -216,6 +216,9 @@ $fp = fopen($commentsFile, 'w');
 fwrite($fp,json_encode($commentsFileData));
 fclose($fp);
 
+// has to be set here after saving file
+$commentsFileData[$lastCommentId]['WpUserId'] = $WpUserId;
+
 // process comments File --- ENDE
 
 // process rating comments data file
@@ -298,10 +301,16 @@ foreach ($commentsDataJsonFiles as $jsonFile) {
 
         var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
         var pictureID = <?php echo json_encode($pictureID);?>;
+        var lastCommentId = <?php echo json_encode($lastCommentId);?>;
         var Active = <?php echo json_encode($Active);?>;
         var ratingCommentsDataFromJustCommented = <?php echo json_encode($ratingCommentsData);?>;
 
-        cgJsData[galeryIDuser].jsonCommentsData = <?php echo json_encode($jsonCommentsData); ?>;
+        if(cgJsData[galeryIDuser].jsonCommentsData[pictureID]){
+            cgJsData[galeryIDuser].jsonCommentsData[pictureID][lastCommentId] = <?php echo json_encode($commentsFileData[$lastCommentId]); ?>;
+        }else{
+            cgJsData[galeryIDuser].jsonCommentsData[pictureID] = <?php echo json_encode($commentsFileData); ?>;
+        }
+
         cgJsData[galeryIDuser].vars.commentUnix = <?php echo json_encode($unix); ?>;
         cgJsClass.gallery.comment.setComments(galeryIDuser);
         if(Active!=2){
