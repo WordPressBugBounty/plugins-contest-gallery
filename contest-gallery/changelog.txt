@@ -1,5 +1,9 @@
 Contest Gallery
 
+= V25.0.6 =
+* FIXED: Sorting in "Masonry view" did not work.
+* FIXED: Agreeing YouTube policies in full window blog view broke the view.
+
 = V25.0.5 =
 * NEW: Deactivate, activate or delete all comments at once checkboxes added in "Show comments" area for an entry.
 * FIXED: Clicking through pagination in frontend cause content below gallery shortcode jumps at the top of gallery area.

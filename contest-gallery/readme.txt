@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, upload, voting, youtube
 Requires at least: 5.6
-Stable tag: 25.0.5
+Stable tag: 25.0.6
 Tested up to: 6.7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -227,6 +227,10 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V25.0.6 =
+* FIXED: Sorting in "Masonry view" did not work.
+* FIXED: Agreeing YouTube policies in full window blog view broke the view.
 
 = V25.0.5 =
 * NEW: Deactivate, activate or delete all comments at once checkboxes added in "Show comments" area for an entry.
