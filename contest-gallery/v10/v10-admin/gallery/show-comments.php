@@ -557,7 +557,21 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
 
         echo "<div id='cgShowComments' class='cg_border_top_none' >";
 
-		foreach($select_comments_array as $key => $value){
+        if(count($select_comments)){
+            echo "<div style='display: flex;justify-content: end;margin-bottom: 20px;margin-top: 5px;'>";
+              echo "<div style='margin-right: 13px;'>";
+                echo "Deactivate all: <input type='checkbox' id='cgCommentsDeactivateAll'>";
+              echo "</div>";
+              echo "<div style='margin-right: 14px;'>";
+                echo "Activate all: <input type='checkbox' id='cgCommentsActivateAll'>";
+              echo "</div>";
+              echo "<div style='margin-right: 6px;'>";
+                echo "Delete all: <input type='checkbox' id='cgCommentsDeleteAll'>";
+              echo "</div>";
+            echo "</div>";
+        }
+
+	      foreach($select_comments_array as $key => $value){
             if(!empty($value['insert_id']) && !empty($collectInsertIdsWithWpUserIdsAndIps[$value['insert_id']])){
 	            $value['userIP'] = $collectInsertIdsWithWpUserIdsAndIps[$value['insert_id']]['IP'];
 	            $value['WpUserId'] = $collectInsertIdsWithWpUserIdsAndIps[$value['insert_id']]['WpUserId'];
@@ -645,9 +659,9 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
         echo "</div>";
 
             echo "<div>";
-		echo "<div style='display:inline;float:right;'>Delete: <input  class='cg_comment_delete'  type='checkbox' name='delete-comment[]' value='$id'></div>";
-		echo "<div style='display:inline;float:right;margin-right:20px;'>Activate: <input class='cg_comment_activate' ".((!empty($value['Active']) && $value['Active']==2) ? "" : "disabled")." type='checkbox' name='activate-comment[]' value='$id'></div>";
-		echo "<div style='display:inline;float:right;margin-right:20px;'>Deactivate: <input class='cg_comment_deactivate' ".((!empty($value['Active']) && $value['Active']==2) ? "disabled" : "")." type='checkbox' name='deactivate-comment[]' value='$id'></div>";
+		echo "<div style='display:inline;float:right;margin-right:-10px;'>Delete: <input  class='cg_comment_delete'  type='checkbox' name='delete-comment[]' value='$id'></div>";
+		echo "<div style='display:inline;float:right;margin-right:30px;'>Activate: <input class='cg_comment_activate' ".((!empty($value['Active']) && $value['Active']==2) ? "" : "disabled")." type='checkbox' name='activate-comment[]' value='$id'></div>";
+		echo "<div style='display:inline;float:right;margin-right:30px;'>Deactivate: <input class='cg_comment_deactivate' ".((!empty($value['Active']) && $value['Active']==2) ? "disabled" : "")." type='checkbox' name='deactivate-comment[]' value='$id'></div>";
             echo "</div>";
 
 		echo "</div>";

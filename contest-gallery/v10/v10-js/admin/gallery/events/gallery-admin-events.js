@@ -2415,5 +2415,43 @@ jQuery(document).ready(function ($) {
 
     });
 
+    $(document).on('change','#cgCommentsDeactivateAll',function (e) {
+        var $cgShowComments = $(this).closest('#cgShowComments');
+        $cgShowComments.find('#cgCommentsActivateAll').prop('checked',false);
+        $cgShowComments.find('#cgCommentsDeleteAll').prop('checked',false);
+        if($(this).prop('checked')){
+            $cgShowComments.find('.cg_comment_activate').prop('checked',false);
+            $cgShowComments.find('.cg_comment_delete').prop('checked',false);
+            $cgShowComments.find('.cg_comment_deactivate:not(:disabled)').prop('checked',true);
+        }else{
+            $cgShowComments.find('.cg_comment_deactivate:not(:disabled)').prop('checked',false);
+        }
+    });
+
+    $(document).on('change','#cgCommentsActivateAll',function (e) {
+        var $cgShowComments = $(this).closest('#cgShowComments');
+        $cgShowComments.find('#cgCommentsDeactivateAll').prop('checked',false);
+        $cgShowComments.find('#cgCommentsDeleteAll').prop('checked',false);
+        if($(this).prop('checked')){
+            $cgShowComments.find('.cg_comment_deactivate').prop('checked',false);
+            $cgShowComments.find('.cg_comment_delete').prop('checked',false);
+            $cgShowComments.find('.cg_comment_activate:not(:disabled)').prop('checked',true);
+        }else{
+            $cgShowComments.find('.cg_comment_activate:not(:disabled)').prop('checked',false);
+        }
+    });
+
+    $(document).on('change','#cgCommentsDeleteAll',function (e) {
+        var $cgShowComments = $(this).closest('#cgShowComments');
+        $cgShowComments.find('#cgCommentsActivateAll').prop('checked',false);
+        $cgShowComments.find('#cgCommentsDeactivateAll').prop('checked',false);
+        if($(this).prop('checked')){
+            $cgShowComments.find('.cg_comment_activate').prop('checked',false);
+            $cgShowComments.find('.cg_comment_deactivate').prop('checked',false);
+            $cgShowComments.find('.cg_comment_delete:not(:disabled)').prop('checked',true);
+        }else{
+            $cgShowComments.find('.cg_comment_delete:not(:disabled)').prop('checked',false);
+        }
+    });
 
 });

@@ -1,5 +1,11 @@
 Contest Gallery
 
+= V25.0.5 =
+* NEW: Deactivate, activate or delete all comments at once checkboxes added in "Show comments" area for an entry.
+* FIXED: Clicking through pagination in frontend cause content below gallery shortcode jumps at the top of gallery area.
+* FIXED: Deactivating and activating an entry causes content that should be visible in frontend for the entry to disappear.
+* FIXED: Position of price tag in frontend gallery area, using cg_gallery_ecommerce shortcode, not always correct.
+
 = V25.0.4 =
 * FIXED: Opening "Slider view" from masonry view in full window mode causes high distance between thumbnails in slider images overview.
 * FIXED: Content not always centered when opening "Blog view" or "Slider view" in full window mode.

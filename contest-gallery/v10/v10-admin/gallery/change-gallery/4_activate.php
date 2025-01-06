@@ -225,10 +225,16 @@
 
             $RatingOverviewArray = cg_get_correct_rating_overview($GalleryID);
 
+			$infoPidsStillToProcess = [];
+
             // add all json files and generate images array
             foreach($picsSQL as $object){
 
                 $imageArray = cg_create_json_files_when_activating($GalleryID,$object,$thumbSizesWp,$uploadFolder,$imageArray,$galeryrow->Version,$RatingOverviewArray);
+
+				if(in_array($object->id,$infoPidsArray)===false){
+					$infoPidsStillToProcess[] = $object->id;
+				}
 
                 $isAlternativeFile=false;
 
@@ -256,6 +262,9 @@
 
             }
 
+			if(!empty($infoPidsStillToProcess)){
+				cg_json_upload_form_info_data_files_new($GalleryID,$infoPidsStillToProcess,true);
+			}
 
         }
 

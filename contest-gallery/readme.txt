@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, upload, voting, youtube
 Requires at least: 5.6
-Stable tag: 25.0.4
+Stable tag: 25.0.5
 Tested up to: 6.7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -227,6 +227,12 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V25.0.5 =
+* NEW: Deactivate, activate or delete all comments at once checkboxes added in "Show comments" area for an entry.
+* FIXED: Clicking through pagination in frontend cause content below gallery shortcode jumps at the top of gallery area.
+* FIXED: Deactivating and activating an entry causes content that should be visible in frontend for the entry to disappear.
+* FIXED: Position of price tag in frontend gallery area, using cg_gallery_ecommerce shortcode, not always correct.
 
 = V25.0.4 =
 * FIXED: Opening "Slider view" from masonry view in full window mode causes high distance between thumbnails in slider images overview.
