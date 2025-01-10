@@ -16,6 +16,7 @@ if (!defined('ABSPATH')) {
     $tablename_options_visual = $wpdb->prefix . "contest_gal1ery_options_visual";
     $tablename_registry_and_login_options = $wpdb->prefix."contest_gal1ery_registry_and_login_options";
 
+
     if(intval($galleryDbVersion)>=14){
         $proOptions = $wpdb->get_row("SELECT * FROM $tablenameProOptions WHERE GeneralID = '1'");
     }else{
@@ -221,9 +222,37 @@ if (!defined('ABSPATH')) {
         $cgReply = get_option('admin_email');
     }
 
+    $RegMailCC = $proOptions->RegMailCC;
+    $RegMailBCC = $proOptions->RegMailBCC;
+
     $headers = array();
     $headers[] = "From: " . html_entity_decode(strip_tags($proOptions->RegMailAddressor)) . " <" . strip_tags($cgReply) . ">";
     $headers[] = "Reply-To: " . strip_tags($cgReply) . "";
+
+    if(!empty($RegMailCC)){
+	    if(strpos($RegMailCC,';')){
+		    $RegMailCC = explode(';',$RegMailCC);
+		    foreach($RegMailCC as $ccValue){
+			    $ccValue = trim($ccValue);
+			    $headers[] = "CC: $ccValue\r\n";
+		    }
+	    }
+	    else{
+		    $headers[] = "CC: $RegMailCC\r\n";
+	    }
+    }
+
+    if(strpos($RegMailBCC,';')){
+	    $RegMailBCC = explode(';',$RegMailBCC);
+        foreach($RegMailBCC as $bccValue){
+            $bccValue = trim($bccValue);
+            $headers[] = "BCC: $bccValue\r\n";
+        }
+    }
+    else{
+        $headers[] = "BCC: $RegMailBCC\r\n";
+    }
+
     $headers[] = "MIME-Version: 1.0";
     $headers[] = "Content-Type: text/html; charset=utf-8";
 

@@ -14,7 +14,6 @@
     display: none;
 }
 
-
 #wp-admin-bar-user-info{
     display: none;
 }
@@ -25,6 +24,9 @@
 #wpadminbar #wp-admin-bar-my-account.with-avatar #wp-admin-bar-user-actions > li{
     margin-left: 0;
 }
+
+
+
 #contextual-help-link-wrap{
     display: none;
 }

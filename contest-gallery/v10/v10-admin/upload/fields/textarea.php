@@ -1,5 +1,7 @@
 <?php
 
+$FieldTitleGallery = '';
+
 if(!$isOnlyPlaceHolder){
     $Show_Slider = $wpdb->get_var("SELECT Show_Slider FROM $tablename_form_input WHERE id = '$id'");
 
@@ -38,6 +40,7 @@ if(!$isOnlyPlaceHolder){
     $inputRow = $wpdb->get_row("SELECT * FROM $tablename_form_input WHERE id = '$id'");
 
     $Show_Slider = $inputRow->Show_Slider;
+	$FieldTitleGallery = $inputRow->FieldTitleGallery;
 
     if($Show_Slider==1){$checkedShow_Slider='checked';}
     else{$checkedShow_Slider='';}
@@ -288,18 +291,30 @@ echo <<<HEREDOC
 <div class='cg_view_options_row'>
     <div  class='cg_view_option cg_view_option_33_percent   cg_border_right_none cg_border_bottom_none cg_view_option_flex_flow_column'>
         <div class='cg_view_option_title cg_view_option_title_full_width '>
-            <p>Field title</p>
+            <p>Contact form field title<br><br><br></p>
         </div>
         <div class="cg_view_option_input cg_view_option_input_full_width" >
             <input  class="cg_view_option_input_field_title"  type="text" name="upload[$id][title]" value='$valueFieldTitle' size="30">
         </div>
     </div>
-     <div class='cg_view_option cg_view_option_67_percent  cg_border_bottom_none cg_view_option_flex_flow_column'>
+     <div class='cg_view_option   cg_border_bottom_none cg_border_right_none cg_view_option_flex_flow_column'>
         <div class='cg_view_option_title cg_view_option_title_full_width '>
-            <p>Textarea placeholder</p>
+            <p>Contact form field placeholder<br><br><br></p>
         </div>
         <div class="cg_view_option_input_full_width" >
             <textarea name='upload[$id][content]' maxlength='10000' style='width:100%;' placeholder='Placeholder'  rows='6'>$valueFieldPlaceholder</textarea>
+        </div>
+    </div>
+    <div class='cg_view_option cg_border_bottom_none   cg_view_option_flex_flow_column'>
+        <div class='cg_view_option_title cg_view_option_title_full_width '>
+            <p>Field title gallery or entry view<br>
+            <span class="cg_view_option_title_note">
+            	<b>NOTE:</b> if set will be displayed in gallery or entry view instead of "Contact form field title"
+			</span>
+            </p>
+        </div>
+        <div class="cg_view_option_input cg_view_option_input_full_width" >
+            <input type="text" name="upload[$id][FieldTitleGallery]" value='$FieldTitleGallery' size="30">
         </div>
     </div>
 </div>

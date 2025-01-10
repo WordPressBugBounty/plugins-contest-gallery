@@ -158,7 +158,7 @@ jQuery(document).ready(function ($) {
             $(this).find('.cg_view_option_textarea_interval_on').attr('name',shortcode+'[TextWhenShortcodeIntervalIsOn]').val(option);
 
             if(typeof jsonOptions[shortcode]=='undefined'){
-                option = "&lt;p style=&quot;text-align: center;&quot;&gt;&lt;strong&gt;Contest is over&lt;\/strong&gt;&lt;\/p&gt;";
+                option = "&lt;p style=&quot;text-align: center;&quot;&gt;&lt;strong&gt;No contest currently&lt;\/strong&gt;&lt;\/p&gt;";
                 option = jQuery('<textarea />').html(option).text();
             }else{
                 var option = getOptionValue(shortcode,jsonOptions,undefined,$(this),'TextWhenShortcodeIntervalIsOff',undefined,'TextWhenShortcodeIntervalIsOff');

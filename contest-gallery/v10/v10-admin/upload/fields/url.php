@@ -1,5 +1,7 @@
 <?php
 
+$FieldTitleGallery = '';
+
 if(!$isOnlyPlaceHolder){
     $fieldOrder = $value->Field_Order;
     $fieldOrderKey = "$fieldOrder";
@@ -29,10 +31,17 @@ if(!$isOnlyPlaceHolder){
     if($id==$Field1IdGalleryView){$checked='checked';}
     else{$checked='';}
 
-    $Show_Slider = $wpdb->get_var("SELECT Show_Slider FROM $tablename_form_input WHERE id = '$id'");
+    $rowUrl = $wpdb->get_row("SELECT * FROM $tablename_form_input WHERE id = '$id'");
+	$FieldTitleGallery = $rowUrl->FieldTitleGallery;
 
-    if($Show_Slider==1){$checkedShow_Slider='checked';}
+    if($rowUrl->Show_Slider==1){$checkedShow_Slider='checked';}
     else{$checkedShow_Slider='';}
+
+    if($rowUrl->ForwardToUrl==1){$checkedForwardToUrl='checked';}
+    else{$checkedForwardToUrl='';}
+
+    if($rowUrl->ForwardToUrlNewTab==1){$checkedForwardToUrlNewTab='checked';}
+    else{$checkedForwardToUrlNewTab='';}
 
     if($id==$Field2IdGalleryView){$checkedShowTag='checked';}
     else{$checkedShowTag='';}
@@ -86,33 +95,61 @@ HEREDOC;
 
 echo <<<HEREDOC
 <div class='cg_view_options_row'>
-    <div  class='cg_view_option cg_view_option_100_percent  cg_border_bottom_none '>
+    <div  class='cg_view_option cg_border_bottom_none cg_border_right_none'>
         <div class='cg_view_option_title cg_view_option_title_full_width '>
             <p>Show as info in single entry view</p>
         </div>
         <div class="cg_view_option_checkbox">
               <input type="checkbox" name="upload[$id][infoInSlider]" $checkedShow_Slider>
         </div>
-    </div>    
+    </div>
+    <div  class='cg_view_option cg_border_bottom_none cg_border_right_none $cgProFalse'>
+        <div class='cg_view_option_title cg_view_option_title_full_width '>
+            <p>Forward to the URL by click on an entry in masonry view</p>
+        </div>
+        <div class="cg_view_option_checkbox">
+              <input type="checkbox" name="upload[$id][ForwardToUrl]" $checkedForwardToUrl>
+        </div>
+    </div>
+    <div  class='cg_view_option cg_border_bottom_none $cgProFalse'>
+        <div class='cg_view_option_title cg_view_option_title_full_width '>
+            <p>Forward in new tab</p>
+        </div>
+        <div class="cg_view_option_checkbox">
+              <input type="checkbox" name="upload[$id][ForwardToUrlNewTab]" $checkedForwardToUrlNewTab>
+        </div>
+    </div>
 </div>
 HEREDOC;
 
 echo <<<HEREDOC
 <div class='cg_view_options_row'>
-    <div  class='cg_view_option cg_view_option_33_percent   cg_border_right_none cg_border_bottom_none cg_view_option_flex_flow_column'>
+    <div  class='cg_view_option    cg_border_right_none cg_border_bottom_none cg_view_option_flex_flow_column'>
         <div class='cg_view_option_title cg_view_option_title_full_width '>
-            <p>Field title</p>
+            <p>Contact form field title<br><br><br></p>
         </div>
         <div class="cg_view_option_input cg_view_option_input_full_width" >
             <input  class="cg_view_option_input_field_title"  type="text" name="upload[$id][title]" value='$valueFieldTitle' size="30">
         </div>
     </div>
-     <div class='cg_view_option cg_view_option_67_percent  cg_border_bottom_none cg_view_option_flex_flow_column'>
+     <div class='cg_view_option   cg_border_bottom_none cg_border_right_none cg_view_option_flex_flow_column'>
         <div class='cg_view_option_title cg_view_option_title_full_width'>
-            <p>URL placeholder</p>
+            <p>Contact form field placeholder<br><br><br></p>
         </div>
         <div class="cg_view_option_input cg_view_option_input_full_width" >
             <input type="text" name="upload[$id][content]" value='$valueFieldPlaceholder' size="30">
+        </div>
+    </div>
+    <div class='cg_view_option cg_border_bottom_none    cg_view_option_flex_flow_column'>
+        <div class='cg_view_option_title cg_view_option_title_full_width '>
+            <p>Field title entry view<br>
+            <span class="cg_view_option_title_note">
+            	<b>NOTE:</b> if set will be displayed in entry view instead of "Contact form field title"
+			</span>
+            </p>
+        </div>
+        <div class="cg_view_option_input cg_view_option_input_full_width" >
+            <input type="text" name="upload[$id][FieldTitleGallery]" value='$FieldTitleGallery' size="30">
         </div>
     </div>
 </div>

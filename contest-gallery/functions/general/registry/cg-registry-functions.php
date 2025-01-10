@@ -25,7 +25,7 @@ if(!function_exists('cg_modified_logout_url')){
     {
         $user = wp_get_current_user();
 
-        if(in_array('contest_gallery_user_since_v14',(array)$user->roles) OR in_array('contest_gallery_user',(array)$user->roles)){
+        if(in_array('contest_gallery_user_since_v14',(array)$user->roles) OR in_array('contest_gallery_user',(array)$user->roles) || cgHasUserGroupAllowedToEdit(wp_get_current_user())){
             $default .= '&cgLogoutLink=true';// modifies url to check if cg logout has to be done in cg_redirect_when_logout function
         }
 
@@ -101,7 +101,7 @@ if(!function_exists('cg_modified_admin_bar_for_contest_gallery_user_v14')){
 
         $user = $current_user;
 
-        if(in_array('contest_gallery_user_since_v14',(array)$user->roles)){
+        if(in_array('contest_gallery_user_since_v14',(array)$user->roles) || cgHasUserGroupAllowedToEdit(wp_get_current_user())){
 
             $tablename_registry_and_login_options = $wpdb->prefix . "contest_gal1ery_registry_and_login_options";
 
@@ -159,7 +159,8 @@ if(!function_exists('cg_modified_admin_bar_for_contest_gallery_user_v14')){
                 $args = array(
                     'id'    => 'edit-profile',//wp-admin-edit-profile << full id name in frontend
                     'parent'    => 'user-actions',//wp-admin-bar-user-actions <<< full id name in frontend
-                    'title' => $language_EditProfile
+                    'title' => $language_EditProfile,
+                    'href' => get_edit_profile_url()
                 );
                 $wp_admin_bar->add_node($args);
 
@@ -169,11 +170,12 @@ if(!function_exists('cg_modified_admin_bar_for_contest_gallery_user_v14')){
                     if(!empty($BackToGalleryLink)){
                         $args = array(
                             'id'    => 'contest_gallery_user_bar',
+                            'parent'    => 'user-actions',//wp-admin-bar-user-actions <<< full id name in frontend
                             'title' => $language_BackToGallery,
                             'href' => $BackToGalleryLink
                         );
-                    }
                     $wp_admin_bar->add_node($args);
+                    }
                     wp_enqueue_script( 'cg_contest_gallery_edit_profile_js', plugins_url('/../../../v10/v10-js/admin/profile/edit-profile.js', __FILE__), array('jquery'), cg_get_version_for_scripts());
                 }
 
@@ -242,13 +244,18 @@ if(!function_exists('cg_modified_admin_bar_for_eventually_contest_gallery_profil
 if(!function_exists('cgHasUserGroupAllowedToEdit')){
     function cgHasUserGroupAllowedToEdit( $user ) {
 
+	    $hasUserGroupAllowedToEdit = false;
+
+        if(empty($user)){
+            return $hasUserGroupAllowedToEdit;
+        }
+
         global $wpdb;
         $tablename_registry_and_login_options = $wpdb->prefix . "contest_gal1ery_registry_and_login_options";
 
         $registryAndLoginOptions = $wpdb->get_row( "SELECT * FROM $tablename_registry_and_login_options WHERE GeneralID = '1'" );
         $EditProfileGroups = (!empty($registryAndLoginOptions->EditProfileGroups)) ? unserialize($registryAndLoginOptions->EditProfileGroups) : [];
 
-        $hasUserGroupAllowedToEdit = false;
 
         foreach ($EditProfileGroups as $RoleGroupKey => $value){
             if(in_array('contest_gallery_user_since_v14',(array)$user->roles) OR in_array($RoleGroupKey,(array)$user->roles)){

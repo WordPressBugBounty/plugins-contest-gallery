@@ -224,6 +224,9 @@ return array(
         'EcommerceTitle' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 30.03.2023
         'EcommerceDescription' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 30.03.2023
         'WpAttachmentDetailsType' => array('COLUMN_TYPE' => 'VARCHAR(20)','DEFAULT' => '""'),// Update ab 28.05.2023
+        'ForwardToUrl' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 08.01.2025
+        'ForwardToUrlNewTab' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 08.01.2025
+        'FieldTitleGallery' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 08.01.2025
     ),
     $tablename_form_output => array(
         'Field_Content' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""')// Update ab 23.02.2019
@@ -297,6 +300,8 @@ return array(
         'ConsentTwitter' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 29.06.2024
         'ConsentInstagram' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 02.07.2024
         'ConsentTikTok' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 02.07.2024
+        'RegMailCC' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 08.01.2025
+        'RegMailBCC' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 08.01.2025
     ),
     $tablename_create_user_entries => array(
         'Field_Content' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019

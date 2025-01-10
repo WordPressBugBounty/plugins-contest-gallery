@@ -40,6 +40,9 @@ if(!function_exists('cg_copy_comments')){
                 if(count($fileImageCommentDirs)){
                     foreach ($fileImageCommentDirs as $fileImageCommentDir){
 		                $oldImageId = substr($fileImageCommentDir,strrpos($fileImageCommentDir,'/')+1,strlen($fileImageCommentDir));
+						if(empty($collectImageIdsArray[$oldImageId])){
+							continue;
+						}
                         if(!is_dir($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$nextGalleryID.'/json/image-comments/ids/'.$collectImageIdsArray[$oldImageId])){
                             mkdir($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$nextGalleryID.'/json/image-comments/ids/'.$collectImageIdsArray[$oldImageId],0755,true);
                         }

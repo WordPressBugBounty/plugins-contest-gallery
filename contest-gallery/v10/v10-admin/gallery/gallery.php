@@ -1741,7 +1741,7 @@ if($isAjaxCall){
 
 						echo "<div class='cg_image_title_container' >";
 						echo "$formvalue:<br/>";
-						echo "<input type='text' value='$getEntries1' name='content[$id][$formFieldId][short-text]'  placeholder='www.example.com' maxlength='1000' class='cg_image_title cg_short_text cg_input_vars_count cg_input_by_search_sort_$formFieldId'>";
+						echo "<input type='text' value='$getEntries1' name='content[$id][$formFieldId][short-text]'  placeholder='https://www.example.com' maxlength='1000' class='cg_image_title cg_short_text cg_input_vars_count cg_input_by_search_sort_$formFieldId'>";
 
 						echo "</div>";
 

@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, upload, voting, youtube
 Requires at least: 5.6
-Stable tag: 25.0.6
+Stable tag: 25.0.8
 Tested up to: 6.7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -12,6 +12,11 @@ File types: **JPG, PNG, GIF, PDF, ZIP, WEBM, MP4, MOV, TXT, DOC, DOCX, XLS, XLSX
 
 == Ecommerce PayPal ==
 * Sell entries as shipping, download or service via PayPal or charge for uploads. Configure prices, shipping, taxes and currencies for  your products. Configure checkout notes and agreements. Watermark image files, add download or service keys. Selling download or service and charging for uploads only available in PRO version.
+
+== Different file types upload form ==
+* Upload form for different file types
+* Display uploaded files in a gallery
+* [Different file types upload form and gallery example](https://www.contest-gallery.com/different-file-types-upload-form-and-gallery/)
 
 == Social Media Share Buttons ==
 * Facebook, WhatsApp, Twitter, Telegram, Skype, Pinterest, Reddit, XING, LinkedIn, Email, SMS, Gmail, Yahoo, Evernote, VK, OK, Douban, RenRen, Qzone, Weibu
@@ -133,10 +138,9 @@ https://www.youtube.com/watch?v=lHgbHkDzRnk
 * Random sort button
 * Switch between total different gallery views without site reloading
 * Three different views
-* Real justified Flickr look, customize height
-* Thumb look, define size and margin between thumbs
-* Blog look
-* Slider look
+* Masonry view
+* Blog view
+* Slider view
 
 = Single entry view options =
 * View entries in blog view full window
@@ -227,6 +231,14 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V25.0.8 =
+* NEW: "Field title gallery or entry view" added in "Contact form" to input, textarea, select, select-categories, date and URL types of fields. Will be visible instead of "Contact form field title" in gallery or entry view, if set.
+* NEW: "Forward to the URL by click on an entry in masonry view" added to URL contact form field.
+* NEW: Selected role groups which can edit Contest Gallery "Registration form" fields are now also  use "Logout URL" and "Back to gallery URL" if configured in "Login options".
+* FIXED: "Login form" did not work for all cases.
+* FIXED: Registration "Confirmation e-mail" did not work for all cases.
+* FIXED: Contest is over not shown when using cg_galleries... type of shortcode.
 
 = V25.0.6 =
 * FIXED: Sorting in "Masonry view" did not work.

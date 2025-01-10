@@ -53,6 +53,10 @@ if(!function_exists('cg_json_upload_form')){
             $formDataArray[$jsonKey]['WatermarkPosition'] = $object->WatermarkPosition;
             $formDataArray[$jsonKey]['Active'] = $object->Active;
 
+			if(!empty($object->FieldTitleGallery)){
+				$formDataArray[$jsonKey]['FieldTitleGallery'] = $object->FieldTitleGallery;
+			}
+
         }
 
         /*    foreach($singleViewOrderDataJson as $data){

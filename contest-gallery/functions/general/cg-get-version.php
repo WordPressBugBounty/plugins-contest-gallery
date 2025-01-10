@@ -10,14 +10,14 @@ if(!function_exists('cg_get_version')){
 
 if(!function_exists('cg_get_db_version')){
     function cg_get_db_version () {
-        return '24.07';// has to be floatval, especially after 21.0 update!
+        return '25.08';// has to be floatval, especially after 21.0 update!
     }
 }
 
 if(!function_exists('cg_get_version_for_scripts')){
     function cg_get_version_for_scripts () {
         /**###NORMAL###**/
-        return '25.0.6';
+        return '25.0.8';
         /**###NORMAL-END###**/
     }
 }

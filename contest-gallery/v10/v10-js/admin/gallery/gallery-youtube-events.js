@@ -172,7 +172,35 @@ jQuery(document).ready(function ($) {
             $cgAddYoutubePreview.empty().addClass('cg_hide');
             $cgAddYoutubeLoader.removeClass('cg_hide');
             $cgNoUrlMatch.addClass('cg_hide');
-            if(url.indexOf('x.com/')>-1 || url.indexOf('twitter.com/')>-1){
+            /*if(url.indexOf('<blockquote ')>-1){
+                $cgAddYoutubeLoader.addClass('cg_hide');
+                $cgNoUrlMatch.addClass('cg_hide');
+                $cgAddYoutubePreview.empty().removeClass('cg_hide');
+                $cgAddYoutubePreview.append('<iframe width="420" height="236"' +
+                    ' src="'+embed+'">' +
+                    '</iframe>');
+                youtubeData = data;
+                $cgAddYoutubeSubmit.removeClass('cg_disabled_one');
+
+                cgJsClassAdmin.gallery.vars.twitterData.html = null;
+
+                blockquote = $('<textarea />').html(blockquote).text();
+
+                $cgAddYoutubeLoader.removeClass('cg_hide');
+                $cgNoUrlMatch.addClass('cg_hide');
+                $cgAddYoutubePreview.addClass('cg_opacity_0').removeClass('cg_hide');
+                $cgAddYoutubePreview.empty().html(cgJsClassAdmin.gallery.vars.twitterData.html);
+                $cgAddYoutubeInput.addClass('cg_disabled_one');
+                setTimeout(function (){
+                    $cgAddYoutubeLoader.addClass('cg_hide');
+                    $cgAddYoutubeInput.removeClass('cg_disabled_one');
+                    $cgAddYoutubePreview.removeClass('cg_opacity_0');
+                    $cgAddYoutubeSubmit.removeClass('cg_disabled_one');
+                },1500);
+
+
+
+            }else*/ if(url.indexOf('x.com/')>-1 || url.indexOf('twitter.com/')>-1){
                 urlType = 'twitter';
                 var cgCallTwitter = async function () {
 

@@ -26,12 +26,13 @@ if(!defined('ABSPATH')){exit;}
 			echo "To many invalid atempts. Please try few minutes later again";return false;
 		}*/
 
-        $GalleryID = sanitize_text_field($_REQUEST['action4']);
+        $GalleryID = absint(sanitize_text_field($_REQUEST['action4']));
 
         $wp_upload_dir = wp_upload_dir();
-        $optionsPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/'.$GalleryID.'-options.json';
-        $optionsSource =json_decode(file_get_contents($optionsPath),true);
-        $intervalConf = cg_shortcode_interval_check($GalleryID,$optionsSource,'cg_users_login');
+        //$optionsPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/'.$GalleryID.'-options.json';
+       // $optionsSource =json_decode(file_get_contents($optionsPath),true);
+        //$intervalConf = cg_shortcode_interval_check($GalleryID,$optionsSource,'cg_users_login');
+        $intervalConf = cg_shortcode_interval_check($GalleryID,[],'cg_users_login');
         if(!$intervalConf['shortcodeIsActive']){
             ?>
             <script data-cg-processing="true">
@@ -138,14 +139,27 @@ cg_append_login_and_password_do_not_match.classList.remove('cg_hide');
                 // works better (more reliable on different systems and cases) then wp_signon!
                 wp_set_auth_cookie( $cgWpData->ID,true );
 
+				$galleryDbVersion = 100;
+                if(!empty($GalleryID)){
                 $galleryDbVersion = $wpdb->get_var( "SELECT Version FROM $tablename_options WHERE id='$GalleryID'");
+                }
 
-                if(intval($galleryDbVersion)>=14){
+                if(intval($galleryDbVersion)>=14 || empty($GalleryID)){
                     $ForwardAfterLoginUrlCheck = intval($wpdb->get_var("SELECT ForwardAfterLoginUrlCheck FROM $tablename_pro_options WHERE GeneralID = '1'"));
-                    $ForwardAfterLoginUrl = html_entity_decode(stripslashes(nl2br($wpdb->get_var("SELECT ForwardAfterLoginUrl FROM $tablename_pro_options WHERE GeneralID = '1'"))));
+	                $ForwardAfterLoginUrl = $wpdb->get_var("SELECT ForwardAfterLoginUrl FROM $tablename_pro_options WHERE GeneralID = '1'");
+                    if(!empty($ForwardAfterLoginUrl)){
+	                    $ForwardAfterLoginUrl = html_entity_decode(stripslashes(nl2br($ForwardAfterLoginUrl)));
+                    }else{
+	                    $ForwardAfterLoginUrl = '';
+                    }
                 }else{
                     $ForwardAfterLoginUrlCheck = intval($wpdb->get_var("SELECT ForwardAfterLoginUrlCheck FROM $tablename_pro_options WHERE GalleryID = '$GalleryID'"));
-                    $ForwardAfterLoginUrl = html_entity_decode(stripslashes(nl2br($wpdb->get_var("SELECT ForwardAfterLoginUrl FROM $tablename_pro_options WHERE GalleryID = '$GalleryID'"))));
+	                $ForwardAfterLoginUrl = $wpdb->get_var("SELECT ForwardAfterLoginUrl FROM $tablename_pro_options WHERE GalleryID = '$GalleryID'");
+                    if(!empty($ForwardAfterLoginUrl)){
+	                    $ForwardAfterLoginUrl = html_entity_decode(stripslashes(nl2br($ForwardAfterLoginUrl)));
+                    }else{
+	                    $ForwardAfterLoginUrl = '';
+                    }
                 }
 
                     ?>

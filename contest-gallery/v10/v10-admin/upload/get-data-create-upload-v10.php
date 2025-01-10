@@ -55,6 +55,11 @@ $EcommerceTitle = 0;
 $EcommerceTitleToSet = 0;
 $EcommerceDescription = 0;
 $EcommerceDescriptionToSet = 0;
+$ForwardToUrl = 0;
+$ForwardToUrlToSet = 0;
+$ForwardToUrlNewTab = 0;
+$checkedForwardToUrl='';
+$checkedForwardToUrlNewTab='';
 
 if(!empty($_POST['upload'])){
 
@@ -504,6 +509,8 @@ if(!empty($_POST['upload'])){
 					$SubTitle = 0;
 				}
 
+				$FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? trim($field['FieldTitleGallery']) : '';
+
 				if(strpos($Version,'-PRO')===false){
 					$SubTitle = 0;
 				}
@@ -572,9 +579,11 @@ if(!empty($_POST['upload'])){
 					$wpdb->update(
 						"$tablename_form_input",
 						array('GalleryID' => $GalleryID,'Field_Type' => $fieldType,'Field_Order' => $order,'Field_Content' => $nfFieldsArray,
-						      'Active' => $active,'Show_Slider' => $Show_Slider,'WatermarkPosition' => $WatermarkPosition,'IsForWpPageTitle' => $IsForWpPageTitle,'IsForWpPageDescription' => $IsForWpPageDescription,'SubTitle' => $SubTitle,'ThirdTitle' => $ThirdTitle,'EcommerceTitle' => $EcommerceTitle,'EcommerceDescription' => $EcommerceDescription,'WpAttachmentDetailsType' => $WpAttachmentDetailsType),
+						      'Active' => $active,'Show_Slider' => $Show_Slider,'WatermarkPosition' => $WatermarkPosition,'IsForWpPageTitle' => $IsForWpPageTitle,'IsForWpPageDescription' => $IsForWpPageDescription,'SubTitle' => $SubTitle,'ThirdTitle' => $ThirdTitle,'EcommerceTitle' => $EcommerceTitle,'EcommerceDescription' => $EcommerceDescription,'WpAttachmentDetailsType' => $WpAttachmentDetailsType,
+							'FieldTitleGallery' => $FieldTitleGallery
+						),
 						array('id' => $id),
-						array('%d','%s','%s','%s','%s','%s','%s','%d','%d','%d','%d','%s','%s','%s'),
+						array('%d','%s','%s','%s','%s','%s','%s','%d','%d','%d','%d','%s','%s','%s','%s'),
 						array('%d')
 					);
 					if(!empty($SubTitle)){$SubTitleToSet=$id;}
@@ -592,10 +601,10 @@ if(!empty($_POST['upload'])){
 					$wpdb->query( $wpdb->prepare(
 						"
                                 INSERT INTO $tablename_form_input
-                      ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,WatermarkPosition,IsForWpPageTitle,IsForWpPageDescription,SubTitle,ThirdTitle,EcommerceTitle,EcommerceDescription,WpAttachmentDetailsType)
-                      VALUES ( %s,%d,%s,%d,%s,%d,%d,%s,%d,%d,%d,%d,%s,%s,%s )
+                      ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,WatermarkPosition,IsForWpPageTitle,IsForWpPageDescription,SubTitle,ThirdTitle,EcommerceTitle,EcommerceDescription,WpAttachmentDetailsType,FieldTitleGallery)
+                      VALUES ( %s,%d,%s,%d,%s,%d,%d,%s,%d,%d,%d,%d,%s,%s,%s,%s )
                             ",
-						'',$GalleryID,$fieldType,$order,$nfFieldsArray,$Show_Slider,$active,$WatermarkPosition,$IsForWpPageTitle,$IsForWpPageDescription,$SubTitle,$ThirdTitle,$EcommerceTitle,$EcommerceDescription,$WpAttachmentDetailsType
+						'',$GalleryID,$fieldType,$order,$nfFieldsArray,$Show_Slider,$active,$WatermarkPosition,$IsForWpPageTitle,$IsForWpPageDescription,$SubTitle,$ThirdTitle,$EcommerceTitle,$EcommerceDescription,$WpAttachmentDetailsType,$FieldTitleGallery
 					) );
 					if(!empty($SubTitle)){$SubTitleToSet=$wpdb->insert_id;}
 					if(!empty($ThirdTitle)){$ThirdTitleToSet=$wpdb->insert_id;}
@@ -656,6 +665,9 @@ if(!empty($_POST['upload'])){
 				}else{
 					$SubTitle = 0;
 				}
+
+				$FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? trim($field['FieldTitleGallery']) : '';
+
 				if(strpos($Version,'-PRO')===false){
 					$SubTitle = 0;
 				}
@@ -669,9 +681,10 @@ if(!empty($_POST['upload'])){
 				if(empty($field['new'])){
 					$wpdb->update(
 						"$tablename_form_input",
-						array('GalleryID' => $GalleryID,'Field_Type' => $fieldType,'Field_Order' => $order,'Field_Content' => $dtFieldsArray,'Active' => $active,'Show_Slider' => $Show_Slider,'SubTitle' => $SubTitle,'ThirdTitle' => $ThirdTitle),
+						array('GalleryID' => $GalleryID,'Field_Type' => $fieldType,'Field_Order' => $order,'Field_Content' => $dtFieldsArray,'Active' => $active,'Show_Slider' => $Show_Slider,'SubTitle' => $SubTitle,'ThirdTitle' => $ThirdTitle,
+						      'FieldTitleGallery' => $FieldTitleGallery),
 						array('id' => $id),
-						array('%d','%s','%s','%s','%s','%s','%d','%d'),
+						array('%d','%s','%s','%s','%s','%s','%d','%d','%s'),
 						array('%d')
 					);
 					if(!empty($SubTitle)){$SubTitleToSet=$id;}
@@ -685,10 +698,10 @@ if(!empty($_POST['upload'])){
 					$wpdb->query( $wpdb->prepare(
 						"
                                 INSERT INTO $tablename_form_input
-                      ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,SubTitle,ThirdTitle)
-                      VALUES ( %s,%d,%s,%d,%s,%d,%d,%d,%d )
+                      ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,SubTitle,ThirdTitle,FieldTitleGallery)
+                      VALUES ( %s,%d,%s,%d,%s,%d,%d,%d,%d,%s )
                             ",
-						'',$GalleryID,$fieldType,$order,$dtFieldsArray,$Show_Slider,$active,$SubTitle,$ThirdTitle
+						'',$GalleryID,$fieldType,$order,$dtFieldsArray,$Show_Slider,$active,$SubTitle,$ThirdTitle,$FieldTitleGallery
 					) );
 
 					if(!empty($SubTitle)){$SubTitleToSet=$wpdb->insert_id;}
@@ -710,6 +723,25 @@ if(!empty($_POST['upload'])){
 					$Show_Slider = 1;
 				}else{
 					$Show_Slider = 0;
+				}
+
+				$FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? trim($field['FieldTitleGallery']) : '';
+
+				if(!empty($field['ForwardToUrl'])){
+					$ForwardToUrl = 1;
+				}else{
+					$ForwardToUrl = 0;
+				}
+
+				if(!empty($field['ForwardToUrlNewTab'])){
+					$ForwardToUrlNewTab = 1;
+				}else{
+					$ForwardToUrlNewTab = 0;
+				}
+
+				if(strpos($Version,'-PRO')===false){
+					$ForwardToUrl = 0;
+					$ForwardToUrlNewTab = 0;
 				}
 
 				if(!empty($field['required'])){
@@ -735,14 +767,21 @@ if(!empty($_POST['upload'])){
 				if(empty($field['new'])){
 					$wpdb->update(
 						"$tablename_form_input",
-						array('GalleryID' => $GalleryID,'Field_Type' => 'url-f','Field_Order' => $order,'Field_Content' => $urlFieldsArray,'Active' => $active,'Show_Slider' => $Show_Slider),
+						array('GalleryID' => $GalleryID,'Field_Type' => 'url-f','Field_Order' => $order,
+						      'Field_Content' => $urlFieldsArray,'Active' => $active,
+						      'Show_Slider' => $Show_Slider,'ForwardToUrl' => $ForwardToUrl,'ForwardToUrlNewTab' => $ForwardToUrlNewTab,
+						      'FieldTitleGallery' => $FieldTitleGallery),
 						array('id' => $id),
-						array('%d','%s','%s','%s','%s','%d','%s'),
+						array('%d','%s','%d',
+							'%s','%d',
+							'%d','%d','%d',
+							'%s'),
 						array('%d')
 					);
 
 					if(!empty($field['infoInGallery'])){$infoInGalleryId=$id;}
 					if(!empty($field['tagInGallery'])){$tagInGalleryId=$id;}
+					if(!empty($ForwardToUrl)){$ForwardToUrlToSet=$id;}
 
 				}
 				else{
@@ -750,15 +789,15 @@ if(!empty($_POST['upload'])){
 					$wpdb->query( $wpdb->prepare(
 						"
                                 INSERT INTO $tablename_form_input
-                      ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active)
-                      VALUES ( %s,%d,%s,%d,%s,%d,%d )
+                      ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider, Active, ForwardToUrl, ForwardToUrlNewTab, FieldTitleGallery)
+                      VALUES ( %s,%d,%s,%d,%s,%d,%d,%d,%d,%s )
                             ",
-						'',$GalleryID,'url-f',$order,$urlFieldsArray,$Show_Slider,$active
+						'',$GalleryID,'url-f',$order,$urlFieldsArray,$Show_Slider,$active,$ForwardToUrl,$ForwardToUrlNewTab,$FieldTitleGallery
 					) );
 
 					if(!empty($field['infoInGallery'])){$infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");}
 					if(!empty($field['tagInGallery'])){$tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");}
-
+					if(!empty($ForwardToUrl)){$ForwardToUrlToSet=$wpdb->insert_id;}
 
 				}
 			}
@@ -880,6 +919,8 @@ if(!empty($_POST['upload'])){
 					$SubTitle = 0;
 				}
 
+				$FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? trim($field['FieldTitleGallery']) : '';
+
 				if(!empty($field['ThirdTitle'])){
 					$ThirdTitle = 1;
 				}else{
@@ -899,9 +940,10 @@ if(!empty($_POST['upload'])){
 					$wpdb->update(
 						"$tablename_form_input",
 						array('GalleryID' => $GalleryID,'Field_Type' => $fieldType,'Field_Order' => $order,'Field_Content' => $kfFieldsArray,
-						      'Active' => $active,'Show_Slider' => $Show_Slider,'IsForWpPageDescription' => $IsForWpPageDescription,'SubTitle' => $SubTitle,'ThirdTitle' => $ThirdTitle,'EcommerceDescription' => $EcommerceDescription,'WpAttachmentDetailsType' => $WpAttachmentDetailsType),
+						      'Active' => $active,'Show_Slider' => $Show_Slider,'IsForWpPageDescription' => $IsForWpPageDescription,'SubTitle' => $SubTitle,'ThirdTitle' => $ThirdTitle,'EcommerceDescription' => $EcommerceDescription,'WpAttachmentDetailsType' => $WpAttachmentDetailsType,
+						      'FieldTitleGallery' => $FieldTitleGallery),
 						array('id' => $id),
-						array('%d','%s','%s','%s','%s','%s','%d','%d','%s','%s'),
+						array('%d','%s','%s','%s','%s','%s','%d','%d','%s','%s','%s','%s'),
 						array('%d')
 					);
 					if(!empty($SubTitle)){$SubTitleToSet=$id;}
@@ -917,10 +959,10 @@ if(!empty($_POST['upload'])){
 					$wpdb->query( $wpdb->prepare(
 						"
                                 INSERT INTO $tablename_form_input
-                      ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,IsForWpPageDescription,SubTitle,ThirdTitle,EcommerceDescription,WpAttachmentDetailsType)
-                      VALUES ( %s,%d,%s,%d,%s,%d,%d,%d,%d,%d,%s,%s )
+                      ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,IsForWpPageDescription,SubTitle,ThirdTitle,EcommerceDescription,WpAttachmentDetailsType,FieldTitleGallery)
+                      VALUES ( %s,%d,%s,%d,%s,%d,%d,%d,%d,%d,%s,%s,%s )
                             ",
-						'',$GalleryID,$fieldType,$order,$kfFieldsArray,$Show_Slider,$active,$IsForWpPageDescription,$SubTitle,$ThirdTitle,$EcommerceDescription,$WpAttachmentDetailsType
+						'',$GalleryID,$fieldType,$order,$kfFieldsArray,$Show_Slider,$active,$IsForWpPageDescription,$SubTitle,$ThirdTitle,$EcommerceDescription,$WpAttachmentDetailsType,$FieldTitleGallery
 					) );
 					if(!empty($SubTitle)){$SubTitleToSet=$wpdb->insert_id;}
 					if(!empty($ThirdTitle)){$ThirdTitleToSet=$wpdb->insert_id;}
@@ -1150,6 +1192,9 @@ if(!empty($_POST['upload'])){
 				}else{
 					$SubTitle = 0;
 				}
+
+				$FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? trim($field['FieldTitleGallery']) : '';
+
 				if(strpos($Version,'-PRO')===false){
 					$SubTitle = 0;
 				}
@@ -1162,9 +1207,10 @@ if(!empty($_POST['upload'])){
 				if(empty($field['new'])){
 					$wpdb->update(
 						"$tablename_form_input",
-						array('GalleryID' => $GalleryID,'Field_Type' => 'select-f','Field_Order' => $order,'Field_Content' => $seFieldsArray,'Active' => $active,'Show_Slider' => $Show_Slider,'WatermarkPosition' => $WatermarkPosition,'SubTitle' => $SubTitle,'ThirdTitle' => $ThirdTitle),
+						array('GalleryID' => $GalleryID,'Field_Type' => 'select-f','Field_Order' => $order,'Field_Content' => $seFieldsArray,'Active' => $active,'Show_Slider' => $Show_Slider,'WatermarkPosition' => $WatermarkPosition,'SubTitle' => $SubTitle,'ThirdTitle' => $ThirdTitle,
+						      'FieldTitleGallery' => $FieldTitleGallery),
 						array('id' => $id),
-						array('%d','%s','%s','%s','%s','%s','%s','%d','%d'),
+						array('%d','%s','%s','%s','%s','%s','%s','%d','%d','%s'),
 						array('%d')
 					);
 					if(!empty($SubTitle)){$SubTitleToSet=$id;}
@@ -1178,10 +1224,10 @@ if(!empty($_POST['upload'])){
 					$wpdb->query( $wpdb->prepare(
 						"
                                 INSERT INTO $tablename_form_input
-                      ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,WatermarkPosition,SubTitle,ThirdTitle)
-                      VALUES ( %s,%d,%s,%d,%s,%d,%d,%s,%d,%d )
+                      ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,WatermarkPosition,SubTitle,ThirdTitle,FieldTitleGallery)
+                      VALUES ( %s,%d,%s,%d,%s,%d,%d,%s,%d,%d,%s )
                             ",
-						'',$GalleryID,'select-f',$order,$seFieldsArray,$Show_Slider,$active,$WatermarkPosition,$SubTitle,$ThirdTitle
+						'',$GalleryID,'select-f',$order,$seFieldsArray,$Show_Slider,$active,$WatermarkPosition,$SubTitle,$ThirdTitle,$FieldTitleGallery
 					) );
 
 					if(!empty($SubTitle)){$SubTitleToSet=$wpdb->insert_id;}
@@ -1237,6 +1283,9 @@ if(!empty($_POST['upload'])){
 				}else{
 					$SubTitle = 0;
 				}
+
+				$FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? trim($field['FieldTitleGallery']) : '';
+
 				if(strpos($Version,'-PRO')===false){
 					$SubTitle = 0;
 				}
@@ -1249,9 +1298,10 @@ if(!empty($_POST['upload'])){
 				if(empty($field['new'])){
 					$wpdb->update(
 						"$tablename_form_input",
-						array('GalleryID' => $GalleryID,'Field_Type' => 'selectc-f','Field_Order' => $order,'Field_Content' => $secFieldsArray,'Active' => $active,'Show_Slider' => $Show_Slider,'WatermarkPosition' => $WatermarkPosition,'SubTitle' => $SubTitle,'ThirdTitle' => $ThirdTitle),
+						array('GalleryID' => $GalleryID,'Field_Type' => 'selectc-f','Field_Order' => $order,'Field_Content' => $secFieldsArray,'Active' => $active,'Show_Slider' => $Show_Slider,'WatermarkPosition' => $WatermarkPosition,'SubTitle' => $SubTitle,'ThirdTitle' => $ThirdTitle,
+						      'FieldTitleGallery' => $FieldTitleGallery),
 						array('id' => $id),
-						array('%d','%s','%s','%s','%s','%s','%s','%d','%d'),
+						array('%d','%s','%s','%s','%s','%s','%s','%d','%d','%s'),
 						array('%d')
 					);
 
@@ -1269,10 +1319,10 @@ if(!empty($_POST['upload'])){
 					$wpdb->query( $wpdb->prepare(
 						"
                                 INSERT INTO $tablename_form_input
-                      ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,WatermarkPosition,SubTitle,ThirdTitle)
-                      VALUES ( %s,%d,%s,%d,%s,%d,%d,%s,%d,%d)
+                      ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,WatermarkPosition,SubTitle,ThirdTitle,FieldTitleGallery)
+                      VALUES ( %s,%d,%s,%d,%s,%d,%d,%s,%d,%d,%s,%s)
                             ",
-						'',$GalleryID,'selectc-f',$order,$secFieldsArray,$Show_Slider,$active,$WatermarkPosition,$SubTitle,$ThirdTitle
+						'',$GalleryID,'selectc-f',$order,$secFieldsArray,$Show_Slider,$active,$WatermarkPosition,$SubTitle,$ThirdTitle,$FieldTitleGallery
 					) );
 
 					if(!empty($SubTitle)){$SubTitleToSet=$wpdb->insert_id;}
@@ -1331,6 +1381,16 @@ if(!empty($_POST['upload'])){
 		$optionsFileData[$GalleryID.'-ec']['visual']['ThirdTitle'] = 0;
 	}else{
 		$optionsFileData['visual']['ThirdTitle'] = 0;
+	}
+
+	if(!empty($optionsFileData[$GalleryID])){
+		$optionsFileData[$GalleryID]['visual']['ForwardToUrl'] = 0;
+		$optionsFileData[$GalleryID.'-u']['visual']['ForwardToUrl'] = 0;
+		$optionsFileData[$GalleryID.'-nv']['visual']['ForwardToUrl'] = 0;
+		$optionsFileData[$GalleryID.'-w']['visual']['ForwardToUrl'] = 0;
+		$optionsFileData[$GalleryID.'-ec']['visual']['ForwardToUrl'] = 0;
+	}else{
+		$optionsFileData['visual']['ForwardToUrl'] = 0;
 	}
 
 	if(!empty($optionsFileData[$GalleryID])){
@@ -1429,6 +1489,28 @@ if(!empty($_POST['upload'])){
 		}else{
 			$optionsFileData['visual']['ThirdTitle'] = $ThirdTitleToSet;
 		}
+	}
+
+	if(!empty($ForwardToUrlToSet)){
+		if(!empty($optionsFileData[$GalleryID])){
+			$optionsFileData[$GalleryID]['visual']['ForwardToUrl'] = $ForwardToUrlToSet;
+			$optionsFileData[$GalleryID.'-u']['visual']['ForwardToUrl'] = $ForwardToUrlToSet;
+			$optionsFileData[$GalleryID.'-nv']['visual']['ForwardToUrl'] = $ForwardToUrlToSet;
+			$optionsFileData[$GalleryID.'-w']['visual']['ForwardToUrl'] = $ForwardToUrlToSet;
+			$optionsFileData[$GalleryID.'-ec']['visual']['ForwardToUrl'] = $ForwardToUrlToSet;
+		}else{
+			$optionsFileData['visual']['ForwardToUrl'] = $ForwardToUrlToSet;
+		}
+	}
+
+	if(!empty($optionsFileData[$GalleryID])){
+		$optionsFileData[$GalleryID]['visual']['ForwardToUrlNewTab'] = $ForwardToUrlNewTab;
+		$optionsFileData[$GalleryID.'-u']['visual']['ForwardToUrlNewTab'] = $ForwardToUrlNewTab;
+		$optionsFileData[$GalleryID.'-nv']['visual']['ForwardToUrlNewTab'] = $ForwardToUrlNewTab;
+		$optionsFileData[$GalleryID.'-w']['visual']['ForwardToUrlNewTab'] = $ForwardToUrlNewTab;
+		$optionsFileData[$GalleryID.'-ec']['visual']['ForwardToUrlNewTab'] = $ForwardToUrlNewTab;
+	}else{
+		$optionsFileData['visual']['ForwardToUrlNewTab'] = $ForwardToUrlNewTab;
 	}
 
 	if(!empty($IsForWpPageTitleID)){

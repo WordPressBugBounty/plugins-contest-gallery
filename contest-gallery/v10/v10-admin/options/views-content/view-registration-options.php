@@ -131,7 +131,11 @@ echo <<<HEREDOC
     <div class="cg_view_options_row">
             <div class="cg_view_option cg_border_border_bottom_left_radius_8_px cg_view_option_full_width cg_border_top_bottom_none $beforeSinceV14Disabled" style="margin-bottom: -20px;">
                 <div class="cg_view_option_title ">
-                    <p>Role groups which can edit Contest Gallery "Registration form" fields<br>in "Edit profile" when logged in.$beforeSinceV14Explanation</p>
+                    <p>Role groups which can edit Contest Gallery "Registration form" fields<br>in "Edit profile" when logged in.
+					<br><span class="cg_color_red">NEW:</span> Selected role groups will also use "Logout URL" and "Back to gallery URL" if configured below in "Login options".<br><br>
+$beforeSinceV14Explanation
+</p>
+                    
                 </div>                    
         </div>
     </div>
@@ -386,6 +390,28 @@ echo <<<HEREDOC
                 </div>
             </div>
        </div>
+        <div class='cg_view_options_row'>
+                <div class='cg_view_option   cg_view_option_full_width cg_border_top_none $cgProFalse'  >
+                    <div class='cg_view_option_title'>
+                        <p>CC e-mail<br><span class="cg_view_option_title_note">Should not be the same as "Reply e-mail"<br>Sending to multiple recipients example (mail1@example.com; mail2@example.com; mail3@example.com)</span>
+                        </p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input type="text" name="RegMailCC" id="RegMailCC" value="$RegMailCC"  maxlength="200" >
+                    </div>
+                </div>
+        </div>
+        <div class='cg_view_options_row'>
+                <div class='cg_view_option   cg_view_option_full_width cg_border_top_none $cgProFalse'  >
+                    <div class='cg_view_option_title'>
+                        <p>BCC e-mail<br><span class="cg_view_option_title_note">Should not be the same as "Reply e-mail"<br>Sending to multiple recipients example (mail1@example.com; mail2@example.com; mail3@example.com)</span>
+                        </p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input type="text" name="RegMailBCC" id="RegMailBCC" value="$RegMailBCC"  maxlength="200" >
+                    </div>
+                </div>
+        </div>
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_view_option_full_width cg_border_top_none" id="RegMailSubjectContainer">
                 <div class="cg_view_option_title">

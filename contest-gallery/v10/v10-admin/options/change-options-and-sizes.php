@@ -1730,6 +1730,8 @@ if (!empty($_POST['changeSize'])) {
     $TextAfterEmailConfirmation = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['TextAfterEmailConfirmation']) ? $_POST['TextAfterEmailConfirmation'] : '');
     $RegMailAddressor = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['RegMailAddressor']) ? $_POST['RegMailAddressor'] : '');
     $RegMailReply = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['RegMailReply']) ? $_POST['RegMailReply'] : '');
+        $RegMailCC = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['RegMailCC']) ? $_POST['RegMailCC'] : '');
+        $RegMailBCC = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['RegMailBCC']) ? $_POST['RegMailBCC'] : '');
     $RegMailSubject = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['RegMailSubject']) ? $_POST['RegMailSubject'] : '');
 
     $InformAdminAllowActivateDeactivate = (!empty($_POST['InformAdminAllowActivateDeactivate'])) ? 1 : 0;
@@ -1760,6 +1762,8 @@ if (!empty($_POST['changeSize'])) {
     $optionsForGeneralIDsinceV14['pro']['HideRegFormAfterLoginTextToShow'] = $HideRegFormAfterLoginTextToShow;
     $optionsForGeneralIDsinceV14['pro']['RegMailAddressor'] = $RegMailAddressor;
     $optionsForGeneralIDsinceV14['pro']['RegMailReply'] = $RegMailReply;
+        $optionsForGeneralIDsinceV14['pro']['RegMailCC'] = $RegMailCC;
+        $optionsForGeneralIDsinceV14['pro']['RegMailBCC'] = $RegMailBCC;
     $optionsForGeneralIDsinceV14['pro']['RegMailSubject'] = $RegMailSubject;
     $optionsForGeneralIDsinceV14['pro']['TextEmailConfirmation'] = $TextEmailConfirmation;
 
@@ -1823,10 +1827,10 @@ if (!empty($_POST['changeSize'])) {
         "$tablename_pro_options",
         array(
             'ForwardAfterLoginUrl' => $ForwardAfterLoginUrl,'ForwardAfterRegText' => $ForwardAfterRegText,
-            'ForwardAfterRegUrl' => $ForwardAfterRegUrl,'ForwardAfterRegText' => $ForwardAfterRegText,
+                'ForwardAfterRegUrl' => $ForwardAfterRegUrl,
             'ForwardAfterLoginText' => $ForwardAfterLoginText,'TextEmailConfirmation' => $TextEmailConfirmation,
             'TextAfterEmailConfirmation' => $TextAfterEmailConfirmation,'RegMailAddressor' => $RegMailAddressor,
-            'RegMailReply' => $RegMailReply, 'RegMailSubject' => $RegMailSubject,
+                'RegMailReply' => $RegMailReply,'RegMailCC' => $RegMailCC,'RegMailBCC' => $RegMailBCC, 'RegMailSubject' => $RegMailSubject,
             'RegUserUploadOnlyText' => $RegUserUploadOnlyText,'GalleryUploadTextBefore' => $GalleryUploadTextBefore,
             'GalleryUploadTextAfter' => $GalleryUploadTextAfter,'GalleryUploadConfirmationText' => $GalleryUploadConfirmationText,
 
@@ -1841,10 +1845,10 @@ if (!empty($_POST['changeSize'])) {
         array('GalleryID' => $id),
         array(
             '%s','%s',
+                '%s',
             '%s','%s',
             '%s','%s',
-            '%s','%s',
-            '%s','%s',
+                '%s','%s','%s','%s',
             '%s','%s',
 
             '%s','%s',

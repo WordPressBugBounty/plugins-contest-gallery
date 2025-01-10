@@ -777,9 +777,12 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
 		    $galleryIdToCheck = substr($dir,strrpos($dir,'-')+1, strlen($dir));
 		    $optionsFileToCheck = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdToCheck.'/json/'.$galleryIdToCheck.'-options.json';
 		    if(file_exists($optionsFileToCheck)){// only v10 and later
-			    $optionsToCheck = json_decode(file_get_contents($optionsFileToCheck),true);
-			    if(!empty($optionsToCheck[$galleryIdToCheck])){
-				    $optionsToCheck = $optionsToCheck[$galleryIdToCheck];
+			    $optionsToCheckSource = json_decode(file_get_contents($optionsFileToCheck),true);
+
+			    if(!empty($optionsToCheckSource[$galleryIdToCheck])){
+				    $optionsToCheck = $optionsToCheckSource[$galleryIdToCheck];
+			    }else{
+				    $optionsToCheck = $optionsToCheckSource;
 			    }
 			    $imageDataJsonFiles = glob($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdToCheck.'/json/image-data/*.json');
 
@@ -806,7 +809,44 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
                     }
 			    }
 
-			    if(count($imageIDs)){
+			    $intervalConf = cg_shortcode_interval_check($galleryIdToCheck,$optionsToCheckSource,$cg_gallery_shortcode_type,true);
+
+                if(!$intervalConf['shortcodeIsActive'] || !count($imageIDs)){
+	                //var_dump('set no entries');
+	                $time = $time+1;// does not work with ++ no clue why
+	                $imagesFullData[$time] = cg_get_empty_entry_values();
+	                $imagesFullData[$time]['PositionNumber'] = $PositionNumber;
+	                if(!empty($optionsToCheck['pro']['MainTitleGalleriesView'])){
+		                $imagesFullData[$time]['MainTitleGalleriesView'] = $optionsToCheck['pro']['MainTitleGalleriesView'];
+	                }
+	                if(!empty($optionsToCheck['pro']['SubTitleGalleriesView'])){
+		                $imagesFullData[$time]['SubTitleGalleriesView'] = $optionsToCheck['pro']['SubTitleGalleriesView'];
+	                }
+	                if(!empty($optionsToCheck['pro']['ThirdTitleGalleriesView'])){
+		                $imagesFullData[$time]['ThirdTitleGalleriesView'] = $optionsToCheck['pro']['ThirdTitleGalleriesView'];
+	                }
+
+	                $imagesFullData[$time]['gidToShow'] = $time;
+	                if(!empty($optionsToCheck['general'][$WpPageParentShortCodeType])){
+		                $imagesFullData[$time]['entryGuid'] = get_permalink($optionsToCheck['general'][$WpPageParentShortCodeType]);
+	                }
+	                $GalleryName = 'Gallery ID '.$galleryIdToCheck;
+	                if(!empty($optionsToCheck['general']['GalleryName'])){
+		                $GalleryName = $optionsToCheck['general']['GalleryName'];
+	                }
+	                $imagesFullData[$time]['GalleryName'] = $GalleryName;
+	                $imagesFullData[$time]['isCGalleriesNoGalleryGid']  = $galleryIdToCheck;
+	                $imagesFullData[$time]['isCGalleriesNoGalleryEntries']  = true;
+	                $imagesFullData[$time]['isContestOver']  = false;
+
+	                if(!$intervalConf['shortcodeIsActive']){
+		                $imagesFullData[$time]['isContestOver']  = true;
+		                $imagesFullData[$time]['isCGalleriesNoGalleryEntriesText']  = $intervalConf['TextWhenShortcodeIntervalIsOff'];
+	                }else{
+		                $imagesFullData[$time]['isCGalleriesNoGalleryEntriesText']  = $language_NoGalleryEntries;
+	                }
+
+                }else{
 				    usort($imageIDs, "cgSortArray");
 				    $AllowRatingToCheck = $optionsToCheck['general']['AllowRating'];
 				    if(!($AllowRatingToCheck==2 || $AllowRatingToCheck>=12)){
@@ -920,33 +960,6 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
 						    }
 					    }
 				    }
-                }else{
-                    //var_dump('set no entries');
-                    $time = $time+1;// does not work with ++ no clue why
-				    $imagesFullData[$time] = cg_get_empty_entry_values();
-				    $imagesFullData[$time]['PositionNumber'] = $PositionNumber;
-				    if(!empty($optionsToCheck['pro']['MainTitleGalleriesView'])){
-					    $imagesFullData[$time]['MainTitleGalleriesView'] = $optionsToCheck['pro']['MainTitleGalleriesView'];
-				    }
-				    if(!empty($optionsToCheck['pro']['SubTitleGalleriesView'])){
-					    $imagesFullData[$time]['SubTitleGalleriesView'] = $optionsToCheck['pro']['SubTitleGalleriesView'];
-				    }
-				    if(!empty($optionsToCheck['pro']['ThirdTitleGalleriesView'])){
-					    $imagesFullData[$time]['ThirdTitleGalleriesView'] = $optionsToCheck['pro']['ThirdTitleGalleriesView'];
-				    }
-
-				    $imagesFullData[$time]['gidToShow'] = $time;
-                    if(!empty($optionsToCheck['general'][$WpPageParentShortCodeType])){
-	                    $imagesFullData[$time]['entryGuid'] = get_permalink($optionsToCheck['general'][$WpPageParentShortCodeType]);
-                    }
-				    $GalleryName = 'Gallery ID '.$galleryIdToCheck;
-				    if(!empty($optionsToCheck['general']['GalleryName'])){
-					    $GalleryName = $optionsToCheck['general']['GalleryName'];
-				    }
-				    $imagesFullData[$time]['GalleryName'] = $GalleryName;
-				    $imagesFullData[$time]['isCGalleriesNoGalleryGid']  = $galleryIdToCheck;
-				    $imagesFullData[$time]['isCGalleriesNoGalleryEntries']  = true;
-				    $imagesFullData[$time]['isCGalleriesNoGalleryEntriesText']  = $language_NoGalleryEntries;
 			    }
 			    $PositionNumber++;
 		    }

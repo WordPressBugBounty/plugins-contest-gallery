@@ -171,7 +171,7 @@ echo <<<HEREDOC
     <div class='cg_view_options_row'>
         <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="wp-cgTextWhenShortcodeIntervalIsOff-wrap-Container">
             <div class='cg_view_option_title'>
-                <p>Text if interval has ended</p>
+                <p>Text if interval has not started or has ended</p>
             </div>
             <div class='cg_view_option_html cg_view_option_input_full_width' >
                  <div class='cg-wp-editor-container' data-wp-editor-id="cgTextWhenShortcodeIntervalIsOff"  >

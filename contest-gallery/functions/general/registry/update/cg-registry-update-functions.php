@@ -147,7 +147,8 @@ if(!function_exists('cg_update_registry_and_login_options_v14')){
                 'TextAfterEmailConfirmation' => $options['pro']['TextAfterEmailConfirmation'],'HideRegFormAfterLogin' => $options['pro']['HideRegFormAfterLogin'],
                 'HideRegFormAfterLoginShowTextInstead' => $options['pro']['HideRegFormAfterLoginShowTextInstead'],'HideRegFormAfterLoginTextToShow' => $options['pro']['HideRegFormAfterLoginTextToShow'],
                 'RegMailAddressor' => $options['pro']['RegMailAddressor'],'RegMailReply' => $options['pro']['RegMailReply'],
-                'RegMailSubject' => $options['pro']['RegMailSubject'],'TextEmailConfirmation' => $options['pro']['TextEmailConfirmation']
+                'RegMailSubject' => $options['pro']['RegMailSubject'],'TextEmailConfirmation' => $options['pro']['TextEmailConfirmation'],
+                'RegMailCC' => $options['pro']['RegMailCC'],'RegMailBCC' => $options['pro']['RegMailBCC']
             ),
             array('GeneralID' => 1),
             array(
@@ -156,6 +157,7 @@ if(!function_exists('cg_update_registry_and_login_options_v14')){
                 '%d','%s',
                 '%s','%d',
                 '%d','%s',
+                '%s','%s',
                 '%s','%s',
                 '%s','%s'
             ),

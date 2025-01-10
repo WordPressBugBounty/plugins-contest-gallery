@@ -31,7 +31,7 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 		if(!empty($optionsVisual->Field3IdGalleryView)){$inputIdsArray[]=$optionsVisual->Field3IdGalleryView;}
 
 		$inputs = $wpdb->get_results("SELECT * FROM $tablename_form_input WHERE GalleryID = $GalleryID");
-		$frontendInputProperties = ['Show_Slider','WatermarkPosition','SubTitle','ThirdTitle','EcommerceTitle','EcommerceDescription','IsForWpPageTitle'];
+		$frontendInputProperties = ['Show_Slider','WatermarkPosition','SubTitle','ThirdTitle','EcommerceTitle','EcommerceDescription','IsForWpPageTitle','FieldTitleGallery'];
 		$fieldTitlesArray = [];
 		$dateFieldsIdsAndFormatArray = array();
 
@@ -48,7 +48,11 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 				if(!empty($input->$property)){
 					$inputIdsArray[]=$input->id;
 					$Field_Content = unserialize($input->Field_Content);
+					if(!empty($input->FieldTitleGallery)){
+						$fieldTitlesArray[$input->id] = $input->FieldTitleGallery;
+					}else{
 					$fieldTitlesArray[$input->id] = $Field_Content["titel"];
+					}
 					if($input->Field_Type=='date-f'){
 						$dateFieldsIdsAndFormatArray[$input->id] = $Field_Content["format"];
 					}
@@ -324,7 +328,7 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 
 					// some date time fields in some systems might start with 1999-01-01 00:00:00
 					// so important to check to $row->Field_Type == 'dt'
-				}else if($row->Field_Type == 'dt' && !empty($row->InputDate) && $row->InputDate!='0000-00-00 00:00:00'){
+				}else if($row->Field_Type == 'date-f' && !empty($row->InputDate) && $row->InputDate!='0000-00-00 00:00:00'){
 					$newDateTimeString = '';
 
 					try {

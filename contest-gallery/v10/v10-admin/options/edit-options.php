@@ -291,6 +291,8 @@ foreach($selectSQL4 as $value4){
     $TextAfterEmailConfirmation = contest_gal1ery_convert_for_html_output_without_nl2br($value4->TextAfterEmailConfirmation);
     $RegMailAddressor = contest_gal1ery_convert_for_html_output_without_nl2br($value4->RegMailAddressor);
     $RegMailReply = contest_gal1ery_convert_for_html_output_without_nl2br($value4->RegMailReply);
+	$RegMailCC = contest_gal1ery_convert_for_html_output_without_nl2br($value4->RegMailCC);
+	$RegMailBCC = contest_gal1ery_convert_for_html_output_without_nl2br($value4->RegMailBCC);
     $RegMailSubject = contest_gal1ery_convert_for_html_output_without_nl2br($value4->RegMailSubject);
     $UploadRequiresCookieMessage = contest_gal1ery_convert_for_html_output_without_nl2br($value4->UploadRequiresCookieMessage);
     $RegUserUploadOnlyText = contest_gal1ery_convert_for_html_output_without_nl2br($value4->RegUserUploadOnlyText);

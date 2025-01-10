@@ -669,7 +669,7 @@ if($isShowGallery == true){
 
     die;*/
 
-    if(!$intervalConf['shortcodeIsActive'] && empty($isFromOrderSummary)){
+    if(!$intervalConf['shortcodeIsActive'] && empty($isFromOrderSummary) && empty($isCGalleries)){
             ?>
             <pre>
             <script data-cg-processing="true">

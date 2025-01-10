@@ -1,6 +1,6 @@
 <?php
 if(!function_exists('cg_shortcode_interval_check')){
-    function cg_shortcode_interval_check($GalleryID,$options,$cg_gallery_shortcode_type){
+    function cg_shortcode_interval_check($GalleryID,$options,$cg_gallery_shortcode_type,$isFromCGgalleries = false){
 
 	    $wp_upload_dir = wp_upload_dir();
 

@@ -762,6 +762,8 @@ if(!function_exists('contest_gal1ery_create_table')){
 			RegMailAddressor VARCHAR(200),
 			RegMailReply VARCHAR(200),
 			RegMailSubject VARCHAR(200),
+			RegMailCC TEXT DEFAULT '',
+			RegMailBCC TEXT DEFAULT '',
 			RegUserUploadOnly TINYINT,
 			RegUserUploadOnlyText TEXT,
 			Manipulate TINYINT DEFAULT 1,
@@ -1101,10 +1103,11 @@ HEREDOC;
         if($wpdb->get_var("SHOW TABLES LIKE '$tablename_form_input'") != $tablename_form_input){
             $sql = "CREATE TABLE $tablename_form_input (
 		id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-		GalleryID INT(20),
-		Field_Type VARCHAR(10),
-		Field_Order INT(3),
-		Field_Content TEXT,
+		GalleryID INT(20) DEFAULT 0,
+		Field_Type VARCHAR(10) DEFAULT '',
+		Field_Order INT(3) DEFAULT 0,
+		Field_Content TEXT DEFAULT '',
+		FieldTitleGallery TEXT DEFAULT '',
 		Show_Slider TINYINT DEFAULT 0,
 		Use_as_URL TINYINT DEFAULT 0,
 		Active TINYINT DEFAULT 1,
@@ -1116,6 +1119,8 @@ HEREDOC;
 		IsForWpPageDescription TINYINT DEFAULT 0,
 		SubTitle TINYINT DEFAULT 0,
 		ThirdTitle TINYINT DEFAULT 0,
+		ForwardToUrl TINYINT DEFAULT 0,
+		ForwardToUrlNewTab TINYINT DEFAULT 0,
         EcommerceTitle TINYINT DEFAULT 0,
 		EcommerceDescription TINYINT DEFAULT 0
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1

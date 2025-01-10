@@ -8,9 +8,9 @@ if(!empty($_FILES) AND !empty($_FILES['cg_input_image_upload_file']) AND !empty(
 $GalleryID = absint(sanitize_text_field($_POST['cg_gallery_id_registry']));
 
 $wp_upload_dir = wp_upload_dir();
-$optionsPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/'.$GalleryID.'-options.json';
-$optionsSource =json_decode(file_get_contents($optionsPath),true);
-$intervalConf = cg_shortcode_interval_check($GalleryID,$optionsSource,'cg_users_reg');
+//$optionsPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/'.$GalleryID.'-options.json';
+//$optionsSource =json_decode(file_get_contents($optionsPath),true);
+$intervalConf = cg_shortcode_interval_check($GalleryID,[],'cg_users_reg');
 if(!$intervalConf['shortcodeIsActive']){
     ?>
     <script data-cg-processing="true">
@@ -65,7 +65,12 @@ if($cg_check==$galleryHashToCompare){
     $tablename_options = $wpdb->prefix . "contest_gal1ery_options";
     $table_usermeta = $wpdb->prefix . "usermeta";
 
-    $galleryDbVersion = $wpdb->get_var("SELECT Version FROM $tablename_options WHERE id='$GalleryID'");
+    // because not id give to cg_users_reg shortcode
+    if($GalleryID==0){
+	    $galleryDbVersion = 100;
+    }else{
+	    $galleryDbVersion = $wpdb->get_var("SELECT Version FROM $tablename_options WHERE id='$GalleryID'");
+    }
 
     $cg_main_mail = sanitize_text_field($_POST['cg-main-mail']);
 
@@ -125,6 +130,8 @@ cg_check_mail_name_value.value = 1;// blocks form from beeing submitted
 var cg_user_name_check_alert = document.getElementById('cg_user_name_check_alert');
 cg_user_name_check_alert.innerHTML = cg_user_name_check_alert.innerHTML + cg_language_ThisUsernameAlreadyExists;
 cg_user_name_check_alert.classList.remove("cg_hide");
+
+
 
 </script>
 <?php
