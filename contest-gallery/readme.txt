@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, upload, voting, youtube
 Requires at least: 5.6
-Stable tag: 25.0.8
+Stable tag: 25.0.9
 Tested up to: 6.7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -231,6 +231,9 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V25.0.9 =
+* FIXED: Selected role groups which can edit Contest Gallery "Registration form" will be converted to "Contest Gallery Since V14" user role, caused in update 25.0.8.
 
 = V25.0.8 =
 * NEW: "Field title gallery or entry view" added in "Contact form" to input, textarea, select, select-categories, date and URL types of fields. Will be visible instead of "Contact form field title" in gallery or entry view, if set.

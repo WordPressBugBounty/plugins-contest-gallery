@@ -1,5 +1,8 @@
 Contest Gallery
 
+= V25.0.9 =
+* FIXED: Selected role groups which can edit Contest Gallery "Registration form" will be converted to "Contest Gallery Since V14" user role, caused in update 25.0.8.
+
 = V25.0.8 =
 * NEW: "Field title gallery or entry view" added in "Contact form" to input, textarea, select, select-categories, date and URL types of fields. Will be visible instead of "Contact form field title" in gallery or entry view, if set.
 * NEW: "Forward to the URL by click on an entry in masonry view" added to URL contact form field.

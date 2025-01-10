@@ -25,7 +25,7 @@ if(!function_exists('cg_modified_logout_url')){
     {
         $user = wp_get_current_user();
 
-        if(in_array('contest_gallery_user_since_v14',(array)$user->roles) OR in_array('contest_gallery_user',(array)$user->roles) || cgHasUserGroupAllowedToEdit(wp_get_current_user())){
+        if(in_array('contest_gallery_user_since_v14',(array)$user->roles) OR in_array('contest_gallery_user',(array)$user->roles)){
             $default .= '&cgLogoutLink=true';// modifies url to check if cg logout has to be done in cg_redirect_when_logout function
         }
 
@@ -101,7 +101,7 @@ if(!function_exists('cg_modified_admin_bar_for_contest_gallery_user_v14')){
 
         $user = $current_user;
 
-        if(in_array('contest_gallery_user_since_v14',(array)$user->roles) || cgHasUserGroupAllowedToEdit(wp_get_current_user())){
+        if(in_array('contest_gallery_user_since_v14',(array)$user->roles)){
 
             $tablename_registry_and_login_options = $wpdb->prefix . "contest_gal1ery_registry_and_login_options";
 
@@ -244,18 +244,13 @@ if(!function_exists('cg_modified_admin_bar_for_eventually_contest_gallery_profil
 if(!function_exists('cgHasUserGroupAllowedToEdit')){
     function cgHasUserGroupAllowedToEdit( $user ) {
 
-	    $hasUserGroupAllowedToEdit = false;
-
-        if(empty($user)){
-            return $hasUserGroupAllowedToEdit;
-        }
-
         global $wpdb;
         $tablename_registry_and_login_options = $wpdb->prefix . "contest_gal1ery_registry_and_login_options";
 
         $registryAndLoginOptions = $wpdb->get_row( "SELECT * FROM $tablename_registry_and_login_options WHERE GeneralID = '1'" );
         $EditProfileGroups = (!empty($registryAndLoginOptions->EditProfileGroups)) ? unserialize($registryAndLoginOptions->EditProfileGroups) : [];
 
+        $hasUserGroupAllowedToEdit = false;
 
         foreach ($EditProfileGroups as $RoleGroupKey => $value){
             if(in_array('contest_gallery_user_since_v14',(array)$user->roles) OR in_array($RoleGroupKey,(array)$user->roles)){
