@@ -151,7 +151,6 @@ if(!empty($_POST['upload'])){
 			$GalleryID, $deleteFieldnumber
 		));
 
-
 		$wpdb->query( $wpdb->prepare(
 			"
                 DELETE FROM $tablenameentries WHERE GalleryID = %d AND f_input_id = %d
@@ -955,7 +954,6 @@ if(!empty($_POST['upload'])){
 
 				}
 				else{
-
 					$wpdb->query( $wpdb->prepare(
 						"
                                 INSERT INTO $tablename_form_input

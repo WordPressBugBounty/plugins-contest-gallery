@@ -784,7 +784,8 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
 			    }else{
 				    $optionsToCheck = $optionsToCheckSource;
 			    }
-			    $imageDataJsonFiles = glob($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdToCheck.'/json/image-data/*.json');
+
+                $imageDataJsonFiles = glob($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdToCheck.'/json/image-data/*.json');
 
 			    $imageIDs = [];
 			    foreach ($imageDataJsonFiles as $imageDataJsonFile) {
@@ -960,7 +961,7 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
 						    }
 					    }
 				    }
-			    }
+                }
 			    $PositionNumber++;
 		    }
 	    }

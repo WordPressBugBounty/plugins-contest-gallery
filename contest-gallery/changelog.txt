@@ -1,5 +1,8 @@
 Contest Gallery
 
+= V25.0.9.1 =
+* FIXED: If URL field in "Edit contact form"  was activated to be displayed in frontend then additionally not required "https://" was added to inserted URL even if http:// or https:// were already set in the URL.
+
 = V25.0.9 =
 * FIXED: Selected role groups which can edit Contest Gallery "Registration form" will be converted to "Contest Gallery Since V14" user role, caused in update 25.0.8.
 

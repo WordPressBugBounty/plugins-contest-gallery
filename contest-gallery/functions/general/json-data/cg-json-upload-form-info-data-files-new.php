@@ -51,7 +51,7 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 					if(!empty($input->FieldTitleGallery)){
 						$fieldTitlesArray[$input->id] = $input->FieldTitleGallery;
 					}else{
-					$fieldTitlesArray[$input->id] = $Field_Content["titel"];
+						$fieldTitlesArray[$input->id] = $Field_Content["titel"];
 					}
 					if($input->Field_Type=='date-f'){
 						$dateFieldsIdsAndFormatArray[$input->id] = $Field_Content["format"];
@@ -321,6 +321,7 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 				$arrayDataForImage[$row->pid][$row->f_input_id] = array();
 
 				$arrayDataForImage[$row->pid][$row->f_input_id]['field-type'] = $row->Field_Type;
+
 				$arrayDataForImage[$row->pid][$row->f_input_id]['field-title'] = isset($fieldTitlesArray[$row->f_input_id]) ? $fieldTitlesArray[$row->f_input_id] : '';
 
 				if(!empty($row->Field_Type == 'comment-f')){// <<< check field type here!!!

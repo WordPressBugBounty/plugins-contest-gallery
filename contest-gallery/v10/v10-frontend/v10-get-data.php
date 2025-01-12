@@ -225,6 +225,13 @@ if($is_user_logged_in){
 	$logged_in_user = get_userdata($wpUserId);
 }
 
+$wp_upload_dir = wp_upload_dir();
+
+// if users were deleted
+if(file_exists($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$galeryID."/json/".$galeryID."-deleted-image-ids.json")){
+	cg_actualize_all_images_data_deleted_images($galeryID);
+}
+
 $isProVersion = false;
 $plugin_dir_path = plugin_dir_path(__FILE__);
 if(is_dir ($plugin_dir_path.'/../../../contest-gallery-pro') && strpos(cg_get_version_for_scripts(),'-PRO')!==false){
@@ -495,11 +502,6 @@ if(($options['pro']['RegUserGalleryOnly']==1 && $is_user_logged_in == false) || 
 }
 
 if($isShowGallery == true){
-
-    // if users were deleted
-    if(file_exists($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$galeryID."/json/".$galeryID."-deleted-image-ids.json")){
-        cg_actualize_all_images_data_deleted_images($galeryID);
-    }
 
     $jsonImagesCount = count($jsonImagesData);
 
@@ -846,8 +848,10 @@ if($isShowGallery == true){
 
             $entryPermalink = contest_gal1ery_convert_for_html_output_without_nl2br($options['pro']['BackToGalleryButtonURL']);
         }else{
+                if(!empty($jsonImagesData[$entryId][$WpPageShortCodeType])){// might happen if original WpUpload was deleted in WP library
             $entryPermalink = get_permalink(wp_get_post_parent_id($jsonImagesData[$entryId][$WpPageShortCodeType]));
         }
+            }
             if(!empty($isEcommerceTest)){
                 if(strpos($entryPermalink,'test=true')===false){
                     if(strpos($entryPermalink,'?')!==false){
@@ -1017,11 +1021,11 @@ include('load-data-ajax.php');
 
 
 if(!empty($isGalleriesMainPage) && $hasOlderVersionsOnMainCGalleriesPage){
-    if($is_user_logged_in &&
+    if($is_user_logged_in && !empty($logged_in_user) && (
        is_super_admin($logged_in_user->ID) ||
        in_array( 'administrator', (array) $logged_in_user->roles ) ||
        in_array( 'editor', (array) $logged_in_user->roles ) ||
-       in_array( 'author', (array) $logged_in_user->roles )
+       in_array( 'author', (array) $logged_in_user->roles))
     ){
         $recognizedFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/cg-galleries-main-page-information-recognized.txt';
         if(!file_exists($recognizedFile)){

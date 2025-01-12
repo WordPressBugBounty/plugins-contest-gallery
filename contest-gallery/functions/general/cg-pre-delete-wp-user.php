@@ -54,6 +54,10 @@ if(!function_exists('cg1l_pre_delete_user')){
 
                 foreach ($collectGalleryIDsAndImagesArray as $GalleryID => $imageIDs){
 
+					if(empty($GalleryID)){
+						continue;// can't theoretically not happen, no clue why it happend to a support user one time, GalleryID must have been manually deleted in the datbase
+					}
+
                     $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/'.$GalleryID.'-deleted-image-ids.json';
                     if(file_exists($jsonFile)){
                         $fp = fopen($jsonFile, 'r');
@@ -67,10 +71,14 @@ if(!function_exists('cg1l_pre_delete_user')){
                         $json[] = $imageID;
                     }
 
-                    $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/'.$GalleryID.'-deleted-image-ids.json';
+					$dir = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json';
+
+					if(is_dir($dir)){// because gallery might be deleted
+						$jsonFile = $dir.'/'.$GalleryID.'-deleted-image-ids.json';
                     $fp = fopen($jsonFile, 'w');
                     fwrite($fp, json_encode($json));
                     fclose($fp);
+					}
 
                 }
 
@@ -107,8 +115,6 @@ if(!function_exists('cg1l_pre_delete_user')){
             if($_POST['delete_option'] == 'reassign' AND !empty($_POST['reassign_user'])){
 
                 $reassign_user_id = intval($_POST['reassign_user']);
-
-                // User "Edit options" >>> "Status and repair" >>> "Repair frontend" if somebeody asks relating display_name of images in frontend
 
                 $wpdb->query("UPDATE $tablename SET WpUserId=$reassign_user_id WHERE WpUserId = $user_id");
 

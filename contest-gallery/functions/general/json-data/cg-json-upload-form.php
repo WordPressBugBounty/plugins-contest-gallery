@@ -17,7 +17,6 @@ if(!function_exists('cg_json_upload_form')){
             mkdir($jsonUpload,0755,true);
         }
 
-
         $formDataForJson = $wpdb->get_results("SELECT * FROM $tablename_form_input WHERE GalleryID = $GalleryID ORDER BY id DESC");
         //   $singleViewOrderDataJson = $wpdb->get_results("SELECT id, Field_Type, Field_Order, Field_Content FROM $tablename_form_input WHERE GalleryID = $GalleryID AND Show_Slider = 1 ORDER BY Field_Order DESC");
 
@@ -60,10 +59,8 @@ if(!function_exists('cg_json_upload_form')){
         }
 
         /*    foreach($singleViewOrderDataJson as $data){
-
                 $data->Field_Content = unserialize($data->Field_Content);
                 $data->Field_Content = $data->Field_Content["titel"];
-
             }*/
 
 

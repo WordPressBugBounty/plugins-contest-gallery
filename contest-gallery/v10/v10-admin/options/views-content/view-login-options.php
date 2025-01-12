@@ -168,7 +168,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse $beforeSinceV14Disabled">
                 <div class="cg_view_option_title">
-                    <p>Logout URL<br>works for "Contest Gallery User since v14" roles<br>or for role groups which can edit Contest Gallery "Registration form" fields<br>configured above in "Registration options"<br>$beforeSinceV14Explanation<span class="cg_view_option_title_note">URL where will be redirected when logged in user click on logout<br>If empty then standard WordPress logout URL will be used</span></p>
+                    <p>Logout URL<br>works only for "Contest Gallery User since v14" roles$beforeSinceV14Explanation<br><span class="cg_view_option_title_note">URL where will be redirected when logged in user click on logout<br>If empty then standard WordPress logout URL will be used</span></p>
                 </div>
                 <div class="cg_view_option_input">
                     <input type="text" name="LogoutLink" maxlength="999" value="$LogoutLink"/>
@@ -178,7 +178,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse $beforeSinceV14Disabled">
                 <div class="cg_view_option_title">
-                    <p>Back to gallery URL<br>works for "Contest Gallery User since v14" roles<br>or for role groups which can edit Contest Gallery "Registration form" fields<br>configured above in "Registration options"<br>$beforeSinceV14Explanation<span class="cg_view_option_title_note">URL where where you user can be redirected if "Back to gallery" is clicked in "Edit profile" area<br>If empty "Back to gallery" does not appear in "Edit profile"</span></p>
+                    <p>Back to gallery URL<br>works only for "Contest Gallery User since v14" roles$beforeSinceV14Explanation<br><span class="cg_view_option_title_note">URL where where you user can be redirected if "Back to gallery" is clicked in "Edit profile" area<br>If empty "Back to gallery" does not appear in "Edit profile"</span></p>
                 </div>
                 <div class="cg_view_option_input">
                     <input type="text" name="BackToGalleryLink" maxlength="999" value="$BackToGalleryLink"/>

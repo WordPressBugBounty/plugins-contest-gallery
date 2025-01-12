@@ -141,7 +141,7 @@ cg_append_login_and_password_do_not_match.classList.remove('cg_hide');
 
 				$galleryDbVersion = 100;
                 if(!empty($GalleryID)){
-                $galleryDbVersion = $wpdb->get_var( "SELECT Version FROM $tablename_options WHERE id='$GalleryID'");
+	                $galleryDbVersion = $wpdb->get_var( "SELECT Version FROM $tablename_options WHERE id='$GalleryID'");
                 }
 
                 if(intval($galleryDbVersion)>=14 || empty($GalleryID)){
