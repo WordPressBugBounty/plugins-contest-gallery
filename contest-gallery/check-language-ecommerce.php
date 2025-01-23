@@ -38,6 +38,10 @@ if(file_exists($translationsFile)){
 }
 
 // PROFILE translations for since v14 contest gallery user group
+__('Buy now');$l_BuyNow = "Buy now";$language_BuyNow = (!empty($translations[$l_BuyNow]) && $is_frontend) ? $translations[$l_BuyNow] : ((empty(trim(__($l_BuyNow,$domain)))) ? __($l_BuyNow,$domainDefault) : __($l_BuyNow,$domain)); if(empty($translations[$l_BuyNow])){$translations[$l_BuyNow]='';}
+
+__('Add to cart');$l_AddToShoppingCart = "Add to cart";$language_AddToShoppingCart = (!empty($translations[$l_AddToShoppingCart]) && $is_frontend) ? $translations[$l_AddToShoppingCart] : ((empty(trim(__($l_AddToShoppingCart,$domain)))) ? __($l_AddToShoppingCart,$domainDefault) : __($l_AddToShoppingCart,$domain)); if(empty($translations[$l_AddToShoppingCart])){$translations[$l_AddToShoppingCart]='';}
+
 __('Shopping cart');$l_ShoppingCart = "Shopping cart";$language_ShoppingCart = (!empty($translations[$l_ShoppingCart]) && $is_frontend) ? $translations[$l_ShoppingCart] : ((empty(trim(__($l_ShoppingCart,$domain)))) ? __($l_ShoppingCart,$domainDefault) : __($l_ShoppingCart,$domain)); if(empty($translations[$l_ShoppingCart])){$translations[$l_ShoppingCart]='';}
 
 __('Close shopping cart');$l_CloseShoppingCart = "Close shopping cart";$language_CloseShoppingCart = (!empty($translations[$l_CloseShoppingCart]) && $is_frontend) ? $translations[$l_CloseShoppingCart] : ((empty(trim(__($l_CloseShoppingCart,$domain)))) ? __($l_CloseShoppingCart,$domainDefault) : __($l_CloseShoppingCart,$domain)); if(empty($translations[$l_CloseShoppingCart])){$translations[$l_CloseShoppingCart]='';}

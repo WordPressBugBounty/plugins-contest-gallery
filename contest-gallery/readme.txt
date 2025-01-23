@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, upload, voting, youtube
 Requires at least: 5.6
-Stable tag: 25.0.9.1
+Stable tag: 25.1.0
 Tested up to: 6.7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -231,6 +231,11 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V25.1.0 =
+* NEW: Translation of "Buy now" and "Add to cart" now possible.
+* FIXED: Backend entries search showed sometimes results which doesn't contain the search word.
+* FIXED: "Contact entries total per user" per user current value not corrected if an entry was deleted using cg_gallery_user shortcode.
 
 = V25.0.9.1 =
 * FIXED: If URL field in "Edit contact form"  was activated to be displayed in frontend then additionally not required "https://" was added to inserted URL even if http:// or https:// were already set in the URL.

@@ -112,7 +112,7 @@ HEREDOC;
     echo <<<HEREDOC
                 <div id="cg_main_options_tab_second_row" class="cg_ecommerce">
                     <div id="cg_main_options_tab_second_row_inner" class="cg_main_options_tab_row">
-                        <div class='cg_view_select cg_view_select_translations' cg-data-view="#translations" data-count="9"><a class="cg_view_select_link" cg-data-view="#translations" cg-data-href="cgViewHelper9">Translations</a></div>
+                        <div class='cg_view_select cg_view_select_translations cg_v14_note_caret' cg-data-view="#translations" data-count="9"><a class="cg_view_select_link" cg-data-view="#translations" cg-data-href="cgViewHelper9">Translations</a></div>
                       <div class='cg_view_select cg_view_select_translations cg_v14_note_caret' cg-data-view="#translationsEcommerce" data-count="15"><a class="cg_view_select_link" cg-data-view="#translationsEcommerce" cg-data-href="translationsEcommerce">Translations ecommerce</a></div>
                       <div cg-data-view="#view16" data-count="75" id="cgSaveOptionsNavButton">
                         <span cg-data-view="#view16" cg-data-href="cgViewHelper16" class="cg_backend_button_gallery_action" >Save options</span>
@@ -327,7 +327,7 @@ HEREDOC;
 
 if($isEditTranslationsOnly){
     echo <<<HEREDOC
-            <h4 id="translations" class="cg_view_header cg_view_header_translations">Translations</h4>
+            <h4 id="translations" class="cg_view_header cg_view_header_translations cg_v14_note_caret">Translations (general)</h4>
 	<div class="cg_view cg_view_translations  cgViewHelper9">
 HEREDOC;
     include(__DIR__.'/views-content/view-translations-options.php');

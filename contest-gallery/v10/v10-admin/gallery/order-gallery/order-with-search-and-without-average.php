@@ -142,7 +142,7 @@ $countSearchSQLQuery = "SELECT COUNT(*) AS NumberOfRows FROM (
                                                   $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND                                            
                                                   $tablenameentries.GalleryID = %d AND 
                                                   $tablename.id = $tablenameentries.pid AND 
-                                                  ($tablenameentries.Short_Text like %s OR $tablenameentries.Long_Text like %s OR $tablename.id like %s) 
+                                                  ($tablenameentries.Short_Text like %s OR $tablenameentries.Long_Text like %s OR $tablename.id = %d) 
                                                   UNION
                                                  SELECT 
                                                 DISTINCT $tablename.*$orderByCount
@@ -193,16 +193,16 @@ $countSearchSQLQuery = "SELECT COUNT(*) AS NumberOfRows FROM (
                                                 WHERE 
                                                   $tablename.GalleryID = %d  
                                                   $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
-                                                  $tablename.id LIKE %s
+                                                  $tablename.id = %d
                                                   ) A";
 
 $countSearchSQL = $wpdb->get_var($wpdb->prepare($countSearchSQLQuery,[
-    $GalleryID,$GalleryID,'%'.$search.'%','%'.$search.'%','%'.$searchIntval.'%',
+	$GalleryID,$GalleryID,'%'.$search.'%','%'.$search.'%',$searchIntval,
     $GalleryID,'%'.$search.'%',
     $GalleryID,$GalleryID,$GalleryID,'%'.$search.'%',
     $GalleryID,'%'.$search.'%','%'.$search.'%','%'.$search.'%',
     $GalleryID,'%'.$search.'%','%'.$search.'%','%'.$search.'%','%'.$search.'%',
-    $GalleryID,'%'.$searchIntval.'%'
+	$GalleryID,$searchIntval
 ]));
 
 
@@ -220,7 +220,7 @@ $selectSQLquery = "SELECT * FROM (
                                                   $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
                                                   $tablenameentries.GalleryID = %d AND 
                                                   $tablename.id = $tablenameentries.pid AND 
-                                                  ($tablenameentries.Short_Text like %s OR $tablenameentries.Long_Text like %s OR $tablename.id like %s) AND 
+                                                  ($tablenameentries.Short_Text like %s OR $tablenameentries.Long_Text like %s OR $tablename.id = %d) AND 
                                                   $tablenameentries.f_input_id >= 1 
                                                   UNION
                                                  SELECT 
@@ -272,18 +272,18 @@ $selectSQLquery = "SELECT * FROM (
                                                 WHERE 
                                                   $tablename.GalleryID = %d  
                                                   $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
-                                                  $tablename.id LIKE %s
+                                                  $tablename.id = %d
                                                   ) A
                                                  group by id order by %s $direction LIMIT %d, %d
                                             ";
 
 $selectSQL = $wpdb->get_results($wpdb->prepare($selectSQLquery,[
-    $GalleryID,$GalleryID,'%'.$search.'%','%'.$search.'%','%'.$searchIntval.'%',
+	$GalleryID,$GalleryID,'%'.$search.'%','%'.$search.'%',$searchIntval,
     $GalleryID,'%'.$search.'%',
     $GalleryID,$GalleryID,$GalleryID,'%'.$search.'%',
     $GalleryID,'%'.$search.'%','%'.$search.'%','%'.$search.'%',
     $GalleryID,'%'.$search.'%','%'.$search.'%','%'.$search.'%','%'.$search.'%',
-    $GalleryID,'%'.$searchIntval.'%',
+	$GalleryID,$searchIntval,
     $orderBy,$start,$step
 ]));
 

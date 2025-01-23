@@ -590,15 +590,15 @@ echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
         <p class='cg_view_options_rows_container_title'>Limit contact entries and user recognition methods</span></p>
             <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_border_right_none cg_view_option_50_percent $cgProFalse cg_border_radius_unset' id="RegUserMaxUploadContainer" >
+                <div class='cg_view_option cg_border_right_none cg_view_option_full_width $cgProFalse cg_border_radius_unset' id="RegUserMaxUploadContainer" >
                     <div class='cg_view_option_title'>
                         <p>Contact entries total per user<br><span class="cg_view_option_title_note">0 or empty = no limit</span></p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input id="RegUserMaxUpload" type="text" name="RegUserMaxUpload" value="$RegUserMaxUpload" maxlength="20" >
+                        <input id="RegUserMaxUpload" type="text" name="RegUserMaxUpload" value="$RegUserMaxUpload" maxlength="20" style="max-width: 100px; text-align: center;" >
                     </div>
                 </div>
-                <div class='cg_view_option cg_view_option_50_percent $cgProFalse cg_border_top_right_radius_8_px' id="RegUserMaxUploadPerCategoryContainer" >
+                <div class='cg_view_option cg_view_option_50_percent cg_hide $cgProFalse cg_border_top_right_radius_8_px' id="RegUserMaxUploadPerCategoryContainer" >
                     <div class='cg_view_option_title'>
                         <p>Contact entries for a user per category<br><span class="cg_view_option_title_note">0 or empty = no limit</span></p>
                     </div>

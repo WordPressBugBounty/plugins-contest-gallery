@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Contest Gallery\n"
-"POT-Creation-Date: 2025-01-03 21:41+0100\n"
-"PO-Revision-Date: 2025-01-03 21:45+0100\n"
+"POT-Creation-Date: 2025-01-23 10:30+0100\n"
+"PO-Revision-Date: 2025-01-23 10:31+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -22,226 +22,234 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 
 #: check-language-ecommerce.php:41
-msgid "Shopping cart"
-msgstr "Winkelwagen"
+msgid "Buy now"
+msgstr "Koop nu"
 
 #: check-language-ecommerce.php:43
+msgid "Add to cart"
+msgstr "Voeg toe aan winkelwagen"
+
+#: check-language-ecommerce.php:45
+msgid "Shopping cart"
+msgstr "Winkelmandje"
+
+#: check-language-ecommerce.php:47
 msgid "Close shopping cart"
 msgstr "Sluit winkelwagen"
 
-#: check-language-ecommerce.php:45
+#: check-language-ecommerce.php:49
 msgid "Invoice"
 msgstr "Factuur"
 
-#: check-language-ecommerce.php:47
+#: check-language-ecommerce.php:51
 msgid "Download invoice"
 msgstr "Factuur downloaden"
 
-#: check-language-ecommerce.php:49
+#: check-language-ecommerce.php:53
 msgid "Billing address different from delivery address?"
 msgstr "Factuuradres verschilt van afleveradres?"
 
-#: check-language-ecommerce.php:51
+#: check-language-ecommerce.php:55
 msgid "Country"
 msgstr "Land"
 
-#: check-language-ecommerce.php:53
+#: check-language-ecommerce.php:57
 msgid "Price"
 msgstr "Prijs"
 
-#: check-language-ecommerce.php:55
+#: check-language-ecommerce.php:59
 msgid "Quantity"
 msgstr "Hoeveelheid"
 
-#: check-language-ecommerce.php:57
+#: check-language-ecommerce.php:61
 msgid "Shipping"
 msgstr "Verzenden"
 
-#: check-language-ecommerce.php:59 check-language-ecommerce.php:61
+#: check-language-ecommerce.php:63 check-language-ecommerce.php:65
 msgid "Alternative shipping"
 msgstr "Alternatieve verzending"
 
-#: check-language-ecommerce.php:63
+#: check-language-ecommerce.php:67
 msgid "Alternative shipping costs"
 msgstr "Alternatieve verzendkosten"
 
-#: check-language-ecommerce.php:65
+#: check-language-ecommerce.php:69
 msgid "Standard shipping costs"
 msgstr "Standaard verzendkosten"
 
-#: check-language-ecommerce.php:67
+#: check-language-ecommerce.php:71
 msgid "Free shipping"
 msgstr "Free shipping"
 
-#: check-language-ecommerce.php:69 check-language.php:128
+#: check-language-ecommerce.php:73 check-language.php:128
 msgid "Download"
 msgstr "Download"
 
-#: check-language-ecommerce.php:71
+#: check-language-ecommerce.php:75
 msgid "Please check agreement"
 msgstr "Controleer de overeenkomst"
 
-#: check-language-ecommerce.php:73
+#: check-language-ecommerce.php:77
 msgid "Shipping country not allowed"
 msgstr "Verzendland niet toegestaan"
 
-#: check-language-ecommerce.php:76
+#: check-language-ecommerce.php:80
 msgid "Select country"
 msgstr "Selecteer land"
 
-#: check-language-ecommerce.php:78
+#: check-language-ecommerce.php:82
 msgid "Shipping only possible for the following countries"
 msgstr "Verzending alleen mogelijk voor de volgende landen"
 
-#: check-language-ecommerce.php:80
+#: check-language-ecommerce.php:84
 msgid "Shipping address"
 msgstr "Shipping address"
 
-#: check-language-ecommerce.php:84
+#: check-language-ecommerce.php:88
 msgid "Billing address"
 msgstr "Billing address"
 
-#: check-language-ecommerce.php:86
+#: check-language-ecommerce.php:90
 msgid "First Name"
 msgstr "Voornaam"
 
-#: check-language-ecommerce.php:88
+#: check-language-ecommerce.php:92
 msgid "Last Name"
 msgstr "Achternaam"
 
-#: check-language-ecommerce.php:90
+#: check-language-ecommerce.php:94
 msgid "Company"
 msgstr "Bedrijf"
 
-#: check-language-ecommerce.php:92
+#: check-language-ecommerce.php:96
 msgid "Address Line 1"
 msgstr "Adres lijn 1"
 
-#: check-language-ecommerce.php:94
+#: check-language-ecommerce.php:98
 msgid "Address Line 2"
 msgstr "Adres lijn 2"
 
-#: check-language-ecommerce.php:96
+#: check-language-ecommerce.php:100
 msgid "City"
 msgstr "Stad"
 
-#: check-language-ecommerce.php:98
+#: check-language-ecommerce.php:102
 msgid "Postal Code"
 msgstr "Postcode"
 
-#: check-language-ecommerce.php:100
+#: check-language-ecommerce.php:104
 msgid "Select state/territory"
 msgstr "Selecteer staat/territoria"
 
-#: check-language-ecommerce.php:102
+#: check-language-ecommerce.php:106
 msgid "Billing address identical to delivery address"
 msgstr "Factuuradres identiek aan afleveradres"
 
-#: check-language-ecommerce.php:104
+#: check-language-ecommerce.php:108
 msgid "Date of invoice"
 msgstr "Factuurdatum"
 
-#: check-language-ecommerce.php:106
+#: check-language-ecommerce.php:110
 msgid "Payment date"
 msgstr "Betaaldatum"
 
-#: check-language-ecommerce.php:108
+#: check-language-ecommerce.php:112
 msgid "Paid via"
 msgstr "Betaald via"
 
-#: check-language-ecommerce.php:110
+#: check-language-ecommerce.php:114
 msgid "PayPal"
 msgstr "PayPal"
 
-#: check-language-ecommerce.php:112
+#: check-language-ecommerce.php:116
 msgid "Nr."
 msgstr "Nr."
 
-#: check-language-ecommerce.php:114
+#: check-language-ecommerce.php:118
 msgid "Tax rate"
 msgstr "Belastingtarief"
 
-#: check-language-ecommerce.php:116
+#: check-language-ecommerce.php:120
 msgid "VAT Number"
 msgstr "Btw-nummer"
 
-#: check-language-ecommerce.php:118
+#: check-language-ecommerce.php:122
 msgid "optional"
 msgstr "optioneel"
 
-#: check-language-ecommerce.php:120
+#: check-language-ecommerce.php:124
 msgid "Price unit net"
 msgstr "Prijs eenheid netto"
 
-#: check-language-ecommerce.php:122
+#: check-language-ecommerce.php:126
 msgid "Price total net"
 msgstr "Prijs totaal netto"
 
-#: check-language-ecommerce.php:124
+#: check-language-ecommerce.php:128
 msgid "Total net"
 msgstr "Totaal netto"
 
-#: check-language-ecommerce.php:126
+#: check-language-ecommerce.php:130
 msgid "Total gross"
 msgstr "Totaal bruto"
 
-#: check-language-ecommerce.php:128
+#: check-language-ecommerce.php:132
 msgid "Total price"
 msgstr "Totale prijs"
 
-#: check-language-ecommerce.php:130
+#: check-language-ecommerce.php:134
 msgid "Added to shopping cart"
 msgstr "Toegevoegd aan winkelwagen"
 
-#: check-language-ecommerce.php:132
+#: check-language-ecommerce.php:136
 msgid "To shopping cart"
 msgstr "Naar winkelwagen"
 
-#: check-language-ecommerce.php:134
+#: check-language-ecommerce.php:138
 msgid "Title"
 msgstr "Titel"
 
-#: check-language-ecommerce.php:136
+#: check-language-ecommerce.php:140
 msgid "Key"
 msgstr "Sleutel"
 
-#: check-language-ecommerce.php:138
+#: check-language-ecommerce.php:142
 msgid "Copy Key"
 msgstr "Kopieer sleutel"
 
-#: check-language-ecommerce.php:140
+#: check-language-ecommerce.php:144
 msgid "No products selected"
 msgstr "Geen producten geselecteerd"
 
-#: check-language-ecommerce.php:142
+#: check-language-ecommerce.php:146
 msgid "Full order details"
 msgstr "Volledige bestelgegevens"
 
-#: check-language-ecommerce.php:144
+#: check-language-ecommerce.php:148
 msgid "Order number"
 msgstr "Bestellingsnummer"
 
-#: check-language-ecommerce.php:146
+#: check-language-ecommerce.php:150
 msgid "Your order was successful. You will be redirected."
 msgstr "Uw bestelling is gelukt. U wordt doorgestuurd."
 
-#: check-language-ecommerce.php:148
+#: check-language-ecommerce.php:152
 msgid "Order failed. Please contact administrator."
 msgstr "Bestelling mislukt. Neem contact op met de beheerder."
 
-#: check-language-ecommerce.php:150
+#: check-language-ecommerce.php:154
 msgid "Checkout processing impossible. No internet connection."
 msgstr "Afrekenen onmogelijk. Geen internet verbinding."
 
-#: check-language-ecommerce.php:152
+#: check-language-ecommerce.php:156
 msgid "Maximum uploads"
 msgstr "Maximale uploads"
 
-#: check-language-ecommerce.php:154
+#: check-language-ecommerce.php:158
 msgid "Uploaded"
 msgstr "Geüpload"
 
-#: check-language-ecommerce.php:156
+#: check-language-ecommerce.php:160
 msgid "All uploads used"
 msgstr "Alle uploads gebruikt"
 
@@ -1177,9 +1185,6 @@ msgstr ""
 
 #~ msgid "Date"
 #~ msgstr "Datum"
-
-#~ msgid "Added to basket"
-#~ msgstr "Toegevoegd aan winkelwagen"
 
 #~ msgid "Go to basket"
 #~ msgstr "Ga naar winkelwagen"

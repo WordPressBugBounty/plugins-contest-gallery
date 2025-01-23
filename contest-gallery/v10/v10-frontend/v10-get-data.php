@@ -843,6 +843,8 @@ if($isShowGallery == true){
 
     if(!empty($entryId) && !empty($options['visual']['ShowBackToGalleryButton'])){
 
+            $entryPermalink = '';// in case deactivated
+
             $options['visual']['BackToGalleryButtonText']=$language_BackToGallery;
         if(!empty($options['pro']['BackToGalleryButtonURL'])){
 

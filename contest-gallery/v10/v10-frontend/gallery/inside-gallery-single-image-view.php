@@ -128,11 +128,13 @@ echo <<<HEREDOC
                                         </div>
                                     </div>
                                 <div class="cg-center-sale-buy-now-and-add-to-basket-container">
+                                	<div class="cg-center-sale-buy-now-and-add-to-basket-container-sub">
                                     <div class="cg-center-sale-buy-now" data-cg-gid="$galeryIDuser">
-                                            Buy now
+                                            $language_BuyNow
                                         </div>
                                         <div class="cg-center-sale-add-to-basket" data-cg-gid="$galeryIDuser">
-                                            Add to basket
+                                            $language_AddToShoppingCart
+                                        </div>
                                         </div>
                                 </div>
                                 <div class="cg-center-sale-product-info cg_hide">

@@ -75,9 +75,9 @@ if(!function_exists('cg1l_pre_delete_user')){
 
 					if(is_dir($dir)){// because gallery might be deleted
 						$jsonFile = $dir.'/'.$GalleryID.'-deleted-image-ids.json';
-                    $fp = fopen($jsonFile, 'w');
-                    fwrite($fp, json_encode($json));
-                    fclose($fp);
+						$fp = fopen($jsonFile, 'w');
+						fwrite($fp, json_encode($json));
+						fclose($fp);
 					}
 
                 }
@@ -109,7 +109,6 @@ if(!function_exists('cg1l_pre_delete_user')){
 
                 // delete from eventually cg google users table
                 $wpdb->query("DELETE FROM $tablename_contest_gal1ery_google_users WHERE WpUserId = '$user_id' ");
-
             }
 
             if($_POST['delete_option'] == 'reassign' AND !empty($_POST['reassign_user'])){

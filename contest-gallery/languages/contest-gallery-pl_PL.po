@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Contest Gallery\n"
-"POT-Creation-Date: 2025-01-03 21:45+0100\n"
-"PO-Revision-Date: 2025-01-03 21:48+0100\n"
+"POT-Creation-Date: 2025-01-23 10:31+0100\n"
+"PO-Revision-Date: 2025-01-23 10:31+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -22,227 +22,235 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 
 #: check-language-ecommerce.php:41
+msgid "Buy now"
+msgstr "Kup teraz"
+
+#: check-language-ecommerce.php:43
+msgid "Add to cart"
+msgstr "Dodaj do koszyka"
+
+#: check-language-ecommerce.php:45
 msgid "Shopping cart"
 msgstr "Aktualne hasło"
 
-#: check-language-ecommerce.php:43
+#: check-language-ecommerce.php:47
 msgid "Close shopping cart"
 msgstr "Zamknij koszyk"
 
-#: check-language-ecommerce.php:45
+#: check-language-ecommerce.php:49
 msgid "Invoice"
 msgstr "Faktura"
 
-#: check-language-ecommerce.php:47
+#: check-language-ecommerce.php:51
 msgid "Download invoice"
 msgstr "Pobierz fakturę"
 
-#: check-language-ecommerce.php:49
+#: check-language-ecommerce.php:53
 msgid "Billing address different from delivery address?"
 msgstr "Adres rozliczeniowy jest inny niż adres dostawy?"
 
-#: check-language-ecommerce.php:51
+#: check-language-ecommerce.php:55
 msgid "Country"
 msgstr "Kraj"
 
-#: check-language-ecommerce.php:53
+#: check-language-ecommerce.php:57
 msgid "Price"
 msgstr "Cena"
 
-#: check-language-ecommerce.php:55
+#: check-language-ecommerce.php:59
 msgid "Quantity"
 msgstr "Ilość"
 
-#: check-language-ecommerce.php:57
+#: check-language-ecommerce.php:61
 msgid "Shipping"
 msgstr "Wysyłka"
 
-#: check-language-ecommerce.php:59 check-language-ecommerce.php:61
+#: check-language-ecommerce.php:63 check-language-ecommerce.php:65
 msgid "Alternative shipping"
 msgstr "Alternatywna wysyłka"
 
-#: check-language-ecommerce.php:63
+#: check-language-ecommerce.php:67
 msgid "Alternative shipping costs"
 msgstr "Alternatywne koszty wysyłki"
 
-#: check-language-ecommerce.php:65
+#: check-language-ecommerce.php:69
 msgid "Standard shipping costs"
 msgstr "Standardowe koszty wysyłki"
 
-#: check-language-ecommerce.php:67
+#: check-language-ecommerce.php:71
 msgid "Free shipping"
 msgstr "Darmowa dostawa"
 
-#: check-language-ecommerce.php:69 check-language.php:128
+#: check-language-ecommerce.php:73 check-language.php:128
 msgid "Download"
 msgstr "Pobierać"
 
-#: check-language-ecommerce.php:71
+#: check-language-ecommerce.php:75
 msgid "Please check agreement"
 msgstr "Sprawdź umowę"
 
-#: check-language-ecommerce.php:73
+#: check-language-ecommerce.php:77
 msgid "Shipping country not allowed"
 msgstr "Kraj wysyłki nie jest dozwolony"
 
-#: check-language-ecommerce.php:76
+#: check-language-ecommerce.php:80
 msgid "Select country"
 msgstr "Select country"
 
-#: check-language-ecommerce.php:78
+#: check-language-ecommerce.php:82
 msgid "Shipping only possible for the following countries"
 msgstr "Wysyłka możliwa tylko do następujących krajów"
 
-#: check-language-ecommerce.php:80
+#: check-language-ecommerce.php:84
 msgid "Shipping address"
 msgstr "Adres wysyłki"
 
-#: check-language-ecommerce.php:84
+#: check-language-ecommerce.php:88
 msgid "Billing address"
 msgstr "Adres rozliczeniowy"
 
-#: check-language-ecommerce.php:86
+#: check-language-ecommerce.php:90
 msgid "First Name"
 msgstr "Imię"
 
-#: check-language-ecommerce.php:88
+#: check-language-ecommerce.php:92
 msgid "Last Name"
 msgstr "Nazwisko"
 
-#: check-language-ecommerce.php:90
+#: check-language-ecommerce.php:94
 msgid "Company"
 msgstr "Firma"
 
-#: check-language-ecommerce.php:92
+#: check-language-ecommerce.php:96
 msgid "Address Line 1"
 msgstr "Linia adresu 1"
 
-#: check-language-ecommerce.php:94
+#: check-language-ecommerce.php:98
 msgid "Address Line 2"
 msgstr "Linia adresu 2"
 
-#: check-language-ecommerce.php:96
+#: check-language-ecommerce.php:100
 msgid "City"
 msgstr "Miasto"
 
-#: check-language-ecommerce.php:98
+#: check-language-ecommerce.php:102
 msgid "Postal Code"
 msgstr "Kod pocztowy"
 
-#: check-language-ecommerce.php:100
+#: check-language-ecommerce.php:104
 msgid "Select state/territory"
 msgstr "Wybierz stan/terytorium"
 
-#: check-language-ecommerce.php:102
+#: check-language-ecommerce.php:106
 msgid "Billing address identical to delivery address"
 msgstr "Adres rozliczeniowy identyczny z adresem dostawy"
 
-#: check-language-ecommerce.php:104
+#: check-language-ecommerce.php:108
 msgid "Date of invoice"
 msgstr "Data faktury"
 
-#: check-language-ecommerce.php:106
+#: check-language-ecommerce.php:110
 msgid "Payment date"
 msgstr "Termin płatności"
 
-#: check-language-ecommerce.php:108
+#: check-language-ecommerce.php:112
 msgid "Paid via"
 msgstr "Płatne przez"
 
-#: check-language-ecommerce.php:110
+#: check-language-ecommerce.php:114
 msgid "PayPal"
 msgstr "PayPal"
 
-#: check-language-ecommerce.php:112
+#: check-language-ecommerce.php:116
 msgid "Nr."
 msgstr "Nr."
 
-#: check-language-ecommerce.php:114
+#: check-language-ecommerce.php:118
 msgid "Tax rate"
 msgstr "Wysokość podatku"
 
-#: check-language-ecommerce.php:116
+#: check-language-ecommerce.php:120
 msgid "VAT Number"
 msgstr "Numer VAT"
 
-#: check-language-ecommerce.php:118
+#: check-language-ecommerce.php:122
 msgid "optional"
 msgstr "opcjonalny"
 
-#: check-language-ecommerce.php:120
+#: check-language-ecommerce.php:124
 msgid "Price unit net"
 msgstr "Cena jednostkowa netto"
 
-#: check-language-ecommerce.php:122
+#: check-language-ecommerce.php:126
 msgid "Price total net"
 msgstr "Cena całkowita netto"
 
-#: check-language-ecommerce.php:124
+#: check-language-ecommerce.php:128
 msgid "Total net"
 msgstr "Łączna kwota netto"
 
-#: check-language-ecommerce.php:126
+#: check-language-ecommerce.php:130
 msgid "Total gross"
 msgstr "Łączna brutto"
 
-#: check-language-ecommerce.php:128
+#: check-language-ecommerce.php:132
 msgid "Total price"
 msgstr "Całkowita cena"
 
-#: check-language-ecommerce.php:130
+#: check-language-ecommerce.php:134
 msgid "Added to shopping cart"
 msgstr "Dodano do koszyka"
 
-#: check-language-ecommerce.php:132
+#: check-language-ecommerce.php:136
 msgid "To shopping cart"
 msgstr "Do koszyka"
 
-#: check-language-ecommerce.php:134
+#: check-language-ecommerce.php:138
 msgid "Title"
 msgstr "Tytuł"
 
-#: check-language-ecommerce.php:136
+#: check-language-ecommerce.php:140
 msgid "Key"
 msgstr "Klucz"
 
-#: check-language-ecommerce.php:138
+#: check-language-ecommerce.php:142
 msgid "Copy Key"
 msgstr "Skopiuj klucz"
 
-#: check-language-ecommerce.php:140
+#: check-language-ecommerce.php:144
 msgid "No products selected"
 msgstr "Nie wybrano żadnych produktów"
 
-#: check-language-ecommerce.php:142
+#: check-language-ecommerce.php:146
 msgid "Full order details"
 msgstr "Pełne szczegóły zamówienia"
 
-#: check-language-ecommerce.php:144
+#: check-language-ecommerce.php:148
 msgid "Order number"
 msgstr "Numer zamówienia"
 
-#: check-language-ecommerce.php:146
+#: check-language-ecommerce.php:150
 msgid "Your order was successful. You will be redirected."
 msgstr ""
 "Twoje zamówienie zostało pomyślnie zrealizowane. Zostaniesz przekierowany."
 
-#: check-language-ecommerce.php:148
+#: check-language-ecommerce.php:152
 msgid "Order failed. Please contact administrator."
 msgstr "Zamówienie nie powiodło się. Skontaktuj się z administratorem."
 
-#: check-language-ecommerce.php:150
+#: check-language-ecommerce.php:154
 msgid "Checkout processing impossible. No internet connection."
 msgstr "Przetwarzanie transakcji niemożliwe. Brak połączenia z internetem."
 
-#: check-language-ecommerce.php:152
+#: check-language-ecommerce.php:156
 msgid "Maximum uploads"
 msgstr "Maksymalna liczba przesłanych plików"
 
-#: check-language-ecommerce.php:154
+#: check-language-ecommerce.php:158
 msgid "Uploaded"
 msgstr "Załadowany"
 
-#: check-language-ecommerce.php:156
+#: check-language-ecommerce.php:160
 msgid "All uploads used"
 msgstr "Wykorzystano wszystkie przesłane pliki"
 

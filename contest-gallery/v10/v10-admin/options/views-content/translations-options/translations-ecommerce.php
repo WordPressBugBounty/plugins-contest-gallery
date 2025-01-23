@@ -18,6 +18,29 @@ echo <<<HEREDOC
       <div class='cg_view_options_row' >
             <div class='cg_view_option cg_view_option_full_width' >
                 <div class='cg_view_option_title'>
+                    <p>$language_BuyNow$cgShortcodeCopy</p>
+                </div>
+                <div class='cg_view_option_input'>
+                    <input type="text" name="translations[ecommerce][$l_BuyNow]" maxlength="100" value="$translations[$l_BuyNow]">
+                    </div>
+            </div>
+      </div>
+      <div class='cg_view_options_row' >
+            <div class='cg_view_option cg_view_option_full_width' >
+                <div class='cg_view_option_title'>
+                    <p>$language_AddToShoppingCart$cgShortcodeCopy</p>
+                </div>
+                <div class='cg_view_option_input'>
+                    <input type="text" name="translations[ecommerce][$l_AddToShoppingCart]" maxlength="100" value="$translations[$l_AddToShoppingCart]">
+                    </div>
+            </div>
+      </div>
+HEREDOC;
+
+echo <<<HEREDOC
+      <div class='cg_view_options_row' >
+            <div class='cg_view_option cg_view_option_full_width' >
+                <div class='cg_view_option_title'>
                     <p>$language_ShoppingCart$cgShortcodeCopy</p>
                 </div>
                 <div class='cg_view_option_input'>

@@ -174,7 +174,7 @@ if(!function_exists('cg_modified_admin_bar_for_contest_gallery_user_v14')){
                             'title' => $language_BackToGallery,
                             'href' => $BackToGalleryLink
                         );
-                    $wp_admin_bar->add_node($args);
+	                    $wp_admin_bar->add_node($args);
                     }
                     wp_enqueue_script( 'cg_contest_gallery_edit_profile_js', plugins_url('/../../../v10/v10-js/admin/profile/edit-profile.js', __FILE__), array('jquery'), cg_get_version_for_scripts());
                 }
@@ -244,7 +244,7 @@ if(!function_exists('cg_modified_admin_bar_for_eventually_contest_gallery_profil
 if(!function_exists('cgHasUserGroupAllowedToEdit')){
     function cgHasUserGroupAllowedToEdit( $user ) {
 
-        global $wpdb;
+	    global $wpdb;
         $tablename_registry_and_login_options = $wpdb->prefix . "contest_gal1ery_registry_and_login_options";
 
         $registryAndLoginOptions = $wpdb->get_row( "SELECT * FROM $tablename_registry_and_login_options WHERE GeneralID = '1'" );

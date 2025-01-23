@@ -1,5 +1,10 @@
 Contest Gallery
 
+= V25.1.0 =
+* NEW: Translation of "Buy now" and "Add to cart" now possible.
+* FIXED: Backend entries search showed sometimes results which doesn't contain the search word.
+* FIXED: "Contact entries total per user" per user current value not corrected if an entry was deleted using cg_gallery_user shortcode.
+
 = V25.0.9.1 =
 * FIXED: If URL field in "Edit contact form"  was activated to be displayed in frontend then additionally not required "https://" was added to inserted URL even if http:// or https:// were already set in the URL.
 
