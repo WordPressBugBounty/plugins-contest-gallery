@@ -1324,6 +1324,7 @@ HEREDOC;
             ButtonTextOnLoad VARCHAR(1000) DEFAULT '',
             ButtonStyle VARCHAR(100) DEFAULT '',
             BorderRadius TINYINT DEFAULT 0,
+            GooglemailConvert TINYINT DEFAULT 0,
 		    FeControlsStyle VARCHAR(20) DEFAULT '',
 		    TextBeforeGoogleSignInButton TEXT DEFAULT ''
             ) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1

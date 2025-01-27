@@ -6,14 +6,7 @@ if(!function_exists('contest_gal1ery_google_sign_in')){
 
         contest_gal1ery_db_check();
 
-	    $GalleryID = 0;
-	    if(!empty($atts)){
-        extract( shortcode_atts( array(
-            'id' => ''
-        ), $atts ) );
-        $GalleryID = trim($atts['id']);
-	    }
-
+	    $GalleryID = 0;// just for sure
         $entryId = 0;
         if(!empty($atts['entryId'])){
             $entryId = $atts['entryId'];

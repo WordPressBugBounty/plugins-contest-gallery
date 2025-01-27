@@ -85,6 +85,7 @@ if(!function_exists('cg_ecommerce_get_orders')){
 		            $cg_gallery_ids_query = '';
 		            $cg_gallery_ids_exploded = explode(' ',sanitize_text_field($_POST['cg_gallery_ids']));
 		            foreach ($cg_gallery_ids_exploded as $cg_gallery_id){
+			            $cg_gallery_id = absint($cg_gallery_id);
 			            if(!empty($cg_gallery_id)){
 				            if(!$cg_gallery_ids_query){
 					            $cg_gallery_ids_query .= "$tablename_ecommerce_orders_items.GalleryID = $cg_gallery_id";

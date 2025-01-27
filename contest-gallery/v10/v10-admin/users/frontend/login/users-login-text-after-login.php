@@ -1,9 +1,5 @@
 <?php
-if(intval($galleryDbVersion)>=14){
     $ForwardAfterLoginText = contest_gal1ery_convert_for_html_output($wpdb->get_var("SELECT ForwardAfterLoginText FROM $tablename_pro_options WHERE GeneralID = '1'"));
-}else{
-    $ForwardAfterLoginText = contest_gal1ery_convert_for_html_output($wpdb->get_var("SELECT ForwardAfterLoginText FROM $tablename_pro_options WHERE GalleryID = '$GalleryID'"));
-}
 
 global $isForwardAfterLoginTextAppears;
 $isForwardAfterLoginTextAppears = true;

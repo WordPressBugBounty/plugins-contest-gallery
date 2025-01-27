@@ -223,8 +223,7 @@ $RegUserOrderSummaryOnlyText
 			<?php
 		}
 
-	//	$status = $PayPalOrderResponse['status'];
-		$status = 'COMPLETED';
+	    $status = $PayPalOrderResponse['status'];
 		$explanation = 'Status unknown';
 		// status explanation source // https://developer.paypal.com/docs/api/payments/v2/
 		if($status=='COMPLETED'){

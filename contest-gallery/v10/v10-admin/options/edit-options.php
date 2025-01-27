@@ -95,6 +95,17 @@ $ButtonTextOnLoad = contest_gal1ery_convert_for_html_output_without_nl2br($selec
 $FeControlsStyleGoogleSignIn = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLgoogleOptions->FeControlsStyle);
 $FeControlsStyleWhiteGoogleSignIn = ($FeControlsStyleGoogleSignIn=='white' OR empty($FeControlsStyleGoogleSignIn)) ? 'checked' : '';
 $FeControlsStyleBlackGoogleSignIn = ($FeControlsStyleGoogleSignIn=='black') ? 'checked' : '';
+
+$GooglemailConvert = ($selectSQLgoogleOptions->GooglemailConvert==1) ? 'checked' : '';
+
+$GmailChecked = '';
+$GooglemailChecked = '';
+if($GooglemailConvert=='1'){
+	$GmailChecked = 'checked';
+}else{
+	$GooglemailChecked = 'checked';
+}
+
 $ButtonStyle = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLgoogleOptions->ButtonStyle);
 $ButtonStyleBrightChecked = '';
 $ButtonStyleDarkChecked = '';

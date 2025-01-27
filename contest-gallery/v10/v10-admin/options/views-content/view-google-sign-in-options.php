@@ -44,8 +44,8 @@ echo <<<HEREDOC
         <span class="cg_color_red">NOTE:</span> Via Google sign in button logged in users are <strong>handled like WordPress users.</strong>
         <br>They will be <strong>logged in</strong> after using Google sign in button. <strong>If the Google signed in user is not a WordPress user</strong>
         <br><strong>a WordPress user with <a href="" class="cg_go_to_link" data-cg-go-to-link="RegOptionsUserGroupRolesContainer">configured user group role in "Registration options"</a> will be created.</strong>
-        <br>The official <strong>@googlemail.com</strong> as e-mail will be used when the WordPress user will be created.
-        <br>If the <strong>Google signed in user has already a WordPress account with @googlemail.com</strong> ending<br><strong>then NO new WordPress account will be created.</strong>
+        <br>The official <strong>@gmail.com</strong> (@googlemail.com some countries) as e-mail will be used when the WordPress user will be created.
+        <br>If the <strong>Google signed in user has already a WordPress account with @gmail.com or @googlemail</strong> ending<br><strong>then NO new WordPress account will be created.</strong>
         <br>So if you as <strong>administrator use a @googlemail.com e-mail</strong> you <strong>would be directly logged in as administrator</strong>.
 </p>
 HEREDOC;
@@ -116,6 +116,19 @@ echo <<<HEREDOC
                 </div>
             </div>
             </div>
+HEREDOC;
+
+echo <<<HEREDOC
+<div class='cg_view_options_row'>
+        <div class="cg_view_option  cg_view_option_100_percent cg_border_top_none $cgProFalse" >
+            <div class="cg_view_option_title">
+                <p>Create @googlemail Google Sign In users as @gmail WordPress users in the database<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE:</span> older Google users from certain countries might have @googlemail as official address, but using @gmail everywhere for registration and login. This users can be created as @gmail users, so they can login with @gmail as WordPress user without using Google Sign In. Google handles @googlemail and @gmail as same e-mail address.</span></span></p>
+            </div>
+            <div class="cg_view_option_checkbox">
+                <input type="checkbox" name="GooglemailConvert" id="GooglemailConvert" value="1" $GooglemailConvert >
+            </div>
+        </div>
+</div>
 HEREDOC;
 
 $btn_google_signin_light_normal_web = plugins_url('/../../../../v10/v10-css/btn_google_signin_light_normal_web.png', __FILE__);

@@ -1947,15 +1947,20 @@ if (!empty($_POST['changeSize'])) {
     $FeControlsStyleGoogleSignIn = (!empty($_POST['FeControlsStyleWhiteGoogleSignIn'])) ? 'white' : 'black';
     $TextBeforeGoogleSignInButton = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['TextBeforeGoogleSignInButton']) ? $_POST['TextBeforeGoogleSignInButton'] : '');
 
+	    $GooglemailConvert = (!empty($_POST['GooglemailConvert'])) ? 1 : 0;
+
     $wpdb->update(
         $tablenameGoogleOptions,
         array(
+                'GooglemailConvert' => $GooglemailConvert,
             'ClientId' => $ClientId,'ButtonTextOnLoad' => $ButtonTextOnLoad,
             'ButtonStyle' => $ButtonStyle, 'BorderRadius' => $GoogleButtonBorderRadius,
             'FeControlsStyle' => $FeControlsStyleGoogleSignIn,'TextBeforeGoogleSignInButton' => $TextBeforeGoogleSignInButton
         ),
         array('GeneralID' => 1),
-        array('%s','%s',
+            array(
+	                '%d',
+                    '%s','%s',
             '%s', '%d', '%s', '%s'),
         array('%d')
     );

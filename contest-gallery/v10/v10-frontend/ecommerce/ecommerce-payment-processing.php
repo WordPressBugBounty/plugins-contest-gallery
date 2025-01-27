@@ -31,6 +31,34 @@ $tablename_ecommerce_invoice_options = $wpdb->prefix . "contest_gal1ery_ecommerc
 $tablename_ecommerce_orders_items = $wpdb->prefix . "contest_gal1ery_ecommerce_orders_items";
 $tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
 
+$IsFullPaid = false;
+$VersionDb = floatval(cg_get_db_version());
+$VersionScripts = cg_get_version_for_scripts();
+
+$ecommerce_options = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_options WHERE GeneralID = 1");
+$ecommerce_options_array = json_decode(json_encode($ecommerce_options),true);
+
+$IsTest = 0;
+if($_POST['orderData']['isSandbox']=='true'){// has to be checked this way because of mixed sent data (rawdata as string) the true is a string
+	$Environment = 'sandbox';
+	$IsTest = 1;
+}else{
+	$Environment = 'live';
+}
+
+if($IsTest){
+	$accessToken = cg_paypal_get_access_token($ecommerce_options_array['PayPalSandboxClientId'],$ecommerce_options_array['PayPalSandboxSecret'],true);
+}else{
+	$accessToken = cg_paypal_get_access_token($ecommerce_options_array['PayPalLiveClientId'],$ecommerce_options_array['PayPalLiveSecret']);
+}
+
+$PayPalOrderResponse = cg_get_paypal_order($accessToken,$_POST['orderData']['id'],$IsTest);
+$status = $PayPalOrderResponse['status'];
+
+if(!empty($PayPalOrderResponse['status']) && $PayPalOrderResponse['status']=='COMPLETED'){
+	$IsFullPaid = true;
+}
+
 $wp_upload_dir = wp_upload_dir();
 
 $year = date('Y');
@@ -205,14 +233,6 @@ $OrderId = 0;
 $PaymentType = 'paypal';
 $PaymentOrderType = 'capture';
 
-$IsTest = 0;
-if($_POST['isSandbox']=='true'){// has to be checked this way because of mixed sent data (rawdata as string) the true is a string
-    $Environment = 'sandbox';
-    $IsTest = 1;
-}else{
-    $Environment = 'live';
-}
-
 $captureId = isset($_POST['id']) ? $_POST['id'] : 'no-capture-id' ;
 $captureId = $_POST['id'].time();
 if($Environment=='sandbox'){
@@ -301,6 +321,7 @@ if(true){
                  ShippingNet, ShippingGross, ShippingTaxValue,TaxPercentageDefault,
                  CurrencyShort, CurrencyPosition, WpUserId, IP, IsTest, 
                  PaymentType, PaymentOrderType, PayPalTransactionId,LogFilePath,
+                 IsFullPaid,VersionDb,VersionScripts,
                  LogForDatabase,OrderIdHash,Tstamp,
                  PayerEmail,TaxNr,
                 InvoiceAddressFirstName,InvoiceAddressLastName,InvoiceAddressCompany,InvoiceAddressLine1,InvoiceAddressLine2,InvoiceAddressCity,InvoiceAddressPostalCode,InvoiceAddressStateShort,InvoiceAddressStateTranslation,InvoiceAddressCountryShort,InvoiceAddressCountryTranslation,
@@ -311,6 +332,7 @@ if(true){
                         %f,%f,%f,%f,
                         %s,%s,%d,%s,%d,
                         %s,%s,%s,%s,
+                        %d,%f,%s,
                         %s,%s,%d,
                         %s,%s,
                         %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,
@@ -322,6 +344,7 @@ if(true){
 	    $ShippingNet, $ShippingGross, $ShippingTaxValue, $TaxPercentageDefault,
 	    $CurrencyShort,$CurrencyPosition,$WpUserId,$IP, $IsTest,
         $PaymentType, $PaymentOrderType, $PayPalTransactionId,'WP_UPLOAD_DIR'.$databaseToSaveLogFilePath,
+	    $IsFullPaid,$VersionDb,$VersionScripts,
         serialize($LogForDatabase),'',$time,
         $PayerEmail,$EcommerceTaxNr,
 	    $InvoiceAddressFirstName,$InvoiceAddressLastName,$InvoiceAddressCompany,$InvoiceAddressLine1,$InvoiceAddressLine2,$InvoiceAddressCity,$InvoiceAddressPostalCode,$InvoiceAddressStateShort,$InvoiceAddressStateTranslation,$InvoiceAddressCountryShort,$InvoiceAddressCountryTranslation,
@@ -635,7 +658,6 @@ if(true){
 	    //var_dump(        '$OrderId');
 	    //var_dump(        $OrderId);
 
-	    $ecommerce_options = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_options WHERE GeneralID = 1");
 
 	    $SendOrderConfirmationMail = $ecommerce_options->SendOrderConfirmationMail;
         $header = $ecommerce_options->OrderConfirmationMailHeader;
@@ -691,7 +713,7 @@ if(true){
         $cgIsGeneral = true;
         add_action( 'wp_mail_failed', 'cg_on_wp_mail_error', 10, 1 );
 
-	    if($CreateInvoice && $SendInvoice && $SendOrderConfirmationMail == 1){
+	    if($CreateInvoice && $SendInvoice && $SendOrderConfirmationMail == 1 && $IsFullPaid){
             if($InvoiceNumber){
 	            $invoiceFilePathForUser = $ecommerceInvoicesFolder."/invoice-".$InvoiceNumber.'.pdf';
 	            copy($invoiceFilePath, $invoiceFilePathForUser);
@@ -705,7 +727,7 @@ if(true){
                 unlink($invoiceFilePathForUser);
 		    }
         }else{
-		    if($SendOrderConfirmationMail == 1){
+		    if($SendOrderConfirmationMail == 1 && $IsFullPaid){
 			    wp_mail($payer_email, $subject, $Msg, $headers);
 		    }
         }

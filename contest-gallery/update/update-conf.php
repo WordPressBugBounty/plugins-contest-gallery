@@ -328,13 +328,19 @@ return array(
         'PermanentTextWhenLoggedIn' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""')// Update ab 05.01.2022
     ),
     $tablename_google_options => array(
-        'TextBeforeGoogleSignInButton' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""')// Update ab 22.12.2021
+	    'TextBeforeGoogleSignInButton' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 22.12.2021
+	    'GooglemailConvert' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0)// Update 25.01.2025
     ),
     $tablename_ecommerce_entries => array(
         'MaxUploads' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 03.06.2024
         'AllUploadsUsedText' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 03.06.2024
         'IsUpload' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 03.06.2024
         'UploadGallery' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update 03.06.2024
+    ),
+    $tablename_ecommerce_orders => array(
+	    'IsFullPaid' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 24.01.2025
+	    'VersionDb' => array('COLUMN_TYPE' => 'DECIMAL(65,2)','DEFAULT' => 0),// Update 24.01.2025
+	    'VersionScripts' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 24.01.2025
     ),
     $tablename_ecommerce_orders_items => array(
         'IsUpload' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 03.06.2024

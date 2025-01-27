@@ -14,17 +14,19 @@ if(!function_exists('cg_create_google_options')){
 					( id, GeneralID,
 					ClientId,ButtonTextOnLoad,
 					ButtonStyle,BorderRadius,
-					FeControlsStyle,TextBeforeGoogleSignInButton
+					FeControlsStyle,TextBeforeGoogleSignInButton,
+					GooglemailConvert
 					)
 					VALUES (
 					%s,%d,
 					%s,%s,
 					%s,%d,
-					%s,%s
+					%s,%s,
+					%d
 					)",
                 '','1',
                 '','Continue with Google',
-                'bright',1,'white',''
+                'bright',1,'white','',1
             ) );
 
         }

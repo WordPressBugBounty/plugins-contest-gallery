@@ -1,5 +1,9 @@
 Contest Gallery
 
+= V25.1.2 =
+* FIXED: Security issue.
+* FIXED: Order status might be not always correct on the order summary page.
+
 = V25.1.0 =
 * NEW: Translation of "Buy now" and "Add to cart" now possible.
 * FIXED: Backend entries search showed sometimes results which doesn't contain the search word.
