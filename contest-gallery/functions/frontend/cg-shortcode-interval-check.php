@@ -18,6 +18,7 @@ if(!function_exists('cg_shortcode_interval_check')){
         $intervalEndDate = null;
         $TextWhenShortcodeIntervalIsOn = '';
         $TextWhenShortcodeIntervalIsOff = '';
+
         if(isset($options['interval'][$cg_gallery_shortcode_type])
             && isset($options['interval'][$cg_gallery_shortcode_type]['active'])
             && $options['interval'][$cg_gallery_shortcode_type]['active']=='on'

@@ -27,52 +27,52 @@
 
 $orderBy = 'rowid';
 switch($order){
-    case 'custom': $orderBy ='PositionNumber ASC, id'; break;
-    case 'date_desc': $orderBy ='id'; break;
-    case 'date_asc': $orderBy ='id'; break;
-    case 'rating_desc': $orderBy = ($AllowRating==1 OR ($AllowRating>=12 && $AllowRating<=20)) ? 'CountR' : 'CountS'; break;
-    case 'rating_asc': $orderBy = ($AllowRating==1 OR ($AllowRating>=12 && $AllowRating<=20)) ? 'CountR' : 'CountS'; break;
-    case 'comments_desc': $orderBy ='CountC'; break;
-    case 'comments_asc': $orderBy ='CountC';
+	case 'custom': $orderBy ='PositionNumber ASC, id'; break;
+	case 'date_desc': $orderBy ='id'; break;
+	case 'date_asc': $orderBy ='id'; break;
+	case 'rating_desc': $orderBy = ($AllowRating==1 OR ($AllowRating>=12 && $AllowRating<=20)) ? 'CountR' : 'CountS'; break;
+	case 'rating_asc': $orderBy = ($AllowRating==1 OR ($AllowRating>=12 && $AllowRating<=20)) ? 'CountR' : 'CountS'; break;
+	case 'comments_desc': $orderBy ='CountC'; break;
+	case 'comments_asc': $orderBy ='CountC';
 }
 
 $direction = 'DESC';
 switch($order){
-    case 'custom': $direction ='DESC'; break;
-    case 'date_desc': $direction ='DESC'; break;
-    case 'date_asc': $direction ='ASC'; break;
-    case 'rating_desc': $direction = 'DESC'; break;
-    case 'rating_asc': $direction = 'ASC'; break;
-    case 'comments_desc': $direction ='DESC'; break;
-    case 'comments_asc': $direction ='ASC';
+	case 'custom': $direction ='DESC'; break;
+	case 'date_desc': $direction ='DESC'; break;
+	case 'date_asc': $direction ='ASC'; break;
+	case 'rating_desc': $direction = 'DESC'; break;
+	case 'rating_asc': $direction = 'ASC'; break;
+	case 'comments_desc': $direction ='DESC'; break;
+	case 'comments_asc': $direction ='ASC';
 }
 
 $orderByCount = '';
 
 if($order=='rating_desc_with_manip'){
-    if($AllowRating==1 OR ($AllowRating>=12 && $AllowRating<=20)){
-        $orderByCount = ", $tablename.CountR + $tablename.addCountR1 + $tablename.addCountR2 + $tablename.addCountR3 + $tablename.addCountR4 + $tablename.addCountR5 as totalCountR ";
-        $orderBy = 'totalCountR';
-        $direction = 'DESC';
-    }
-    if($AllowRating==2){
-        $orderByCount = ", $tablename.CountS + $tablename.addCountS  as totalCountS ";
-        $orderBy = 'totalCountS';
-        $direction = 'DESC';
-    }
+	if($AllowRating==1 OR ($AllowRating>=12 && $AllowRating<=20)){
+		$orderByCount = ", $tablename.CountR + $tablename.addCountR1 + $tablename.addCountR2 + $tablename.addCountR3 + $tablename.addCountR4 + $tablename.addCountR5 as totalCountR ";
+		$orderBy = 'totalCountR';
+		$direction = 'DESC';
+	}
+	if($AllowRating==2){
+		$orderByCount = ", $tablename.CountS + $tablename.addCountS  as totalCountS ";
+		$orderBy = 'totalCountS';
+		$direction = 'DESC';
+	}
 }
 
 if($order=='rating_asc_with_manip'){
-    if($AllowRating==1 OR ($AllowRating>=12 && $AllowRating<=20)){
-        $orderByCount = ", $tablename.CountR + $tablename.addCountR1 + $tablename.addCountR2 + $tablename.addCountR3 + $tablename.addCountR4 + $tablename.addCountR5 as totalCountR ";
-        $orderBy = 'totalCountR';
-        $direction = 'ASC';
-    }
-    if($AllowRating==2){
-        $orderByCount = ", $tablename.CountS + $tablename.addCountS  as totalCountS ";
-        $orderBy = 'totalCountS';
-        $direction = 'ASC';
-    }
+	if($AllowRating==1 OR ($AllowRating>=12 && $AllowRating<=20)){
+		$orderByCount = ", $tablename.CountR + $tablename.addCountR1 + $tablename.addCountR2 + $tablename.addCountR3 + $tablename.addCountR4 + $tablename.addCountR5 as totalCountR ";
+		$orderBy = 'totalCountR';
+		$direction = 'ASC';
+	}
+	if($AllowRating==2){
+		$orderByCount = ", $tablename.CountS + $tablename.addCountS  as totalCountS ";
+		$orderBy = 'totalCountS';
+		$direction = 'ASC';
+	}
 }
 
 $checkCookieIdOrIP = '';
@@ -99,29 +99,29 @@ $checkCookieIdOrIP = '';
 
 $selectWinnersOnly = 'AND';
 if(!empty($_POST['cg_show_only_winners'])){
-    $selectWinnersOnly = "AND $tablename.Winner = 1 ";
+	$selectWinnersOnly = "AND $tablename.Winner = 1 ";
 }
 
 $selectActiveOnly = '';
 
 if(!empty($_POST['cg_show_only_active'])){
-    if(empty($_POST['cg_show_only_winners'])){
-        $selectWinnersOnly = "";
-    }
-    $selectActiveOnly = " AND $tablename.Active = 1 ";
+	if(empty($_POST['cg_show_only_winners'])){
+		$selectWinnersOnly = "";
+	}
+	$selectActiveOnly = " AND $tablename.Active = 1 ";
 }
 
 $selectInactiveOnly = '';
 
 if(!empty($_POST['cg_show_only_inactive'])){
-    if(empty($_POST['cg_show_only_winners'])){
-        $selectWinnersOnly = "";
-    }
-    $selectInactiveOnly = " AND $tablename.Active = 0 ";
+	if(empty($_POST['cg_show_only_winners'])){
+		$selectWinnersOnly = "";
+	}
+	$selectInactiveOnly = " AND $tablename.Active = 0 ";
 }
 
 if(empty($_POST['cg_show_only_winners']) AND empty($_POST['cg_show_only_active']) AND empty($_POST['cg_show_only_inactive'])){
-    $selectWinnersOnly = "";
+	$selectWinnersOnly = "";
 }
 
 //    var_dump("$selectWinnersOnly$selectActiveOnly$selectInactiveOnly" );
@@ -198,10 +198,10 @@ $countSearchSQLQuery = "SELECT COUNT(*) AS NumberOfRows FROM (
 
 $countSearchSQL = $wpdb->get_var($wpdb->prepare($countSearchSQLQuery,[
 	$GalleryID,$GalleryID,'%'.$search.'%','%'.$search.'%',$searchIntval,
-    $GalleryID,'%'.$search.'%',
-    $GalleryID,$GalleryID,$GalleryID,'%'.$search.'%',
-    $GalleryID,'%'.$search.'%','%'.$search.'%','%'.$search.'%',
-    $GalleryID,'%'.$search.'%','%'.$search.'%','%'.$search.'%','%'.$search.'%',
+	$GalleryID,'%'.$search.'%',
+	$GalleryID,$GalleryID,$GalleryID,'%'.$search.'%',
+	$GalleryID,'%'.$search.'%','%'.$search.'%','%'.$search.'%',
+	$GalleryID,'%'.$search.'%','%'.$search.'%','%'.$search.'%','%'.$search.'%',
 	$GalleryID,$searchIntval
 ]));
 
@@ -279,12 +279,12 @@ $selectSQLquery = "SELECT * FROM (
 
 $selectSQL = $wpdb->get_results($wpdb->prepare($selectSQLquery,[
 	$GalleryID,$GalleryID,'%'.$search.'%','%'.$search.'%',$searchIntval,
-    $GalleryID,'%'.$search.'%',
-    $GalleryID,$GalleryID,$GalleryID,'%'.$search.'%',
-    $GalleryID,'%'.$search.'%','%'.$search.'%','%'.$search.'%',
-    $GalleryID,'%'.$search.'%','%'.$search.'%','%'.$search.'%','%'.$search.'%',
+	$GalleryID,'%'.$search.'%',
+	$GalleryID,$GalleryID,$GalleryID,'%'.$search.'%',
+	$GalleryID,'%'.$search.'%','%'.$search.'%','%'.$search.'%',
+	$GalleryID,'%'.$search.'%','%'.$search.'%','%'.$search.'%','%'.$search.'%',
 	$GalleryID,$searchIntval,
-    $orderBy,$start,$step
+	$orderBy,$start,$step
 ]));
 
 

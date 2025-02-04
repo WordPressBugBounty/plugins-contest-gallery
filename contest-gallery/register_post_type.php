@@ -7,58 +7,58 @@
 if(!function_exists('cg_post_type_supports')){
 	function cg_post_type_supports() {
 		return array(
-            'title', // post title
-            'editor', // post content
-            'author', // post author
-            'excerpt', // post excerpt
-            'custom-fields', // custom fields
-            //'comments',
-            'page-attributes', // page attributes, like parent page can be changed
-        );
+			'title', // post title
+			'editor', // post content
+			'author', // post author
+			'excerpt', // post excerpt
+			'custom-fields', // custom fields
+			//'comments',
+			'page-attributes', // page attributes, like parent page can be changed
+		);
 	}
 }
 
 if(!function_exists('cg_post_type_labels')){
 	function cg_post_type_labels() {
 		return array(
-            'name' => _x('Cgallery', 'plural'),
-            'singular_name' => _x('Cgallery', 'singular'),
-            'menu_name' => _x('Cgallery', 'admin menu'),
-            'name_admin_bar' => _x('Cgallery', 'admin bar'),
-            'add_new' => _x('Add New', 'add new'),
-            'add_new_item' => __('Add New Cgallery'),
-            'new_item' => __('New Cgallery'),
-            'edit_item' => __('Edit Page (Contest Gallery Custom Post Type)'),
-            'view_item' => __('View Cgallery'),
-            'all_items' => __('All Cgallery'),
-            'search_items' => __('Search Cgallery'),
-            'not_found' => __('No contest gallery pages found.'),
-        );
+			'name' => _x('Cgallery', 'plural'),
+			'singular_name' => _x('Cgallery', 'singular'),
+			'menu_name' => _x('Cgallery', 'admin menu'),
+			'name_admin_bar' => _x('Cgallery', 'admin bar'),
+			'add_new' => _x('Add New', 'add new'),
+			'add_new_item' => __('Add New Cgallery'),
+			'new_item' => __('New Cgallery'),
+			'edit_item' => __('Edit Page (Contest Gallery Custom Post Type)'),
+			'view_item' => __('View Cgallery'),
+			'all_items' => __('All Cgallery'),
+			'search_items' => __('Search Cgallery'),
+			'not_found' => __('No contest gallery pages found.'),
+		);
 	}
 }
 
 if(!function_exists('cg_post_type_args')){
 	function cg_post_type_args($supports,$labels) {
 		return array(
-            'show_in_rest' => true,
-            // 'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt', 'author' ),
-            'supports' => $supports,
-            'labels' => $labels,
+			'show_in_rest' => true,
+			// 'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt', 'author' ),
+			'supports' => $supports,
+			'labels' => $labels,
 			'public' => true,// important, has to be set to true, otherwise not work
 			'show_in_nav_menus' => false,// otherwise appears in menus unnecessary
-            'show_in_menu' => false,
-            'query_var' => true,
-            //'rewrite'      => array( 'slug' => 'contest-gallery', 'with_front' => true, 'hierarchical' => true ),
-            //  'rewrite'      => array( 'slug' => 'contest-gallery', 'with_front' => true ),
-            'hierarchical' => true,
-            //   'rewrite' => array('slug' => 'contest-gallery-plug'),
-            //   'rewrite' => array('slug' => '/', 'with_front' => true),
-            // 'rewrite' => array('slug' => 'contest-gallery'),
-            //   'capability_type' => 'page',// only permissions related, maybe remove
-          //  'has_archive' => true,
-            //     'hierarchical' => true,
-            'show_in_admin_bar' => true,
-        );
+			'show_in_menu' => false,
+			'query_var' => true,
+			//'rewrite'      => array( 'slug' => 'contest-gallery', 'with_front' => true, 'hierarchical' => true ),
+			//  'rewrite'      => array( 'slug' => 'contest-gallery', 'with_front' => true ),
+			'hierarchical' => true,
+			//   'rewrite' => array('slug' => 'contest-gallery-plug'),
+			//   'rewrite' => array('slug' => '/', 'with_front' => true),
+			// 'rewrite' => array('slug' => 'contest-gallery'),
+			//   'capability_type' => 'page',// only permissions related, maybe remove
+			//  'has_archive' => true,
+			//     'hierarchical' => true,
+			'show_in_admin_bar' => true,
+		);
 	}
 }
 

@@ -46,7 +46,7 @@ if(!function_exists('contest_gal1ery_users_registry')){
             ));
         }
         ob_start();
-        echo "<pre class='cg_main_pre  cg_10 cg_20' >";
+        echo "<pre class='cg_main_pre  cg_10 cg_20'  style='overflow:hidden;visibility: hidden;height:650px;' >";
         include(__DIR__.'/../v10/v10-admin/users/frontend/registry/users-registry.php');
         echo "</pre>";
         $contest_gal1ery_users_registry = ob_get_clean();

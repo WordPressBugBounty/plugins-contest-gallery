@@ -1,5 +1,9 @@
 Contest Gallery
 
+= V25.1.3 =
+* NEW: Improved frontend shortcodes load visually for slower connections.
+* FIXED: "Export all votes" query took too long.
+
 = V25.1.2 =
 * FIXED: Security issue.
 * FIXED: Order status might be not always correct on the order summary page.

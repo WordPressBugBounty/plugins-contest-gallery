@@ -44,7 +44,7 @@ if(!function_exists('contest_gal1ery_order_summary')){
 	    $UploadGalleries = [];
 	    $currenciesArray = [];// has to be setted here for sure in case no internet connection and has uploads for sale
 
-	    echo "<pre class='cg_main_pre  cg_10 cg_20' >";
+	    echo "<pre class='cg_main_pre  cg_10 cg_20'  style='overflow:hidden;visibility: hidden;height:650px;' >";
 	        include(__DIR__.'/../v10/v10-frontend/ecommerce/ecommerce-show-order-frontend.php');
 	    if(!empty($hasUploadSell) && empty($isPayPalResponseError)){
 				foreach ($UploadGalleries as $OrderItemID => $UploadGallery){

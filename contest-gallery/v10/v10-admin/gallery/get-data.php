@@ -234,7 +234,7 @@ $galleryDbVersion = $optionsSQL->Version;
 
 $fieldsToSelectString = "id, rowid, Timestamp, NamePic, ImgType, CountC, CountCtoReview, CountR, CountS, Rating, GalleryID, Active, Informed, WpUpload,
              Width, Height, WpUserId, rSource, rThumb, addCountS, addCountR1, addCountR2, addCountR3, addCountR4, addCountR5, addCountR6, addCountR7, 
-             addCountR8, addCountR9, addCountR10,Category, Exif, IP, CountR1, CountR2, CountR3, CountR4, CountR5, CountR5, CountR6, CountR7, CountR8, CountR9, CountR10, 
+             addCountR8, addCountR9, addCountR10,Category, Exif, IP, CountR1, CountR2, CountR3, CountR4, CountR5, CountR6, CountR7, CountR8, CountR9, CountR10, 
              Version, CheckSet, CookieId, Winner, MultipleFiles, WpPage, WpPageUser, WpPageNoVoting, WpPageWinner, WpPageEcommerce, OrderItem, EcommerceEntry";
 if($isAjaxCall){
     // dann wurde die seite gerade aufgerufen oder ein reload gemacht nach dem neue gallery kreiert worden ist
@@ -249,7 +249,8 @@ if($isAjaxCall){
         if($order=='rating_desc_average' || $order=='rating_asc_average' || $order=='rating_desc_average_with_manip' || $order=='rating_asc_average_with_manip'){
             $order = 'date_desc';
         }
-        // dann muss es ein ajax call sein!!!
+
+	    // dann muss es ein ajax call sein!!!
         if($search==='' && !($order=='rating_desc_sum' || $order=='rating_asc_sum' || $order=='rating_desc_sum_with_manip' || $order=='rating_asc_sum_with_manip' || $order=='rating_desc_average' || $order=='rating_asc_average' || $order=='rating_desc_average_with_manip' || $order=='rating_asc_average_with_manip') && strpos($order, '_for_id_') === false){
             include ('order-gallery/order-without-search-and-average.php');
         }/*else if(($order=='rating_desc_average' || $order=='rating_asc_average' || $order=='rating_desc_average_with_manip' || $order=='rating_asc_average_with_manip') && strpos($order, '_for_id_') === false){

@@ -215,7 +215,7 @@ if(!function_exists('cgDropTables')){
         }
 
 	    $wpdb->query(
-            "
+		    "
 				DELETE FROM $posts WHERE post_mime_type = 'contest-gallery-youtube' || post_mime_type = 'contest-gallery-twitter' || post_mime_type = 'contest-gallery-instagram' || post_mime_type = 'contest-gallery-tiktok' || post_mime_type = 'contest-gallery-plugin-page' || post_mime_type = 'contest-gallery-plugin-page-galleries-slug' || post_mime_type = 'contest-gallery-plugin-page-galleries-user-slug' || post_mime_type = 'contest-gallery-plugin-page-galleries-no-voting-slug' || post_mime_type = 'contest-gallery-plugin-page-galleries-winner-slug' || post_mime_type = 'contest-gallery-plugin-page-galleries-ecommerce-slug'
 			");
 
@@ -231,6 +231,7 @@ if(!function_exists('cgDropTables')){
         $wpdb->query($sql31);
         $wpdb->query($sql32);
         $wpdb->query($sql33);
+
 
         cg_delete_blog_option($i,"p_cgal1ery_reg_code");
         cg_delete_blog_option($i,"p_c1_k_g_r_9");

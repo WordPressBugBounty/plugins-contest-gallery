@@ -70,7 +70,11 @@ if(empty($isFromOrderSummary)){
 	if(empty($isCGalleriesAjax)){
 		ob_start();
 	}
-	echo "<pre class='cg_main_pre  cg_10 cg_20' >";
+    $cgPreMinHeight = 650;
+    if(!empty($shortcode_name) && $shortcode_name == 'cg_users_contact'){
+        $cgPreMinHeight = 250;
+    }
+	echo "<pre class='cg_main_pre  cg_10 cg_20' style='overflow:hidden;visibility: hidden;height:".$cgPreMinHeight."px;' >";
 }
 
 include("v10-frontend/v10-get-data.php");

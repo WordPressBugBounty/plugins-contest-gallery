@@ -237,10 +237,10 @@ if(!function_exists('cg_get_ecommerce_files_data')){
 			$ecommerceFilesData[$ecommerceFilesRow->pid] = json_decode(json_encode($ecommerceFilesRow),true);
 
 			// has to be unserialized because is unserialized otherwise jsond_decode processing error later
-			$ecommerceFilesData[$ecommerceFilesRow->pid]['WpUploadFilesPosts'] = unserialize($ecommerceFilesData[$ecommerceFilesRow->pid]['WpUploadFilesPosts']);
-			$ecommerceFilesData[$ecommerceFilesRow->pid]['WpUploadFilesPostMeta'] = unserialize($ecommerceFilesData[$ecommerceFilesRow->pid]['WpUploadFilesPostMeta']);
-			$ecommerceFilesData[$ecommerceFilesRow->pid]['WpUploadFilesForSale'] = unserialize($ecommerceFilesData[$ecommerceFilesRow->pid]['WpUploadFilesForSale']);
-			$ecommerceFilesData[$ecommerceFilesRow->pid]['WatermarkSettings'] = unserialize($ecommerceFilesData[$ecommerceFilesRow->pid]['WatermarkSettings']);
+			$ecommerceFilesData[$ecommerceFilesRow->pid]['WpUploadFilesPosts'] = !empty($ecommerceFilesData[$ecommerceFilesRow->pid]['WpUploadFilesPosts']) ? unserialize($ecommerceFilesData[$ecommerceFilesRow->pid]['WpUploadFilesPosts']) : '';
+			$ecommerceFilesData[$ecommerceFilesRow->pid]['WpUploadFilesPostMeta'] = !empty($ecommerceFilesData[$ecommerceFilesRow->pid]['WpUploadFilesPostMeta']) ? unserialize($ecommerceFilesData[$ecommerceFilesRow->pid]['WpUploadFilesPostMeta']) : '';
+			$ecommerceFilesData[$ecommerceFilesRow->pid]['WpUploadFilesForSale'] = !empty($ecommerceFilesData[$ecommerceFilesRow->pid]['WpUploadFilesForSale']) ? unserialize($ecommerceFilesData[$ecommerceFilesRow->pid]['WpUploadFilesForSale']) : '';
+			$ecommerceFilesData[$ecommerceFilesRow->pid]['WatermarkSettings'] = !empty($ecommerceFilesData[$ecommerceFilesRow->pid]['WatermarkSettings']) ? unserialize($ecommerceFilesData[$ecommerceFilesRow->pid]['WatermarkSettings']) : '';
 			$ecommerceFilesData[$ecommerceFilesRow->pid]['AllUploadsUsedText'] = contest_gal1ery_convert_for_html_output_without_nl2br($ecommerceFilesData[$ecommerceFilesRow->pid]['AllUploadsUsedText']);
 		}
 

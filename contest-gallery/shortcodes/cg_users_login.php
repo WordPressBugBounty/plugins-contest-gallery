@@ -44,7 +44,7 @@ if(!function_exists('contest_gal1ery_users_login')){
         }
        
         ob_start();
-        echo "<pre class='cg_main_pre  cg_10 cg_20'  >";
+        echo "<pre class='cg_main_pre  cg_10 cg_20'  style='overflow:hidden;visibility: hidden;height:230px;'  >";
         include(__DIR__.'/../v10/v10-admin/users/frontend/login/users-login.php');
         echo "</pre>";
         $contest_gal1ery_users_login = ob_get_clean();

@@ -38,13 +38,13 @@ if(!function_exists('cg_ecommerce_get_orders')){
                 if(!empty($_POST['cg_paypal_transaction_id'])){
                     $OpenBracket = '&& (';
                     $CloseBracket = ')';
-                    $PayPalTransactionId = sanitize_text_field($_POST['cg_paypal_transaction_id']);
+                    $PayPalTransactionId = cg1l_sanitize_method($_POST['cg_paypal_transaction_id']);
                     $PayPalTransactionIdWhereQuery = "$tablename_ecommerce_orders.PayPalTransactionId LIKE '%$PayPalTransactionId%'";
                 }
                 if(!empty($_POST['cg_payer_email'])){
                     $OpenBracket = '&& (';
                     $CloseBracket = ')';
-                    $PayerEmail = sanitize_text_field($_POST['cg_payer_email']);
+                    $PayerEmail = cg1l_sanitize_method($_POST['cg_payer_email']);
                     if(!empty($_POST['cg_paypal_transaction_id'])){
                         $PayerEmailWhereQuery .= "OR  ";
                     }
@@ -54,7 +54,7 @@ if(!function_exists('cg_ecommerce_get_orders')){
                     $OpenBracket = '&& (';
                     $CloseBracket = ')';
                     $cg_item_ids_query = '';
-                    $cg_item_ids_exploded = explode(' ',sanitize_text_field($_POST['cg_item_ids']));
+                    $cg_item_ids_exploded = explode(' ',cg1l_sanitize_method($_POST['cg_item_ids']));
                     foreach ($cg_item_ids_exploded as $cg_item_id){
 	                    $cg_item_id = absint($cg_item_id);
                         if(!empty($cg_item_id)){
@@ -73,7 +73,7 @@ if(!function_exists('cg_ecommerce_get_orders')){
 				if(!empty($_POST['cg_order_number'])){
 		            $OpenBracket = '&& (';
 		            $CloseBracket = ')';
-		            $OrderNumber = sanitize_text_field($_POST['cg_order_number']);
+		            $OrderNumber = cg1l_sanitize_method($_POST['cg_order_number']);
 					if(!empty($_POST['cg_paypal_transaction_id']) || !empty($_POST['cg_payer_email']) || !empty($_POST['cg_item_ids'])){
 			            $OrderNumberWhereQuery .= "OR  ";
 		            }
@@ -83,9 +83,9 @@ if(!function_exists('cg_ecommerce_get_orders')){
 		            $OpenBracket = '&& (';
 		            $CloseBracket = ')';
 		            $cg_gallery_ids_query = '';
-		            $cg_gallery_ids_exploded = explode(' ',sanitize_text_field($_POST['cg_gallery_ids']));
+		            $cg_gallery_ids_exploded = explode(' ',cg1l_sanitize_method($_POST['cg_gallery_ids']));
 		            foreach ($cg_gallery_ids_exploded as $cg_gallery_id){
-			            $cg_gallery_id = absint($cg_gallery_id);
+                        $cg_gallery_id = absint($cg_gallery_id);
 			            if(!empty($cg_gallery_id)){
 				            if(!$cg_gallery_ids_query){
 					            $cg_gallery_ids_query .= "$tablename_ecommerce_orders_items.GalleryID = $cg_gallery_id";

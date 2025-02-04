@@ -96,6 +96,24 @@ if(!function_exists('cg_votes_csv_export_all')){
             $multipleRatingQueryString = " OR ($tablename_ip.Rating>=1 && $tablename_ip.Rating<=$AllowRatingMax)";
         }
 
+        // Old QUERY WITH WpUpload = 0 check!!! Only important for simple contact form entries without file
+        /*$votingData = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT
+                 $wpUsers.user_login, $wpUsers.user_email,  
+                 $wpPosts.post_title, $wpPosts.guid, 
+                $tablename.id as pid, $tablename.WpUpload, 
+                $tablename_ip.id as ipId, $tablename_ip.pid, $tablename_ip.Tstamp, $tablename_ip.VoteDate, $tablename_ip.IP, $tablename_ip.Rating, $tablename_ip.RatingS, $tablename_ip.WpUserId, $tablename_ip.OptionSet, $tablename_ip.CookieId, $tablename_ip.Category, $tablename_ip.CategoriesOn 
+                FROM $tablename, $tablename_ip, $wpPosts, $wpUsers WHERE 
+				(($tablename_ip.GalleryID = %d AND $tablename_ip.pid = $tablename.id AND $tablename.WpUpload = $wpPosts.ID AND ($tablename_ip.RatingS = 1$multipleRatingQueryString)) OR 
+				($tablename_ip.GalleryID = %d AND $tablename_ip.pid = $tablename.id AND $tablename.WpUpload = $wpPosts.ID AND $tablename.WpUserId = $wpUsers.ID AND ($tablename_ip.RatingS = 1$multipleRatingQueryString)) OR 
+				($tablename_ip.GalleryID = %d AND $tablename_ip.pid = $tablename.id AND $tablename.WpUpload = $wpPosts.ID AND $tablename_ip.WpUserId = $wpUsers.ID AND ($tablename_ip.RatingS = 1$multipleRatingQueryString))) 
+				OR
+				(($tablename_ip.GalleryID = %d AND $tablename_ip.pid = $tablename.id AND $tablename.WpUpload = 0 AND ($tablename_ip.RatingS = 1$multipleRatingQueryString)) OR 
+				($tablename_ip.GalleryID = %d AND $tablename_ip.pid = $tablename.id AND $tablename.WpUpload = 0 AND $tablename.WpUserId = $wpUsers.ID AND ($tablename_ip.RatingS = 1$multipleRatingQueryString)) OR 
+				($tablename_ip.GalleryID = %d AND $tablename_ip.pid = $tablename.id AND $tablename.WpUpload = 0 AND $tablename_ip.WpUserId = $wpUsers.ID AND ($tablename_ip.RatingS = 1$multipleRatingQueryString)))  
+				GROUP BY $tablename_ip.id 
+				ORDER BY $tablename_ip.id DESC
+                 ",[$GalleryID,$GalleryID,$GalleryID,$GalleryID,$GalleryID,$GalleryID]));*/
+
         // always admin user_email and admin user_login as result in this query, this why $wpUsersDataArray will be created and used
         $votingData = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT 
                  $wpUsers.user_login, $wpUsers.user_email,  
@@ -106,10 +124,6 @@ if(!function_exists('cg_votes_csv_export_all')){
 				(($tablename_ip.GalleryID = %d AND $tablename_ip.pid = $tablename.id AND $tablename.WpUpload = $wpPosts.ID AND ($tablename_ip.RatingS = 1$multipleRatingQueryString)) OR 
 				($tablename_ip.GalleryID = %d AND $tablename_ip.pid = $tablename.id AND $tablename.WpUpload = $wpPosts.ID AND $tablename.WpUserId = $wpUsers.ID AND ($tablename_ip.RatingS = 1$multipleRatingQueryString)) OR 
 				($tablename_ip.GalleryID = %d AND $tablename_ip.pid = $tablename.id AND $tablename.WpUpload = $wpPosts.ID AND $tablename_ip.WpUserId = $wpUsers.ID AND ($tablename_ip.RatingS = 1$multipleRatingQueryString))) 
-				OR 
-				(($tablename_ip.GalleryID = %d AND $tablename_ip.pid = $tablename.id AND $tablename.WpUpload = 0 AND ($tablename_ip.RatingS = 1$multipleRatingQueryString)) OR 
-				($tablename_ip.GalleryID = %d AND $tablename_ip.pid = $tablename.id AND $tablename.WpUpload = 0 AND $tablename.WpUserId = $wpUsers.ID AND ($tablename_ip.RatingS = 1$multipleRatingQueryString)) OR 
-				($tablename_ip.GalleryID = %d AND $tablename_ip.pid = $tablename.id AND $tablename.WpUpload = 0 AND $tablename_ip.WpUserId = $wpUsers.ID AND ($tablename_ip.RatingS = 1$multipleRatingQueryString)))  
 				GROUP BY $tablename_ip.id 
 				ORDER BY $tablename_ip.id DESC
                  ",[$GalleryID,$GalleryID,$GalleryID,$GalleryID,$GalleryID,$GalleryID]));

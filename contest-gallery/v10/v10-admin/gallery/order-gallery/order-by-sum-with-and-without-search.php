@@ -1,8 +1,6 @@
 <?php
 
 
-
-
 $sumCountRaddManipTotalSum = ',';
 $sumCountRaddManipTotalCount = '';
 $CountRtotalSumCalculated = '';
@@ -77,9 +75,9 @@ $sumCountR = "SUM(";
 
 for($iR=1;$iR<=$AllowRating-10;$iR++){
     if($iR==1){
-        $sumCountR .= "CASE WHEN $tablenameIP.pid > 0 AND $tablenameIP.Rating = '$iR' AND $tablename.id = $tablenameIP.pid THEN $iR ELSE 0 END";
+        $sumCountR .= "CASE WHEN $tablenameIP.Rating = '$iR' AND $tablename.id = $tablenameIP.pid THEN $iR ELSE 0 END";
     }else{
-        $sumCountR .= " + CASE WHEN $tablenameIP.pid > 0 AND $tablenameIP.Rating = '$iR' AND $tablename.id = $tablenameIP.pid THEN $iR ELSE 0 END";
+        $sumCountR .= " + CASE WHEN $tablenameIP.Rating = '$iR' AND $tablename.id = $tablenameIP.pid THEN $iR ELSE 0 END";
     }
 }
 
@@ -87,9 +85,9 @@ $sumCountR .= ") AS CountRtotalSum$sumCountRaddManipTotalSum SUM(";
 
 for($iR=1;$iR<=$AllowRating-10;$iR++){
     if($iR==1){
-        $sumCountR .= "CASE WHEN $tablenameIP.pid > 0 AND $tablenameIP.Rating = '$iR' AND $tablename.id = $tablenameIP.pid THEN 1 ELSE 0 END";
+        $sumCountR .= "CASE WHEN $tablenameIP.Rating = '$iR' AND $tablename.id = $tablenameIP.pid THEN 1 ELSE 0 END";
     }else{
-        $sumCountR .= " + CASE WHEN $tablenameIP.pid > 0 AND $tablenameIP.Rating = '$iR' AND $tablename.id = $tablenameIP.pid THEN 1 ELSE 0 END";
+        $sumCountR .= " + CASE WHEN $tablenameIP.Rating = '$iR' AND $tablename.id = $tablenameIP.pid THEN 1 ELSE 0 END";
     }
 }
 
@@ -360,7 +358,7 @@ if($search===''){
         $GalleryID,$GalleryID,$GalleryID,'%'.$search.'%','%'.$search.'%','%'.$search.'%','%'.$search.'%',
     ]));
 
-    // var_dump("");
+	// var_dump("");
 
     //  }
     /*var_dump('test');
