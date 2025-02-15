@@ -156,6 +156,7 @@ HEREDOC;
         $IsUpload = false;
         if($SaleType=='shipping'){ $IsShipping = true;  }
         if($SaleType=='download'){ $IsDownload = true;  }
+        if($SaleType=='service'){ $IsService = true;  }
         if($SaleType=='upload'){ $IsUpload = true;  }
 
 		$UploadGallery  = 0;

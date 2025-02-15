@@ -2489,8 +2489,6 @@ $(document).on('click','#RatingVisibleForGalleryEcommerceOption',function (e) {
             $(this).addClass('cg_active');
     });
 
-
-    // sort gallery files
     $(document).on('click', '.cg_test_ecom_keys', function (e) {
 
         e.preventDefault();
@@ -2520,6 +2518,49 @@ $(document).on('click','#RatingVisibleForGalleryEcommerceOption',function (e) {
             debugger
         });
 
+    });
+
+    $(document).on('click', '.cg_test_stripe_keys', function (e) {
+
+        e.preventDefault();
+
+        var isTest = '0';
+        if($(this).hasClass('cg_test_env')){
+            isTest = '1';
+            var cg_client = $('#StripeSandboxClientId').val();
+            var cg_secret = $('#StripeSandboxSecret').val();
+        }else{
+            var cg_client = $('#StripeLiveClientId').val();
+            var cg_secret = $('#StripeLiveSecret').val();
+        }
+        cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Request to Stripe API running',undefined,undefined,undefined,true);
+
+        $.ajax({
+            url: 'admin-ajax.php',
+            method: 'get',
+            data: 'cg_test_env='+isTest+'&action=post_cg_test_stripe_keys&cg_client='+cg_client+'&cg_secret='+cg_secret,
+        }).done(function (response) {
+
+            if(response.indexOf('###cgkeytrue###')>-1){
+                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Keys are correct and will work<br>Don\'t forget to "Save options"');
+            }else{
+                var message = response.split('cgmessage')[1];
+                message = message.replace("###", '');
+                message = message.replace("###", '');
+                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage(message);
+            }
+        }).fail(function (xhr, status, error) {
+            debugger
+        });
+
+    });
+
+    $(document).on('click', '#PayPalApiActiveOption', function (e) {
+        cgJsClassAdmin.options.functions.checkPayPalApiFields($,$(this).find('#PayPalApiActive'));
+    });
+
+    $(document).on('click', '#StripeApiActiveOption', function (e) {
+        cgJsClassAdmin.options.functions.checkStripeApiFields($,$(this).find('#StripeApiActive'));
     });
 
 });

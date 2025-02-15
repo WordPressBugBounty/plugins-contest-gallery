@@ -20,6 +20,8 @@ if(!function_exists('cg_get_24_version_values')){
 			'PicsPerSite' => 20,
 			'ShowGalleryNameAsTitle' => 1,
 			'GalleriesPageRedirectURL' => '',
+			'GalleriesPagesNoIndex' => 0,
+			'GalleriesPagesNoFollow' => 0,
 			'BorderRadius' => 1,
 			'FeControlsStyle' => 'white'
 		];

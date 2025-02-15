@@ -1,10 +1,10 @@
 === Photos, Files, YouTube, Twitter, Instagram, TikTok, Ecommerce Contest Gallery – Upload, Vote, Sell via PayPal, Social Share Buttons ===
 Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
-Tags: photo contest, competition, upload, voting, youtube
+Tags: photo contest, competition, contest, voting, youtube
 Requires at least: 5.6
-Stable tag: 25.1.3
-Tested up to: 6.7.1
+Stable tag: 26.0.0
+Tested up to: 6.7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -231,6 +231,13 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V26.0.0 =
+* NEW: Stripe as payment processing added. Use Stripe payment methods in your ecommerce checkout.
+* NEW: Dynamic up to 10 columns appears now in masonry view, instead of maximum only  3. Depends on container width.
+* NEW: Allow search engines like Google to index or follow the /contest-galleries... pages and subpages, options. By default is deactivated.
+* NEW: Allow sort by rating possible if "Show only user votes" or "Hide voting until user vote" is activated, for cg_gallery_no_voting and cg_gallery_winner shortcodes.
+* FIXED: Changing options for "Shortcode interval configuration" stuck if options page not reloaded for a while.
 
 = V25.1.3 =
 * NEW: Improved frontend shortcodes load visually for slower connections.

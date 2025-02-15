@@ -166,6 +166,52 @@ if($galleryDbVersion>=24){
 HEREDOC;
 }
 
+if(!empty($galleriesOptions['u']['GalleriesPagesNoIndex'])){
+	$GalleriesPagesNoIndex = 'checked';
+}else{
+	$GalleriesPagesNoIndex = '';
+}
+//<meta name="robots" content="noindex, nofollow">
+
+echo <<<HEREDOC
+       <div class="cg_view_options_row cg_border_top_none">
+            <div class="cg_view_option cg_view_option_100_percent cg_border_top_none" id="GalleriesPagesNoIndexContainer">
+                <div class="cg_view_option_title">
+                    <p style="margin-right: -30px;">
+                    	Allow search engines like Google to index the /contest-galleries... pages and subpages
+                    	<br><span class="cg_view_option_title_note"><b>NOTE:</b> if unchecked ...meta name="robots" content="noindex"... is set<br><b>NOTE:</b> noindex tells a robot to not index a page, it is used to keep pages out of search results</span>
+                    </p>
+                </div>
+                <div class="cg_view_option_checkbox cg_view_option_checked">
+                    <input type="checkbox" name="cg_galleries[u][GalleriesPagesNoIndex]" id="GalleriesPagesNoIndex" $GalleriesPagesNoIndex>
+                </div>
+            </div>
+    </div>
+HEREDOC;
+
+if(!empty($galleriesOptions['u']['GalleriesPagesNoFollow'])){
+	$GalleriesPagesNoFollow = 'checked';
+}else{
+	$GalleriesPagesNoFollow = '';
+}
+//<meta name="robots" content="noindex, nofollow">
+
+echo <<<HEREDOC
+       <div class="cg_view_options_row cg_border_top_none">
+            <div class="cg_view_option cg_view_option_100_percent cg_border_top_none" id="GalleriesPagesNoIndexContainer">
+                <div class="cg_view_option_title">
+                    <p style="margin-right: -30px;">
+                    	Allow search engines like Google to follow links on the /contest-galleries... pages and subpages
+                    	<br><span class="cg_view_option_title_note"><b>NOTE:</b> if unchecked ...meta name="robots" content="nofollow"... is set<br><b>NOTE:</b> nofollow tells a robot not follow links on a page</span>
+                    </p>
+                </div>
+                <div class="cg_view_option_checkbox cg_view_option_checked">
+                    <input type="checkbox" name="cg_galleries[u][GalleriesPagesNoFollow]" id="GalleriesPagesNoFollow" $GalleriesPagesNoFollow>
+                </div>
+            </div>
+    </div>
+HEREDOC;
+
 
 echo <<<HEREDOC
 <div class="cg_view_options_row">

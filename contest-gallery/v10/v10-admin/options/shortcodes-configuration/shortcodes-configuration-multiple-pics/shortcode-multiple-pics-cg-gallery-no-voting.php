@@ -74,7 +74,7 @@ echo <<<HEREDOC
 
     <div  class='cg_view_option cg_view_option_50_percent cg_border_top_bottom_none AllowSortContainer'>
         <div class='cg_view_option_title'>
-        <p>Allow sort<br/><span class="cg_view_option_title_note">Order by rating is not available if <br>"Show only user votes" or <br>"Hide voting until user vote" is activated</span></p>
+        <p>Allow sort</p>
         </div>
         <div  class='cg_view_option_checkbox'>
                 <input type="checkbox" name="multiple-pics[cg_gallery_no_voting][general][AllowSort]" class="cg_shortcode_checkbox AllowSort" checked="{$jsonOptions["$GalleryID-nv"]["general"]["AllowSort"]}">

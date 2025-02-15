@@ -36,8 +36,9 @@ if(!function_exists('contest_gal1ery_order_summary')){
 		    'cg_set_frontend_cookie_ajax_url' => admin_url( 'admin-ajax.php' )
 	    ));
 
+	    cg_ecommerce_include_javascript_ajax_frontend('cg_v10_js_cg_gallery','post_cg_ecommerce_payment_processing_wordpress_ajax_script_function_name',array('cg_ecommerce_payment_processing_ajax_url' => admin_url( 'admin-ajax.php' )));
 
-        ob_start();
+	    ob_start();
 
 	    $hasUploadSell = false;
 	    $isPayPalResponseError = false;

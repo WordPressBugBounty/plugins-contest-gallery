@@ -1,5 +1,9 @@
 <?php
 
+if(!empty($isReallyGalleryEcommerce)){
+	wp_enqueue_script( 'cg_v10_js_cg_stripe_url', 'https://js.stripe.com/v3/', [], false);
+}
+
 wp_enqueue_script( 'jquery-touch-punch' );
 wp_enqueue_script( 'jquery-ui-slider' );
 wp_enqueue_script( 'jquery-ui-datepicker' );
@@ -11,7 +15,8 @@ wp_enqueue_script( 'jquery-ui-sortable' );
 
     wp_enqueue_script( 'cg_v10_js_cg_gallery', plugins_url( '/v10-js-min/cg_gallery.min.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts());
 
-// Achtung! Nicht von hier verschieben und die Reihenfolge beachten. Wp_enque kommt for wp_localize
+
+	// Achtung! Nicht von hier verschieben und die Reihenfolge beachten. Wp_enque kommt for wp_localize
     wp_localize_script( 'cg_v10_js_cg_gallery', 'post_cg_rate_v10_oneStar_wordpress_ajax_script_function_name', array(
         'cg_rate_v10_oneStar_ajax_url' => admin_url( 'admin-ajax.php' )
     ));
@@ -58,6 +63,10 @@ wp_enqueue_script( 'jquery-ui-sortable' );
         'cg_get_raw_data_from_galleries_ajax_url' => admin_url( 'admin-ajax.php' )
     ));
 
+    wp_localize_script( 'cg_v10_js_cg_gallery', 'post_cg_get_stripe_payment_intent_wordpress_ajax_script_function_name', array(
+        'cg_get_stripe_payment_intent_ajax_url' => admin_url( 'admin-ajax.php' )
+    ));
+
     wp_localize_script( 'cg_v10_js_cg_gallery', 'post_cg_check_if_online_wordpress_ajax_script_function_name', array(
         'cg_check_if_online_ajax_url' => admin_url( 'admin-ajax.php' )
     ));
@@ -73,7 +82,7 @@ if(empty($isFromOrderSummary)){
     $cgPreMinHeight = 650;
     if(!empty($shortcode_name) && $shortcode_name == 'cg_users_contact'){
         $cgPreMinHeight = 250;
-    }
+}
 	echo "<pre class='cg_main_pre  cg_10 cg_20' style='overflow:hidden;visibility: hidden;height:".$cgPreMinHeight."px;' >";
 }
 

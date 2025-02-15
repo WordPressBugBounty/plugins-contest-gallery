@@ -47,7 +47,7 @@ cgJsClassAdmin.mainMenu.functions = {
             var deleteText = ' All uploaded pictures will be irrevocable deleted.';
         }
 
-        if (confirm("Are you sure you want to delete this gallery (id "+del+")?"+deleteText+""+ecomText+"")) {
+        if (confirm("Are you sure you want to delete this gallery (id "+del+")?"+deleteText+""+ecomText+"\r\n(files and images which are in the gallery will be NOT deleted from the media library)")) {
             cgJsClassAdmin.index.functions.cgLoadBackend(jQuery(buttonObject).closest('form'),true);
             return true;
         } else {

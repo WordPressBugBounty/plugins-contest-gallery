@@ -4,7 +4,8 @@ if(!function_exists('contest_gal1ery_frontend_gallery_ecommerce')){
 
     function contest_gal1ery_frontend_gallery_ecommerce($atts){
 
-        // PLUGIN VERSION CHECK HERE
+
+	    // PLUGIN VERSION CHECK HERE
 
         contest_gal1ery_db_check();
 

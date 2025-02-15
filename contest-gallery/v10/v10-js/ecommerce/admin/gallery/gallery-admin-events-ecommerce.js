@@ -269,6 +269,10 @@ jQuery(document).ready(function ($) {
 
     $(document).on('click', '#cgEcommerceShowApiResponseButton', function () {
 
+        if($(this).hasClass('cg_is_stripe')){
+            return;
+        }
+
         cgJsClassAdmin.gallery.functions.showCgBackendBackgroundDrop();
         var $cgEcommerceShowApiResponseContainer = $('#cgEcommerceShowApiResponseContainer');
         $cgEcommerceShowApiResponseContainer.removeClass('cg_hide').find('.cg-lds-dual-ring-gallery-hide').removeClass('cg_hide');

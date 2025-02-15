@@ -151,10 +151,12 @@ $wpNickname = '';
 
 $wpUser = null;
 $WpUserId = '';
+$WpUserEmail = '';
 
 if($is_user_logged_in){
     $WpUserId = get_current_user_id();
     $current_user = wp_get_current_user();
+	$WpUserEmail = $current_user->user_email;
     $wpNickname = get_user_meta( $WpUserId, 'nickname');
     if(is_array($wpNickname)){
         $wpNickname = $wpNickname[0];
@@ -393,6 +395,9 @@ if((!empty($isOnlyGalleryEcommerce) || !empty($isOnlyUploadFormEcommerce) || $ha
 
     unset($ecommerceOptions['PayPalLiveSecret']);
     unset($ecommerceOptions['PayPalSandboxSecret']);
+
+    unset($ecommerceOptions['StripeLiveSecret']);
+    unset($ecommerceOptions['StripeSandboxSecret']);
 
 }
 
@@ -738,8 +743,14 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
 		    // $a1 == previous file
 		    // $a2 == current file
 		    if($AllowRating=='2'){
-			    if ($a1['CountS'] == $a2['CountS']) return $a1;// return previous always, which means higher id
-			    return ($a1['CountS'] > $a2['CountS']) ? $a1 : $a2;
+                if(empty($a1['addCountS'])){
+	                $a1['addCountS'] = 0;
+                }
+                if(empty($a2['addCountS'])){
+	                $a2['addCountS'] = 0;
+                }
+			    if (intval($a1['CountS'])+intval($a1['addCountS']) == intval($a2['CountS'])+intval($a2['addCountS'])) return $a1;// return previous always, which means higher id
+			    return (intval($a1['CountS'])+intval($a1['addCountS']) > intval($a2['CountS'])+intval($a2['addCountS'])) ? $a1 : $a2;
 		    }else if($AllowRating>='12'){
 			    $array = [12,13,14,15,16,17,18,19,20];
 			    $sumA1 = 0;
@@ -750,8 +761,14 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
 						    if(!empty($a1['CountR'.$i])){
 							    $sumA1 += intval($a1['CountR'.$i])*$i;// *$i because count and not sum is saved
 						    }
+						    if(!empty($a1['addCountR'.$i])){
+							    $sumA1 += intval($a1['addCountR'.$i])*$i;// *$i because count and not sum is saved
+						    }
 						    if(!empty($a2['CountR'.$i])){
 							    $sumA2 += intval($a2['CountR'.$i]*$i);//  *$i because count and not sum is saved
+						    }
+						    if(!empty($a2['addCountR'.$i])){
+							    $sumA2 += intval($a2['addCountR'.$i]*$i);//  *$i because count and not sum is saved
 						    }
 					    }
 				    }

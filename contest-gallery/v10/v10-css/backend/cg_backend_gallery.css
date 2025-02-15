@@ -150,6 +150,7 @@
 
 .cg_table_list .wp-list-table .cg_td_button .cg_td_button_text{
     margin-right: 10px;
+    word-break: break-word;
 }
 
 .cg_table_list .wp-list-table .cg_td_button .cg_image_action_span{

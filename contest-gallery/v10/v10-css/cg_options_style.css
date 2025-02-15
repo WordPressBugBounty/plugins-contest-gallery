@@ -4471,6 +4471,10 @@ td input, td input:focus, td input:hover{
 	flex-flow: column !important;
 }
 
+.cg_align_items_baseline {
+	align-items: baseline !important;
+}
+
 .cg_justify_content_center{
 	justify-content: center !important;
 }

@@ -771,6 +771,7 @@ if(!function_exists('cg_get_time_based_on_wp_timezone_conf')){
 		$dt = DateTime::createFromFormat('U', $unixtstmp);// this always creates gmt+0/utc+0
 		$minutes = get_option('gmt_offset')*60;
 		$dt->modify("$minutes minutes");
+
 		return $dt->format($format);
 
 	}

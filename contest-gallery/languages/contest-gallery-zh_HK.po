@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Contest Gallery\n"
-"POT-Creation-Date: 2025-01-23 10:32+0100\n"
-"PO-Revision-Date: 2025-01-23 10:33+0100\n"
+"POT-Creation-Date: 2025-02-14 20:51+0100\n"
+"PO-Revision-Date: 2025-02-14 20:53+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_HK\n"
@@ -162,94 +162,98 @@ msgid "PayPal"
 msgstr "貝寶"
 
 #: check-language-ecommerce.php:116
+msgid "Stripe"
+msgstr "Stripe"
+
+#: check-language-ecommerce.php:118
 msgid "Nr."
 msgstr "編號。"
 
-#: check-language-ecommerce.php:118
+#: check-language-ecommerce.php:120
 msgid "Tax rate"
 msgstr "稅率"
 
-#: check-language-ecommerce.php:120
+#: check-language-ecommerce.php:122
 msgid "VAT Number"
 msgstr "增值稅號"
 
-#: check-language-ecommerce.php:122
+#: check-language-ecommerce.php:124
 msgid "optional"
 msgstr "選修的"
 
-#: check-language-ecommerce.php:124
+#: check-language-ecommerce.php:126
 msgid "Price unit net"
 msgstr "價格單位淨值"
 
-#: check-language-ecommerce.php:126
+#: check-language-ecommerce.php:128
 msgid "Price total net"
 msgstr "總價淨價"
 
-#: check-language-ecommerce.php:128
+#: check-language-ecommerce.php:130
 msgid "Total net"
 msgstr "總淨值"
 
-#: check-language-ecommerce.php:130
+#: check-language-ecommerce.php:132
 msgid "Total gross"
 msgstr "總毛額"
 
-#: check-language-ecommerce.php:132
+#: check-language-ecommerce.php:134
 msgid "Total price"
 msgstr "總價"
 
-#: check-language-ecommerce.php:134
+#: check-language-ecommerce.php:136
 msgid "Added to shopping cart"
 msgstr "已加入購物車"
 
-#: check-language-ecommerce.php:136
+#: check-language-ecommerce.php:138
 msgid "To shopping cart"
 msgstr "到購物車"
 
-#: check-language-ecommerce.php:138
+#: check-language-ecommerce.php:140
 msgid "Title"
 msgstr "標題"
 
-#: check-language-ecommerce.php:140
+#: check-language-ecommerce.php:142
 msgid "Key"
 msgstr "鑰匙"
 
-#: check-language-ecommerce.php:142
+#: check-language-ecommerce.php:144
 msgid "Copy Key"
 msgstr "複製鑰匙"
 
-#: check-language-ecommerce.php:144
+#: check-language-ecommerce.php:146
 msgid "No products selected"
 msgstr "沒有選擇產品"
 
-#: check-language-ecommerce.php:146
+#: check-language-ecommerce.php:148
 msgid "Full order details"
 msgstr "完整訂單詳情"
 
-#: check-language-ecommerce.php:148
+#: check-language-ecommerce.php:150
 msgid "Order number"
 msgstr "訂單編號"
 
-#: check-language-ecommerce.php:150
+#: check-language-ecommerce.php:152
 msgid "Your order was successful. You will be redirected."
 msgstr "您的訂單已成功。您將被重定向。"
 
-#: check-language-ecommerce.php:152
+#: check-language-ecommerce.php:154
 msgid "Order failed. Please contact administrator."
 msgstr "訂單失敗。請聯絡管理員。"
 
-#: check-language-ecommerce.php:154
+#: check-language-ecommerce.php:156
 msgid "Checkout processing impossible. No internet connection."
 msgstr "無法進行結帳處理。沒有網路連線。"
 
-#: check-language-ecommerce.php:156
+#: check-language-ecommerce.php:158
 msgid "Maximum uploads"
 msgstr "最大上傳數量"
 
-#: check-language-ecommerce.php:158
+#: check-language-ecommerce.php:160
 msgid "Uploaded"
 msgstr "已上傳"
 
-#: check-language-ecommerce.php:160
+#: check-language-ecommerce.php:162
 msgid "All uploads used"
 msgstr "所有上傳已使用"
 

@@ -26,12 +26,12 @@ if(!function_exists('cg_increase_number')){
 }
 
 if(!function_exists('cg_get_set_key')){
-	function cg_get_set_key($GalleryID,$realId,$DownloadKeysCsvName='',$ServiceKeysCsvName='',$email='',$captureId='',$tstamp=''){
+	function cg_get_set_key($GalleryID,$realId,$DownloadKeysCsvName='',$ServiceKeysCsvName='',$email='',$captureId='',$tstamp='',$OrderNumber=''){
 		$wp_upload_dir = wp_upload_dir();
 
 		if($DownloadKeysCsvName){
 			$csvPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/ecommerce/real-id-'.$realId.'/download-keys/'.$DownloadKeysCsvName;
-		}if($ServiceKeysCsvName){
+		}else if($ServiceKeysCsvName){
 			$csvPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/ecommerce/real-id-'.$realId.'/service-keys/'.$ServiceKeysCsvName;
 		}
 //var_dump('$csvPath');
@@ -46,16 +46,30 @@ if(!function_exists('cg_get_set_key')){
 			//var_dump($DownloadKeysCsvName);
 			//var_dump($csvPath);
 			$fp = file($csvPath);
-			$linesCount = count($fp);
+			//$linesLength = 100;
+			$linesLength = 0;// 0 is unlimited
 
 			$i = 0;
 
-			while ($line = fgetcsv($handle,$linesCount,';')){
-				//var_dump('$line');
-				//var_dump($line);
+			while ($line = fgetcsv($handle,$linesLength,';')){
 				$newExplode[$i] = [];
 				$newExplode[$i][0] = trim($line[0]);
-				$newExplode[$i][1] = trim($line[1]);
+				if(!empty($line[1])){
+					$newExplode[$i][1] = trim($line[1]);
+				}else{
+					$newExplode[$i][1] = '';
+				}
+				if(!empty($line[2])){
+					$newExplode[$i][2] = trim($line[2]);
+				}else{
+					$newExplode[$i][2] = '';
+				}
+				if(!empty($line[3])){
+					$newExplode[$i][3] = trim($line[3]);
+				}else{
+					$newExplode[$i][3] = '';
+				}
+
 				if(empty($line[1]) && !$isGotNewKey){
 					//var_dump('$line[0]');
 					//var_dump($line[0]);
@@ -72,8 +86,8 @@ if(!function_exists('cg_get_set_key')){
 					if(!empty($email)){
 						$newExplode[$i][2] = trim($email);
 					}
-					if(!empty($captureId)){
-						$newExplode[$i][3] = trim($captureId);
+					if(!empty($OrderNumber)){
+						$newExplode[$i][3] = trim($OrderNumber);
 					}
 				}
 				$i++;

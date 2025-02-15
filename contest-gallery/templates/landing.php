@@ -18,6 +18,9 @@ $permalink = get_permalink($postId);
 $rowObject = null;
 global $cgShortCodeType;
 $shortCodeType = $cgShortCodeType;
+
+$wp_upload_dir = wp_upload_dir();
+
 /*
     $isParentPage = false;
     if(empty($postParent)){
@@ -107,6 +110,18 @@ if(!empty($cgEntryId)){
     }
 }
 
+$galleriesOptions = cg_galleries_options($wp_upload_dir,$shortCodeType,$post->post_mime_type);
+
+$metaRobots = '';
+
+if(!empty($galleriesOptions['GalleriesPagesNoIndex']) && !empty($galleriesOptions['GalleriesPagesNoFollow'])){
+	$metaRobots = '<meta name="robots" content="noindex, nofollow">'."\r\n";
+}else if(!empty($galleriesOptions['GalleriesPagesNoIndex'])){
+	$metaRobots = '<meta name="robots" content="noindex">'."\r\n";
+}else if(!empty($galleriesOptions['GalleriesPagesNoFollow'])){
+	$metaRobots = '<meta name="robots" content="nofollow">'."\r\n";
+}
+
 ?>
 <!doctype html>
 <html <?php language_attributes(); ?>>
@@ -128,9 +143,7 @@ if(!empty($cgEntryId)){
     ?>">
     <?php
 
-    if($shortCodeType == 'cg_gallery_user'){
-        echo '<meta name="robots" content="noindex, nofollow">'."\r\n";
-    }
+        echo $metaRobots;
 
     if(class_exists( 'QM_Plugin' )){
         ?>

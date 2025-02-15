@@ -33,7 +33,10 @@ if(empty($Order)){
 	$OrderNumber = $Order->OrderNumber;
 	$LogForDatabase = unserialize($Order->LogForDatabase);
 	$wp_upload_dir = wp_upload_dir();
+	$hasToBeCompleted = false;
+	$PayPalOrderResponse = [];
 
+	$StripePiId = $Order->StripePiId;
 	$PayPalTransactionId = $Order->PayPalTransactionId;
 	$PayerEmail = $Order->PayerEmail;
 
@@ -44,6 +47,12 @@ if(empty($Order)){
 	$GalleryIDs = [];
 	$uploadedEntries = [];
 	$uploadedEntriesData = [];
+	$status = '';
+
+	$StripePiPaymentMethodConfDetailsId = '';
+    $StripePiPaymentMethodId = '';
+    $StripePiId = '';
+    $StripePiClientSecret = '';
 
 	foreach ($OrderItems as $OrderItem){
 		if(in_array($OrderItem->GalleryID,$GalleryIDs)===false){
@@ -122,61 +131,197 @@ if(empty($Order)){
 
 	if(!empty($LogForDatabase)){
 
-		$ecommerceOptions = json_decode(json_encode($wpdb->get_row( "SELECT * FROM $tablename_ecommerce_options WHERE GeneralID = 1")),true);
-		$currenciesArray = cg_get_ecommerce_currencies_array_formatted_by_short_key();
-		$ecommerceCountries = cg_get_countries();
+		$ecommerce_options = $wpdb->get_row( "SELECT * FROM $tablename_ecommerce_options WHERE GeneralID = 1");
+		$ecommerceOptions = json_decode(json_encode($ecommerce_options),true);
 
-//var_dump('$SaleOrder->IsTest');
-//var_dump($SaleOrder->IsTest);
-//die;
-		if($Order->IsTest){
-			$accessToken = cg_paypal_get_access_token($ecommerceOptions['PayPalSandboxClientId'],$ecommerceOptions['PayPalSandboxSecret'],true);
-		}else{
-			$accessToken = cg_paypal_get_access_token($ecommerceOptions['PayPalLiveClientId'],$ecommerceOptions['PayPalLiveSecret']);
-		}
+		if($Order->PaymentType == 'stripe'){
+			if($Order->IsTest){
+				$secret = $ecommerceOptions['StripeSandboxSecret'];
+			}else{
+				$secret = $ecommerceOptions['StripeLiveSecret'];
+			}
 
-		if($accessToken=='no-internet'){
-			// Access Token could not be created. Wrong client id or wrong secret
-			echo "<div  id='mainCGdivOrderContainer'  class='mainCGdivOrderContainer'>
-<p style='text-align: center;margin:10px;'>No internet connection</p>
-</div>"; return;
-		}else if($accessToken=='error'){
-			//Access Token could not be created. Wrong client id or wrong secret.
-			echo "<div  id='mainCGdivOrderContainer' class='mainCGdivOrderContainer' >
-<p style='text-align: center;margin:10px;'>PayPal client authentication failed</p>
-</div>"; return;
-		}
+			$params = [
+				'expand' => ['latest_charge']//  to check refund
+			];
 
-		$PayPalOrderResponse = cg_get_paypal_order($accessToken,$Order->PayPalTransactionId,$Order->IsTest);
-		if(empty($PayPalOrderResponse['status'])){
-			echo "<div  id='mainCGdivOrderContainer' class='mainCGdivOrderContainer'>
-<p style='text-align: center;margin-bottom: 0;'><b>Error getting PayPal order. Reload this page to try again.</b></p>
+			$ch = curl_init();
+
+			curl_setopt($ch, CURLOPT_URL, 'https://api.stripe.com/v1/payment_intents/'.$Order->StripePiId);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_POST, 1);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
+			curl_setopt($ch, CURLOPT_USERPWD, $secret . ':' . '');
+
+			$headers = array();
+			$headers[] = 'Content-Type: application/x-www-form-urlencoded';
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+			$result = json_decode(curl_exec($ch),true);
+
+			if (curl_errno($ch)) {
+				$Error = 'Error:' . curl_error($ch);
+			}else{
+				if(!empty($result['error']['message'])){
+					$Error = 'Error:' . $result['error']['message'];
+				}
+			}
+
+			if(!empty($Error)){
+				echo "<div  id='mainCGdivOrderContainer'  class='mainCGdivOrderContainer' >
+<p style='text-align: center;margin:10px;'>$Error</p>
+</div>";
+				return;
+			}else{
+				$status = $result['status'];
+
+                if(!empty($result['latest_charge']['amount_refunded']) && $result['latest_charge']['amount_refunded'] == $result['latest_charge']['amount_refunded']){
+	                $status = 'refunded';
+                }else if(!empty($result['latest_charge']['amount_refunded']) && $result['latest_charge']['amount_refunded'] != $result['latest_charge']['amount_refunded']){
+	                $status = 'partially refunded';
+                }
+
+				$explanation = 'Status unknown';
+				// status explanation source // https://docs.stripe.com/payments/paymentintents/lifecycle
+				if($status=='succeeded'){
+					if(!$Order->IsFullPaid && $Order->VersionDb >= 26){
+						$hasToBeCompleted = true;
+					}
+					$explanation = 'the funds for this captured payment were credited to the payee\'s Stripe account';
+				}
+				if($status=='requires_action'){
+					$explanation = 'checkout wasn\'t completed';
+				}
+				if($status=='requires_payment_method'){
+					$explanation = 'payment method failed';
+				}
+				if($status=='processing'){
+					$explanation = 'your order is beeing processed.';
+				}
+				if($status=='canceled'){
+					$explanation = 'your order was canceled';
+				}
+				if($status=='requires_action'){
+					$explanation = 'order required additional action';
+				}
+				if($status=='requires_capture'){
+					$explanation = 'order has to be captured';
+				}
+
+				if($status=='partially refunded'){
+					$explanation = 'an amount less than this captured payment\'s amount was partially refunded or is in the process being refunded to the payer';
+				}
+
+				if($status=='refunded'){
+					$explanation = 'an amount greater than or equal to this captured payment\'s amount was refunded or is in the process being refunded to the payer';
+				}
+
+				if($Order->VersionDb >= 26 && $Order->PaymentStatus != $status){
+					$wpdb->update(
+						"$tablename_ecommerce_orders",
+						array('PaymentStatus' => cg1l_sanitize_method($status)),
+						array('id' => $OrderId),
+						array('%s'),
+						array('%d')
+					);
+				}
+
+				if($status!='succeeded'){
+					echo "<div  id='mainCGdivOrderContainer'  class='mainCGdivOrderContainer'>
+<p style='text-align: center;'><b>Status:</b> $status ($explanation)</p>
 </div>"; return;
-		}
-		$status = $PayPalOrderResponse['status'];
-		$explanation = 'Status unknown';
-		// status explanation source // https://developer.paypal.com/docs/api/payments/v2/
-		if($status=='COMPLETED'){
-			$explanation = 'the funds for this captured payment were credited to the payee\'s PayPal account';
-		}
-		if($status=='DECLINED'){
-			$explanation = 'the funds could not be captured';
-		}
-		if($status=='PARTIALLY_REFUNDED'){
-			$explanation = 'an amount less than this captured payment\'s amount was partially refunded to the payer';
-		}
-		if($status=='PENDING'){
-			$explanation = 'the funds for this captured payment was not yet credited to the payee\'s PayPal account. For more information, see status.details';
-		}
-		if($status=='REFUNDED'){
-			$explanation = 'an amount greater than or equal to this captured payment\'s amount was refunded to the payer';
-		}
-		if($status=='FAILED'){
-			$explanation = 'there was an error while capturing payment';
+				}
+
+			}
+		}else if($Order->PaymentType == 'paypal'){
+
+            if($Order->IsTest){
+                $accessToken = cg_paypal_get_access_token($ecommerceOptions['PayPalSandboxClientId'],$ecommerceOptions['PayPalSandboxSecret'],true);
+            }else{
+                $accessToken = cg_paypal_get_access_token($ecommerceOptions['PayPalLiveClientId'],$ecommerceOptions['PayPalLiveSecret']);
+            }
+
+            if($accessToken=='no-internet'){
+                // Access Token could not be created. Wrong client id or wrong secret
+                echo "<div  id='mainCGdivOrderContainer'  class='mainCGdivOrderContainer'>
+    <p style='text-align: center;margin:10px;'>No internet connection</p>
+    </div>"; return;
+            }else if($accessToken=='error'){
+                //Access Token could not be created. Wrong client id or wrong secret.
+                echo "<div  id='mainCGdivOrderContainer' class='mainCGdivOrderContainer' >
+    <p style='text-align: center;margin:10px;'>PayPal client authentication failed</p>
+    </div>"; return;
+            }
+
+            $PayPalOrderResponse = cg_get_paypal_order($accessToken,$Order->PayPalTransactionId,$Order->IsTest);
+            if(empty($PayPalOrderResponse['status'])){
+                echo "<div  id='mainCGdivOrderContainer' class='mainCGdivOrderContainer'>
+    <p style='text-align: center;margin-bottom: 0;'><b>Error getting PayPal order. Reload this page to try again.</b></p>
+    </div>"; return;
+            }
+            $status = $PayPalOrderResponse['status'];
+            $explanation = 'Status unknown';
+            // status explanation source // https://developer.paypal.com/docs/api/payments/v2/
+            if($status=='COMPLETED'){
+                if(!$Order->IsFullPaid && $Order->VersionDb >= 26){
+                    $hasToBeCompleted = true;
+                }
+                $explanation = 'the funds for this captured payment were credited to the payee\'s PayPal account';
+            }
+            if($status=='DECLINED'){
+                $explanation = 'the funds could not be captured';
+            }
+            if($status=='PARTIALLY_REFUNDED'){
+                $explanation = 'an amount less than this captured payment\'s amount was partially refunded to the payer';
+            }
+            if($status=='PENDING'){
+                $explanation = 'the funds for this captured payment was not yet credited to the payee\'s PayPal account. For more information, see status.details';
+            }
+            if($status=='REFUNDED'){
+                $explanation = 'an amount greater than or equal to this captured payment\'s amount was refunded to the payer';
+            }
+            if($status=='FAILED'){
+                $explanation = 'there was an error while capturing payment';
+            }
+
+			if($Order->VersionDb >= 26 && $Order->PaymentStatus != $status){
+				$wpdb->update(
+					"$tablename_ecommerce_orders",
+					array('PaymentStatus' => cg1l_sanitize_method($status)),
+					array('id' => $OrderId),
+					array('%s'),
+					array('%d')
+				);
+			}
+
+			if($status!='COMPLETED'){
+				$isPayPalResponseError = true;
+				echo "<div  id='mainCGdivOrderContainer'  class='mainCGdivOrderContainer'>
+<p style='text-align: center;'><b>Status:</b> $status ($explanation)</p>
+</div>"; return;
+			}
+
+    }else{
+			echo "<div  id='mainCGdivOrderContainer' class='mainCGdivOrderContainer mainCGdiv'>
+Payment type not set
+</div>"; return;
+    }
+
+		if($hasToBeCompleted){
+	        cg_ecommerce_processing_afterwards($Order,$OrderIdHash,$status,$ecommerce_options);
+	        $LogForDatabase = cg_ecommerce_get_log_modified($LogForDatabase,$OrderId);
+            // order might be modified, by adding invoice
+			$Order = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_orders WHERE id = '$OrderId' LIMIT 1");
 		}
 
 		unset($ecommerceOptions['PayPalLiveSecret']);
 		unset($ecommerceOptions['PayPalSandboxSecret']);
+        unset($ecommerceOptions['StripeLiveSecret']);
+		unset($ecommerceOptions['StripeSandboxSecret']);
+
+		$currenciesArray = cg_get_ecommerce_currencies_array_formatted_by_short_key();
+		$ecommerceCountries = cg_get_countries();
+
 
 		?>
         <script data-cg-processing="true">
@@ -280,14 +425,25 @@ if(empty($Order)){
 	if($Order->IsTest){
 		$environment = ' (test environment)';
 	}
+    $TransactionIdText = "<b>PayPal Transaction ID$environment</b><br>$PayPalTransactionId";
+    $paymentStatusTextAndUrl = "All possible captured payment statuses can be found <a target='_blank' href='https://developer.paypal.com/docs/api/payments/v2/#definition-capture_status'>...developer.paypal.com/docs/api/payments...</a>";
+
+	if($Order->PaymentType == 'stripe'){
+		$paymentStatusTextAndUrl = "All possible payment intents statuses can be found <a target='_blank' href='https://docs.stripe.com/payments/paymentintents/lifecycle'>...docs.stripe.com/payments/paymentintents/lifecycle...</a>";
+		$StripePiId = $Order->StripePiId;
+		$StripePiPaymentMethodId = $Order->StripePiPaymentMethodId;
+		$StripePiPaymentMethodConfDetailsId = $Order->StripePiPaymentMethodConfDetailsId;
+		$StripePiClientSecret = $Order->StripePiClientSecret;
+		$TransactionIdText = "<b>Stripe Payment Intent ID$environment</b><br>$StripePiId";
+	}
 
 
 	echo "<div style='visibility: hidden;' id='mainCGdivOrderContainer' class='mainCGdivOrderContainer' >
 <p style='text-align: center;margin-bottom: 0;'><b>Status:</b> $status ($explanation)<br>
-All possible captured payment status can be found <a target='_blank' href='https://developer.paypal.com/docs/api/payments/v2/#definition-capture_status'>...developer.paypal.com/docs/api/payments...</a> </p>
+$paymentStatusTextAndUrl</p>
 <div style='display:flex; text-align: center; justify-content: space-around;  max-width: 600px;margin: 0 auto;'>
     <div>
-    <p><b>PayPal Transaction ID$environment</b><br>$PayPalTransactionId</p>
+    <p>$TransactionIdText</p>
     </div>
     <div>
     <p ><b>Payer email</b><br>$PayerEmail</p>
@@ -318,6 +474,11 @@ All possible captured payment status can be found <a target='_blank' href='https
         cgJsClass.gallery.vars.ecommerce.EUshortcodes = <?php echo json_encode(cg_get_eu_countries_shortcodes());?>;
         cgJsClass.gallery.vars.ecommerce.isShowSaleOrder = true;
         cgJsClass.gallery.vars.ecommerce.is_admin = <?php echo json_encode(is_admin()); ?>;
+        cgJsClass.gallery.vars.ecommerce.StripePiClientSecret = <?php echo json_encode($StripePiClientSecret);?>;
+        cgJsClass.gallery.vars.ecommerce.StripePiId = <?php echo json_encode($StripePiId);?>;
+        cgJsClass.gallery.vars.ecommerce.StripePiPaymentMethodId = <?php echo json_encode($StripePiPaymentMethodId);?>;
+        cgJsClass.gallery.vars.ecommerce.StripePiPaymentMethodConfDetailsId = <?php echo json_encode($StripePiPaymentMethodConfDetailsId);?>;
+
         cgJsClass.gallery.language.ecommerce.OrderSuccessfulYouWillBeRedirected = <?php echo json_encode($language_OrderSuccessfulYouWillBeRedirected); ?>;
         cgJsClass.gallery.language.ecommerce.OrderFailedContactAdministrator = <?php echo json_encode($language_OrderFailedContactAdministrator); ?>;
 

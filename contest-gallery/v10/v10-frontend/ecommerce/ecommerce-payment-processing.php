@@ -4,7 +4,9 @@
 echo "<pre>";
 print_r($_POST);
 echo "<pre>";
-die;*/
+die;
+*/
+
 
 // because of esc_html and esc_attr json strings has to be converted first here to array
 foreach ($_POST['orderData']['purchase_units'][0]['items'] as $key => $item){
@@ -16,6 +18,7 @@ $_POST = cg1l_sanitize_post($_POST);
 $SENT_POST = $_POST;
 $SENT_POST['ownKeys'] = [];
 
+// returns $SENT_POST as $beforeFilter if function does not exists
 $beforeFilter = apply_filters( 'cg_filter_before_ecommerce_payment_processing', $SENT_POST);
 
 /*
@@ -31,35 +34,11 @@ $tablename_ecommerce_invoice_options = $wpdb->prefix . "contest_gal1ery_ecommerc
 $tablename_ecommerce_orders_items = $wpdb->prefix . "contest_gal1ery_ecommerce_orders_items";
 $tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
 
-$IsFullPaid = false;
-$VersionDb = floatval(cg_get_db_version());
-$VersionScripts = cg_get_version_for_scripts();
-
-$ecommerce_options = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_options WHERE GeneralID = 1");
-$ecommerce_options_array = json_decode(json_encode($ecommerce_options),true);
-
-$IsTest = 0;
-if($_POST['orderData']['isSandbox']=='true'){// has to be checked this way because of mixed sent data (rawdata as string) the true is a string
-	$Environment = 'sandbox';
-	$IsTest = 1;
-}else{
-	$Environment = 'live';
-}
-
-if($IsTest){
-	$accessToken = cg_paypal_get_access_token($ecommerce_options_array['PayPalSandboxClientId'],$ecommerce_options_array['PayPalSandboxSecret'],true);
-}else{
-	$accessToken = cg_paypal_get_access_token($ecommerce_options_array['PayPalLiveClientId'],$ecommerce_options_array['PayPalLiveSecret']);
-}
-
-$PayPalOrderResponse = cg_get_paypal_order($accessToken,$_POST['orderData']['id'],$IsTest);
-$status = $PayPalOrderResponse['status'];
-
-if(!empty($PayPalOrderResponse['status']) && $PayPalOrderResponse['status']=='COMPLETED'){
-	$IsFullPaid = true;
-}
-
 $wp_upload_dir = wp_upload_dir();
+$IsFullPaid = false;
+
+$VersionDb = floatval(cg_get_db_version());
+$VersionForScripts = cg_get_version_for_scripts();
 
 $year = date('Y');
 $month = date('m');
@@ -71,10 +50,139 @@ if(is_user_logged_in()){
 }
 $_POST = $_POST['orderData'];
 
+$IsTest = 0;
+if($_POST['isSandbox']=='true'){// has to be checked this way because of mixed sent data (rawdata as string) the true is a string
+	$Environment = 'sandbox';
+	$IsTest = 1;
+}else{
+	$Environment = 'live';
+}
+
+$Error = '';
+
+$PaymentStatus = '';
+$IsFullPaid = false;
+$StripePiPaymentMethodName = false;
+$StripeEmail = '';
+$StripePiClientSecret = '';
+$StripePiId = '';
+$StripePiPaymentMethodId = '';
+$StripePiPaymentMethodConfDetailsId = '';
+
+$PaymentType = (!empty($_POST['StripePiClientSecret'])) ? 'stripe' : 'paypal';
+
+$ecommerce_options = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_options WHERE GeneralID = 1");
+$ecommerce_options_array = json_decode(json_encode($ecommerce_options),true);
+
+if($PaymentType == 'paypal'){
+	if($IsTest){
+		$accessToken = cg_paypal_get_access_token($ecommerce_options_array['PayPalSandboxClientId'],$ecommerce_options_array['PayPalSandboxSecret'],true);
+	}else{
+		$accessToken = cg_paypal_get_access_token($ecommerce_options_array['PayPalLiveClientId'],$ecommerce_options_array['PayPalLiveSecret']);
+	}
+	$PayPalOrderResponse = cg_get_paypal_order($accessToken,$_POST['id'],$IsTest);
+
+	if(!empty($PayPalOrderResponse['status'])){
+		$PaymentStatus = $PayPalOrderResponse['status'];
+	}
+
+	if(!empty($PayPalOrderResponse['status']) && $PayPalOrderResponse['status']=='COMPLETED'){
+		$IsFullPaid = true;
+	}
+
+}else if($PaymentType == 'stripe'){
+
+	$StripePiClientSecret = (isset($_POST['StripePiClientSecret'])) ? $_POST['StripePiClientSecret'] : '';
+	$StripePiId = (isset($_POST['StripePiId'])) ? $_POST['StripePiId'] : '';
+	$StripeEmail = (isset($_POST['StripeEmail'])) ? $_POST['StripeEmail'] : '';
+	$StripePiPaymentMethodId = '';
+	$StripePiPaymentMethodConfDetailsId = '';
+
+	if($IsTest){
+		$secret = $ecommerce_options->StripeSandboxSecret;
+	}else{
+		$secret = $ecommerce_options->StripeLiveSecret;
+	}
+
+	$ch = curl_init();
+
+	curl_setopt($ch, CURLOPT_URL, 'https://api.stripe.com/v1/payment_intents/'.$StripePiId);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_USERPWD, $secret . ':' . '');
+
+	$headers = array();
+	$headers[] = 'Content-Type: application/x-www-form-urlencoded';
+	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+	$result = json_decode(curl_exec($ch),true);
+	if (curl_errno($ch)) {
+		$Error = 'Error payment_intent check:' . curl_error($ch);
+	}else{
+		if(!empty($result['error']['message'])){
+			$Error = 'Error payment_intent check:' . $result['error']['message'];
+		}else{
+			$StripePiPaymentMethodId = $result['payment_method'];
+			$StripePiPaymentMethodConfDetailsId = $result['payment_method_configuration_details']['id'];
+        }
+
+
+
+	}
+
+	curl_close($ch);
+
+	if(!empty($Error)){
+		?>
+        <script data-cg-processing="true">
+            cgJsClass.gallery.vars.ecommerce.TransactionError = <?php echo json_encode($Error);?>;
+        </script>
+		<?php
+		die;
+	}else{
+		$PaymentStatus = $result['status'];
+		if($PaymentStatus=='succeeded'){
+			$IsFullPaid = true;
+		}
+	}
+
+	$StripeCustomer = cg_stripe_list_customers($StripeEmail,$secret);
+    if(empty($StripeCustomer)){
+        // create customer
+	    $StripeCustomer = cg_stripe_create_customer($StripeEmail,$secret);
+    }else{
+	    // update customers address
+	    $StripeCustomer = cg_stripe_update_customers($StripeEmail,$secret,$StripeCustomer['id']);
+    }
+
+	/*echo "<pre>";
+	print_r($StripeCustomer);
+	echo "</pre>";
+	die;*/
+
+	cg_stripe_attach_customer_to_payment_method($secret,$StripePiPaymentMethodId,$StripeCustomer['id']);
+	$StripePiPaymentMethodName = cg_stripe_update_payment_method($secret,$StripePiPaymentMethodId,$StripeEmail);
+    if(empty($StripePiPaymentMethodName)){// then must have been stripe light error, see cg_stripe_update_payment_method
+	    $StripePiPaymentMethodName = cg_stripe_get_payment_method($secret,$StripePiPaymentMethodId);
+    }
+
+}else{
+	?>
+    <script data-cg-processing="true">
+        cgJsClass.gallery.vars.ecommerce.TransactionError = <?php echo json_encode("Not a PayPal and not a Stripe payment");?>;
+    </script>
+	<?php
+	die;
+}
+
+//$PaymentStatus = 'processing';
+//$IsFullPaid = false;
+
 $selectSQLecommerceOptions = cg_get_ecommerce_options();
 $CreateInvoice = $selectSQLecommerceOptions->CreateInvoice;
 $SendInvoice = $selectSQLecommerceOptions->SendInvoice;
 $PriceDivider = $selectSQLecommerceOptions->PriceDivider;
+$_POST['PriceDivider'] = $PriceDivider;
 $CurrencyPosition = $selectSQLecommerceOptions->CurrencyPosition;
 $TaxPercentage = $selectSQLecommerceOptions->TaxPercentageDefault;
 
@@ -98,28 +206,7 @@ $InvoiceAddressCountryTranslation = (isset($_POST['cgInvoiceAddressCountryTransl
 
 $EcommerceTaxNr = (isset($_POST['cgEcommerceTaxNr'])) ? $_POST['cgEcommerceTaxNr'] : '';
 
-$InvoiceAddressForHtmlOutput = $InvoiceAddressFirstName.' '.$InvoiceAddressLastName;
-$InvoiceAddressForHtmlOutput .= ($InvoiceAddressCompany) ? '<br>'.$InvoiceAddressCompany : '';
-$InvoiceAddressForHtmlOutput .= '<br>'.$InvoiceAddressLine1;
-$InvoiceAddressForHtmlOutput .= ($InvoiceAddressLine2) ? '<br>'.$InvoiceAddressLine2 : '';
-if($InvoiceAddressStateShort){
-	if($InvoiceAddressCountryShort=='US'  || $InvoiceAddressCountryShort=='CA'){
-		$InvoiceAddressForHtmlOutput .= '<br>'.$InvoiceAddressCity.' '.$InvoiceAddressStateShort.' '.$InvoiceAddressPostalCode;
-	}else{
-		$InvoiceAddressForHtmlOutput .= '<br>'.$InvoiceAddressCity.' '.$InvoiceAddressStateTranslation.' '.$InvoiceAddressPostalCode;
-	}
-}else{
-	if(in_array($InvoiceAddressCountryShort,$EUshortcodes)!==false){
-		$InvoiceAddressForHtmlOutput .= '<br>'.$InvoiceAddressPostalCode.' '.$InvoiceAddressCity;
-	}else{
-		$InvoiceAddressForHtmlOutput .= '<br>'.$InvoiceAddressCity.' '.$InvoiceAddressPostalCode;
-	}
-}
-
-$InvoiceAddressForHtmlOutput .= ($InvoiceAddressCountryTranslation) ? '<br>'.$InvoiceAddressCountryTranslation : '';
-if($EcommerceTaxNr){
-	$InvoiceAddressForHtmlOutput .=  '<br>'.$language_VatNumber.': '.$EcommerceTaxNr;
-}
+$InvoiceAddressForHtmlOutput = cg_ecommerce_create_invoice_address_for_html_output($InvoiceAddressFirstName,$InvoiceAddressLastName,$InvoiceAddressCompany,$InvoiceAddressLine1,$InvoiceAddressLine2,$InvoiceAddressStateShort,$InvoiceAddressCountryShort,$InvoiceAddressCity,$InvoiceAddressPostalCode,$InvoiceAddressStateTranslation,$EUshortcodes,$InvoiceAddressCountryTranslation,$EcommerceTaxNr,$language_VatNumber);
 
 $ShippingAddressFirstName = (isset($_POST['cgShippingAddressFirstName'])) ? $_POST['cgShippingAddressFirstName'] : '';
 $ShippingAddressLastName = (isset($_POST['cgShippingAddressLastName'])) ? $_POST['cgShippingAddressLastName'] : '';
@@ -218,22 +305,26 @@ $TaxPercentageDefault = $_POST['TaxPercentageDefault'];
 $TaxPercentageDefaultToShow = number_format(floatval($TaxPercentageDefault),2,$PriceDivider);
 //var_dump('$TaxPercentageDefaultToShow');
 //var_dump($TaxPercentageDefaultToShow);
-$PayerEmail = $_POST['payer']['email_address'];
+if($StripeEmail){
+	$PayerEmail = $StripeEmail;
+}else{
+	$PayerEmail = $_POST['payer']['email_address'];
+}
 
 $WpUserId = 0;
 if (is_user_logged_in()) {
     $WpUserId = get_current_user_id();
 }
 $IP = cg1l_sanitize_method(cg_get_user_ip());
+if(empty($_POST['id'])){// id is PayPalTransactionId
+	$_POST['id'] = '';
+}
 $PayPalTransactionId = $_POST['id'];
-$captureStatus = $_POST['status'];
 $LogFilePath = serialize($_POST);
 $OrderId = 0;
 
-$PaymentType = 'paypal';
 $PaymentOrderType = 'capture';
 
-$captureId = isset($_POST['id']) ? $_POST['id'] : 'no-capture-id' ;
 $captureId = $_POST['id'].time();
 if($Environment=='sandbox'){
     $databaseToSaveLogFilePathPart = '/contest-gallery/ecommerce/test-environment/logs/'.$year.'/'.$month;
@@ -291,8 +382,6 @@ if(true){
 
     //$OrderId = 1;
 
-    $isCaptureIdExists = $wpdb->get_var("SELECT COUNT(*) as NumberOfRows FROM $tablename_ecommerce_orders WHERE PayPalTransactionId = '$captureId' LIMIT 1");
-
 	//var_dump('done');
 
     // to go sure that ecommerce processing is not done twice
@@ -320,9 +409,10 @@ if(true){
                 ( id, GalleryID, PriceTotalNetItems, PriceTotalNetItemsWithShipping,PriceTotalGrossItems, PriceTotalGrossItemsWithShipping, ShippingTotal, 
                  ShippingNet, ShippingGross, ShippingTaxValue,TaxPercentageDefault,
                  CurrencyShort, CurrencyPosition, WpUserId, IP, IsTest, 
-                 PaymentType, PaymentOrderType, PayPalTransactionId,LogFilePath,
+                 StripePiClientSecret, StripePiId, StripePiPaymentMethodId,StripePiPaymentMethodConfDetailsId,StripePiPaymentMethodName,
                  IsFullPaid,VersionDb,VersionScripts,
-                 LogForDatabase,OrderIdHash,Tstamp,
+                 PaymentType, PaymentStatus, PaymentOrderType, PayPalTransactionId,LogFilePath,
+                 LogForDatabase,OrderIdHash,Tstamp, 
                  PayerEmail,TaxNr,
                 InvoiceAddressFirstName,InvoiceAddressLastName,InvoiceAddressCompany,InvoiceAddressLine1,InvoiceAddressLine2,InvoiceAddressCity,InvoiceAddressPostalCode,InvoiceAddressStateShort,InvoiceAddressStateTranslation,InvoiceAddressCountryShort,InvoiceAddressCountryTranslation,
                 ShippingAddressFirstName,ShippingAddressLastName,ShippingAddressCompany,ShippingAddressLine1,ShippingAddressLine2,ShippingAddressCity,ShippingAddressPostalCode,ShippingAddressStateShort,ShippingAddressStateTranslation,ShippingAddressCountryShort,ShippingAddressCountryTranslation,
@@ -331,8 +421,9 @@ if(true){
                 VALUES ( %s,%d,%f,%f,%f,%f,%f,
                         %f,%f,%f,%f,
                         %s,%s,%d,%s,%d,
-                        %s,%s,%s,%s,
+                        %s,%s,%s,%s,%s,
                         %d,%f,%s,
+                        %s,%s,%s,%s,%s,
                         %s,%s,%d,
                         %s,%s,
                         %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,
@@ -343,8 +434,9 @@ if(true){
         '',intval($_POST['usedGid']),$PriceTotalNetItems, $PriceTotalNetItemsWithShipping, $PriceTotalGrossItems, $PriceTotalGrossItemsWithShipping, $ShippingTotal,
 	    $ShippingNet, $ShippingGross, $ShippingTaxValue, $TaxPercentageDefault,
 	    $CurrencyShort,$CurrencyPosition,$WpUserId,$IP, $IsTest,
-        $PaymentType, $PaymentOrderType, $PayPalTransactionId,'WP_UPLOAD_DIR'.$databaseToSaveLogFilePath,
-	    $IsFullPaid,$VersionDb,$VersionScripts,
+	    $StripePiClientSecret, $StripePiId, $StripePiPaymentMethodId,$StripePiPaymentMethodConfDetailsId,$StripePiPaymentMethodName,
+	    $IsFullPaid,$VersionDb,$VersionForScripts,
+        $PaymentType, $PaymentStatus, $PaymentOrderType, $PayPalTransactionId,'WP_UPLOAD_DIR'.$databaseToSaveLogFilePath,
         serialize($LogForDatabase),'',$time,
         $PayerEmail,$EcommerceTaxNr,
 	    $InvoiceAddressFirstName,$InvoiceAddressLastName,$InvoiceAddressCompany,$InvoiceAddressLine1,$InvoiceAddressLine2,$InvoiceAddressCity,$InvoiceAddressPostalCode,$InvoiceAddressStateShort,$InvoiceAddressStateTranslation,$InvoiceAddressCountryShort,$InvoiceAddressCountryTranslation,
@@ -354,11 +446,12 @@ if(true){
 
 	//var_dump('$InvoiceAddressFirstName after insert');
 	//var_dump($InvoiceAddressFirstName);
-
-	 //  $wpdb->show_errors(); //setting the Show or Display errors option to true
-	//	var_dump(3344555);
-	   //var_dump('$wpdb-> ORDER print_error();');
-	// var_dump($wpdb->print_error());
+/*
+	  $wpdb->show_errors(); //setting the Show or Display errors option to true
+		var_dump(3344555);
+	  var_dump('$wpdb-> ORDER print_error();');
+ var_dump($wpdb->print_error());
+*/
 
 	    $OrderId = $wpdb->insert_id;
     $ParentOrder = $OrderId;
@@ -374,283 +467,48 @@ if(true){
         array('%d')
     );
 
+    if($PaymentType=='stripe'){
+	    $_POST['payer']['email_address'] = $StripeEmail;
+    }
+
     $payer_email = $_POST['payer']['email_address'];
 
     //
     //if(true){
 
-        $itemHasTax = false;
-        $itemHasShipping = false;
         $hasDownload = false;
 
 	    $currenciesArray = cg_get_ecommerce_currencies_array_formatted_by_short_key();
 	    $CurrencySymbol = $currenciesArray[$CurrencyShort];
 
-	    $ordersummaryandpage = '<table>';
-	    $ordersummaryandpage .= '<tr><td><b>'.$language_OrderNumber.':</b><br><br></td><td style="padding-left:30px;">'.$OrderIdHash.'<br><br></td></tr>';
+        $processingData = cg_ecommerce_payment_processing_data($LogForDatabase, $OrderIdHash,$PayerEmail,$PayPalTransactionId,$time,$PriceDivider,$PaymentStatus,$ParentOrder, $PriceTotalGrossItemsWithShipping,true,false,0,$IsFullPaid,$OrderIdHash);
 
-        foreach ($_POST['purchase_units'][0]['items'] as $key => $item){
+	    $wpdb->update(
+		    "$tablename_ecommerce_orders",
+		    array('LogForDatabase' => serialize($processingData['LogForDatabase'])),// LogForDatabase was modified and has to be updated after processing
+		    array('id' => $OrderId),
+		    array('%s'),
+		    array('%d')
+	    );
 
-	        //var_dump('$item');
-            /*echo "<pre>";
-                print_r($item);
-            echo "</pre>";*/
-
-	        $IsService = false;
-            $IsShipping = false;
-            $IsAlternativeShipping = false;
-            $IsDownload = false;
-	        $IsUpload = false;
-            $Shipping = 0;
-            $TaxValue = 0;
-            $DownloadKey = '';
-            $ServiceKey = '';
-            $entryId = intval($item['EcommerceEntryID']);
-            $WpUploads = serialize($item['WpUploads']);
-
-	        $WpUploadFilesForSale = $item['RawData']['ecommerceData']['WpUploadFilesForSale'];
-	        //var_dump('MultipleFilesParsed123');
-	        //var_dump('$WpUploadFilesForSale');
-	        //var_dump($WpUploadFilesForSale);
-            if(!empty($WpUploadFilesForSale)){
-	            $WpUploadFilesForSale = serialize($WpUploadFilesForSale);
-            }else{
-	            $WpUploadFilesForSale = '';
-            }
-	        //var_dump('raw data after');
-	        /*echo "<pre>";
-	        print_r($item['RawData']);
-	        echo "</pre>";*/
-
-	        //var_dump('realGid123');
-	        //var_dump($item['RawData']['realGid']);
-
-	        $GalleryID = intval($item['RawData']['realGid']);
-	        $RawData = serialize($item['RawData']);
-
-	        $AlternativeShippingGross = 0;
-	        $AlternativeShippingNet = 0;
-	        $AlternateShippingTaxValue = 0;
-
-            if(!empty($item['IsShipping'])){
-                $IsShipping = true;
-	            $itemHasShipping = true;
-                if(!empty($item['alternative_shipping_amount_value_gross'])){
-                    $IsAlternativeShipping = true;
-	                $AlternativeShippingGross = round(floatval($item['alternative_shipping_amount_value_gross']),2);
-	                $AlternativeShippingNet = round(floatval($item['alternative_shipping_amount_value_net']),2);
-	                //var_dump('$IsAlternativeShipping');
-	                //var_dump($IsAlternativeShipping);
-	                //var_dump($AlternativeShippingGross);
-	                //var_dump($AlternativeShippingNet);
-                    $AlternateShippingTaxValue = $AlternativeShippingGross - $AlternativeShippingNet;
-                }else{
-	                if(!empty($item['IsAlternativeShipping'])){// might be IsAlternativeShipping with alternative_shipping_amount_value_gross 0
-		                $IsAlternativeShipping = true;
-	                }
-                }
-            }else if($item['IsService']){
-	            //var_dump('$IsService123');
-	            //var_dump($IsService);
-	            $IsService = true;
-            }else if($item['IsUpload']){
-	            //var_dump('$IsService123');
-	            //var_dump($IsService);
-	            $IsUpload = true;
-            }else{
-	            $hasDownload = true;
-                $IsDownload = true;
-            }
-
-            if(!empty($item['tax'])){
-                $TaxValue = round(floatval($item['tax']['value']),2);
-            }
-
-	        $TaxPercentage = 0;
-
-	        if(!empty($item['tax_percentage'])){
-                $TaxPercentage = round(floatval($item['tax_percentage']),2);
-            }
-
-            $EcommerceEntryID = $item['EcommerceEntryID'];
-
-            $ecommerceEntryRow = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_entries WHERE id = '$EcommerceEntryID'  ORDER BY id DESC LIMIT 1");
-
-            $DownloadKeysCsvName = $ecommerceEntryRow->DownloadKeysCsvName;
-            $ServiceKeysCsvName = $ecommerceEntryRow->ServiceKeysCsvName;
-            $realId = $ecommerceEntryRow->pid;
-
-            if(!empty($DownloadKeysCsvName) && $IsDownload){
-                $DownloadKey = cg_get_set_key($GalleryID,$realId,$DownloadKeysCsvName,'',$PayerEmail,$captureId,$time);
-            }
-
-            if(!empty($ServiceKeysCsvName) && $IsService){
-                $ServiceKey = cg_get_set_key($GalleryID,$realId,'',$ServiceKeysCsvName,$PayerEmail,$captureId,$time);
-            }
-
-	        $PriceUnitNet = round(floatval($item['unit_amount']['value']),2);
-	        $_POST['purchase_units'][0]['items'][$key]['PriceUnitNet'] = $PriceUnitNet;
-	        $PriceTotalNet = $PriceUnitNet*intval($item['quantity']);
-	        $_POST['purchase_units'][0]['items'][$key]['PriceTotalNet'] = $PriceTotalNet;
-	        $PriceUnitGross = $PriceUnitNet + round(floatval($item['tax']['value']),2);
-	        $PriceTotalGross = $PriceUnitGross * intval($item['quantity']);
-	        $_POST['purchase_units'][0]['items'][$key]['PriceUnitGross'] = $PriceUnitGross;
-	        $_POST['purchase_units'][0]['items'][$key]['PriceTotalGross'] = $PriceTotalGross;
-	        $TaxValueUnit = round(floatval($item['tax']['value']),2);
-	        $_POST['purchase_units'][0]['items'][$key]['TaxValueUnit'] = $TaxValueUnit;
-	        $TaxValueTotal = $TaxValueUnit * intval($item['quantity']);
-	        $_POST['purchase_units'][0]['items'][$key]['TaxValueTotal'] = $TaxValueTotal;
-
-	        $_POST['purchase_units'][0]['items'][$key]['AlternativeShippingGross'] = $AlternativeShippingGross;
-	        $_POST['purchase_units'][0]['items'][$key]['AlternativeShippingNet'] = $AlternativeShippingNet;
-	        $_POST['purchase_units'][0]['items'][$key]['AlternateShippingTaxValue'] = $AlternateShippingTaxValue;
-	        $_POST['purchase_units'][0]['items'][$key]['TaxValue'] = $TaxValue;
-	        $_POST['purchase_units'][0]['items'][$key]['TaxPercentage'] = $TaxPercentage;
-
-	        $_POST['purchase_units'][0]['items'][$key]['TaxPercentageToShow']=cg_ecommerce_price_to_show($currenciesArray,'%','right',$PriceDivider,$TaxPercentage);
-
-	        if($TaxPercentage){
-	            $itemHasTax = true;
-            }
-
-	        //var_dump('$currenciesArray 123');
-	        //var_dump($currenciesArray);
-	        //var_dump('$PriceTotalGross 123');
-	        //var_dump($PriceTotalGross);
-	        //var_dump('$CurrencyShort 123');
-	        //var_dump($CurrencyShort);
-	        //var_dump('$CurrencyPosition 123');
-	        //var_dump($CurrencyPosition);
-	        //var_dump('$PriceDivider 123');
-	        //var_dump($PriceDivider);
-
-	        $PriceTotalGrossToShow = cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$PriceTotalGross);
-
-            if(intval($item['quantity'])>1){
-	            $PriceUnitNetToShow = cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$PriceUnitNet);
-	            $PriceTotalGrossToShow .= ' ('.$item['quantity'] .'*'. $PriceUnitNetToShow .')';
-            }
-
-	        //var_dump('$PriceTotalGrossToShow 123');
-	        //var_dump($PriceTotalGrossToShow);
-
-            $nameForMailToShow = ((strlen($item['name'])>70) ? substr($item['name'],0,70).'...' : $item['name']);
-
-	        $ordersummaryandpage .= '<tr><td><b>'.$nameForMailToShow.':</b> </td><td style="padding-left:30px;">'.$PriceTotalGrossToShow.'</td></tr>';
-            if(!empty($DownloadKey) && $IsDownload && $captureStatus=='COMPLETED' && empty($beforeFilter['ownKeys'][$realId]['DownloadKey'])){
-	            $SENT_POST['ownKeys'][$realId] = $DownloadKey;
-	            $ordersummaryandpage .= '<tr><td><b>'.$nameForMailToShow.' '.$language_Key.':</b> </td><td style="padding-left:30px;">'.$DownloadKey.'</td></tr>';
-            }else if(!empty($ServiceKey) && $IsService && $captureStatus=='COMPLETED' && empty($beforeFilter['ownKeys'][$realId]['ServiceKey'])){
-	            $SENT_POST['ownKeys'][$realId] = $ServiceKey;
-	            $ordersummaryandpage .= '<tr><td><b>'.$nameForMailToShow.' '.$language_Key.':</b> </td><td style="padding-left:30px;">'.$ServiceKey.'</td></tr>';
-            }else if(!empty($beforeFilter['ownKeys'][$realId]['DownloadKey'])){
-	            $DownloadKey = $beforeFilter['ownKeys'][$realId]['DownloadKey'];
-	            $SENT_POST['ownKeys'][$realId] = $DownloadKey;
-	            $ordersummaryandpage .= '<tr><td><b>'.$nameForMailToShow.' '.$language_Key.':</b> </td><td style="padding-left:30px;">'.$DownloadKey.'</td></tr>';
-            }else if(!empty($beforeFilter['ownKeys'][$realId]['ServiceKey'])){
-	            $ServiceKey = $beforeFilter['ownKeys'][$realId]['ServiceKey'];
-	            $SENT_POST['ownKeys'][$realId] = $ServiceKey;
-	            $ordersummaryandpage .= '<tr><td><b>'.$nameForMailToShow .' '.$language_Key.':</b> </td><td style="padding-left:30px;">'.$ServiceKey.'</td></tr>';
-            }
-
-			if(!empty($AlternativeShippingGross)){
-				$AlternativeShippingGrossToShow = cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$AlternativeShippingGross);
-				$ordersummaryandpage .= '<tr><td><b>'.$language_AlternativeShipping.':</b> </td><td style="padding-left:30px;">'.$AlternativeShippingGrossToShow.'</td></tr>';
-			}
-
-	        $ordersummaryandpage .= '<tr><td>&nbsp;</td><td>&nbsp;</td></tr>';
-
-            $SaleTitle = contest_gal1ery_htmlentities_and_preg_replace($item['name']);
-            $SaleDescription = contest_gal1ery_htmlentities_and_preg_replace($item['description']);
-
-	        $wpdb->query( $wpdb->prepare(
-                "
-					INSERT INTO $tablename_ecommerce_orders_items  
-					(
-					 id, pid, GalleryID, ParentOrder,TaxValueUnit,TaxValueTotal,
-					 PriceUnitNet, PriceUnitGross, PriceTotalNet, PriceTotalGross, 
-					 Units, SaleTitle,SaleDescription,IsShipping,IsAlternativeShipping,IsDownload,IsService,IsUpload,
-					 AlternativeShippingGross,AlternativeShippingNet,AlternateShippingTaxValue,
-					 TaxPercentage,
-					 DownloadKey,ServiceKey,WpUploads,RawData,WpUploadFilesForSale)
-					VALUES ( 
-					        %s,%d,%d,%d,%f,%f,
-					        %f,%f,%f,%f,
-					        %d,%s,%s,%d,%d,%d,%d,%d,
-					        %f,%f,%f,
-					        %f,
-					        %s,%s,%s,%s,%s)
-				",
-                '',$realId,$GalleryID,$ParentOrder,$TaxValueUnit,$TaxValueTotal,
-                $PriceUnitNet, $PriceUnitGross, $PriceTotalNet, $PriceTotalGross,
-                intval($item['quantity']),$SaleTitle,$SaleDescription,$IsShipping,$IsAlternativeShipping,$IsDownload,$IsService,$IsUpload,
-                $AlternativeShippingGross,$AlternativeShippingNet,$AlternateShippingTaxValue,
-                $TaxPercentage,
-                $DownloadKey,$ServiceKey,$WpUploads,$RawData,$WpUploadFilesForSale
-            ));
-
-           $wpdb->show_errors(); //setting the Show or Display errors option to true
-
-	        //var_dump('$wpdb->print_error();');
-	        //var_dump($wpdb->print_error());
-
-            $itemId = $wpdb->insert_id;
-
-	        //var_dump('$itemId');
-	        //var_dump($itemId);
-
-	        //var_dump('$IsDownload');
-	        //var_dump($IsDownload);
-
-            // copy sold wp uploads to sold folder so always available
-	        /*
-            if($IsDownload){
-                foreach (unserialize($WpUploads) as $WpUpload){
-	                //var_dump('$WpUpload sold');
-	                //var_dump($WpUpload);
-                    $soldDownloadsFolderWpUpload = $soldDownloadsFolder.'/wp-upload-id-'.$WpUpload;
-	                //var_dump('$soldDownloadsFolderWpUpload');
-	                //var_dump($soldDownloadsFolderWpUpload);
-                    if(!is_dir($soldDownloadsFolderWpUpload)){// then must already exist for wp upload id
-	                    mkdir($soldDownloadsFolderWpUpload,0755,true);
-	                    $ecommerceFileFolder = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/ecommerce/real-id-'.$realId.'/wp-upload-id-'.$WpUpload;
-	                    //var_dump('$ecommerceFileFolder');
-	                    //var_dump($ecommerceFileFolder);
-                        $folderData = scandir($ecommerceFileFolder);
-                        foreach ($folderData as $filename){
-                            if($filename!='.' && $filename!='..'){
-	                            //var_dump('copy');
-                                copy($ecommerceFileFolder.'/'.$filename, $soldDownloadsFolderWpUpload.'/'.$filename);
-                            }
-                        }
-                    }
-                }
-            }*/
-        }
-
-	    if(!empty($ShippingGross) && $itemHasDefaultShipping){
-		    $ShippingGrossToShow = cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$ShippingGross);
-		    $ordersummaryandpage .= '<tr><td><b>'.$language_StandardShippingCosts.':</b> </td><td style="padding-left:30px;">'.$ShippingGrossToShow.'</td></tr>';
-	    }
-
-	    $totalPriceToShow = cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$PriceTotalGrossItemsWithShipping);
-
-	    $ordersummaryandpage .= '<tr><td><br><b>'.$language_TotalGross.':</b></td><td style="padding-left:30px;"><br>'.$totalPriceToShow.'</td></tr>';
-
-	    $ordersummaryandpage .= '</table>';
-
-        if($itemHasTax || ($itemHasShipping && $TaxPercentageDefault)){
-	        $hasTaxToShow = true;
-        }
+	    $hasDownload = $processingData['hasDownload'];
+        $itemHasShipping = $processingData['itemHasShipping'];
+        $ordersummaryandpage = $processingData['ordersummaryandpage'];
 
         $invoiceFilePath = '';
-        $HasInvoice = false;
 	    $cgProVersion = contest_gal1ery_key_check();
 
+        $invoiceData = [
+            'InvoiceNumber' => '',
+            'ecommerceInvoicesFolder' => '',
+            'invoiceFilePath' => ''
+        ];
+
 	    ###PRO###
-	    if($CreateInvoice && $cgProVersion && cg_get_version()=='contest-gallery-pro'){
-		    $HasInvoice = true;
-		    include ('ecommerce-payment-processing-create-invoice.php');
+	    if($CreateInvoice && $cgProVersion && cg_get_version()=='contest-gallery-pro' && $IsFullPaid){
+            $invoiceData = cg_ecommerce_payment_processing_create_invoice($createdOrderId);
+		    // order might be modified, by adding invoice
+		    $Order = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_orders WHERE id = '$OrderId' LIMIT 1");
 	    }
 	    ###PRO-END###
 
@@ -658,79 +516,14 @@ if(true){
 	    //var_dump(        '$OrderId');
 	    //var_dump(        $OrderId);
 
-
 	    $SendOrderConfirmationMail = $ecommerce_options->SendOrderConfirmationMail;
-        $header = $ecommerce_options->OrderConfirmationMailHeader;
-        $reply = $ecommerce_options->OrderConfirmationMailReply;
-        $cc = $ecommerce_options->OrderConfirmationMailCc;
-        $bcc = $ecommerce_options->OrderConfirmationMailBcc;
+
         $CreateInvoice = $ecommerce_options->CreateInvoice;
-        $subject = contest_gal1ery_convert_for_html_output($ecommerce_options->OrderConfirmationMailSubject);
-        $Msg = contest_gal1ery_convert_for_html_output_without_nl2br($ecommerce_options->OrderConfirmationMail);
-        $url = trim(sanitize_text_field($ecommerce_options->OCMailOrderSummaryURL))."?order_id=$OrderId";
 
-        $replacePosUrl = '$order$';
+        // to do here
+        $mailData = cg_ecommerce_prepare_payment_mail($ecommerce_options, $OrderId, $OrderIdHash, $ordersummaryandpage,$hasDownload,$language_FullOrderDetails,$language_Download);
 
-	    $ordersummaryandpage .= '<br><a href="'.$ecommerce_options->ForwardAfterPurchaseUrl.'?cg_order='.$OrderIdHash.'" target="_blank" >'.$language_FullOrderDetails.(($hasDownload) ? ' ('.$language_Download.')' : '').'</a><br>';
-
-        if(stripos($Msg,$replacePosUrl)!==false){
-            $Msg = str_ireplace($replacePosUrl, $ordersummaryandpage, $Msg);
-        }
-
-        $headers = array();
-        $headers[] = "From: $header <". html_entity_decode(strip_tags($reply)) . ">\r\n";
-        $headers[] = "Reply-To: ". strip_tags($reply) . "\r\n";
-
-        if(strpos($cc,';')){
-            $cc = explode(';',$cc);
-            foreach($cc as $ccValue){
-                $ccValue = trim($ccValue);
-                $headers[] = "CC: $ccValue\r\n";
-            }
-        }else{
-            $headers[] = "CC: $cc\r\n";
-        }
-
-        if(strpos($bcc,';')){
-            $bcc = explode(';',$bcc);
-            foreach($bcc as $bccValue){
-                $bccValue = trim($bccValue);
-                $headers[] = "BCC: $bccValue\r\n";
-            }
-        }
-        else{
-            $headers[] = "BCC: $bcc\r\n";
-        }
-
-        $headers[] = "MIME-Version: 1.0\r\n";
-        $headers[] = "Content-Type: text/html; charset=utf-8\r\n";
-
-        global $cgMailAction;
-        global $cgMailGalleryId;
-        global $cgIsGeneral;
-        $cgMailAction = "Order confirmation e-mail";
-        $cgMailGalleryId = 0;
-        $cgIsGeneral = true;
-        add_action( 'wp_mail_failed', 'cg_on_wp_mail_error', 10, 1 );
-
-	    if($CreateInvoice && $SendInvoice && $SendOrderConfirmationMail == 1 && $IsFullPaid){
-            if($InvoiceNumber){
-	            $invoiceFilePathForUser = $ecommerceInvoicesFolder."/invoice-".$InvoiceNumber.'.pdf';
-	            copy($invoiceFilePath, $invoiceFilePathForUser);
-	            $attachments = array($invoiceFilePathForUser);
-            }else{
-	            $attachments = array($invoiceFilePath);
-            }
-		    //var_dump('before wp mail');
-            wp_mail($payer_email, $subject, $Msg, $headers, $attachments);
-		    if($InvoiceNumber){
-                unlink($invoiceFilePathForUser);
-		    }
-        }else{
-		    if($SendOrderConfirmationMail == 1 && $IsFullPaid){
-			    wp_mail($payer_email, $subject, $Msg, $headers);
-		    }
-        }
+        cg_ecommerce_payment_processing_mail($CreateInvoice, $SendInvoice, $SendOrderConfirmationMail, $IsFullPaid,$invoiceData['InvoiceNumber'],$invoiceData['ecommerceInvoicesFolder'],$invoiceData['invoiceFilePath'],$payer_email, $mailData['subject'], $mailData['Msg'], $mailData['headers']);
 
         //$attachments = array(ABSPATH . '/uploads/abc.png');
         //wp_mail($email, 'Testing Attachment' , 'This is subscription','This is for header',$attachments);

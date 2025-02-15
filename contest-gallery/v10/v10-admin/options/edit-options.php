@@ -121,11 +121,17 @@ $commentsNotificationOptions = $wpdb->get_results($wpdb->prepare( "SELECT * FROM
 if(floatval($galleryDbVersion)>=22){
 
     $selectSQLecommerceOptions = cg_get_ecommerce_options();
+	$PayPalApiActive = ($selectSQLecommerceOptions->PayPalApiActive==2) ? '' : 'checked';
     $PayPalDisableFunding = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->PayPalDisableFunding);
     $PayPalSandboxClientId = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->PayPalSandboxClientId);
     $PayPalLiveClientId = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->PayPalLiveClientId);
     $PayPalLiveSecret = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->PayPalLiveSecret);
     $PayPalSandboxSecret = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->PayPalSandboxSecret);
+	$StripeApiActive = ($selectSQLecommerceOptions->StripeApiActive==2) ? '' : 'checked';
+    $StripeSandboxClientId = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->StripeSandboxClientId);
+    $StripeLiveClientId = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->StripeLiveClientId);
+    $StripeLiveSecret = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->StripeLiveSecret);
+    $StripeSandboxSecret = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->StripeSandboxSecret);
     $CurrencyShort = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->CurrencyShort);
     $CurrencyPosition = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->CurrencyPosition);
     $PriceDivider = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->PriceDivider);

@@ -388,7 +388,6 @@ if(!function_exists('post_cg_pro_version_info_recognized')){
 }
 // PRO version info recognized ---- END
 
-// PRO version show paypal checkout
 add_action( 'wp_ajax_nopriv_post_cg_ecommerce_checkout', 'post_cg_ecommerce_checkout' );
 add_action( 'wp_ajax_post_cg_ecommerce_checkout', 'post_cg_ecommerce_checkout' );
 if(!function_exists('post_cg_ecommerce_checkout')){
@@ -409,9 +408,7 @@ if(!function_exists('post_cg_ecommerce_checkout')){
     }
 
 }
-// PRO version show paypal checkout ---- END
 
-// PRO version show paypal checkout
 add_action( 'wp_ajax_nopriv_post_cg_ecommerce_payment_processing', 'post_cg_ecommerce_payment_processing' );
 add_action( 'wp_ajax_post_cg_ecommerce_payment_processing', 'post_cg_ecommerce_payment_processing' );
 if(!function_exists('post_cg_ecommerce_payment_processing')){
@@ -432,32 +429,38 @@ if(!function_exists('post_cg_ecommerce_payment_processing')){
     }
 
 }
-// PRO version show paypal checkout ---- END
 
-// PRO version show paypal checkout
 add_action( 'wp_ajax_nopriv_post_cg_get_raw_data_from_galleries', 'post_cg_get_raw_data_from_galleries' );
 add_action( 'wp_ajax_post_cg_get_raw_data_from_galleries', 'post_cg_get_raw_data_from_galleries' );
 if(!function_exists('post_cg_get_raw_data_from_galleries')){
     function post_cg_get_raw_data_from_galleries() {
-		// internal server error example ... how to produce it
-	    //header('HTTP/1.1 500 LALALALA123');
-		//exit(0);
         global $wpdb;
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
             include (__DIR__.'/../v10/v10-frontend/ecommerce/ecommerce-get-raw-data-from-galleries.php');
             exit();
+        }else {
+            exit();
+        }
+
+    }
 
         }
-        else {
+
+add_action( 'wp_ajax_nopriv_post_cg_get_stripe_payment_intent', 'post_cg_get_stripe_payment_intent' );
+add_action( 'wp_ajax_post_cg_get_stripe_payment_intent', 'post_cg_get_stripe_payment_intent' );
+if(!function_exists('post_cg_get_stripe_payment_intent')){
+    function post_cg_get_stripe_payment_intent() {
+        global $wpdb;
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+            include (__DIR__.'/../v10/v10-frontend/ecommerce/ecommerce-get-stripe-payment-intent.php');
+            exit();
+        }else {
             exit();
         }
 
     }
 
 }
-// PRO version show paypal checkout ---- END
-
-
 
 // PRO get sale id data
 add_action( 'wp_ajax_post_cg_ecommerce_download_keys_file', 'post_cg_ecommerce_download_keys_file' );

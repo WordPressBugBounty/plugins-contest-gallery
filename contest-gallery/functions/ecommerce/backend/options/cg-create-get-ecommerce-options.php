@@ -19,41 +19,53 @@ if(!function_exists('cg_create_ecommerce_options')){
                 "
 					INSERT INTO $tablename_ecommerce_options
 					( id, GeneralID,
+					PayPalApiActive,
 					PayPalSandboxClientId,PayPalSandboxSecret,
-					PayPalLiveClientId,PayPalLiveSecret,Environment,
+					PayPalLiveClientId,PayPalLiveSecret,
+					StripeApiActive,
+					StripeSandboxClientId,StripeSandboxSecret,
+					StripeLiveClientId,StripeLiveSecret,
+					Environment,
 					CurrencyShort,CurrencyPosition,PriceDivider,
 					CreateInvoice,SendInvoice,
 					BorderRadiusOrder,FeControlsStyleOrder,
                     SendOrderConfirmationMail,OrderConfirmationMailHeader,OrderConfirmationMailReply,
                     OrderConfirmationMailSubject,OrderConfirmationMail,
                     AllowedCountries, TaxPercentageDefault, ShippingGross,
-                    RegUserPurchaseOnlyText,
-                    RegUserOrderSummaryOnlyText
+                    RegUserPurchaseOnlyText, RegUserOrderSummaryOnlyText
 					)
 					VALUES (
 					%s,%d,
+					%d,
 					%s,%s,
-					%s,%s,%s,
+					%s,%s,
+					%d,
+					%s,%s,
+					%s,%s,
+			        %s,
 					%s,%s,%s,
 					%d,%d,
 					%d,%s,
 					%d,%s,%s,
 					%s,%s,
 					%s,%d,%d,
-					%s,
-					%s
+					%s,%s
 					)",
                 '',1,
+                2,
                 '','',
-                '','','sandbox',
+                '','',
+                2,
+                '','',
+                '','',
+                'sandbox',
                 'USD','left','.',
                 0,0,
                 1,'white',
                 0,$OrderConfirmationMailHeader,$OrderConfirmationMailReply,
                 $OrderConfirmationMailSubject,$OrderConfirmationMail,
                 $AllowedCountries,15,5,
-                'You have to be registered and logged in to be able to purchase.',
-                'You have to be registered and logged in to see the order summary.'
+                'You have to be registered and logged in to be able to purchase.','You have to be registered and logged in to see the order summary.',
             ) );
         }
 

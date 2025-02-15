@@ -884,6 +884,54 @@ if (!function_exists('post_cg_test_ecom_keys')) {
 }
 // sort files ---- END
 
+// sort files
+add_action('wp_ajax_post_cg_test_stripe_keys', 'post_cg_test_stripe_keys');
+if (!function_exists('post_cg_test_stripe_keys')) {
+    function post_cg_test_stripe_keys()
+    {
+        contest_gal1ery_db_check();
+
+        if (defined('DOING_AJAX') && DOING_AJAX) {
+
+            $user = wp_get_current_user();
+
+            if (
+                is_super_admin($user->ID) ||
+                in_array('administrator', (array)$user->roles) ||
+                in_array('editor', (array)$user->roles) ||
+                in_array('author', (array)$user->roles)
+            ) {
+
+                $cg_client = sanitize_text_field($_GET['cg_client']);
+                $cg_secret = sanitize_text_field($_GET['cg_secret']);
+
+                $tokenError = '';
+
+				if(empty($cg_client) || empty($cg_secret)){// cause without secret an access token will be at least generated, but can not be used for further requests
+					$tokenError='client or secret not provided';
+				}else{
+					$tokenError = cg_test_stripe_keys($cg_client,$cg_secret);
+				}
+
+                if(!empty($tokenError)){
+	                echo '###cgmessage###'.$tokenError.'###cgmessage###';
+                }else{
+	                echo '###cgkeytrue###';
+                }
+
+            } else {
+                echo "<div id='cgSaveCategoriesCouldNotBeChanged'><h2>MISSINGRIGHTS<br>This area can be edited only as administrator, editor or author.</h2></div>";
+                exit();
+            }
+
+            exit();
+        } else {
+            exit();
+        }
+    }
+}
+// sort files ---- END
+
 // save json
 
 add_action('wp_ajax_post_cg_shortcode_interval_conf', 'post_cg_shortcode_interval_conf');

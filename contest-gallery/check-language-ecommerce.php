@@ -113,6 +113,8 @@ __('Paid via');$l_PaidVia = "Paid via";$language_PaidVia = (!empty($translations
 
 __('PayPal');$l_PayPal = "PayPal";$language_PayPal = (!empty($translations[$l_PayPal]) && $is_frontend) ? $translations[$l_PayPal] : ((empty(trim(__($l_PayPal,$domain)))) ? __($l_PayPal,$domainDefault) : __($l_PayPal,$domain)); if(empty($translations[$l_PayPal])){$translations[$l_PayPal]='';}
 
+__('Stripe');$l_Stripe = "Stripe";$language_Stripe = (!empty($translations[$l_Stripe]) && $is_frontend) ? $translations[$l_Stripe] : ((empty(trim(__($l_Stripe,$domain)))) ? __($l_Stripe,$domainDefault) : __($l_Stripe,$domain)); if(empty($translations[$l_Stripe])){$translations[$l_Stripe]='';}
+
 __('Nr.');$l_Nr = "Nr.";$language_Nr = (!empty($translations[$l_Nr]) && $is_frontend) ? $translations[$l_Nr] : ((empty(trim(__($l_Nr,$domain)))) ? __($l_Nr,$domainDefault) : __($l_Nr,$domain)); if(empty($translations[$l_Nr])){$translations[$l_Nr]='';}
 
 __('Tax rate');$l_TaxRate = "Tax rate";$language_TaxRate = (!empty($translations[$l_TaxRate]) && $is_frontend) ? $translations[$l_TaxRate] : ((empty(trim(__($l_TaxRate,$domain)))) ? __($l_TaxRate,$domainDefault) : __($l_TaxRate,$domain)); if(empty($translations[$l_TaxRate])){$translations[$l_TaxRate]='';}

@@ -79,7 +79,7 @@ echo "<input type='hidden' name='cg_step'  value='$step' />";
 
 echo '<input  type="text" placeholder="Order number"  name="cg_order_number" value="'.(isset($_POST['cg_order_number'])  ? $_POST['cg_order_number'] : '').'" />';
 
-echo '<input  type="text" placeholder="PayPal Transaction ID"  name="cg_paypal_transaction_id" value="'.(isset($_POST['cg_paypal_transaction_id'])  ? $_POST['cg_paypal_transaction_id'] : '').'" />';
+echo '<input  type="text" placeholder="PayPal/Stripe ID"  name="cg_paypal_transaction_id" value="'.(isset($_POST['cg_paypal_transaction_id'])  ? $_POST['cg_paypal_transaction_id'] : '').'" />';
 
 echo '<input  type="text" placeholder="Entry IDs - example: 25 26"  name="cg_item_ids" value="'.(isset($_POST['cg_item_ids'])  ? $_POST['cg_item_ids'] : '').'" />';
 
@@ -167,7 +167,7 @@ if(!empty($_GET['cg_show_order']) AND !empty($_GET['cg_order_id'])){
                                     class="manage-column column-username" style="max-width:170px;">Date</th>
                                 <th scope="col" id="cgColumHeaderTotalValue" class="manage-column" style="width:90px;">Total value</th>
                                 <th scope="col" id="cgColumnHeaderTransactionId" class="manage-column">Order number</th>
-                                <th scope="col" id="cgColumnHeaderTransactionId" class="manage-column">PayPal transaction ID</th>
+                                <th scope="col" id="cgColumnHeaderTransactionId" class="manage-column">PayPal Transaction ID/Stripe Payment Intent ID</th>
                                 <th scope="col" id="cgColumHeaderItemIds" class="manage-column">Entry IDs</th>
                                 <th scope="col" id="cgColumHeaderItemIds" class="manage-column">Gallery IDs</th>
                                 <th scope="col" id="cgColumnHeaderPayerEmail" class="manage-column">Payer email</th>
@@ -245,6 +245,7 @@ HEREDOC;
 	        }
 
 	        $purchaseTime = cg_get_time_based_on_wp_timezone_conf($saleOrder->Tstamp,'Y-M-d H:i:s');
+            $StripePiId =  $saleOrder->StripePiId;
             $PayPalTransactionId =  $saleOrder->PayPalTransactionId;
             $PayerEmail =  $saleOrder->PayerEmail;
             $ParentOrder =  $saleOrder->id;
@@ -266,13 +267,18 @@ HEREDOC;
 				$environment = '<br>(test environment)';
 			}
 
+			$TransactionIdText = 'PayPal:<br>'.$PayPalTransactionId;
+			if(!empty($StripePiId)){
+				$TransactionIdText = 'Stripe:<br>'.$StripePiId;
+			}
+
             echo "<tr>";
                 echo "<td style=\"max-width:170px;\">$purchaseTime$environment</td>";
                 echo "<td>$totalValueStringToShow</td>";
                 echo "<td>$OrderNumber</td>";
                 echo "
-                <td class='cg_td_button cg_flex_flow_column'><span class='cg_td_button_text'>$PayPalTransactionId</span>
-                <div style='margin-top: 7px;margin-bottom: 5px;'><a class='cg_image_action_href cg_load_backend_link' href='?page=".cg_get_version()."/index.php&cg_show_order=true&cg_order_id=$ParentOrder&option_id=$GalleryID' style='display: inline-block;margin-bottom:10px;'><span class='cg_image_action_span'>Show order</span></a><br>
+                <td class='cg_td_button cg_flex_flow_column'><span class='cg_td_button_text'>$TransactionIdText</span>
+                <div style='margin-top: 7px;margin-bottom: 5px;'><a class='cg_image_action_href' href='?page=".cg_get_version()."/index.php&cg_show_order=true&cg_order_id=$ParentOrder&option_id=$GalleryID' style='display: inline-block;margin-bottom:10px;' target='_blank'><span class='cg_image_action_span'>Show order</span></a><br>
                 <a class='cg_image_action_href ' href='".get_site_url()."?cg_ecommerce_export_order=true&cg_order_id=$ParentOrder&option_id=$GalleryID' style='margin-top:10px;margin-bottom:10px;'><span class='cg_image_action_span' style='background-color: #f1f1f1;'>Export order</span></a></div>
                 </td>";
                 echo "<td>$itemIds</td>";

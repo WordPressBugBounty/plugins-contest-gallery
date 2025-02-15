@@ -90,7 +90,11 @@ cgJsClassAdmin.options.functions = {
         // bind this event as next before anything else
    //     for (var i = 0; i < classElements.length; i++) {
             $classElements.each(function (){
-                jQuery(this).get(0).addEventListener("click",cgViewOptionCheck);
+                var $element = jQuery(this);
+                if(!$element.data('cg_initiated_event_click')){
+                    jQuery(this).get(0).addEventListener("click",cgViewOptionCheck);
+                    $element.data('cg_initiated_event_click',true);
+                }
             });
 /*            classElements[i].addEventListener("click", function (e){
                 cgJsClassAdmin.options.functions.cgViewOptionCheck(this,e);
@@ -432,6 +436,9 @@ cgJsClassAdmin.options.functions = {
 
         cgJsClassAdmin.options.functions.cg_LostPasswordMailActiveCheck($);
 
+        cgJsClassAdmin.options.functions.checkPayPalApiFields($);
+        cgJsClassAdmin.options.functions.checkStripeApiFields($);
+
         // replace reset votes
 
         var reloadUrl = window.location.href;
@@ -519,6 +526,8 @@ cgJsClassAdmin.options.functions = {
         var $ = jQuery;
 
         var $element = $(element);
+
+        //console.log('option will be checked');
 
         if($(e.target).is('a') && $(e.target).closest('a').length){
             return;
@@ -2212,5 +2221,27 @@ cgJsClassAdmin.options.functions = {
         }
         $Shipping.val(input_val);
         cgJsClassAdmin.gallery.currencyInputFunctions.setCurNew($Shipping,undefined,undefined,undefined);
+    },
+    checkPayPalApiFields: function ($,$PayPalApiActive){
+        if(!$PayPalApiActive){
+            $PayPalApiActive = $('#PayPalApiActive');
+        }
+        var $cg_view  = $PayPalApiActive.closest('.cg_view');
+        if($PayPalApiActive.prop('checked')){
+            $cg_view.find('.cg_paypal_api .cg_view_option').removeClass('cg_disabled');
+        }else{
+            $cg_view.find('.cg_paypal_api .cg_view_option').addClass('cg_disabled');
+        }
+    },
+    checkStripeApiFields: function ($,$StripeApiActive){
+        if(!$StripeApiActive){
+            $StripeApiActive = $('#StripeApiActive');
+        }
+        var $cg_view  = $StripeApiActive.closest('.cg_view');
+        if($StripeApiActive.prop('checked')){
+            $cg_view.find('.cg_stripe_api .cg_view_option').removeClass('cg_disabled');
+        }else{
+            $cg_view.find('.cg_stripe_api .cg_view_option').addClass('cg_disabled');
+        }
     }
 };

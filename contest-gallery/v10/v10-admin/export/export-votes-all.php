@@ -106,7 +106,7 @@ if(!function_exists('cg_votes_csv_export_all')){
 				(($tablename_ip.GalleryID = %d AND $tablename_ip.pid = $tablename.id AND $tablename.WpUpload = $wpPosts.ID AND ($tablename_ip.RatingS = 1$multipleRatingQueryString)) OR 
 				($tablename_ip.GalleryID = %d AND $tablename_ip.pid = $tablename.id AND $tablename.WpUpload = $wpPosts.ID AND $tablename.WpUserId = $wpUsers.ID AND ($tablename_ip.RatingS = 1$multipleRatingQueryString)) OR 
 				($tablename_ip.GalleryID = %d AND $tablename_ip.pid = $tablename.id AND $tablename.WpUpload = $wpPosts.ID AND $tablename_ip.WpUserId = $wpUsers.ID AND ($tablename_ip.RatingS = 1$multipleRatingQueryString))) 
-				OR
+				OR 
 				(($tablename_ip.GalleryID = %d AND $tablename_ip.pid = $tablename.id AND $tablename.WpUpload = 0 AND ($tablename_ip.RatingS = 1$multipleRatingQueryString)) OR 
 				($tablename_ip.GalleryID = %d AND $tablename_ip.pid = $tablename.id AND $tablename.WpUpload = 0 AND $tablename.WpUserId = $wpUsers.ID AND ($tablename_ip.RatingS = 1$multipleRatingQueryString)) OR 
 				($tablename_ip.GalleryID = %d AND $tablename_ip.pid = $tablename.id AND $tablename.WpUpload = 0 AND $tablename_ip.WpUserId = $wpUsers.ID AND ($tablename_ip.RatingS = 1$multipleRatingQueryString)))  

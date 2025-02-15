@@ -105,11 +105,13 @@ jQuery(document).ready(function ($) {
 
         cgJsClassAdmin.options.functions.addCheckedUncheckedClasses(jQuery);
 
-        if(!cgJsClassAdmin.index.vars.isIntervalConfEventsLoaded){
+        //if(!cgJsClassAdmin.index.vars.isIntervalConfEventsLoaded){
             // events should be initiated only one time!!!
-            cgJsClassAdmin.options.functions.initOptionsClickEvents(true);
-            cgJsClassAdmin.index.vars.isIntervalConfEventsLoaded = true;
-        }
+            //cgJsClassAdmin.index.vars.isIntervalConfEventsLoaded = true;
+        //}
+
+        // has to be initiated every time, because might be changed
+        cgJsClassAdmin.options.functions.initOptionsClickEvents(true);
 
         $cgShortcodeIntervalConfigurationForm.addClass('cg_hide');
         $cgShortcodeIntervalConfigurationContainer.removeClass('cg_hide');

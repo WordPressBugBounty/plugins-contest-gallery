@@ -249,18 +249,17 @@ if($isAjaxCall){
         if($order=='rating_desc_average' || $order=='rating_asc_average' || $order=='rating_desc_average_with_manip' || $order=='rating_asc_average_with_manip'){
             $order = 'date_desc';
         }
-
-	    // dann muss es ein ajax call sein!!!
+        // dann muss es ein ajax call sein!!!
         if($search==='' && !($order=='rating_desc_sum' || $order=='rating_asc_sum' || $order=='rating_desc_sum_with_manip' || $order=='rating_asc_sum_with_manip' || $order=='rating_desc_average' || $order=='rating_asc_average' || $order=='rating_desc_average_with_manip' || $order=='rating_asc_average_with_manip') && strpos($order, '_for_id_') === false){
-            include ('order-gallery/order-without-search-and-average.php');
+	        include ('order-gallery/order-without-search-and-average.php');
         }/*else if(($order=='rating_desc_average' || $order=='rating_asc_average' || $order=='rating_desc_average_with_manip' || $order=='rating_asc_average_with_manip') && strpos($order, '_for_id_') === false){
             include ('order-gallery/order-by-average-with-and-without-search.php');// will not be used anymore, just average example
         }*/else if(($order=='rating_desc_sum' || $order=='rating_asc_sum' || $order=='rating_desc_sum_with_manip' || $order=='rating_asc_sum_with_manip') && strpos($order, '_for_id_') === false){
-            include ('order-gallery/order-by-sum-with-and-without-search.php');
+	        include ('order-gallery/order-by-sum-with-and-without-search.php');
         }else if(strpos($order, '_for_id_') !== false){
-            include ('order-gallery/order-custom-fields-with-and-without-search.php');
+	        include ('order-gallery/order-custom-fields-with-and-without-search.php');
         }else{
-            include ('order-gallery/order-with-search-and-without-average.php');
+	        include ('order-gallery/order-with-search-and-without-average.php');
         }
     }
 

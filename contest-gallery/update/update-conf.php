@@ -331,6 +331,14 @@ return array(
 	    'TextBeforeGoogleSignInButton' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 22.12.2021
 	    'GooglemailConvert' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0)// Update 25.01.2025
     ),
+    $tablename_ecommerce_options => array(
+        'PayPalApiActive' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 1),// Update 18.01.2025 // with 1 and 0 is activated, PayPalApiActive is 1 because it was activated by default before 26.0.0
+        'StripeApiActive' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 2),// Update 18.01.2025 // with 2 is deactivated
+        'StripeLiveClientId' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 18.01.2025
+        'StripeLiveSecret' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 18.01.2025
+        'StripeSandboxClientId' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 18.01.2025
+        'StripeSandboxSecret' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""')// Update 18.01.2025
+    ),
     $tablename_ecommerce_entries => array(
         'MaxUploads' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 03.06.2024
         'AllUploadsUsedText' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 03.06.2024
@@ -338,9 +346,15 @@ return array(
         'UploadGallery' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update 03.06.2024
     ),
     $tablename_ecommerce_orders => array(
-	    'IsFullPaid' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 24.01.2025
-	    'VersionDb' => array('COLUMN_TYPE' => 'DECIMAL(65,2)','DEFAULT' => 0),// Update 24.01.2025
-	    'VersionScripts' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 24.01.2025
+	    'StripePiClientSecret' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 18.01.2025
+	    'StripePiId' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 18.01.2025
+	    'StripePiPaymentMethodId' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 18.01.2025
+	    'StripePiPaymentMethodConfDetailsId' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 18.01.2025
+	    'PaymentStatus' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 18.01.2025
+	    'IsFullPaid' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 18.01.2025
+	    'VersionDb' => array('COLUMN_TYPE' => 'DECIMAL(65,2)','DEFAULT' => 0),// Update 18.01.2025
+	    'VersionScripts' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 18.01.2025
+	    'StripePiPaymentMethodName' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 18.01.2025
     ),
     $tablename_ecommerce_orders_items => array(
         'IsUpload' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 03.06.2024

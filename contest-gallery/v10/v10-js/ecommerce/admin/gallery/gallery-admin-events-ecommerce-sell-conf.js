@@ -447,6 +447,8 @@ jQuery(document).ready(function ($) {
             $cgSellContainer.find('#cgDownloadKeysFileRemovedNote').addClass('cg_hide');
             $cgSellContainer.find('#cgShowDownloadKeysFile,#DownloadKeysUrlName').attr('href',$sortableDiv.find('.cg_download_keys_csv_url').attr('href'));
             $cgSellContainer.find('#cgShowDownloadKeysFile').text($sortableDiv.find('.cg_download_keys_csv_name').val());
+        }else{
+            $cgSellContainer.find('#cgDownloadKeysFileRemoveNote').addClass('cg_hide');
         }
 
         $cgSellContainer.find('#cgServiceKeysFileRemoveWasClicked').val(0);
@@ -456,6 +458,8 @@ jQuery(document).ready(function ($) {
             // <a href="" id="DownloadKeysUrlName"></a> <<< do it this way place it in DownloadKeysUrlContainer
             $cgSellContainer.find('#cgShowServiceKeysFile,#ServiceKeysUrlName').attr('href',$sortableDiv.find('.cg_service_keys_csv_url').attr('href'));
             $cgSellContainer.find('#cgShowServiceKeysFile').text($sortableDiv.find('.cg_service_keys_csv_name').val());
+        }else{
+            $cgSellContainer.find('#cgServiceKeysFileRemoveNote').addClass('cg_hide');
         }
 
         var placeholderValue = 49.99;

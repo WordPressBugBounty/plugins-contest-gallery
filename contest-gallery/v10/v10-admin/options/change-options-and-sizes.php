@@ -2850,7 +2850,7 @@ if (!empty($_POST['changeSize'])) {
 	    // save cg_galleries
         if(!empty($_POST['cg_galleries'])){
 	        $galleryTypes = [ 'g', 'u', 'nv', 'w','ec'];
-	        $namesBool = [ 'BorderRadius','ShowGalleryNameAsTitle', 'PreviewLastAdded', 'PreviewHighestRated', 'PreviewMostCommented'];
+	        $namesBool = [ 'BorderRadius','ShowGalleryNameAsTitle', 'PreviewLastAdded', 'PreviewHighestRated', 'PreviewMostCommented','GalleriesPagesNoIndex','GalleriesPagesNoFollow'];
 	        $namesInt = [ 'WidthThumb', 'HeightThumb', 'DistancePicsV', 'DistancePics', 'PicsPerSite'];
 	        $namesString = [ 'GalleriesPageRedirectURL','FeControlsStyle'];
 

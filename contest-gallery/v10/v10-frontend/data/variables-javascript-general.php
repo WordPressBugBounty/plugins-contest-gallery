@@ -24,6 +24,7 @@
            cgJsClass.gallery.vars.php_post_max_size = <?php echo json_encode(contest_gal1ery_return_mega_byte(ini_get('post_max_size'))); ?>;
            cgJsClass.gallery.vars.adminUrl = <?php echo json_encode( admin_url('admin-ajax.php')); ?>;
            cgJsClass.gallery.vars.wpNickname = <?php echo json_encode($wpNickname); ?>;
+           cgJsClass.gallery.vars.WpUserEmail = <?php echo json_encode($WpUserEmail); ?>;
            cgJsClass.gallery.vars.wpUserId = <?php echo json_encode($WpUserId); ?>;
            cgJsClass.gallery.vars.pluginVersion = <?php echo json_encode(cg_get_version_for_scripts()); ?>;
            cgJsClass.gallery.vars.userIP = <?php echo json_encode($userIP); ?>;

@@ -16,13 +16,52 @@ $GalleryID = 1;
 $galeryIDuserForJs = $GalleryID;
 
 $is_frontend = true;
+$hasToBeCompleted = false;
+
 include(__DIR__ . "/../../../check-language.php");
 include(__DIR__ . "/../../../check-language-general.php");
 include(__DIR__ . "/../../../check-language-ecommerce.php");
 
+if(!empty($_GET['payment_intent'])){
+
+	global $wpdb;
+	$tablename_ecommerce_options = $wpdb->prefix . "contest_gal1ery_ecommerce_options";
+
+	$ecommerce_options = $wpdb->get_row( "SELECT * FROM $tablename_ecommerce_options WHERE GeneralID = 1");
+	$ecommerceOptions = json_decode(json_encode($ecommerce_options),true);
+	unset($ecommerceOptions['PayPalLiveSecret']);
+	unset($ecommerceOptions['PayPalSandboxSecret']);
+	unset($ecommerceOptions['StripeLiveSecret']);
+	unset($ecommerceOptions['StripeSandboxSecret']);
+
+	$FeControlsStyleOrder = ($ecommerceOptions['FeControlsStyleOrder'] == 'white') ? 'cg_fe_controls_style_white' : '';
+	$BorderRadiusOrder = ($ecommerceOptions['BorderRadiusOrder'] == '1') ? 'cg_border_radius_controls_and_containers' : '';
+
+	echo "<div  id='mainCGdivOrderContainer' class='mainCGdivOrderContainer mainCGdiv $FeControlsStyleOrder $BorderRadiusOrder' >
+<p style='font-weight: bold; text-align: center;font-size: 24px;margin: 50px  0;'>$language_OrderSuccessfulYouWillBeRedirected</p>
+</div>";
+	$pi = cg1l_sanitize_method($_GET['payment_intent']);
+	?>
+    <pre>
+        <script>
+                var PiId = <?php echo json_encode($pi); ?>;
+                cgJsClass.gallery.vars.ecommerce.StripePiId = PiId;
+                cgJsClass.gallery.vars.ecommerce.ecommerceOptions = <?php echo json_encode($ecommerceOptions); ?>;
+                jQuery('body').addClass('cg_pointer_events_none');
+                jQuery('body').css('pointer-events','none');
+                setTimeout(function (){
+                    cgJsClass.gallery.ecommerce.functions.stripeIndexDb.init(true,PiId);
+                },1000);
+                var domain = <?php echo json_encode(get_bloginfo('wpurl')); ?>;
+                localStorage.removeItem('cgEcomCustomerProducts_for_'+domain);
+        </script>
+    </pre>
+	<?php
+	return;
+}
 //$_GET['order_id'] = 1;
 if(empty($_GET['cg_order'])){
-	echo "<p style='text-align: center;'><b>No order ID provided</b></p>";
+	echo "<p style='text-align: center;'><b>No order number provided</b></p>";
 	return;
 }
 
@@ -32,30 +71,31 @@ $tablename = $wpdb->prefix . "contest_gal1ery";
 $tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
 $tablename_ecommerce_orders = $wpdb->prefix . "contest_gal1ery_ecommerce_orders";
 $tablename_ecommerce_orders_items = $wpdb->prefix . "contest_gal1ery_ecommerce_orders_items";
-$tablenameEcommerceOptions = $wpdb->prefix . "contest_gal1ery_ecommerce_options";
+$tablename_ecommerce_options = $wpdb->prefix . "contest_gal1ery_ecommerce_options";
 
 // please provide sales id should be visible if not provided
 // ales id sanitize $_GET und dann verarbeiten
 
-$OrderIdHash = sanitize_text_field($_GET['cg_order']);
+$OrderIdHash = cg1l_sanitize_method($_GET['cg_order']);
 //$optionsNormal = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_orders WHERE id='$OrderId'");
-$SaleOrder = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_orders WHERE OrderIdHash = '$OrderIdHash' LIMIT 1");
+$Order = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_orders WHERE OrderIdHash = '$OrderIdHash' LIMIT 1");
 
-if(empty($SaleOrder)){
+if(empty($Order)){
 	echo "<p style='text-align: center;'><b>Order not found</b></p>";
 }else{
 
 	$wp_upload_dir = wp_upload_dir();
 
-	$OrderId = $SaleOrder->id;
-	$OrderNumber = $SaleOrder->OrderNumber;
-	$InvoiceFilePath = $SaleOrder->InvoiceFilePath;
-	$LogForDatabase = unserialize($SaleOrder->LogForDatabase);
-//$RawData = unserialize($SaleOrder->RawData);
+	$OrderId = $Order->id;
+	$OrderNumber = $Order->OrderNumber;
+	$InvoiceFilePath = $Order->InvoiceFilePath;
+	$LogForDatabase = unserialize($Order->LogForDatabase);
+//$RawData = unserialize($Order->RawData);
 
 	$RawData = [];
 	$RawDataWhenBuyed = [];
 	$options = [];
+	$status = '';
 
 	$OrderItems = $wpdb->get_results("SELECT * FROM $tablename_ecommerce_orders_items WHERE ParentOrder = '$OrderId' ");
 
@@ -150,18 +190,21 @@ if(empty($SaleOrder)){
 
 	if(!empty($LogForDatabase)){
 
-		$ecommerceOptions = $wpdb->get_row("SELECT * FROM $tablenameEcommerceOptions WHERE GeneralID = '1'");
-		$ecommerceOptions = json_decode(json_encode($ecommerceOptions),true);
+		$ecommerce_options = $wpdb->get_row( "SELECT * FROM $tablename_ecommerce_options WHERE GeneralID = 1");
+		$ecommerceOptions = json_decode(json_encode($ecommerce_options),true);
 
 		$FeControlsStyleOrder = ($ecommerceOptions['FeControlsStyleOrder'] == 'white') ? 'cg_fe_controls_style_white' : '';
 		$BorderRadiusOrder = ($ecommerceOptions['BorderRadiusOrder'] == '1') ? 'cg_border_radius_controls_and_containers' : '';
 
-		$WpUserIdOrder = $SaleOrder->WpUserId;
+		$WpUserIdOrder = $Order->WpUserId;
 		$WpUserIdLoggedIn = get_current_user_id();
 
 		$user = wp_get_current_user();
 
 		$isAllowedUser = false;
+        $HasInvoice = false;
+
+        $cgProVersion = contest_gal1ery_key_check();
 
 		if (
 			is_super_admin($user->ID) ||
@@ -186,31 +229,193 @@ if(empty($SaleOrder)){
 $RegUserOrderSummaryOnlyText
 </div>"; return;
 		}
-		if($SaleOrder->IsTest){
-		    $accessToken = cg_paypal_get_access_token($ecommerceOptions['PayPalSandboxClientId'],$ecommerceOptions['PayPalSandboxSecret'],true);
-		}else{
-		    $accessToken = cg_paypal_get_access_token($ecommerceOptions['PayPalLiveClientId'],$ecommerceOptions['PayPalLiveSecret']);
-		}
-		if($accessToken=='no-internet'){
-			$isPayPalResponseError = true;// wil be defined in cg_order_summary
-			echo "<div  id='mainCGdivOrderContainer'  class='mainCGdivOrderContainer mainCGdiv $FeControlsStyleOrder $BorderRadiusOrder' >
+
+		if($Order->PaymentType == 'stripe'){
+
+			if($Order->IsTest){
+				$secret = $ecommerceOptions['StripeSandboxSecret'];
+			}else{
+				$secret = $ecommerceOptions['StripeLiveSecret'];
+			}
+
+			$params = [
+				'expand' => ['latest_charge']//  to check refund
+			];
+
+			$ch = curl_init();
+
+			curl_setopt($ch, CURLOPT_URL, 'https://api.stripe.com/v1/payment_intents/'.$Order->StripePiId);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_POST, 1);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
+			curl_setopt($ch, CURLOPT_USERPWD, $secret . ':' . '');
+
+			$headers = array();
+			$headers[] = 'Content-Type: application/x-www-form-urlencoded';
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+			$result = json_decode(curl_exec($ch),true);
+			if (curl_errno($ch)) {
+				$Error = 'Error:' . curl_error($ch);
+			}else{
+				if(!empty($result['error']['message'])){
+					$Error = 'Error:' . $result['error']['message'];
+				}
+			}
+
+			if(!empty($Error)){
+				echo "<div  id='mainCGdivOrderContainer'  class='mainCGdivOrderContainer mainCGdiv $FeControlsStyleOrder $BorderRadiusOrder' >
+<p style='text-align: center;margin:10px;'>$Error</p>
+</div>";
+				return;
+			}else{
+                $status = $result['status'];
+
+				if(!empty($result['latest_charge']['amount_refunded']) && $result['latest_charge']['amount_refunded'] == $result['latest_charge']['amount_refunded']){
+					$status = 'refunded';
+				}else if(!empty($result['latest_charge']['amount_refunded']) && $result['latest_charge']['amount_refunded'] != $result['latest_charge']['amount_refunded']){
+					$status = 'partially refunded';
+				}
+
+				$explanation = 'Status unknown';
+				// status explanation source // https://docs.stripe.com/payments/paymentintents/lifecycle
+				if($status=='succeeded'){
+                    if(!$Order->IsFullPaid && $Order->VersionDb >= 26){
+                        $hasToBeCompleted = true;
+                    }
+					$explanation = 'the funds for this captured payment were credited to the payee\'s Stripe account';
+				}
+				if($status=='requires_action'){
+					$explanation = 'checkout wasn\'t completed';
+				}
+				if($status=='requires_payment_method'){
+					$explanation = 'payment method failed';
+				}
+				if($status=='processing'){
+					$explanation = 'your order is beeing processed.';
+				}
+				if($status=='canceled'){
+					$explanation = 'your order was canceled';
+				}
+				if($status=='requires_action'){
+					$explanation = 'order required additional action';
+				}
+				if($status=='requires_capture'){
+					$explanation = 'order has to be captured';
+				}
+
+				if($status=='partially refunded'){
+					$explanation = 'an amount less than this captured payment\'s amount was partially refunded or is in the process being refunded to the payer';
+				}
+
+				if($status=='refunded'){
+					$explanation = 'an amount greater than or equal to this captured payment\'s amount was refunded or is in the process being refunded to the payer';
+				}
+
+				if($Order->VersionDb >= 26 && $Order->PaymentStatus != $status){
+					$wpdb->update(
+						"$tablename_ecommerce_orders",
+						array('PaymentStatus' => cg1l_sanitize_method($status)),
+						array('id' => $OrderId),
+						array('%s'),
+						array('%d')
+					);
+				}
+
+				if($status!='succeeded'){
+					echo "<div  id='mainCGdivOrderContainer'  class='mainCGdivOrderContainer mainCGdiv $FeControlsStyleOrder $BorderRadiusOrder'>
+<p style='text-align: center;'><b>Status:</b> $status ($explanation)</p>
+</div>"; return;
+				}
+
+            }
+
+		}else if($Order->PaymentType == 'paypal'){
+
+			if($Order->IsTest){
+				$accessToken = cg_paypal_get_access_token($ecommerceOptions['PayPalSandboxClientId'],$ecommerceOptions['PayPalSandboxSecret'],true);
+			}else{
+				$accessToken = cg_paypal_get_access_token($ecommerceOptions['PayPalLiveClientId'],$ecommerceOptions['PayPalLiveSecret']);
+			}
+			if($accessToken=='no-internet'){
+				$isPayPalResponseError = true;// wil be defined in cg_order_summary
+				echo "<div  id='mainCGdivOrderContainer'  class='mainCGdivOrderContainer mainCGdiv $FeControlsStyleOrder $BorderRadiusOrder' >
 <p style='text-align: center;margin:10px;'>No internet connection</p>
 </div>"; return;
-		}else if($accessToken=='error'){
-			$isPayPalResponseError = true;
-			//Access Token could not be created. Wrong client id or wrong secret.
-			echo "<div  id='mainCGdivOrderContainer'  class='mainCGdivOrderContainer mainCGdiv $FeControlsStyleOrder $BorderRadiusOrder'>
+			}else if($accessToken=='error'){
+				$isPayPalResponseError = true;
+				//Access Token could not be created. Wrong client id or wrong secret.
+				echo "<div  id='mainCGdivOrderContainer'  class='mainCGdivOrderContainer mainCGdiv $FeControlsStyleOrder $BorderRadiusOrder'>
 <p style='text-align: center;margin:10px;'>PayPal client authentication failed</p>
+</div>"; return;
+			}
+
+			$PayPalOrderResponse = cg_get_paypal_order($accessToken,$Order->PayPalTransactionId,$Order->IsTest);
+			if(empty($PayPalOrderResponse['status'])){
+				$isPayPalResponseError = true;
+				echo "<div  id='mainCGdivOrderContainer' class='mainCGdivOrderContainer mainCGdiv $FeControlsStyleOrder $BorderRadiusOrder'>
+<p style='text-align: center;margin:10px;'><b>Error getting PayPal order. Reload this page to try again.</b></p>
+</div>"; return;
+			}
+
+			$status = $PayPalOrderResponse['status'];
+			$explanation = 'Status unknown';
+			// status explanation source // https://developer.paypal.com/docs/api/payments/v2/
+			if($status=='COMPLETED'){
+				$explanation = 'the funds for this captured payment were credited to the payee\'s PayPal account';
+                if(!$Order->IsFullPaid && $Order->VersionDb >= 26){
+                    $hasToBeCompleted = true;
+                }
+			}
+			if($status=='DECLINED'){
+				$explanation = 'the funds could not be captured';
+			}
+			if($status=='PARTIALLY_REFUNDED'){
+				$explanation = 'an amount less than this captured payment\'s amount was partially refunded to the payer';
+			}
+			if($status=='PENDING'){
+				$explanation = 'the funds for this captured payment was not yet credited to the payee\'s PayPal account. For more information, see status.details';
+			}
+			if($status=='REFUNDED'){
+				$explanation = 'an amount greater than or equal to this captured payment\'s amount was refunded to the payer';
+			}
+			if($status=='FAILED'){
+				$explanation = 'there was an error while capturing payment';
+			}
+
+			if($Order->VersionDb >= 26 && $Order->PaymentStatus != $status){
+				$wpdb->update(
+					"$tablename_ecommerce_orders",
+					array('PaymentStatus' => cg1l_sanitize_method($status)),
+					array('id' => $OrderId),
+					array('%s'),
+					array('%d')
+				);
+			}
+
+			if($status!='COMPLETED'){
+				echo "<div  id='mainCGdivOrderContainer'  class='mainCGdivOrderContainer mainCGdiv $FeControlsStyleOrder $BorderRadiusOrder'>
+<p style='text-align: center;'><b>Status:</b> $status ($explanation)</p>
+</div>"; return;
+			}
+
+		}else{
+			echo "<div  id='mainCGdivOrderContainer' class='mainCGdivOrderContainer mainCGdiv $FeControlsStyleOrder $BorderRadiusOrder'>
+Payment type not set
 </div>"; return;
 		}
 
-		$PayPalOrderResponse = cg_get_paypal_order($accessToken,$SaleOrder->PayPalTransactionId,$SaleOrder->IsTest);
-		if(empty($PayPalOrderResponse['status'])){
-			$isPayPalResponseError = true;
-			echo "<div  id='mainCGdivOrderContainer' class='mainCGdivOrderContainer mainCGdiv $FeControlsStyleOrder $BorderRadiusOrder'>
-<p style='text-align: center;margin:10px;'><b>Error getting PayPal order. Reload this page to try again.</b></p>
-</div>"; return;
-		}
+		unset($ecommerceOptions['PayPalLiveSecret']);
+		unset($ecommerceOptions['PayPalSandboxSecret']);
+		unset($ecommerceOptions['StripeLiveSecret']);
+		unset($ecommerceOptions['StripeSandboxSecret']);
+
+        if($hasToBeCompleted){
+	        cg_ecommerce_processing_afterwards($Order,$OrderIdHash,$status,$ecommerce_options);
+	        $LogForDatabase = cg_ecommerce_get_log_modified($LogForDatabase,$OrderId);
+	        // order might be modified, by adding invoice
+	        $Order = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_orders WHERE id = '$OrderId' LIMIT 1");
+        }
 
 		if(!empty($_GET['cg_is_after_purchase'])){
 			?>
@@ -223,36 +428,6 @@ $RegUserOrderSummaryOnlyText
 			<?php
 		}
 
-	    $status = $PayPalOrderResponse['status'];
-		$explanation = 'Status unknown';
-		// status explanation source // https://developer.paypal.com/docs/api/payments/v2/
-		if($status=='COMPLETED'){
-			$explanation = 'the funds for this captured payment were credited to the payee\'s PayPal account';
-		}
-		if($status=='DECLINED'){
-			$explanation = 'the funds could not be captured';
-		}
-		if($status=='PARTIALLY_REFUNDED'){
-			$explanation = 'an amount less than this captured payment\'s amount was partially refunded to the payer';
-		}
-		if($status=='PENDING'){
-			$explanation = 'the funds for this captured payment was not yet credited to the payee\'s PayPal account. For more information, see status.details';
-		}
-		if($status=='REFUNDED'){
-			$explanation = 'an amount greater than or equal to this captured payment\'s amount was refunded to the payer';
-		}
-		if($status=='FAILED'){
-			$explanation = 'there was an error while capturing payment';
-		}
-		if($status!='COMPLETED'){
-			$isPayPalResponseError = true;
-			echo "<div  id='mainCGdivOrderContainer'  class='mainCGdivOrderContainer mainCGdiv $FeControlsStyleOrder $BorderRadiusOrder'>
-<p style='text-align: center;'><b>Status:</b> $status ($explanation)</p>
-</div>"; return;
-		}
-
-		unset($ecommerceOptions['PayPalLiveSecret']);
-		unset($ecommerceOptions['PayPalSandboxSecret']);
 		$currenciesArray = cg_get_ecommerce_currencies_array_formatted_by_short_key();
 		$ecommerceCountries = cg_get_countries();
 
@@ -339,7 +514,7 @@ $RegUserOrderSummaryOnlyText
         }
 
         cgJsClass.gallery.vars.ecommerce.isShowSaleOrder = true;
-        cgJsClass.gallery.vars.ecommerce.Order = <?php echo json_encode($SaleOrder); ?>;
+        cgJsClass.gallery.vars.ecommerce.Order = <?php echo json_encode($Order); ?>;
         cgJsClass.gallery.vars.ecommerce.currenciesArray = <?php echo json_encode($currenciesArray); ?>;
         cgJsClass.gallery.vars.localeLang = <?php echo json_encode(get_locale()); ?>;
         cgJsClass.gallery.vars.ecommerce.ecommerceOptions = <?php echo json_encode($ecommerceOptions); ?>;

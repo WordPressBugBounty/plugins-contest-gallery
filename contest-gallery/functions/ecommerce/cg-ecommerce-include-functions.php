@@ -19,6 +19,13 @@
     include(__DIR__.'/../ecommerce/backend/requests/requests-paypal-api/cg-get-paypal-data.php');
     include(__DIR__.'/cg-ecommerce-include-javascript.php');
     include (__DIR__.'/../ecommerce/backend/requests/requests-paypal-api/cg-paypal-get-access-token.php');
+    include (__DIR__.'/../ecommerce/backend/requests/requests-stripe-api/cg-stripe-processing.php');
+    include (__DIR__.'/../ecommerce/backend/requests/requests-stripe-api/cg-stripe-attach-customer-to-payment-method.php');
+    include (__DIR__.'/../ecommerce/backend/requests/requests-stripe-api/cg-stripe-update-payment-method.php');
+    include (__DIR__.'/../ecommerce/backend/requests/requests-stripe-api/cg-stripe-create-customer.php');
+    include (__DIR__.'/../ecommerce/backend/requests/requests-stripe-api/cg-stripe-update-customer.php');
+    include (__DIR__.'/../ecommerce/backend/requests/requests-stripe-api/cg-stripe-list-customers.php');
+    include (__DIR__.'/../ecommerce/backend/requests/requests-stripe-api/cg-test-stripe-keys.php');
     include(__DIR__.'/general/cg-paypal-get-invoice-number-logic-result.php');
     include(__DIR__.'/general/cg-ecommerce-functions.php');
 

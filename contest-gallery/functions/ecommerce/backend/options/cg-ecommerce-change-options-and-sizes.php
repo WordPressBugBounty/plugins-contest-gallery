@@ -12,6 +12,10 @@ if(!function_exists('cg_ecommerce_change_options_and_sizes')){
         $PayPalSandboxSecret = $unsavingValues->PayPalSandboxSecret;
         $PayPalLiveClientId = $unsavingValues->PayPalLiveClientId;
         $PayPalLiveSecret = $unsavingValues->PayPalLiveSecret;
+	    $StripeSandboxClientId = $unsavingValues->StripeSandboxClientId;
+	    $StripeSandboxSecret = $unsavingValues->StripeSandboxSecret;
+	    $StripeLiveClientId = $unsavingValues->StripeLiveClientId;
+	    $StripeLiveSecret = $unsavingValues->StripeLiveSecret;
         $CurrencyShort = $unsavingValues->CurrencyShort;
         $CurrencyPosition = $unsavingValues->CurrencyPosition;
         $PriceDivider = $unsavingValues->PriceDivider;
@@ -58,10 +62,18 @@ if(!function_exists('cg_ecommerce_change_options_and_sizes')){
 	    $InvoiceNumberLogicCustomNumberTest = $unsavingValues->InvoiceNumberLogicCustomNumberTest;
 	    $InvoiceNumberLogicCustomNumberLive = $unsavingValues->InvoiceNumberLogicCustomNumberLive;
 
-        $PayPalSandboxClientId = sanitize_text_field(isset($_POST['PayPalSandboxClientId']) ? $_POST['PayPalSandboxClientId'] : $PayPalSandboxClientId);
+	    $PayPalApiActive = isset($_POST['PayPalApiActive']) ? 1 : 2;
+	    $PayPalSandboxClientId = sanitize_text_field(isset($_POST['PayPalSandboxClientId']) ? $_POST['PayPalSandboxClientId'] : $PayPalSandboxClientId);
         $PayPalSandboxSecret = sanitize_text_field(isset($_POST['PayPalSandboxSecret']) ? $_POST['PayPalSandboxSecret'] : $PayPalSandboxSecret);
         $PayPalLiveClientId = sanitize_text_field(isset($_POST['PayPalLiveClientId']) ? $_POST['PayPalLiveClientId'] : $PayPalLiveClientId);
         $PayPalLiveSecret = sanitize_text_field(isset($_POST['PayPalLiveSecret']) ? $_POST['PayPalLiveSecret'] : $PayPalLiveSecret);
+
+	    $StripeApiActive = isset($_POST['StripeApiActive']) ? 1 : 2;
+	    $StripeSandboxClientId = sanitize_text_field(isset($_POST['StripeSandboxClientId']) ? $_POST['StripeSandboxClientId'] : $StripeSandboxClientId);
+        $StripeSandboxSecret = sanitize_text_field(isset($_POST['StripeSandboxSecret']) ? $_POST['StripeSandboxSecret'] : $StripeSandboxSecret);
+        $StripeLiveClientId = sanitize_text_field(isset($_POST['StripeLiveClientId']) ? $_POST['StripeLiveClientId'] : $StripeLiveClientId);
+        $StripeLiveSecret = sanitize_text_field(isset($_POST['StripeLiveSecret']) ? $_POST['StripeLiveSecret'] : $StripeLiveSecret);
+		
         $CurrencyShort = sanitize_text_field(isset($_POST['CurrencyShort']) ? $_POST['CurrencyShort'] : $CurrencyShort);
         $CurrencyPosition = sanitize_text_field(isset($_POST['CurrencyPosition']) ? $_POST['CurrencyPosition'] : $CurrencyPosition);
         $PriceDivider = sanitize_text_field(isset($_POST['PriceDivider']) ? $_POST['PriceDivider'] : $PriceDivider);
@@ -147,8 +159,12 @@ if(!function_exists('cg_ecommerce_change_options_and_sizes')){
 	    $wpdb->update(
             $tablenameEcommerceOptions,
             array(
+                'PayPalApiActive' => $PayPalApiActive,
                 'PayPalSandboxClientId' => $PayPalSandboxClientId,'PayPalSandboxSecret' => $PayPalSandboxSecret,
                 'PayPalLiveClientId' => $PayPalLiveClientId, 'PayPalLiveSecret' => $PayPalLiveSecret,
+                'StripeApiActive' => $StripeApiActive,
+                'StripeSandboxClientId' => $StripeSandboxClientId,'StripeSandboxSecret' => $StripeSandboxSecret,
+                'StripeLiveClientId' => $StripeLiveClientId, 'StripeLiveSecret' => $StripeLiveSecret,
                 'CurrencyShort' => $CurrencyShort, 'CurrencyPosition' => $CurrencyPosition, 'PriceDivider' => $PriceDivider,
                 'CreateInvoice' => $CreateInvoice, 'SendInvoice' => $SendInvoice,'Environment' => $Environment,
                  'TaxPercentageDefault' => $TaxPercentageDefault,'ShippingGross'=>$ShippingGross,
@@ -162,6 +178,10 @@ if(!function_exists('cg_ecommerce_change_options_and_sizes')){
             ),
             array('GeneralID' => 1),
             array(
+                '%d',
+                '%s','%s',
+                '%s', '%s',
+                '%d',
                 '%s','%s',
                 '%s', '%s',
                 '%s', '%s', '%s',

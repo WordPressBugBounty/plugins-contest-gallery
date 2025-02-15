@@ -4,6 +4,7 @@ $_POST = cg1l_sanitize_post($_POST);
 
 global $wpdb;
 $tablenameEcommerceEntries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
+$tablenameEcommerceOptions = $wpdb->prefix . "contest_gal1ery_ecommerce_options";
 
 $wp_upload_dir = wp_upload_dir();
 
@@ -50,6 +51,8 @@ if(isset($_POST['realGidsAndIdsDeletedOrFromOtherGalleries'])){
 
 		$OptionsDataEachGallery[$GalleryID] = json_decode(file_get_contents($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/'.$GalleryID.'-options.json'),true);
 
+		$OptionsDataEachGallery[$GalleryID] = (!empty($OptionsDataEachGallery[$GalleryID][$GalleryID])) ? $OptionsDataEachGallery[$GalleryID][$GalleryID] : $OptionsDataEachGallery[$GalleryID];
+
 		$ecommerceFilesData = [];
 		$collectedIds = '';
 		foreach ($realIds as $realId){
@@ -76,6 +79,7 @@ if(isset($_POST['realGidsAndIdsDeletedOrFromOtherGalleries'])){
 		}
 
 	}
+
 	?>
     <script data-cg-processing="true">
         cgJsClass.gallery.vars.ecommerce.RawDataEachGallery = <?php echo json_encode($RawDataEachGallery);?>;

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Contest Gallery\n"
-"POT-Creation-Date: 2025-01-23 10:26+0100\n"
-"PO-Revision-Date: 2025-01-23 10:27+0100\n"
+"POT-Creation-Date: 2025-02-14 20:41+0100\n"
+"PO-Revision-Date: 2025-02-14 20:46+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -162,94 +162,98 @@ msgid "PayPal"
 msgstr "PayPal"
 
 #: check-language-ecommerce.php:116
+msgid "Stripe"
+msgstr "Stripe"
+
+#: check-language-ecommerce.php:118
 msgid "Nr."
 msgstr "Nr."
 
-#: check-language-ecommerce.php:118
+#: check-language-ecommerce.php:120
 msgid "Tax rate"
 msgstr "Steuersatz"
 
-#: check-language-ecommerce.php:120
+#: check-language-ecommerce.php:122
 msgid "VAT Number"
 msgstr "Umsatzsteuer-Identifikationsnummer"
 
-#: check-language-ecommerce.php:122
+#: check-language-ecommerce.php:124
 msgid "optional"
 msgstr "optional"
 
-#: check-language-ecommerce.php:124
+#: check-language-ecommerce.php:126
 msgid "Price unit net"
 msgstr "Preiseinheit netto"
 
-#: check-language-ecommerce.php:126
+#: check-language-ecommerce.php:128
 msgid "Price total net"
 msgstr "Preis gesamt netto"
 
-#: check-language-ecommerce.php:128
+#: check-language-ecommerce.php:130
 msgid "Total net"
 msgstr "Gesamt netto"
 
-#: check-language-ecommerce.php:130
+#: check-language-ecommerce.php:132
 msgid "Total gross"
 msgstr "Gesamtbrutto"
 
-#: check-language-ecommerce.php:132
+#: check-language-ecommerce.php:134
 msgid "Total price"
 msgstr "Gesamtpreis"
 
-#: check-language-ecommerce.php:134
+#: check-language-ecommerce.php:136
 msgid "Added to shopping cart"
 msgstr "Zum Warenkorb hinzugefügt"
 
-#: check-language-ecommerce.php:136
+#: check-language-ecommerce.php:138
 msgid "To shopping cart"
 msgstr "Zum Warenkorb"
 
-#: check-language-ecommerce.php:138
+#: check-language-ecommerce.php:140
 msgid "Title"
 msgstr "Titel"
 
-#: check-language-ecommerce.php:140
+#: check-language-ecommerce.php:142
 msgid "Key"
 msgstr "Schlüssel"
 
-#: check-language-ecommerce.php:142
+#: check-language-ecommerce.php:144
 msgid "Copy Key"
 msgstr "Schlüssel kopieren"
 
-#: check-language-ecommerce.php:144
+#: check-language-ecommerce.php:146
 msgid "No products selected"
 msgstr "Keine Produkte ausgewählt"
 
-#: check-language-ecommerce.php:146
+#: check-language-ecommerce.php:148
 msgid "Full order details"
 msgstr "Vollständige Bestelldetails"
 
-#: check-language-ecommerce.php:148
+#: check-language-ecommerce.php:150
 msgid "Order number"
 msgstr "Bestellnummer"
 
-#: check-language-ecommerce.php:150
+#: check-language-ecommerce.php:152
 msgid "Your order was successful. You will be redirected."
 msgstr "Ihre Bestellung war erfolgreich. Sie werden weitergeleitet."
 
-#: check-language-ecommerce.php:152
+#: check-language-ecommerce.php:154
 msgid "Order failed. Please contact administrator."
 msgstr "Bestellung fehlgeschlagen. Bitte wenden Sie sich an den Administrator."
 
-#: check-language-ecommerce.php:154
+#: check-language-ecommerce.php:156
 msgid "Checkout processing impossible. No internet connection."
 msgstr "Kassenabwicklung unmöglich. Keine Internetverbindung."
 
-#: check-language-ecommerce.php:156
+#: check-language-ecommerce.php:158
 msgid "Maximum uploads"
 msgstr "Maximale Anzahl von Uploads"
 
-#: check-language-ecommerce.php:158
+#: check-language-ecommerce.php:160
 msgid "Uploaded"
 msgstr "Hochgeladen"
 
-#: check-language-ecommerce.php:160
+#: check-language-ecommerce.php:162
 msgid "All uploads used"
 msgstr "Alle Uploads verwendet"
 

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Contest Gallery\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-23 10:32+0100\n"
-"PO-Revision-Date: 2025-01-23 10:32+0100\n"
+"POT-Creation-Date: 2025-02-14 20:50+0100\n"
+"PO-Revision-Date: 2025-02-14 20:50+0100\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -165,94 +165,98 @@ msgid "PayPal"
 msgstr "PayPal"
 
 #: check-language-ecommerce.php:116
+msgid "Stripe"
+msgstr "Stripe"
+
+#: check-language-ecommerce.php:118
 msgid "Nr."
 msgstr "č."
 
-#: check-language-ecommerce.php:118
+#: check-language-ecommerce.php:120
 msgid "Tax rate"
 msgstr "Sadzba dane"
 
-#: check-language-ecommerce.php:120
+#: check-language-ecommerce.php:122
 msgid "VAT Number"
 msgstr "Identifikačné číslo DPH"
 
-#: check-language-ecommerce.php:122
+#: check-language-ecommerce.php:124
 msgid "optional"
 msgstr "voliteľné"
 
-#: check-language-ecommerce.php:124
+#: check-language-ecommerce.php:126
 msgid "Price unit net"
 msgstr "Jednotková cena netto"
 
-#: check-language-ecommerce.php:126
+#: check-language-ecommerce.php:128
 msgid "Price total net"
 msgstr "Cena celková netto"
 
-#: check-language-ecommerce.php:128
+#: check-language-ecommerce.php:130
 msgid "Total net"
 msgstr "Celková netto"
 
-#: check-language-ecommerce.php:130
+#: check-language-ecommerce.php:132
 msgid "Total gross"
 msgstr "Celková brutto"
 
-#: check-language-ecommerce.php:132
+#: check-language-ecommerce.php:134
 msgid "Total price"
 msgstr "Celková cena"
 
-#: check-language-ecommerce.php:134
+#: check-language-ecommerce.php:136
 msgid "Added to shopping cart"
 msgstr "Pridané do nákupného košíka"
 
-#: check-language-ecommerce.php:136
+#: check-language-ecommerce.php:138
 msgid "To shopping cart"
 msgstr "Do nákupného košíka"
 
-#: check-language-ecommerce.php:138
+#: check-language-ecommerce.php:140
 msgid "Title"
 msgstr "Názov"
 
-#: check-language-ecommerce.php:140
+#: check-language-ecommerce.php:142
 msgid "Key"
 msgstr "kľúč"
 
-#: check-language-ecommerce.php:142
+#: check-language-ecommerce.php:144
 msgid "Copy Key"
 msgstr "Kopírovať kľúč"
 
-#: check-language-ecommerce.php:144
+#: check-language-ecommerce.php:146
 msgid "No products selected"
 msgstr "Nie sú vybrané žiadne produkty"
 
-#: check-language-ecommerce.php:146
+#: check-language-ecommerce.php:148
 msgid "Full order details"
 msgstr "Kompletné detaily objednávky"
 
-#: check-language-ecommerce.php:148
+#: check-language-ecommerce.php:150
 msgid "Order number"
 msgstr "Číslo objednávky"
 
-#: check-language-ecommerce.php:150
+#: check-language-ecommerce.php:152
 msgid "Your order was successful. You will be redirected."
 msgstr "Vaša objednávka bola úspešná. Budete presmerovaní."
 
-#: check-language-ecommerce.php:152
+#: check-language-ecommerce.php:154
 msgid "Order failed. Please contact administrator."
 msgstr "Objednávka zlyhala. Kontaktujte správcu."
 
-#: check-language-ecommerce.php:154
+#: check-language-ecommerce.php:156
 msgid "Checkout processing impossible. No internet connection."
 msgstr "Spracovanie pokladne nemožné. Žiadne internetové pripojenie."
 
-#: check-language-ecommerce.php:156
+#: check-language-ecommerce.php:158
 msgid "Maximum uploads"
 msgstr "Maximálne nahrávanie"
 
-#: check-language-ecommerce.php:158
+#: check-language-ecommerce.php:160
 msgid "Uploaded"
 msgstr "Nahrané"
 
-#: check-language-ecommerce.php:160
+#: check-language-ecommerce.php:162
 msgid "All uploads used"
 msgstr "Všetky nahrané súbory sú použité"
 

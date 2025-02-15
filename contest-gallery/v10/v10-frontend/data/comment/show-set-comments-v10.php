@@ -270,7 +270,7 @@ $wpdb->update(
     "$tablename",
     array('CountC' => $countCommentsTotal, 'CountCtoReview' => $countCountCtoReview),
     array('id' => $pictureID),
-    array('%d'),
+    array('%d','%d'),
     array('%d')
 );
 
