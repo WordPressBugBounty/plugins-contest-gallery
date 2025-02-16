@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, youtube
 Requires at least: 5.6
-Stable tag: 26.0.0
+Stable tag: 26.0.0.1
 Tested up to: 6.7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -231,6 +231,9 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V26.0.0.1 =
+* FIXED: Allow search engines like Google to index or follow the /contest-galleries... pages and subpages options did not work.
 
 = V26.0.0 =
 * NEW: Stripe as payment processing added. Use Stripe payment methods in your ecommerce checkout.

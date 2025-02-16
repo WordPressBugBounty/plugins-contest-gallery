@@ -1,5 +1,8 @@
 Contest Gallery
 
+= V26.0.0.1 =
+* FIXED: Allow search engines like Google to index or follow the /contest-galleries... pages and subpages options did not work.
+
 = V26.0.0 =
 * NEW: Stripe as payment processing added. Use Stripe payment methods in your ecommerce checkout.
 * NEW: Dynamic up to 10 columns appears now in masonry view, instead of maximum only  3. Depends on container width.

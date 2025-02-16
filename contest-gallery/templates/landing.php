@@ -114,11 +114,11 @@ $galleriesOptions = cg_galleries_options($wp_upload_dir,$shortCodeType,$post->po
 
 $metaRobots = '';
 
-if(!empty($galleriesOptions['GalleriesPagesNoIndex']) && !empty($galleriesOptions['GalleriesPagesNoFollow'])){
+if(empty($galleriesOptions['GalleriesPagesNoIndex']) && empty($galleriesOptions['GalleriesPagesNoFollow'])){
 	$metaRobots = '<meta name="robots" content="noindex, nofollow">'."\r\n";
-}else if(!empty($galleriesOptions['GalleriesPagesNoIndex'])){
+}else if(empty($galleriesOptions['GalleriesPagesNoIndex']) && !empty($galleriesOptions['GalleriesPagesNoFollow'])){
 	$metaRobots = '<meta name="robots" content="noindex">'."\r\n";
-}else if(!empty($galleriesOptions['GalleriesPagesNoFollow'])){
+}else if(!empty($galleriesOptions['GalleriesPagesNoIndex']) && empty($galleriesOptions['GalleriesPagesNoFollow'])){
 	$metaRobots = '<meta name="robots" content="nofollow">'."\r\n";
 }
 
