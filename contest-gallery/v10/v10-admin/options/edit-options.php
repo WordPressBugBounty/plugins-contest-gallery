@@ -1014,6 +1014,9 @@ $galleriesOptions = cg_get_galleries_options_all();
 
 require_once(dirname(__FILE__) . "/../nav-menu.php");
 
+$cgPHPversionClient = phpversion();
+$cgGoogleSignInLibVersionClient = 'not installed';// is set because of normal version
+
 echo "<form id='cgEditOptionsForm' action='?page=".cg_get_version()."/index.php&edit_options=true&option_id=$galeryNR' method='post'  data-cg-submit-message='Options saved'  class='cg_load_backend_submit cg_load_backend_submit_save_data'>";
 
 echo '<input type="hidden" name="cgDbVersion" value="'.$galleryDbVersion.'" >';

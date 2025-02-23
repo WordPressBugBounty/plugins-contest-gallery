@@ -48,7 +48,9 @@ if(isset($_POST['cgPurchaseUnits']) && !empty($ecommerceOptions->StripeApiActive
 		'amount' => $amount,
 		//'amount' => '1000',// 1 = 0.01
 		//'description' => 'Description here',
-		'setup_future_usage' => 'off_session',// so customer id can be attached later to  payment method
+	//	'off_session' => 'true',
+		//'confirm' => 'true',
+		//'setup_future_usage' => 'off_session',// so customer id can be attached later to  payment method
 		'metadata' => $metaData
 	];
 

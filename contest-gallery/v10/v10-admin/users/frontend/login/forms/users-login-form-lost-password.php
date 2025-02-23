@@ -10,7 +10,8 @@ echo "<p id='cgLostPasswordEmailValidationMessage' class='cg_input_error cg_hide
 
 echo "</div>";
 echo "<div class='cg_form_upload_submit_div cg_form_div' >";
-echo '<input type="submit" name="submit" id="cgLostPasswordEmailSend" value="'.$language_Send.'">';
+//echo '<input type="submit" name="submit" id="cgLostPasswordEmailSend" value="'.$language_Send.'">';
+echo '<button type="submit" name="submit" id="cgLostPasswordEmailSend" >'.$language_Send.'</button>';
 echo '<div class="cg_form_div_image_upload_preview_loader_container cg_hide"><div class="cg_form_div_image_upload_preview_loader cg-lds-dual-ring-gallery-hide cg-lds-dual-ring-gallery-hide-mainCGallery"></div></div>';
 echo "</div>";
 echo "<div><a href='' class='cgLostPasswordBackToLoginFormButton'>$language_BackToLoginForm</a></div>";

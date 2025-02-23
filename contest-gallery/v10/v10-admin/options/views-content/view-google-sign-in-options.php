@@ -99,7 +99,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row '> 
             <div class='cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse'>
                 <div class='cg_view_option_title'>
-                    <p>Google client id$cgIsGoogleSignLibraryMissingNote<br/><span class="cg_view_option_title_note"><a id="cgGoogleSignInTestClientIdForDomain" href="$cgGoogleSignInTestingFilePath#$ClientId" target="_blank" class="$cgIsGoogleSignLibraryMissingClass" style="$cgIsGoogleSignLibraryMissingStyle">Test google client id in combination with your domain</a><span id="cgGoogleSignInDomain" class="cg_hide" >$siteUrl</span></span></p>
+                    <p>Google client id$cgIsGoogleSignLibraryMissingNote<br/><span class="cg_view_option_title_note"><a id="cgGoogleSignInTestClientIdForDomain" href="$cgGoogleSignInTestingFilePath#clientId=$ClientId&phpVersion=$cgPHPversionClient&libVersion=$cgGoogleSignInLibVersionClient" target="_blank" class="$cgIsGoogleSignLibraryMissingClass" style="$cgIsGoogleSignLibraryMissingStyle">Test google client id in combination with your domain</a><span id="cgGoogleSignInDomain" class="cg_hide" >$siteUrl</span></span></p>
                 </div>
                 <div class='cg_view_option_input'>
                     <input type="text" placeholder="" class="cg-long-input" id="GoogleClientId" name="GoogleClientId" maxlength="100" value="$ClientId">

@@ -18,7 +18,10 @@ if(!function_exists('contest_gal1ery_frontend_gallery_ecommerce')){
             'test' => ''
         ), $atts ) );
 
-        $galeryID = trim($atts['id']);
+	    $galeryID = 0;
+	    if(!empty($atts['id'])){
+		    $galeryID = trim($atts['id']);
+	    }
 
         $entryId = 0;
         if(!empty($atts['entry_id'])){

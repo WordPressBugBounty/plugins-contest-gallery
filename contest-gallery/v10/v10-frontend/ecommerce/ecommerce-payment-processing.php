@@ -160,11 +160,18 @@ if($PaymentType == 'paypal'){
 	echo "</pre>";
 	die;*/
 
-	cg_stripe_attach_customer_to_payment_method($secret,$StripePiPaymentMethodId,$StripeCustomer['id']);
-	$StripePiPaymentMethodName = cg_stripe_update_payment_method($secret,$StripePiPaymentMethodId,$StripeEmail);
-    if(empty($StripePiPaymentMethodName)){// then must have been stripe light error, see cg_stripe_update_payment_method
+	//cg_stripe_attach_customer_to_payment_method($secret,$StripePiPaymentMethodId,$StripeCustomer['id']);
+//	$StripePiPaymentMethodName = cg_stripe_update_payment_method($secret,$StripePiPaymentMethodId,$StripeEmail);
+  //  if(empty($StripePiPaymentMethodName)){// then must have been stripe light error, see cg_stripe_update_payment_method
+   //     var_dump(1234);
 	    $StripePiPaymentMethodName = cg_stripe_get_payment_method($secret,$StripePiPaymentMethodId);
-    }
+ //   }
+
+   // var_dump($StripePiPaymentMethodName);
+
+  //  var_dump('ready123');
+
+    //die;
 
 }else{
 	?>

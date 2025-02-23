@@ -34,6 +34,7 @@ if(!function_exists('contest_gal1ery_users_login')){
             ));
         }else{
             wp_enqueue_style( 'cg_v10_css_cg_gallery', plugins_url('/../v10/v10-css-min/cg_gallery.min.css', __FILE__), false, cg_get_version_for_scripts() );
+            wp_enqueue_style( 'cg_v10_css_loaders_cg_gallery', plugins_url('/../v10/v10-css/frontend/style_loaders.css', __FILE__), false, cg_get_version_for_scripts() );
             wp_enqueue_script( 'cg_v10_js_cg_gallery', plugins_url( '/../v10/v10-js-min/cg_gallery.min.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts());
             wp_localize_script( 'cg_v10_js_cg_gallery', 'post_cg_pro_version_info_recognized_wordpress_ajax_script_function_name', array(
                 'cg_pro_version_info_recognized_ajax_url' => admin_url( 'admin-ajax.php' )

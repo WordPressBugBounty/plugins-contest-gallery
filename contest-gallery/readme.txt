@@ -1,17 +1,17 @@
-=== Photos, Files, YouTube, Twitter, Instagram, TikTok, Ecommerce Contest Gallery – Upload, Vote, Sell via PayPal, Social Share Buttons ===
+=== Photos, Files, YouTube, Twitter, Instagram, TikTok, Ecommerce Contest Gallery – Upload, Vote, Sell via PayPal or Stripe, Social Share Buttons ===
 Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, youtube
 Requires at least: 5.6
-Stable tag: 26.0.0.1
+Stable tag: 26.0.1
 Tested up to: 6.7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-File types: **JPG, PNG, GIF, PDF, ZIP, WEBM, MP4, MOV, TXT, DOC, DOCX, XLS, XLSX, PPT, PPTX, CSV, MP3, WAV, OGG, M4A**. Social Media Share Buttons: see below. Create galleries (material, modern, responsive) and allow to vote and comment files, photos or YouTube / Twitter / Instagram / TikTok posts. Create upload form. Add additional files to every entry. Create user registration frontend forms. Add login form. Add "Google Sign-In button" to login via Google account. Sell entries via PayPal.
+File types: **JPG, PNG, GIF, PDF, ZIP, WEBM, MP4, MOV, TXT, DOC, DOCX, XLS, XLSX, PPT, PPTX, CSV, MP3, WAV, OGG, M4A**. Social Media Share Buttons: see below. Create galleries (material, modern, responsive) and allow to vote and comment files, photos or YouTube / Twitter / Instagram / TikTok posts. Create upload form. Add additional files to every entry. Create user registration frontend forms. Add login form. Add "Google Sign-In button" to login via Google account. Sell entries via PayPal or Stripe API.
 
-== Ecommerce PayPal ==
-* Sell entries as shipping, download or service via PayPal or charge for uploads. Configure prices, shipping, taxes and currencies for  your products. Configure checkout notes and agreements. Watermark image files, add download or service keys. Selling download or service and charging for uploads only available in PRO version.
+== Ecommerce PayPal and Stripe APIs available ==
+* Sell entries as shipping, download or service,  or charge for uploads, via PayPal or Stripe API. Configure prices, shipping, taxes and currencies for  your products. Configure checkout notes and agreements. Watermark image files, add download or service keys. Selling download or service and charging for uploads only available in PRO version.
 
 == Different file types upload form ==
 * Upload form for different file types
@@ -37,7 +37,7 @@ File types: **JPG, PNG, GIF, PDF, ZIP, WEBM, MP4, MOV, TXT, DOC, DOCX, XLS, XLSX
 
 == Frontend video example ==
 
-https://www.youtube.com/watch?v=lHgbHkDzRnk
+https://www.youtube.com/watch?v=Us-EYffJtcU
 
 = Contact form and gallery examples =
 * [Different file types contact form and gallery](https://www.contest-gallery.com/different-file-types-upload-form-and-gallery/)
@@ -231,6 +231,10 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V26.0.1 =
+* FIXED: Different small bugs.
+* FIXED: Security issue.
 
 = V26.0.0.1 =
 * FIXED: Allow search engines like Google to index or follow the /contest-galleries... pages and subpages options did not work.
@@ -601,140 +605,5 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 * FIXED: Forwarding to another page after upload did not always work.
 * FIXED: Multiple issues relating gallery appearance and mobile devices in frontend.
 * FIXED: Changing added file did not work in backend.
-
-= V19.1.5.2 =
-* FIXED: Closing opened file is not possible in frontend, if "Allow sort", "Allow search" and "In gallery upload form" are deactivated.
-* FIXED: Closing opened file is not possible in frontend, if only one view is activated and all other possible "Gallery view" options are deactivated.
-
-= V19.1.5.1 =
-* FIXED: Further possible SQL injection ways found by WPScan team.
-
-= V19.1.5 =
-* FIXED: Found possible SQL injections ways.
-* FIXED: Custom sorting was not displayed in frontend.
-* FIXED: 90 and 279 degree rotated images were not shown right in frontend.
-
-= V19.1.4.1 =
-* FIXED: Clicking on options tab in "Edit options" might not always display the right options area.
-
-= V19.1.4 =
-* NEW: "E-mail to frontend user after frontend upload" enableable in "Upload options".
-* NEW: "Comments notification e-mail for frontend user" enableable in "Gallery options".
-* NEW: "Votes notification e-mail for frontend user" enableable in "Gallery options".
-* FIXED: "Comment will be reviewed" message does not appear, if comment is first comment of a file and "Review comments" is activated.
-
-= V19.1.3 =
-* NEW: "Copy original file source link button" enableable in "File view options".
-* NEW: "Forward to original file source button" enableable in "File view options".
-* NEW: Show order of current selected file in slider view.
-* NEW: Bigger slider handle button in slider view on mobiles.
-* FIXED: Vertical scrolling till submit button in "In gallery upload form" not possible for mobiles.
-* FIXED: Clicking on alternative file type like txt or pdf caused instant download of the file, in single file view.
-* FIXED: "Download original file button" option could not be deactivated.
-
-= V19.1.2 =
-* FIXED: Images cutted on the right side in blog view and slider view in some cases.
-* FIXED: Gallery might break after new image upload in some cases.
-
-= V19.1.1 =
-* NEW: Improved sorting in frontend.
-* NEW: Improved opening image after in gallery frontend upload.
-* NEW: Improved slider view look on bigger monitors.
-* NEW: Blog view not full window image URL can be copied.
-* NEW: Different small improvements frontend handling overall.
-* FIXED: Changing orientation on mobiles.
-* FIXED: Opening slider and blog view full window on bigger monitors.
-* FIXED: Closing blog view full window and appearance blog view not full window.
-* FIXED: Different small bugfixes frontend handling overall.
-
-= V19.1.0 =
-* NEW: Improved items arrangement in blog view and slider view.
-* NEW: Sticky menu with gallery buttons when scrolling down in blog view full window and slider view full window.
-* NEW: Improved navigation in slider view.
-* FIXED: Hint messages did not appear in backend images area.
-* FIXED: Switching from sorting by rating to sorting by date did show wrong order in frontend.
-* FIXED: Uploaded file in gallery upload form was not opened after upload.
-
-= V19.0.0 =
-* NEW: Custom sorting in backend is available and can be activated for frontend.
-
-= V18.0.1.2 =
-* NEW: Management of additional files in backend images area improved.
-* NEW: Position of exif data if additional files were added with exif data improved in frontend.
-* FIXED: Parse error gallery options for some PHP versions.
-
-= V18.0.1.1 =
-* FIXED: Changing additional file to first order shows wrong original file in backend when trying to sort files again.
-
-= V18.0.1 =
-* NEW: New "Review comments" option in "Edit options" >>> "Gallery". Comments can be reviewed and manually activated in backend images area.
-* FIXED: Emojis does not appear when clicking on emojis icon when commenting in frontend for some themes.
-
-= V18.0.0.1 =
-* FIXED: Using different kind of gallery shortcodes with same id on same page might cause galleries loading error in some cases.
-
-= V18.0.0 =
-* NEW: Add additional files to every file post. Like multiple files upload on Instagram. Available for galleries created or copied in version 17 or higher.
-* NEW: "Gallery slide out" in "Single file view" changed now in "Blog view". Relevant for galleries created before 15.0.5 version and where "Gallery slide out" option is used.
-* FIXED: Preview thumbnail was not shown for videos on IOS mobile devices.
-
-= V17.0.8 =
-* NEW: "You have already voted for this file" icon will be displayed near a voting count in frontend if already voted for a file.
-
-= V17.0.7 =
-* NEW: Unix time shown in backend now converted and displayed based on configuration of WordPress timezone settings.
-* NEW: ICO file type upload and adding to gallery not possible anymore since WordPress 6.0 restriction.
-
-= V17.0.6 =
-* NEW: Check if required tables created and show query and error message if not.
-* NEW: Check if upload folder is writable and show error message if not.
-* NEW: WordPress Media Library file ID, title and description are added to "Export all fields and total rating".
-* FIXED: Frontend in gallery upload form backdrop did not always appear.
-* FIXED: Frontend bulk upload issues in some cases.
-* FIXED: Exit full screen via Escape button in frontend.
-
-= V17.0.5 =
-* NEW: Some upload validation and frontend handling improvements.
-* FIXED: Security issue - possible SQL injection.
-
-= V17.0.4 =
-* NEW: Improved multiple stars voting frontend process and visually.
-* NEW: "Activated" and "Winner" column is displayed in "Export all fields and total rating" CSV file.
-
-= V17.0.3 =
-* NEW: Powerpoint file types can be added: PPT, PPTX
-
-= V17.0.2 =
-* NEW: Video file types can be added, uploaded and played in gallery: WEBM, MP4, MOV
-* FIXED: Forwarding to file from "File activation e-mail" did not work if cg_users_upload form shortcode was used.
-
-= V17.0.1 =
-* NEW: New file types can be added and uploaded in gallery: MP3, WAV, OGG, M4A
-* FIXED: "Show votes" and "Show comments" in backend for new file types did not work.
-
-= V17.0.0 =
-* NEW: New file types can be added and uploaded in gallery: PDF, ZIP, TXT, DOC, DOCX, XLS, XLSX, CSV
-* NEW: Select in "Edit upload form" which file types can be uploaded.
-* NEW: Configure "Max upload size" for new file types.
-* NEW: Facebook share button deprecated. Not available for new galleries anymore.
-
-= V16.1.0 =
-* NEW: Allow/Disallow file types as upload option for frontend upload form.
-* NEW: ICO images can be added now as file type.
-* NEW: PNGs and GIFs can be uploaded only in PRO version now.
-
-= V16.0.1.1 =
-* FIXED: cg_users_upload shortcode upload form not visible if certain options combination is activated.
-
-= V16.0.1 =
-* FIXED: cg_users_upload shortcode upload form not visible for not logged in users.
-
-= V16.0.0 =
-* NEW: Modern upload form. Image upload area always at the top of the upload form. Drag and drop can be done.
-* NEW: Bulk upload only available in PRO version.
-* NEW: cg_users_upload shortcode can be now added multiple times on same page using different gallery ids.
-* NEW: Information for each image can be edited in bulk upload.
-* NEW: All kind of emojis can be added to comments form now. No not allowed emojis message anymore when using own mobile device emojis.
-* FIXED: Japanese and Korean chars could not be typed in comments and upload form.
 
 Full updates history can be found in changelog.txt in plugins directory.

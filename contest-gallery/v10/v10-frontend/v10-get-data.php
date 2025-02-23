@@ -665,7 +665,7 @@ if($isShowGallery == true){
         $cgHideDivContainerClass = 'cg_hide';
     }
 
-    if(!empty($entryId) && !empty($options['visual']['TextBeforeWpPageEntry'])){
+    if(!empty($entryId) && !empty($options['visual']['TextBeforeWpPageEntry']) && !empty($isCgWpPageEntryLandingPage)){
         echo contest_gal1ery_convert_for_html_output($options['visual']['TextBeforeWpPageEntry']);
     }
 
@@ -743,113 +743,8 @@ if($isShowGallery == true){
 
     include (__DIR__.'/gallery/gallery-upload-form-options.php');
 
-    if($isOnlyContactForm){
-        if($mainCGdivShowUncollapsed){
-            echo "<div class='cg_skeleton_loader_on_page_load_div cg_skeleton_loader_on_page_load_div_uncollapsed'>";
-                echo "<div class='cg_skeleton_loader_on_page_load_container'>";
-                echo "<div class='cg_skeleton_loader_on_page_load' style='height:220px;width:100%;'></div>";
-                echo "</div>";
-                echo "<div class='cg_skeleton_loader_on_page_load_container' >";
-                echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:100%;'></div>";
-                echo "</div>";
-                echo "<div class='cg_skeleton_loader_on_page_load_container' >";
-                echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:100%;'></div>";
-                echo "</div>";
-                echo "<div class='cg_skeleton_loader_on_page_load_container' >";
-                echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:150px;'></div>";
-                echo "</div>";
-            echo "</div>";
-        }else{
-            echo "<div class='cg_skeleton_loader_on_page_load_div cg_skeleton_loader_on_page_load_div_form_collapsed'>";
-                echo "<div class='cg_skeleton_loader_on_page_load_container'>";
-                    echo "<div class='cg_skeleton_loader_on_page_load' style='height:60px;width:100%;'></div>";
-                    echo "</div>";
-                    echo "<div class='cg_skeleton_loader_on_page_load_container' >";
-                    echo "<div class='cg_skeleton_loader_on_page_load' style='height:300px;width:100%;'></div>";
-                    echo "</div>";
-                    echo "<div class='cg_skeleton_loader_on_page_load_container' style='margin-bottom: 10px;'>";
-                    echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:25%;'></div>";
-                    echo "</div>";
-                    echo "<div class='cg_skeleton_loader_on_page_load_container' style='margin-bottom: 10px;' >";
-                    echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:50%;'></div>";
-                    echo "</div>";
-                    echo "<div class='cg_skeleton_loader_on_page_load_container' style='margin-bottom: 10px;' >";
-                    echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:75%;'></div>";
-                    echo "</div>";
-                    echo "<div class='cg_skeleton_loader_on_page_load_container' >";
-                    echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:100%;'></div>";
-                echo "</div>";
-            echo "</div>";
-        }
-    }else{
-
-        if(!empty($entryId) OR $currentLook=='blog' OR $currentLook=='slider'){
-            echo "<div class='cg_skeleton_loader_on_page_load_div cg_skeleton_loader_on_page_load_div_blog_and_slider_view'>";
-                echo "<div class='cg_skeleton_loader_on_page_load_container'>";
-                    echo "<div class='cg_skeleton_loader_on_page_load' style='height:60px;width:100%;'></div>";
-                    echo "</div>";
-                    echo "<div class='cg_skeleton_loader_on_page_load_container' >";
-                echo "<div class='cg_skeleton_loader_on_page_load' style='height:400px;width:100%;'></div>";
-                    echo "</div>";
-                    echo "<div class='cg_skeleton_loader_on_page_load_container' style='margin-bottom: 10px;'>";
-                    echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:25%;'></div>";
-                    echo "</div>";
-                    echo "<div class='cg_skeleton_loader_on_page_load_container' style='margin-bottom: 10px;' >";
-                    echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:50%;'></div>";
-                    echo "</div>";
-                    echo "<div class='cg_skeleton_loader_on_page_load_container' style='margin-bottom: 10px;' >";
-                    echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:75%;'></div>";
-                    echo "</div>";
-                    echo "<div class='cg_skeleton_loader_on_page_load_container' >";
-                    echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:100%;'></div>";
-                echo "</div>";
-            echo "</div>";
-        }else if($currentLook=='thumb'){
-                echo "<div class='cg_skeleton_loader_on_page_load_div cg_skeleton_loader_on_page_load_div_thumb_view cg_display_flex cg_flex_flow_column '>";
-                echo "<div class='cg_skeleton_loader_on_page_load_container'>";
-                    echo "<div class='cg_skeleton_loader_on_page_load' style='height:60px;width:100%;'></div>";
-                    echo "</div>";
-                echo "<div class='cg_display_flex cg_justify_content_space_between'>";
-                    echo "<div class='cg_skeleton_loader_on_page_load_container cg_container cg_display_flex cg_flex_flow_column' style='width:32.00%;' >";
-                        echo "<div class='cg_skeleton_loader_on_page_load' style='height:300px;width: 100%;margin-bottom: 15px;'></div>";
-                        echo "<div class='cg_skeleton_loader_on_page_load' style='height:600px;width: 100%;margin-bottom: 15px;'></div>";
-                        echo "<div class='cg_skeleton_loader_on_page_load' style='height:300px;width: 100%;margin-bottom: 15px;'></div>";
-                        echo "<div class='cg_skeleton_loader_on_page_load' style='height:600px;width: 100%;margin-bottom: 15px;'></div>";
-                    echo "</div>";
-                    echo "<div class='cg_skeleton_loader_on_page_load_container cg_container cg_display_flex cg_flex_flow_column'  style='width:32.00%;'>";
-                        echo "<div class='cg_skeleton_loader_on_page_load' style='height:600px;width: 100%;margin-bottom: 15px;'></div>";
-                        echo "<div class='cg_skeleton_loader_on_page_load' style='height:300px;width: 100%;margin-bottom: 15px;'></div>";
-                        echo "<div class='cg_skeleton_loader_on_page_load' style='height:600px;width: 100%;margin-bottom: 15px;'></div>";
-                        echo "<div class='cg_skeleton_loader_on_page_load' style='height:300px;width: 100%;margin-bottom: 15px;'></div>";
-                    echo "</div>";
-                    echo "<div class='cg_skeleton_loader_on_page_load_container cg_container cg_display_flex cg_flex_flow_column'  style='width:32.00%;'>";
-                        echo "<div class='cg_skeleton_loader_on_page_load' style='height:300px;width: 100%;margin-bottom: 15px;'></div>";
-                        echo "<div class='cg_skeleton_loader_on_page_load' style='height:600px;width: 100%;margin-bottom: 15px;'></div>";
-                        echo "<div class='cg_skeleton_loader_on_page_load' style='height:300px;width: 100%;margin-bottom: 15px;'></div>";
-                        echo "<div class='cg_skeleton_loader_on_page_load' style='height:600px;width: 100%;margin-bottom: 15px;'></div>";
-                    echo "</div>";
-                echo "</div>";
-            echo "</div>";
-        }else if($currentLook=='height'){
-            echo "<div class='cg_skeleton_loader_on_page_load_div cg_skeleton_loader_on_page_load_div_height_view'>";
-                echo "<div class='cg_skeleton_loader_on_page_load_container'>";
-                    echo "<div class='cg_skeleton_loader_on_page_load' style='height:60px;width:100%;'></div>";
-                    echo "</div>";
-                    echo "<div class='cg_skeleton_loader_on_page_load_container' style='margin-bottom: 10px;'>";
-                    echo "<div class='cg_skeleton_loader_on_page_load' style='height:250px;width: 25%;'></div>";
-                    echo "<div class='cg_skeleton_loader_on_page_load' style='height:250px;width: 74%;'></div>";
-                    echo "</div>";
-                    echo "<div class='cg_skeleton_loader_on_page_load_container' style='margin-bottom: 10px;'>";
-                    echo "<div class='cg_skeleton_loader_on_page_load' style='height:250px;width: 74%;'></div>";
-                    echo "<div class='cg_skeleton_loader_on_page_load' style='height:250px;width: 25%;'></div>";
-                    echo "</div>";
-                    echo "<div class='cg_skeleton_loader_on_page_load_container' >";
-                    echo "<div class='cg_skeleton_loader_on_page_load' style='height:250px;width: 25%;'></div>";
-                    echo "<div class='cg_skeleton_loader_on_page_load' style='height:250px;width: 74%;'></div>";
-                echo "</div>";
-            echo "</div>";
-        }
-   }
+        $cg_skeleton_loader_on_page_load_div_hide = 'cg_hide';
+        include("gallery/gallery-loaders.php");
 
     if(!empty($entryId) && !empty($options['visual']['ShowBackToGalleryButton'])){
 
@@ -873,11 +768,14 @@ if($isShowGallery == true){
                     }
                 }
             }
+
+            if(!empty($isCgWpPageEntryLandingPage)){
         echo "<div class='mainCGBackToGalleryButtonHrefContainer cg_hide'>";
             echo "<a href='$entryPermalink' class='mainCGBackToGalleryButtonHref' data-cg-gid='$galeryIDuserForJs'>";
                 echo "<div id='mainCGBackToGalleryButton$galeryIDuserForJs' class=' mainCGBackToGalleryButton'>".contest_gal1ery_convert_for_html_output_without_nl2br($options['visual']['BackToGalleryButtonText'])."</div>";
             echo "</a>";
         echo "</div>";
+            }
 
         }
 
@@ -1025,7 +923,7 @@ if($isShowGallery == true){
 
     }
 
-    if(!empty($entryId) && !empty($options['visual']['TextAfterWpPageEntry'])){
+    if(!empty($entryId) && !empty($options['visual']['TextAfterWpPageEntry']) && !empty($isCgWpPageEntryLandingPage)){
         echo contest_gal1ery_convert_for_html_output($options['visual']['TextAfterWpPageEntry']);
     }
 

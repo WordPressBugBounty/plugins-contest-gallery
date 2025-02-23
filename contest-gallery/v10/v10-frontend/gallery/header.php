@@ -77,7 +77,6 @@ if($isOnlyUploadForm || $isOnlyContactForm){
     echo "</div>";
 }else{
 
-
 if(true){
 //if($GalleryUpload==1 OR $AllowSort == 1 OR $LooksCount>1 or $categoriesCheck or $Search==1 or $FullSizeGallery==1 OR $options['general']['RandomSortButton']==1){
 
@@ -94,7 +93,7 @@ if(true){
         }
 
         if(!empty($isOnlyGalleryEcommerce)){
-            echo'<div class="cg-sale-basket-open-parent" >';
+	        echo'<div class="cg-sale-basket-open-parent" >';
                 echo'<div class="cg-sale-basket-open" data-cg-tooltip="'.$language_ShoppingCart.'" data-cg-gid="'.$galeryIDuserForJs.'">';
                 echo'<div class="cg-sale-basket-icon"></div>';
                 echo'<div class="cg-sale-items-count" >&nbsp;(<span id="cgSaleBasketItemsCount cg-sale-items-count" >0</span>)</div>';

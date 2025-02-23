@@ -529,7 +529,11 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
 
           $wpNickNamesArray = [];
 
+          $wpUsers = [];
+
+          if(!empty($collectWpUserIds)){
           $wpUsers = $wpdb->get_results( "SELECT ID, user_login, user_nicename FROM $tablenameWpUsers WHERE ($collectWpUserIds) ");
+          }
 
           foreach ($wpUsers as $wpUser){
               $wpNickname = get_user_meta( $WpUserId, 'nickname');

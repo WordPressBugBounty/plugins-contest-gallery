@@ -159,6 +159,7 @@ if(empty($galleriesOptions['GalleriesPagesNoIndex']) && empty($galleriesOptions[
     wp_enqueue_script('jquery');// will appear in footer so or so, because of wp_footer
     wp_enqueue_style( 'cg_entry_landing_page_style', plugins_url('/../v10/v10-css/cg_entry_landing_page_style.css', __FILE__), false, cg_get_version_for_scripts() );
 
+
     echo '<meta property="og:url" content="'.$permalink.'">'."\r\n";
     echo '<meta property="og:site_name" content="'.$blogname.'">'."\r\n";
 
@@ -236,6 +237,17 @@ if(empty($galleriesOptions['GalleriesPagesNoIndex']) && empty($galleriesOptions[
         echo "</style>";
     }
 
+if(!empty($cgEntryId)){
+	echo "<style>";
+        echo "#mainCGdivEntryPageContainer{\r\n";
+        echo "max-width: 1000px;\r\n";
+        echo "max-width: 1000px;\r\n";
+        echo "margin-left: auto;\r\n";
+        echo "margin-right: auto;\r\n";
+        echo "}\r\n";
+	echo "</style>";
+}
+
     echo "<style>";
     echo "#wp-admin-bar-site-editor {display: none !important;}";
     echo "</style>";
@@ -252,6 +264,8 @@ if(empty($galleriesOptions['GalleriesPagesNoIndex']) && empty($galleriesOptions[
     <?php
     //the_title(); // for later integration
     the_content();
+    // https://stackoverflow.com/questions/71772319/stop-wordpress-php-javascript-function-adding-skip-link-code
+    remove_action( 'wp_footer', 'the_block_template_skip_link' );// other deprecated the_block_template_skip_link shown always
     wp_footer();
     ?>
 </div>

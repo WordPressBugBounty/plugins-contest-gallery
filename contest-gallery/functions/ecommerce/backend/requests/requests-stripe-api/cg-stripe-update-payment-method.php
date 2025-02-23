@@ -41,6 +41,9 @@ if(!function_exists('cg_stripe_update_payment_method')){
 	    }
 	    curl_close($ch);
 
+		//var_dump('$result444555');
+		//var_dump($result);
+
 		if(!empty($result['type'])){
 			return $result['type'];
 		}else{

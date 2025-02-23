@@ -273,7 +273,8 @@ if(!$intervalConf['shortcodeIsActive']){
     }
 
     echo "<div id='cg_registry_submit_container' class='cg_form_upload_submit_div cg_form_div'>";
-    echo '<input type="submit" name="cg_registry_submit" id="cg_users_registry_check" class="cg_form_upload_submit" value="' . $language_sendRegistry . '">';
+    //echo '<input type="submit" name="cg_registry_submit" id="cg_users_registry_check" class="cg_form_upload_submit" value="' . $language_sendRegistry . '">';
+    echo '<button type="submit" name="cg_registry_submit" id="cg_users_registry_check" class="cg_form_upload_submit" >' . $language_sendRegistry . '</button>';
     echo "<p class='cg_input_error cg_hide' id='cg_registry_manipulation_error'></p>";
     echo '<div class="cg_form_div_image_upload_preview_loader_container cg_hide"><div class="cg_form_div_image_upload_preview_loader cg-lds-dual-ring-gallery-hide cg-lds-dual-ring-gallery-hide-mainCGallery"></div></div>';
     echo "</div>";

@@ -23,7 +23,8 @@ echo "<input type='password'  id='cg_login_password' name='cg_login_password'>";
 echo "<p id='cg_append_login_password_fail' class='cg_input_error cg_hide' ></p>";// Fehlermeldung erscheint hier
 echo "</div>";
 echo "<div class='cg_form_upload_submit_div cg_form_div' >";
-echo '<input type="submit" name="submit" id="cg_user_login_check" value="'.$language_sendLogin.'">';
+//echo '<input type="submit" name="submit" id="cg_user_login_check" value="'.$language_sendLogin.'">';
+echo '<button type="submit" id="cg_user_login_check" >'.$language_sendLogin.'</button>';
 echo "<p id='cg_append_validation_system_fail' class='cg_input_error cg_hide' ></p>";// Fehlermeldung erscheint hier
 //echo "<p id='cg_append_email_and_password_do_not_match' class='cg_input_error cg_hide' ></p>";// Fehlermeldung erscheint hier
 echo "<p id='cg_append_login_and_password_do_not_match' class='cg_input_error cg_hide' ></p>";// Fehlermeldung erscheint hier

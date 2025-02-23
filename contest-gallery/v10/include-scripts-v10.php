@@ -10,7 +10,8 @@ wp_enqueue_script( 'jquery-ui-datepicker' );
 wp_enqueue_script( 'jquery-ui-sortable' );
 
     wp_enqueue_style( 'cg_v10_css_cg_gallery', plugins_url('/v10-css-min/cg_gallery.min.css', __FILE__), false, cg_get_version_for_scripts() );
-    
+    wp_enqueue_style( 'cg_v10_css_loaders_cg_gallery', plugins_url('/v10-css/frontend/style_loaders.css', __FILE__), false, cg_get_version_for_scripts() );
+
     wp_enqueue_script( 'cg_v10_js_masonry', plugins_url( '/v10-js/libs/masonry.pkgd.min.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts());
 
     wp_enqueue_script( 'cg_v10_js_cg_gallery', plugins_url( '/v10-js-min/cg_gallery.min.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts());
@@ -83,13 +84,17 @@ if(empty($isFromOrderSummary)){
     if(!empty($shortcode_name) && $shortcode_name == 'cg_users_contact'){
         $cgPreMinHeight = 250;
 }
-	echo "<pre class='cg_main_pre  cg_10 cg_20' style='overflow:hidden;visibility: hidden;height:".$cgPreMinHeight."px;' >";
+	echo "<pre class='cg_main_pre  cg_10 cg_20' style='max-height:0 !important;overflow:hidden;visibility: hidden;height:".$cgPreMinHeight."px;' >";
 }
 
 include("v10-frontend/v10-get-data.php");
 
 if(empty($isFromOrderSummary)){
 	echo "</pre>";
+	if(empty($isAjax)){
+		$cg_skeleton_loader_on_page_load_div_hide = '';
+		include("v10-frontend/gallery/gallery-loaders.php");
+	}
 	if(empty($isCGalleriesAjax)){
 		$frontend_gallery = ob_get_clean();
 		apply_filters( 'cg_filter_frontend_gallery', $frontend_gallery );

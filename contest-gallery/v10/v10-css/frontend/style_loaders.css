@@ -1,0 +1,367 @@
+.mainCGdivContainer  .cgMainCGdivLoaderContainer{
+    display: block;
+    width: 100%;
+    background-color: #fff;
+    border: 0.5px solid black;
+}
+
+.mainCGdivContainer  .cgMainCGdivLoaderContainer.cg_border_radius_controls_and_containers {
+    border-radius: unset;/*not for loaders */
+}
+.mainCGdivContainer  .cgMainCGdivLoaderContainer .cg-header-loader{
+    padding: 10px 10px 5px;
+}
+
+.mainCGdivContainer  .cgMainCGdivLoaderContainer .cg-header-loader .cg-center-div-skeleton-box{
+    height: 20px;
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    background-color: #DDDBDD;
+    margin-bottom: 7px;
+}
+
+#cgEcommerceCheckoutBodyCartLoader{
+    max-width: 600px;
+    margin: 80px auto 0;
+    overflow: hidden;
+}
+
+@media screen and (max-width:600px) {
+    #cgEcommerceCheckoutBodyCartLoader{
+        margin: 80px 10px 0 10px;
+    }
+}
+
+#mainCGdivOrderContainer #cgEcommerceCheckoutBodyCartLoader{
+    display: none;
+}
+
+#cgEcommerceCheckoutBodyCartLoader .cgEcommerceCheckoutBodyCartLoaderPart{
+    background-color: #dddbdd;
+    width: 100%;
+    height: 20px;
+    margin-bottom: 5px;
+    box-sizing:  border-box;
+    overflow: hidden;
+    position: relative;
+    border-radius: 4px;
+}
+
+#cgEcommerceCheckoutBodyPaypalLoader{
+    max-width: 600px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+#cgEcommerceCheckoutBodyPaypalLoader .cgEcommerceCheckoutBodyPaypalLoaderPart{
+    background-color: #dddbdd;
+    width: 100%;
+    height: 40px;
+    margin-bottom: 5px;
+    box-sizing:  border-box;
+    overflow: hidden;
+    position: relative;
+    border-radius: 4px;
+}
+
+#cgEcommerceCheckoutBodyStripeLoader{
+    max-width: 600px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+#cgEcommerceCheckoutBodyStripeLoader .cgEcommerceCheckoutBodyStripeLoaderPart{
+    background-color: #dddbdd;
+    width: 100%;
+    height: 40px;
+    margin-bottom: 5px;
+    box-sizing:  border-box;
+    overflow: hidden;
+    position: relative;
+    border-radius: 4px;
+}
+
+.cgCenterDiv .cg_comment_loader_container{
+    padding-left: 20px;
+    padding-top: 75px;
+}
+
+.cgCenterDiv .cg_comment_loader{
+    background-color: #dddbdd;
+    width: 100%;
+    height: 22px;
+    box-sizing:  border-box;
+    overflow: hidden;
+    position: relative;
+}
+
+.mainCGdiv.cg_border_radius_controls_and_containers .cgCenterDiv .cg_comment_loader{
+    border-radius: 4px;
+}
+
+.cgCenterDiv .cg_comment_loader:after,
+.mainCGdivContainer  .cgMainCGdivLoaderContainer .cg-header-loader .cg-center-div-skeleton-box:after,
+.mainCGdivContainer  .cgMainCGdivLoaderContainer .cg-gallery-loader .cg-center-div-skeleton-box:after,
+.mainCGdiv .mainCGallery .cgCenterDiv .cg-center-div-skeleton-box:after,
+.mainCGdivHelperParent .cg_skeleton_loader_on_page_load:after,
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load:after,
+#cgEcommerceStripePaymentButton.cg_skeleton_loader:after,
+#cg_user_login_check.cg_skeleton_loader:after,
+#cg_users_registry_check.cg_skeleton_loader:after,
+#cgLostPasswordEmailSend.cg_skeleton_loader:after,
+.mainCGdiv .mainCGallery .cg_show.cg_skeleton_loader .cg_append:after,
+.mainCGdiv .cg_gallery_thumbs_control .cg_view_switcher.cg_skeleton_loader:after,
+.mainCGdiv.cg_fe_controls_style_white .cg_gallery_thumbs_control .cg_view_switcher.cg_skeleton_loader:after,
+.mainCGdiv.cg_fe_controls_style_white .cg-cat-select-area .cg_select_cat_label.cg_skeleton_loader:before,
+.mainCGdiv .mainCGallery .cgCenterDiv .cg_skeleton_loader.cg-center-image:after,
+.mainCGdiv .mainCGallery .cgCenterDiv .cg_skeleton_loader.cg-center-image-rotated:after,
+#cgEcommerceCheckoutBodyCartLoader .cgEcommerceCheckoutBodyCartLoaderPart:after,
+#cgEcommerceCheckoutBodyPaypalLoader .cgEcommerceCheckoutBodyPaypalLoaderPart:after,
+#cgEcommerceCheckoutBodyStripeLoader .cgEcommerceCheckoutBodyStripeLoaderPart:after
+{
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.2) 20%, rgba(255, 255, 255, 0.5) 60%, rgba(255, 255, 255, 0));
+    -webkit-animation: cg_center_div_shimmer 1s linear infinite;
+    animation: cg_center_div_shimmer 1s linear infinite;
+    content: "" !important;
+}
+
+
+.mainCGdiv .cg_gallery_thumbs_control .cg_view_switcher.cg_skeleton_loader:after{
+    background-color: #3d3434;
+    opacity: 0.5;
+}
+
+.mainCGdiv.cg_fe_controls_style_white .cg_gallery_thumbs_control .cg_view_switcher.cg_skeleton_loader:after{
+    background-color: #c7c7c7;
+    opacity: 0.5;
+}
+
+.mainCGdiv .mainCGallery .cg_show.cg_skeleton_loader .cg_append:after {
+    -webkit-animation: cg_gallery_append_shimmer 1s linear infinite;
+    animation: cg_gallery_append_shimmer 1s linear infinite;
+}
+
+.mainCGdiv.cg_fe_controls_style_white .cg_gallery_thumbs_control .cg_view_switcher.cg_skeleton_loader:after,.mainCGdiv.cg_fe_controls_style_white .cg-cat-select-area .cg_select_cat_label.cg_skeleton_loader:before,
+.mainCGdiv .cg_gallery_thumbs_control .cg_view_switcher.cg_skeleton_loader:after,.mainCGdiv .cg-cat-select-area .cg_select_cat_label.cg_skeleton_loader:before{
+    -webkit-animation: cg_gallery_append_shimmer 1s linear infinite;
+    animation: cg_gallery_append_shimmer 1s linear infinite;
+}
+
+.mainCGdiv .mainCGallery .cgCenterDiv .cg_skeleton_loader.cg-center-image:after,
+.mainCGdiv .mainCGallery .cgCenterDiv .cg_skeleton_loader.cg-center-image-rotated:after {
+    -webkit-animation: cg_gallery_append_shimmer 1s infinite;
+    animation: cg_gallery_append_shimmer 1s infinite;
+    content: "";
+}
+
+.mainCGdiv.cg_border_radius_controls_and_containers .mainCGallery .cgCenterDiv .cg-center-div-skeleton-box{
+    border-radius: unset; /*not for loaders*/
+}
+
+.mainCGdivContainer  .cgMainCGdivLoaderContainer .cg-gallery-loader-container{
+    padding: 5px 10px 5px;
+}
+
+.mainCGdivContainer  .cgMainCGdivLoaderContainer .cg-gallery-loader{
+    padding: 0;
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.mainCGdivContainer  .cgMainCGdivLoaderContainer .cg-gallery-loader .cg-center-div-skeleton-box{
+    height: 200px;
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    background-color: #DDDBDD;
+    width: 32%;
+}
+
+.mainCGdiv .mainCGallery .cgCenterDivLoaderContainer {
+    top: -70px;
+    left: 0;
+    display: block;
+    position: absolute;
+    z-index: 999;
+    width: 100%;
+    margin-top: 30px;
+    background-color: black;
+}
+
+.mainCGdiv.cg_border_radius_controls_and_containers .mainCGallery .cgCenterDivLoaderContainer {
+    border-radius: unset; /*not for loaders*/
+}
+
+.mainCGdiv.cg_fe_controls_style_white .mainCGallery .cgCenterDivLoaderContainer {
+    background-color: white;
+}
+
+body >.mainCGdivHelperParent .mainCGdiv .mainCGallery .cgCenterDivLoaderContainer {
+    position: fixed;
+}
+
+body >.mainCGdivHelperParent .mainCGdiv .mainCGallery .cgCenterDivLoaderContainer.cg_is_on_search .cgCenterDiv.cgCenterDivLoader.cg_hide {
+    display: block !important;/*has to be always displayed then if searcg*/
+}
+
+.mainCGdiv.cg_fe_controls_style_white  .mainCGallery .cgCenterDivLoaderContainer {
+    background-color: #fff;
+}
+
+.mainCGdiv .mainCGallery .cgCenterDivLoaderContainerBackdrop {
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: #222222;
+    display: block;
+    position: fixed; /*important that position fixed of backdrop!*/
+    z-index: 998;
+}
+
+.mainCGdiv.cg_fe_controls_style_white  .mainCGallery .cgCenterDivLoaderContainerBackdrop{
+    background-color: #fff;
+}
+
+.mainCGdivHelperParent .mainCGdiv .mainCGallery .cgCenterDiv.cgCenterDivLoader {
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 20px;
+}
+
+.mainCGdivHelperParent .mainCGdiv .mainCGallery .cgCenterDiv.cgCenterDivLoader {
+    display: block;
+    background-color: #000;
+    border-radius: unset;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    width: 100%;
+    min-width: 100% !important;
+    max-width: 100% !important;
+}
+
+body > .mainCGdivHelperParent .mainCGdiv .mainCGallery .cgCenterDiv.cgCenterDivLoader {
+    padding: 25px 30px 0;
+}
+
+body > .mainCGdivHelperParent .mainCGdiv .mainCGallery .cgCenterDiv.cgCenterDivLoader .cg-center-div-helper {
+    max-width: 970px;
+}
+
+body > .mainCGdivHelperParent .mainCGdiv.cg_border_radius_controls_and_containers  .mainCGallery .cgCenterDiv.cgCenterDivLoader .cg-center-div-helper .cg-center-div-skeleton-box {
+    border-radius: 8px;
+}
+
+.mainCGdiv .mainCGallery.cg_center_white .cgCenterDiv.cgCenterDivLoader {
+    background-color: #fff;
+    border: unset;
+}
+
+body > .mainCGdivHelperParent .mainCGdiv .mainCGallery .cgCenterDiv.cgCenterDivLoader:first-of-type .cg-center-image.cg-center-div-skeleton-box:first-of-type {
+    margin-top: 50px;
+}
+
+.mainCGdiv .mainCGallery .cgCenterDiv .cg-center-image.cg-center-div-skeleton-box {
+    height: 300px;
+}
+
+.mainCGdivHelperParent .cg_skeleton_loader_on_page_load_div,
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div {
+    padding: 10px;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mainCGdivHelperParent .cg_skeleton_loader_on_page_load_div .cg_skeleton_loader_on_page_load_container,
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div .cg_skeleton_loader_on_page_load_container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div .cg_skeleton_loader_on_page_load_container:last-child
+{
+    margin-bottom: 0;
+}
+
+.mainCGdivHelperParent .cg_skeleton_loader_on_page_load_div .cg_skeleton_loader_on_page_load_container .cg_skeleton_loader_on_page_load,
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div .cg_skeleton_loader_on_page_load_container .cg_skeleton_loader_on_page_load
+{
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.mainCGdivHelperParent .mainCGdiv.cg_border_radius_controls_and_containers .cg_skeleton_loader_on_page_load_div .cg_skeleton_loader_on_page_load_container .cg_skeleton_loader_on_page_load,
+.mainCGdivUploadForm.cg_border_radius_controls_and_containers .cg_skeleton_loader_on_page_load_div .cg_skeleton_loader_on_page_load_container .cg_skeleton_loader_on_page_load
+{
+    border-radius: 8px;
+}
+
+.mainCGdiv .mainCGallery .cgCenterDiv .cg-center-div-skeleton-box,
+.mainCGdivHelperParent .cg_skeleton_loader_on_page_load,
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load
+{
+    background-color: #DDDBDD;
+    box-sizing: border-box;
+}
+
+
+.mainCGdiv .mainCGallery .cg_show.cg_skeleton_loader .cg_gallery_info  {
+    display: none;
+}
+
+.mainCGdiv .mainCGallery .cg_show.cg_skeleton_loader .cg_append {
+    background-color: #DDDBDD;
+}
+
+
+.mainCGdiv .cg_gallery_thumbs_control .cg_view_switcher {
+    position: relative;
+    overflow: hidden;
+}
+
+
+
+body .mainCGdiv.cg_fe_controls_style_white .cg-cat-select-area .cg_select_cat_label.cg_skeleton_loader:before {
+    -webkit-animation: cg_gallery_append_shimmer 1s linear infinite;
+    animation: cg_gallery_append_shimmer 1s linear infinite;
+}
+
+body .mainCGdiv .cg-cat-select-area .cg_select_cat_label.cg_skeleton_loader:before {
+    -webkit-animation: cg_gallery_append_shimmer 1s linear infinite;
+    animation: cg_gallery_append_shimmer 1s linear infinite;
+}
+
+.mainCGdiv .mainCGallery .cgCenterDiv .cg_skeleton_loader.cg-center-image {
+    background-color: #DDDBDD;
+}
+
+.mainCGdiv .mainCGallery .cgCenterDiv .cg_skeleton_loader.cg-center-image-rotated {
+    background-color: #DDDBDD;
+}
+
+@-webkit-keyframes cg_gallery_append_shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes cg_gallery_append_shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}

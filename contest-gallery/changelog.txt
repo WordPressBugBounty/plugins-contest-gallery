@@ -1,5 +1,9 @@
 Contest Gallery
 
+= V26.0.1 =
+* FIXED: Different small bugs.
+* FIXED: Security issue.
+
 = V26.0.0.1 =
 * FIXED: Allow search engines like Google to index or follow the /contest-galleries... pages and subpages options did not work.
 
