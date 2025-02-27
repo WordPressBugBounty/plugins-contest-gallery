@@ -1,5 +1,10 @@
 Contest Gallery
 
+= V26.0.2 =
+* NEW: Larger images in masonry view. Min width raised from around 270px to 370px.
+* NEW: Larger images in entry view. Max width raised from 930px to 1020px.
+* FIXED: Special characters did not appear correctly in cg_gallery_user entry view.
+
 = V26.0.1 =
 * FIXED: Different small bugs.
 * FIXED: Security issue.
