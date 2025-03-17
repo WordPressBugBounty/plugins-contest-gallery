@@ -32,7 +32,7 @@ echo <<<HEREDOC
  <div class='cg_view_options_row'>
     <div class='cg_border_radius_unset  cg_border_top_none cg_view_option cg_view_option_100_percent' id="PayPalApiActiveOption">
         <div class='cg_view_option_title'>
-            <p>Enablel PayPal API for checkout</p>
+            <p>Enable PayPal API for checkout</p>
         </div>
         <div class='cg_view_option_checkbox'>
             <input type="checkbox" name="PayPalApiActive" id="PayPalApiActive" $PayPalApiActive>
@@ -96,6 +96,18 @@ echo <<<HEREDOC
                             </div>
                         </div>
                 </div>
+                 <div class='cg_view_options_row'>
+				    <div class='cg_border_radius_unset  cg_border_top_none cg_view_option cg_border_bottom_none cg_view_option_100_percent cg_border_right_none' id="PayPalTestActiveOption">
+				        <div class='cg_view_option_title'>
+				            <p>Enable PayPal Sandbox Testing<br>
+				                <span class="cg_view_option_title_note"><b>NOTE:</b> Disable this option after testing is finished. Otherwise not desired test purchases might happen if somebody knows the logic and use official credit card numbers for testing from PayPal.</span>
+				            </p>
+				        </div>
+				        <div class='cg_view_option_checkbox'>
+				            <input type="checkbox" name="PayPalTestActive" id="PayPalTestActive" $PayPalTestActive>
+				        </div>
+				    </div>
+				</div>
             </div>
            <div class='cg_view_options_row_column' style="width:25%;">
                 <div class='cg_view_options_row'>
@@ -131,7 +143,7 @@ echo <<<HEREDOC
 <div class="cg_view_options_row cg_paypal_api">
     <div class="cg_view_option   cg_view_option_20_percent cg_border_top_bottom_none cg_border_right_none cg_disable_funding_option ">
         <div class="cg_view_option_title">
-            <p>Credit or debit cards<br><span class="cg_view_option_title_note">Test credit cards numbers can be found here:<br><a href="https://developer.paypal.com/tools/sandbox/card-testing/" target="_blank" >...paypal...card-testing…</a></span></p>
+            <p>Credit or debit cards<br><span class="cg_view_option_title_note">Credit card numbers for testing can be found here:<br><a href="https://developer.paypal.com/tools/sandbox/card-testing/" target="_blank" >...paypal...card-testing…</a></span></p>
         </div>
         <div class="cg_view_option_checkbox">
             <input type="checkbox" $CardChecked class="cg_disable_funding" value="card">

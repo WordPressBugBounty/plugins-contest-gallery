@@ -64,7 +64,25 @@ $mainCGdivShowUncollapsed = '';
 // because of version 20.0 is always collapsed, mandatory not exists
 if(!$isOnlyContactEntry){
     if(!isset($fileUploadField['Field_Content']['mandatory']) || $fileUploadField['Field_Content']['mandatory']=='on'){
-        $isShowCollapsed = true;
+	    if(floatval($options['general']['Version'])>=26.03){
+		    if($fileUploadField['Field_Content']['collapsed']=='on'){
+			    $isShowCollapsed = true;
+		    }else{
+			    $isShowCollapsed = false;
+			    $mainCGdivShowUncollapsed = 'mainCGdivShowUncollapsed';
+		    }
+	    }else{
+		    if(!isset($fileUploadField['Field_Content']['collapsed'])){
+			    $isShowCollapsed = true;
+		    }else{
+			    if($fileUploadField['Field_Content']['collapsed']=='on'){
+				    $isShowCollapsed = true;
+			    }else{
+				    $isShowCollapsed = false;
+				    $mainCGdivShowUncollapsed = 'mainCGdivShowUncollapsed';
+			    }
+		    }
+	    }
     }else{
         if($isBulkUpload){
             $isShowCollapsed = true;

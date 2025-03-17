@@ -379,6 +379,7 @@ if(!empty($_POST['cg_create'])){
     //include(__DIR__ ."/../../update/update-contact-options-check/update-contact-options-check.php");
 
     $fieldContent['titel']="File upload";
+    $fieldContent['collapsed']="off";
 
     $imageF = 'image-f';
 

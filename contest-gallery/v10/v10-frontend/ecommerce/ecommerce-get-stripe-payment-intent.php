@@ -40,7 +40,15 @@ if(isset($_POST['cgPurchaseUnits']) && !empty($ecommerceOptions->StripeApiActive
 	$metaData['shipping'] = !empty($data[0]['amount']['breakdown']['shipping']['value']) ? $data[0]['amount']['breakdown']['shipping']['value'] : '0.00';
 
     foreach ($data[0]['items'] as $key => $item){
-	    $metaData['item_'.($key+1)] = substr('name: '.substr($item['name'],0,60).';quantity: '.$item['quantity'].';priceGross: '.$item['priceGross'].';unit_amount: '.$item['unit_amount']['value'].';tax : '.$item['tax']['value'].';tax_percentage : '.$item['tax_percentage'].';SaleType : '.$item['SaleType'].';Entry ID : '.$item['realId'].';Gallery ID : '.$item['realGid'],0,499);
+	    if(empty($item['name'])){$item['name'] = '';}
+	    if(empty($item['quantity'])){$item['quantity'] = '';}
+	    if(empty($item['priceGross'])){$item['priceGross'] = '';}
+        $unit_amount_value = empty($item['unit_amount']['value']) ? '' : $item['unit_amount']['value'];
+        $tax_value = empty($item['tax']['value']) ? '' : $item['tax']['value'];
+	    if(empty($item['tax_percentage'])){$item['tax_percentage'] = '';}
+	    if(empty($item['SaleType'])){$item['SaleType'] = '';}
+	    if(empty($item['realGid'])){$item['realGid'] = '';}
+	    $metaData['item_'.($key+1)] = substr('name: '.substr($item['name'],0,60).';quantity: '.$item['quantity'].';priceGross: '.$item['priceGross'].';unit_amount: '.$unit_amount_value.';tax : '.$tax_value.';tax_percentage : '.$item['tax_percentage'].';SaleType : '.$item['SaleType'].';Entry ID : '.$item['realId'].';Gallery ID : '.$item['realGid'],0,499);
     }
 
 	$params = [

@@ -297,6 +297,8 @@ HEREDOC;
             $InvoiceNote = '';
         }
 
+	    $InvoiceNote = contest_gal1ery_convert_for_html_output_without_nl2br($InvoiceNote);
+
         $country_codes_paypal_csv = __DIR__.'/../../../../functions/ecommerce/general/country_codes_paypal.csv';
         $countriesArray = [];
         $countriesArray['default'] = 'Default';
@@ -358,7 +360,7 @@ HEREDOC;
 
             $htmlMain .= '<tr>
      <td style="text-align:left;">'.$item['quantity'].'</td>
-     <td style="text-align:left;">'.$item['name'].$freeShippingStringAlternativeString.'</td>
+     <td style="text-align:left;">'.contest_gal1ery_convert_for_html_output_without_nl2br($item['name']).$freeShippingStringAlternativeString.'</td>
      '.$taxColumnToShow.'
      <td  style="text-align:right;">'.$priceStringToShowSingle.'</td>
      <td  style="text-align:right;">'.$priceStringToShowTotal.'</td>
@@ -552,6 +554,12 @@ HEREDOC;
         }
 
         $totalPriceToShow = cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$PriceTotalGrossItemsWithShipping);
+
+	    $filterData = apply_filters( 'cg_custom_total_price_to_show', $PriceTotalGrossItemsWithShipping,$totalPriceToShow);
+
+	    if(!empty($filterData['cgCustomTotalPriceToShow'])){
+		    $totalPriceToShow = $filterData['cgCustomTotalPriceToShow'];
+	    }
 
         $freeShippingString = '';
         if($itemHasDefaultShipping && $isFreeShipping){

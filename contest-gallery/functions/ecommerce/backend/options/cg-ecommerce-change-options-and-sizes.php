@@ -63,12 +63,14 @@ if(!function_exists('cg_ecommerce_change_options_and_sizes')){
 	    $InvoiceNumberLogicCustomNumberLive = $unsavingValues->InvoiceNumberLogicCustomNumberLive;
 
 	    $PayPalApiActive = isset($_POST['PayPalApiActive']) ? 1 : 2;
+	    $PayPalTestActive = !empty($_POST['PayPalTestActive']) ? 1 : 0;
 	    $PayPalSandboxClientId = sanitize_text_field(isset($_POST['PayPalSandboxClientId']) ? $_POST['PayPalSandboxClientId'] : $PayPalSandboxClientId);
         $PayPalSandboxSecret = sanitize_text_field(isset($_POST['PayPalSandboxSecret']) ? $_POST['PayPalSandboxSecret'] : $PayPalSandboxSecret);
         $PayPalLiveClientId = sanitize_text_field(isset($_POST['PayPalLiveClientId']) ? $_POST['PayPalLiveClientId'] : $PayPalLiveClientId);
         $PayPalLiveSecret = sanitize_text_field(isset($_POST['PayPalLiveSecret']) ? $_POST['PayPalLiveSecret'] : $PayPalLiveSecret);
 
 	    $StripeApiActive = isset($_POST['StripeApiActive']) ? 1 : 2;
+	    $StripeTestActive = !empty($_POST['StripeTestActive']) ? 1 : 0;
 	    $StripeSandboxClientId = sanitize_text_field(isset($_POST['StripeSandboxClientId']) ? $_POST['StripeSandboxClientId'] : $StripeSandboxClientId);
         $StripeSandboxSecret = sanitize_text_field(isset($_POST['StripeSandboxSecret']) ? $_POST['StripeSandboxSecret'] : $StripeSandboxSecret);
         $StripeLiveClientId = sanitize_text_field(isset($_POST['StripeLiveClientId']) ? $_POST['StripeLiveClientId'] : $StripeLiveClientId);
@@ -159,10 +161,10 @@ if(!function_exists('cg_ecommerce_change_options_and_sizes')){
 	    $wpdb->update(
             $tablenameEcommerceOptions,
             array(
-                'PayPalApiActive' => $PayPalApiActive,
+                'PayPalApiActive' => $PayPalApiActive,'PayPalTestActive' => $PayPalTestActive,
                 'PayPalSandboxClientId' => $PayPalSandboxClientId,'PayPalSandboxSecret' => $PayPalSandboxSecret,
                 'PayPalLiveClientId' => $PayPalLiveClientId, 'PayPalLiveSecret' => $PayPalLiveSecret,
-                'StripeApiActive' => $StripeApiActive,
+                'StripeApiActive' => $StripeApiActive,'StripeTestActive' => $StripeTestActive,
                 'StripeSandboxClientId' => $StripeSandboxClientId,'StripeSandboxSecret' => $StripeSandboxSecret,
                 'StripeLiveClientId' => $StripeLiveClientId, 'StripeLiveSecret' => $StripeLiveSecret,
                 'CurrencyShort' => $CurrencyShort, 'CurrencyPosition' => $CurrencyPosition, 'PriceDivider' => $PriceDivider,
@@ -178,10 +180,10 @@ if(!function_exists('cg_ecommerce_change_options_and_sizes')){
             ),
             array('GeneralID' => 1),
             array(
-                '%d',
+                '%d','%d',
                 '%s','%s',
                 '%s', '%s',
-                '%d',
+                '%d','%d',
                 '%s','%s',
                 '%s', '%s',
                 '%s', '%s', '%s',

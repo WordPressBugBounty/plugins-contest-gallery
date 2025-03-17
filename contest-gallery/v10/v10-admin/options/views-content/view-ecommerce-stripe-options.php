@@ -30,7 +30,7 @@ echo <<<HEREDOC
  <div class='cg_view_options_row'>
     <div class='cg_border_radius_unset cg_border_top_none  cg_view_option cg_view_option_100_percent' id="StripeApiActiveOption">
         <div class='cg_view_option_title'>
-            <p>Enablel Stripe API for checkout</p>
+            <p>Enable Stripe API for checkout</p>
         </div>
         <div class='cg_view_option_checkbox'>
             <input type="checkbox" name="StripeApiActive" id="StripeApiActive" $StripeApiActive>
@@ -94,6 +94,18 @@ echo <<<HEREDOC
                             </div>
                         </div>
                 </div>
+                 <div class='cg_view_options_row'>
+				    <div class='cg_border_radius_unset  cg_border_top_none cg_view_option cg_border_bottom_none cg_view_option_100_percent cg_border_right_none' id="StripeTestActiveOption">
+				        <div class='cg_view_option_title'>
+				            <p>Enable Stripe Sandbox Testing<br>
+				                <span class="cg_view_option_title_note"><b>NOTE:</b> Disable this option after testing is finished. Otherwise not desired test purchases might happen if somebody knows the logic and use official credit card numbers for testing from Stripe.</span>
+				            </p>
+				        </div>
+				        <div class='cg_view_option_checkbox'>
+				            <input type="checkbox" name="StripeTestActive" id="StripeTestActive" $StripeTestActive>
+				        </div>
+				    </div>
+				</div>
             </div>
            <div class='cg_view_options_row_column' style="width:25%;">
                 <div class='cg_view_options_row'>
@@ -111,6 +123,8 @@ echo <<<HEREDOC
         <div class="cg_view_option cg_view_option_full_width" style="margin-bottom: -15px;" >
             <div class="cg_view_option_title ">
                 <p>Stripe payment methods<br><span class="cg_view_option_title_note">You can control which payment methods should be available in your Stripe dashboard:<br><a href="https://dashboard.stripe.com/test/settings/payment_methods/" target="_blank">https://dashboard.stripe.com/test/settings/payment_methods</a><br><br>
+                Credit card numbers for testing can be found here:<br><a href="https://docs.stripe.com/testing" target="_blank">https://docs.stripe.com/testing</a>
+                <br><br>
                   <b class="cg_color_red">NOTE:</b> some payment methods requires up to <b>24 hours</b> to appear as payment in <b>live mode</b> 
               		<br><br>
                   <b class="cg_color_red">NOTE:</b> only <b>instant</b> processing payment methods like "Credit Cards" are supported so far<br>

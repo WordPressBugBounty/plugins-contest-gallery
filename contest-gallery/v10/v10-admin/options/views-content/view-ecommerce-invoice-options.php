@@ -3,7 +3,7 @@
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
 <p class="cg_view_options_rows_container_title ">
-        <strong>* NOTE:</strong> Ecommerce invoice options are general and valid for all galleries.<br>
+        <strong>* NOTE:</strong> Invoice options are general and valid for all galleries.<br>
 </p>
 HEREDOC;
 

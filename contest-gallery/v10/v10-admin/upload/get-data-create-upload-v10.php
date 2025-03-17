@@ -316,6 +316,16 @@ if(!empty($_POST['upload'])){
 					$onOff = 'off';
 				}
 
+				if(!empty($field['collapsed'])){
+					if($field['collapsed']=='on'){
+						$collapsed = 'on';
+					}else{
+						$collapsed = 'off';
+					}
+				}else{
+					$collapsed = 'off';
+				}
+
 				if(empty($field['hide'])){
 					$active = 1;
 				}else{
@@ -323,6 +333,7 @@ if(!empty($_POST['upload'])){
 				}
 
 				$bhFieldsArray['mandatory']=sanitize_text_field($onOff);
+				$bhFieldsArray['collapsed']=sanitize_text_field($collapsed);
 
 				$bhFieldsArray['titel']= sanitize_text_field(htmlentities($field['title'], ENT_QUOTES));
 				$bhFieldsArray['file-type-img']= sanitize_text_field(htmlentities(!empty($field['file-type-img']) ? $field['file-type-img'] : '' , ENT_QUOTES));
@@ -517,10 +528,6 @@ if(!empty($_POST['upload'])){
 				if(!empty($field['EcommerceTitle'])){
 					$EcommerceTitle = 1;
 				}else{
-					$EcommerceTitle = 0;
-				}
-
-				if(strpos($Version,'-PRO')===false){
 					$EcommerceTitle = 0;
 				}
 

@@ -9,6 +9,7 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
         $CurrencyPosition = $LogForDatabase['CurrencyPosition'];
 	    $itemHasShipping = false;
 	    $hasDownload = false;
+	    $itemHasTax = false;
 
 	    global $wpdb;
         $tablename_ecommerce_orders = $wpdb->prefix . "contest_gal1ery_ecommerce_orders";
@@ -184,16 +185,20 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
 	            }
 
             }
+	        $TaxValue = 0;
+	        if(!empty($item['tax'])){
+		        $TaxValue = round(floatval($item['tax']['value']),2);
+	        }
 
             $PriceUnitNet = round(floatval($item['unit_amount']['value']),2);
             $LogForDatabase['purchase_units'][0]['items'][$key]['PriceUnitNet'] = $PriceUnitNet;
             $PriceTotalNet = $PriceUnitNet*intval($item['quantity']);
             $LogForDatabase['purchase_units'][0]['items'][$key]['PriceTotalNet'] = $PriceTotalNet;
-            $PriceUnitGross = $PriceUnitNet + round(floatval($item['tax']['value']),2);
+            $PriceUnitGross = $PriceUnitNet + round(floatval($TaxValue),2);
             $PriceTotalGross = $PriceUnitGross * intval($item['quantity']);
             $LogForDatabase['purchase_units'][0]['items'][$key]['PriceUnitGross'] = $PriceUnitGross;
             $LogForDatabase['purchase_units'][0]['items'][$key]['PriceTotalGross'] = $PriceTotalGross;
-            $TaxValueUnit = round(floatval($item['tax']['value']),2);
+            $TaxValueUnit = round(floatval($TaxValue),2);
             $LogForDatabase['purchase_units'][0]['items'][$key]['TaxValueUnit'] = $TaxValueUnit;
             $TaxValueTotal = $TaxValueUnit * intval($item['quantity']);
             $LogForDatabase['purchase_units'][0]['items'][$key]['TaxValueTotal'] = $TaxValueTotal;
@@ -232,6 +237,7 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
             //var_dump($PriceTotalGrossToShow);
 
             $nameForMailToShow = ((strlen($item['name'])>70) ? substr($item['name'],0,70).'...' : $item['name']);
+	        $nameForMailToShow = contest_gal1ery_convert_for_html_output_without_nl2br($nameForMailToShow);
 
             $ordersummaryandpage .= '<tr><td><b>'.$nameForMailToShow.':</b> </td><td style="padding-left:30px;">'.$PriceTotalGrossToShow.'</td></tr>';
             if(!empty($DownloadKey) && $IsDownload && ($PaymentStatus=='COMPLETED' || $PaymentStatus=='succeeded') && empty($beforeFilter['ownKeys'][$realId]['DownloadKey'])){

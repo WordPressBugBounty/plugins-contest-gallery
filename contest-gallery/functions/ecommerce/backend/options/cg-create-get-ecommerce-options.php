@@ -19,10 +19,10 @@ if(!function_exists('cg_create_ecommerce_options')){
                 "
 					INSERT INTO $tablename_ecommerce_options
 					( id, GeneralID,
-					PayPalApiActive,
+					PayPalApiActive,PayPalTestActive,
 					PayPalSandboxClientId,PayPalSandboxSecret,
 					PayPalLiveClientId,PayPalLiveSecret,
-					StripeApiActive,
+					StripeApiActive,StripeTestActive,
 					StripeSandboxClientId,StripeSandboxSecret,
 					StripeLiveClientId,StripeLiveSecret,
 					Environment,
@@ -36,10 +36,10 @@ if(!function_exists('cg_create_ecommerce_options')){
 					)
 					VALUES (
 					%s,%d,
-					%d,
+					%d,%d,
 					%s,%s,
 					%s,%s,
-					%d,
+					%d,%d,
 					%s,%s,
 					%s,%s,
 			        %s,
@@ -52,10 +52,10 @@ if(!function_exists('cg_create_ecommerce_options')){
 					%s,%s
 					)",
                 '',1,
-                2,
+                2,0,
                 '','',
                 '','',
-                2,
+                2,0,
                 '','',
                 '','',
                 'sandbox',

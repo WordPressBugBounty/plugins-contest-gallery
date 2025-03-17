@@ -134,10 +134,13 @@ HEREDOC;
                 <div id="cg_main_options_tab_second_row">
                     <div id="cg_main_options_tab_second_row_inner" class="cg_main_options_tab_row">
 HEREDOC;
+	/*
+  <div class='cg_view_select $cg_v14_note_caret' cg-data-view="#view10" data-count="10"><a class="cg_view_select_link" cg-data-view="#view10" cg-data-href="cgViewHelper10" style="$cg_v14_email_confirmation_disabled_style">E-mail confirmation e-mail</a></div>
+	 */
 
     if(intval($galleryDbVersion)>=22) {
         echo <<<HEREDOC
-                 <div class='cg_view_select cg_view_select_general cg_view_select_ecommerce cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view13" data-count="13"><a class="cg_view_select_link" cg-data-view="#view13" cg-data-href="cgViewHelper13">Galleries</a></div>
+                 <div class='cg_view_select  cg_view_select_ecommerce cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view13" data-count="13"><a class="cg_view_select_link" cg-data-view="#view13" cg-data-href="cgViewHelper13">Ecommerce</a></div>
                  <div class='cg_view_select cg_view_select_ecommerce cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view14" data-count="14"><a class="cg_view_select_link" cg-data-view="#view14" cg-data-href="cgViewHelper14">Invoice</a></div>
                   <div cg-data-view="#view15" data-count="75" id="cgSaveOptionsNavButton">
                     <span cg-data-view="#view15" cg-data-href="cgViewHelper15" class="cg_backend_button_gallery_action" ><strong>Save options</strong></span>
@@ -502,7 +505,7 @@ HEREDOC;
     if($isEditEcommerceOnly){
         if(intval($galleryDbVersion)>=22) {
             echo <<<HEREDOC
-        <h4 id="view13" class="cg_view_header cg_view_header_general">Galleries</h4>
+        <h4 id="view13" class="cg_view_header cg_view_header_general">Ecommerce</h4>
 <div class="cg_view cgEcommerceGeneralOptions cgViewHelper13">
 HEREDOC;
             echo <<<HEREDOC

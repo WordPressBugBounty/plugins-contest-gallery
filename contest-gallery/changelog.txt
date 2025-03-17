@@ -1,12 +1,19 @@
 Contest Gallery
 
+= V26.0.3 =
+* NEW: Show contact form collapsed option if file upload is required. By default is uncollapsed for new galleries.
+* NEW: Slightly improved borders and shadows for bright gallery color style in frontend in case of very bright monitors.
+* NEW: Enable PayPal and Stripe sandbox testing options. By default is disabled, so not desired test purchases in test environment can be done with PayPal or Stripe credit cards for testing.
+* FIXED: Rotating of upload form on mobile devices did not work properly.
+* FIXED: Different little bugs.
+
 = V26.0.2 =
 * NEW: Larger images in masonry view. Min width raised from around 270px to 370px.
 * NEW: Larger images in entry view. Max width raised from 930px to 1020px.
 * FIXED: Special characters did not appear correctly in cg_gallery_user entry view.
 
 = V26.0.1 =
-* FIXED: Different small bugs.
+* FIXED: Different little bugs.
 * FIXED: Security issue.
 
 = V26.0.0.1 =

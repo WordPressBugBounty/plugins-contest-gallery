@@ -152,7 +152,7 @@ if((time()>=$ContestEndTime && $ContestEnd==1) OR $ContestEnd==2){
 
                 foreach($jsonUploadFormSortedByFieldOrder as $fieldOrder => $field){
 
-                    if ($field['Field_Type'] == 'image-f'){
+                if ($field['Field_Type'] == 'image-f'){
 
                         $Field_Order = $field['Field_Order'];
                         $Field_Content = $field['Field_Content'];

@@ -250,7 +250,7 @@ echo <<<HEREDOC
                     <div class='cg_view_option_title'>
                         <p>Activate bulk (multiple files) upload in frontend
                         <br><span class="cg_view_option_title_note"><span class="cg_color_red">NOTE:</span> adding additional files per file upload is not available for bulk upload</span>
-                        <br><span class="cg_view_option_title_note"><span class="cg_color_red">NOTE:</span> multiple files upload is always required and collapsed at the beginning</span>
+                        <br><span class="cg_view_option_title_note"><span class="cg_color_red">NOTE:</span> multiple files upload is always <b>required</b> and <b>collapsed</b> at the beginning</span>
                         </p>
                     </div>
                     <div class='cg_view_option_checkbox'>

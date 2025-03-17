@@ -27,6 +27,11 @@ echo "<div class='formFieldInnerDiv' >";
 
 // Formularfelder unserializen
 $fieldContent = unserialize($value->Field_Content);
+/*
+echo "<pre>";
+	print_r($fieldContent);
+echo "</pre>";
+*/
 
 // Aktuelle Feld ID mitschicken
 echo "<input type='hidden' name='actualID[]' value='$id' >";
@@ -207,6 +212,22 @@ foreach($fieldContent as $key => $valueFieldContent){
     }
 }
 
+if(floatval($dbGalleryVersion)>=26.03){
+	if($fieldContent['collapsed']=='on'){
+		$collapsedChecked = 'checked';
+	}else{
+		$collapsedChecked = '';
+	}
+}else{
+	// for older versions
+	if(!isset($fieldContent['collapsed'])){
+		$collapsedChecked = 'checked';
+	}else if($fieldContent['collapsed']=='on'){
+		$collapsedChecked = 'checked';
+	}else{
+		$collapsedChecked = '';
+	}
+}
 
 foreach($fieldContent as $key => $valueFieldContent){
 
@@ -243,7 +264,7 @@ foreach($fieldContent as $key => $valueFieldContent){
         <div class="cg_view_options_row_marker cg_hide"><div class="cg_view_options_row_marker_title">Field title</div><div class="cg_view_options_row_marker_content"></div></div>
             <div class="cg_view_option cg_view_option_not_disable cg_border_bottom_none cg_view_option_100_percent">
                 <div class="cg_view_option_title cg_view_option_title_header">
-                    <p>File upload field<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE:</span> file upload field always at the top the form</span></p>
+                    <p>File upload field<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE:</span> file upload field always at the top of the form</span></p>
                 </div>
             </div>
 </div>
@@ -291,19 +312,29 @@ HEREDOC;
 </div>
 HEREDOC;
 
+		// ,<br>only upload form button is visible first,<br>after adding/dropping file,<br>form will be uncollapsed
+
         echo <<<HEREDOC
 <div class='cg_view_options_row'>
-    <div  class='cg_view_option cg_border_top_none cg_view_option_50_percent cg_border_right_none '>
+    <div  class='cg_view_option cg_border_top_none cg_border_right_none '>
         <div class='cg_view_option_title cg_view_option_title_full_width '>
-            <p>Required<br><span class="cg_view_option_title_note"><b>NOTE:</b> if required then form appears collapsed,<br>only upload form button is visible first,<br>after adding/dropping file,<br>form will be uncollapsed </span></p>
+            <p>Required<br><span class="cg_view_option_title_note"><b>NOTE:</b> if not required then form appears always uncollapsed</span></p>
         </div>
         <div class="cg_view_option_checkbox">
               <input type="checkbox" name="upload[$id][required]" $requiredChecked>
         </div>
     </div>
-    <div class='cg_view_option cg_border_top_none cg_view_option_hide_upload_field cg_view_option_50_percent '>
+    <div  class='cg_view_option cg_border_top_none cg_border_right_none '>
+        <div class='cg_view_option_title cg_view_option_title_full_width '>
+            <p>Show collapsed if required<br><span class="cg_view_option_title_note"><b>NOTE:</b> Form appears collapsed.<br>Only upload form button is visible first,<br>after adding/dropping file,<br>form will be uncollapsed.</span></p>
+        </div>
+        <div class="cg_view_option_checkbox">
+              <input type="checkbox" name="upload[$id][collapsed]" $collapsedChecked>
+        </div>
+    </div>
+    <div class='cg_view_option cg_border_top_none cg_view_option_hide_upload_field  '>
         <div class='cg_view_option_title cg_view_option_title_full_width'>
-            <p>Hide<br><span class="cg_view_option_title_note"><b>NOTE:</b> Will not be visible in contact form</span></p>
+            <p>Hide<br><span class="cg_view_option_title_note"><b>NOTE:</b> will not be visible in contact form<br><b>use this form as normal contact form<br>without file upload</b></span></p>
         </div>
         <div class="cg_view_option_checkbox">
               <input type="checkbox" name="upload[$id][hide]" $hideChecked>

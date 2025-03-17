@@ -337,7 +337,9 @@ return array(
         'StripeLiveClientId' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 18.01.2025
         'StripeLiveSecret' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 18.01.2025
         'StripeSandboxClientId' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 18.01.2025
-        'StripeSandboxSecret' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""')// Update 18.01.2025
+        'StripeSandboxSecret' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 18.01.2025
+        'PayPalTestActive' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 16.03.2025
+        'StripeTestActive' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 16.03.2025
     ),
     $tablename_ecommerce_entries => array(
         'MaxUploads' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 03.06.2024

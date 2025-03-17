@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, youtube
 Requires at least: 5.6
-Stable tag: 26.0.2
+Stable tag: 26.0.3
 Tested up to: 6.7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -231,6 +231,13 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V26.0.3 =
+* NEW: Show contact form collapsed option if file upload is required. By default is uncollapsed for new galleries.
+* NEW: Slightly improved borders and shadows for bright gallery color style in frontend in case of very bright monitors.
+* NEW: Enable PayPal and Stripe sandbox testing options. By default is disabled, so not desired test purchases in test environment can be done with PayPal or Stripe credit cards for testing.
+* FIXED: Rotating of upload form on mobile devices did not work properly.
+* FIXED: Different little bugs.
 
 = V26.0.2 =
 * NEW: Larger images in masonry view. Min width raised from around 270px to 370px.

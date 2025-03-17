@@ -80,7 +80,17 @@ if($PaymentType == 'paypal'){
 	}else{
 		$accessToken = cg_paypal_get_access_token($ecommerce_options_array['PayPalLiveClientId'],$ecommerce_options_array['PayPalLiveSecret']);
 	}
+
 	$PayPalOrderResponse = cg_get_paypal_order($accessToken,$_POST['id'],$IsTest);
+
+	if(empty($PayPalOrderResponse['id'])){
+		?>
+        <script data-cg-processing="true">
+            cgJsClass.gallery.vars.ecommerce.TransactionError = <?php echo json_encode($PayPalOrderResponse['message']);?>;
+        </script>
+		<?php
+		die;
+	}
 
 	if(!empty($PayPalOrderResponse['status'])){
 		$PaymentStatus = $PayPalOrderResponse['status'];

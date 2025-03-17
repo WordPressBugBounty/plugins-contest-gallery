@@ -173,7 +173,7 @@ echo <<<HEREDOC
     </div>
      <div class='cg_view_option cg_view_option_hide_upload_field cg_view_option_50_percent '>
         <div class='cg_view_option_title cg_view_option_title_full_width'>
-            <p>Hide<br><span class="cg_view_option_title_note"><b>NOTE:</b> Will not be visible in contact form</span></p>
+            <p>Hide<br><span class="cg_view_option_title_note"><b>NOTE:</b> will not be visible in contact form</span></p>
         </div>
         <div class="cg_view_option_checkbox" >
               <input type="checkbox" name="upload[$id][hide]" $hideChecked>
