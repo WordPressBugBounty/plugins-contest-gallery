@@ -597,7 +597,6 @@ if(!$isManipulated){
                         ?>
 
                         <script data-cg-processing="true">
-                            debugger
 
                             var gid = <?php echo json_encode($galeryIDuser);?>;
                             cgJsData[gid].vars.upload.doneUploadFailed = true;
@@ -1677,9 +1676,14 @@ if(!$isManipulated){
     if(!empty($_POST['cg_from_gallery_form_ajax_upload_or_contact'])){
 
         $isOnlyContactForm = false;
+        $isFromUploadSale = false;
 
         if(!empty($_POST['isOnlyContactForm'])){
             $isOnlyContactForm = true;
+        }
+
+        if(!empty($_POST['isFromUploadSale'])){
+            $isFromUploadSale = true;
         }
 
         if($ActivateUpload==1){
@@ -1702,6 +1706,7 @@ if(!$isManipulated){
                 var newImageIdsArray = <?php echo json_encode($collectImageIDs);?>;
                 var processedFilesCounter = <?php echo json_encode($processedFilesCounter);?>;
                 var isOnlyContactForm = <?php echo json_encode($isOnlyContactForm);?>;
+                var isFromUploadSale = <?php echo json_encode($isFromUploadSale);?>;
                 var isOnlyContactEntry = <?php echo json_encode($isOnlyContactEntry);?>;
                 var isAdditionalFilesUpload = parseInt(<?php echo json_encode($proOptions->AdditionalFiles);?>);
                 var isBulkUpload = parseInt(<?php echo json_encode($selectSQL1->ActivateBulkUpload);?>);
@@ -1709,7 +1714,7 @@ if(!$isManipulated){
                 var AdditionalFilesArray = <?php echo json_encode($AdditionalFilesArray);?>;
                 var arrayInfoDataForImageAddedEntries = <?php echo json_encode($arrayInfoDataForImageAddedEntries);?>;
 
-                if(isOnlyContactForm){
+                if(isOnlyContactForm && !isFromUploadSale){
                     cgJsClass.gallery.vars.$cgLoadedIds.each(function () {
                         var oneOfGalleryIdsOnPage = jQuery(this).val();
                         var gidAsStringForSure = ''+oneOfGalleryIdsOnPage;
@@ -1731,19 +1736,21 @@ if(!$isManipulated){
                         }
                     });
                 }else{
-                    // works also for multiple bulk upload
-                    for(var realId in ExifDataByRealIds){if(!ExifDataByRealIds.hasOwnProperty(realId)){break;}
-                        data[realId].Exif = ExifDataByRealIds[realId];
+                    if(!isFromUploadSale){
+                        // works also for multiple bulk upload
+                        for(var realId in ExifDataByRealIds){if(!ExifDataByRealIds.hasOwnProperty(realId)){break;}
+                            data[realId].Exif = ExifDataByRealIds[realId];
+                        }
+                        // works only for additional files without multiple bulk upload
+                        if(isAdditionalFilesUpload && !isBulkUpload && Object.keys(AdditionalFilesArray).length > 1){
+                            data[realIdBefore].MultipleFilesParsed = AdditionalFilesArray;
+                        }
+                        cgJsClass.gallery.views.close(gid,true);
+                        for(var realId in arrayInfoDataForImageAddedEntries){if(!arrayInfoDataForImageAddedEntries.hasOwnProperty(realId)){break;}
+                            cgJsData[gid].jsonInfoData[realId] = arrayInfoDataForImageAddedEntries[realId];
+                        }
+                        cgJsClass.gallery.getJson.imageDataPreProcess(gid,data,false,processedFilesCounter,true,newImageIdsArray);
                     }
-                    // works only for additional files without multiple bulk upload
-                    if(isAdditionalFilesUpload && !isBulkUpload && Object.keys(AdditionalFilesArray).length > 1){
-                        data[realIdBefore].MultipleFilesParsed = AdditionalFilesArray;
-                    }
-                    cgJsClass.gallery.views.close(gid,true);
-                    for(var realId in arrayInfoDataForImageAddedEntries){if(!arrayInfoDataForImageAddedEntries.hasOwnProperty(realId)){break;}
-                        cgJsData[gid].jsonInfoData[realId] = arrayInfoDataForImageAddedEntries[realId];
-                    }
-                    cgJsClass.gallery.getJson.imageDataPreProcess(gid,data,false,processedFilesCounter,true,newImageIdsArray);
                 }
 
             </script>

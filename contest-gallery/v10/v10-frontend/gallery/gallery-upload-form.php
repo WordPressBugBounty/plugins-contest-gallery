@@ -4,7 +4,11 @@ global $cgGlobalGoogleRecaptchaRendered;
 
 include ('gallery-upload-form-options.php');
 
-echo "<div id='mainCGdivUploadForm$galeryIDuserForJs' class='mainCGdivUploadForm $mainCGdivShowUncollapsed $mainCGdivContactEntriesOnly $mainCGdivUploadNotRequired $mainCGdivUploadFormBulk $mainCGdivUploadFormAdditionalFiles mainCGdivUploadFormAjax cg_hide $cgFeControlsStyle $BorderRadiusClassUploadForm' data-cg-gid='$galeryIDuserForJs' data-cg-real-gid='$galeryID'>";
+if(empty($OrderItemID)){
+    $OrderItemID = '';
+}
+
+echo "<div id='mainCGdivUploadForm$galeryIDuserForJs' class='mainCGdivUploadForm $mainCGdivShowUncollapsed $mainCGdivContactEntriesOnly $mainCGdivUploadNotRequired $mainCGdivUploadFormBulk $mainCGdivUploadFormAdditionalFiles mainCGdivUploadFormAjax cg_hide $cgFeControlsStyle $BorderRadiusClassUploadForm' data-cg-gid='$galeryIDuserForJs' data-cg-real-gid='$galeryID'  data-cg-order-item-id='$OrderItemID' >";
 
 $jsonUploadFormSortedByFieldOrder = array();
 

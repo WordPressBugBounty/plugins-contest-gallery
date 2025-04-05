@@ -475,6 +475,9 @@ Payment type not set
             if(typeof cgJsData[gid].options == 'undefined' ){
                 cgJsData[gid].options = cgJsClass.gallery.vars.ecommerce.options[gid];
             }
+            if(typeof cgJsData[gid].optionsFullData == 'undefined' ){
+                cgJsData[gid].optionsFullData = cgJsClass.gallery.vars.ecommerce.options[gid];
+            }
 
             if(typeof cgJsData[gid].vars == 'undefined' ){
                 cgJsData[gid].vars = {};

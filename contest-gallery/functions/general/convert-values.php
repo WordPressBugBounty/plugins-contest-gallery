@@ -63,8 +63,12 @@ if(!function_exists('contest_gal1ery_no_convert')){
 }
 if(!function_exists('cg_stripslashes_recursively')){
     function cg_stripslashes_recursively ($content){
-        $content=implode("",explode("\\",$content));
-        return stripslashes(trim($content));
+        if(!empty($content)){
+            $content=implode("",explode("\\",$content));
+            return stripslashes(trim($content));
+        }else{
+            return $content;
+        }
     }
 }
 if(!function_exists('contest_gal1ery_convert_for_html_output')){

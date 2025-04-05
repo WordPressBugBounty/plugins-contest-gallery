@@ -134,33 +134,27 @@ if(!function_exists('cg_modified_admin_bar_for_contest_gallery_user_v14')){
                 $wp_admin_bar->remove_menu('comments');         // Remove the comments link
                 $wp_admin_bar->remove_menu('new-content');      // Remove the content link
                 $wp_admin_bar->remove_menu('w3tc');             // If you use w3 total cache remove the performance link
-                //$wp_admin_bar->remove_menu('my-account');       // Remove the user details tab
+                $wp_admin_bar->remove_menu('my-account');       // Remove the user details tab
                 $wp_admin_bar->remove_menu('search');       // Remove the user details tab
                 $wp_admin_bar->remove_menu('user-info');       // Remove the user details tab
 
 
                 // Modify WordPress nodes here
+                /*
                 $args = array(
                     'id'    => 'logout',//wp-admin-bar-logout << full id name in frontend
-                    'parent'    => 'user-actions',//wp-admin-bar-user-actions <<< full id name in frontend
+                    //'parent'    => 'user-actions',//wp-admin-bar-user-actions <<< full id name in frontend
+                    'parent'    => 'cg_account',//wp-admin-bar-cg_account <<< full id name in frontend
                     //'href' => wp_logout_url(get_permalink()) // EXAMPLE!!! only example how to modify node!!!! Logout url is already modified by recognizer in sthis state in cg_modified_logout_url
                     'title' => $language_LogOut
                 );
                 // Logout url is already modified by recognizer in sthis state in cg_modified_logout_url
-                $wp_admin_bar->add_node($args);
+                $wp_admin_bar->add_node($args);*/
 
                 $args = array(
-                    'id'    => 'my-account',//wp-admin-my-account << full id name in frontend
+                    'id'    => 'cg_account',//wp-admin-cg_account << full id name in frontend
                     'parent'    => 'top-secondary',//wp-admin-bar-top-secondary <<< full id name in frontend
                     'title' => $language_Account.": ".$current_user->user_login
-                );
-                $wp_admin_bar->add_node($args);
-
-                $args = array(
-                    'id'    => 'edit-profile',//wp-admin-edit-profile << full id name in frontend
-                    'parent'    => 'user-actions',//wp-admin-bar-user-actions <<< full id name in frontend
-                    'title' => $language_EditProfile,
-                    'href' => get_edit_profile_url()
                 );
                 $wp_admin_bar->add_node($args);
 
@@ -170,14 +164,37 @@ if(!function_exists('cg_modified_admin_bar_for_contest_gallery_user_v14')){
                     if(!empty($BackToGalleryLink)){
                         $args = array(
                             'id'    => 'contest_gallery_user_bar',
-                            'parent'    => 'user-actions',//wp-admin-bar-user-actions <<< full id name in frontend
+                            //'parent'    => 'user-actions',//wp-admin-bar-user-actions <<< full id name in frontend
+                            'parent'    => 'cg_account',//wp-admin-bar-cg_account <<< full id name in frontend
                             'title' => $language_BackToGallery,
                             'href' => $BackToGalleryLink
                         );
 	                    $wp_admin_bar->add_node($args);
                     }
                     wp_enqueue_script( 'cg_contest_gallery_edit_profile_js', plugins_url('/../../../v10/v10-js/admin/profile/edit-profile.js', __FILE__), array('jquery'), cg_get_version_for_scripts());
+                }else{
+                    $args = array(
+                        'id'    => 'edit-profile',//wp-admin-edit-profile << full id name in frontend
+                        // 'parent'    => 'user-actions',//wp-admin-bar-user-actions <<< full id name in frontend
+                        'parent'    => 'cg_account',//wp-admin-bar-cg_account <<< full id name in frontend
+                        'title' => $language_EditProfile,
+                        'href' => get_edit_profile_url()
+                    );
+                    $wp_admin_bar->add_node($args);
                 }
+
+                $args = array(
+                    'id'    => 'cg_logout',//wp-admin-bar-logout << full id name in frontend
+                    //'parent'    => 'user-actions',//wp-admin-bar-user-actions <<< full id name in frontend
+                    'parent'    => 'cg_account',//wp-admin-bar-cg_account <<< full id name in frontend
+                    //'href' => wp_logout_url(get_permalink()) // EXAMPLE!!! only example how to modify node!!!! Logout url is already modified by recognizer in sthis state in cg_modified_logout_url
+                    'title' => $language_LogOut,
+                    'href' => wp_logout_url(get_permalink())
+                );
+                // Logout url is already modified by recognizer in sthis state in cg_modified_logout_url
+                $wp_admin_bar->add_node($args);
+
+                wp_enqueue_style( 'cg_logged_in_style', plugins_url('/../../../v10/v10-css/frontend/logged_in_style.css', __FILE__), false, cg_get_version_for_scripts() );
 
             }
 

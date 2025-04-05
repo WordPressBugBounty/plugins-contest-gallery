@@ -136,6 +136,11 @@ $ecommerceFilesData = '';
 if((!empty($_GET['test'])) || (!empty($atts) && !empty($atts['test']))){
 	$isEcommerceTest = true;
 }
+
+if(empty($hasUploadSell)){
+    $hasUploadSell = false;// so is set for sure
+}
+
 if($shortcode_name == 'cg_gallery_user'){
 	$shortcode_name_plural = 'cg_galleries_user';
     $isUserGallery = true; // will be used both :)
@@ -204,18 +209,16 @@ if($shortcode_name == 'cg_gallery_user'){
     if(!empty($_GET['test']) && $_GET['test']=='true'){
         $isEcommerceTest = true;
     }
-}else if(!empty($isReallyUploadForm)){
+}else if(!empty($isReallyUploadForm) || !empty($isReallyContactForm)){
     $isOnlyContactForm = true;
     $galeryIDshort = 'cf';
     $galeryIDuser = $galeryID.'-cf';
     $galeryIDuserForJs = $galeryIDuser;
     $cg_gallery_shortcode_type = 'cg_users_contact';
-}else if(!empty($isReallyContactForm)){
-    $isOnlyContactForm = true;
-    $galeryIDshort = 'cf';
-    $galeryIDuser = $galeryID.'-cf';
-    $galeryIDuserForJs = $galeryIDuser;
-    $cg_gallery_shortcode_type = 'cg_users_contact';
+    if(!empty($hasUploadSell) && !empty($OrderItemID)){
+        //$galeryIDuserForJs = $OrderItemID;
+        $galeryIDuserForJs = $OrderItemID.'itemId';
+    }
 }
 
 $is_user_logged_in = is_user_logged_in();

@@ -762,7 +762,7 @@ if (!function_exists('post_cg_attach_to_another_user_select')) {
 
                 echo "<select id='cgAttachToAnotherUserSelect' name='cgAttachToAnotherUserId' class='cg_no_outline_and_shadow_on_focus'>";
                     foreach ($selectWPusers as $user){
-                        echo "<option value='$user->ID' data-user_login='$user->user_login'>$user->user_login - $user->user_email (ID: $user->ID)</option>";
+                        echo "<option value='$user->ID' data-user_login='$user->user_login' data-user_email='$user->user_email'>$user->user_login - $user->user_email (ID: $user->ID)</option>";
                     }
                 echo "</select>";
 

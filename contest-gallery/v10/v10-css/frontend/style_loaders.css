@@ -108,6 +108,7 @@
 .mainCGdivUploadForm .cg_skeleton_loader_on_page_load:after,
 #cgEcommerceStripePaymentButton.cg_skeleton_loader:after,
 #cg_user_login_check.cg_skeleton_loader:after,
+#cgLostPasswordNewSend.cg_skeleton_loader:after,
 #cg_users_registry_check.cg_skeleton_loader:after,
 #cgLostPasswordEmailSend.cg_skeleton_loader:after,
 .mainCGdiv .mainCGallery .cg_show.cg_skeleton_loader .cg_append:after,

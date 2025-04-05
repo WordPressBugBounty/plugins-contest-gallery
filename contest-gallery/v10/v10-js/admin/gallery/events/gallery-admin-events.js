@@ -2025,6 +2025,7 @@ jQuery(document).ready(function ($) {
         var WpUserId = $option.val();
         var text = $option.text();
         var user_login = $option.attr('data-user_login');
+        var user_email = $option.attr('data-user_email');
         var cg_nonce = $('#cg_nonce').val();
         var gid = $('#cgBackendGalleryId').val();
 
@@ -2053,7 +2054,7 @@ jQuery(document).ready(function ($) {
                 cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Entry dettached from <br><b style="color: black !important;">'+text+'</b>',true);
             }else{
                 var $cg_added_by = $('<span class="cg_added_by">Added by (username)</span>');
-                var $cg_action_href = $('<a class="cg_image_action_href cg_load_backend_link" href="?page=contest-gallery-pro/index.php&users_management=true&option_id='+gid+'&wp_user_id='+WpUserId+'&cg_nonce='+cg_nonce+'">'+
+                var $cg_action_href = $('<a class="cg_image_action_href cg_load_backend_link" title="'+user_email+'" href="?page=contest-gallery-pro/index.php&users_management=true&option_id='+gid+'&wp_user_id='+WpUserId+'&cg_nonce='+cg_nonce+'">'+
                     '<div class="cg_image_action_span cg_for_id_wp_username_by_search_sort cg_added_by_username">'+user_login+'</div></a>');
                 var $cg_attach_to_another_user = $('<div class="cg_action_button cg_attach_to_another_user">Attach to another user<br>or detach<br>from user</div>');
                 $cg_backend_info_user_link_container.find('.cg_added_by, .cg_image_action_href.cg_load_backend_link, .cg_attach_to_another_user').remove();

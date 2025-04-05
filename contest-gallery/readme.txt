@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, youtube
 Requires at least: 5.6
-Stable tag: 26.0.3
+Stable tag: 26.0.4
 Tested up to: 6.7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -232,6 +232,10 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 
 == Changelog ==
 
+= V26.0.4 =
+* FIXED: Different little bugs.
+* FIXED: Using multiple different upload forms if multiple different "uploads" were purchased, did not work on order summary page.
+
 = V26.0.3 =
 * NEW: Show contact form collapsed option if file upload is required. By default is uncollapsed for new galleries.
 * NEW: Slightly improved borders and shadows for bright gallery color style in frontend in case of very bright monitors.
@@ -245,7 +249,7 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 * FIXED: Special characters did not appear correctly in cg_gallery_user entry view.
 
 = V26.0.1 =
-* FIXED: Different small bugs.
+* FIXED: Different little bugs.
 * FIXED: Security issue.
 
 = V26.0.0.1 =

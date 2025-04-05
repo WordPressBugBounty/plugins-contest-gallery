@@ -20,10 +20,13 @@
            // var index = Object.keys(cgJsData).length;
             var index = <?php echo json_encode($galeryIDuserForJs); ?>;
             var shortcode_name = <?php echo json_encode($shortcode_name); ?>;
+            var hasUploadSell = <?php echo json_encode($hasUploadSell); ?>;
 
             // data gallery stuff
            if(cgJsData[index]){
+               if(!hasUploadSell){
                alert('This shortcode is inserted multiple times, which is not allowed: ['+shortcode_name+'  id="'+index+'"]');
+               }
            }else{
                cgJsData[index] = {};
                cgJsData[index].vars = {};

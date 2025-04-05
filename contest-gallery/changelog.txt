@@ -1,5 +1,9 @@
 Contest Gallery
 
+= V26.0.4 =
+* FIXED: Different little bugs.
+* FIXED: Using multiple different upload forms if multiple different "uploads" were purchased, did not work on order summary page.
+
 = V26.0.3 =
 * NEW: Show contact form collapsed option if file upload is required. By default is uncollapsed for new galleries.
 * NEW: Slightly improved borders and shadows for bright gallery color style in frontend in case of very bright monitors.

@@ -1183,7 +1183,7 @@ if($isAjaxCall){
 
 				echo "<div class='cg_backend_info_user_link_container'>";
 				echo $cgAddedByGoogleUser;
-				echo "<span class='cg_added_by'>Added by (username)</span><a class=\"cg_image_action_href cg_load_backend_link\" href='?page=".cg_get_version()."/index.php&users_management=true&option_id=$GalleryID&wp_user_id=".$allWpUsersByIdArray[$WpUserId]['ID']."'>
+				echo "<span class='cg_added_by'>Added by (username)</span><a class=\"cg_image_action_href cg_load_backend_link\"  title='".$allWpUsersByIdArray[$WpUserId]['user_email']."'  href='?page=".cg_get_version()."/index.php&users_management=true&option_id=$GalleryID&wp_user_id=".$allWpUsersByIdArray[$WpUserId]['ID']."'>
 <div class=\"cg_image_action_span cg_for_id_wp_username_by_search_sort cg_added_by_username\" >".$allWpUsersByIdArray[$WpUserId]['user_login']."</div></a>";
 
 				if(in_array($WpUserId,$wpUsersIdsWithNotConfirmedMailArray)){
