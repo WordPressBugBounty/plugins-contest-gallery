@@ -53,40 +53,40 @@ if(!function_exists('cg_create_exif_data')){
                 if(!empty($wpImageExifData['IFD0'])){
 
                     if(!empty($wpImageExifData['IFD0']['Model']) && !empty($wpImageExifData['IFD0']['Make'])){
-                        $exifDataForImage['MakeAndModel'] = $wpImageExifData['IFD0']['Make'].' '.$wpImageExifData['IFD0']['Model'];
+                        $exifDataForImage['MakeAndModel'] = cg1l_sanitize_method($wpImageExifData['IFD0']['Make']).' '.cg1l_sanitize_method($wpImageExifData['IFD0']['Model']);
                     }
 
                     if(!empty($wpImageExifData['IFD0']['Model'])){
-                        $exifDataForImage['Model'] = $wpImageExifData['IFD0']['Model'];
+                        $exifDataForImage['Model'] = cg1l_sanitize_method($wpImageExifData['IFD0']['Model']);
                     }
 
                     // future update eventually
                     /*if(!empty($wpImageExifData['IFD0']['DateTime'])){
-                        $exifDataForImage['DateTime'] = $wpImageExifData['IFD0']['DateTime'];
+                        $exifDataForImage['DateTime'] = cg1l_sanitize_method($wpImageExifData['IFD0']['DateTime']);
                     }*/
 
                 }
 
                 if(!empty($wpImageExifData['COMPUTED'])){
                     if(!empty($wpImageExifData['COMPUTED']['ApertureFNumber'])){
-                        $exifDataForImage['ApertureFNumber'] = $wpImageExifData['COMPUTED']['ApertureFNumber'];
+                        $exifDataForImage['ApertureFNumber'] = cg1l_sanitize_method($wpImageExifData['COMPUTED']['ApertureFNumber']);
                     }
                 }
 
                 if(!empty($wpImageExifData['EXIF'])){
                     if(!empty($wpImageExifData['EXIF']['ExposureTime'])){
-                        $exifDataForImage['ExposureTime'] = $wpImageExifData['EXIF']['ExposureTime'];
+                        $exifDataForImage['ExposureTime'] = cg1l_sanitize_method($wpImageExifData['EXIF']['ExposureTime']);
                     }
                 }
 
                 if(!empty($wpImageExifData['EXIF'])){
                     if(!empty($wpImageExifData['EXIF']['ISOSpeedRatings'])){
                         if(!empty($wpImageExifData['EXIF']['ISOSpeedRatings'][0])){
-                            $exifDataForImage['ISOSpeedRatings'] = $wpImageExifData['EXIF']['ISOSpeedRatings'][0];
+                            $exifDataForImage['ISOSpeedRatings'] = cg1l_sanitize_method($wpImageExifData['EXIF']['ISOSpeedRatings'][0]);
                         }else if(!empty($wpImageExifData['EXIF']['ISOSpeedRatings'][1])){
-                            $exifDataForImage['ISOSpeedRatings'] = $wpImageExifData['EXIF']['ISOSpeedRatings'][1];
+                            $exifDataForImage['ISOSpeedRatings'] = cg1l_sanitize_method($wpImageExifData['EXIF']['ISOSpeedRatings'][1]);
                         }else{
-                            $exifDataForImage['ISOSpeedRatings'] = $wpImageExifData['EXIF']['ISOSpeedRatings'];
+                            $exifDataForImage['ISOSpeedRatings'] = cg1l_sanitize_method($wpImageExifData['EXIF']['ISOSpeedRatings']);
                         }
                     }
                 }
@@ -98,14 +98,14 @@ if(!function_exists('cg_create_exif_data')){
 
                         if(count($focal_length)){
                             $focal_length = intval($focal_length[0]/intval($focal_length[1]));
-                            $exifDataForImage['FocalLength'] = $focal_length.'mm';
+                            $exifDataForImage['FocalLength'] = cg1l_sanitize_method($focal_length).'mm';
                         }
                     }
                 }
 
                 if(!empty($wpImageExifData['EXIF'])){
                     if(!empty($wpImageExifData['EXIF']['DateTimeOriginal'])){
-                        $exifDataForImage['DateTimeOriginal'] = $wpImageExifData['EXIF']['DateTimeOriginal'];
+                        $exifDataForImage['DateTimeOriginal'] = cg1l_sanitize_method($wpImageExifData['EXIF']['DateTimeOriginal']);
                     }
                 }
 

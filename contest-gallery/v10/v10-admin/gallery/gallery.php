@@ -2023,7 +2023,7 @@ if($isAjaxCall){
 					$DateTimeOriginal = str_replace(':','-',$DateTimeOriginal);
 				}
 
-				echo '<div class="'.((!empty($exifData['DateTimeOriginal'])) ? '' : 'cg_hide').' cg-exif cg-exif-date-time-original cg-exif '.$cgProFalse.'"><span class="cg-exif-date-time-original-img cg-exif-img"></span><span class="cg-exif-date-time-original-text cg-exif-text">'.$DateTimeOriginal.'</span></div>';
+				echo '<div class="'.((!empty($exifData['DateTimeOriginal'])) ? '' : 'cg_hide').' cg-exif cg-exif-date-time-original cg-exif '.$cgProFalse.'"><span class="cg-exif-date-time-original-img cg-exif-img"></span><span class="cg-exif-date-time-original-text cg-exif-text">'.contest_gal1ery_convert_for_html_output_without_nl2br($DateTimeOriginal).'</span></div>';
 
 				$MakeAndModel = '';
 				if(!empty($exifData['MakeAndModel'])){// Make And Model or only Model might be available
@@ -2032,13 +2032,13 @@ if($isAjaxCall){
 					$MakeAndModel = $exifData['Model'];
 				}
 
-				echo '<div class="'.((!empty($exifData['MakeAndModel'])) ? '' : 'cg_hide').' cg-exif cg-exif-model"><span class="cg-exif-model-img cg-exif-img"></span><span class="cg-exif-model-text cg-exif-text">'.$MakeAndModel.'</span></div>';
+				echo '<div class="'.((!empty($exifData['MakeAndModel'])) ? '' : 'cg_hide').' cg-exif cg-exif-model"><span class="cg-exif-model-img cg-exif-img"></span><span class="cg-exif-model-text cg-exif-text">'.contest_gal1ery_convert_for_html_output_without_nl2br($MakeAndModel).'</span></div>';
 
 				$ApertureFNumber = '';
-				echo '<div class="'.((!empty($exifData['ApertureFNumber'])) ? '' : 'cg_hide').' cg-exif cg-exif-aperturefnumber cg-exif"><span class="cg-exif-aperturefnumber-img cg-exif-img"></span><span class="cg-exif-aperturefnumber-text cg-exif-text">'.((!empty($exifData['ApertureFNumber'])) ? $exifData['ApertureFNumber'] : '').'</span></div>';
-				echo '<div class="'.((!empty($exifData['ExposureTime'])) ? '' : 'cg_hide').' cg-exif cg-exif-exposuretime cg-exif"><span class="cg-exif-exposuretime-img cg-exif-img"></span><span class="cg-exif-exposuretime-text cg-exif-text">'.((!empty($exifData['ExposureTime'])) ? $exifData['ExposureTime'] : '').'</span></div>';
-				echo '<div class="'.((!empty($exifData['ISOSpeedRatings'])) ? '' : 'cg_hide').' cg-exif cg-exif-isospeedratings cg-exif"><span class="cg-exif-isospeedratings-img cg-exif-img"></span><span class="cg-exif-isospeedratings-text cg-exif-text">'.((!empty($exifData['ISOSpeedRatings'])) ? $exifData['ISOSpeedRatings'] : '').'</span></div>';
-				echo '<div class="'.((!empty($exifData['FocalLength'])) ? '' : 'cg_hide').' cg-exif cg-exif-focallength cg-exif"><span class="cg-exif-focallength-img cg-exif-img"></span><span class="cg-exif-focallength-text cg-exif-text">'.((!empty($exifData['FocalLength'])) ? $exifData['FocalLength'] : '').'</span></div>';
+				echo '<div class="'.((!empty($exifData['ApertureFNumber'])) ? '' : 'cg_hide').' cg-exif cg-exif-aperturefnumber cg-exif"><span class="cg-exif-aperturefnumber-img cg-exif-img"></span><span class="cg-exif-aperturefnumber-text cg-exif-text">'.((!empty($exifData['ApertureFNumber'])) ? contest_gal1ery_convert_for_html_output_without_nl2br($exifData['ApertureFNumber']) : '').'</span></div>';
+				echo '<div class="'.((!empty($exifData['ExposureTime'])) ? '' : 'cg_hide').' cg-exif cg-exif-exposuretime cg-exif"><span class="cg-exif-exposuretime-img cg-exif-img"></span><span class="cg-exif-exposuretime-text cg-exif-text">'.((!empty($exifData['ExposureTime'])) ? contest_gal1ery_convert_for_html_output_without_nl2br($exifData['ExposureTime']) : '').'</span></div>';
+				echo '<div class="'.((!empty($exifData['ISOSpeedRatings'])) ? '' : 'cg_hide').' cg-exif cg-exif-isospeedratings cg-exif"><span class="cg-exif-isospeedratings-img cg-exif-img"></span><span class="cg-exif-isospeedratings-text cg-exif-text">'.((!empty($exifData['ISOSpeedRatings'])) ? contest_gal1ery_convert_for_html_output_without_nl2br($exifData['ISOSpeedRatings']) : '').'</span></div>';
+				echo '<div class="'.((!empty($exifData['FocalLength'])) ? '' : 'cg_hide').' cg-exif cg-exif-focallength cg-exif"><span class="cg-exif-focallength-img cg-exif-img"></span><span class="cg-exif-focallength-text cg-exif-text">'.((!empty($exifData['FocalLength'])) ? contest_gal1ery_convert_for_html_output_without_nl2br($exifData['FocalLength']) : '').'</span></div>';
 				echo '</div>';
 
 				echo '</div>';

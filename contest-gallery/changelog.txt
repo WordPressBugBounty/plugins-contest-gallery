@@ -1,5 +1,8 @@
 Contest Gallery
 
+= V26.0.5 =
+* FIXED: Security issue.
+
 = V26.0.4 =
 * FIXED: Different little bugs.
 * FIXED: Using multiple different upload forms if multiple different "uploads" were purchased, did not work on order summary page.
