@@ -697,10 +697,13 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
 
         $imagesFullData = [];
 
+        if(!function_exists('cgSortArray')){
 	    function cgSortArray($a1, $a2){
 		    if ($a1 == $a2) return 0;
 		    return ($a1 > $a2) ? -1 : 1;
 	    }
+        }
+
 
 	    if(empty($galleriesIds)){
 		    usort($galleryNumbers, "cgSortArray");
@@ -723,6 +726,7 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
 		    $dirs[] = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdForArray;
 	    }
 
+        if(!function_exists('cgGetNotEmptyJsonFileData')){
 	    function cgGetNotEmptyJsonFileData($index,$imageIDs,$galleryIdToCheck, $imageId, $wp_upload_dir){
 		    $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdToCheck.'/json/image-data/image-data-'.$imageId.'.json';
 		    $jsonFileData = json_decode(file_get_contents($jsonFile),true);
@@ -738,7 +742,9 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
                 }
             }
 	    }
+        }
 
+        if(!function_exists('cgGetHighestRating')){
 	    function cgGetHighestRating($a1, $a2, $AllowRating){
 		    // $a1 == previous file
 		    // $a2 == current file
@@ -777,13 +783,16 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
 			    return ($sumA1 > $sumA2) ? $a1 : $a2;
 		    }
 	    }
+        }
 
+        if(!function_exists('cgGetHighestComments')){
 	    function cgGetHighestComments($a1, $a2){
 		    // $a1 == previous file
 		    // $a2 == current file
 		    if ($a1['CountC'] == $a2['CountC']) return $a1;// return previous always, which means higher id
 		    return ($a1['CountC'] > $a2['CountC']) ? $a1 : $a2;
 	    }
+        }
 
         $time = time();
 	    $structure = get_option( 'permalink_structure' );

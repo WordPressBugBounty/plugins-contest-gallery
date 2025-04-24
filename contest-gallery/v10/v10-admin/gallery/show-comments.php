@@ -548,9 +548,12 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
                   }
               }
           }
+
+          if(!function_exists('cgSortArray')){
           function cgSortArray($a1, $a2){
               if ($a1['timestamp'] == $a2['timestamp']) return 0;
               return ($a1['timestamp'] > $a2['timestamp']) ? -1 : 1;
+          }
           }
 
           usort($select_comments_array, "cgSortArray");

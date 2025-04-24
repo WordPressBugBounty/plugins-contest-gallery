@@ -1,5 +1,8 @@
 Contest Gallery
 
+= V26.0.5.1 =
+* FIXED: Adding cg_galleries... type of shortcode to a page or post not possible in WordPress version 6.8 and higher.
+
 = V26.0.5 =
 * FIXED: Security issue.
 
