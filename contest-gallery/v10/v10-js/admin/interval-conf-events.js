@@ -90,10 +90,14 @@ jQuery(document).ready(function ($) {
                     maxDate:moment(momentMaxDate),
                 };
 
+                debugger
+
                 if(jsonOptions[openedShortcode] && jsonOptions[openedShortcode][year] && jsonOptions[openedShortcode][year]['monthly'] && jsonOptions[openedShortcode][year]['monthly'][monthName]
                     && jsonOptions[openedShortcode][year]['monthly'][monthName].fromDate  && jsonOptions[openedShortcode][year]['monthly'][monthName].toDate){
-                    pickerSettings.startDate = new Date(jsonOptions[openedShortcode][year]['monthly'][monthName].fromDate);
-                    pickerSettings.endDate =  new Date(jsonOptions[openedShortcode][year]['monthly'][monthName].toDate);
+                    //pickerSettings.startDate = new Date(jsonOptions[openedShortcode][year]['monthly'][monthName].fromDate);
+                    //pickerSettings.endDate =  new Date(jsonOptions[openedShortcode][year]['monthly'][monthName].toDate);
+                    pickerSettings.startDate = moment(jsonOptions[openedShortcode][year]['monthly'][monthName].fromDate);// has to be done with moment.js
+                    pickerSettings.endDate = moment(jsonOptions[openedShortcode][year]['monthly'][monthName].toDate);// has to be done with moment.js
                 }
 
                 $(this).daterangepicker(
@@ -228,7 +232,12 @@ jQuery(document).ready(function ($) {
 
                 if(option){
                     $(this).find('.cg_view_option_select').removeClass('cg_hide');
-                    var startDate = new Date(option);
+                    console.log('option start date');
+                    console.log(option);
+                    //var startDate = new Date(option);
+                    var startDate = moment(option).toDate();// has to be done with moment.js
+                    console.log('startDate')
+                    console.log(startDate)
                     var dayOfMonth = startDate.getDate();
                     if(dayOfMonth<10){
                         dayOfMonth = '0'+String(dayOfMonth);
@@ -240,7 +249,8 @@ jQuery(document).ready(function ($) {
                 var option = getOptionValue(shortcode,jsonOptions,intervalType,$(this),'toDate');
                 $(this).find('.cg_shortcode_interval_datepicker_input_end').attr('name',shortcode+'['+$(this).attr('data-cg-year')+']['+$(this).attr('data-cg-interval-type')+']['+$(this).attr('data-cg-month')+'][toDate]').val(((option) ? option : ''));
                 if(option){
-                    var endDate = new Date(option);
+                    //var endDate = new Date(option);
+                    var endDate = moment(option).toDate();// has to be done with moment.js
                     var dayOfMonth = endDate.getDate();
                     if(dayOfMonth<10){
                         dayOfMonth = '0'+String(dayOfMonth);
@@ -312,6 +322,8 @@ jQuery(document).ready(function ($) {
         $('.cg_shortcode_interval_datepicker').on('apply.daterangepicker', function(ev, picker) {
 
             var $cg_shortcode_interval_datepicker_row = $clickedDatepicker.closest('.cg_shortcode_interval_datepicker_row');
+            console.log('picker.startDate._d')
+            console.log(picker.startDate._d)
             $cg_shortcode_interval_datepicker_row.find('.cg_shortcode_interval_datepicker_input_start').val(moment(picker.startDate._d).format('YYYY-MM-DD'));
             $cg_shortcode_interval_datepicker_row.find('.cg_shortcode_interval_datepicker_input_end').val(moment(picker.endDate._d).format('YYYY-MM-DD'));
             $cg_shortcode_interval_datepicker_row.find('.cg_view_option_select').removeClass('cg_hide');

@@ -38,10 +38,13 @@ if(!empty($_GET['option_id'])){
 
 global $wp_version;
 
-//  CHECK FIRST!!!!
 $wp_upload_dir = wp_upload_dir();
+$PdfPreviewsToCreateString = '';
+$cgNewWpUploadWhichReplace = '';
+$cgWpUploadToReplace = '';
+$cgNewWpUploadWhichReplaceForPdfPreview = '';
+$cgWpUploadToReplaceForPdfPreview = '';
 
-//  CHECK FIRST  ---- END !!!!
 if(!empty($_POST['cgGalleryFormSubmit']) && !empty($_POST['cgIsRealFormSubmit'])){
 	include('change-gallery/0_change-gallery.php');
 }
@@ -57,7 +60,6 @@ if(empty($isNewGalleryCreated)){
 }
 
 $cg_hide_is_new_gallery = ($isNewGalleryCreated) ? 'cg_hide' : '';
-
 
 if(!empty($isGalleryAjaxBackendLoad)){// when from page load then load like without without ajax call for faster processing
 	$isAjaxCall = false;
@@ -127,7 +129,6 @@ if($isAjaxCall){
 	echo '<input type="hidden" name="option_id"  value="'. $GalleryID .'">';
 	//echo "<div id='sortable' style='width:935px;border: thin solid black;background-color:#fff;padding-bottom:50px;padding-left:20px;padding-right:20px;padding-top:20px;'>";
 	echo "<input type='hidden' name='changeGalery' value='changeGalery'>";
-
 
 
 	echo "<ul id='cgSortable'>";
@@ -216,6 +217,9 @@ if($isAjaxCall){
 		$WpPageNoVoting = $value->WpPageNoVoting;
 		$WpPageWinner = $value->WpPageWinner;
 		$WpPageEcommerce = $value->WpPageEcommerce;
+		$PdfPreview = $value->PdfPreview;
+        $PdfPreviewImage = '';
+        $PdfPreviewImageLarge = '';
 		if($value->MultipleFiles=='""'){
 			$value->MultipleFiles = '';
 		}
@@ -263,6 +267,9 @@ if($isAjaxCall){
 		}
 
 		$anotherFirstMultipleFile = false;
+		$anotherFirstMultipleFilePdfPreviewImage = '';
+		$anotherFirstMultipleFilePdfPreviewImageLarge = '';
+        $realIdSourceOrder = 0;
 		$MultipleFiles = [];
 		$MultipleFilesString = '';
 		$NamePicToShow = '';
@@ -364,12 +371,19 @@ if($isAjaxCall){
 					break;
 				}else if($MultipleFilesOrder == 1){
 					$anotherFirstMultipleFile = true;
+                    if(!empty($MultipleFileArray['PdfPreviewImage'])){
+                        $anotherFirstMultipleFilePdfPreviewImage = $MultipleFileArray['PdfPreviewImage'];
+                    }
+                    if(!empty($MultipleFileArray['PdfPreviewImageLarge'])){
+                        $anotherFirstMultipleFilePdfPreviewImageLarge = $MultipleFileArray['PdfPreviewImageLarge'];
+                    }
 					break;
 				}
 			}
 
 			foreach ($MultipleFiles as $MultipleFilesOrder => $MultipleFileArray){
 				if(!empty($MultipleFileArray['isRealIdSource'])){
+                    $realIdSourceOrder = $MultipleFilesOrder;
 					if(!empty($EcommerceEntry) && cg_is_is_image($ImgType) && $SaleType=='download' && in_array($WpUpload,$WpUploadFilesForSaleArray)!==false){
 						$addedEcommerceImageForDownload[$id][$WpUpload] = 'base64here';
 					}
@@ -413,6 +427,10 @@ if($isAjaxCall){
 						var_dump($WpUploadToShow);*/
 			$image_url_to_show = $MultipleFiles[1]['guid'];
 			$ImgTypeToShow = $MultipleFiles[1]['ImgType'];
+			$PdfPreview = !empty($MultipleFiles[1]['PdfPreview']) ? $MultipleFiles[1]['PdfPreview'] : 0;
+            if(!empty($PdfPreview)){
+                $WpUploadToShow = $MultipleFiles[1]['PdfPreview'];
+            }
 			$NamePicToShow = $MultipleFiles[1]['NamePic'];
 			$rThumbToShow = $MultipleFiles[1]['rThumb'];
 			/*            $post_title = $MultipleFiles[1]['post_title'];
@@ -766,7 +784,6 @@ if($isAjaxCall){
 		if($ImgType=='ytb' || $ImgType=='twt' || $ImgType=='inst' || $ImgType=='tkt'){
 			$post_mime_type_fist_part = 'embed';
 		}
-
 		if(cg_is_is_image($ImgTypeToShow)){
 			if(!empty($EcommerceEntry)){
 				$imgSrcMedium=$image_url_to_show;
@@ -843,11 +860,27 @@ if($isAjaxCall){
 			}
 		}
 
+        if(!empty($value->PdfPreview)){
+            if(!empty($anotherFirstMultipleFilePdfPreviewImage) && $realIdSourceOrder==1){
+                $PdfPreviewImage = $anotherFirstMultipleFilePdfPreviewImage;
+            }else{
+                $PdfPreviewImage = wp_get_attachment_image_src($value->PdfPreview, 'full');
+                $PdfPreviewImage = $PdfPreviewImage[0];
+            }
+            if(!empty($anotherFirstMultipleFilePdfPreviewImageLarge) && $realIdSourceOrder==1){
+                $PdfPreviewImageLarge = $anotherFirstMultipleFilePdfPreviewImageLarge;
+            }else{
+                $PdfPreviewImageLarge = wp_get_attachment_image_src($value->PdfPreview, 'large');
+                $PdfPreviewImageLarge = $PdfPreviewImageLarge[0];
+            }
+            $post_mime_type_fist_part = 'image';
+        }
+
 		echo "<div class='cg_backend_info_container $cg_ecom_not_ecom' data-cg-real-id='$id' data-cg-post_name='$post_name'  data-cg-post_title='$post_title' 
              data-cg-post_content='$post_description'  data-cg-post_excerpt='$post_excerpt'   data-cg-post_mime_type='$post_mime_type'  
              data-cg-original-source='$image_url' data-cg-type-short='$ImgType'  data-cg-type='$post_mime_type_fist_part'
              data-cg-url-image-large='$imgSrcLargeRealIdSrc'  data-cg-url-image-medium='$imgSrcMediumRealIdSrc'  
-             data-cg-file-height='$fileHeight' data-cg-file-width='$fileWidth'  data-cg-exif='$exifDataStringForInput' data-cg-wp-upload='$WpUpload' 
+             data-cg-file-height='$fileHeight' data-cg-file-width='$fileWidth'  data-cg-exif='$exifDataStringForInput'  data-cg-pdf-preview='".$value->PdfPreview."' data-cg-pdf-original='".$image_url."'   data-cg-pdf-preview-image='$PdfPreviewImage' data-cg-pdf-preview-image-large='$PdfPreviewImageLarge' data-cg-wp-upload='$WpUpload' 
             >";
 
 		if(!empty($OrderItem)){
@@ -908,6 +941,8 @@ if($isAjaxCall){
 			echo "<input type='hidden' class='cg_real_id' value='$id'>";
 			echo "<input type='hidden' class='cg_table_id' value='$id'>";
 			echo "<input type='hidden' class='cg_type' value='$post_mime_type_fist_part'>";
+            echo "<input type='hidden' class='cg_file_preview' value='$PdfPreview'>";
+            echo "<input type='hidden' class='cgPdfPreviewImageLarge' value='$PdfPreviewImageLarge'>";
 			echo "<input type='hidden' class='cg_image_type_to_show' value='$ImgTypeToShow'>";
 			echo "<input type='hidden' class='cg_image_src_large_to_show' value='$imgSrcLargeToShow'>";
 
@@ -1028,9 +1063,21 @@ if($isAjaxCall){
 		echo "<input type='hidden' class='IsAlternativeShipping' value='$IsAlternativeShipping'>";
 		echo "<input type='hidden' class='imgSrcFullWidth' value='$imgSrcFullWidth'>";
 		echo "<input type='hidden' class='imgSrcFullHeight' value='$imgSrcFullHeight'>";
-		echo '<div class="cg_backend_image_full_size_target '.$cg_ecom_video.'" data-file-type="'.$ImgTypeToShow.'"  data-name-pic="'.$NamePicToShow.'" data-original-src="'.$sourceOriginalImgShow.'" >';
 
-		if(empty($allWpPostsByWpUploadIdArray[$WpUpload]) && $ImgTypeToShow!='con'){
+        echo '<div class="cg_create_pdf_preview cg_hide"><div class="cg_create_pdf_preview_skeleton" style="width: 50%;"></div><div class="cg_create_pdf_preview_skeleton" style="width: 60%;"></div><div class="cg_create_pdf_preview_skeleton" style="width: 70%;"></div><div class="cg_create_pdf_preview_skeleton" style="width: 80%;"></div><div class="cg_create_pdf_preview_skeleton" style="width: 90%;"></div><div style="margin-left: 5%;margin-top: 10px;">Creating PDF preview</div></div>';
+		echo '<div class="cg_backend_image_full_size_target '.$cg_ecom_video.'" data-file-type="'.$ImgTypeToShow.'"  data-name-pic="'.$NamePicToShow.'" data-original-src="'.$sourceOriginalImgShow.'" >';
+		if(($post_mime_type=='application/pdf' && $PdfPreview && !$anotherFirstMultipleFile) || $anotherFirstMultipleFilePdfPreviewImage){
+            $title = "Show full size";
+            if(in_array($WpUploadToShow,$WpUploadFilesForSaleArray)!==false){
+                $title = "Show preview";
+                $sourceOriginalImgShow = $PdfPreviewImage;
+            }
+            if(!empty($anotherFirstMultipleFilePdfPreviewImage)){
+                $PdfPreviewImage = $anotherFirstMultipleFilePdfPreviewImage;
+            }
+            echo '<a href="'.$sourceOriginalImgShow.'?time='.time().'" target="_blank" title="'.$title.'" alt="'.$title.'">
+                <div class="cg0degree cg_backend_image" style="background: url('.($PdfPreviewImage.'?time='.time()).') no-repeat center" ></div></a>';
+        }else if(empty($allWpPostsByWpUploadIdArray[$WpUpload]) && $ImgTypeToShow!='con'){
 			echo '<div class="cg_backend_image_full_size_target_empty" >';
 			echo "</div>";
 		}else if(cg_is_alternative_file_type_file($ImgTypeToShow)){
@@ -2081,7 +2128,7 @@ if($isAjaxCall){
 					echo "cg_gallery <b>&nbsp;deleted&nbsp;</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
 					echo "</a>";
 				}else{
-					echo "<span data-cg-shortcode='[cg_gallery id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".$permalink."' target='_blank' class='cg_entry_page_url''>";
+					echo "<span data-cg-shortcode='[cg_gallery id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".$permalink."' target='_blank' class='cg_entry_page_url cg_gallery''>";
 					echo "cg_gallery";
 					echo "</a> <span class='td_gallery_info_shortcode_edit cg_tooltip'></span></span>";
 				}
@@ -2097,7 +2144,7 @@ if($isAjaxCall){
 					echo "cg_gallery_user <b>&nbsp;deleted&nbsp;</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
 					echo "</a>";
 				}else{
-					echo "<span data-cg-shortcode='[cg_gallery_user id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".$permalink."' target='_blank' class='cg_entry_page_url'>";
+					echo "<span data-cg-shortcode='[cg_gallery_user id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".$permalink."' target='_blank' class='cg_entry_page_url cg_gallery_user'>";
 					echo "cg_gallery_user";
 					echo "</a> <span class='td_gallery_info_shortcode_edit cg_tooltip'></span></span>";
 				}
@@ -2113,7 +2160,7 @@ if($isAjaxCall){
 					echo "cg_gallery_no_voting <b>&nbsp;deleted&nbsp;</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
 					echo "</a>";
 				}else{
-					echo "<span data-cg-shortcode='[cg_gallery_no_voting id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".$permalink."' target='_blank' class='cg_entry_page_url'>";
+					echo "<span data-cg-shortcode='[cg_gallery_no_voting id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".$permalink."' target='_blank' class='cg_entry_page_url cg_gallery_no_voting'>";
 					echo "cg_gallery_no_voting";
 					echo "</a> <span class='td_gallery_info_shortcode_edit cg_tooltip'></span></span>";
 				}
@@ -2129,7 +2176,7 @@ if($isAjaxCall){
 					echo "cg_gallery_winner <b>&nbsp;deleted&nbsp;</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
 					echo "</a>";
 				}else{
-					echo "<span data-cg-shortcode='[cg_gallery_winner id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".$permalink."' target='_blank' class='cg_entry_page_url'>";
+					echo "<span data-cg-shortcode='[cg_gallery_winner id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".$permalink."' target='_blank' class='cg_entry_page_url cg_gallery_winner'>";
 					echo "cg_gallery_winner";
 					echo "</a> <span class='td_gallery_info_shortcode_edit cg_tooltip'></span></span>";
 				}
@@ -2147,10 +2194,10 @@ if($isAjaxCall){
 						echo "</a>";
 					}else{
 						if($ImgTypeToShow!='con'){
-							echo "<span data-cg-shortcode='[cg_gallery_ecommerce id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".$permalink."' target='_blank' class='cg_entry_page_url '>";
+							echo "<span data-cg-shortcode='[cg_gallery_ecommerce id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".$permalink."' target='_blank' class='cg_entry_page_url cg_gallery_ecommerce'>";
 							echo "cg_gallery_ecommerce";
 							echo "</a> <span class='td_gallery_info_shortcode_edit cg_tooltip'></span></span>";
-							echo "<span data-cg-shortcode='[cg_gallery_ecommerce id=\"$GalleryID\" entry_id=\"$id\" test=\"true\"]'><a href='".$permalink."?test=true' target='_blank' class='cg_entry_page_url '>";
+							echo "<span data-cg-shortcode='[cg_gallery_ecommerce id=\"$GalleryID\" entry_id=\"$id\" test=\"true\"]'><a href='".$permalink."?test=true' target='_blank' class='cg_entry_page_url cg_gallery_ecommerce'>";
 							echo "cg_gallery_ecommerce test";
 							echo "</a> <span class='td_gallery_info_shortcode_edit cg_tooltip'></span></span>";
 						}else{

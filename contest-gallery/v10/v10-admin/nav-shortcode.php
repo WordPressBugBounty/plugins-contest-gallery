@@ -103,11 +103,11 @@ echo "<div class='td_gallery_info_content'>";
 
 echo "<div class='td_gallery_info_shortcode' >
     <div>
-     <div class='td_gallery_info_name_title'>Contact form</div>
+     <div class='td_gallery_info_name_title'>Contact (upload) form</div>
     <div class='td_gallery_info_name_span'>[cg_users_contact id=\"".$galeryNR."\"]</div>
         <div>
             <span class=\"cg-info-icon\">read info</span>
-    <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;top:67px;\">Displays contact form<br>Can be added multiple times on a page with different id’s</span>
+    <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;top:67px;\">Displays contact/upload form<br><b>\"Contact form\"</b> can be <b>used for uploads</b><br>or as simple contact form without uploads<br>Can be added multiple times on a page<br>with different id’s</span>
         </div>
     </div>
     <div class='td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div>

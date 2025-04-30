@@ -670,6 +670,7 @@ if (!empty($_POST['changeSize'])) {
     $ForwardToWpPageEntry = (isset($_POST['ForwardToWpPageEntry'])) ? 1 : 0;
     $ForwardToWpPageEntryInNewTab = (isset($_POST['ForwardToWpPageEntryInNewTab'])) ? 1 : 0;
     $ShowBackToGalleryButton = (isset($_POST['ShowBackToGalleryButton'])) ? 1 : 0;
+        $ShowBackToGalleriesButton = (isset($_POST['ShowBackToGalleriesButton'])) ? 1 : 0;
 
     if (!empty($_POST['PreviewInSlider']) && !empty($_POST['AllowGalleryScript'])) {
 
@@ -934,6 +935,8 @@ if (!empty($_POST['changeSize'])) {
     $TextDeactivatedEntry = (isset($_POST['TextDeactivatedEntry'])) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['TextDeactivatedEntry']) : '';
 
     $BackToGalleryButtonURL = (isset($_POST['BackToGalleryButtonURL'])) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['BackToGalleryButtonURL']) : '';
+        $BackToGalleriesButtonURL = (isset($_POST['BackToGalleriesButtonURL'])) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['BackToGalleriesButtonURL']) : '';
+
     $WpPageParentRedirectURL = (isset($_POST['WpPageParentRedirectURL'])) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['WpPageParentRedirectURL']) : '';
     $RedirectURLdeletedEntry = (isset($_POST['RedirectURLdeletedEntry'])) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['RedirectURLdeletedEntry']) : '';
 
@@ -957,7 +960,8 @@ if (!empty($_POST['changeSize'])) {
             'BorderRadiusUpload' => $BorderRadiusUpload,'BorderRadiusRegistry' => $BorderRadiusRegistry,'BorderRadiusLogin' => $BorderRadiusLogin,'ThankVote' => $ThankVote,
             'CopyOriginalFileLink' => $CopyOriginalFileLink,'ForwardOriginalFile' => $ForwardOriginalFile , 'ShareButtons' => $ShareButtons,
             'ForwardToWpPageEntry' => $ForwardToWpPageEntry, 'ForwardToWpPageEntryInNewTab' => $ForwardToWpPageEntryInNewTab,'TextBeforeWpPageEntry' => $TextBeforeWpPageEntry,'TextAfterWpPageEntry' => $TextAfterWpPageEntry,
-            'ShowBackToGalleryButton' => $ShowBackToGalleryButton, 'BackToGalleryButtonText' => $BackToGalleryButtonText, 'TextDeactivatedEntry' => $TextDeactivatedEntry
+                'ShowBackToGalleryButton' => $ShowBackToGalleryButton, 'BackToGalleryButtonText' => $BackToGalleryButtonText, 'TextDeactivatedEntry' => $TextDeactivatedEntry,
+                'ShowBackToGalleriesButton' => $ShowBackToGalleriesButton
         ),
         array('GalleryID' => $id),
         array('%d', '%d',
@@ -977,7 +981,8 @@ if (!empty($_POST['changeSize'])) {
             '%d', '%d', '%d', '%d',
             '%d', '%d', '%s',
             '%d', '%d', '%s', '%s',
-            '%d', '%s', '%s'
+                '%d', '%s', '%s',
+                '%d'
         ),
         array('%d')
     );
@@ -1708,6 +1713,9 @@ if (!empty($_POST['changeSize'])) {
     $RegUserGalleryOnly = (!empty($_POST['RegUserGalleryOnly'])) ? '1' : '0';
     $VoteNotOwnImage = (!empty($_POST['VoteNotOwnImage'])) ? '1' : '0';
 
+        $PdfPreviewBackend = (!empty($_POST['PdfPreviewBackend'])) ? '1' : '0';
+        $PdfPreviewFrontend = (!empty($_POST['PdfPreviewFrontend'])) ? '1' : '0';
+
     $AllowUploadJPG = (!empty($_POST['AllowUploadJPG'])) ? 1 : 0;
     $AllowUploadPNG = (!empty($_POST['AllowUploadPNG'])) ? 1 : 0;
     $AllowUploadGIF = (!empty($_POST['AllowUploadGIF'])) ? 1 : 0;
@@ -1792,7 +1800,8 @@ if (!empty($_POST['changeSize'])) {
                 'ReviewComm' => $ReviewComm, 'InformAdminAllowActivateDeactivate' => $InformAdminAllowActivateDeactivate,
                 'RegUserMaxUploadPerCategory' => $RegUserMaxUploadPerCategory,'ConsentYoutube'=>$ConsentYoutube,
                 'ConsentTwitter'=>$ConsentTwitter,'ConsentInstagram'=>$ConsentInstagram,
-                'ConsentTikTok'=>$ConsentTikTok
+                'ConsentTikTok'=>$ConsentTikTok,
+                'PdfPreviewBackend'=>$PdfPreviewBackend,'PdfPreviewFrontend'=>$PdfPreviewFrontend
         ),
         array('GalleryID' => $id),
         array(
@@ -1817,7 +1826,8 @@ if (!empty($_POST['changeSize'])) {
             '%d','%d',
                 '%d','%d',
                 '%d','%d',
-                '%d'
+                '%d',
+                '%d','%d'
         ),
         array('%d')
     );
@@ -1839,7 +1849,7 @@ if (!empty($_POST['changeSize'])) {
             'RegUserGalleryOnlyText' => $RegUserGalleryOnlyText,'PreselectSort' => $PreselectSort,
             'UploadRequiresCookieMessage' => $UploadRequiresCookieMessage,'CustomImageNamePath' => $CustomImageNamePath,
             'VoteMessageSuccessText' => $VoteMessageSuccessText,'VoteMessageWarningText' => $VoteMessageWarningText,
-            'BackToGalleryButtonURL' => $BackToGalleryButtonURL,'WpPageParentRedirectURL' => $WpPageParentRedirectURL,
+                'BackToGalleryButtonURL' => $BackToGalleryButtonURL,'BackToGalleriesButtonURL' => $BackToGalleriesButtonURL,'WpPageParentRedirectURL' => $WpPageParentRedirectURL,
             'RedirectURLdeletedEntry' => $RedirectURLdeletedEntry, 'InformAdminActivationURL' => $InformAdminActivationURL
         ),
         array('GalleryID' => $id),
@@ -1850,13 +1860,12 @@ if (!empty($_POST['changeSize'])) {
             '%s','%s',
                 '%s','%s','%s','%s',
             '%s','%s',
-
             '%s','%s',
             '%s','%s',
             '%s','%s',
             '%s','%s',
             '%s','%s',
-            '%s','%s',
+                '%s','%s','%s',
             '%s','%s'
         ),
         array('%d')
@@ -2181,6 +2190,12 @@ if (!empty($_POST['changeSize'])) {
     $_POST['multiple-pics']['cg_gallery_winner']['visual']['ShowBackToGalleryButton'] = (!empty($_POST['multiple-pics']['cg_gallery_winner']['visual']['ShowBackToGalleryButton'])) ? 1 : 0;
         $_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['ShowBackToGalleryButton'] = (!empty($_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['ShowBackToGalleryButton'])) ? 1 : 0;
 
+        $_POST['multiple-pics']['cg_gallery']['visual']['ShowBackToGalleriesButton'] = $ShowBackToGalleriesButton;
+        $_POST['multiple-pics']['cg_gallery_user']['visual']['ShowBackToGalleriesButton'] = (!empty($_POST['multiple-pics']['cg_gallery_user']['visual']['ShowBackToGalleriesButton'])) ? 1 : 0;
+        $_POST['multiple-pics']['cg_gallery_no_voting']['visual']['ShowBackToGalleriesButton'] = (!empty($_POST['multiple-pics']['cg_gallery_no_voting']['visual']['ShowBackToGalleriesButton'])) ? 1 : 0;
+        $_POST['multiple-pics']['cg_gallery_winner']['visual']['ShowBackToGalleriesButton'] = (!empty($_POST['multiple-pics']['cg_gallery_winner']['visual']['ShowBackToGalleriesButton'])) ? 1 : 0;
+        $_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['ShowBackToGalleriesButton'] = (!empty($_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['ShowBackToGalleriesButton'])) ? 1 : 0;
+
     $_POST['multiple-pics']['cg_gallery']['visual']['ForwardToWpPageEntry'] = $ForwardToWpPageEntry;
     $_POST['multiple-pics']['cg_gallery_user']['visual']['ForwardToWpPageEntry'] = (!empty($_POST['multiple-pics']['cg_gallery_user']['visual']['ForwardToWpPageEntry'])) ? 1 : 0;
     $_POST['multiple-pics']['cg_gallery_no_voting']['visual']['ForwardToWpPageEntry'] = (!empty($_POST['multiple-pics']['cg_gallery_no_voting']['visual']['ForwardToWpPageEntry'])) ? 1 : 0;
@@ -2222,6 +2237,19 @@ if (!empty($_POST['changeSize'])) {
     $_POST['multiple-pics']['cg_gallery_winner']['pro']['RegUserGalleryOnlyText'] = (!empty($_POST['multiple-pics']['cg_gallery_winner']['pro']['RegUserGalleryOnlyText'])) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_winner']['pro']['RegUserGalleryOnlyText']) : '';
     $_POST['multiple-pics']['cg_gallery_user']['pro']['RegUserGalleryOnlyText'] = (!empty($_POST['multiple-pics']['cg_gallery_user']['pro']['RegUserGalleryOnlyText'])) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_user']['pro']['RegUserGalleryOnlyText']) : '';
         $_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['RegUserGalleryOnlyText'] = (!empty($_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['RegUserGalleryOnlyText'])) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['RegUserGalleryOnlyText']) : '';
+
+
+        $_POST['multiple-pics']['cg_gallery']['pro']['PdfPreviewBackend'] = $PdfPreviewBackend;
+        $_POST['multiple-pics']['cg_gallery_user']['pro']['PdfPreviewBackend'] = (!empty($_POST['multiple-pics']['cg_gallery_user']['pro']['PdfPreviewBackend'])) ? 1 : 0; // this setting is irrelevant for user gallery
+        $_POST['multiple-pics']['cg_gallery_no_voting']['pro']['PdfPreviewBackend'] = (!empty($_POST['multiple-pics']['cg_gallery_no_voting']['pro']['PdfPreviewBackend'])) ? 1 : 0;
+        $_POST['multiple-pics']['cg_gallery_winner']['pro']['PdfPreviewBackend'] = (!empty($_POST['multiple-pics']['cg_gallery_winner']['pro']['PdfPreviewBackend'])) ? 1 : 0;
+        $_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['PdfPreviewBackend'] = (!empty($_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['PdfPreviewBackend'])) ? 1 : 0;
+
+        $_POST['multiple-pics']['cg_gallery']['pro']['PdfPreviewFrontend'] = $PdfPreviewFrontend;
+        $_POST['multiple-pics']['cg_gallery_user']['pro']['PdfPreviewFrontend'] = (!empty($_POST['multiple-pics']['cg_gallery_user']['pro']['PdfPreviewFrontend'])) ? 1 : 0; // this setting is irrelevant for user gallery
+        $_POST['multiple-pics']['cg_gallery_no_voting']['pro']['PdfPreviewFrontend'] = (!empty($_POST['multiple-pics']['cg_gallery_no_voting']['pro']['PdfPreviewFrontend'])) ? 1 : 0;
+        $_POST['multiple-pics']['cg_gallery_winner']['pro']['PdfPreviewFrontend'] = (!empty($_POST['multiple-pics']['cg_gallery_winner']['pro']['PdfPreviewFrontend'])) ? 1 : 0;
+        $_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['PdfPreviewFrontend'] = (!empty($_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['PdfPreviewFrontend'])) ? 1 : 0;
 
     // has to be set here for json-options.php
     $AdditionalCssGalleryPage = '';
@@ -2288,6 +2316,14 @@ if (!empty($_POST['changeSize'])) {
         $_POST['multiple-pics']['cg_gallery_winner']['pro']['BackToGalleryButtonURL'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_winner']['pro']['BackToGalleryButtonURL']);
 	        if($dbVersion>=22){
 		        $_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['BackToGalleryButtonURL'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['BackToGalleryButtonURL']);
+	        }
+
+            $_POST['multiple-pics']['cg_gallery']['pro']['BackToGalleriesButtonURL'] = $BackToGalleriesButtonURL;
+            $_POST['multiple-pics']['cg_gallery_user']['pro']['BackToGalleriesButtonURL'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_user']['pro']['BackToGalleriesButtonURL']);
+            $_POST['multiple-pics']['cg_gallery_no_voting']['pro']['BackToGalleriesButtonURL'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_no_voting']['pro']['BackToGalleriesButtonURL']);
+            $_POST['multiple-pics']['cg_gallery_winner']['pro']['BackToGalleriesButtonURL'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_winner']['pro']['BackToGalleriesButtonURL']);
+	        if($dbVersion>=22){
+		        $_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['BackToGalleriesButtonURL'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['BackToGalleriesButtonURL']);
 	        }
 
         $_POST['multiple-pics']['cg_gallery']['pro']['WpPageParentRedirectURL'] = $WpPageParentRedirectURL;

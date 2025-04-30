@@ -1,7 +1,7 @@
 cgJsClassAdmin.gallery.load = cgJsClassAdmin.gallery.functions || {};
 cgJsClassAdmin.gallery.load = {
     init: function($,isAddImages,$formLinkObject,isImagesAdded,addedImagesResponse,cg_picture_id_to_scroll){
-
+        debugger
         if(isAddImages){
             $('#cg_uploading_gif').hide();
             $('#cg_uploading_div').hide();
@@ -54,7 +54,6 @@ cgJsClassAdmin.gallery.load = {
         $('.clickBack').hide();
 
         // moved from gallery_admin --- ENDE
-
 
         $('#chooseAll').prop('checked',false);
 
@@ -127,7 +126,6 @@ cgJsClassAdmin.gallery.load = {
         //formPostData.append('action', 'post_contest_gallery_action_ajax');
 
 
-
         // AJAX Call - Load when site load
         cgJsClassAdmin.gallery.functions.requests.push($.ajax({
             url: 'admin-ajax.php',
@@ -137,7 +135,7 @@ cgJsClassAdmin.gallery.load = {
             contentType: false,
             processData: false
         }).done(function(response) {
-
+debugger
 
             if(cgJsClassAdmin.index.functions.isInvalidNonce($,response)){
                 return;
@@ -231,8 +229,12 @@ cgJsClassAdmin.gallery.load = {
                 cgJsClassAdmin.gallery.functions.checkIfFurtherImagesAvailable($);
             }
 
+            debugger
             if(isAddImages){
                 if(isImagesAdded){// have to be done here, isAddImages condition has to be valid, so bottom condition not executed!
+                    if(addedImagesResponse.indexOf('cg-pdf-previews-to-create')>-1){
+                        cgJsClassAdmin.gallery.pdf.createAndSetPdfPreviewPrepare($,addedImagesResponse,false,$response);
+                    }
                     cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Entries added',true);
                     jQuery('html, body').animate({
                             scrollTop: jQuery('#cgSortable').offset().top - 150+'px'

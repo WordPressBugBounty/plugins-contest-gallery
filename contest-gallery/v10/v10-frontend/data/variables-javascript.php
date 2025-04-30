@@ -25,7 +25,7 @@
             // data gallery stuff
            if(cgJsData[index]){
                if(!hasUploadSell){
-               alert('This shortcode is inserted multiple times, which is not allowed: ['+shortcode_name+'  id="'+index+'"]');
+                   alert('This shortcode is inserted multiple times, which is not allowed: ['+shortcode_name+'  id="'+index+'"]');
                }
            }else{
                cgJsData[index] = {};

@@ -36,6 +36,7 @@ if(!function_exists('contest_gal1ery_create_table')){
         $tablename_google_options = $wpdb->base_prefix . "$i"."contest_gal1ery_google_options";
         $tablename_google_users = $wpdb->base_prefix . "$i"."contest_gal1ery_google_users";
         $tablename_wp_pages = $wpdb->base_prefix . "$i"."contest_gal1ery_wp_pages";
+        $tablename_wp_pdf_previews = $wpdb->base_prefix . "$i"."contest_gal1ery_pdf_previews";
       //  $tablename_general = $wpdb->base_prefix . "$i"."contest_gal1ery_general";
 
         $charset_collate = $wpdb->get_charset_collate();
@@ -120,7 +121,9 @@ if(!function_exists('contest_gal1ery_create_table')){
 		WpPageEcommerceTagTermTaxonomyId BIGINT(20) DEFAULT 0,
 		EcommerceEntry BIGINT(20) DEFAULT 0,
 		OrderItem INT(11) DEFAULT 0,
-        INDEX GalleryID_index (GalleryID)
+		PdfPreview BIGINT(20) DEFAULT 0,
+        INDEX GalleryID_index (GalleryID),
+        INDEX PdfPreview_index (PdfPreview)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -639,7 +642,9 @@ if(!function_exists('contest_gal1ery_create_table')){
         ForwardToWpPageEntryInNewTab TINYINT DEFAULT 0,
         ShowBackToGalleryButton TINYINT DEFAULT 0,
         BackToGalleryButtonText TEXT DEFAULT '',
-        TextDeactivatedEntry TEXT DEFAULT ''
+        TextDeactivatedEntry TEXT DEFAULT '',
+        ShowBackToGalleriesButton TINYINT DEFAULT 0,
+        INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
 
 
@@ -668,7 +673,8 @@ if(!function_exists('contest_gal1ery_create_table')){
 								 BorderRadiusUpload,BorderRadiusRegistry,BorderRadiusLogin,ThankVote,GeneralID,
 								 CopyOriginalFileLink,ForwardOriginalFile,ShareButtons,
 								 TextBeforeWpPageEntry,TextAfterWpPageEntry,ForwardToWpPageEntry,ForwardToWpPageEntryInNewTab,
-								 ShowBackToGalleryButton,BackToGalleryButtonText,TextDeactivatedEntry
+								 ShowBackToGalleryButton,BackToGalleryButtonText,TextDeactivatedEntry,
+								 ShowBackToGalleriesButton
 								 )
 								VALUES ( %s,%d,%s,%s,
 								%s,%s,%s,%s,%s,%s,
@@ -683,7 +689,8 @@ if(!function_exists('contest_gal1ery_create_table')){
 								%d,%d,%d,%d,%d,
 								%d,%d,%s,
 								%s,%s,%d,%d,
-							    %d,%s,%s
+							    %d,%s,%s,
+							    %d
 								)
 							",
                         '',$value,'left','left',
@@ -699,7 +706,8 @@ if(!function_exists('contest_gal1ery_create_table')){
                         1,1,1,1,0,
                         1,1,'',
                         '','',0,0,
-                        1,'',''
+                        1,'','',
+                        1
                     ) );
 
                 }
@@ -821,6 +829,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 			AdditionalFilesCount TINYINT DEFAULT 0,
 			ReviewComm TINYINT DEFAULT 0,
             BackToGalleryButtonURL TEXT DEFAULT '',
+            BackToGalleriesButtonURL TEXT DEFAULT '',
             WpPageParentRedirectURL TEXT DEFAULT '',
             RedirectURLdeletedEntry TEXT DEFAULT '',
             InformAdminAllowActivateDeactivate TINYINT DEFAULT 0,
@@ -828,7 +837,10 @@ if(!function_exists('contest_gal1ery_create_table')){
             ConsentYoutube TINYINT DEFAULT 0,
             ConsentTwitter TINYINT DEFAULT 0,
             ConsentInstagram TINYINT DEFAULT 0,
-            ConsentTikTok TINYINT DEFAULT 0
+            ConsentTikTok TINYINT DEFAULT 0,
+            PdfPreviewBackend TINYINT DEFAULT 0,
+            PdfPreviewFrontend TINYINT DEFAULT 0,
+            INDEX GalleryID_index (GalleryID)
 			) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
                 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
                 dbDelta($sql);
@@ -919,6 +931,7 @@ HEREDOC;
                     $AdditionalFiles = 0;
                     $AdditionalFilesCount = 1;
                     $BackToGalleryButtonURL = '';
+                    $BackToGalleriesButtonURL = '';
                     $WpPageParentRedirectURL = '';
                     $RedirectURLdeletedEntry = '';
 
@@ -941,7 +954,7 @@ HEREDOC;
                                 VoteMessageSuccessActive,VoteMessageWarningActive,VoteMessageSuccessText,VoteMessageWarningText,
                                 CommNoteActive,GeneralID,ShowProfileImage,
                                 AllowUploadJPG,AllowUploadPNG,AllowUploadGIF,AllowUploadICO,
-                                AdditionalFiles,AdditionalFilesCount,BackToGalleryButtonURL,WpPageParentRedirectURL,RedirectURLdeletedEntry,
+                                AdditionalFiles,AdditionalFilesCount,BackToGalleryButtonURL,BackToGalleriesButtonURL,WpPageParentRedirectURL,RedirectURLdeletedEntry,
                                  InformAdminAllowActivateDeactivate, InformAdminActivationURL
                                 )
                                 VALUES (%s,%d,%s,%s,
@@ -960,7 +973,7 @@ HEREDOC;
                                 %d,%d,%s,%s,
                                 %d,%d,%d,
                                 %d,%d,%d,%d,
-                                %d,%d,%s,%s,%s,
+                                %d,%d,%s,%s,%s,%s,
                                 %d,%s
                                 )
                             ",
@@ -979,7 +992,7 @@ HEREDOC;
                             $VoteMessageSuccessActive,$VoteMessageWarningActive,$VoteMessageSuccessText,$VoteMessageWarningText,
                             $CommNoteActive,$GeneralID,$ShowProfileImage,
                             $AllowUploadJPG,$AllowUploadPNG,$AllowUploadGIF,$AllowUploadICO,
-                            $AdditionalFiles,$AdditionalFilesCount,$BackToGalleryButtonURL,$WpPageParentRedirectURL,'',
+                            $AdditionalFiles,$AdditionalFilesCount,$BackToGalleryButtonURL,$BackToGalleriesButtonURL,$WpPageParentRedirectURL,'',
                             0,''
                         ) );
                     }
@@ -1353,6 +1366,20 @@ HEREDOC;
         }
 
         cg_create_ecommerce_tables($i,$isShowError,$lastError,$charset_collate);
+
+        // in all found examples index name is another then colum name
+        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_wp_pdf_previews'") != $tablename_wp_pdf_previews){
+            $sql = "CREATE TABLE $tablename_wp_pdf_previews (
+            id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            WpUpload BIGINT(20) DEFAULT 0,
+            WpUploadPreview BIGINT(20) DEFAULT 0,
+            INDEX WpUpload_index (WpUpload),
+            INDEX WpUploadPreview_index (WpUploadPreview)
+            ) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($sql);
+            cg_echo_last_sql_error($isShowError,$lastError);
+        }
 
         // in all found examples index name is another then colum name
         if($wpdb->get_var("SHOW TABLES LIKE '$tablename_wp_pages'") != $tablename_wp_pages){

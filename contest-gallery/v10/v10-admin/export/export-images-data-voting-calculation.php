@@ -52,6 +52,9 @@ foreach ($selectSQLall as $row){
 foreach($selectAllGalleryVotes as $row){
 
     if($row->RatingS==1){
+        if(empty($allGalleryVotesArray[$row->pid]['OneStarCount'])){
+            $allGalleryVotesArray[$row->pid]['OneStarCount'] = 0;
+        }
         $allGalleryVotesArray[$row->pid]['OneStarCount']  = $allGalleryVotesArray[$row->pid]['OneStarCount']  + $row->RatingS;
     }
     else if($row->Rating==1){
@@ -103,6 +106,37 @@ foreach($selectAllGalleryVotes as $row){
 }
 
 foreach($allGalleryVotesArray as $key => $row){
+
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsOneStarCount'])){
+        $allGalleryVotesArray[$key]['MultipleStarsOneStarCount'] = 0;
+    }
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsTwoStarsCount'])){
+        $allGalleryVotesArray[$key]['MultipleStarsTwoStarsCount'] = 0;
+    }
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsThreeStarsCount'])){
+        $allGalleryVotesArray[$key]['MultipleStarsThreeStarsCount'] = 0;
+    }
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsFourStarsCount'])){
+        $allGalleryVotesArray[$key]['MultipleStarsFourStarsCount'] = 0;
+    }
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsFiveStarsCount'])){
+        $allGalleryVotesArray[$key]['MultipleStarsFiveStarsCount'] = 0;
+    }
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsSixStarsCount'])){
+        $allGalleryVotesArray[$key]['MultipleStarsSixStarsCount'] = 0;
+    }
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsSevenStarsCount'])){
+        $allGalleryVotesArray[$key]['MultipleStarsSevenStarsCount'] = 0;
+    }
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsEightStarsCount'])){
+        $allGalleryVotesArray[$key]['MultipleStarsEightStarsCount'] = 0;
+    }
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsNineStarsCount'])){
+        $allGalleryVotesArray[$key]['MultipleStarsNineStarsCount'] = 0;
+    }
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsTenStarsCount'])){
+        $allGalleryVotesArray[$key]['MultipleStarsTenStarsCount'] = 0;
+    }
 
     $allGalleryVotesArray[$key]['MultipleStarsCountInCaseTwoStarsVotingIsActivated'] =
         $allGalleryVotesArray[$key]['MultipleStarsOneStarCount'] +
@@ -174,7 +208,38 @@ foreach($allGalleryVotesArray as $key => $row){
         $allGalleryVotesArray[$key]['MultipleStarsSevenStarsCount'] +
         $allGalleryVotesArray[$key]['MultipleStarsEightStarsCount'] +
         $allGalleryVotesArray[$key]['MultipleStarsNineStarsCount'] +
-        $allGalleryVotesArray[$key]['MultipleStarsTenStarsCount'] ;
+        $allGalleryVotesArray[$key]['MultipleStarsTenStarsCount'];
+
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsOneStarSum'])){
+        $allGalleryVotesArray[$key]['MultipleStarsOneStarSum'] = 0;
+    }
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsTwoStarsSum'])){
+        $allGalleryVotesArray[$key]['MultipleStarsTwoStarsSum'] = 0;
+    }
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsThreeStarsSum'])){
+        $allGalleryVotesArray[$key]['MultipleStarsThreeStarsSum'] = 0;
+    }
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsFourStarsSum'])){
+        $allGalleryVotesArray[$key]['MultipleStarsFourStarsSum'] = 0;
+    }
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsFiveStarsSum'])){
+        $allGalleryVotesArray[$key]['MultipleStarsFiveStarsSum'] = 0;
+    }
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsSixStarsSum'])){
+        $allGalleryVotesArray[$key]['MultipleStarsSixStarsSum'] = 0;
+    }
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsSevenStarsSum'])){
+        $allGalleryVotesArray[$key]['MultipleStarsSevenStarsSum'] = 0;
+    }
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsEightStarsSum'])){
+        $allGalleryVotesArray[$key]['MultipleStarsEightStarsSum'] = 0;
+    }
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsNineStarsSum'])){
+        $allGalleryVotesArray[$key]['MultipleStarsNineStarsSum'] = 0;
+    }
+    if(empty($allGalleryVotesArray[$key]['MultipleStarsTenStarsSum'])){
+        $allGalleryVotesArray[$key]['MultipleStarsTenStarsSum'] = 0;
+    }
 
     $allGalleryVotesArray[$key]['MultipleStarsSumInCaseTwoStarsVotingIsActivated'] =
         $allGalleryVotesArray[$key]['MultipleStarsOneStarSum'] +

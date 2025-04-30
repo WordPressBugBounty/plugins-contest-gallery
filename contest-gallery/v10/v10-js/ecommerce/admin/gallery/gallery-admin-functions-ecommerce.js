@@ -40,20 +40,29 @@ cgJsClassAdmin.gallery.functions.initDownloadSale = function($,$cgSellContainer,
             var WpUpload = parseInt(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order]['WpUpload']);
             var fileType = cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order]['ImgType'];
             var NamePic = cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order]['NamePic'];
+            var PdfPreview = cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order]['PdfPreview'];
+            var PdfPreviewImageLarge = cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order]['PdfPreviewImageLarge'];
             var cg_file_check = 'cg_unchecked';
             if((WpUploadFilesForSaleArrayLoaded.indexOf(WpUpload)>-1 || cgJsClassAdmin.gallery.vars.WpUploadFilesForSaleArrayNew.indexOf(WpUpload)>-1) && cgJsClassAdmin.gallery.vars.removedWpUploadIdsFromSale.indexOf(WpUpload)===-1){
                 cg_file_check = 'cg_checked';
             }
 
             if(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].type=='image') {
-                if(!firstCheckedImageOrder && cg_file_check=='cg_checked'){
+                if(!firstCheckedImageOrder && cg_file_check=='cg_checked' && !(PdfPreview > 0)){// has to be tested that way: .PdfPreview > 0
                     firstCheckedImageOrder = order;
                 }
                 if(cg_file_check=='cg_checked'){
                     //$cgSellContainer.find('#cgSellWatermarkPreview').removeClass('cg_hide');
                 }
-                var backgroundUrl = cgJsClassAdmin.gallery.getBackgroundUrl($sortableDiv.find('.cg_backend_info_container'),realId,order,WpUpload);
-                $cgSellContainer.find( '#cgSellSelectFilesForSaleSelectContainer').append($('<div class="cg_file_container cg_file_img_container" data-cg-real-id="'+realId+'" data-cg-order="'+order+'"  data-cg-wp-upload="'+WpUpload+'" data-cg-type="'+cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].type+'"><div class="cg_file cg_file_img" style="background-image: url('+backgroundUrl+')" ></div><div  class="cg_file_checkbox '+cg_file_check+'"></div></div>'));
+                if(PdfPreview > 0){// has to be tested that way: .PdfPreview > 0
+                    var backgroundUrl = cgJsClassAdmin.gallery.getBackgroundUrl($sortableDiv.find('.cg_backend_info_container'),realId,order,WpUpload,PdfPreviewImageLarge);
+                    $cgSellContainer.find( '#cgSellSelectFilesForSaleSelectContainer').append($('<div class="cg_file_container " data-cg-real-id="'+realId+'" data-cg-order="'+order+'"  data-cg-wp-upload="'+WpUpload+'" data-cg-type="pdf"><div class="cg_file cg_file_pdf" style="background-image: url('+backgroundUrl+')" ></div><div  class="cg_file_checkbox '+cg_file_check+'"></div></div>'));
+                }else{
+                    var backgroundUrl = cgJsClassAdmin.gallery.getBackgroundUrl($sortableDiv.find('.cg_backend_info_container'),realId,order,WpUpload);
+                    $cgSellContainer.find( '#cgSellSelectFilesForSaleSelectContainer').append($('<div class="cg_file_container cg_file_img_container" data-cg-real-id="'+realId+'" data-cg-order="'+order+'"  data-cg-wp-upload="'+WpUpload+'" data-cg-type="'+cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].type+'"><div class="cg_file cg_file_img" style="background-image: url('+backgroundUrl+')" ></div><div  class="cg_file_checkbox '+cg_file_check+'"></div></div>'));
+                }
+
+
             }else{
                 var cg_is_embed = '';
                 if(fileType=='inst' || fileType=='tkt' || fileType=='twt' || fileType=='ytb'){
@@ -79,6 +88,8 @@ cgJsClassAdmin.gallery.functions.initDownloadSale = function($,$cgSellContainer,
         var fileType = $sortableDiv.find('.cg_image_type_to_show').val();
         var cg_type = $sortableDiv.find('.cg_type').val();
         var cg_wp_post_title = $sortableDiv.find('.cg_wp_post_title').val();
+        var cg_file_preview = $sortableDiv.find('.cg_file_preview').val();
+        var PdfPreviewImageLarge = $sortableDiv.find('.cgPdfPreviewImageLarge').val();
 
         var cg_file_check = 'cg_unchecked';
         debugger
@@ -86,12 +97,17 @@ cgJsClassAdmin.gallery.functions.initDownloadSale = function($,$cgSellContainer,
             cg_file_check = 'cg_checked';
         }
 
-        if(IsImageType=='1') {
+        if(IsImageType=='1' || cg_file_preview > 1) {
             if(cg_file_check=='cg_checked'){
                 //$cgSellContainer.find('#cgSellWatermarkPreview').removeClass('cg_hide');
             }
-            var backgroundUrl = cgJsClassAdmin.gallery.getBackgroundUrl($sortableDiv.find('.cg_backend_info_container'),realId,1,WpUpload);
-            $cgSellContainer.find( '#cgSellSelectFilesForSaleSelectContainer').append($('<div class="cg_file_container cg_file_img_container" data-cg-real-id="'+realId+'" data-cg-order="1"  data-cg-wp-upload="'+WpUpload+'" data-cg-is-image="'+IsImageType+'" data-cg-type="'+fileType+'"><div class="cg_file cg_file_img" style="background-image: url('+backgroundUrl+')" ></div><div  class="cg_file_checkbox '+cg_file_check+'"></div></div>'));
+            if(PdfPreviewImageLarge){
+                var backgroundUrl = cgJsClassAdmin.gallery.getBackgroundUrl($sortableDiv.find('.cg_backend_info_container'),realId,1,WpUpload,PdfPreviewImageLarge);
+                $cgSellContainer.find( '#cgSellSelectFilesForSaleSelectContainer').append($('<div class="cg_file_container" data-cg-real-id="'+realId+'" data-cg-order="1"  data-cg-wp-upload="'+WpUpload+'" data-cg-is-image="0" data-cg-type="pdf"><div class="cg_file cg_file_pdf" style="background-image: url('+backgroundUrl+')" ></div><div  class="cg_file_checkbox '+cg_file_check+'"></div></div>'));
+            }else{
+                var backgroundUrl = cgJsClassAdmin.gallery.getBackgroundUrl($sortableDiv.find('.cg_backend_info_container'),realId,1,WpUpload);
+                $cgSellContainer.find( '#cgSellSelectFilesForSaleSelectContainer').append($('<div class="cg_file_container cg_file_img_container" data-cg-real-id="'+realId+'" data-cg-order="1"  data-cg-wp-upload="'+WpUpload+'" data-cg-is-image="'+IsImageType+'" data-cg-type="'+fileType+'"><div class="cg_file cg_file_img" style="background-image: url('+backgroundUrl+')" ></div><div  class="cg_file_checkbox '+cg_file_check+'"></div></div>'));
+            }
         }else{
             var cg_file_video = '';
             if(cg_type=='video') {cg_file_video = 'cg_file_video';}

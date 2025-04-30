@@ -68,7 +68,7 @@ echo '</select>';
 echo '<div id="cg_main_options" style="margin-top: 0;box-shadow: unset;" class="cg_main_options">';
 
 echo '<div id="cgUploadFieldsSelect">';
-echo '<p class="cg_edit_form_options_label">Contact form</p>';
+echo '<p class="cg_edit_form_options_label">Contact form<br><span style="margin-top: 0;display: block;font-size:16px;"><b>NOTE:</b> "Contact form" will be also <b>used for uploads</b></span></p>';
 //echo "<form name='defineUpload' enctype='multipart/form-data' action='?page='.cg_get_version().'/index.php&optionID=$GalleryID&defineUpload=true' id='form' method='post'>";
 
 $fbLikeTitleAndDesc = '';

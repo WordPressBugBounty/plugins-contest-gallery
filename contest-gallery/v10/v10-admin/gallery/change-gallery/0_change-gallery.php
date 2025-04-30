@@ -56,6 +56,7 @@ $tablename_comments = $wpdb->prefix . "contest_gal1ery_comments";
 $tablename_options_visual = $wpdb->prefix . "contest_gal1ery_options_visual";
 $tablename_form_input = $wpdb->prefix . "contest_gal1ery_f_input";
 $tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
+$tablename_wp_pdf_previews = $wpdb->base_prefix . "contest_gal1ery_pdf_previews";
 
 $GalleryID = absint($GalleryID);
 $infoPidsArray = [];
@@ -231,6 +232,7 @@ $proOptions = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_pro_option
 
 $Manipulate = $proOptions->Manipulate;
 $FbLikeNoShare = $proOptions->FbLikeNoShare;
+$PdfPreviewBackend = $proOptions->PdfPreviewBackend;
 $DataShare = ($FbLikeNoShare == 1) ? 'true' : 'false';
 $DataClass = ($proOptions->FbLikeOnlyShare==1) ? 'fb-share-button' : 'fb-like';
 $DataLayout = ($proOptions->FbLikeOnlyShare==1) ? 'button' : 'button_count';
@@ -289,6 +291,118 @@ if(!empty($_POST['cg_rThumb'])){
 	$wpdb->query($wpdb->prepare($querySETrow,$queryArgsArray));
 }
 
+//var_dump('print post');
+
+/*
+echo "<pre>";
+print_r($_POST);
+echo "</pre>";
+
+if(!empty($_POST['cg_multiple_files_for_post'])){
+    echo "<pre>";
+    print_r($_POST['cg_multiple_files_for_post']);
+    echo "</pre>";
+    var_dump(12312);
+}*/
+
+$PdfPreviewIfWpUploadReplace = 0;
+$PdfWpUploadsToCreate = [];// do not remove, check is required
+
+if(cg_get_version()=='contest-gallery'){
+    $PdfPreviewBackend = 0;
+}
+
+// check if has PDF files to preview to create
+if(!empty($_POST['cg_multiple_files_for_post']) && $PdfPreviewBackend == 1){
+    foreach ($_POST['cg_multiple_files_for_post'] as $id => $fileDataForPost){
+        if(empty($fileDataForPost)){// might be empty when activated for sale
+            continue;
+        }
+        $hasPdfPreview = false;
+        $fileDataForPostArray = json_decode(stripslashes(sanitize_text_field($fileDataForPost)),true);
+        /*echo "<pre>";
+        print_r($fileDataForPostArray);
+        echo "</pre>";*/
+        $fileDataForPostArrayNew = $fileDataForPostArray;
+        foreach ($fileDataForPostArray as $order => $array){
+            if(empty($array['PdfPreview'])){
+                $array['PdfPreview'] = 0;// so is set
+            }
+            if(!empty($array['post_mime_type']) && $array['post_mime_type']=='application/pdf' && absint($array['PdfPreview'])==0){
+                //var_dump('create pdf');
+                $hasPdfPreview = true;
+                $WpUpload = absint($array['WpUpload']);
+                //var_dump('$WpUpload');
+                //var_dump($WpUpload);
+                $PdfPreview = $wpdb->get_var("SELECT WpUploadPreview FROM $tablename_wp_pdf_previews WHERE WpUpload = '$WpUpload'");
+                //$PdfWpUploadsToCreate do not remove, check is required
+                if(empty($PdfPreview) && in_array($WpUpload,$PdfWpUploadsToCreate)===false){
+                    if(empty($PdfPreviewsToCreateString)){
+                        $PdfPreviewsToCreateString =  'cg-pdf-previews-to-create###'.$id.';'.$WpUpload.';'.$array['guid'];
+                    }else{
+                        $PdfPreviewsToCreateString .= ','.$id.';'.$WpUpload.';'.$array['guid'];
+                    }
+                    $PdfWpUploadsToCreate[] = $WpUpload;
+                }else{
+                    $PdfPreviewImageLarge = wp_get_attachment_image_src($PdfPreview, 'large');
+                    //var_dump('$PdfPreviewImage');
+                    //var_dump($PdfPreviewImage);
+                    if(!empty($PdfPreviewImageLarge)){
+                        if(in_array($WpUpload,$PdfWpUploadsToCreate)===false){
+                            if(empty($PdfPreviewsToCreateString)){
+                                $PdfPreviewsToCreateString = 'cg-pdf-previews-to-create###'.$id.';'.$WpUpload.';'.$array['guid'].';'.$PdfPreviewImageLarge[0];
+                            }else{
+                                $PdfPreviewsToCreateString .= ','.$id.';'.$WpUpload.';'.$array['guid'].';'.$PdfPreviewImageLarge[0];
+                            }
+                            $PdfWpUploadsToCreate[] = $WpUpload;
+                        }
+                        $array['PdfPreviewImageLarge'] = $PdfPreviewImageLarge[0];
+                        $PdfPreviewImage = wp_get_attachment_image_src($PdfPreview, 'full');
+                        $array['PdfPreviewImage'] = $PdfPreviewImage[0];
+                        $array['PdfPreview'] = absint($PdfPreview);
+                        $array['PdfOriginal'] = get_the_guid($array['WpUpload']);
+                        $array['full'] = $PdfPreviewImage[0];
+                        $array['guid'] = $PdfPreviewImage[0];
+                        $array['Width'] = $PdfPreviewImage[1];
+                        $array['Height'] = $PdfPreviewImage[2];
+                        $array['thumbnail'] = $PdfPreviewImageLarge[0];
+                        $array['medium'] = $PdfPreviewImageLarge[0];
+                        $array['large'] = $PdfPreviewImageLarge[0];
+                        $array['post_mime_type'] = 'image/png';
+                        $array['ImgType'] = 'png';
+                        $array['type'] = 'image';
+                    }else{
+                        // delete row in $tablename_wp_pdf_previews
+                        $wpdb->query("DELETE FROM $tablename_wp_pdf_previews WHERE WpUpload = $WpUpload");
+                        if(in_array($WpUpload,$PdfWpUploadsToCreate)===false){
+                            if(empty($PdfPreviewsToCreateString)){
+                                $PdfPreviewsToCreateString = 'cg-pdf-previews-to-create###'.$id.';'.$WpUpload.';'.$array['guid'];
+                            }else{
+                                $PdfPreviewsToCreateString .= ','.$id.';'.$WpUpload.';'.$array['guid'];
+                            }
+                            $PdfWpUploadsToCreate[] = $WpUpload;
+                        }
+                        $array['PdfPreviewImage'] = '';
+                        $array['PdfPreview'] = 0;
+                    }
+                    $fileDataForPostArrayNew[$order] = $array;
+                    //$fileDataForPost[$order] = $array;
+                    //$_POST['cg_multiple_files_for_post'][$id] = $fileDataForPost;
+                }
+            }
+            /*if(!empty($array['PdfOriginal'])){// not required so far, maybe have to be constructed further in the future
+                $hasPdfPreview = true;
+            }*/
+        }
+        if($hasPdfPreview){
+            $_POST['cg_multiple_files_for_post'][$id] = json_encode($fileDataForPostArrayNew);
+        }
+    }
+}
+
+//var_dump('$PdfPreviewsToCreateString');
+//var_dump($PdfPreviewsToCreateString);
+
 // has to be done here extra because might get empty after processing
 if(!empty($_POST['cg_multiple_files_for_post']) && !empty($_POST['cgDeleteOriginalImageSourceAlso'])){
 	// correct if delete was sent
@@ -325,6 +439,7 @@ if(!empty($_POST['cg_multiple_files_for_post']) && !empty($_POST['cgDeleteOrigin
 	}
 }
 
+// for replace always cg_multiple_files_for_post will be sent with 1 item
 if(!empty($_POST['cg_multiple_files_for_post'])){
 
 	// NamePic
@@ -341,12 +456,11 @@ if(!empty($_POST['cg_multiple_files_for_post'])){
 	$realIdWhereSourceChanged = 0;
 	$newWpUploadWhenSourceChanged = 0;
 	$newPostTitleWhenSourceChanged = '';
-	$queryHasRealIdDeleted = 'INSERT INTO '.$tablename.' (id, NamePic, ImgType, WpUpload, Width, Height, rThumb, Exif) VALUES ';
+	$queryHasRealIdDeleted = 'INSERT INTO '.$tablename.' (id, NamePic, ImgType, WpUpload, Width, Height, rThumb, Exif, PdfPreview) VALUES ';
 	$queryArgsArray = [];
 	$queryAddArgsArray = [];
 	$queryArgsCounter = 0;
 	$queryArgsArray1 = [];
-
 
 	foreach ($_POST['cg_multiple_files_for_post'] as $id => $fileDataForPost){
 
@@ -374,20 +488,103 @@ if(!empty($_POST['cg_multiple_files_for_post'])){
 			}
 
 			if(!empty($_POST['cgWpUploadToReplace'])){
+
+                $WpUpload = absint($_POST['cgNewWpUploadWhichReplace']);
+                $cgWpUploadToReplace = absint($_POST['cgWpUploadToReplace']);
+                $mime_type = get_post_mime_type($WpUpload);
+                $rowObject = $wpdb->get_row("SELECT * FROM $tablename WHERE id = '$id'");
+                if($mime_type=='application/pdf' && $PdfPreviewBackend == 1){
+                    $PdfPreview = $wpdb->get_var("SELECT WpUploadPreview FROM $tablename_wp_pdf_previews WHERE WpUpload = '$WpUpload'");
+                    $guid = get_the_guid($WpUpload);
+                    //$PdfWpUploadsToCreate do not remove, check is required
+                    if(empty($PdfPreview) && in_array($WpUpload,$PdfWpUploadsToCreate)===false){
+                        if(empty($PdfPreviewsToCreateString)){
+                            $PdfPreviewsToCreateString =  'cg-pdf-previews-to-create###'.$id.';'.$WpUpload.';'.$guid;
+                        }else{
+                            $PdfPreviewsToCreateString .= ','.$id.';'.$WpUpload.';'.$guid;
+                        }
+                        $PdfWpUploadsToCreate[] = $WpUpload;
+                    }else{
+                        $PdfPreviewImageLarge = wp_get_attachment_image_src($PdfPreview, 'large');
+                        if(!empty($PdfPreviewImageLarge)){
+                            if(in_array($WpUpload,$PdfWpUploadsToCreate)===false){
+                                if(empty($PdfPreviewsToCreateString)){
+                                    $PdfPreviewsToCreateString = 'cg-pdf-previews-to-create###'.$id.';'.$WpUpload.';'.$guid.';'.$PdfPreviewImageLarge[0];
+                                }else{
+                                    $PdfPreviewsToCreateString .= ','.$id.';'.$WpUpload.';'.$guid.';'.$PdfPreviewImageLarge[0];
+                                }
+                                $PdfWpUploadsToCreate[] = $WpUpload;
+                            }
+                            //         var_dump('$PdfPreview replace');
+                            //        var_dump($PdfPreview);
+                            $PdfPreviewIfWpUploadReplace = $PdfPreview;
+                        }else{
+                            // then update back to 0!!!
+                            if($cgWpUploadToReplace == $rowObject->WpUpload){
+                                $wpdb->query("UPDATE $tablename SET PdfPreview=0 WHERE id = $id");
+                            }
+                            // delete row in $tablename_wp_pdf_previews
+                            $wpdb->query("DELETE FROM $tablename_wp_pdf_previews WHERE WpUpload = $WpUpload");
+                            if(in_array($WpUpload,$PdfWpUploadsToCreate)===false){
+                                if(empty($PdfPreviewsToCreateString)){
+                                    $PdfPreviewsToCreateString = 'cg-pdf-previews-to-create###'.$id.';'.$WpUpload.';'.$guid;
+                                }else{
+                                    $PdfPreviewsToCreateString .= ','.$id.';'.$WpUpload.';'.$guid;
+                                }
+                                $PdfWpUploadsToCreate[] = $WpUpload;
+                            }
+                        }
+                    }
+                }
+
 				// var_dump('will be replaced');
-				$cgNewWpUploadWhichReplace = $_POST['cgNewWpUploadWhichReplace'];
+				$cgNewWpUploadWhichReplace = absint($_POST['cgNewWpUploadWhichReplace']);
 				$ecommerceEntry = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_entries WHERE pid = '$id'");
 				$hasFileToReplaceAndMove = false;
-				// var_dump('$cgNewWpUploadWhichReplace');
-				// var_dump($cgNewWpUploadWhichReplace);
-				// var_dump('$ecommerceEntry->WpUploadFilesForSale');
-				//var_dump($ecommerceEntry->WpUploadFilesForSale);
-				if(!empty($ecommerceEntry) && !empty($ecommerceEntry->WpUploadFilesForSale) && in_array($_POST['cgWpUploadToReplace'],unserialize($ecommerceEntry->WpUploadFilesForSale))!==false){
+                //var_dump('$cgNewWpUploadWhichReplace');
+                //var_dump($cgNewWpUploadWhichReplace);
+                if(!empty($ecommerceEntry->WpUploadFilesForSale)){
+                    //var_dump('unserialize $ecommerceEntry->WpUploadFilesForSale');
+                    //var_dump(unserialize($ecommerceEntry->WpUploadFilesForSale));
+                }
+                //var_dump('cgWpUploadToReplace');
+                //var_dump($_POST['cgWpUploadToReplace']);
 
-					$removedWpUploadIdsFromSale = [$_POST['cgWpUploadToReplace']];
+                $NewWpUploadOrder = 0;
+
+                foreach ($fileDataForPostArray as $order1 => $array1){
+                    if($array1['WpUpload'] == $cgNewWpUploadWhichReplace){
+                        $NewWpUploadOrder = $order1;
+                    }
+                }
+
+                // for replace always cg_multiple_files_for_post will be sent with 1 item
+				if(!empty($ecommerceEntry) && !empty($ecommerceEntry->WpUploadFilesForSale) && in_array(absint($_POST['cgWpUploadToReplace']),unserialize($ecommerceEntry->WpUploadFilesForSale))!==false){
+                    //('before move file');
+					$removedWpUploadIdsFromSale = [absint($_POST['cgWpUploadToReplace'])];
+                    // for replace always cg_multiple_files_for_post will be sent with 1 item
+                    //var_dump('post_mime_type test');
+                    //var_dump($fileDataForPostArray[$NewWpUploadOrder]['post_mime_type']);
+
+                /*    echo "<pre>";
+                    print_r($fileDataForPostArray);
+                    echo "</pre>";*/
+
+               //     var_dump('$cgNewWpUploadWhichReplace');
+               //     var_dump($cgNewWpUploadWhichReplace);
+
+        //            die;
+                    if(!(!empty($fileDataForPostArray[$NewWpUploadOrder]['post_mime_type']) && $fileDataForPostArray[$NewWpUploadOrder]['post_mime_type'] == 'application/pdf' && $PdfPreviewBackend == 1)){
+                        //var_dump('move file');
+                        cg_replace_ecommerce_file($id, $GalleryID, $ecommerceEntry, $cgNewWpUploadWhichReplace, $fileDataForPostArray,$removedWpUploadIdsFromSale);
+                    }else{
+                        $cgNewWpUploadWhichReplaceForPdfPreview = $cgNewWpUploadWhichReplace;
+                        $cgWpUploadToReplaceForPdfPreview = $cgWpUploadToReplace;
+                    }
+
 					// var_dump('$removedWpUploadIdsFromSale');
 					// var_dump($removedWpUploadIdsFromSale);
-					cg_move_file_from_ecommerce_sale_folder($id, $GalleryID, $ecommerceEntry->id, $removedWpUploadIdsFromSale);
+					/*cg_move_file_from_ecommerce_sale_folder($id, $GalleryID, $ecommerceEntry->id, $removedWpUploadIdsFromSale);
 					$sqlObjectFile = $wpdb->get_row("SELECT * FROM $tablename WHERE id = '$id'");
 					$WpUploadFilesForSale = unserialize($ecommerceEntry->WpUploadFilesForSale);
 					unset($WpUploadFilesForSale[array_search($_POST['cgWpUploadToReplace'], $WpUploadFilesForSale)]);
@@ -400,18 +597,30 @@ if(!empty($_POST['cg_multiple_files_for_post'])){
 					// var_dump('$WpUploadFilesForSale');
 					// var_dump($WpUploadFilesForSale);
 
-					cg_move_file_ecommerce_sale_folder($id, $GalleryID,$sqlObjectFile,$ecommerceEntry,$WpUploadFilesForSale,$removedWpUploadIdsFromSale);
+					cg_move_file_ecommerce_sale_folder($id, $GalleryID,$sqlObjectFile,$ecommerceEntry,$WpUploadFilesForSale,$removedWpUploadIdsFromSale);*/
 
 
 				}
 			}
 
+            //var_dump('$cgWpUploadToReplace123');
+            //var_dump($cgWpUploadToReplace);
+
+            //var_dump('$cgNewWpUploadWhichReplace123');
+            //var_dump($cgNewWpUploadWhichReplace);
+
 			// var_dump('$hasRealId');
 			// var_dump($hasRealId);
 
+            // $fileDataForPostArray[1] becomes new real id then!!!
 			if(!$hasRealId){// then realId must be deleted
+                //         var_dump('!$hasRealId');
+                //      var_dump(true);
 				$hasRealIdDeleted = true;
+                //      var_dump('$hasRealIdDeleted123');
+                //     var_dump($hasRealIdDeleted);
 				$realIdWhereSourceChanged = $id;
+                // for replace always cg_multiple_files_for_post will be sent with 1 item
 				$newPostTitleWhenSourceChanged = $fileDataForPostArray[1]['NamePic'];
 				$newWpUploadWhenSourceChanged = $fileDataForPostArray[1]['WpUpload'];
 				// var_dump('$fileDataForPostArray');
@@ -420,8 +629,9 @@ if(!empty($_POST['cg_multiple_files_for_post'])){
 				// print_r($fileDataForPostArray);
 				// echo "</pre>";
 
-				$queryHasRealIdDeleted .= "(%d,%s,%s,%d,%d,%d,%d,%s),";
+				$queryHasRealIdDeleted .= "(%d,%s,%s,%d,%d,%d,%d,%s,%d),";
 				$queryArgsArray1[] = $id;
+                // $fileDataForPostArray[1] becomes new real id then!!!
 				$queryArgsArray1[] = $fileDataForPostArray[1]['NamePic'];
 				$queryArgsArray1[] = $fileDataForPostArray[1]['ImgType'];
 				$queryArgsArray1[] = $fileDataForPostArray[1]['WpUpload'];
@@ -429,6 +639,13 @@ if(!empty($_POST['cg_multiple_files_for_post'])){
 				$queryArgsArray1[] = absint($fileDataForPostArray[1]['Height']);
 				$queryArgsArray1[] = absint($fileDataForPostArray[1]['rThumb']);
 				$queryArgsArray1[] = absint($fileDataForPostArray[1]['Exif']);
+                if(!empty($PdfPreviewIfWpUploadReplace)){
+                    $queryArgsArray1[] = $PdfPreviewIfWpUploadReplace;
+                }else if(!empty($fileDataForPostArray[1]['PdfPreview'])){
+                    $queryArgsArray1[] = absint($fileDataForPostArray[1]['PdfPreview']);
+                }else{
+                    $queryArgsArray1[] = 0;
+                }
 
 				$fileDataForPostArrayNew = [];
 				$fileDataForPostArrayNew['WpUpload'] = $fileDataForPostArray[1]['WpUpload'];
@@ -474,6 +691,9 @@ if(!empty($_POST['cg_multiple_files_for_post'])){
 
 	}
 
+    //   var_dump('$PdfPreviewsToCreateString 2');
+    // var_dump($PdfPreviewsToCreateString);
+
 	// ic = i counter
 	for ($ic = 0;$ic<$queryArgsCounter;$ic++){
 		$queryArgsArray[] =$queryAddArgsArray[$ic];
@@ -487,10 +707,10 @@ if(!empty($_POST['cg_multiple_files_for_post'])){
 	$wpdb->query($wpdb->prepare($querySETrowMultipleFiles,$queryArgsArray));
 
 	if(!empty($hasRealIdDeleted)){
+        //    var_dump('$hasRealIdDeleted execute');
 		$queryHasRealIdDeleted = substr($queryHasRealIdDeleted, 0, -1);
-		$queryHasRealIdDeleted .= " ON DUPLICATE KEY UPDATE NamePic = VALUES(NamePic), ImgType = VALUES(ImgType), WpUpload = VALUES(WpUpload), Width = VALUES(Width), Height = VALUES(Height),  rThumb = VALUES(rThumb), Exif = VALUES(Exif)";
+		$queryHasRealIdDeleted .= " ON DUPLICATE KEY UPDATE NamePic = VALUES(NamePic), ImgType = VALUES(ImgType), WpUpload = VALUES(WpUpload), Width = VALUES(Width), Height = VALUES(Height),  rThumb = VALUES(rThumb), Exif = VALUES(Exif), PdfPreview = VALUES(PdfPreview)";
 		$wpdb->query($wpdb->prepare($queryHasRealIdDeleted,$queryArgsArray1));
-
 		if(intval($galeryrow->Version)>=22){
 			$IsForWpPageTitleInputId = $wpdb->get_var("SELECT id FROM $tablename_form_input WHERE GalleryID = '$GalleryID' AND IsForWpPageTitle = '1'");
 			$hasWpPageTitleInputIfSourceChanged = false;
@@ -509,6 +729,11 @@ if(!empty($_POST['cg_multiple_files_for_post'])){
 
 	}
 
+}
+
+
+if(!empty($PdfPreviewsToCreateString)){
+    $PdfPreviewsToCreateString .= '###cg-pdf-previews-to-create-end';
 }
 
 if (!empty($_POST['cg_winner'])) {

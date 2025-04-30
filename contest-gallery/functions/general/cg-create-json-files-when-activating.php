@@ -74,7 +74,11 @@ if(!function_exists('cg_create_json_files_when_activating')){
 
 			$post_alt = get_post_meta($rowObject->WpUpload,'_wp_attachment_image_alt',true);
 			if(!empty($isEcommerceImageSale)){
+                if(!empty($rowObject->PdfPreview)){
+                    $meta = wp_get_attachment_metadata( $rowObject->PdfPreview );
+                }else{
 				$meta = wp_get_attachment_metadata( $rowObject->WpUpload );
+                }
 				$folderPath = substr($meta['file'],0, strrpos($meta['file'],'/'));
 				$fileName = substr($meta['file'],strrpos($meta['file'],'/')+1,strlen($meta['file']) );
 				$imgSrcFull=$uploadFolder['baseurl'].'/'.$folderPath.'/'.$fileName;
@@ -169,7 +173,22 @@ if(!function_exists('cg_create_json_files_when_activating')){
 		$imagesDataArray[$rowObject->id]['WpPageWinner'] = intval($rowObject->WpPageWinner);
 		$imagesDataArray[$rowObject->id]['WpPageEcommerce'] = intval($rowObject->WpPageEcommerce);
 		$imagesDataArray[$rowObject->id]['EcommerceEntry'] = intval($rowObject->EcommerceEntry);
-
+		$imagesDataArray[$rowObject->id]['PdfPreview'] = intval($rowObject->PdfPreview);
+        if(!empty($rowObject->PdfPreview)){
+            $PdfPreviewImage = wp_get_attachment_image_src($rowObject->PdfPreview, 'full');
+            $PdfPreviewImageLarge = wp_get_attachment_image_src($rowObject->PdfPreview, 'large');
+            // important to set PdfOriginal
+            $imagesDataArray[$rowObject->id]['PdfOriginal'] = $guid;
+            $imagesDataArray[$rowObject->id]['full'] = $PdfPreviewImage[0];
+            $imagesDataArray[$rowObject->id]['guid'] = $PdfPreviewImage[0];
+            $imagesDataArray[$rowObject->id]['Width'] = $PdfPreviewImage[1];
+            $imagesDataArray[$rowObject->id]['Height'] = $PdfPreviewImage[2];
+            $imagesDataArray[$rowObject->id]['thumbnail'] = $PdfPreviewImageLarge[0];
+            $imagesDataArray[$rowObject->id]['medium'] = $PdfPreviewImageLarge[0];
+            $imagesDataArray[$rowObject->id]['large'] = $PdfPreviewImageLarge[0];
+            $imagesDataArray[$rowObject->id]['ImgType'] = 'png';
+            $imagesDataArray[$rowObject->id]['post_mime_type'] = 'image/png';
+        }
 		$imageRatingArray['rowid'] = intval($rowObject->rowid);
 		$imageRatingArray['PositionNumber'] = intval($rowObject->PositionNumber);
 		$imageRatingArray['Timestamp'] = intval($rowObject->Timestamp);
@@ -193,6 +212,19 @@ if(!function_exists('cg_create_json_files_when_activating')){
 		$imageRatingArray['WpPageWinner']= intval($rowObject->WpPageWinner);
 		$imageRatingArray['WpPageEcommerce']= intval($rowObject->WpPageEcommerce);
 		$imageRatingArray['EcommerceEntry']= intval($rowObject->EcommerceEntry);
+        $imageRatingArray['PdfPreview'] = intval($rowObject->PdfPreview);
+        if(!empty($rowObject->PdfPreview)){
+            $imageRatingArray['PdfOriginal'] = $guid;
+            $imageRatingArray['full'] = $PdfPreviewImage[0];
+            $imageRatingArray['guid'] = $PdfPreviewImage[0];
+            $imageRatingArray['Width'] = $PdfPreviewImage[1];
+            $imageRatingArray['Height'] = $PdfPreviewImage[2];
+            $imageRatingArray['thumbnail'] = $PdfPreviewImageLarge[0];
+            $imageRatingArray['medium'] = $PdfPreviewImageLarge[0];
+            $imageRatingArray['large'] = $PdfPreviewImageLarge[0];
+            $imageRatingArray['ImgType'] = 'png';
+            $imageRatingArray['post_mime_type'] = 'image/png';
+        }
 
 		// rating comment save here
 		$imageRatingArray['CountC'] = intval($rowObject->CountC);

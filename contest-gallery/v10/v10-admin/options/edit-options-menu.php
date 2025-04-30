@@ -44,6 +44,7 @@ if($isEditOptionsOnly){
                         <div class='cg_view_select' cg-data-view="#view5" data-count="5"><a class="cg_view_select_link" cg-data-view="#view5" cg-data-href="cgViewHelper5">Contact</a></div>
                          <div class='cg_view_select' cg-data-view="#view6" data-count="6"><a class="cg_view_select_link" cg-data-view="#view6" cg-data-href="cgViewHelper6">Admin mail</a></div>
                         <div class='cg_view_select' cg-data-view="#view7" data-count="7"><a class="cg_view_select_link" cg-data-view="#view7" cg-data-href="cgViewHelper7">Activation mail</a></div>
+                          <div class='cg_view_select cg_view_select_icons' cg-data-view="#view18" data-count="18"><a class="cg_view_select_link" cg-data-view="#view18" cg-data-href="cgViewHelper18">PDF</a></div>
                           <div class='cg_view_select cg_view_select_icons' cg-data-view="#view8" data-count="8"><a class="cg_view_select_link" cg-data-view="#view8" cg-data-href="cgViewHelper8">Icons</a></div>
                 </div>
 HEREDOC;
@@ -312,6 +313,13 @@ HEREDOC;
     echo "</div>";
 
     echo <<<HEREDOC
+            <h4 id="view18" class="cg_view_header">PHP</h4>
+            <div class="cg_view cgViewHelper18" >
+HEREDOC;
+    include(__DIR__.'/views-content/view-php-options.php');
+    echo "</div>";
+
+    echo <<<HEREDOC
             <h4 id="view8" class="cg_view_header">Icons</h4>
             <div class="cg_view cgViewHelper8" >
 HEREDOC;
@@ -322,7 +330,7 @@ HEREDOC;
             <h4 id="view20" class="cg_view_header">Social embed</h4>
             <div class="cg_view cgViewHelper20" >
 HEREDOC;
-	include(__DIR__.'/views-content/view-youtube-options.php');
+	include(__DIR__.'/views-content/view-social-embed-options.php');
 
     echo "</div>";
 

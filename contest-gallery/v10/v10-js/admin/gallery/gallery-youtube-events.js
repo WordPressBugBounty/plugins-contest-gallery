@@ -549,6 +549,8 @@ jQuery(document).ready(function ($) {
             }
             cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Successfully added '+Type+'  to  library',true);
 
+            $mediaFrame.find('#cgYoutubeNoEntries').addClass('cg_hide');
+
             return;
 
         }).fail(function (xhr, status, error) {

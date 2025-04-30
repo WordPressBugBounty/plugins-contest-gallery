@@ -161,6 +161,8 @@ jQuery(document).ready(function ($) {
                     //cgJsClassAdmin.gallery.vars.isNewAddedEcommerceDownload = true;
                 }
             }
+
+            debugger
             // no watermark now before
             if(hasNewEcommerceDownloadEntry && false){
                 cgJsClassAdmin.gallery.functions.hideCgBackendBackgroundDropAndContainer();

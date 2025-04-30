@@ -815,10 +815,10 @@ HEREDOC;
 
 if(floatval($galleryDbVersion)>=21){
     if(!isset($jsonOptions[$GalleryID.'-w']['visual']['BackToGalleryButtonText'])){
-        $jsonOptions[$GalleryID.'-w']['visual']['BackToGalleryButtonText'] = $BackToGalleryButtonText;
+        $jsonOptions[$GalleryID.'-w']['visual']['BackToGalleryButtonText'] = '';
     }
     if(!isset($jsonOptions[$GalleryID.'-w']['pro']['BackToGalleryButtonURL'])){
-        $jsonOptions[$GalleryID.'-w']['pro']['BackToGalleryButtonURL'] = $BackToGalleryButtonURL;
+        $jsonOptions[$GalleryID.'-w']['pro']['BackToGalleryButtonURL'] = '';
     }else{
         $jsonOptions[$GalleryID.'-w']['pro']['BackToGalleryButtonURL'] = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID.'-w']['pro']['BackToGalleryButtonURL']);
     }

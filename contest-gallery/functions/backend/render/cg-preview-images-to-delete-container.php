@@ -26,8 +26,9 @@ for [cg_gallery_user id=\"".$GalleryID."'\"] shortcode can be configured in \"Co
 
 <div  class='cg_preview_images_to_delete_button_container cg_files_to_delete_available'>
 <input type='checkbox' id='cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckbox' /><label for='cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckbox' id='cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckboxLabel'>Please delete original source from storage also</label>
-<p id='cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckboxMessage' class='cg_hide'>Please confirm that you want to delete orignal source also (deleted files can not be restored)
-<span class='cg_note cg_hide'><br><b>NOTE:</b> additional files added to a file will be also deleted and can not be restored</span>
+<p id='cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckboxMessage' class='cg_hide'>Please confirm that you want to delete orignal source also (deleted files can't be restored)
+<span class='cg_note cg_hide'><br><b>NOTE:</b> additional files added to a file will be also deleted and can't be restored</span>
+<span class='cg_note_pdf cg_hide'><br><b>NOTE:</b> generated PDF previews related to a PDF will be also deleted and can't be restored</span>
 </p>
 </div>
 

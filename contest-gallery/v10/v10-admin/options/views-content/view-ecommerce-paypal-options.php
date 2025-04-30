@@ -116,7 +116,7 @@ echo <<<HEREDOC
                             <button type="button">Test Sandbox Keys</button></a>
                             </div>
                     </div>
-            </div>
+            </div>            
         </div>
 HEREDOC;
 

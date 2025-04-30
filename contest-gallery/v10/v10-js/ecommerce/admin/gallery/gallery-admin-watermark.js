@@ -69,40 +69,44 @@ cgJsClassAdmin.gallery.functions.initWatermarkSettings = function($,$cgSellConta
     }
 }
 
-cgJsClassAdmin.gallery.getBackgroundUrl =  function ($cg_backend_info_container,realId,order,WpUploadId){
+cgJsClassAdmin.gallery.getBackgroundUrl =  function ($cg_backend_info_container,realId,order,WpUploadId,PdfPreviewImageLarge){
     debugger
     var timestamp = Math.floor(new Date().getTime()/1000);
     var backgroundUrl = '';
-    if(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId] && Object.keys(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId]).length>1){
-        if(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order]['isRealIdSource']){
-            backgroundUrl=$cg_backend_info_container.attr('data-cg-url-image-large');
-        }else{
-            backgroundUrl=cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order]['large'];
-        }
-        if(cgJsClassAdmin.gallery.vars.addedEcommerceImageForDownload[realId] && cgJsClassAdmin.gallery.vars.addedEcommerceImageForDownload[realId][WpUploadId]){
-            backgroundUrl = cgJsClassAdmin.gallery.vars.addedEcommerceImageForDownload[realId][WpUploadId];
-            var $cgAddedEcommerceImageForDownload = jQuery('#cgAddedEcommerceImageForDownload'+realId+'_'+WpUploadId);
-            if($cgAddedEcommerceImageForDownload.length){
-                backgroundUrl = $cgAddedEcommerceImageForDownload.attr('src');
-            }else{// then must be just added and will be watermarked
-                backgroundUrl=cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order]['large'];
-                backgroundUrl += '?time='+timestamp;
-            }
-        }else{
-            backgroundUrl += '?time='+timestamp;
-        }
+    if(PdfPreviewImageLarge){
+        backgroundUrl = PdfPreviewImageLarge+'?time='+timestamp;
     }else{
-        backgroundUrl=$cg_backend_info_container.attr('data-cg-url-image-large');
-        if(cgJsClassAdmin.gallery.vars.addedEcommerceImageForDownload[realId] && cgJsClassAdmin.gallery.vars.addedEcommerceImageForDownload[realId][WpUploadId]){
-            backgroundUrl = cgJsClassAdmin.gallery.vars.addedEcommerceImageForDownload[realId][WpUploadId];
-            var $cgAddedEcommerceImageForDownload = jQuery('#cgAddedEcommerceImageForDownload'+realId+'_'+WpUploadId);
-            if($cgAddedEcommerceImageForDownload.length){
-                backgroundUrl = $cgAddedEcommerceImageForDownload.attr('src');
-            }else{// then must be just added and will be watermarked
+        if(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId] && Object.keys(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId]).length>1){
+            if(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order]['isRealIdSource']){
+                backgroundUrl=$cg_backend_info_container.attr('data-cg-url-image-large');
+            }else{
+                backgroundUrl=cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order]['large'];
+            }
+            if(cgJsClassAdmin.gallery.vars.addedEcommerceImageForDownload[realId] && cgJsClassAdmin.gallery.vars.addedEcommerceImageForDownload[realId][WpUploadId]){
+                backgroundUrl = cgJsClassAdmin.gallery.vars.addedEcommerceImageForDownload[realId][WpUploadId];
+                var $cgAddedEcommerceImageForDownload = jQuery('#cgAddedEcommerceImageForDownload'+realId+'_'+WpUploadId);
+                if($cgAddedEcommerceImageForDownload.length){
+                    backgroundUrl = $cgAddedEcommerceImageForDownload.attr('src');
+                }else{// then must be just added and will be watermarked
+                    backgroundUrl=cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order]['large'];
+                    backgroundUrl += '?time='+timestamp;
+                }
+            }else{
                 backgroundUrl += '?time='+timestamp;
             }
         }else{
-            backgroundUrl += '?time='+timestamp;
+            backgroundUrl=$cg_backend_info_container.attr('data-cg-url-image-large');
+            if(cgJsClassAdmin.gallery.vars.addedEcommerceImageForDownload[realId] && cgJsClassAdmin.gallery.vars.addedEcommerceImageForDownload[realId][WpUploadId]){
+                backgroundUrl = cgJsClassAdmin.gallery.vars.addedEcommerceImageForDownload[realId][WpUploadId];
+                var $cgAddedEcommerceImageForDownload = jQuery('#cgAddedEcommerceImageForDownload'+realId+'_'+WpUploadId);
+                if($cgAddedEcommerceImageForDownload.length){
+                    backgroundUrl = $cgAddedEcommerceImageForDownload.attr('src');
+                }else{// then must be just added and will be watermarked
+                    backgroundUrl += '?time='+timestamp;
+                }
+            }else{
+                backgroundUrl += '?time='+timestamp;
+            }
         }
     }
     return backgroundUrl;
@@ -292,7 +296,7 @@ cgJsClassAdmin.gallery.watermark =  function (backgroundUrl,position,text,pxSize
                 }
 
 
-                if(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].type=='image') {
+                if(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].type=='image' && !(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].PdfPreview > 0)) {// has to be tested that way: .PdfPreview > 0
 
                     if(!counterImage){
                         cgJsClassAdmin.gallery.vars.cgSellContainer.find('#cgSellArrowRight').addClass('cg_hide').attr('data-cg-real-id',realId);

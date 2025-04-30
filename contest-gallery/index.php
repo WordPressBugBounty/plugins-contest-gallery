@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: Contest Gallery
-Description: Contact form, files, photos and videos upload contest gallery plugin for WordPress. Create contact forms for entries with or without file/image upload. Create user registration form. Create login form. Create responsive galleries and allow to vote for any kind of entries.
-Version: 26.0.5.1
+Description: Contact form, files, photos and videos upload contest gallery plugin for WordPress. Create contact forms for entries with or without file/image upload. Create user registration form. Create login form. Create responsive galleries and allow to vote for any kind of entries. Sell entries via PayPal or Stripe api.
+Version: 26.0.6
 Author: Contest Gallery
 Author URI: http://www.contest-gallery.com/
 Text Domain: contest-gallery
@@ -405,6 +405,7 @@ include('functions/general/cg-get-user-ip-type.php');
 include('functions/general/cg-edit-image.php');
 include('functions/general/cg-get-24-version-values.php');
 include('functions/general/cg-delete-images.php');
+include('functions/general/cg-delete-images-of-deleted-wp-uploads.php');
 include('functions/general/cg-deactivate-images.php');
 include('functions/general/cg-plugin-mce-css-to-add.php');
 include('functions/general/cg-remove-folder-recursively.php');

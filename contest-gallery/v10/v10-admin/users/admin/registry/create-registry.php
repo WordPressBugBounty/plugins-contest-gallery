@@ -13,12 +13,10 @@ echo "<input type='hidden' id='cgRecaptchaIconUrl' value='$cgRecaptchaIconUrl'/>
 echo "<input type='hidden' id='cgRecaptchaKey' value='6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'/>";
 
 if(!function_exists('cg_cg_set_default_editor')){
-
     function cg_cg_set_default_editor() {
         $r = 'html';
         return $r;
     }
-
 }
 
 $cgBeforeSinceV14ExplanationRequired = false;

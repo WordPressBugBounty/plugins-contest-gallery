@@ -553,6 +553,7 @@ HEREDOC;
             }
         }
 
+
         $totalPriceToShow = cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$PriceTotalGrossItemsWithShipping);
 
 	    $filterData = apply_filters( 'cg_custom_total_price_to_show', $PriceTotalGrossItemsWithShipping,$totalPriceToShow);

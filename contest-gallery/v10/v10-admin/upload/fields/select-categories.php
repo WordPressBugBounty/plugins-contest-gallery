@@ -149,7 +149,7 @@ echo <<<HEREDOC
               <input type="checkbox" name="upload[$id][infoInSlider]" $checkedShow_Slider>
         </div>
     </div> 
-     <div class='cg_view_option cg_view_option_watermark cg_border_bottom_none cg_border_right_none '>
+     <div class='cg_view_option $cgProFalse cg_view_option_watermark cg_border_bottom_none cg_border_right_none '>
         <div class='cg_view_option_title '>
             <p>Use as watermark for gallery images: (only 1 allowed)<br>
                 <span class="cg_view_option_title_note"><b>NOTE:</b> CSS based, original image source will be not watermarked</span>
@@ -159,8 +159,8 @@ echo <<<HEREDOC
               <input type="checkbox" name="upload[$id][watermarkChecked]" $checkedWatermark>
         </div>       
     </div>
-     <div  class='cg_view_option  cg_view_option_not_disable  cg_border_bottom_none cg_view_option_watermark_position cg_view_option_flex_flow_column $watermarkPositionDisabled'>
-        <div class='cg_view_option_title cg_border_left_none  cg_view_option_title_full_width '>
+     <div  class='cg_view_option $cgProFalse  cg_view_option_not_disable  cg_border_bottom_none cg_view_option_watermark_position cg_view_option_flex_flow_column $watermarkPositionDisabled'>
+        <div class='cg_view_option_title cg_border_left_none  cg_view_option_title_full_width ' style="margin-top: 12.5px;">
             <p>Watermark position</p>
         </div>
                    <div class="cg_view_option_select cg_view_option_input_full_width">

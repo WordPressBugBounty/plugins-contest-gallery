@@ -347,6 +347,9 @@ $jsonOptions['pro']['AllowUploadICO'] = $AllowUploadICO;
 $jsonOptions['pro']['AdditionalFiles'] = $AdditionalFiles;
 $jsonOptions['pro']['AdditionalFilesCount'] = $AdditionalFilesCount;
 
+$jsonOptions['pro']['PdfPreviewBackend'] = $PdfPreviewBackend;
+$jsonOptions['pro']['PdfPreviewFrontend'] = $PdfPreviewFrontend;
+
 $jsonOptions['visual']['ThankVote'] = $ThankVote;
 
 $jsonOptions['visual']['EnableSwitchStyleGalleryButton'] = $EnableSwitchStyleGalleryButton;
@@ -357,6 +360,7 @@ $jsonOptions['visual']['TextAfterWpPageEntry'] = $TextAfterWpPageEntry;
 $jsonOptions['visual']['ForwardToWpPageEntry'] = $ForwardToWpPageEntry;
 $jsonOptions['visual']['ForwardToWpPageEntryInNewTab'] = $ForwardToWpPageEntryInNewTab;
 $jsonOptions['visual']['ShowBackToGalleryButton'] = $ShowBackToGalleryButton;
+$jsonOptions['visual']['ShowBackToGalleriesButton'] = $ShowBackToGalleriesButton;
 $jsonOptions['visual']['BackToGalleryButtonText'] = $BackToGalleryButtonText;
 $jsonOptions['visual']['TextDeactivatedEntry'] = $TextDeactivatedEntry;
 $jsonOptions['visual']['AdditionalCssEntryLandingPage'] = $AdditionalCssEntryLandingPage;
@@ -372,6 +376,7 @@ $jsonOptions['pro']['InformUserVoteMailInterval'] = $InformUserVoteMailInterval;
 $jsonOptions['pro']['InformUserComment'] = $InformUserComment;// is in contest_gal1ery_mail_user_vote table
 $jsonOptions['pro']['InformUserCommentMailInterval'] = $InformUserCommentMailInterval;// is in contest_gal1ery_mail_user_vote table
 $jsonOptions['pro']['BackToGalleryButtonURL'] = $BackToGalleryButtonURL;
+$jsonOptions['pro']['BackToGalleriesButtonURL'] = $BackToGalleriesButtonURL;
 $jsonOptions['pro']['WpPageParentRedirectURL'] = $WpPageParentRedirectURL;
 $jsonOptions['pro']['RedirectURLdeletedEntry'] = $RedirectURLdeletedEntry;
 /*$jsonOptions['pro']['BulkUploadType'] = $BulkUploadType;

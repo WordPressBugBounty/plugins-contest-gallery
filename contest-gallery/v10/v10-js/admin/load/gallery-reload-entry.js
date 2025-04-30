@@ -142,6 +142,7 @@ cgJsClassAdmin.gallery.reload = {
             processData: false
         }).done(function(response) {
             debugger
+
             if(NewWpUploadWhichReplace){
                 $('#cgWpUploadToReplace').val('');// reset again
                 $('#cgNewWpUploadWhichReplace').val('');// reset again
@@ -190,14 +191,67 @@ cgJsClassAdmin.gallery.reload = {
 
                 $('#cgGalleryForm').find('#div'+id).replaceWith($response.find('#div'+id));
                 cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Changes saved',true);
-                cgJsClassAdmin.gallery.vars.$cgReloadEntryLoaderClone.remove();
                 $('body').removeClass('cg_pointer_events_none cg_overflow_y_hidden');
-                debugger
-                cgJsClassAdmin.gallery.functions.loadBlockquote($,realId);
 
+                if(cgJsClassAdmin.gallery.vars.$cgReloadEntryLoaderClone){
+                    cgJsClassAdmin.gallery.vars.$cgReloadEntryLoaderClone.remove();
+                }
+                cgJsClassAdmin.gallery.functions.loadBlockquote($,realId);
             }
 
             cgJsClassAdmin.index.functions.setCgNonce($);
+
+            var cgPdfPreviewsToCreateString = $response.find('#cgPdfPreviewsToCreateString').val();
+            debugger
+            console.log('cgPdfPreviewsToCreateString');
+            console.log(cgPdfPreviewsToCreateString);
+
+            if(cgPdfPreviewsToCreateString.indexOf('cg-pdf-previews-to-create')>-1){
+                cgJsClassAdmin.gallery.pdf.createAndSetPdfPreviewPrepare($,cgPdfPreviewsToCreateString,true,$response);
+            }
+
+            return; // so far not neeeded
+
+            // get current permalinks
+            var cg_admin_url = $("#cg_admin_url").val();
+            var $cgSortableDiv  = $('#div'+id);
+            var realId = $cgSortableDiv.find('.cg_backend_info_container').attr('data-cg-real-id');
+            $cgSortableDiv.find('.cg_entry_page_url').addClass('cg_pointer_events_none');
+
+            $.ajax({
+                url: cg_admin_url + "admin-ajax.php",
+                type: 'post',
+                data: {
+                    action: 'post_cg_get_current_permalinks',
+                    cgRealId: realId,
+                },
+            }).done(function (response) {
+
+                var $response = jQuery(new DOMParser().parseFromString(response, 'text/html'));
+
+                cgJsClassAdmin.gallery.vars.entryPermalinks = {};// reset first
+                $response.find('script[data-cg-processing-get-current-permalinks="true"]').each(function () {
+                    var script = jQuery(this).html();
+                    eval(script);
+                });
+                var permaLinks = cgJsClassAdmin.gallery.vars.entryPermalinks;
+                for(var shortcode in permaLinks){
+                    if(!permaLinks.hasOwnProperty(shortcode)){
+                        break;
+                    }
+                    $cgSortableDiv.find('.cg_entry_page_url.'+shortcode).attr('href',permaLinks[shortcode]);
+               }
+                $cgSortableDiv.find('.cg_entry_page_url').removeClass('cg_pointer_events_none');
+
+            }).fail(function (xhr, status, error) {
+
+                console.log(xhr);
+                console.log(status);
+                console.log(error);
+
+            }).always(function () {
+
+            });
 
         }).fail(function(xhr, status, error) {
             cgJsClassAdmin.index.functions.noteIfIsIE();

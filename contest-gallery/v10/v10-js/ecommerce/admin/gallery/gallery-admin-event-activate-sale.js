@@ -155,7 +155,7 @@ jQuery(document).ready(function ($) {
             if($form.find('.SaleType_download').prop('checked') && $form.find('#cgActivateSale').prop('checked')){
                 var WpUploadId = parseInt(cgJsClassAdmin.gallery.vars.$sortableDiv.find('.cg_wp_upload_id').val());
                 debugger
-                if(cgJsClassAdmin.gallery.vars.$sortableDiv.find('.cg_backend_info_container').attr('data-cg-type')=='image'){
+                if(cgJsClassAdmin.gallery.vars.$sortableDiv.find('.cg_backend_info_container').attr('data-cg-type')=='image' && cgJsClassAdmin.gallery.vars.$sortableDiv.find('.cg_backend_info_container').attr('data-cg-pdf-preview') == 0){
                     formPostData.append('cgSellContainer[base64WatermarkedAndAltFiles]['+WpUploadId+']', cgJsClassAdmin.gallery.vars.base64andAltFileValues[realId][WpUploadId]);
                     formPostData.append('cgSellContainer[base64WatermarkedAndAltFileTypes]['+WpUploadId+']', cgJsClassAdmin.gallery.vars.base64andAltFileTypes[realId][WpUploadId]);
                     formPostData.append('cgSellContainer[WatermarkSettings]['+WpUploadId+'][WatermarkTitle]', cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUploadId]['WatermarkTitle']);

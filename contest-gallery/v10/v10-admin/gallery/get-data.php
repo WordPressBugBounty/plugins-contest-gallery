@@ -132,6 +132,10 @@ $ShowOther = $pro_options->ShowOther;
 $IsModernFiveStar = $pro_options->IsModernFiveStar;
 $RegUserUploadOnly = $pro_options->RegUserUploadOnly;
 $FbLikeOnlyShare = $pro_options->FbLikeOnlyShare;
+$PdfPreviewBackend = $pro_options->PdfPreviewBackend;
+if(cg_get_version()=='contest-gallery'){
+    $PdfPreviewBackend = 0;
+}
 $CatWidgetColor = ($pro_options->CatWidget==1) ? "background-color:#ffffff" : 'background-color:#ffffff';
 $CatWidgetChecked = ($pro_options->CatWidget==1) ? "checked='checked'" : '';
 $ShowCatsUnchecked = ($pro_options->ShowCatsUnchecked==1) ? "checked='checked'" : '';

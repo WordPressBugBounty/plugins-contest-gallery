@@ -4,6 +4,7 @@
     include(__DIR__.'/../ecommerce/backend/gallery/cg-ecommerce-sell-conf.php');
     include(__DIR__.'/../ecommerce/backend/gallery/cg-ecommerce-sell-activate.php');
     include(__DIR__.'/../ecommerce/backend/gallery/cg-ecommerce-sell-deactivate.php');
+    include(__DIR__.'/../ecommerce/backend/gallery/cg-replace-ecommerce-file.php');
     include(__DIR__.'/../ecommerce/backend/gallery/cg-move-file-ecommerce-sell-folder.php');
     include(__DIR__.'/../ecommerce/backend/gallery/cg-move-file-from-ecommerce-sell-folder.php');
 

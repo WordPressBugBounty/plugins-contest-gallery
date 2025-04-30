@@ -264,6 +264,8 @@ $ConsentYoutube = 0;
 $ConsentTwitter = 0;
 $ConsentInstagram = 0;
 $ConsentTikTok = 0;
+$PdfPreviewBackend = 0;
+$PdfPreviewFrontend = 0;
 ###NORMAL---END###
 $ShowExifDateTimeOriginalFormat = 'YYYY-MM-DD';
 $CommentsDateFormat = 'modern';

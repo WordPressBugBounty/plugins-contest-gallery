@@ -24,6 +24,10 @@ $OrderItem = 0;
 
 /*
 echo "<pre>";
+print_r($_POST['PdfPreview']);
+echo "</pre>";
+
+echo "<pre>";
 print_r($_POST);
 echo "</pre>";
 
@@ -112,6 +116,10 @@ if(empty($_POST["cg_upload_action"]) OR empty($_FILES["data"])){
     $selectSQL1 = $wpdb->get_row( "SELECT * FROM $tablenameOptions WHERE id = '$galeryID'" );
     $InformUserUpload = $wpdb->get_var( "SELECT InformUserUpload FROM $tablename_mail_user_upload WHERE GalleryID = '$galeryID'" );
 
+    if(cg_get_version()=='contest-gallery'){
+        $proOptions->PdfPreviewFrontend = 0;
+    }
+
     // correction should be done here, in case bulk upload from older versions is activated
     if($proOptions->AdditionalFiles==1){
         $selectSQL1->ActivateBulkUpload = 0;
@@ -155,6 +163,8 @@ if(empty($_POST["cg_upload_action"]) OR empty($_FILES["data"])){
 
     $WpUserName = '';
     $WpUserId = '';
+
+    $PdfPreviews = [];
 
     $is_user_logged_in = is_user_logged_in();
 
@@ -506,6 +516,7 @@ if(!$isManipulated){
     // manipulation fields check of fields --- END
 
     $AdditionalFilesArray = [];
+    $nextId = 0;
     $ExifDataByRealIds = [];
     $AdditionalFilesMainWpUpload = 0;
     $AdditionalFilesMainRealId = 0;
@@ -651,6 +662,8 @@ if(!$isManipulated){
 
             $_FILES['data']['name'] = $CustomImageNamePathArrayValueToSet.$_FILES['data']['name'];
 
+            $fileType = $file["type"];
+
             if(!$isOnlyContactEntry){
                 foreach ($_FILES as $file => $array) {
                     // $newupload = my_handle_attachment($file,$post_id);
@@ -662,11 +675,10 @@ if(!$isManipulated){
                     $time = date("Y-m-d H:i:s");
 
                     $post_data = array(
-                        'post_content' => "Contest Gallery ID-$galeryID $time"
+                       // 'post_content' => "Contest Gallery ID-$galeryID $time" // removed, 26.0.6
                     );
 
                     $attach_id = media_handle_upload($file,0,$post_data);
-                    //  var_dump($attach_id);die;
 
                     if ( is_wp_error( $attach_id ) ) {
                         //    echo "There was an error uploading the image. Please contact site administrator."; die;
@@ -851,6 +863,16 @@ if(!$isManipulated){
                                 $AdditionalFilesArray[($processedFilesCounter+1)] = [
                                     'WpUpload' => $wp_image_id,
                                 ];
+                                if($fileType=='application/pdf' && !empty($proOptions->PdfPreviewFrontend) && !empty($_POST['PdfPreview'][$key])){
+                               //     var_dump('add pdfPreview first');
+                                    if(!empty($nextId) && !isset($PdfPreviews[$nextId])){
+                                        $PdfPreviews[$nextId] = [];
+                                        $PdfPreviews[$nextId]['WpUpload'] = [];
+                                        $PdfPreviews[$nextId]['PdfPreview'] = [];
+                                    }
+                                    $PdfPreviews[$nextId]['WpUpload'][] = $wp_image_id;
+                                    $PdfPreviews[$nextId]['PdfPreview'][] = $_POST['PdfPreview'][$key][0];
+                                }
                             }
                             $processedFilesCounter++;
                             continue;
@@ -887,7 +909,30 @@ if(!$isManipulated){
 
                 $nextId = $wpdb->insert_id;
 
-	            $newEntriesInserted++;
+            //    var_dump('$fileType');
+                //     var_dump($fileType);
+
+                //     var_dump('$key');
+                //   var_dump($key);
+
+                if($fileType=='application/pdf' && !empty($proOptions->PdfPreviewFrontend) && !empty($_POST['PdfPreview'][$key])){
+                    //     var_dump('add pdfPreview second when nextId');
+                    if(!isset($PdfPreviews[$nextId])){
+                        $PdfPreviews[$nextId] = [];
+                        $PdfPreviews[$nextId]['WpUpload'] = [];
+                        $PdfPreviews[$nextId]['PdfPreview'] = [];
+                    }
+                    $PdfPreviews[$nextId]['WpUpload'][] = $wp_image_id;
+                    $PdfPreviews[$nextId]['PdfPreview'][] = $_POST['PdfPreview'][$key][0];
+                }
+
+                //   var_dump('$PdfPreviews');
+
+                /*echo "<pre>";
+                print_r($PdfPreviews);
+                echo "</pre>";*/
+
+                $newEntriesInserted++;
 
                 // Insert Upload Fields for pic if exists
                 $realIdBefore = $nextId;
@@ -1561,8 +1606,8 @@ if(!$isManipulated){
                                     $AdditionalFilesArray[$key]['Exif'] = cg_create_exif_data($AdditionalFileArray['WpUpload']);
                                 }else if(cg_is_alternative_file_type_video($ImgType)){// added since version 18.0.0
                                     $fileData = wp_get_attachment_metadata($AdditionalFileArray['WpUpload']);
-                                    $Width = (!empty($fileData['height'])) ? $fileData['height'] : 0;
-                                    $Height = (!empty($fileData['width'])) ? $fileData['width'] : 0;
+                                    $Width = (!empty($fileData['width'])) ? $fileData['width'] : 0;
+                                    $Height = (!empty($fileData['height'])) ? $fileData['height'] : 0;
                                 }
                                 $AdditionalFilesArray[$key]['post_title'] = $wpPostRow->post_title;
                                 $AdditionalFilesArray[$key]['post_name'] = $wpPostRow->post_name;
@@ -1599,6 +1644,29 @@ if(!$isManipulated){
             }
         }
 
+        /*
+       var_dump(123);
+        echo "<pre>";
+        print_r($PdfPreviews);
+        echo "</pre>";*/
+
+        // has to be done after MultipleFiles processed
+        foreach ($PdfPreviews as $realId => $PdfPreviewArray){
+            foreach ($PdfPreviewArray['WpUpload'] as $index => $WpUpload){
+                //var_dump('$WpUpload');
+                // var_dump($WpUpload);
+                // echo "<br>";
+                // echo "<br>";
+                // var_dump('$PdfPreviewArray[PdfPreview][$index]');
+                // var_dump($PdfPreviewArray['PdfPreview'][$index]);
+                post_cg_create_pdf_preview_backend($WpUpload, $realId, $PdfPreviewArray['PdfPreview'][$index],true);
+            }
+        }
+
+        if(!empty($PdfPreviews) && !empty($AdditionalFilesArray) && !empty($AdditionalFilesMainRealId) && $ActivateUpload==1){
+            $AdditionalFilesArray = unserialize($wpdb->get_var( "SELECT MultipleFiles FROM $tablename1 WHERE id = '$AdditionalFilesMainRealId'" ));
+        }
+
         if($ActivateUpload==1){
             // json File kreieren wenn instant upload activation an ist!!!
             $picsSQL = $wpdb->get_results( "SELECT DISTINCT $table_posts.*, $tablename1.* FROM $table_posts, $tablename1 WHERE 
@@ -1624,6 +1692,11 @@ if(!$isManipulated){
         }
 
     }
+
+    /*var_dump('$AdditionalFilesArray new');
+    echo "<pre>";
+    print_r($AdditionalFilesArray);
+    echo "</pre>";*/
 
     if($InformAdmin==1){
         include(plugin_dir_path(__FILE__).'mail_admin.php');

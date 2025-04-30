@@ -891,6 +891,7 @@ jQuery(document).ready(function ($) {
             $cg_preview_files_container.empty();
 
             cgJsClassAdmin.gallery.vars.hasAdditionalFiles = false;
+            cgJsClassAdmin.gallery.vars.hasPotentialPdfPreviews = false;
             var hasFilesToDelete = false;
 
             $highlightedRemoveable.find('.cg_backend_image_full_size_target').each(function (){
@@ -905,6 +906,10 @@ jQuery(document).ready(function ($) {
                 if(!$cg_backend_info_container.find('.cg_manage_multiple_files_for_post').hasClass('cg_hide')){
                     hasAdditionalFilesLoop = true;
                     cgJsClassAdmin.gallery.vars.hasAdditionalFiles = true;
+                }
+
+                if($(this).attr('data-file-type')=='pdf'){
+                    cgJsClassAdmin.gallery.vars.hasPotentialPdfPreviews = true;
                 }
 
                 var $element = $(this).clone();
@@ -933,12 +938,16 @@ jQuery(document).ready(function ($) {
                                 }*/
                 var $cg_backend_image_full_size_target_alternative_file_type = $(this).find('.cg_backend_image_full_size_target_alternative_file_type');
 
-
                 if($cg_backend_image_full_size_target_alternative_file_type.length){
                     var fileType = $cg_backend_image_full_size_target_alternative_file_type.attr('data-cg-file-type');
                     $element.addClass('cg_backend_image_full_size_target_container_'+fileType+' cg_backend_image_full_size_target_container_alternative_file_type');
                     $divContainer.append($('<div class="cg_backend_image_full_size_target_name"></div>'));
-                    $divContainer.find('.cg_backend_image_full_size_target_name').text($(this).attr('data-name-pic'));
+                    if(hasAdditionalFilesLoop){
+                        var NamePic = $(this).attr('data-name-pic');
+                    }else{
+                        var NamePic = $cg_backend_info_container.attr('data-cg-post_name');
+                    }
+                    $divContainer.find('.cg_backend_image_full_size_target_name').text(NamePic);
                     $divContainer.prepend($element);
                 }else if($(this).find('video').length){
                     $divContainer.addClass('cg_backend_image_full_size_target_container_video cg_backend_image_full_size_target_container_video_'+$(this).attr('data-file-type'));
@@ -1044,11 +1053,17 @@ jQuery(document).ready(function ($) {
 
         if(!$('#cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckbox').prop('checked')){
             e.preventDefault();
-            $('#cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckboxMessage').removeClass('cg_hide');
+            var $cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckboxMessage = $('#cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckboxMessage');
+            $cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckboxMessage.removeClass('cg_hide');
             if(cgJsClassAdmin.gallery.vars.hasAdditionalFiles){
-                $('#cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckboxMessage').find('.cg_note').removeClass('cg_hide');
+                $cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckboxMessage.find('.cg_note').removeClass('cg_hide');
             }else{
-                $('#cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckboxMessage').find('.cg_note').addClass('cg_hide');
+                $cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckboxMessage.find('.cg_note').addClass('cg_hide');
+            }
+            if(cgJsClassAdmin.gallery.vars.hasPotentialPdfPreviews){
+                $cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckboxMessage.find('.cg_note_pdf').removeClass('cg_hide');
+            }else{
+                $cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckboxMessage.find('.cg_note_pdf').addClass('cg_hide');
             }
         }else{
             var $cgGalleryForm = $('#cgGalleryForm');

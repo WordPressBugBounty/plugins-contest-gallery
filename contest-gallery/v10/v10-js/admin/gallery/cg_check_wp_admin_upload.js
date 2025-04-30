@@ -208,6 +208,9 @@ jQuery(document).ready(function ($) {
         // Create the media frame.
         file_frame = wp.media.frames.file_frame = wp.media({
             title: jQuery(this).data('uploader_title'),
+            /*'library': {
+                cg_post: '123'// example if require to set own parameters, is $_REQUEST['query']['cg_post'] then
+            },*/
             button: {
                 text: jQuery(this).data('uploader_button_text'),
             },

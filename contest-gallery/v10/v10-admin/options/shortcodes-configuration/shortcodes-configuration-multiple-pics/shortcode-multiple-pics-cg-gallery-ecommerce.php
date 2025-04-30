@@ -455,13 +455,81 @@ $ShowAlwaysContainer
     </div>
 HEREDOC;
 
+echo <<<HEREDOC
+</div>
+HEREDOC;
+
 if(floatval($galleryDbVersion)>=21){
-	if(!isset($jsonOptions[$GalleryID.'-ec']['pro']['WpPageParentRedirectURL'])){
-		$jsonOptions[$GalleryID.'-ec']['pro']['WpPageParentRedirectURL'] = contest_gal1ery_convert_for_html_output_without_nl2br($WpPageParentRedirectURL);
-	}else{
-		$jsonOptions[$GalleryID.'-ec']['pro']['WpPageParentRedirectURL'] = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID.'-ec']['pro']['WpPageParentRedirectURL']);
-	}
-	echo <<<HEREDOC
+
+    echo <<<HEREDOC
+        <div class='cg_view_options_row_container GalleryPageOptionsParentContainer cg_border_radius_8_px' style="border: thin solid #dedede;margin-top:15px;">
+            <p class="cg_view_options_row_container_title" >Gallery landing page options</p>            
+HEREDOC;
+
+    if(floatval($galleryDbVersion)>=24) {
+        if(!isset($jsonOptions[$GalleryID.'-ec']['visual']['ShowBackToGalleriesButton'])){
+            $jsonOptions[$GalleryID.'-ec']['visual']['ShowBackToGalleriesButton'] = 1;
+        }
+        echo <<<HEREDOC
+    <div class='cg_view_options_row'>
+        <div class='cg_view_option cg_view_option_100_percent  cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px  '>
+            <div class='cg_view_option_title '>
+                <p>Show back to galleries button on gallery landing page
+                <br><span class="cg_view_option_title_note"><a href="$WpPageParentEcommercePermalink" target="_blank">$WpPageParentEcommercePermalink</a></span></p>
+            </div>
+        <div class='cg_view_option_checkbox '>
+            <input type="checkbox" name='multiple-pics[cg_gallery_ecommerce][visual][ShowBackToGalleriesButton]'  class="cg_shortcode_checkbox ShowBackToGalleriesButton"  checked="{$jsonOptions[$GalleryID.'-ec']['visual']['ShowBackToGalleriesButton']}"  >
+        </div>
+        </div>
+    </div>
+HEREDOC;
+
+        echo <<<HEREDOC
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width  cg_border_top_none '>
+        <div class='cg_view_option_title '>
+            <p>Back to galleries button text<br>
+            <span class="cg_view_option_title_note">Translation can be found <a class="cg_no_outline_and_shadow_on_focus" href="{$editTranslationLink}l_BackToGalleries"  target="_blank">here</a></span>
+            </p>
+        </div>
+    </div>
+</div>
+HEREDOC;
+
+        if(!isset($jsonOptions[$GalleryID.'-ec']['pro']['BackToGalleriesButtonURL'])){
+            $jsonOptions[$GalleryID.'-ec']['pro']['BackToGalleriesButtonURL'] = '';
+        }else{
+            $jsonOptions[$GalleryID.'-ec']['pro']['BackToGalleriesButtonURL'] = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID.'-ec']['pro']['BackToGalleriesButtonURL']);
+        }
+
+        $slugName = (!empty($CgEntriesOwnSlugNameGalleriesEcommerce)) ? $CgEntriesOwnSlugNameGalleriesEcommerce : 'contest-galleries-ecommerce';
+
+        $page = get_page_by_path( $slugName, OBJECT, 'page');
+        $pageGalleries = (!empty($page)) ? get_permalink($page->ID) : '';
+
+        echo <<<HEREDOC
+    <div class='cg_view_options_row'>
+        <div class='cg_view_option cg_view_option_full_width  cg_border_top_none '>
+            <div class='cg_view_option_title '>
+                <p>Back to galleries button custom URL on gallery landing page
+                <br><span class="cg_view_option_title_note"><a href="$WpPageParentEcommercePermalink" target="_blank">$WpPageParentEcommercePermalink</a><br><span class="cg_view_option_title_note">If not set then parent site<br><a target="_blank"  href="$pageGalleries">$pageGalleries</a><br>URL will be used<br><span class="cg_font_weight_500">NOTE: </span> has to start with <span class="cg_font_weight_500">http://</span> or <span class="cg_font_weight_500">https://</span>, like https://www.example.com</span></p>
+            </div>
+            <div class='cg_view_option_input '>
+                <input type="text" name="multiple-pics[cg_gallery_ecommerce][pro][BackToGalleriesButtonURL]" class="BackToGalleriesButtonURL"  value="{$jsonOptions[$GalleryID.'-ec']['pro']['BackToGalleriesButtonURL']}"   >
+            </div>
+        </div>
+    </div>
+HEREDOC;
+
+    }
+
+
+    if(!isset($jsonOptions[$GalleryID.'-ec']['pro']['WpPageParentRedirectURL'])){
+        $jsonOptions[$GalleryID.'-ec']['pro']['WpPageParentRedirectURL'] = '';
+    }else{
+        $jsonOptions[$GalleryID.'-ec']['pro']['WpPageParentRedirectURL'] = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID.'-ec']['pro']['WpPageParentRedirectURL']);
+    }
+    echo <<<HEREDOC
     <div class='cg_view_options_row'>
         <div class='cg_view_option  cg_view_option_full_width cg_border_top_none  '>
             <div class='cg_view_option_title '>
@@ -474,14 +542,14 @@ if(floatval($galleryDbVersion)>=21){
     </div>
 HEREDOC;
 
-	// only json option, not in database available
-	if(!isset($jsonOptions[$GalleryID.'-ec']['visual']['AdditionalCssGalleryPage'])){
-		$AdditionalCssGalleryPage = "body {\r\n&nbsp;&nbsp;font-family: sans-serif;\r\n&nbsp;&nbsp;font-size: 16px;\r\n&nbsp;&nbsp;background-color: white;\r\n&nbsp;&nbsp;color: black;\r\n}";
-	}else{
-		$AdditionalCssGalleryPage = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID.'-ec']['visual']['AdditionalCssGalleryPage']);
-	}
+    // only json option, not in database available
+    if(!isset($jsonOptions[$GalleryID.'-ec']['visual']['AdditionalCssGalleryPage'])){
+        $AdditionalCssGalleryPage = "body {\r\n&nbsp;&nbsp;font-family: sans-serif;\r\n&nbsp;&nbsp;font-size: 16px;\r\n&nbsp;&nbsp;background-color: white;\r\n&nbsp;&nbsp;color: black;\r\n}";
+    }else{
+        $AdditionalCssGalleryPage = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID.'-ec']['visual']['AdditionalCssGalleryPage']);
+    }
 
-	echo <<<HEREDOC
+    echo <<<HEREDOC
     <div class='cg_view_options_row'>
         <div class='cg_view_option  cg_view_option_full_width  cg_border_top_none '>
             <div class='cg_view_option_title '>
@@ -494,12 +562,14 @@ HEREDOC;
     </div>
 HEREDOC;
 
+    echo <<<HEREDOC
+        </div>
+HEREDOC;
+
 }
 
-echo <<<HEREDOC
-</div>
 
-HEREDOC;
+
 
 
 //print_r($order);

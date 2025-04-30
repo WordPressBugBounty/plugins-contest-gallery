@@ -10,7 +10,7 @@ return ['AllowSortOptions','PicsPerSite','FullSizeGallery','FullSize','Search','
     'EnableSwitchStyleGalleryButton','SwitchStyleGalleryButtonOnlyTopControls','EnableSwitchStyleImageViewButton',
     'SwitchStyleImageViewButtonOnlyImageView','ShowAlways','RegUserGalleryOnly','RegUserGalleryOnlyText','EnableEmojis','CheckLoginComment','ThankVote',
     'CopyOriginalFileLink','ForwardOriginalFile','InformUserVote','InformUserVote','InformUserComment','InformUserCommentMailInterval',
-    'ShareButtons','BackToGalleryButtonText','BackToGalleryButtonURL','TextBeforeWpPageEntry','TextAfterWpPageEntry',
+    'ShareButtons','BackToGalleryButtonText','BackToGalleryButtonURL','BackToGalleriesButtonURL','TextBeforeWpPageEntry','TextAfterWpPageEntry',
     'ShowBackToGalleryButton','WpPageParentRedirectURL','RedirectURLdeletedEntry','TextDeactivatedEntry','ForwardToWpPageEntry','ForwardToWpPageEntryInNewTab',
-    'AdditionalCssGalleryPage','AdditionalCssEntryLandingPage','WpPageParent','WpPageParentUser','WpPageParentNoVoting','WpPageParentWinner','WpPageParentEcommerce','MainTitleGalleriesView','SubTitleGalleriesView','ThirdTitleGalleriesView','ShowDate','ShowDateFormat'
+    'AdditionalCssGalleryPage','AdditionalCssEntryLandingPage','WpPageParent','WpPageParentUser','WpPageParentNoVoting','WpPageParentWinner','WpPageParentEcommerce','MainTitleGalleriesView','SubTitleGalleriesView','ThirdTitleGalleriesView','ShowDate','ShowDateFormat','PdfPreviewBackend','PdfPreviewFrontend','ShowBackToGalleriesButton'
 ];

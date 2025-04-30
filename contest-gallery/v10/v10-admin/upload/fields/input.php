@@ -282,17 +282,37 @@ echo <<<HEREDOC
 HEREDOC;
 echo <<<HEREDOC
 <div class='cg_view_options_row'>
-    <div  class='cg_view_option cg_border_right_none cg_border_bottom_none '>
+    <div  class='cg_view_option cg_view_option_25_percent cg_border_right_none cg_border_bottom_none '>
         <div class='cg_view_option_title cg_view_option_title_full_width '>
-            <p>Show as info in single entry view</p>
+            <p>Show as info in single<br>entry view</p>
         </div>
         <div class="cg_view_option_checkbox">
               <input type="checkbox" name="upload[$id][infoInSlider]" $checkedShow_Slider>
         </div>
     </div> 
-     <div class='cg_view_option cg_view_option_watermark cg_border_bottom_none cg_border_right_none '>
+HEREDOC;
+
+echo <<<HEREDOC
+     <div class='$cgProFalse cg_view_option cg_view_option_25_percent cg_border_right_none cg_border_bottom_none cg_view_option_flex_flow_column'>
+        <div class='cg_view_option_title cg_view_option_title_full_width'>
+            <p><br>Use to add to WordPress<br>post field</p>
+        </div>
+          <div class="cg_view_option_select cg_view_option_input_full_width" style="margin-bottom: 6px;">
+                <select  name='upload[$id][WpAttachmentDetailsType]'>
+                    <option value='' >Please select</option>
+                    <option value='alt' $WpAttachmentDetailsTypeAltChecked>Alternative text</option>
+                    <option value='title' $WpAttachmentDetailsTypeTitleChecked>Title</option>
+                    <option value='caption' $WpAttachmentDetailsTypeCaptionChecked>Caption</option>
+                    <option value='description' $WpAttachmentDetailsTypeDescriptionChecked>Description</option>
+                </select>
+        </div>
+    </div>
+HEREDOC;
+
+echo <<<HEREDOC
+     <div class='cg_view_option cg_view_option_25_percent cg_view_option_watermark cg_border_bottom_none cg_border_right_none $cgProFalse'>
         <div class='cg_view_option_title '>
-            <p>Use as watermark for gallery images: (only 1 allowed)<br>
+            <p>Use as watermark for gallery images:<br>(only 1 allowed)<br>
                 <span class="cg_view_option_title_note"><b>NOTE:</b> CSS based, original image source will be not watermarked</span>
             </p>
         </div>
@@ -300,9 +320,9 @@ echo <<<HEREDOC
               <input type="checkbox" name="upload[$id][watermarkChecked]" $checkedWatermark>
         </div>
     </div>
-     <div  class='cg_view_option  cg_view_option_not_disable  cg_border_bottom_none cg_view_option_watermark_position cg_view_option_flex_flow_column $watermarkPositionDisabled'>
+     <div  class='cg_view_option cg_view_option_25_percent  cg_view_option_not_disable  cg_border_bottom_none cg_view_option_watermark_position cg_view_option_flex_flow_column $cgProFalse $watermarkPositionDisabled'>
         <div class='cg_view_option_title cg_border_left_none  cg_view_option_title_full_width '>
-            <p>Watermark position</p>
+            <p><br>Watermark position</p>
         </div>
           <div class="cg_view_option_select cg_view_option_input_full_width">
                 <select class='cg_watermark_position' name='upload[$id][watermarkPosition]'>
@@ -350,28 +370,10 @@ echo <<<HEREDOC
 </div>
 HEREDOC;
 
-echo <<<HEREDOC
-<div class='cg_view_options_row'>
-         <div class='$cgProFalse cg_view_option cg_view_option_full_width cg_border_bottom_none cg_view_option_flex_flow_column'>
-        <div class='cg_view_option_title cg_view_option_title_full_width'>
-            <p>Use to add to WordPress post field</p>
-        </div>
-          <div class="cg_view_option_select cg_view_option_input_full_width" style="margin-bottom: 6px;">
-                <select  name='upload[$id][WpAttachmentDetailsType]'>
-                    <option value='' >Please select</option>
-                    <option value='alt' $WpAttachmentDetailsTypeAltChecked>Alternative text</option>
-                    <option value='title' $WpAttachmentDetailsTypeTitleChecked>Title</option>
-                    <option value='caption' $WpAttachmentDetailsTypeCaptionChecked>Caption</option>
-                    <option value='description' $WpAttachmentDetailsTypeDescriptionChecked>Description</option>
-                </select>
-        </div>
-    </div>
-</div>
-HEREDOC;
 
 echo <<<HEREDOC
 <div class='cg_view_options_row'>
-    <div  class='cg_view_option cg_view_option_50_percent  cg_border_right_none cg_border_bottom_none cg_view_option_flex_flow_column'>
+    <div  class='cg_view_option cg_view_option_50_percent cg_border_top_none cg_border_right_none cg_border_bottom_none cg_view_option_flex_flow_column'>
         <div class='cg_view_option_title cg_view_option_title_full_width '>
             <p>Min char</p>
         </div>
@@ -379,7 +381,7 @@ echo <<<HEREDOC
             <input type="text" name="upload[$id][min-char]" value="$minChar" size="30">
         </div>
     </div>
-     <div class='cg_view_option cg_view_option_50_percent  cg_border_bottom_none cg_view_option_flex_flow_column'>
+     <div class='cg_view_option cg_view_option_50_percent cg_border_top_none  cg_border_bottom_none cg_view_option_flex_flow_column'>
         <div class='cg_view_option_title cg_view_option_title_full_width '>
             <p>Max char</p>
         </div>

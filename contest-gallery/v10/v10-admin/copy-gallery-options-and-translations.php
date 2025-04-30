@@ -433,6 +433,7 @@ if ($cgVersion < 10) {
     $jsonOptions['visual']['ForwardToWpPageEntry'] = $valueCollect['ForwardToWpPageEntry'];
     $jsonOptions['visual']['ForwardToWpPageEntryInNewTab'] = $valueCollect['ForwardToWpPageEntryInNewTab'];
     $jsonOptions['visual']['ShowBackToGalleryButton'] = $valueCollect['ShowBackToGalleryButton'];
+    $jsonOptions['visual']['ShowBackToGalleriesButton'] = $valueCollect['ShowBackToGalleriesButton'];
     $jsonOptions['visual']['BackToGalleryButtonText'] = $valueCollect['BackToGalleryButtonText'];
     $jsonOptions['visual']['TextDeactivatedEntry'] = $valueCollect['TextDeactivatedEntry'];
 }
@@ -445,6 +446,7 @@ if ($cgVersion < 21) {
     $valueCollect['ForwardToWpPageEntry'] = $ForwardToWpPageEntry;
     $valueCollect['ForwardToWpPageEntryInNewTab'] = $ForwardToWpPageEntryInNewTab;
     $valueCollect['ShowBackToGalleryButton'] = $ShowBackToGalleryButton;
+    $valueCollect['ShowBackToGalleriesButton'] = $ShowBackToGalleriesButton;
     $valueCollect['BackToGalleryButtonText'] = $BackToGalleryButtonText;
     $valueCollect['TextDeactivatedEntry'] = $TextDeactivatedEntry;
     $jsonOptions['visual']['ShareButtons'] = $ShareButtons;
@@ -453,6 +455,7 @@ if ($cgVersion < 21) {
     $jsonOptions['visual']['ForwardToWpPageEntry'] = $ForwardToWpPageEntry;
     $jsonOptions['visual']['ForwardToWpPageEntryInNewTab'] = $ForwardToWpPageEntryInNewTab;
     $jsonOptions['visual']['ShowBackToGalleryButton'] = $ShowBackToGalleryButton;
+    $jsonOptions['visual']['ShowBackToGalleriesButton'] = $ShowBackToGalleriesButton;
     $jsonOptions['visual']['BackToGalleryButtonText'] = $BackToGalleryButtonText;
     $jsonOptions['visual']['TextDeactivatedEntry'] = $TextDeactivatedEntry;
     $jsonOptions['visual']['AdditionalCssEntryLandingPage'] = $AdditionalCssEntryLandingPage;// json only
@@ -984,6 +987,7 @@ if ($cgVersion < 10) {
     $jsonOptions['pro']['AdditionalFilesCount'] = (cg_get_version()=='contest-gallery-pro') ? 9 : 2;
     $jsonOptions['pro']['ReviewComm'] = 0;
     $jsonOptions['pro']['BackToGalleryButtonURL'] = '';
+    $jsonOptions['pro']['BackToGalleriesButtonURL'] = '';
     $jsonOptions['pro']['WpPageParentRedirectURL'] = '';
     $jsonOptions['pro']['RedirectURLdeletedEntry'] = '';
     $jsonOptions['pro']['RegUserMaxUploadPerCategory'] = 0;
@@ -1210,10 +1214,15 @@ if(file_exists($jsonOptionsGalleryPrev)){
             $jsonOptions[$nextIDgallery.'-w']['visual']['ForwardToWpPageEntryInNewTab'] = $ForwardToWpPageEntryInNewTab;
             $jsonOptions[$nextIDgallery.'-ec']['visual']['ForwardToWpPageEntryInNewTab'] = $ForwardToWpPageEntryInNewTab;
             $jsonOptions[$nextIDgallery]['visual']['ShowBackToGalleryButton'] = $ShowBackToGalleryButton;
+            $jsonOptions[$nextIDgallery]['visual']['ShowBackToGalleriesButton'] = $ShowBackToGalleriesButton;
             $jsonOptions[$nextIDgallery.'-u']['visual']['ShowBackToGalleryButton'] = $ShowBackToGalleryButton;
             $jsonOptions[$nextIDgallery.'-nv']['visual']['ShowBackToGalleryButton'] = $ShowBackToGalleryButton;
             $jsonOptions[$nextIDgallery.'-w']['visual']['ShowBackToGalleryButton'] = $ShowBackToGalleryButton;
             $jsonOptions[$nextIDgallery.'-ec']['visual']['ShowBackToGalleryButton'] = $ShowBackToGalleryButton;
+            $jsonOptions[$nextIDgallery.'-u']['visual']['ShowBackToGalleriesButton'] = $ShowBackToGalleriesButton;
+            $jsonOptions[$nextIDgallery.'-nv']['visual']['ShowBackToGalleriesButton'] = $ShowBackToGalleriesButton;
+            $jsonOptions[$nextIDgallery.'-w']['visual']['ShowBackToGalleriesButton'] = $ShowBackToGalleriesButton;
+            $jsonOptions[$nextIDgallery.'-ec']['visual']['ShowBackToGalleriesButton'] = $ShowBackToGalleriesButton;
             $jsonOptions[$nextIDgallery]['visual']['BackToGalleryButtonText'] = $BackToGalleryButtonText;
             $jsonOptions[$nextIDgallery.'-u']['visual']['BackToGalleryButtonText'] = $BackToGalleryButtonText;
             $jsonOptions[$nextIDgallery.'-nv']['visual']['BackToGalleryButtonText'] = $BackToGalleryButtonText;

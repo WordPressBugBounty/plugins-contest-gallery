@@ -697,13 +697,12 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
 
         $imagesFullData = [];
 
-        if(!function_exists('cgSortArray')){
-	    function cgSortArray($a1, $a2){
-		    if ($a1 == $a2) return 0;
-		    return ($a1 > $a2) ? -1 : 1;
-	    }
+        if (!function_exists('cgSortArray')) {
+            function cgSortArray($a1, $a2){
+                if ($a1 == $a2) return 0;
+                return ($a1 > $a2) ? -1 : 1;
+            }
         }
-
 
 	    if(empty($galleriesIds)){
 		    usort($galleryNumbers, "cgSortArray");
@@ -726,72 +725,73 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
 		    $dirs[] = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdForArray;
 	    }
 
-        if(!function_exists('cgGetNotEmptyJsonFileData')){
-	    function cgGetNotEmptyJsonFileData($index,$imageIDs,$galleryIdToCheck, $imageId, $wp_upload_dir){
-		    $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdToCheck.'/json/image-data/image-data-'.$imageId.'.json';
-		    $jsonFileData = json_decode(file_get_contents($jsonFile),true);
-            if(!empty($jsonFileData)){
-	            $jsonFileData['id'] = $imageId;// set it for sure because of previous versions
-                return $jsonFileData;
-            }else{
-	            $index++;
-                if(!empty($imageIDs[$index])){
-	                return cgGetNotEmptyJsonFileData($index,$imageIDs,$galleryIdToCheck, $imageIDs[$index], $wp_upload_dir);
+
+        if (!function_exists('cgGetNotEmptyJsonFileData')) {
+            function cgGetNotEmptyJsonFileData($index,$imageIDs,$galleryIdToCheck, $imageId, $wp_upload_dir){
+                $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdToCheck.'/json/image-data/image-data-'.$imageId.'.json';
+                $jsonFileData = json_decode(file_get_contents($jsonFile),true);
+                if(!empty($jsonFileData)){
+                    $jsonFileData['id'] = $imageId;// set it for sure because of previous versions
+                    return $jsonFileData;
                 }else{
-	                return [];
+                    $index++;
+                    if(!empty($imageIDs[$index])){
+                        return cgGetNotEmptyJsonFileData($index,$imageIDs,$galleryIdToCheck, $imageIDs[$index], $wp_upload_dir);
+                    }else{
+                        return [];
+                    }
                 }
             }
-	    }
         }
 
-        if(!function_exists('cgGetHighestRating')){
-	    function cgGetHighestRating($a1, $a2, $AllowRating){
-		    // $a1 == previous file
-		    // $a2 == current file
-		    if($AllowRating=='2'){
-                if(empty($a1['addCountS'])){
-	                $a1['addCountS'] = 0;
+        if (!function_exists('cgGetHighestRating')) {
+            function cgGetHighestRating($a1, $a2, $AllowRating){
+                // $a1 == previous file
+                // $a2 == current file
+                if($AllowRating=='2'){
+                    if(empty($a1['addCountS'])){
+                        $a1['addCountS'] = 0;
+                    }
+                    if(empty($a2['addCountS'])){
+                        $a2['addCountS'] = 0;
+                    }
+                    if (intval($a1['CountS'])+intval($a1['addCountS']) == intval($a2['CountS'])+intval($a2['addCountS'])) return $a1;// return previous always, which means higher id
+                    return (intval($a1['CountS'])+intval($a1['addCountS']) > intval($a2['CountS'])+intval($a2['addCountS'])) ? $a1 : $a2;
+                }else if($AllowRating>='12'){
+                    $array = [12,13,14,15,16,17,18,19,20];
+                    $sumA1 = 0;
+                    $sumA2 = 0;
+                    foreach ($array as $option){
+                        if($AllowRating==$option){
+                            for($i=1;$i<=($option-10);$i++){
+                                if(!empty($a1['CountR'.$i])){
+                                    $sumA1 += intval($a1['CountR'.$i])*$i;// *$i because count and not sum is saved
+                                }
+                                if(!empty($a1['addCountR'.$i])){
+                                    $sumA1 += intval($a1['addCountR'.$i])*$i;// *$i because count and not sum is saved
+                                }
+                                if(!empty($a2['CountR'.$i])){
+                                    $sumA2 += intval($a2['CountR'.$i]*$i);//  *$i because count and not sum is saved
+                                }
+                                if(!empty($a2['addCountR'.$i])){
+                                    $sumA2 += intval($a2['addCountR'.$i]*$i);//  *$i because count and not sum is saved
+                                }
+                            }
+                        }
+                    }
+                    if ($sumA1 == $sumA2) return $a1;// return previous always, which means higher id
+                    return ($sumA1 > $sumA2) ? $a1 : $a2;
                 }
-                if(empty($a2['addCountS'])){
-	                $a2['addCountS'] = 0;
-                }
-			    if (intval($a1['CountS'])+intval($a1['addCountS']) == intval($a2['CountS'])+intval($a2['addCountS'])) return $a1;// return previous always, which means higher id
-			    return (intval($a1['CountS'])+intval($a1['addCountS']) > intval($a2['CountS'])+intval($a2['addCountS'])) ? $a1 : $a2;
-		    }else if($AllowRating>='12'){
-			    $array = [12,13,14,15,16,17,18,19,20];
-			    $sumA1 = 0;
-			    $sumA2 = 0;
-			    foreach ($array as $option){
-				    if($AllowRating==$option){
-					    for($i=1;$i<=($option-10);$i++){
-						    if(!empty($a1['CountR'.$i])){
-							    $sumA1 += intval($a1['CountR'.$i])*$i;// *$i because count and not sum is saved
-						    }
-						    if(!empty($a1['addCountR'.$i])){
-							    $sumA1 += intval($a1['addCountR'.$i])*$i;// *$i because count and not sum is saved
-						    }
-						    if(!empty($a2['CountR'.$i])){
-							    $sumA2 += intval($a2['CountR'.$i]*$i);//  *$i because count and not sum is saved
-						    }
-						    if(!empty($a2['addCountR'.$i])){
-							    $sumA2 += intval($a2['addCountR'.$i]*$i);//  *$i because count and not sum is saved
-						    }
-					    }
-				    }
-			    }
-			    if ($sumA1 == $sumA2) return $a1;// return previous always, which means higher id
-			    return ($sumA1 > $sumA2) ? $a1 : $a2;
-		    }
-	    }
+            }
         }
 
-        if(!function_exists('cgGetHighestComments')){
-	    function cgGetHighestComments($a1, $a2){
-		    // $a1 == previous file
-		    // $a2 == current file
-		    if ($a1['CountC'] == $a2['CountC']) return $a1;// return previous always, which means higher id
-		    return ($a1['CountC'] > $a2['CountC']) ? $a1 : $a2;
-	    }
+        if (!function_exists('cgGetHighestComments')) {
+            function cgGetHighestComments($a1, $a2){
+                // $a1 == previous file
+                // $a2 == current file
+                if ($a1['CountC'] == $a2['CountC']) return $a1;// return previous always, which means higher id
+                return ($a1['CountC'] > $a2['CountC']) ? $a1 : $a2;
+            }
         }
 
         $time = time();

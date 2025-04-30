@@ -186,17 +186,30 @@ if(empty($galleriesOptions['GalleriesPagesNoIndex']) && empty($galleriesOptions[
                 $WpUploadFilesPostMeta = unserialize($wpdb->get_var("SELECT WpUploadFilesPostMeta FROM $tablename_ecommerce_entries WHERE pid = '$realId'"));
 
                 if(isset($WpUploadFilesPostMeta[$WpUpload])){
+                    if(!empty($rowObject->PdfPreview)){
+                        $largeSource=wp_get_attachment_image_src($rowObject->PdfPreview, 'large');
+                        $largeSource=$largeSource[0];
+                    }else{
 	                $attached_file_dir = substr($WpUploadFilesPostMeta[$WpUpload]['_wp_attached_file'],0,strrpos($WpUploadFilesPostMeta[$WpUpload]['_wp_attached_file'],'/'));// folder without / at the end
 	                $wp_upload_dir = wp_upload_dir();
                     $fileName = $WpUploadFilesPostMeta[$WpUpload]['_wp_attachment_metadata']['file'];
 	                $largeSource = $wp_upload_dir['baseurl'].'/'.$attached_file_dir.((isset($WpUploadFilesPostMeta[$WpUpload]['_wp_attachment_metadata']['sizes']['large']['file'])) ? $WpUploadFilesPostMeta[$WpUpload]['_wp_attachment_metadata']['sizes']['large']['file'] : $fileName);
+                    }
 	                echo '<meta property="og:image" content="'.$largeSource.'">'."\r\n";
                 }else{
+                    if(!empty($rowObject->PdfPreview)){
+                        $imgSrcLarge=wp_get_attachment_image_src($rowObject->PdfPreview, 'large');
+                    }else{
 	                $imgSrcLarge=wp_get_attachment_image_src($rowObject->WpUpload, 'large');
+                    }
 	                echo '<meta property="og:image" content="'.$imgSrcLarge[0].'">'."\r\n";
                 }
             }else{
-                $imgSrcLarge=wp_get_attachment_image_src($rowObject->WpUpload, 'large');
+                if(!empty($rowObject->PdfPreview)){
+                    $imgSrcLarge=wp_get_attachment_image_src($rowObject->PdfPreview, 'large');
+                }else{
+                    $imgSrcLarge=wp_get_attachment_image_src($rowObject->WpUpload, 'large');
+                }
                 echo '<meta property="og:image" content="'.$imgSrcLarge[0].'">'."\r\n";
             }
         }else if(cg_is_alternative_file_type_video($ImgType)){

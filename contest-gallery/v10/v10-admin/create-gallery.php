@@ -204,7 +204,8 @@ if(!empty($_POST['cg_create'])){
 					BorderRadiusUpload,BorderRadiusRegistry,BorderRadiusLogin, ThankVote,
                     CopyOriginalFileLink,ForwardOriginalFile,ShareButtons,
                     TextBeforeWpPageEntry,TextAfterWpPageEntry,ForwardToWpPageEntry,ForwardToWpPageEntryInNewTab,
-                    ShowBackToGalleryButton,BackToGalleryButtonText,TextDeactivatedEntry
+                    ShowBackToGalleryButton,BackToGalleryButtonText,TextDeactivatedEntry,
+                    ShowBackToGalleriesButton
 					 )
 					VALUES ( %s,%d,%s,%s,
 					%s,%s,%s,%s,%s,%s,
@@ -219,7 +220,8 @@ if(!empty($_POST['cg_create'])){
 					%d,%d,%d,%d,
 					%d,%d,%s,
 					%s,%s,%d,%d,
-					%d,%s,%s
+					%d,%s,%s,
+					%d
 					)
 				",
         '',$nextIDgallery,$CommentsAlignGallery,$RatingAlignGallery,
@@ -235,7 +237,8 @@ if(!empty($_POST['cg_create'])){
         $BorderRadiusUpload,$BorderRadiusRegistry,$BorderRadiusLogin,$ThankVote,
         $CopyOriginalFileLink,$ForwardOriginalFile,$ShareButtons,
         $TextBeforeWpPageEntry,$TextAfterWpPageEntry,$ForwardToWpPageEntry,$ForwardToWpPageEntryInNewTab,
-        $ShowBackToGalleryButton,$BackToGalleryButtonText,$TextDeactivatedEntry
+        $ShowBackToGalleryButton,$BackToGalleryButtonText,$TextDeactivatedEntry,
+        $ShowBackToGalleriesButton
     ) );
 
     // $wpdb->insert( $tablename_options_input, array( 'id' => '', 'Forward' => 0, 'Forward_URL' => '', 'Confirmation_Text' => "$confirmationText" ));
@@ -589,8 +592,9 @@ if(!empty($_POST['cg_create'])){
 					VoteMessageSuccessActive,VoteMessageWarningActive,VoteMessageSuccessText,VoteMessageWarningText,
 					CommNoteActive,ShowProfileImage,
 					AllowUploadJPG,AllowUploadPNG,AllowUploadGIF,AllowUploadICO,
-					AdditionalFiles,AdditionalFilesCount,ReviewComm,BackToGalleryButtonURL,WpPageParentRedirectURL,RedirectURLdeletedEntry,RegUserMaxUploadPerCategory,
-					ConsentYoutube,ConsentTwitter,ConsentInstagram,ConsentTikTok
+					AdditionalFiles,AdditionalFilesCount,ReviewComm,BackToGalleryButtonURL,BackToGalleriesButtonURL,WpPageParentRedirectURL,RedirectURLdeletedEntry,RegUserMaxUploadPerCategory,
+					ConsentYoutube,ConsentTwitter,ConsentInstagram,ConsentTikTok,
+					PdfPreviewBackend,PdfPreviewFrontend
 					)
 					VALUES (%s,%d,%s,%s,
 					%d,%s,
@@ -608,8 +612,9 @@ if(!empty($_POST['cg_create'])){
                     %d,%d,%s,%s,
                     %d,%d,
                     %d,%d,%d,%d,
-                    %d,%d,%d,%s,%s,%s,%s,
-                    %d,%d,%d,%d
+                    %d,%d,%d,%s,%s,%s,%s,%s,
+                    %d,%d,%d,%d,
+                    %d,%d
 					)
 				",
             '',$nextIDgallery,$ForwardAfterRegUrl,$ForwardAfterRegText,
@@ -628,8 +633,9 @@ if(!empty($_POST['cg_create'])){
             $VoteMessageSuccessActive,$VoteMessageWarningActive,$VoteMessageSuccessText,$VoteMessageWarningText,
             $CommNoteActive,$ShowProfileImage,
             $AllowUploadJPG,$AllowUploadPNG,$AllowUploadGIF,$AllowUploadICO,
-            $AdditionalFiles,$AdditionalFilesCount,$ReviewComm,$BackToGalleryButtonURL,$WpPageParentRedirectURL,$RedirectURLdeletedEntry,$RegUserMaxUploadPerCategory,
-	        $ConsentYoutube,$ConsentTwitter,$ConsentInstagram,$ConsentTikTok
+            $AdditionalFiles,$AdditionalFilesCount,$ReviewComm,$BackToGalleryButtonURL,$BackToGalleriesButtonURL,$WpPageParentRedirectURL,$RedirectURLdeletedEntry,$RegUserMaxUploadPerCategory,
+	        $ConsentYoutube,$ConsentTwitter,$ConsentInstagram,$ConsentTikTok,
+            $PdfPreviewBackend,$PdfPreviewFrontend
         ) );
 
         // Create a registry form and options for all galleries since 14.0.0

@@ -138,7 +138,6 @@ if(!function_exists('cg_modified_admin_bar_for_contest_gallery_user_v14')){
                 $wp_admin_bar->remove_menu('search');       // Remove the user details tab
                 $wp_admin_bar->remove_menu('user-info');       // Remove the user details tab
 
-
                 // Modify WordPress nodes here
                 /*
                 $args = array(
@@ -169,7 +168,7 @@ if(!function_exists('cg_modified_admin_bar_for_contest_gallery_user_v14')){
                             'title' => $language_BackToGallery,
                             'href' => $BackToGalleryLink
                         );
-	                    $wp_admin_bar->add_node($args);
+                        $wp_admin_bar->add_node($args);
                     }
                     wp_enqueue_script( 'cg_contest_gallery_edit_profile_js', plugins_url('/../../../v10/v10-js/admin/profile/edit-profile.js', __FILE__), array('jquery'), cg_get_version_for_scripts());
                 }else{

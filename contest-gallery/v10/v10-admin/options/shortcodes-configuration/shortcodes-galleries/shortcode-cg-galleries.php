@@ -168,6 +168,7 @@ echo <<<HEREDOC
 HEREDOC;
 
 if($galleryDbVersion>=24){
+    // GalleriesPageRedirectURL
 	$galleriesOptions['g']['GalleriesPageRedirectURL'] = contest_gal1ery_convert_for_html_output_without_nl2br($galleriesOptions['g']['GalleriesPageRedirectURL']);
 
 	$slugName = (!empty($CgEntriesOwnSlugNameGalleries)) ? $CgEntriesOwnSlugNameGalleries : 'contest-galleries';
@@ -192,6 +193,27 @@ if($galleryDbVersion>=24){
         </div>
     </div>
 HEREDOC;
+    // GalleryPageRedirectURL
+/*
+	$galleriesOptions['g']['GalleryPageRedirectURL'] = contest_gal1ery_convert_for_html_output_without_nl2br($galleriesOptions['g']['GalleryPageRedirectURL']);
+
+	$slugName = (!empty($CgEntriesOwnSlugNameGalleries)) ? $CgEntriesOwnSlugNameGalleries : 'contest-galleries';
+
+	$page = get_page_by_path( $slugName, OBJECT, 'page');
+	$pageGalleryExample = (!empty($page)) ? get_permalink($page->ID).'/contest-gallery-{gallery id}' : '/contest-gallery-{gallery id}';
+
+	echo <<<HEREDOC
+    <div class='cg_view_options_row'>
+        <div class='cg_view_option cg_view_option_full_width cg_border_top_none  '>
+            <div class='cg_view_option_title '>
+                <p>Redirect URL for all cg_gallery shortcode type of pages of Contest Gallery<br><span class="cg_view_option_title_note">The cg_gallery shortcodes type of pages are<br><b>$pageGalleryExample</b><br>(But you can place the cg_gallery_{gallery id} also on any other page)<br>If Redirect URL is set, then HTTP 301 redirect will be executed if a <b>$pageGalleryExample</b> URL gets called<br><span class="cg_font_weight_500">NOTE: </span> has to start with <span class="cg_font_weight_500">http://</span> or <span class="cg_font_weight_500">https://</span>, like https://www.example.com</span><br><b>"Redirect URL for parent site of Contest Gallery entries"</b> in <b>"Gallery view"</b> will overwrite this setting</p>
+            </div>
+            <div class='cg_view_option_input '>
+                <input type="text" name='cg_galleries[g][GalleryPageRedirectURL]' class="GalleryPageRedirectURL"  value="{$galleriesOptions['g']['GalleryPageRedirectURL']}"  >
+            </div>
+        </div>
+    </div>
+HEREDOC;*/
 }
 
 if(!empty($galleriesOptions['g']['GalleriesPagesNoIndex'])){

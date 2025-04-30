@@ -11,17 +11,21 @@ $tablename_ecommerce_orders = $wpdb->prefix . "contest_gal1ery_ecommerce_orders"
 
 $Order = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_orders WHERE id = '$OrderId' LIMIT 1");
 
-function cg_change_invoice_br2nl($string)
-{
-	$return =  preg_replace('/\<br(\s*)?\/?\>/i', "", $string);
-	//$return = preg_replace('/\<br\>/gi', "", $return);
-	//return preg_replace('/\<br \>/gi', "", $return);
-	return $return;
+if (!function_exists('cg_change_invoice_br2nl')) {
+    function cg_change_invoice_br2nl($string)
+    {
+        $return =  preg_replace('/\<br(\s*)?\/?\>/i', "", $string);
+        //$return = preg_replace('/\<br\>/gi', "", $return);
+        //return preg_replace('/\<br \>/gi', "", $return);
+        return $return;
+    }
 }
 
-function cg_change_invoice_br2nl_alt($string)
-{
-	return preg_replace('/\<br(\s*)?\/?\>/i', "\n", $string);
+if (!function_exists('cg_change_invoice_br2nl_alt')) {
+    function cg_change_invoice_br2nl_alt($string)
+    {
+        return preg_replace('/\<br(\s*)?\/?\>/i', "\n", $string);
+    }
 }
 
 $InvoiceNumberOriginal = $Order->InvoiceNumber;

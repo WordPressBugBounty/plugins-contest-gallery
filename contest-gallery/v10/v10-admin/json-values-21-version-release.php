@@ -11,8 +11,10 @@ $TextAfterWpPageEntry = contest_gal1ery_htmlentities_and_preg_replace('<p  style
 $ForwardToWpPageEntry = 0;
 $ForwardToWpPageEntryInNewTab = 0;
 $ShowBackToGalleryButton = 1;
+$ShowBackToGalleriesButton = 1;
 $BackToGalleryButtonText = 'Back to gallery';
 $BackToGalleryButtonURL = '';
+$BackToGalleriesButtonURL = '';
 $WpPageParentRedirectURL = '';
 $TextDeactivatedEntry = contest_gal1ery_htmlentities_and_preg_replace('<p style="text-align: center;"><b>Entry is deactivated</b><br><br>This text can be configurated in "Edit options" >>> "Entry view options" >>> "Text on entry landing page if entry is deactivated"
 <br>Every Contest Gallery entry has own entry pages for every cg_gallery shortcode type</p>');

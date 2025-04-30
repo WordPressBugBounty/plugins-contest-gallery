@@ -123,6 +123,8 @@ if(!function_exists('cgDropTables')){
 	    $tablename_ecommerce_orders = $wpdb->base_prefix . "$i"."contest_gal1ery_ecommerce_orders";
 	    $tablename_ecommerce_orders_items = $wpdb->base_prefix . "$i"."contest_gal1ery_ecommerce_orders_items";
 
+	    $tablename_contest_gal1ery_pdf_previews = $wpdb->base_prefix . "$i"."contest_gal1ery_pdf_previews";
+
         $sqlWpOptionsDelete = 'DELETE FROM ' . $wpOptions . ' WHERE';
         $sqlWpOptionsDelete .= ' option_name = %s';
 
@@ -166,6 +168,7 @@ if(!function_exists('cgDropTables')){
         $sql31 = "DROP TABLE $tablename_ecommerce_invoice_options";
         $sql32 = "DROP TABLE $tablename_ecommerce_orders";
         $sql33 = "DROP TABLE $tablename_ecommerce_orders_items";
+        $sql34 = "DROP TABLE $tablename_contest_gal1ery_pdf_previews";
 
 
         $wpdb->query($sql);
@@ -231,6 +234,7 @@ if(!function_exists('cgDropTables')){
         $wpdb->query($sql31);
         $wpdb->query($sql32);
         $wpdb->query($sql33);
+        $wpdb->query($sql34);
 
 
         cg_delete_blog_option($i,"p_cgal1ery_reg_code");

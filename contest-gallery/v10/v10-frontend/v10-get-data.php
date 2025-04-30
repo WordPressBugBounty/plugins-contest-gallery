@@ -799,8 +799,16 @@ if($isShowGallery == true){
                     echo "<div id='mainCGBackToGalleryButton$galeryIDuserForJs' class=' mainCGBackToGalleryButton isCGalleries'>$language_BackToGalleries</div>";
                 echo "</a>";
 	        echo "</div>";
-        }else if(!empty($isCgParentPage) && intval($options['general']['Version'])>=24){
+        }else if(!empty($isCgParentPage) && intval($options['general']['Version'])>=24 && (!isset($options['visual']['ShowBackToGalleriesButton']) || $options['visual']['ShowBackToGalleriesButton'] == 1)){
 		    //$galleriesOptions = cg_galleries_options($wp_upload_dir,$shortcode_name);
+            if(!empty($options['pro']['BackToGalleriesButtonURL'])){
+                $pageGalleries = $options['pro']['BackToGalleriesButtonURL'];
+                echo "<div class='mainCGBackToGalleryButtonHrefContainer'>";
+                    echo "<a href='$pageGalleries' class='mainCGBackToGalleryButtonHref' data-cg-gid='$galeryIDuserForJs'>";
+                    echo "<div id='mainCGBackToGalleryButton$galeryIDuserForJs' class='mainCGBackToGalleryButton'>$language_BackToGalleries</div>";
+                    echo "</a>";
+                echo "</div>";
+            }else{
 		    $slugName = cg_get_galleries_slug_name($shortcode_name);
 		    $page = get_page_by_path( $slugName, OBJECT, 'page');
             if(!empty($page)){
@@ -812,6 +820,7 @@ if($isShowGallery == true){
 		    echo "</div>";
             }
     }
+	    }
 
     if(is_user_logged_in()){
         if(current_user_can('manage_options')){

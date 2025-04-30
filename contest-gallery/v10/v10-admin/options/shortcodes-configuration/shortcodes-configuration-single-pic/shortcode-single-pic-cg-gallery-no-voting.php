@@ -789,7 +789,7 @@ if(floatval($galleryDbVersion)>=21){
         $jsonOptions[$GalleryID.'-nv']['visual']['BackToGalleryButtonText'] = $BackToGalleryButtonText;
     }
     if(!isset($jsonOptions[$GalleryID.'-nv']['pro']['BackToGalleryButtonURL'])){
-        $jsonOptions[$GalleryID.'-nv']['pro']['BackToGalleryButtonURL'] = $BackToGalleryButtonURL;
+        $jsonOptions[$GalleryID.'-nv']['pro']['BackToGalleryButtonURL'] = '';
     }else{
             $jsonOptions[$GalleryID.'-nv']['pro']['BackToGalleryButtonURL'] = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID.'-nv']['pro']['BackToGalleryButtonURL']);
     }

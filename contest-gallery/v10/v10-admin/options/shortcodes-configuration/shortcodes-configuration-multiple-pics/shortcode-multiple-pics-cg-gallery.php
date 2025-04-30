@@ -370,8 +370,66 @@ echo <<<HEREDOC
             </div>
 HEREDOC;
 
-if(floatval($galleryDbVersion)>=21){
 echo <<<HEREDOC
+</div>
+HEREDOC;
+
+if(floatval($galleryDbVersion)>=21){
+
+echo <<<HEREDOC
+        <div class='cg_view_options_row_container GalleryPageOptionsParentContainer cg_border_radius_8_px' style="border: thin solid #dedede;margin-top:15px;">
+            <p class="cg_view_options_row_container_title" >Gallery landing page options</p>            
+HEREDOC;
+
+    if(floatval($galleryDbVersion)>=24) {
+echo <<<HEREDOC
+    <div class='cg_view_options_row'>
+        <div class='cg_view_option cg_view_option_100_percent cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px'>
+            <div class='cg_view_option_title '>
+                <p>Show back to galleries button on gallery landing page
+                <br><span class="cg_view_option_title_note"><a href="$WpPageParentPermalink" target="_blank">$WpPageParentPermalink</a></span></p>
+            </div>
+            <div class='cg_view_option_checkbox '>
+                <input type="checkbox" name="ShowBackToGalleriesButton" class="ShowBackToGalleriesButton"  $ShowBackToGalleriesButton  >
+            </div>
+        </div>
+    </div>
+HEREDOC;
+
+echo <<<HEREDOC
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width  cg_border_top_none '>
+        <div class='cg_view_option_title '>
+            <p>Back to galleries button text<br>
+            <span class="cg_view_option_title_note">Translation can be found <a class="cg_no_outline_and_shadow_on_focus" href="{$editTranslationLink}l_BackToGalleries"  target="_blank">here</a></span>
+            </p>
+        </div>
+    </div>
+</div>
+HEREDOC;
+
+        $slugName = (!empty($CgEntriesOwnSlugNameGalleries)) ? $CgEntriesOwnSlugNameGalleries : 'contest-galleries';
+
+        $page = get_page_by_path( $slugName, OBJECT, 'page');
+        $pageGalleries = (!empty($page)) ? get_permalink($page->ID) : '';
+
+echo <<<HEREDOC
+    <div class='cg_view_options_row'>
+        <div class='cg_view_option cg_view_option_full_width  cg_border_top_none '>
+            <div class='cg_view_option_title '>
+                <p>Back to galleries button custom URL on gallery landing page
+                <br><span class="cg_view_option_title_note"><a href="$WpPageParentPermalink" target="_blank">$WpPageParentPermalink</a></span><br><span class="cg_view_option_title_note">If not set then parent site<br><a target="_blank"  href="$pageGalleries">$pageGalleries</a><br>URL will be used<br><span class="cg_font_weight_500">NOTE: </span> has to start with <span class="cg_font_weight_500">http://</span> or <span class="cg_font_weight_500">https://</span>, like https://www.example.com</span></p>
+            </div>
+            <div class='cg_view_option_input '>
+                <input type="text" name="BackToGalleriesButtonURL" class="BackToGalleriesButtonURL"  value="$BackToGalleriesButtonURL"  >
+            </div>
+        </div>
+    </div>
+HEREDOC;
+
+    }
+
+    echo <<<HEREDOC
     <div class='cg_view_options_row'>
         <div class='cg_view_option cg_view_option_full_width cg_border_top_none '>
             <div class='cg_view_option_title '>
@@ -385,13 +443,13 @@ echo <<<HEREDOC
 HEREDOC;
 
 // only json option, not in database available
-if(!isset($jsonOptions[$GalleryID]['visual']['AdditionalCssGalleryPage'])){
-    $AdditionalCssGalleryPage = "body {\r\n&nbsp;&nbsp;font-family: sans-serif;\r\n&nbsp;&nbsp;font-size: 16px;\r\n&nbsp;&nbsp;background-color: white;\r\n&nbsp;&nbsp;color: black;\r\n}";
-}else{
-    $AdditionalCssGalleryPage = cg_stripslashes_recursively($jsonOptions[$GalleryID]['visual']['AdditionalCssGalleryPage']);
-}
+    if(!isset($jsonOptions[$GalleryID]['visual']['AdditionalCssGalleryPage'])){
+        $AdditionalCssGalleryPage = "body {\r\n&nbsp;&nbsp;font-family: sans-serif;\r\n&nbsp;&nbsp;font-size: 16px;\r\n&nbsp;&nbsp;background-color: white;\r\n&nbsp;&nbsp;color: black;\r\n}";
+    }else{
+        $AdditionalCssGalleryPage = cg_stripslashes_recursively($jsonOptions[$GalleryID]['visual']['AdditionalCssGalleryPage']);
+    }
 
-echo <<<HEREDOC
+    echo <<<HEREDOC
     <div class='cg_view_options_row'>
         <div class='cg_view_option cg_view_option_full_width  cg_border_top_none '>
             <div class='cg_view_option_title '>
@@ -404,12 +462,14 @@ echo <<<HEREDOC
     </div>
 HEREDOC;
 
-}
 
 echo <<<HEREDOC
-</div>
-
+        </div>
 HEREDOC;
+
+}
+
+
 
 
 $showSliderViewOption = false;

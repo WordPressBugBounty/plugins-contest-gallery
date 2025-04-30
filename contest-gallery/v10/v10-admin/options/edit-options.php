@@ -316,6 +316,7 @@ foreach($selectSQL4 as $value4){
     $UploadRequiresCookieMessage = contest_gal1ery_convert_for_html_output_without_nl2br($value4->UploadRequiresCookieMessage);
     $RegUserUploadOnlyText = contest_gal1ery_convert_for_html_output_without_nl2br($value4->RegUserUploadOnlyText);
     $BackToGalleryButtonURL = contest_gal1ery_convert_for_html_output_without_nl2br($value4->BackToGalleryButtonURL);
+    $BackToGalleriesButtonURL = contest_gal1ery_convert_for_html_output_without_nl2br($value4->BackToGalleriesButtonURL);
     $WpPageParentRedirectURL = contest_gal1ery_convert_for_html_output_without_nl2br($value4->WpPageParentRedirectURL);
     $RedirectURLdeletedEntry = contest_gal1ery_convert_for_html_output_without_nl2br($value4->RedirectURLdeletedEntry);
 
@@ -419,6 +420,9 @@ foreach($selectSQL4 as $value4){
 	$ConsentTwitter = ($value4->ConsentTwitter==1) ? 'checked' : '';
 	$ConsentInstagram = ($value4->ConsentInstagram==1) ? 'checked' : '';
 	$ConsentTikTok = ($value4->ConsentTikTok==1) ? 'checked' : '';
+
+	$PdfPreviewBackend = ($value4->PdfPreviewBackend==1) ? 'checked' : '';
+	$PdfPreviewFrontend = ($value4->PdfPreviewFrontend==1) ? 'checked' : '';
 
 }
 
@@ -741,6 +745,7 @@ foreach($selectSQL3 as $value3){
     $BackToGalleryButtonText = contest_gal1ery_convert_for_html_output_without_nl2br($value3->BackToGalleryButtonText);
     $TextDeactivatedEntry = contest_gal1ery_convert_for_html_output_without_nl2br($value3->TextDeactivatedEntry);
     $ShowBackToGalleryButton = ($value3->ShowBackToGalleryButton==1) ? 'checked' : '';
+    $ShowBackToGalleriesButton = ($value3->ShowBackToGalleriesButton==1) ? 'checked' : '';
 }
 
 $LogoutLink = '';

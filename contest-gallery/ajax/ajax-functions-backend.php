@@ -1,5 +1,293 @@
 <?php
 
+// post_cg_get_current_permalinks
+add_action('wp_ajax_post_cg_get_current_permalinks', 'post_cg_get_current_permalinks');
+if (!function_exists('post_cg_get_current_permalinks')) {
+    function post_cg_get_current_permalinks() {
+
+        global $wpdb;
+        $tablename = $wpdb->prefix . "contest_gal1ery";
+        $realId = absint($_POST['cgRealId']);
+        $realIdRow = $wpdb->get_row( "SELECT * FROM $tablename WHERE id='$realId'" );
+
+        $entryPermalinks = [];
+        if(!empty($realIdRow->WpPage)){
+            $permalink = cg_get_guid($realIdRow->WpPage);
+            if(!empty($permalink)){
+                $entryPermalinks['cg_gallery'] = $permalink;
+            }
+        }
+        if(!empty($realIdRow->WpPageWinner)){
+            $permalink = cg_get_guid($realIdRow->WpPageWinner);
+            if(!empty($permalink)){
+                $entryPermalinks['cg_gallery_winner'] = $permalink;
+            }
+        }
+        if(!empty($realIdRow->WpPageUser)){
+            $permalink = cg_get_guid($realIdRow->WpPageUser);
+            if(!empty($permalink)){
+                $entryPermalinks['cg_gallery_user'] = $permalink;
+            }
+        }
+        if(!empty($realIdRow->WpPageNoVoting)){
+            $permalink = cg_get_guid($realIdRow->WpPageNoVoting);
+            if(!empty($permalink)){
+                $entryPermalinks['cg_gallery_no_voting'] = $permalink;
+            }
+        }
+        if(!empty($realIdRow->WpPageEcommerce)){
+            $permalink = cg_get_guid($realIdRow->WpPageEcommerce);
+            if(!empty($permalink)){
+                $entryPermalinks['cg_gallery_ecommerce'] = $permalink.'?test=true';
+            }
+        }
+
+        ?>
+        <script data-cg-processing-get-current-permalinks="true">
+            cgJsClassAdmin.gallery.vars.entryPermalinks = <?php echo json_encode($entryPermalinks); ?>;
+        </script>
+        <?php
+
+    }
+}
+
+// create PDF preview
+add_action('wp_ajax_post_cg_create_pdf_preview_backend', 'post_cg_create_pdf_preview_backend');
+if (!function_exists('post_cg_create_pdf_preview_backend')) {
+    function post_cg_create_pdf_preview_backend($WpUpload = 0, $realId = 0, $cg_base_64 = '', $isFromFrontendUpload = false) {
+
+        global $wpdb;
+        $tablename_posts = $wpdb->prefix . "posts";
+        $tablename_wp_pdf_previews = $wpdb->prefix . "contest_gal1ery_pdf_previews";
+        $tablename = $wpdb->prefix . "contest_gal1ery";
+        $tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
+
+        $_POST = cg1l_sanitize_post($_POST);
+
+        //var_dump(33444);
+        //var_dump($_POST);
+
+        // create image attachment
+        $wp_upload_dir = wp_upload_dir();
+        $currentUploadDir = $wp_upload_dir['basedir'];
+        $cgWpUploadToReplace = '';
+        $cgNewWpUploadWhichReplace = '';
+        if(empty($WpUpload)){
+            $WpUpload = absint($_POST['cg_wp_upload']);
+        }
+        if(empty($realId)){
+            $realId = absint($_POST['cgRealId']);
+        }
+        if(empty($cg_base_64)){
+            $cg_base_64 = (!empty($_POST['cg_base_64'])) ? $_POST['cg_base_64'] : '';
+        }
+        if(!empty($_POST['cgWpUploadToReplace'])){
+            $cgWpUploadToReplace = absint($_POST['cgWpUploadToReplace']);
+        }
+        if(!empty($_POST['cgNewWpUploadWhichReplace'])){
+            $cgNewWpUploadWhichReplace = absint($_POST['cgNewWpUploadWhichReplace']);
+        }
+
+        $realIdRow = $wpdb->get_row( "SELECT * FROM $tablename WHERE id='$realId'" );
+        $WpUploadRow = $wpdb->get_row( "SELECT * FROM $tablename_posts WHERE ID='$WpUpload'" );
+
+        //var_dump('$cgWpUploadToReplace456');
+        //var_dump($cgWpUploadToReplace);
+        //var_dump('$cgNewWpUploadWhichReplace456');
+        //var_dump($cgNewWpUploadWhichReplace);
+
+        if(!empty($cgWpUploadToReplace) && !empty($cgNewWpUploadWhichReplace)  && !empty($realIdRow->EcommerceEntry)){
+            $EcommerceEntry = $realIdRow->EcommerceEntry;
+            $ecommerceEntry = $wpdb->get_row( "SELECT * FROM $tablename_ecommerce_entries WHERE id='$EcommerceEntry'" );
+            $removedWpUploadIdsFromSale = [$cgWpUploadToReplace];
+            //var_dump('cg_replace_ecommerce_file');
+            cg_replace_ecommerce_file($realIdRow->id, $realIdRow->GalleryID, $ecommerceEntry, $cgNewWpUploadWhichReplace, [],$removedWpUploadIdsFromSale);
+        }
+
+        // check multiple files
+        $multipleFilesPdfPreview = 0;
+        $multipleFilesTitle = '';
+        if(!empty($realIdRow->MultipleFiles) && $realIdRow->MultipleFiles!='""'){
+            $MultipleFiles = unserialize($realIdRow->MultipleFiles);
+            foreach($MultipleFiles as $file){
+                if(empty($file['isRealIdSource']) && $file['post_mime_type']=='application/pdf' && $file['WpUpload'] == $WpUpload && !empty($file['PdfPreview'])){
+                    // post_title
+                    $multipleFilesPdfPreview = $file['PdfPreview'];// set for multiple files then
+                    $multipleFilesTitle = $file['post_title'];
+                }
+            }
+        }
+
+        //var_dump($realIdRow->PdfPreview);
+        //var_dump(get_post( $realIdRow->PdfPreview ));
+        if(!empty($realIdRow->PdfPreview) && !empty(get_post( $realIdRow->PdfPreview )) && $WpUpload == $realIdRow->WpUpload){
+            if(!$isFromFrontendUpload){
+                $PdfPreviewImage = wp_get_attachment_image_src($realIdRow->PdfPreview, 'large');
+                echo 'cg_guid###'.$PdfPreviewImage[0].'###cg_guid_end';
+            }
+        }else if(!empty($multipleFilesPdfPreview) && !empty(get_post($multipleFilesPdfPreview))){// set for multiple files then
+            if(!$isFromFrontendUpload){
+                $multipleFilesPdfPreviewImage = wp_get_attachment_image_src($multipleFilesPdfPreview, 'large');
+                echo 'cg_guid###'.$multipleFilesPdfPreviewImage[0].'###cg_guid_end';
+            }
+        }else{
+            //var_dump(222);
+            $content = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $cg_base_64));
+            $formImage = imagecreatefromstring($content);
+
+            if(!empty($multipleFilesPdfPreview)){
+                $fullName = $multipleFilesTitle.'-cg-pdf-preview';
+            }else{
+                $fullName = $WpUploadRow->post_title.'-cg-pdf-preview';
+            }
+            $fullNamePath = $fullName;
+            $fullNamePath = cg_pre_process_name_for_url_name($fullNamePath);
+            $fullNamePath = cg_check_first_char_for_url_name_after_pre_processing($fullNamePath);
+            $fullNamePath = cg_check_last_char_for_url_name_after_pre_processing($fullNamePath);
+            $fullNamePath = cg_sluggify_for_url($fullNamePath);// has to be tested with asia chars one time
+            $fullNamePathFirst = $fullNamePath;
+
+            //var_dump('$fullName');
+            //var_dump($fullName);
+
+            $fullPath = $wp_upload_dir['basedir'].$wp_upload_dir['subdir'].'/'.$fullNamePathFirst.'.png';
+            //var_dump('$fullPath check');
+            //var_dump($fullPath);
+            if(file_exists($fullPath)){
+                //var_dump(112233);
+                $i = 0;
+                do{
+                    if($i==0){
+                        $i = 1;
+                    }else{
+                        $i++;
+                    }
+                    $add = '-'.$i;
+                    $fullNamePath = $fullNamePathFirst.$add;
+                    $fullPath = $wp_upload_dir['basedir'].$wp_upload_dir['subdir'].'/'.$fullNamePath.'.png';
+                }while(file_exists($fullPath));
+            }
+
+            //var_dump('$fullPath');
+            //var_dump($fullPath);
+
+            //var_dump('$fullName');
+            //var_dump($fullName);
+
+            // for png
+            imagesavealpha($formImage,true);// required for png images... otherwise background black
+
+            //imagejpeg($formImage,$WpUploadFilesPostBaseUrls[$base64WatermarkedAndAltFilesWpUploadId]);
+            //imagegif($formImage,$WpUploadFilesPostBaseUrls[$base64WatermarkedAndAltFilesWpUploadId]);
+            imagepng($formImage,$fullPath);
+
+            //file_put_contents($fullNewPath,$content);
+
+            $attachment = array(
+                'guid' => $wp_upload_dir['url']."/".$fullNamePath.'.png',
+                'post_mime_type' => 'image/png',
+                'post_title' => $fullName,
+                'post_content' => '',
+                'post_status' => 'inherit'
+            );
+
+            $attach_id = wp_insert_attachment( $attachment, $fullPath );
+            $imagenew = get_post( $attach_id );
+            $fullsizepath = get_attached_file( $imagenew->ID );
+            $attach_data = wp_generate_attachment_metadata( $attach_id, $fullsizepath );
+            wp_update_attachment_metadata( $attach_id, $attach_data );
+
+            $wpdb->query($wpdb->prepare(
+                "
+						INSERT INTO $tablename_wp_pdf_previews
+						(id, WpUpload, WpUploadPreview)
+						VALUES ( %s,%d,%d)
+					",
+                '',$WpUpload,$attach_id
+            ));
+
+            $multipleFilesWpUploadForPdfPreview = 0;
+
+            if(!empty($realIdRow->MultipleFiles) && $realIdRow->MultipleFiles!='""'){
+                $MultipleFiles = unserialize($realIdRow->MultipleFiles);
+                foreach($MultipleFiles as $file){
+                    if(empty($file['isRealIdSource']) && $file['post_mime_type']=='application/pdf' && $file['WpUpload'] == $WpUpload){
+                        $multipleFilesWpUploadForPdfPreview = $WpUpload;
+                    }
+                }
+            }
+
+            //var_dump('$multipleFilesWpUploadForPdfPreview');
+            //var_dump($multipleFilesWpUploadForPdfPreview);
+
+            if(!empty($multipleFilesWpUploadForPdfPreview)){
+                //var_dump('$multipleFilesPdfPreview');
+                //var_dump($multipleFilesPdfPreview);
+                $MultipleFiles = unserialize($realIdRow->MultipleFiles);
+                $MultipleFilesNew = [];
+                foreach($MultipleFiles as $order => $file){
+                    if(empty($file['isRealIdSource']) && $file['post_mime_type']=='application/pdf' && $file['WpUpload'] == $WpUpload && $multipleFilesWpUploadForPdfPreview == $WpUpload){
+                        //var_dump('set PdfPreview');
+                        $file['PdfPreview'] = $attach_id;
+                        $PdfPreviewImage = wp_get_attachment_image_src($attach_id, 'full');
+                        $file['PdfPreviewImage'] = $PdfPreviewImage[0];
+                        $PdfPreviewImageLarge = wp_get_attachment_image_src($attach_id, 'large');
+                        $file['PdfPreviewImageLarge'] = $PdfPreviewImageLarge[0];
+                        // important to set PdfOriginal
+                        $file['PdfOriginal'] = get_the_guid($file['WpUpload']);
+                        $file['full'] = $PdfPreviewImage[0];
+                        $file['guid'] = $PdfPreviewImage[0];
+                        $file['Width'] = $PdfPreviewImage[1];
+                        $file['Height'] = $PdfPreviewImage[2];
+                        $file['thumbnail'] = $PdfPreviewImageLarge[0];
+                        $file['medium'] = $PdfPreviewImageLarge[0];
+                        $file['large'] = $PdfPreviewImageLarge[0];
+                        $file['ImgType'] = 'png';
+                        $file['post_mime_type'] = 'image/png';
+                        $file['type'] = 'image';
+                    }
+                    $MultipleFilesNew[$order] = $file;
+                }
+                /*echo "<pre>";
+                    print_r($MultipleFilesNew);
+                echo "</pre>";*/
+                $MultipleFilesNew = serialize($MultipleFilesNew);
+                //var_dump('$realId set MultipleFiles');
+                //var_dump($realId);
+                // SET MultipleFiles='$MultipleFilesNew' ... serialized $MultipleFilesNew has to be in ''
+                $wpdb->query("UPDATE $tablename SET MultipleFiles='$MultipleFilesNew' WHERE id = $realId");
+            }else{
+                //var_dump('$realId set PdfPreview');
+                $wpdb->query("UPDATE $tablename SET PdfPreview=$attach_id WHERE id = $realId");
+            }
+
+            if(!$isFromFrontendUpload){
+                if(!empty($realIdRow->Active)){
+                    $uploadFolder = wp_upload_dir();
+                    $thumbSizesWp = array();
+                    $thumbSizesWp['thumbnail_size_w'] = get_option("thumbnail_size_w");
+                    $thumbSizesWp['medium_size_w'] = get_option("medium_size_w");
+                    $thumbSizesWp['large_size_w'] = get_option("large_size_w");
+                    $imageArray = array();
+                    $pid = $realIdRow->id;
+                    $GalleryID = $realIdRow->GalleryID;
+                    $row = $wpdb->get_row( "SELECT DISTINCT $tablename_posts.*, $tablename.* FROM $tablename_posts, $tablename WHERE 
+                          (($tablename.id = $pid) AND $tablename.GalleryID='$GalleryID' AND $tablename.Active='1' and $tablename_posts.ID = $tablename.WpUpload) 
+                          OR 
+                          (($tablename.id = $pid) AND $tablename.GalleryID='$GalleryID' AND $tablename.Active='1' AND $tablename.WpUpload = 0) 
+                          GROUP BY $tablename.id  ORDER BY $tablename.id DESC LIMIT 0, 1");
+                    cg_create_json_files_when_activating($GalleryID,$row,$thumbSizesWp,$uploadFolder,$imageArray);
+                }
+
+                $PdfPreviewImage = wp_get_attachment_image_src($attach_id, 'large');
+                $PdfPreviewImage = $PdfPreviewImage[0];
+
+                echo 'cg_guid###'.$PdfPreviewImage.'###cg_guid_end';
+            }
+        }
+    }
+}
+
 // move to another gallery get inputs
 add_action('wp_ajax_post_cg_move_to_another_gallery_get_inputs', 'post_cg_move_to_another_gallery_get_inputs');
 if (!function_exists('post_cg_move_to_another_gallery_get_inputs')) {

@@ -26,6 +26,7 @@ $tablename_pro_options = $wpdb->prefix . "contest_gal1ery_pro_options";
 $tablenameentries = $wpdb->prefix . "contest_gal1ery_entries";
 $tablename_options_visual = $wpdb->prefix . "contest_gal1ery_options_visual";
 $tablename_form_input = $wpdb->prefix . "contest_gal1ery_f_input";
+$tablename_wp_pdf_previews = $wpdb->base_prefix . "contest_gal1ery_pdf_previews";
 
 $selectSQL1 = $wpdb->get_row( "SELECT * FROM $tablenameOptions WHERE id = '$galeryID'" );
 $cgVersion = $selectSQL1->Version;
@@ -35,10 +36,17 @@ $proOptions = $wpdb->get_row( "SELECT * FROM $tablename_pro_options WHERE Galler
 $DataShare = ($proOptions->FbLikeNoShare==1) ? 'false' : 'true';
 $DataClass = ($proOptions->FbLikeOnlyShare==1) ? 'fb-share-button' : 'fb-like';
 $DataLayout = ($proOptions->FbLikeOnlyShare==1) ? 'button' : 'button_count';
+$PdfPreviewBackend = $proOptions->PdfPreviewBackend;
+if(cg_get_version()=='contest-gallery'){
+    $PdfPreviewBackend = 0;
+}
+
 
 $addedWpUploadsArray = [];
 $newEntryIdsArray = [];
 $addedWpUploadsContentArray = [];
+
+$PdfPreviewsToCreate = '';
 
 //var_dump("asdfsad");die;
 foreach($cg_wp_upload_ids as $key => $value){
@@ -152,7 +160,13 @@ if($doNotProcess!=1){
     }
 
     $Category = 0;
+    $PdfPreview = 0;
     if(!empty($cg_assign_category)){$Category = $cg_assign_category;}
+
+    // $post_type will be detected in post-type-check.php above
+    if($post_type=="pdf"){
+        $PdfPreview = $wpdb->get_var("SELECT WpUploadPreview FROM $tablename_wp_pdf_previews WHERE WpUpload = '$value'");
+    }
 
      // updating string after all the 0 at the end does not work. That is why version is not inserted there
     // default 0 to countr1-5 was added lately on 15.05.2020
@@ -162,20 +176,50 @@ if($doNotProcess!=1){
 			( id, rowid, Timestamp, NamePic,
 			ImgType, 
 			GalleryID,WpUpload,Width,Height,WpUserId,IP,
-			Category)
+			Category,PdfPreview)
 			VALUES (%s,%d,%d,%s,
 			%s,
 			%d,%d,%d,%d,%d,%s,
-			%d
+			%d,%d
 			 )
 		", 
 			'',0,$unixadd,$NamePic,
 			$post_type,
 			$galeryID,$wp_image_id,$current_width,$current_height,$WpUserId,$userIP,
-            $Category
+            $Category,$PdfPreview
 	 ) );
 
 	$nextId = $wpdb->insert_id;
+    // $post_type will be detected in post-type-check.php above
+    if($post_type=="pdf" && $PdfPreviewBackend == 1){
+        if(empty($PdfPreview)){
+            if(empty($PdfPreviewsToCreate)){
+                $PdfPreviewsToCreate = 'cg-pdf-previews-to-create###'.$nextId.';'.$value.';'.$image_url;
+            }else{
+                $PdfPreviewsToCreate .= ','.$nextId.';'.$value.';'.$image_url;
+            }
+        }else{
+            $PdfPreviewImage = wp_get_attachment_image_src($PdfPreview, 'large');
+            if(!empty($PdfPreviewImage)){
+                if(empty($PdfPreviewsToCreate)){
+                    $PdfPreviewsToCreate = 'cg-pdf-previews-to-create###'.$nextId.';'.$value.';'.$image_url.';'.$PdfPreviewImage[0];
+                }else{
+                    $PdfPreviewsToCreate .= ','.$nextId.';'.$value.';'.$image_url.';'.$PdfPreviewImage[0];
+                }
+            }else{
+                // then update back to 0!!!
+                $wpdb->query("UPDATE $tablename SET PdfPreview=0 WHERE id = $nextId");
+                // delete row in $tablename_wp_pdf_previews
+                $wpdb->query("DELETE FROM $tablename_wp_pdf_previews WHERE WpUpload = $value");
+                if(empty($PdfPreviewsToCreate)){
+                    $PdfPreviewsToCreate = 'cg-pdf-previews-to-create###'.$nextId.';'.$value.';'.$image_url;
+                }else{
+                    $PdfPreviewsToCreate .= ','.$nextId.';'.$value.';'.$image_url;
+                }
+            }
+        }
+    }
+
     $addedWpUploadsArray[$nextId] = $wp_image_id;
     $newEntryIdsArray[] = $nextId;
 	if($post_type!='ytb' && $post_type!='twt' && $post_type!='inst' && $post_type!='tkt'){
@@ -279,6 +323,7 @@ if($doNotProcess!=1){
         }
 
     }
+
     // do not remove!!!!, sentence will be checked to scroll and display message
     echo 'cg-images-added';
 
@@ -293,6 +338,11 @@ else{
     }
 }
 	
+}
+
+if(!empty($PdfPreviewsToCreate)){
+    $PdfPreviewsToCreate .= '###cg-pdf-previews-to-create-end';
+    echo $PdfPreviewsToCreate;
 }
 
 

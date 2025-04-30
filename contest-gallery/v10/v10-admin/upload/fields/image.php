@@ -264,7 +264,7 @@ foreach($fieldContent as $key => $valueFieldContent){
         <div class="cg_view_options_row_marker cg_hide"><div class="cg_view_options_row_marker_title">Field title</div><div class="cg_view_options_row_marker_content"></div></div>
             <div class="cg_view_option cg_view_option_not_disable cg_border_bottom_none cg_view_option_100_percent">
                 <div class="cg_view_option_title cg_view_option_title_header">
-                    <p>File upload field<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE:</span> file upload field always at the top of the form</span></p>
+                    <p>File upload field<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE:</span> file upload field always at the top of the form<br><span class="cg_font_weight_500">NOTE:</span> hide this field if you like to use the form as simple contact form</span></p>
                 </div>
             </div>
 </div>

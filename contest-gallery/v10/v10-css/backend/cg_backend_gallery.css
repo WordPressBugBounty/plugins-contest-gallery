@@ -629,6 +629,7 @@ div#cg_main_container div.cgEcommerceCheckoutBodyContainer div.cg-ecommerce-uplo
     border-radius: 8px;
 }
 
+.cg_backend_info_container .cg_create_pdf_preview,
 .cg_backend_info_container .cg_backend_image_full_size_target{
     width: 292.5px;
     height: 220px;
@@ -703,7 +704,7 @@ div#cg_main_container div.cgEcommerceCheckoutBodyContainer div.cg-ecommerce-uplo
 }
 
 #cgSellBackendImageContainer .cg_post_title{
-    transform: translateY(4px);
+    transform: translateY(1px);
 }
 
 #cgSortable .cg_post_title
@@ -925,11 +926,13 @@ div#cg_main_container div.cgEcommerceCheckoutBodyContainer div.cg-ecommerce-uplo
 #cgPreviewImagesToDeleteContainer .cg_backend_image_full_size_target_container .cg_manage_multiple_files_for_post_prev{
     top: -10px;
     right: -10px;
+    cursor: auto;
 }
 
 #cgPreviewImagesToDeleteContainer .cg_backend_image_full_size_target_container .cg_manage_multiple_files_for_post{
     top: -5px;
     right: -5px;
+    cursor: auto;
 }
 
 .cg_backend_info_container .cg_backend_info_show_votes_fb_like{
@@ -2321,7 +2324,7 @@ select.cg_action_select:disabled{
 .cg_preview_files_container .cg_backend_image_full_size_target_container .cg_backend_image_full_size_target{
     width: 100%;
     height: 100%;
-    background-size: cover !important;
+    background-size: contain !important;
 }
 
 .cg_preview_files_container .cg_backend_image_full_size_target_container .cg_backend_image_full_size_target[data-file-type="ytb"],
@@ -4197,3 +4200,41 @@ select.cg_action_select:focus,
     padding: 5px 10px;
     position: relative;
 }
+
+#cgPdfPreviewGeneration,
+#cgPdfGenerationFinished{
+    position: fixed;
+    bottom: 20px;
+    z-index: 9999;
+    left: 50%;
+    background-color: white;
+    padding: 10px;
+    transform: translateX(-50%);
+    display: block;
+    max-height: unset;
+    height: unset;
+    color: #000;
+    box-shadow: 2px 4px 12px rgba(0, 0, 0, .08);
+    border-radius: 8px;
+    border: thin solid #dedede;
+    text-align: center;
+}
+
+#cgPdfGenerationFinished{
+    color: green;
+}
+
+.cg_pdf_preview_to_create{
+    position: absolute;
+    top: 25px;
+    line-height: 18px;
+    background-color: white;
+    box-shadow: 2px 4px 12px rgba(0, 0, 0, .08);
+    border-radius: 8px;
+    border: thin solid #dedede;
+    padding: 3px 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+}
+

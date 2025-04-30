@@ -1,5 +1,19 @@
 <?php
 
+// has to be here
+echo "<div id='cgPdfPreviewGeneration' class='cg_hide' >";
+echo "<input type='hidden' id='cgPdfPreviewsToCreateString' value='$PdfPreviewsToCreateString' >";
+echo "<input type='hidden' id='cgNewWpUploadWhichReplaceForPdfPreview' value='$cgNewWpUploadWhichReplaceForPdfPreview' >";
+echo "<input type='hidden' id='cgWpUploadToReplaceForPdfPreview' value='$cgWpUploadToReplaceForPdfPreview' >";
+echo "<span>PDF preview creation in progress: <span  id='cgPdfPreviewProgress' >50%</span> ...</span><br>";
+echo '<b>Do not leave and do not reload this page</b>';
+echo '</div>';
+
+// has to be here
+echo "<div id='cgPdfGenerationFinished' class='cg_hide'>";
+echo '<b>PDF creation finished</b>';
+echo '</div>';
+
 if($cgVersion<7){
     echo "<div style='width:100%;text-align:center;font-size:20px;'>";
     echo "<p style='font-size:16px;'>    
@@ -241,6 +255,7 @@ $assign_fields_png = plugins_url('/../../../v10/v10-css/assign-fields.png', __FI
 // form start has to be done after get data!!!
 echo "<form id='cgGalleryForm' action='?page=".cg_get_version()."/index.php&option_id=$GalleryID&step=$step&start=$start&edit_gallery=true' method='POST'>";
 
+echo "<input type='hidden' id='cgPdfPreviewBackend' value='$PdfPreviewBackend'>";
 echo "<input type='hidden' id='cgWpUploadToReplace' name='cgWpUploadToReplace' value=''>";
 echo "<input type='hidden' id='cgNewWpUploadWhichReplace' name='cgNewWpUploadWhichReplace' value=''>";
 

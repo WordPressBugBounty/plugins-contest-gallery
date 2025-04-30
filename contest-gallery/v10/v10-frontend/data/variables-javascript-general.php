@@ -27,6 +27,7 @@
            cgJsClass.gallery.vars.WpUserEmail = <?php echo json_encode($WpUserEmail); ?>;
            cgJsClass.gallery.vars.wpUserId = <?php echo json_encode($WpUserId); ?>;
            cgJsClass.gallery.vars.pluginVersion = <?php echo json_encode(cg_get_version_for_scripts()); ?>;
+           cgJsClass.gallery.vars.version = <?php echo json_encode(cg_get_version()); ?>;
            cgJsClass.gallery.vars.userIP = <?php echo json_encode($userIP); ?>;
            cgJsClass.gallery.vars.userIPtype = <?php echo json_encode($userIPtype); ?>;
            cgJsClass.gallery.vars.userIPisPrivate = <?php echo json_encode($userIPisPrivate); ?>;

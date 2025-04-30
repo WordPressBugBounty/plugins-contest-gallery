@@ -7,6 +7,7 @@ jQuery(document).ready(function ($) {
 
     $(document).on('click','.cg_file_container',function (e) {
         e.preventDefault();
+        debugger
         if($(this).hasClass('cg_is_embed')){
             return;
         }

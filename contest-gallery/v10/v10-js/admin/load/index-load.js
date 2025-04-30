@@ -18,7 +18,7 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
     }
 
     cgJsClassAdmin.index.vars.$cg_main_container.addClass('cg_pointer_events_none');
-
+    debugger
     // AJAX Call - Submit Form
     $.ajax({
         url: 'admin-ajax.php'+urlString,

@@ -395,24 +395,22 @@ HEREDOC;
         }
 
     }
-
-    if(!function_exists('cg_create_htaccess_ecommerce_sale_folder_if_not_exists')){
-        function cg_create_htaccess_ecommerce_sale_folder_if_not_exists($attached_file_dir_watermarked){
-            $htaccessFileContent = <<<HEREDOC
+}
+if(!function_exists('cg_create_htaccess_ecommerce_sale_folder_if_not_exists')){
+    function cg_create_htaccess_ecommerce_sale_folder_if_not_exists($attached_file_dir_watermarked){
+        $htaccessFileContent = <<<HEREDOC
 #Do not remove htaccess in this folder. It prevents for getting files which are selected for sale from getting from outside.
 <Files "*">
    order deny,allow
    deny from all
 </Files>
 HEREDOC;
-            $htaccessFile = $attached_file_dir_watermarked.'/.htaccess';
-            file_put_contents($htaccessFile,$htaccessFileContent);
-            chmod($htaccessFile, 0640);// no read for others!!!
+        $htaccessFile = $attached_file_dir_watermarked.'/.htaccess';
+        file_put_contents($htaccessFile,$htaccessFileContent);
+        chmod($htaccessFile, 0640);// no read for others!!!
 
-            file_put_contents($attached_file_dir_watermarked.'/do-not-remove-htaccess.txt','Do not remove htaccess in this folder. It prevents for getting files which are selected for sale from getting from outside.');
-            file_put_contents($attached_file_dir_watermarked.'/.htaccess','Do not remove htaccess in this folder. It prevents for getting files which are selected for sale from getting from outside.');
+        file_put_contents($attached_file_dir_watermarked.'/do-not-remove-htaccess.txt','Do not remove htaccess in this folder. It prevents for getting files which are selected for sale from getting from outside.');
+        file_put_contents($attached_file_dir_watermarked.'/.htaccess','Do not remove htaccess in this folder. It prevents for getting files which are selected for sale from getting from outside.');
 
-        }
     }
-
 }

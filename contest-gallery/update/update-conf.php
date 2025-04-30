@@ -70,7 +70,8 @@ return array(
         'WpPageWinner' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0),// Update ab 31.12.2022
         'EcommerceEntry' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0),// Update ab 18.11.2022
         'WpPageEcommerce' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0),// Update ab 17.03.2023
-        'OrderItem' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0)// Update ab 05.06.2024
+        'OrderItem' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update ab 05.06.2024
+        'PdfPreview' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0)// Update ab 10.04.2025
     ),
     $tablename_ip => array(
         'RatingS' => array('COLUMN_TYPE' => 'INT(1)','DEFAULT' => 0),// Update ab 11.06.2016
@@ -205,6 +206,7 @@ return array(
         'ForwardToWpPageEntry' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 20.10.2022
         'ForwardToWpPageEntryInNewTab' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 20.10.2022
         'ShowBackToGalleryButton' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 20.10.2022
+        'ShowBackToGalleriesButton' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 1),// Update ab 24.04.2025, DEFAULT 1 because of activated by default before
         'BackToGalleryButtonText' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 20.10.2022
         'TextDeactivatedEntry' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 20.10.2022
     ),
@@ -292,6 +294,7 @@ return array(
         'AdditionalFilesCount' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 06.08.2022
         'ReviewComm' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 08.09.2022
         'BackToGalleryButtonURL' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 31.12.2022
+        'BackToGalleriesButtonURL' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 24.04.2025
         'WpPageParentRedirectURL' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 31.12.2022
         'RedirectURLdeletedEntry' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 31.12.2022
         'InformAdminAllowActivateDeactivate' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 09.03.2023
@@ -302,6 +305,8 @@ return array(
         'ConsentTikTok' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 02.07.2024
         'RegMailCC' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 08.01.2025
         'RegMailBCC' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 08.01.2025
+        'PdfPreviewFrontend' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 18.04.2025
+        'PdfPreviewBackend' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 18.04.2025
     ),
     $tablename_create_user_entries => array(
         'Field_Content' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019

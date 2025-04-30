@@ -12,11 +12,13 @@ cgJsClassAdmin.gallery.vars = {
     multipleFilesForPostBeforeClone: {},
     addValue: 0,
     hasAdditionalFiles: false,
+    entryPermalinks: {},
     base64andAltFileValues: {},
     base64andAltFileTypes: {},
     embedById: {},
     moveContactFieldsAssigns: {},
     moveSelected: '',
+    pdfPreviewsCreated: 0,
     WpUploadFilesForSaleArrayLoaded: [],
     $cg_backend_info_user_link_container: [],
     setStarOnStarOffSrc: function(){

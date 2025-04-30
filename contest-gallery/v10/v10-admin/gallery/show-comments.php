@@ -549,14 +549,14 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
               }
           }
 
-          if(!function_exists('cgSortArray')){
-          function cgSortArray($a1, $a2){
-              if ($a1['timestamp'] == $a2['timestamp']) return 0;
-              return ($a1['timestamp'] > $a2['timestamp']) ? -1 : 1;
-          }
+          if (!function_exists('cgSortArrayComments')) {
+              function cgSortArrayComments($a1, $a2){
+                  if ($a1['timestamp'] == $a2['timestamp']) return 0;
+                  return ($a1['timestamp'] > $a2['timestamp']) ? -1 : 1;
+              }
           }
 
-          usort($select_comments_array, "cgSortArray");
+          usort($select_comments_array, "cgSortArrayComments");
 
          echo "<form style='width:100%;' action='?page=".cg_get_version()."/index.php&option_id=$galeryNR&show_comments=true&id=$pid'  data-cg-submit-message='Changes saved'  method='POST' class='cg_load_backend_submit'>";
 

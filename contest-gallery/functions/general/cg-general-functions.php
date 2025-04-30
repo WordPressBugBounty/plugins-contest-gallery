@@ -419,6 +419,29 @@ if(!function_exists('cg_check_last_char_for_url_name_after_pre_processing')){
 	}
 }
 
+if(!function_exists('cg_sluggify_for_url')){// has to be tested with asia chars one time
+    function cg_sluggify_for_url($url)// has to be tested with asia chars one time
+    {
+        # Prep string with some basic normalization
+        $url = strtolower($url);
+        $url = strip_tags($url);
+        $url = stripslashes($url);
+        $url = html_entity_decode($url);
+
+        # Remove quotes (can't, etc.)
+        $url = str_replace('\'', '', $url);
+
+        # Replace non-alpha numeric with hyphens
+        $match = '/[^a-z0-9]+/';
+        $replace = '-';
+        $url = preg_replace($match, $replace, $url);
+
+        $url = trim($url, '-');
+
+        return $url;
+    }
+}
+
 if(!function_exists('cg_convert_previous_translation_to_general_translations')){
 	function cg_convert_previous_translation_to_general_translations($wp_upload_dir){
 
@@ -981,6 +1004,22 @@ if(!function_exists('cg_get_galleries_options_all')){
             if($galleriesOptions['ec']['PreviewLastAdded']=='0' && $galleriesOptions['ec']['PreviewHighestRated']=='0' && $galleriesOptions['ec']['PreviewMostCommented']=='0'){// do not remove this condition, this case might happen using saving in galleries created before 22 (cg_galleries_ecommerce) shortcode
 	            $galleriesOptions['ec']['PreviewLastAdded']=1;
             }
+            /*
+            if(!isset($galleriesOptions['g']['GalleryPageRedirectURL'])){
+                $galleriesOptions['g']['GalleryPageRedirectURL'] = '';
+            }
+            if(!isset($galleriesOptions['u']['GalleryPageRedirectURL'])){
+                $galleriesOptions['u']['GalleryPageRedirectURL'] = '';
+            }
+            if(!isset($galleriesOptions['nv']['GalleryPageRedirectURL'])){
+                $galleriesOptions['nv']['GalleryPageRedirectURL'] = '';
+            }
+            if(!isset($galleriesOptions['w']['GalleryPageRedirectURL'])){
+                $galleriesOptions['w']['GalleryPageRedirectURL'] = '';
+            }
+            if(!isset($galleriesOptions['ec']['GalleryPageRedirectURL'])){
+                $galleriesOptions['ec']['GalleryPageRedirectURL'] = '';
+            }*/
 		}else{
 			$galleriesOptions = cg_get_24_version_values();
 		}
