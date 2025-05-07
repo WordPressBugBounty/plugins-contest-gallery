@@ -100,7 +100,7 @@ if(empty($isFromOrderSummary)){// to go sure is initiated
 	$isFromOrderSummary = false;
 }
 
-// will be used from a shortcode, but doing simply absint for fun :)
+// for sure, for security
 $galeryID = absint($galeryID);
 
 $realGid = $galeryID;

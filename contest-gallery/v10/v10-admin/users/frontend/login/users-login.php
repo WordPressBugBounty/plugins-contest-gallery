@@ -11,6 +11,7 @@ if(!empty($atts)){
 	extract( shortcode_atts( array(
 		'id' => ''
 	), $atts ) );
+    $atts = cg1l_sanitize_atts($atts);
 	$GalleryID = trim($atts['id']);
 }
 

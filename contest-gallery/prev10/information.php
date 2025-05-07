@@ -3,6 +3,7 @@
 extract( shortcode_atts( array(
 	'id' => ''
 ), $atts ) );
+$atts = cg1l_sanitize_atts($atts);
 
 if(!empty($atts['id'])){
 

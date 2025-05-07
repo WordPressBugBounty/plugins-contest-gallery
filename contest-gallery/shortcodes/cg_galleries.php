@@ -61,6 +61,7 @@ if(!function_exists('contest_gal1ery_frontend_galleries')){
 	    }
 	    extract( shortcode_atts( array(
 	    ), $atts ) );
+        $atts = cg1l_sanitize_atts($atts);
 
 	    return  cg_load_galleries_shortcode($atts);
 
@@ -76,6 +77,7 @@ if(!function_exists('contest_gal1ery_frontend_galleries_user')){
 	    }
 	    extract( shortcode_atts( array(
 	    ), $atts ) );
+        $atts = cg1l_sanitize_atts($atts);
 
 	    return  cg_load_galleries_shortcode($atts,'cg_gallery_user');
 
@@ -91,6 +93,7 @@ if(!function_exists('contest_gal1ery_frontend_galleries_no_voting')){
 	    }
 	    extract( shortcode_atts( array(
 	    ), $atts ) );
+        $atts = cg1l_sanitize_atts($atts);
 
 	    return  cg_load_galleries_shortcode($atts,'cg_gallery_no_voting');
 
@@ -106,6 +109,7 @@ if(!function_exists('contest_gal1ery_frontend_galleries_winner')){
 	    }
 	    extract( shortcode_atts( array(
 	    ), $atts ) );
+        $atts = cg1l_sanitize_atts($atts);
 
 	    return  cg_load_galleries_shortcode($atts,'cg_gallery_winner');
 
@@ -121,6 +125,7 @@ if(!function_exists('contest_gal1ery_frontend_galleries_ecommerce')){
 	    }
 	    extract( shortcode_atts( array(
 	    ), $atts ) );
+        $atts = cg1l_sanitize_atts($atts);
 
 	    return  cg_load_galleries_shortcode($atts,'cg_gallery_ecommerce');
 

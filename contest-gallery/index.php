@@ -2,7 +2,7 @@
 /*
 Plugin Name: Contest Gallery
 Description: Contact form, files, photos and videos upload contest gallery plugin for WordPress. Create contact forms for entries with or without file/image upload. Create user registration form. Create login form. Create responsive galleries and allow to vote for any kind of entries. Sell entries via PayPal or Stripe api.
-Version: 26.0.6
+Version: 26.0.7
 Author: Contest Gallery
 Author URI: http://www.contest-gallery.com/
 Text Domain: contest-gallery
@@ -390,7 +390,7 @@ include('functions/general/json-data/cg-json-upload-form-info-data-files-new.php
 include('functions/general/json-data/cg-check-and-repair-image-data-file.php');
 include('functions/general/sql/cg-copy-rating.php');
 include('functions/general/sql/cg-copy-comments.php');
-include('functions/general/sanitize/cg-sanitize-post.php');
+include('functions/general/sanitize/cg-sanitize.php');
 include('functions/general/sanitize/cg-sanitize-files.php');
 include('functions/general/cg-copy-pre7-gallery-images.php');
 /**###NORMAL###**/

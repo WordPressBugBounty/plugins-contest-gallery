@@ -17,6 +17,7 @@ if(!function_exists('contest_gal1ery_frontend_gallery_ecommerce')){
             'id' => '',
             'test' => ''
         ), $atts ) );
+        $atts = cg1l_sanitize_atts($atts);
 
 	    $galeryID = 0;
 	    if(!empty($atts['id'])){

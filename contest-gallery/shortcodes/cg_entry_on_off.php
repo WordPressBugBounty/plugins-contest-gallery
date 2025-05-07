@@ -17,6 +17,11 @@ if(!function_exists('contest_gal1ery_entry_on_off')){
         extract( shortcode_atts( array(
             'id' => ''
         ), $atts ) );
+        $atts = cg1l_sanitize_atts($atts);
+        if(empty($atts['id'])){
+            echo "<p style='text-align: center;'><br><br><br>Please provide gallery id<br>example: [cg_entry_on_off id=\"1\"]</p>";
+            return;
+        }
         $GalleryID = trim($atts['id']);
 
         // PLUGIN VERSION CHECK HERE --- END

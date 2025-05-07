@@ -17,6 +17,7 @@ if(!function_exists('contest_gal1ery_users_upload')){
         extract( shortcode_atts( array(
             'id' => ''
         ), $atts ) );
+        $atts = cg1l_sanitize_atts($atts);
         $galeryID = trim($atts['id']);
 
         $entryId = 0;

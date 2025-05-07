@@ -3,8 +3,8 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, youtube
 Requires at least: 5.6
-Stable tag: 26.0.6
-Tested up to: 6.8
+Stable tag: 26.0.7
+Tested up to: 6.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -231,6 +231,10 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V26.0.7 =
+* NEW: Security improvements.
+* FIXED: Security issue.
 
 = V26.0.6 =
 * NEW: "Show or hide back to galleries button on gallery landing page" option added in "Gallery view" options for every type of cg_gallery... shortcode.

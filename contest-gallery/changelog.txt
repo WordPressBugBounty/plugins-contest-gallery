@@ -1,5 +1,9 @@
 Contest Gallery
 
+= V26.0.7 =
+* NEW: Security improvements.
+* FIXED: Security issue.
+
 = V26.0.6 =
 * NEW: "Show or hide back to galleries button on gallery landing page" option added in "Gallery view" options for every type of cg_gallery... shortcode.
 * NEW: "Back to galleries button custom URL on gallery landing page" option added in "Gallery view" options for every type of cg_gallery... shortcode.
