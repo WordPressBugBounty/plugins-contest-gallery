@@ -18,6 +18,12 @@ File types: **JPG, PNG, GIF, PDF, ZIP, WEBM, MP4, MOV, TXT, DOC, DOCX, XLS, XLSX
 * Display uploaded files in a gallery
 * [Different file types upload form and gallery example](https://www.contest-gallery.com/different-file-types-upload-form-and-gallery/)
 
+== PDFs with preview gallery ==
+* Display PDFs in gallery with a preview image for every PDF
+* Create upload form with PDF preview image function
+* **Imagick library** is **NOT required** to be installed on your server
+* [PDFs with preview gallery and PDF upload form with preview example](https://www.contest-gallery.com/pdfs-with-preview-gallery/)
+
 == Social Media Share Buttons ==
 * Facebook, WhatsApp, Twitter, Telegram, Skype, Pinterest, Reddit, XING, LinkedIn, Email, SMS, Gmail, Yahoo, Evernote, VK, OK, Douban, RenRen, Qzone, Weibu
 * **Real Custom Post Type Pages behind every entry... so real social share URLs**
