@@ -2481,12 +2481,34 @@ $(document).on('click','#RatingVisibleForGalleryEcommerceOption',function (e) {
 
     });
 
-
-
     // .cg_nav_menu_row .cg_backend_button_genera
     $(document).on('click','.cg_nav_menu_row .cg_backend_button_general:not(.cg_backend_button_back)',function (e) {
             $(this).closest('#cg_nav_menu_row_container').find('.cg_backend_button_general').removeClass('cg_active');
             $(this).addClass('cg_active');
+    });
+
+    $(document).on('click', '#cgOpenAiKeyTest', function (e) {
+
+        e.preventDefault();
+
+        var cgOpenAiKey = $('#OpenAiKey').val();
+
+        cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Request to OpenAI API running',undefined,undefined,undefined,true);
+
+        $.ajax({
+            url: 'admin-ajax.php',
+            method: 'get',
+            data: 'cgOpenAiKey='+cgOpenAiKey+'&action=post_cg_check_open_ai_key'
+        }).done(function (response) {
+            if(response.indexOf('###cgkeytrue###')>-1){
+                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Key is correct and will work<br>Don\'t forget to "Save options"');
+            }else{
+                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Key is not correct and will not work');
+            }
+        }).fail(function (xhr, status, error) {
+            debugger
+        });
+
     });
 
     $(document).on('click', '.cg_test_ecom_keys', function (e) {
@@ -2507,7 +2529,7 @@ $(document).on('click','#RatingVisibleForGalleryEcommerceOption',function (e) {
         $.ajax({
             url: 'admin-ajax.php',
             method: 'get',
-            data: 'cg_test_env='+isTest+'&action=post_cg_test_ecom_keys&cg_client='+cg_client+'&cg_secret='+cg_secret,
+            data: 'cg_test_env='+isTest+'&action=post_cg_test_ecom_keys&cg_client='+cg_client+'&cg_secret='+cg_secret
         }).done(function (response) {
             if(response.indexOf('###cgkeytrue###')>-1){
                 cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Keys are correct and will work<br>Don\'t forget to "Save options"');
@@ -2538,7 +2560,7 @@ $(document).on('click','#RatingVisibleForGalleryEcommerceOption',function (e) {
         $.ajax({
             url: 'admin-ajax.php',
             method: 'get',
-            data: 'cg_test_env='+isTest+'&action=post_cg_test_stripe_keys&cg_client='+cg_client+'&cg_secret='+cg_secret,
+            data: 'cg_test_env='+isTest+'&action=post_cg_test_stripe_keys&cg_client='+cg_client+'&cg_secret='+cg_secret
         }).done(function (response) {
 
             if(response.indexOf('###cgkeytrue###')>-1){

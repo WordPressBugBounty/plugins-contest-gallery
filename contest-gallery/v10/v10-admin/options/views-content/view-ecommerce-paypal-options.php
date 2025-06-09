@@ -69,7 +69,7 @@ echo <<<HEREDOC
                 <div class='cg_view_options_row'>
                             <div class='cg_view_option cg_view_option_flex_flow_column cg_view_option_full_width cg_border_top_none cg_border_left_none  ' >
                                  <a class=" cg-action cg_test_ecom_keys " href="?page=$cg_get_version/index.php&action=post_cg_test_ecom_keys"  >
-                                <button type="button">Test Live Keys</button></a>
+                                <button type="button">Test live keys</button></a>
                             </div>
                     </div>
             </div>
@@ -113,7 +113,7 @@ echo <<<HEREDOC
                 <div class='cg_view_options_row'>
                             <div class='cg_view_option cg_view_option_flex_flow_column cg_view_option_full_width cg_border_top_none cg_border_left_none cg_border_bottom_none ' >
                                  <a class=" cg-action cg_test_ecom_keys cg_test_env " href="?page=$cg_get_version/index.php&action=post_cg_test_ecom_keys"  >
-                            <button type="button">Test Sandbox Keys</button></a>
+                            <button type="button">Test sandbox keys</button></a>
                             </div>
                     </div>
             </div>            

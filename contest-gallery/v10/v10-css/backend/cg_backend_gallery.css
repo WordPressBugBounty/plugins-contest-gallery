@@ -3891,7 +3891,11 @@ select.cg_action_select:disabled{
     max-height: 30px;
 }
 
-.media-modal #cgAddYoutubeSubmit,.media-modal #cgAddYoutubeLibraryButton,.media-modal #cgDeleteYoutubeLibraryButton{
+.media-modal #cgAddYoutubeSubmit,.media-modal #cgAddYoutubeLibraryButton,.media-modal #cgDeleteYoutubeLibraryButton,.media-modal #cgOpenAiKeySubmit,
+.media-modal #cgOpenAiPromptSubmit,
+.media-modal #cgOpenAiBackToModels,
+.media-modal #cgOpenAiAddToWpLib,
+.media-modal #cgOpenAiAddToWpLibAndGallery{
     font-size: 16px;
     height: 40px;
     max-height: 40px;
@@ -3919,7 +3923,9 @@ select.cg_action_select:disabled{
     display: none;
 }
 
-.media-modal #cgYoutubeLibraryContainer{
+.media-modal #cgYoutubeLibraryContainer,
+.media-modal #cgOpenAiContainer
+{
     display: flex;
     padding: 20px;
     padding-right: 0;
@@ -3929,6 +3935,11 @@ select.cg_action_select:disabled{
     flex-wrap: wrap;
     overflow-x: hidden;
     overflow-y: scroll;
+}
+
+.media-modal #cgOpenAiContainer
+{
+    height: 97%;
 }
 
 .media-modal #cgYoutubeLibrary{
@@ -4097,6 +4108,154 @@ select.cg_action_select:disabled{
     box-shadow: unset !important;
     outline: unset !important;
     color: unset !important;
+}
+
+.media-modal .cg_openai_header{
+    font-size: 18px;
+    margin-bottom: 5px;
+    line-height: 22px;
+}
+
+.media-modal .cg_openai_header .cg_openai_header_note{
+    font-size: 16px;
+    margin-top: -3px;
+}
+
+.media-modal .cg_openai_model_image img{
+    width: 64px;
+}
+
+.media-modal .cg_openai_model_desc{
+    font-size: 16px;
+    line-height: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.media-modal #cgOpenAiModels{
+    display: flex;
+}
+
+.media-modal .cg_openai_model{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.media-modal #cgOpenAiOverview .cg_openai_model{
+    cursor: pointer;
+}
+
+.media-modal  .cg_openai_model .cg_openai_resolutions_container{
+    flex-basis: 100%;
+    margin-top: 15px;
+}
+
+.media-modal  .cg_openai_model .cg_openai_resolutions{
+    display: flex;
+}
+
+.media-modal .cg_openai_model .cg_openai_resolutions .cg_openai_res{
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: start;
+    margin-right: 10px;
+    width: 172px;
+    height: 50px;
+    border: thin solid #dedede;
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    position: relative;
+}
+
+.media-modal .cg_openai_model .cg_openai_resolutions .cg_openai_res.cg_selected{
+    border: thin solid black;
+    cursor: auto;
+}
+
+.media-modal .cg_openai_model .cg_openai_resolutions .cg_openai_res .cg_openai_res_size{
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.media-modal .cg_openai_model .cg_openai_resolutions .cg_openai_res .cg_openai_res_price{
+    font-size: 24px;
+}
+
+.media-modal #cgOpenAiPromptContainer{
+    margin-bottom: 15px;
+}
+
+.media-modal #cgOpenAiPromptInput{
+    width: 542px;
+    height:100%;
+    padding-right: 25px !important;
+    font-size: 14px;
+}
+
+.media-modal #cgOpenAiGenLoader,.media-modal #cgOpenAiAddToWpLoader{
+    padding: 0;
+}
+
+.media-modal #cgOpenAiGenLoader .cg_skeleton_loader_on_page_load_container,
+.media-modal #cgOpenAiAddToWpLoader .cg_skeleton_loader_on_page_load_container{
+    width: 491px;
+    height: 491px;
+}
+
+.media-modal #cgOpenAiGenLoader.cg_horizontal_loader .cg_skeleton_loader_on_page_load_container{
+    width: 860px;
+}
+
+.media-modal #cgOpenAiGenLoader.cg_vertical_loader .cg_skeleton_loader_on_page_load_container{
+    height: 860px;
+}
+
+.media-modal #cgOpenAiGenImageContainer .cg_openai_img{
+    width: 491px;
+    height: 491px;
+    margin-bottom: 15px;
+}
+
+.media-modal #cgOpenAiGenImageContainer.cg_horizontal_loader .cg_openai_img{
+    width: 860px;
+}
+
+.media-modal #cgOpenAiGenImageContainer.cg_vertical_loader .cg_openai_img{
+    height: 860px;
+}
+
+.media-modal #cgOpenAiGenImageContainer .cg_openai_img #cgOpenAiImg{
+    width: 100%;
+    height: 100%;
+}
+
+.media-modal #cgOpenAiImageFields .cg_text{
+    width: 300px;
+    margin-bottom: 8px;
+    padding-right: 25px !important;
+}
+
+.media-modal #cgOpenAiSelected .cg_clear_container{
+    position: relative;
+    padding: 0;
+    margin-bottom: 8px;
+}
+
+.media-modal #cgOpenAiSelected .cg_clear{
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-55%);
+    z-index: 1;
+    cursor: pointer;
+}
+
+.media-modal #cgOpenAiGenError{
+    font-size: 22px;
+    margin-top: 15px;
+    line-height: 26px;
 }
 
 #cgMoveToAnotherGalleryCompare{

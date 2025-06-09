@@ -373,7 +373,9 @@ if(!empty($options['pro']['CommNoteActive'])){
     $urlFrontend = '<a href="'.$urlFrontend.'" >'.$urlFrontend.'</a>';
     }
 
-    $urlBackend = $adminUrl."?page=".cg_get_version()."/index.php#option_id=$galeryID&show_comments=true&id=$pictureID";
+    $cg_comm_note_check =  cg_hash_function('---cgCommNoteActive---'.$galeryID);
+
+    $urlBackend = $adminUrl."?page=".cg_get_version()."/index.php#option_id=$galeryID&show_comments=true&id=$pictureID&cg_comm_note_check=$cg_comm_note_check&cg_comment_id=$insert_id";
     $urlBackend = '<a href="'.$urlBackend.'" >'.$urlBackend.'</a>';
 
     $posComment = '$comment$';

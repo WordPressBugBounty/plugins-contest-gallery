@@ -13,11 +13,11 @@ jQuery(document).ready(function ($) {
         $mediaFrame = $(this).closest('.media-frame.cg_backend_area');
         $mediaFrame.find('.media-toolbar-primary.search-form').addClass('cg_hide');
         $mediaFrame.find('.media-menu-item.active').removeClass('active').addClass('cg_active');
+        $mediaFrame.find('.cg_media_menu_item.cg_active').removeClass('cg_active');
     });
 
     $(document).on('click','#cgAddYoutube',function (){
         var $mediaFrame = $(this).closest('.media-frame.cg_backend_area');
-        $mediaFrame.find('#cgYoutubeLibrary').removeClass('cg_active');
         $(this).addClass('cg_active');
         var $cgAddYoutubeContainer = $('#cgAddYoutubeContainer').clone().removeClass('cg_hide');
         var $mediaFrameContent =  $mediaFrame.find('.media-frame-content');
@@ -29,7 +29,6 @@ jQuery(document).ready(function ($) {
     $(document).on('click','#cgYoutubeLibrary,#cgYoutubeLibraryLoadMoreButton',function (e){
         debugger
         $mediaFrame = $('.media-frame.cg_backend_area');
-        $mediaFrame.find('#cgAddYoutube').removeClass('cg_active');
         $(this).addClass('cg_active');
         $mediaFrame.find('#cgYoutubeLibraryNewAddedCount').addClass('cg_hide').text('0');
         var $mediaFrameContent =  $mediaFrame.find('.media-frame-content');
@@ -794,10 +793,13 @@ jQuery(document).ready(function ($) {
     var isReclick = false;
 
     $(document).on('click','.media-frame.cg_backend_area #menu-item-browse.cg_active',function (){
+        debugger
         var $mediaFrame = $(this).closest('.media-frame.cg_backend_area');
         if($mediaFrame.find('.cg_media_menu_item.cg_active').length){
             $mediaFrame.find('.cg_media_menu_item.cg_active').removeClass('cg_active');
-            $mediaFrameContentSub.removeClass('cg_hide');
+            if($mediaFrameContentSub){
+                $mediaFrameContentSub.removeClass('cg_hide');
+            }
             $(this).removeClass('cg_active').addClass('active');
         }
     });
@@ -814,6 +816,13 @@ jQuery(document).ready(function ($) {
         $mediaFrame.find('.media-toolbar-primary.search-form').removeClass('cg_hide');
         $mediaFrame.find('.cg_media_container').remove();
         $mediaFrame.find('.cg_media_menu_item').removeClass('cg_active');
+    });
+
+    cgJsClassAdmin.gallery.functions.loadAiEvents($);
+
+    $(document).on('click','#menu-item-browse',function (){
+        $mediaFrame = $('.media-frame.cg_backend_area');
+        $mediaFrame.find('.media-frame-content .attachments-browser.has-load-more').removeClass('cg_hide');
     });
 
 });

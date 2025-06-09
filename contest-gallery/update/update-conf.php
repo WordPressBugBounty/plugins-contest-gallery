@@ -307,6 +307,7 @@ return array(
         'RegMailBCC' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 08.01.2025
         'PdfPreviewFrontend' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 18.04.2025
         'PdfPreviewBackend' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 18.04.2025
+        'OpenAiKey' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 08.01.2025
     ),
     $tablename_create_user_entries => array(
         'Field_Content' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019

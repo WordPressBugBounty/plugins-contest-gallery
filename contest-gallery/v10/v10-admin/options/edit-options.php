@@ -750,6 +750,7 @@ foreach($selectSQL3 as $value3){
 
 $LogoutLink = '';
 $BackToGalleryLink = '';
+$OpenAiKey = '';
 
 if(intval($galleryDbVersion)>=14){
     $optionsForGeneralIDsinceV14 = cg_get_registry_and_login_options_v14();
@@ -767,6 +768,7 @@ if(intval($galleryDbVersion)>=14){
 
     $ForwardAfterLoginUrlCheck = $optionsForGeneralIDsinceV14['pro']['ForwardAfterLoginUrlCheck'];
     $ForwardAfterLoginUrlCheck = ($ForwardAfterLoginUrlCheck==1) ? 'checked' : '';
+    $OpenAiKey = $optionsForGeneralIDsinceV14['pro']['OpenAiKey'];
     $ForwardAfterLoginUrl = $optionsForGeneralIDsinceV14['pro']['ForwardAfterLoginUrl'];
     $ForwardAfterLoginUrl = contest_gal1ery_convert_for_html_output_without_nl2br($ForwardAfterLoginUrl);
 

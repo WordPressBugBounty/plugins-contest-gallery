@@ -630,7 +630,12 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
 
             echo "<hr>";
 
-            echo "<div style='margin-bottom:20px;margin-top:20px;display:flex;' class='cg_comment' >";
+        $cg_comment_id = '';
+        if(!empty($value['insert_id'])){
+            $cg_comment_id = 'cg_comment_id_'.$value['insert_id'];
+        }
+
+            echo "<div style='margin-bottom:20px;margin-top:20px;display:flex;scroll-margin-top: 100px;' class='cg_comment' id='$cg_comment_id'>";
         echo "<div style='width: 70%;'>";
 		if(!empty($value['Active']) && $value['Active']==2){
             if(!empty($countCtoReviewArray[$id])){

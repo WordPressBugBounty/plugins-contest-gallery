@@ -102,6 +102,10 @@ select{
 	pointer-events: all !important;
 }
 
+.cg_flex_basis_100 {
+	flex-basis: 100%;
+}
+
 #cgUploadFormDescription{
 	margin: -5px auto 10px;
 	text-align: center;
@@ -371,7 +375,7 @@ select{
 }
 
 #cg_main_options_tab_second_row .cg_view_select.cg_v22_caret:after{
-	right: -24px;
+	right: -23px;
 }
 
 #cgEditOptionsForm.cg_edit_translations #cg_main_options_tab_second_row .cg_view_select.cg_v22_caret:after{
@@ -474,14 +478,17 @@ select{
 	box-shadow: unset;
 }
 
-#cgSortable li.cg_sortable_div .cg_image_action_href, #cgCatWidgetTable .cg_image_action_href{
+#cgSortable li.cg_sortable_div .cg_image_action_href, #cgCatWidgetTable .cg_image_action_href,
+#cgOpenAiGenImageContainer .cg_image_action_href{
 	text-decoration: none;
 	color: black;
 	outline: none;
 	box-shadow: unset;
 }
 
-#cgSortable li.cg_sortable_div .cg_image_action_href:hover, #cgCatWidgetTable .cg_image_action_href:hover{
+#cgSortable li.cg_sortable_div .cg_image_action_href:hover, #cgCatWidgetTable .cg_image_action_href:hover,
+#cgOpenAiGenImageContainer .cg_image_action_href:hover
+{
 	text-decoration: none;
 	color: black;
 	outline: none;
@@ -547,7 +554,8 @@ select{
 }
 
 #cgGalleryBackendContainer .cg_image_checkbox,
-.cg_fixed_checkbox{
+.cg_fixed_checkbox,
+#cgOpenAiGenImageContainer .cg_image_checkbox{
 	display:flex;
 	width: 120px !important;
 	text-align: center;
@@ -569,6 +577,10 @@ select{
 	box-shadow: 2px 4px 12px rgba(0,0,0,.08) !important;
 }
 
+#cgOpenAiGenImageContainer .cg_image_checkbox{
+	width: 155px !important;
+}
+
 #cgGalleryBackendContainer .cg_image_checkbox_container_view_control .cg_image_checkbox{
 	width: 17% !important;
 }
@@ -580,7 +592,9 @@ select{
 	margin-top: 3px;
 	opacity: 0.4;
 }
-#cgGalleryBackendContainer .cg_image_checkbox .cg_image_checkbox_action{
+
+#cgGalleryBackendContainer .cg_image_checkbox .cg_image_checkbox_action,
+#cgOpenAiGenImageContainer .cg_image_checkbox .cg_image_checkbox_action{
 	color: black;
 	margin-right: 10px;
 }
@@ -589,7 +603,8 @@ select{
 	visibility: visible;
 }
 
-#cgGalleryBackendContainer .cg_image_checkbox .cg_image_checkbox_icon{
+#cgGalleryBackendContainer .cg_image_checkbox .cg_image_checkbox_icon,
+#cgOpenAiGenImageContainer .cg_image_checkbox .cg_image_checkbox_icon{
 	width: 20px;
 	height: 20px;
 	position: absolute;
@@ -601,7 +616,8 @@ select{
 
 #cgGalleryBackendContainer .cg_image_checkbox.cg_active .cg_image_checkbox_icon,
 .cg_file_checkbox.cg_checked,
-.cg_fixed_checkbox.cg_checked .cg_fixed_checkbox_icon
+.cg_fixed_checkbox.cg_checked .cg_fixed_checkbox_icon,
+#cgOpenAiGenImageContainer .cg_image_checkbox.cg_active .cg_image_checkbox_icon
 {
 	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAaZJREFUaEPtmD1KBEEQhb8FY0HQxVBDEzPxAC6oB1DwHAYeQb2JeoIN1FgMTU00VQO9gRTMgA7b09VT3TOzUBPudte8772amp8JS35Mllw/DjB0gp6AJ2B0wFvIaKB5uydgttBYwBMwGlhv3waugcPqhzlwAbzF6o8hgV3gHthoiP0A9mMQQwOI+AdgPeD0DXDWlsKQADHxovsbWBsjgEb8aAG04gVgdC2UIv4T2APex9JCqeJnwEuuMboFXALHwArwCJwDr7ETVP+niP8CDjTipbZmCslN5gmYNsRKxBqXionXAtwBJwGnY24VFa8F+AFWW1olBFFcfC4AqdOE6EW8FuAWOFVcrDWELG17PPhbKtaC0dNqLmKZQM8LHrYWFRdBcoSebbKK1yYg63aq0bkZtUS3QDvBotU0CdRFckFkE5+SQC6IrOK7AFjaKbv4rgBdIIqItwCkQBQTbwXQQBQVnwNAaoReyouLzwUgdeRmdwUcVeOq/izS+jISHfKKBSn3AUW5/pc4QP+e/z+jJ+AJGB3wFjIaaN7uCZgtNBbwBIwGmrf/AsfDVjGhp2amAAAAAElFTkSuQmCC');
 	background-repeat: no-repeat;
@@ -1888,6 +1904,12 @@ div.tabcontents
 	margin: 0 auto;
 	width: auto;
 	padding-bottom: 3px;
+}
+
+#cgEditOptionsForm.cg_edit_general .cg_main_options #cg_main_options_tab #cg_main_options_tab_second_row #cg_main_options_tab_second_row_inner {
+	justify-content: space-between;
+	padding-left: 13px;
+	padding-right: 13px;
 }
 
 .cg_main_options .cg_vertical-align-top{
@@ -4844,7 +4866,8 @@ td input, td input:focus, td input:hover{
 .cgEcommerceGeneralOptions .cg-pro-false:after,
 .cgInvoiceGeneralOptions .cg-pro-false:after,
 .cg_attach_to_another_user.cg-pro-false:after,
-.cg_move_to_another_gallery.cg-pro-false .cg_image_action_span:after
+.cg_move_to_another_gallery.cg-pro-false .cg_image_action_span:after,
+.cg_openai_res.cg-pro-false:after
 {
 	content: "PRO";
 	background-color: #95ff79 !important;

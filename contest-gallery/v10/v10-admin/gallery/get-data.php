@@ -136,6 +136,7 @@ $PdfPreviewBackend = $pro_options->PdfPreviewBackend;
 if(cg_get_version()=='contest-gallery'){
     $PdfPreviewBackend = 0;
 }
+$OpenAiKey = $wpdb->get_var("SELECT OpenAiKey FROM $tablename_pro_options WHERE GeneralID = 1");
 $CatWidgetColor = ($pro_options->CatWidget==1) ? "background-color:#ffffff" : 'background-color:#ffffff';
 $CatWidgetChecked = ($pro_options->CatWidget==1) ? "checked='checked'" : '';
 $ShowCatsUnchecked = ($pro_options->ShowCatsUnchecked==1) ? "checked='checked'" : '';

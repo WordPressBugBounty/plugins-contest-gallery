@@ -1,5 +1,8 @@
 Contest Gallery
 
+= V26.0.8 =
+* NEW: Create images via OpenAI API and add them to your WordPress media library.
+
 = V26.0.7 =
 * NEW: Security improvements.
 * FIXED: Security issue.

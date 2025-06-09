@@ -528,6 +528,7 @@ if(!function_exists('cg_get_registry_and_login_options_v14')){
         $optionsForGeneralIDsinceV14['pro']['RegMailReply'] = $optionsPRO->RegMailReply;
         $optionsForGeneralIDsinceV14['pro']['RegMailSubject'] = $optionsPRO->RegMailSubject;
         $optionsForGeneralIDsinceV14['pro']['TextEmailConfirmation'] = $optionsPRO->TextEmailConfirmation;
+        $optionsForGeneralIDsinceV14['pro']['OpenAiKey'] = $optionsPRO->OpenAiKey;
 
         return $optionsForGeneralIDsinceV14;
 

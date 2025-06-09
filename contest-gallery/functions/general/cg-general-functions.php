@@ -515,9 +515,20 @@ if(!function_exists('cg_check_nonce')){
 			$cg_nonce = $_GET['cg_nonce'];
 		}
 		if(empty($cg_nonce) || !wp_verify_nonce($cg_nonce, 'cg_nonce')){
-			echo '###cg_version###'.cg_get_version().'###cg_version###';
-			echo '###cg_nonce_invalid###';
-			die;
+            $hasValidCgCommNoteActive = false;
+            if(!empty($_GET['cg_comm_note_check']) && !empty($_GET['option_id'])){
+                $cg_comm_note_check = sanitize_text_field($_GET['cg_comm_note_check']);
+                $GalleryID = absint($_GET['option_id']);
+                $hashToCompare = cg_hash_function('---cgCommNoteActive---'.$GalleryID, $cg_comm_note_check);
+                if($cg_comm_note_check==$hashToCompare){
+                    $hasValidCgCommNoteActive = true;
+                }
+            }
+            if(!$hasValidCgCommNoteActive){
+                echo '###cg_version###'.cg_get_version().'###cg_version###';
+                echo '###cg_nonce_invalid###';
+                die;
+            }
 		}
 	}
 }

@@ -23,6 +23,7 @@ wp_enqueue_script( 'cg_gallery_admin_objects', plugins_url( '/v10/v10-js/admin/g
 wp_enqueue_script( 'cg_gallery_admin_functions', plugins_url( '/v10/v10-js/admin/gallery/gallery-admin-functions.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_script( 'cg_gallery_admin_pdf', plugins_url( '/v10/v10-js/admin/gallery/gallery-admin-pdf.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_script( 'cg_gallery_youtube_events', plugins_url( '/v10/v10-js/admin/gallery/gallery-youtube-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_gallery_openai_events', plugins_url( '/v10/v10-js/admin/gallery/gallery-openai-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_script( 'cg_gallery_admin_gallery_load_init_or_add', plugins_url( '/v10/v10-js/admin/load/gallery-load-init-or-add.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_script( 'cg_gallery_admin_gallery_reload_entry', plugins_url( '/v10/v10-js/admin/load/gallery-reload-entry.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_script( 'cg_gallery_admin_gallery_load_change_or_sort', plugins_url( '/v10/v10-js/admin/load/gallery-load-change-or-sort.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );

@@ -17,6 +17,13 @@ jQuery(document).ready(function ($) {
         $cgMultipleFilesForPostContainer.removeClass('cg_hide');
     });
 
+    jQuery(document).on('click', '.media-modal.cg_add_files_to_gallery + .media-modal-backdrop,.media-modal.cg_add_files_to_gallery .media-modal-close', function (event) {
+        debugger
+        if(cgJsClassAdmin.gallery.vars.cgNewAiImageToGalleryAdded){
+            cgJsClassAdmin.gallery.functions.reloadAfterAddingEntries($,'',1);
+        }
+    });
+
     // Media uploader multiple images to a post
     jQuery(document).on('click', '#cgSortable .cg_add_multiple_files_to_post_text,#cgSortable .cg_add_multiple_files_to_post, #cgSortable .cg_add_multiple_files_to_post_prev, #cgMultipleFilesForPostContainer .cg_backend_image_add_files_label, #cgMultipleFilesForPostContainer .cg_replace', function (event) {
         event.preventDefault();
@@ -221,6 +228,8 @@ jQuery(document).ready(function ($) {
 
         file_frame.on('open', function () { // alert(2);
 
+            file_frame.$el.closest('.media-modal').addClass('cg_add_files_to_gallery');
+            cgJsClassAdmin.gallery.vars.cgNewAiImageToGalleryAdded = 0; // reset here
             file_frame.$el.addClass('cg_backend_area');
             //file_frame.$el.addClass('cg_backend_area cg_add_additional_files');
 

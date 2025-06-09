@@ -840,6 +840,7 @@ if(!function_exists('contest_gal1ery_create_table')){
             ConsentTikTok TINYINT DEFAULT 0,
             PdfPreviewBackend TINYINT DEFAULT 0,
             PdfPreviewFrontend TINYINT DEFAULT 0,
+            OpenAiKey TEXT DEFAULT '',
             INDEX GalleryID_index (GalleryID)
 			) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
                 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');

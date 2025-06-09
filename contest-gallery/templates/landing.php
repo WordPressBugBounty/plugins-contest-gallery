@@ -190,17 +190,17 @@ if(empty($galleriesOptions['GalleriesPagesNoIndex']) && empty($galleriesOptions[
                         $largeSource=wp_get_attachment_image_src($rowObject->PdfPreview, 'large');
                         $largeSource=$largeSource[0];
                     }else{
-	                $attached_file_dir = substr($WpUploadFilesPostMeta[$WpUpload]['_wp_attached_file'],0,strrpos($WpUploadFilesPostMeta[$WpUpload]['_wp_attached_file'],'/'));// folder without / at the end
-	                $wp_upload_dir = wp_upload_dir();
-                    $fileName = $WpUploadFilesPostMeta[$WpUpload]['_wp_attachment_metadata']['file'];
-	                $largeSource = $wp_upload_dir['baseurl'].'/'.$attached_file_dir.((isset($WpUploadFilesPostMeta[$WpUpload]['_wp_attachment_metadata']['sizes']['large']['file'])) ? $WpUploadFilesPostMeta[$WpUpload]['_wp_attachment_metadata']['sizes']['large']['file'] : $fileName);
+                        $attached_file_dir = substr($WpUploadFilesPostMeta[$WpUpload]['_wp_attached_file'],0,strrpos($WpUploadFilesPostMeta[$WpUpload]['_wp_attached_file'],'/'));// folder without / at the end
+                        $wp_upload_dir = wp_upload_dir();
+                        $fileName = $WpUploadFilesPostMeta[$WpUpload]['_wp_attachment_metadata']['file'];
+                        $largeSource = $wp_upload_dir['baseurl'].'/'.$attached_file_dir.((isset($WpUploadFilesPostMeta[$WpUpload]['_wp_attachment_metadata']['sizes']['large']['file'])) ? $WpUploadFilesPostMeta[$WpUpload]['_wp_attachment_metadata']['sizes']['large']['file'] : $fileName);
                     }
 	                echo '<meta property="og:image" content="'.$largeSource.'">'."\r\n";
                 }else{
                     if(!empty($rowObject->PdfPreview)){
                         $imgSrcLarge=wp_get_attachment_image_src($rowObject->PdfPreview, 'large');
                     }else{
-	                $imgSrcLarge=wp_get_attachment_image_src($rowObject->WpUpload, 'large');
+                        $imgSrcLarge=wp_get_attachment_image_src($rowObject->WpUpload, 'large');
                     }
 	                echo '<meta property="og:image" content="'.$imgSrcLarge[0].'">'."\r\n";
                 }

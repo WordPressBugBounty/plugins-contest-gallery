@@ -71,7 +71,7 @@ foreach($collectImageIDs as $key => $imageID){
     if(!empty($categoryId)){
         $categoryName = $wpdb->get_var("SELECT Name FROM $tablename_categories WHERE id='$categoryId' and Active='1'");
         $UserEntries .= "<br/><strong>Category:</strong><br/>";
-        $UserEntries .= $categoryName."<br/>";
+        $UserEntries .= contest_gal1ery_convert_for_html_output_without_nl2br($categoryName)."<br/>";
     }
 
     $contentMail = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailAdmin->Content);
@@ -127,8 +127,8 @@ foreach($collectImageIDs as $key => $imageID){
                     $imageID,$formFieldId
                 ) );
 
-                $UserEntries .= "<br/><strong>$formvalue:</strong><br/>";
-                $UserEntries .= "$getEntries<br/>";
+                $UserEntries .= "<br/><strong>".contest_gal1ery_convert_for_html_output_without_nl2br($formvalue).":</strong><br/>";
+                $UserEntries .= contest_gal1ery_convert_for_html_output_without_nl2br($getEntries)."<br/>";
 
                 $fieldtype='';
                 $i=0;
@@ -140,8 +140,6 @@ foreach($collectImageIDs as $key => $imageID){
             if($fieldtype=="ef" AND $n==2){$fieldOrder=$formvalue; $n=3; continue;}
             if ($fieldtype=='ef' AND $n==3) {
 
-
-
                 $getEntries = $wpdb->get_var( $wpdb->prepare(
                     "
 															SELECT Short_Text
@@ -152,8 +150,8 @@ foreach($collectImageIDs as $key => $imageID){
                 ) );
 
                 if(empty($userData)){
-                    $UserEntries .= "<br/><strong>$formvalue:</strong><br/>";
-                    $UserEntries .= "$getEntries<br/>";
+                    $UserEntries .= "<br/><strong>".contest_gal1ery_convert_for_html_output_without_nl2br($formvalue).":</strong><br/>";
+                    $UserEntries .= contest_gal1ery_convert_for_html_output_without_nl2br($getEntries)."<br/>";
                 }
 
                 $fieldtype='';
@@ -176,8 +174,8 @@ foreach($collectImageIDs as $key => $imageID){
                     $imageID,$formFieldId
                 ) );
 
-                $UserEntries .= "<br/><strong>$formvalue:</strong><br/>";
-                $UserEntries .= "$getEntries<br/>";
+                $UserEntries .= "<br/><strong>".contest_gal1ery_convert_for_html_output_without_nl2br($formvalue).":</strong><br/>";
+                $UserEntries .= contest_gal1ery_convert_for_html_output_without_nl2br($getEntries)."<br/>";
 
                 $fieldtype='';
                 $i=0;
@@ -198,8 +196,8 @@ foreach($collectImageIDs as $key => $imageID){
                     $imageID,$formFieldId
                 ) );
 
-                $UserEntries .= "<br/><strong>$formvalue:</strong><br/>";
-                $UserEntries .= "$getEntries<br/>";
+                $UserEntries .= "<br/><strong>".contest_gal1ery_convert_for_html_output_without_nl2br($formvalue).":</strong><br/>";
+                $UserEntries .= contest_gal1ery_convert_for_html_output_without_nl2br($getEntries)."<br/>";
 
                 $fieldtype='';
                 $i=0;
@@ -222,8 +220,8 @@ foreach($collectImageIDs as $key => $imageID){
 
                 if(!empty($getEntries)){
                     $getEntries = nl2br($getEntries);
-                    $UserEntries .= "<br/><strong>$formvalue:</strong><br/>";
-                    $UserEntries .= "$getEntries<br/>";
+                    $UserEntries .= "<br/><strong>".contest_gal1ery_convert_for_html_output_without_nl2br($formvalue).":</strong><br/>";
+                    $UserEntries .= contest_gal1ery_convert_for_html_output_without_nl2br($getEntries)."<br/>";
                 }
 
                 $fieldtype='';
@@ -272,7 +270,7 @@ foreach($collectImageIDs as $key => $imageID){
 
         if($proOptions->InformAdminAllowActivateDeactivate){
             if(empty(trim($proOptions->InformAdminActivationURL))){
-                $Msg.= '<br>No "Page URL for activation deactivation of entry" configured';
+                $Msg.= '<br>No "Page URL for activation/deactivation of an entry" configured';
             }else{
                 $hash = cg_hash_function('---cngl1---'.$imageID);
                 $Msg.= '<br><strong>Activate entry:</strong><br>';
@@ -291,7 +289,7 @@ foreach($collectImageIDs as $key => $imageID){
 
         if($proOptions->InformAdminAllowActivateDeactivate){
             if(empty(trim($proOptions->InformAdminActivationURL))){
-                $Msg.= '<br>No "Page URL for activation deactivation of entry" configured';
+                $Msg.= '<br>No "Page URL for activation/deactivation of an entry" configured';
             }else{
                 $hash = cg_hash_function('---cngl1---'.$imageID);
                 $Msg.= '<br><strong>Activate entry:</strong><br>';

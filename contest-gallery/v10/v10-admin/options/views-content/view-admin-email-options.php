@@ -117,7 +117,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row $cgInformAdminActivationURLhide'>
             <div class="cg_view_option cg_border_top_none cg_view_option_100_percent $cgProFalse cg_inform_admin" id="cgInformAdminAllowActivateDeactivateContainer">
                 <div class="cg_view_option_title">
-                    <p>Allow to activate deactivate new frontend entry direct from admin email without being logged in
+                    <p>Allow to activate/deactivate new frontend entry direct from admin email without being logged in
                         <br><span class="cg_view_option_title_note">
                         <span style="font-weight:bold;">Note: </span> you have to place the cg_entry_on_off shortcode at the configured page URL, see next option
                         </span>
@@ -131,7 +131,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row $cgInformAdminActivationURLhide'>
                 <div class='cg_view_option cg_inform_admin  cg_view_option_full_width cg_border_top_none $cgProFalse $InformAdminActivationURLDisabled' id="cgInformAdminActivationURLContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Page URL for activation deactivation of entry
+                        <p>Page URL for activation/deactivation of an entry
                             <br><span class="cg_view_option_title_note">
                         <span style="font-weight:bold;">NOTE: </span> place following shortcode at the page which you use for activation deactivation of entry<br>
                         <span class='cg_shortcode_parent'><span class='cg_shortcode_copy cg_shortcode_copy_mail_confirm cg_tooltip'></span><span class='cg_shortcode_copy_text'>[cg_entry_on_off id="$GalleryID"]</span></span>

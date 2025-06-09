@@ -148,7 +148,7 @@ cgJsClassAdmin.options.functions = {
 
         cgJsClassAdmin.options.functions.initOptionsClickEvents();
 
-        var goToArray = ['cgTranslationOther','cgTranslationShippingPossible','cgTranslationLanguageEmail','cgTranslationLanguageEmail','cgEditGalleryNameRow','cgTranslationLanguagePassword','l_ThankVote','l_BackToGallery','l_BackToGalleries','TranslationsCommentFormArea','l_AllVotesUsed','YourCommentWillBeReviewedRow','cgContactFormShortcodeConfigurationArea','l_GalleryDateFormat'];
+        var goToArray = ['cgTranslationOther','cgTranslationShippingPossible','cgTranslationLanguageEmail','cgTranslationLanguageEmail','cgEditGalleryNameRow','cgTranslationLanguagePassword','l_ThankVote','l_BackToGallery','l_BackToGalleries','TranslationsCommentFormArea','l_AllVotesUsed','YourCommentWillBeReviewedRow','cgContactFormShortcodeConfigurationArea','l_GalleryDateFormat','cgOpenAiKeyRowColumn'];
         debugger
         $(goToArray).each(function (index,value){
             if(location.hash.indexOf(value) >= 0 || location.search.indexOf(value) >= 0){

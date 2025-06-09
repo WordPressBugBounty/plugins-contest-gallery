@@ -16,13 +16,13 @@ if(!function_exists('cg_replace_ecommerce_file')){
         $WpUploadFilesForSale[] = $cgNewWpUploadWhichReplace;
         if(!empty($fileDataForPostArray)){
             $sqlObjectFile->MultipleFiles = serialize($fileDataForPostArray);// has to be set here
-				}
+        }
         // var_dump('$sqlObjectFile->MultipleFiles');
-	    //echo "<pre>";
+        // echo "<pre>";
         // 	print_r($sqlObjectFile->MultipleFiles);
-	        //echo "</pre>";
-		//	var_dump('$WpUploadFilesForSale');
-	        //	var_dump($WpUploadFilesForSale);
+        // echo "</pre>";
+        // var_dump('$WpUploadFilesForSale');
+        // var_dump($WpUploadFilesForSale);
 
         cg_move_file_ecommerce_sale_folder($realId, $GalleryID,$sqlObjectFile,$ecommerceEntry,$WpUploadFilesForSale,$removedWpUploadIdsFromSale);
 

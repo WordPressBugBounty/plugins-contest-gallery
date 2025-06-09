@@ -138,6 +138,8 @@ if(!function_exists('cg_update_registry_and_login_options_v14')){
             array('%d')
         );
 
+        $OpenAiKey = (isset($_POST['OpenAiKey'])) ? sanitize_text_field($_POST['OpenAiKey']) : '';
+
         $wpdb->update(
             "$tablename_options_pro_options",
             array(
@@ -148,7 +150,8 @@ if(!function_exists('cg_update_registry_and_login_options_v14')){
                 'HideRegFormAfterLoginShowTextInstead' => $options['pro']['HideRegFormAfterLoginShowTextInstead'],'HideRegFormAfterLoginTextToShow' => $options['pro']['HideRegFormAfterLoginTextToShow'],
                 'RegMailAddressor' => $options['pro']['RegMailAddressor'],'RegMailReply' => $options['pro']['RegMailReply'],
                 'RegMailSubject' => $options['pro']['RegMailSubject'],'TextEmailConfirmation' => $options['pro']['TextEmailConfirmation'],
-                'RegMailCC' => $options['pro']['RegMailCC'],'RegMailBCC' => $options['pro']['RegMailBCC']
+                'RegMailCC' => $options['pro']['RegMailCC'],'RegMailBCC' => $options['pro']['RegMailBCC'],
+                'OpenAiKey' => $OpenAiKey,
             ),
             array('GeneralID' => 1),
             array(
@@ -159,7 +162,8 @@ if(!function_exists('cg_update_registry_and_login_options_v14')){
                 '%d','%s',
                 '%s','%s',
                 '%s','%s',
-                '%s','%s'
+                '%s','%s',
+                '%s'
             ),
             array('%d')
         );

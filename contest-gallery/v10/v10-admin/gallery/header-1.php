@@ -75,7 +75,7 @@ echo "<div style='margin-top: 7px; height:35px;'>";
 
     <!--<input type="number" value="" class="regular-text process_custom_images" id="process_custom_images" name="" max="10" min="1" step="10">-->
     <div style="display:flex;flex-flow: column;align-items: flex-start;" id="cgAddImagesWpUploader">
-        <button data-cg-gid="<?php echo $GalleryID; ?>" class="cg_upload_wp_images_button button cg_backend_button_gallery_action" style="width: fit-content;">Add Files / Social embed</button>
+        <button data-cg-gid="<?php echo $GalleryID; ?>" class="cg_upload_wp_images_button button cg_backend_button_gallery_action" style="width: fit-content;">Add files / Social embed / OpenAI</button>
         <span style="margin-top: 5px;display:block;">Social embed: YouTube, Twitter, Instagram, TikTok</span>
     </div>
 

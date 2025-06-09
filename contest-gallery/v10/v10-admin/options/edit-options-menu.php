@@ -61,6 +61,8 @@ HEREDOC;
 echo <<<HEREDOC
                        <div class='cg_view_select cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view15" data-count="15"><a class="cg_view_select_link" cg-data-view="#view15" cg-data-href="cgViewHelper15" id="cgSignInOptionsTabLink">Login Google</a></div>
 
+                       <div class='cg_view_select cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view21" data-count="21"><a class="cg_view_select_link" cg-data-view="#view21" cg-data-href="cgViewHelper21" id="cgOpenAiTabLink">OpenAI</a></div>
+
                       <div cg-data-view="#view17" data-count="17" id="cgSaveOptionsNavButton">
                         <span cg-data-view="#view17" cg-data-href="cgViewHelper17" class="cg_backend_button_gallery_action" ><strong>Save options</strong></span>
                       </div>
@@ -312,12 +314,14 @@ HEREDOC;
 
     echo "</div>";
 
+    if(intval($galleryDbVersion)>=14){
     echo <<<HEREDOC
-            <h4 id="view18" class="cg_view_header">PHP</h4>
+            <h4 id="view18" class="cg_view_header">PDF</h4>
             <div class="cg_view cgViewHelper18" >
 HEREDOC;
-    include(__DIR__.'/views-content/view-php-options.php');
+        include(__DIR__.'/views-content/view-pdf-options.php');
     echo "</div>";
+    }
 
     echo <<<HEREDOC
             <h4 id="view8" class="cg_view_header">Icons</h4>
@@ -508,6 +512,15 @@ HEREDOC;
 HEREDOC;
         include(__DIR__.'/views-content/view-google-sign-in-options.php');
         echo "</div>";
+
+        if(intval($galleryDbVersion)>=14){
+            echo <<<HEREDOC
+            <h4 id="view21" class="cg_view_header">OpenAI</h4>
+            <div class="cg_view cgViewHelper21" >
+HEREDOC;
+            include(__DIR__.'/views-content/view-openai-options.php');
+            echo "</div>";
+        }
     }
 
     if($isEditEcommerceOnly){

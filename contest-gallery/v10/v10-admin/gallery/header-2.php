@@ -3,6 +3,7 @@
 // has to be here
 echo "<div id='cgPdfPreviewGeneration' class='cg_hide' >";
 echo "<input type='hidden' id='cgPdfPreviewsToCreateString' value='$PdfPreviewsToCreateString' >";
+echo "<input type='hidden' id='cgOpenAiKeyOption' value='$OpenAiKey' >";
 echo "<input type='hidden' id='cgNewWpUploadWhichReplaceForPdfPreview' value='$cgNewWpUploadWhichReplaceForPdfPreview' >";
 echo "<input type='hidden' id='cgWpUploadToReplaceForPdfPreview' value='$cgWpUploadToReplaceForPdfPreview' >";
 echo "<span>PDF preview creation in progress: <span  id='cgPdfPreviewProgress' >50%</span> ...</span><br>";
@@ -195,6 +196,8 @@ cg_ask_if_should_be_removed_from_sale_if_multiple();
 cg_preview_images_to_delete_container($GalleryID);
 
 cg_social_input_container($GalleryID);
+
+cg_openai_container($GalleryID,$cgProFalse);
 
 cg_social_library($GalleryID);
 

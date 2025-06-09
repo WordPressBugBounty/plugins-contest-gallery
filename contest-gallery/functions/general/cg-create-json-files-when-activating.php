@@ -77,7 +77,7 @@ if(!function_exists('cg_create_json_files_when_activating')){
                 if(!empty($rowObject->PdfPreview)){
                     $meta = wp_get_attachment_metadata( $rowObject->PdfPreview );
                 }else{
-				$meta = wp_get_attachment_metadata( $rowObject->WpUpload );
+                    $meta = wp_get_attachment_metadata( $rowObject->WpUpload );
                 }
 				$folderPath = substr($meta['file'],0, strrpos($meta['file'],'/'));
 				$fileName = substr($meta['file'],strrpos($meta['file'],'/')+1,strlen($meta['file']) );

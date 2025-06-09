@@ -193,6 +193,15 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
             $cg_nav_menu_row_container.find('#cgNavMenuEcommerceOrders .cg_backend_button_general').addClass('cg_active');
         }
 
+        if(location.href.indexOf('cg_comment_id=')>-1){
+            var cg_comment_id = location.href.split('cg_comment_id=')[1];
+            var $cg_comment = $('#cg_comment_id_'+cg_comment_id);
+            $cg_comment.addClass('cg_blink').get(0).scrollIntoView();
+            setTimeout(function (){
+                $cg_comment.removeClass('cg_blink');
+            },2000);
+        }
+
         cgJsClassAdmin.index.functions.setCgNonce($);
 
     }).fail(function(xhr, status, error) {

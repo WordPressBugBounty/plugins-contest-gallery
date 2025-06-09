@@ -37,10 +37,10 @@ $DataShare = ($proOptions->FbLikeNoShare==1) ? 'false' : 'true';
 $DataClass = ($proOptions->FbLikeOnlyShare==1) ? 'fb-share-button' : 'fb-like';
 $DataLayout = ($proOptions->FbLikeOnlyShare==1) ? 'button' : 'button_count';
 $PdfPreviewBackend = $proOptions->PdfPreviewBackend;
+
 if(cg_get_version()=='contest-gallery'){
     $PdfPreviewBackend = 0;
 }
-
 
 $addedWpUploadsArray = [];
 $newEntryIdsArray = [];

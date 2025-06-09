@@ -17,6 +17,7 @@ cgJsClassAdmin.gallery.vars = {
     base64andAltFileTypes: {},
     embedById: {},
     moveContactFieldsAssigns: {},
+    openAIPrompt: '',
     moveSelected: '',
     pdfPreviewsCreated: 0,
     WpUploadFilesForSaleArrayLoaded: [],

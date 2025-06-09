@@ -14,6 +14,7 @@ cgJsClassAdmin.gallery.functions = {
         // if trick around with same class names then site freeze might happen
         file_frame.$el.find('.media-frame-router').append('<button class="cg_media_menu_item" id="cgAddYoutube" >Add social embed</button>');
         file_frame.$el.find('.media-frame-router').append('<button class="cg_media_menu_item" id="cgYoutubeLibrary" >Social embed library<span id="cgYoutubeLibraryNewAddedCount" class="cg_hide" >0</span></button>');
+        file_frame.$el.find('.media-frame-router').append('<button class="cg_media_menu_item" id="cgCreateViaOpenAI" >Create via OpenAI</button>');
         if (isReplace) {
             file_frame.$el.addClass('cg_is_replace');
         }
@@ -689,7 +690,7 @@ cgJsClassAdmin.gallery.functions = {
             $cg_backend_image_full_size_target.find('.cg_for_sale_price').text(priceToShow);
         });
     },
-    reloadAfterAddingEntries: function ($, response) {
+    reloadAfterAddingEntries: function ($, response, isImagesAdded) {
 
         $("#cgAddImagesWpUploader").css("display", "block");
         var gid = $('#cgBackendGalleryId').val();
@@ -712,8 +713,6 @@ cgJsClassAdmin.gallery.functions = {
 
         // to go simply sure that nothing will be deleted!!!
         $('#cgGalleryForm').find('.cg_delete').remove();
-
-        var isImagesAdded = false;
 
         if (response.indexOf('cg-images-added') != -1) {
             isImagesAdded = true;

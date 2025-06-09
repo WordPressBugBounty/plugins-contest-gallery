@@ -1,5 +1,317 @@
 <?php
 
+// post_cg_check_open_ai_key
+add_action('wp_ajax_post_cg_check_open_ai_key', 'post_cg_check_open_ai_key');
+if (!function_exists('post_cg_check_open_ai_key')) {
+    function post_cg_check_open_ai_key() {
+
+        $apiKey = cg1l_sanitize_method($_GET['cgOpenAiKey']);
+        $cgOpenAiKeyIsValid = false;
+        $cgOpenAiKeyErrorMessage = '';
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, 'https://api.openai.com/v1/models');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $apiKey
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($httpCode === 200) {
+            echo '###cgkeytrue###';
+           return;
+            /*
+           $cgOpenAiKeyIsValid = true;
+           echo "✅ API key is valid.\n\n";
+           $data = json_decode($response, true);
+           echo "Models available:\n";
+           foreach ($data['data'] as $model) {
+               echo "- " . $model['id'] . "\n";
+           }*/
+        } elseif ($httpCode === 401) {
+            return;
+            //echo "❌ Invalid API key (401 Unauthorized).\n";
+            $cgOpenAiKeyErrorMessage = '❌ Invalid API key (401 Unauthorized).';
+        } else {
+            return;
+            //echo "⚠️ Request failed. HTTP code: $httpCode\n";
+            //echo "cURL error: $error\n";
+            $cgOpenAiKeyErrorMessage = "⚠️ Request failed. HTTP code: $httpCode<br>cURL error: $error";
+        }
+
+        ?>
+        <script data-cg-processing="true">
+            cgJsClassAdmin.gallery.vars.cgOpenAiKeyIsValid = <?php echo json_encode($cgOpenAiKeyIsValid); ?>;
+            cgJsClassAdmin.gallery.vars.cgOpenAiKeyErrorMessage = <?php echo json_encode($cgOpenAiKeyErrorMessage); ?>;
+        </script>
+        <?php
+
+    }
+}
+
+// post_cg_generate_open_ai_image
+add_action('wp_ajax_post_cg_generate_open_ai_image', 'post_cg_generate_open_ai_image');
+if (!function_exists('post_cg_generate_open_ai_image')) {
+    function post_cg_generate_open_ai_image() {
+
+        /*
+        echo "<pre>";
+            print_r($_POST);
+        echo "</pre>";
+        */
+
+        $_POST = cg1l_sanitize_post($_POST);
+
+        global $wpdb;
+        $tablename_pro_options = $wpdb->prefix . "contest_gal1ery_pro_options";
+        $apiKey = $wpdb->get_var("SELECT OpenAiKey FROM $tablename_pro_options WHERE GeneralID = 1");
+
+        $prompt = $_POST['cgOpenAiPromptInput'];
+       // $prompt = 'Batman in a beautiful landscape of mountains waterfall and forrest';
+        $cgOpenAiGenIsValid = false;
+        $cgOpenAiGenErrorMessage = '';
+        $cgOpenAiGenUrl = '';
+
+        $ch = curl_init();
+
+        $default_socket_timeout = (int)(ini_get('default_socket_timeout'));
+        $max_execution_time = (int)(ini_get('max_execution_time'));
+
+        //$default_socket_timeout = 2;
+        //$max_execution_time = 3;
+
+        curl_setopt($ch, CURLOPT_URL, 'https://api.openai.com/v1/images/generations');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, ($default_socket_timeout-1));
+        curl_setopt($ch, CURLOPT_TIMEOUT, ($max_execution_time-1));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $apiKey,
+            'Content-Type: application/json'
+        ]);
+
+        if(cg_get_version()!='contest-gallery-pro'){
+            if(strpos($_POST['cg_ai_res'],'1536')!==false || strpos($_POST['cg_ai_res'],'1792')!==false){
+                $_POST['cg_ai_res'] = '1024x1024';
+            }
+        }
+
+        $data = [
+         //  'model' => 'dall-e-3',
+            'model' => $_POST['cg_ai_model'],
+            'prompt' => $prompt,
+            'n' => 1,
+            //'quality' => 'low',// for chat gpt-image-1
+            //'output_format' => 'png',// for chat gpt-image-1
+          //  'size' => '1024x1024',
+            'size' => $_POST['cg_ai_res'],
+        ];
+
+        if(!empty($_POST['cg_ai_quality'])){
+            $data['quality'] = $_POST['cg_ai_quality'];
+        }
+
+        /*
+        var_dump('$data');
+        echo "<pre>";
+        print_r($_POST);
+        print_r($data);
+        echo "</pre>";
+        die;*/
+
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        $curlErrorNo = curl_errno($ch);
+        $curlErrorMsg = curl_error($ch);
+
+        if($curlErrorMsg){
+            $cgOpenAiGenErrorMessage = $curlErrorMsg;
+            if(strpos($cgOpenAiGenErrorMessage, 'time')!==false){
+                $cgOpenAiGenErrorMessage .= '<br>if it is a timeout reason so increase that values in your .htaccess file<br>'.
+                    'php_value max_execution_time 240<br>php_value default_socket_timeout 240<br>
+                    240 seconds and higher is the recommend value to get the response from OpenAI.';
+            }
+        }else{
+            if (!$response) {
+                // echo json_encode(['error' => 'API request failed']);
+                $cgOpenAiGenErrorMessage = 'API request failed';
+            }else{
+                $json = json_decode($response, true);
+                /*var_dump('$json');
+                echo "<pre>";
+                    print_r($json);
+                echo "</pre>";*/
+                if (isset($json['data'][0]['url'])) {
+                    //echo json_encode(['imageUrl' => $json['data'][0]['url']]);
+                    //$cgOpenAiGenUrl = json_encode($json['data'][0]['url']);
+                    //$cgOpenAiGenUrl = str_replace('&quot;','',str_replace('"', '', stripslashes(urldecode( $cgOpenAiGenUrl ))));
+                    $cgOpenAiGenUrl = $json['data'][0]['url'];
+                   // var_dump($cgOpenAiGenUrl);
+                 //   die;
+                    $cgOpenAiGenIsValid = true;
+                } else if (isset($json['data'][0]['b64_json'])) {
+                    $cgOpenAiGenUrl = 'data:image/png;base64,'.$json['data'][0]['b64_json'];
+                    $cgOpenAiGenIsValid = true;
+                } else {
+                    //$json = json_decode($response, true);
+                    //var_dump($json);
+                    //echo json_encode(['error' => 'Image not generated.']);
+                    if (!empty($json['error']['message'])) {
+                        $cgOpenAiGenErrorMessage = $json['error']['message'];
+                    }else {
+                        $cgOpenAiGenErrorMessage = 'Error: image not generated.<br>The prompt might not comply with OpenAI policies.<br><a href="https://openai.com/policies/creating-images-and-videos-in-line-with-our-policies/" target="_blank" >https://openai.com/policies/creating-images...</a>';
+                    }
+
+                }
+            }
+        }
+
+        ?>
+        <script data-cg-processing="true">
+            cgJsClassAdmin.gallery.vars.cgOpenAiGenIsValid = <?php echo json_encode($cgOpenAiGenIsValid); ?>;
+            cgJsClassAdmin.gallery.vars.cgOpenAiGenErrorMessage = <?php echo json_encode($cgOpenAiGenErrorMessage); ?>;
+            cgJsClassAdmin.gallery.vars.cgOpenAiGenUrl = <?php echo json_encode($cgOpenAiGenUrl); ?>;
+        </script>
+        <?php
+
+    }
+}
+
+// post_cg_add_open_ai_image
+add_action('wp_ajax_post_cg_add_open_ai_image', 'post_cg_add_open_ai_image');
+if (!function_exists('post_cg_add_open_ai_image')) {
+    function post_cg_add_open_ai_image() {
+
+        // has to be done before sanitizing! Otherwise URL can't be called after sanitizing
+        // will be only used to call OpenAI URL
+        $imageUrl = $_POST['cg_openai_image_url'];
+
+        $_POST = cg1l_sanitize_post($_POST);
+        $wp_upload_dir = wp_upload_dir();
+
+        $fullName = $_POST['cg_openai_image_name'];
+        $GalleryID = absint($_POST['cgGalleryID']);
+
+        $cgAddOpenAiImageIsValid = true;
+        $cgAddOpenAiImageErrorMessage = '';
+
+        try {
+
+            $fullNamePath = $fullName;
+            $fullNamePath = cg_pre_process_name_for_url_name($fullNamePath);
+            $fullNamePath = cg_check_first_char_for_url_name_after_pre_processing($fullNamePath);
+            $fullNamePath = cg_check_last_char_for_url_name_after_pre_processing($fullNamePath);
+            $fullNamePath = cg_sluggify_for_url($fullNamePath);// has to be tested with asia chars one time
+            $fullNamePathFirst = $fullNamePath;
+
+            //var_dump('$fullName');
+            //var_dump($fullName);
+
+            $fullPath = $wp_upload_dir['basedir'].$wp_upload_dir['subdir'].'/'.$fullNamePathFirst.'.png';
+            //var_dump('$fullPath check');
+            //var_dump($fullPath);
+            if(file_exists($fullPath)){
+                //var_dump(112233);
+                $i = 0;
+                do{
+                    if($i==0){
+                        $i = 1;
+                    }else{
+                        $i++;
+                    }
+                    $add = '-'.$i;
+                    $fullNamePath = $fullNamePathFirst.$add;
+                    $fullPath = $wp_upload_dir['basedir'].$wp_upload_dir['subdir'].'/'.$fullNamePath.'.png';
+                }while(file_exists($fullPath));
+            }
+
+            if(strpos($imageUrl, 'data:image/png;base64,')!==false){
+                $content = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $imageUrl));
+                $formImage = imagecreatefromstring($content);
+                imagesavealpha($formImage,true);// required for png images... otherwise background black
+                imagepng($formImage,$fullPath);
+            }else{
+
+                // Initialize cURL session
+                $ch = curl_init($imageUrl);
+                $fp = fopen($fullPath, 'wb');
+
+                $default_socket_timeout = (int)(ini_get('default_socket_timeout'));
+                $max_execution_time = (int)(ini_get('max_execution_time'));
+
+                curl_setopt($ch, CURLOPT_FILE, $fp);
+                curl_setopt($ch, CURLOPT_HEADER, 0);
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Follow redirects
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, ($default_socket_timeout-1));
+                curl_setopt($ch, CURLOPT_TIMEOUT, ($max_execution_time-1));
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true); // Validate SSL certificate
+
+                $result = curl_exec($ch);
+                $error = curl_error($ch);
+                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+                curl_close($ch);
+                fclose($fp);
+
+                // Check for errors
+                if (!$result || $httpCode !== 200) {
+                    unlink($fullPath); // Remove the incomplete file
+                    //echo json_encode([
+                    // 'error' => 'Failed to download image: ' . ($error ?: 'HTTP code ' . $httpCode)
+                    //]);
+                    $cgAddOpenAiImageErrorMessage = 'Failed to download image: ' . ($error ?: 'HTTP code ' . $httpCode);
+                    $cgAddOpenAiImageIsValid = false;
+                }
+
+            }
+
+            if($cgAddOpenAiImageIsValid){
+                $attachment = [
+                    'guid' => $wp_upload_dir['url']."/".$fullNamePath.'.png',
+                    'post_mime_type' => 'image/png',
+                    'post_title' => (!empty($_POST['cgOpenAiTitle'])) ? contest_gal1ery_convert_for_html_output_without_nl2br($_POST['cgOpenAiTitle']) : $fullName,
+                    'post_content' => contest_gal1ery_convert_for_html_output_without_nl2br($_POST['cgOpenAiDescription']),
+                    'post_excerpt' => contest_gal1ery_convert_for_html_output_without_nl2br($_POST['cgOpenAiCaption']),
+                    'post_status' => 'inherit'
+                ];
+
+                $attach_id = wp_insert_attachment( $attachment, $fullPath );
+                $imagenew = get_post( $attach_id );
+                $fullsizepath = get_attached_file( $imagenew->ID );
+                $attach_data = wp_generate_attachment_metadata( $attach_id, $fullsizepath );
+                wp_update_attachment_metadata( $attach_id, $attach_data );
+                add_post_meta( $attach_id, '_wp_attachment_image_alt', contest_gal1ery_convert_for_html_output_without_nl2br($_POST['cgOpenAiAltText']));
+            }
+
+            if(!empty($_POST['cg_openai_image_is_add_to_gallery'])){
+                $cg_wp_upload_ids = [$attach_id];
+                $_POST['action2'] = $GalleryID;
+                require_once(__DIR__.'/../v10/v10-admin/gallery/wp-uploader.php');
+            }
+
+        }catch (Exception $e) {
+            $cgAddOpenAiImageIsValid = false;
+            $cgAddOpenAiImageErrorMessage = $e->getMessage();
+        }
+
+        ?>
+        <script data-cg-processing="true">
+            cgJsClassAdmin.gallery.vars.cgAddOpenAiImageIsValid = <?php echo json_encode($cgAddOpenAiImageIsValid); ?>;
+            cgJsClassAdmin.gallery.vars.cgAddOpenAiImageErrorMessage = <?php echo json_encode($cgAddOpenAiImageErrorMessage); ?>;
+        </script>
+        <?php
+
+    }
+}
+
 // post_cg_get_current_permalinks
 add_action('wp_ajax_post_cg_get_current_permalinks', 'post_cg_get_current_permalinks');
 if (!function_exists('post_cg_get_current_permalinks')) {
