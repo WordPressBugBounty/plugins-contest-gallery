@@ -121,7 +121,7 @@ if(!$intervalConf['shortcodeIsActive']){
         }
 
         if ($value->Field_Type == 'user-html-field') {
-            $content = contest_gal1ery_convert_for_html_output($value->Field_Content);
+            $content = contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Content);
             $cgContentField = "<div class='cg-" . $value->Field_Type . "'>$content</div>";
         }
 

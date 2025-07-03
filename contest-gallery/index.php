@@ -2,7 +2,7 @@
 /*
 Plugin Name: Contest Gallery
 Description: Contact form, files, photos and videos upload contest gallery plugin for WordPress. Create contact forms for entries with or without file/image upload. Create user registration form. Create login form. Create responsive galleries and allow to vote for any kind of entries. Sell entries via PayPal or Stripe API. Create images via OpenAI API.
-Version: 26.0.8
+Version: 26.0.9
 Author: Contest Gallery
 Author URI: http://www.contest-gallery.com/
 Text Domain: contest-gallery
@@ -112,6 +112,12 @@ include('functions/general/registry/create/cg-registry-create-functions.php');
 include('functions/general/registry/update/cg-registry-update-functions.php');
 include('ajax/ajax-functions-frontend.php');
 include('ajax/ajax-functions-backend.php');
+include('functions/backend/ajax/openai/cg-ai-general-functions.php');
+include('functions/backend/ajax/openai/post-cg-get-openai-prompts.php');
+include('functions/backend/ajax/openai/post-cg-check-openai-key.php');
+include('functions/backend/ajax/openai/post-cg-generate-openai-image.php');
+include('functions/backend/ajax/openai/post-cg-edit-openai-image.php');
+include('functions/backend/ajax/openai/post-cg-add-openai-image.php');
 include('functions/general/cg-check-file-types.php');
 include('functions/ecommerce/cg-ecommerce-include-functions.php');
 include('functions/ecommerce/general/cg-ecommerce-payment-processing-create-invoice.php');

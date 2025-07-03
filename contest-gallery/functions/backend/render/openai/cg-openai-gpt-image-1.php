@@ -6,7 +6,12 @@
         <img src="<?php echo $assetsPath;?>/gpt-image-1.png" >
     </div>
     <div class='cg_openai_model_desc' >
-        <b>GPT Image 1</b><br>State-of-the-art image generation model.<br>
+        <b>GPT Image 1</b><br>
+        <span id="cgOpenAiEditDesc" style="margin-bottom: 10px; display: block;">
+            Best OpenAI model to edit images.<br>
+            <a target="_blank" href="https://www.contest-gallery.com/openai-edit-images-example/">Full example of enormous capabilities to edit images</a><br>
+        </span>
+        State-of-the-art image generation model.<br>
         Offers different quality levels.<br>
         <a href="https://platform.openai.com/docs/models/gpt-image-1" target="_blank">Details</a>
     </div>
@@ -20,7 +25,8 @@
         The listed prices are <b>for 1 Million tokens</b>:<br>
         <a href="https://platform.openai.com/docs/models/gpt-image-1" target="_blank">Details</a><br><br>
         So an OpenAI GPT Image 1 prompt with 100 characters<br>
-        and standard quality will be around $0.10 - $0.30.
+        and standard quality will be around $0.10 - $0.30.<br><br>
+        Costs for a partially cached prompt might be up to 75% cheaper.
     </div>
     <div class="cg_openai_resolutions_container" >
         <div class="cg_openai_header" >

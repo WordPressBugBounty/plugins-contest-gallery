@@ -383,7 +383,7 @@ echo "<input type='hidden' id='isFromEditContactFormIsForWpPageTitleChangedOrHas
 
             include (__DIR__.'/fields/html.php');
 
-            include (__DIR__.'/fields/htmlf.php');
+            //include (__DIR__.'/fields/htmlf.php');// ht not works if this is inserted, no clue where it comes from
 
             include (__DIR__.'/fields/simple-captcha.php');
 

@@ -15,6 +15,7 @@ cgJsClassAdmin.gallery.functions = {
         file_frame.$el.find('.media-frame-router').append('<button class="cg_media_menu_item" id="cgAddYoutube" >Add social embed</button>');
         file_frame.$el.find('.media-frame-router').append('<button class="cg_media_menu_item" id="cgYoutubeLibrary" >Social embed library<span id="cgYoutubeLibraryNewAddedCount" class="cg_hide" >0</span></button>');
         file_frame.$el.find('.media-frame-router').append('<button class="cg_media_menu_item" id="cgCreateViaOpenAI" >Create via OpenAI</button>');
+        //file_frame.$el.find('.media-frame-router').append('<button class="cg_media_menu_item" id="cgEditViaOpenAI" >Edit via OpenAI</button>');
         if (isReplace) {
             file_frame.$el.addClass('cg_is_replace');
         }
@@ -1385,5 +1386,86 @@ cgJsClassAdmin.gallery.functions = {
             });
         });
 
+    },
+    getAiPrompts: function ($,cg_start,isShowMore) {
+        debugger
+        if(!cgJsClassAdmin.gallery.vars.openAiPromptsChecked || isShowMore){
+            cgJsClassAdmin.gallery.vars.openAiPromptsChecked = true;
+            var $cgOpenAiShowMoreLoader = $('#cgOpenAiContainer.cg_media_container.cg_cloned #cgOpenAiShowMoreLoader');
+            var $cgOpenAiMorePrompts = $('#cgOpenAiContainer.cg_media_container.cg_cloned #cgOpenAiMorePrompts');
+
+            if(isShowMore){
+                //$cgOpenAiShowMoreLoader.removeClass('cg_hide').get(0).scrollIntoView();
+                $cgOpenAiShowMoreLoader.removeClass('cg_hide');
+                $cgOpenAiMorePrompts.addClass('cg_hide');
+            }
+
+            var data = {};
+            data['action'] = 'post_cg_get_openai_prompts';
+            if(!cg_start || cg_start < 0){
+                cg_start = 0;
+            }
+            data['cg_start'] = cg_start;
+
+            $.ajax({
+                url: 'admin-ajax.php',
+                method: 'post',
+                data: data
+            }).done(function (response) {
+
+                var $response = jQuery(new DOMParser().parseFromString(response, 'text/html'));
+                $response.find('script[data-cg-processing="true"]').each(function () {
+                    var script = jQuery(this).html();
+                    eval(script);
+                });
+
+                // without cg_cloned in this moment, because might be not cloned, and doesn't matter if...
+                var $cgOpenAiMorePrompts = $('#cgOpenAiContainer.cg_media_container #cgOpenAiMorePrompts');
+
+                if(isShowMore){
+                    $cgOpenAiShowMoreLoader.addClass('cg_hide');
+                    cgJsClassAdmin.gallery.vars.openAiMorePrompts.forEach(function(item){
+                        cgJsClassAdmin.gallery.functions.appendAiPrompt($cgOpenAiMorePrompts.closest('#cgOpenAiContainer'),item,isShowMore);
+                    });
+                }
+
+                if (cgJsClassAdmin.gallery.vars.openAiMorePromptsCount) {
+                    $cgOpenAiMorePrompts.removeClass('cg_hide');
+                }else{
+                    $cgOpenAiMorePrompts.addClass('cg_hide');
+                }
+
+            }).fail(function (xhr, status, error) {
+                debugger
+                console.log('response error get openai prompts');
+                console.log(xhr);
+                console.log('status error get openai prompts');
+                console.log(status);
+                console.log('error error get openai prompts');
+                console.log(error);
+
+                return;
+
+            }).always(function () {
+
+                var test = 1;
+
+            });
+
+
+        }
+
+    },
+    appendAiPrompt: function ($cgOpenAiContainer,item,isShowMore) {
+        item.Prompt = jQuery('<textarea />').html(item.Prompt).text();
+        var content = '<div class="cg_openai_prompt" data-cg-Tstamp="'+item.Tstamp+'"  title="Select prompt"><div class="cg_openai_prompt_date">'+item.date+' (WP Timezone: UTC'+item.gmt_offset+')</div><div class="cg_openai_prompt_text">'+item.Prompt+'</div></div>';
+        debugger
+        if(!$cgOpenAiContainer.find('.cg_openai_prompt[data-cg-Tstamp="'+item.Tstamp+'"]').length){
+            if(isShowMore){
+                jQuery(content).insertBefore($cgOpenAiContainer.find('#cgOpenAiShowMoreLoader'));
+            }else{
+                $cgOpenAiContainer.find('#cgOpenAiPromptsEntered').prepend(content);
+            }
+        }
     }
 };

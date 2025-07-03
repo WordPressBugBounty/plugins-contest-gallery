@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, youtube
 Requires at least: 5.6
-Stable tag: 26.0.8
+Stable tag: 26.0.9
 Tested up to: 6.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -242,6 +242,11 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 
 == Changelog ==
 
+= V26.0.9 =
+* NEW: Successful prompts to OpenAI history.
+* FIXED: Adding HTML field when editing an upload form did not work.
+* FIXED: Security issue.
+
 = V26.0.8 =
 * NEW: Create images via OpenAI API and add them to your WordPress media library.
 
@@ -451,204 +456,5 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 * NEW: Configure invoice options and possible invoice number logic.
 * NEW: Show and export ecommerce orders.
 * NEW: All translations are now general and valid for all galleries.
-
-= V21.3.8 =
-* FIXED: Some entries might get not visible in frontend. If it is the case then go "Edit options" >>> "Status, repair..." >>> "Repair frontend".
-* FIXED: Disabling "Show image EXIF data" in frontend, still show EXIF data.
-
-= V21.3.7 =
-* FIXED: Entries might not displayed in frontend after resaving in backend, if certain contact form configuration.
-* FIXED: Entries information could not be updated in backend if frontend repair option was used.
-* FIXED: Check by cookie for contact form logic improved. Works also now on cached sites.
-
-= V21.3.6 =
-* FIXED: Security issue - found by patchstack.com team.
-* FIXED: Entries information configured being displayed in frontend not always displayed in frontend.
-
-= V21.3.5 =
-* FIXED: Security issues - found by patchstack.com team.
-
-= V21.3.4 =
-* FIXED: Outdated version of Chrome or certain configuration in Edge browser can cause STATUS_ACCESS_VIOLATION error when redirecting to another page after upload.
-
-= V21.3.3 =
-* FIXED: Select user role group for registered users over Contest Gallery registration form not changeable.
-
-= V21.3.2.1 =
-* FIXED: Security issue - found by patchstack.com team.
-
-= V21.3.2 =
-* FIXED: Theme CSS of pre tags in Contest Gallery container.
-* FIXED: By some themes rendered and visible empty pre tags, in contest gallery parent container.
-
-= V21.3.1 =
-* FIXED: Gallery appears with not required borders in some cases.
-* FIXED: Security issue - possible Cross Site Scripting (XSS) - found by patchstack.com team.
-
-= V21.3.0 =
-* FIXED: Nested frontend output in pre tags in case WordPress wpautop function is used, so output is correctly visible.
-
-= V21.2.9.1 =
-* FIXED: Backend "Edit options" not changeable in some cases.
-
-= V21.2.9 =
-* FIXED: Security issue - possible Cross Site Request Forgery (CSRF) - found by patchstack.com team.
-
-= V21.2.8.4 =
-* FIXED: Clicking on menu points in "Edit options" scroll menu might cause page reload because of third party plugins which use data-href attribute as href attribute.
-
-= V21.2.8.3 =
-* NEW: "Export all fields and total rating" EXIF data will be exported.
-* FIXED: Saving options added empty lines to some content fields.
-
-= V21.2.8.1 =
-* FIXED: Security issue - possible XSS Injection.
-
-= V21.2.8 =
-* FIXED: Frontend gallery titles and subtitles were not actualized in all cases.
-
-= V21.2.5 =
-* NEW: Thumb view images not cropped anymore.
-
-= V21.2.4 =
-* NEW: Notification visible for deleted images from media library or other third party plugin in backend images area.
-* FIXED: Copying a gallery did not copied all values in all cases.
-* FIXED: Editing info in user gallery did not show background drop when loading.
-* FIXED: Editing info in user gallery did not save category changes. After frontend reload still previous category was visible.
-
-= V21.2.3 =
-* NEW: "Minimum resolution for uploading of JPG, IMG and GIF" options.
-* FIXED: "Cookie voting just activated" appeared every time at the beginning of voting if "Check by cookie" for voting as recognition method is activated.
-
-= V21.2.2 =
-* NEW: Show categories unfolded.
-* FIXED: Upload entry confirmation not visible in all cases.
-
-= V21.2.1.3 =
-* FIXED: Comment and voting icons overlay in single entry view on mobiles if no additional is added to an entry.
-
-= V21.2.1.2 =
-* FIXED: Changes of width and height of thumbs in "Gallery view" >>> "Thumb view" options does not appear in frontend.
-
-= V21.2.1.1 =
-* FIXED: "Add files" was not working in backend if "Assign fields" was not clicked before.
-* FIXED: Selected wp post type field was not always displayed in the overview as selected during "Assign fields" when "Add files" in backend.
-
-= V21.2.1 =
-* NEW: WordPress post fields like "Alternative text", "Title", "Caption" and "Description" can be assigned to Input and Textarea field types when adding files in backend.
-* NEW: Input and Textarea field types can be added to WordPress post field like "Alternative text", "Title", "Caption" and "Description" when uploading in frontend.
-* FIXED: Interval conf might not show all available months in some cases.
-
-= V21.2.0 =
-* NEW: Frontend look modernized.
-* NEW: Backend look modernized.
-* NEW: Height view removed due to maintenance and look often equals thumb view.
-* NEW: Thumb view logic improved. No breaks on certain device widths anymore.
-* FIXED: Some CSS bugs frontend.
-* FIXED: Some handling bugs backend.
-* FIXED: Right categories count was not shown for user gallery.
-* FIXED: Backend gallery might not load, if has no entries, in some cases.
-* FIXED: Copying gallery with more then 100 entries was not working.
-* FIXED: "Export users data" was not working in "Users management".
-* FIXED: Colors and border radius settings of registration and login form had wrong source. Maybe has to be reconfigured after this update.
-
-= V21.1.3.1 =
-* FIXED: Login and registration form not visible after 21.1.3 update.
-
-= V21.1.3 =
-* NEW: Voting button centered and size increased in single entry view.
-* FIXED: Slashes appeared if additional CSS for gallery and entry view page was added with quotes in "Edit options".
-* FIXED: Mouseover icon info were shown vertical in full window mode in some cases.
-* FIXED: Delete (undo) multiple stars votes caused error.
-
-= V21.1.2.5 =
-* NEW: Slight CSS improvements backend and frontend.
-* FIXED: Undefined variable message in backend show comments area.
-* FIXED: Registered username was not shown in all cases in backend show comments area.
-
-= V21.1.2.4 =
-* FIXED: JPG images could not be uploaded in frontend in some cases.
-
-= V21.1.2.3 =
-* FIXED: Right count of entries in categories widget is not displayed if multiple cg_gallery shortcode galleries with different ids are inserted on same page.
-* FIXED: Noindex, nofollow meta tag added to cg_gallery_user custom post type pages.
-
-= V21.1.2.2 =
-* FIXED: Shortcode interval configuration did not work for some browsers.
-
-= V21.1.2.1 =
-* FIXED: Possible XSS vulnerability found by patchstack.com team.
-
-= V21.1.2 =
-* FIXED: Editing fields of user gallery using cg_gallery_user shortcode is not possible if select field is added to contact form.
-* FIXED: "Show as info in single entry view" option not available for date field.
-
-= V21.1.1 =
-* NEW: "Allow to activate deactivate new frontend entry direct from admin email without being logged in" option.
-* NEW: file_get_contents will be done instead of include in case allow_url_include=0 is set in PHP settings, so no error will be produced in that case.
-* FIXED: Uploading ZIP did not work in all cases.
-* FIXED: "Remove and correct votes" if "Allow vote via multiple stars" was activated did not work.
-
-= V21.1.0.1 =
-* FIXED: Copying gallery might cause undefined index error.
-* FIXED: Finished contests stay finished if gallery is copied as new "Shortcode interval configuration" settings are available since 21.1.0 to configure start and end time for any shortcode type.
-
-= V21.1.0 =
-* NEW: Interval configuration for every shortcode. Configure how long every shortcode should be active in a certain interval, monthly, weekly, daily and set range for every interval type.
-
-= V21.0.3.3 =
-* FIXED: Sorting rating by sum if multiple stars voting is activated did no work.
-
-= V21.0.3.2 =
-* FIXED: Next and previous file in entry buttons not visible in frontend if additional files were added to entry.
-* FIXED: Jpeg files were not visible in frontend if were added as additional files to entry via frontend.
-* FIXED: Rotated images in backend not always rotated in frontend.
-
-= V21.0.3.1 =
-* FIXED: Search in full window view did not work in all cases.
-* FIXED: Sorting by rating for one star voting did not work after 21.0.3 update.
-* FIXED: Social share icons were not visible in frontend after 21.0.3 update.
-
-= V21.0.3 =
-* NEW: Frontend JS and CSS files minified and summarized in min files.
-* FIXED: Delete entries button when using cg_gallery_user shortcode might not always appear.
-
-= V21.0.2 =
-* NEW: More social share buttons added: Email, SMS, Gmail, Yahoo, Evernote, OK, Douban, RenRen.
-* NEW: Clicking "Back to gallery button" from entry page scrolls to gallery after opening gallery page.
-* FIXED: Categories could not be set as sub or third title in gallery.
-* FIXED: Sort by WP username in backend did not work with a search value.
-* FIXED: Scrolling in blog view from bottom to top might cause incorrect loaded entries.
-
-= V21.0.1 =
-* NEW: Adding emojis when uploading or as content in backend and displaying them in frontend possible.
-* NEW: Enable to subtitle or third title to display in gallery.
-* NEW: Adding multiple gallery shortcodes of same type with same id and different entry_id on single page is possible now.
-* FIXED: Files with special chars in name failed to upload in frontend.
-* FIXED: Clicking back from full window mode sometimes forwarded to entry landing page.
-* FIXED: Line breaks in textarea fields were not visible after saving.
-* FIXED: Didn't scroll to gallery when closing full window if height or thumb view were activated.
-
-= V21.0.0 =
-* NEW: Contest Gallery Custom Post Type Pages for new or copied galleries.
-* NEW: Every entry has own pages. With galleries as parent pages.
-* NEW: Social share buttons available for new or copied galleries.
-* NEW: Configure in contact form which input or textarea should be shared on social media.
-* NEW: Further options related new entry landing pages.
-* NEW: Improved frontend look for new or copied galleries. Entry title, rating and comments count placed under the thumbs.
-* NEW: Improved backend look.
-
-= V20.0.0 =
-* NEW: Contact form. File upload in frontend is not mandatory anymore. Form can be used to add entries with and without file upload.
-* NEW: Entries without file upload are also manageable in backend and will be displayed in frontend.
-* NEW: cg_users_upload shortcode ist renamed in cg_users_contact shortcode, but can still be used like always.
-* NEW: Improved frontend gallery design.
-* NEW: Improved frontend handling when entries opened in full window.
-* NEW: Improved frontend handling on mobile devices.
-* NEW: Improved contact form design and creation handling in backend.
-* NEW: Improved registration form design and creation handling backend.
-* FIXED: Forwarding to another page after upload did not always work.
-* FIXED: Multiple issues relating gallery appearance and mobile devices in frontend.
-* FIXED: Changing added file did not work in backend.
 
 Full updates history can be found in changelog.txt in plugins directory.

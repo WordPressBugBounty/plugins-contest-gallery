@@ -28,6 +28,7 @@ jQuery(document).ready(function ($) {
     jQuery(document).on('click', '#cgSortable .cg_add_multiple_files_to_post_text,#cgSortable .cg_add_multiple_files_to_post, #cgSortable .cg_add_multiple_files_to_post_prev, #cgMultipleFilesForPostContainer .cg_backend_image_add_files_label, #cgMultipleFilesForPostContainer .cg_replace', function (event) {
         event.preventDefault();
         cgJsClassAdmin.gallery.functions.removeUsedFrames();
+        cgJsClassAdmin.gallery.functions.getAiPrompts(jQuery);
 
         //    $(document).on('click','#cgMultipleFilesForPostContainer .cg_backend_image_add_files_label',function () {
        //     cgJsClassAdmin.gallery.vars.$cg_backend_info_container.find('.cg_add_multiple_files_to_post').click();
@@ -184,7 +185,8 @@ jQuery(document).ready(function ($) {
 
     jQuery(document).on('click', '.cg_upload_wp_images_button', function (event) {
         cgJsClassAdmin.gallery.functions.removeUsedFrames();
-
+        cgJsClassAdmin.gallery.functions.getAiPrompts(jQuery);
+        debugger
         var file_frame;
         event.preventDefault();
 
@@ -323,7 +325,16 @@ jQuery(document).ready(function ($) {
             // We set multiple to false so only get one image from the uploader
             var attachment = file_frame.state().get('selection').toJSON();
             attachment = cgJsClassAdmin.gallery.functions.orderDescendAttachments(attachment,true);
-            cgMediaUploadGallery(attachment, file_frame);
+            //console.log('attachment');
+            //console.log(attachment);
+            debugger
+            if(file_frame.$el.find('.media-frame-content.cg_openai_edit').length){
+                cgJsClassAdmin.gallery.vars.openAIImagesToEdit = attachment;
+                $('.cg_upload_wp_images_button').click();
+                $('#cgEditViaOpenAI').addClass('cg_select_openai_images').click();
+            }else{
+                cgMediaUploadGallery(attachment, file_frame);
+            }
             //$("#cg_wp_upload_ids").append("<input class='cg_wp_upload_id' value="+attachment.id+" />");
         });
 

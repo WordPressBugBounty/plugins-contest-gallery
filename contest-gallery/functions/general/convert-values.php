@@ -1,5 +1,31 @@
 <?php
 
+if(!function_exists('contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method')){
+    function contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method ($content){
+        if(!empty($content)){
+            $content = trim($content);
+        }else{
+            $content = '';
+        }
+
+        if(!current_user_can( 'unfiltered_html' ) ){
+            $content = wp_kses_post($content);// script tags will be removed
+        }
+
+        $content = str_replace("&zwj;", "", $content);// might be inserted by html parser
+        $content = htmlentities($content, ENT_QUOTES);
+        $content = str_replace("&zwj;", "", $content);// might be inserted by html parser
+
+        //$content = nl2br($content);
+
+        //Ganz wichtig, ansonsten werden bei vielen Servern immer / (Backslashes bei Anf�hrungszeichen und aneren speziellen Sonderzeichen) hinzugef�gt
+        $content = preg_replace('/\\\\/', '', $content);
+
+        return cg1l_sanitize_method($content);
+
+    }
+}
+
 if(!function_exists('contest_gal1ery_htmlentities_and_preg_replace')){
     function contest_gal1ery_htmlentities_and_preg_replace ($content){
         if(!empty($content)){

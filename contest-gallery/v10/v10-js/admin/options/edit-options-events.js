@@ -2498,7 +2498,7 @@ $(document).on('click','#RatingVisibleForGalleryEcommerceOption',function (e) {
         $.ajax({
             url: 'admin-ajax.php',
             method: 'get',
-            data: 'cgOpenAiKey='+cgOpenAiKey+'&action=post_cg_check_open_ai_key'
+            data: 'cgOpenAiKey='+cgOpenAiKey+'&action=post_cg_check_openai_key'
         }).done(function (response) {
             if(response.indexOf('###cgkeytrue###')>-1){
                 cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Key is correct and will work<br>Don\'t forget to "Save options"');

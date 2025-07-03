@@ -315,12 +315,12 @@ HEREDOC;
     echo "</div>";
 
     if(intval($galleryDbVersion)>=14){
-    echo <<<HEREDOC
+        echo <<<HEREDOC
             <h4 id="view18" class="cg_view_header">PDF</h4>
             <div class="cg_view cgViewHelper18" >
 HEREDOC;
         include(__DIR__.'/views-content/view-pdf-options.php');
-    echo "</div>";
+        echo "</div>";
     }
 
     echo <<<HEREDOC

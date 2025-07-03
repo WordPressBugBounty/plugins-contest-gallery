@@ -37,6 +37,7 @@ if(!function_exists('contest_gal1ery_create_table')){
         $tablename_google_users = $wpdb->base_prefix . "$i"."contest_gal1ery_google_users";
         $tablename_wp_pages = $wpdb->base_prefix . "$i"."contest_gal1ery_wp_pages";
         $tablename_wp_pdf_previews = $wpdb->base_prefix . "$i"."contest_gal1ery_pdf_previews";
+        $tablename_ai_prompts = $wpdb->base_prefix . "$i"."contest_gal1ery_ai_prompts";
       //  $tablename_general = $wpdb->base_prefix . "$i"."contest_gal1ery_general";
 
         $charset_collate = $wpdb->get_charset_collate();
@@ -1389,6 +1390,23 @@ HEREDOC;
             WpPage BIGINT(20) DEFAULT 0,
             INDEX WpPage_index (WpPage)
             ) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($sql);
+            cg_echo_last_sql_error($isShowError,$lastError);
+        }
+
+        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_ai_prompts'") != $tablename_ai_prompts){
+            $sql = "CREATE TABLE $tablename_ai_prompts (
+		id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        Prompt TEXT DEFAULT '',
+        RevisedPrompt TEXT DEFAULT '',
+        Company VARCHAR(100) DEFAULT '',
+        Model VARCHAR(100) DEFAULT '',
+        Quality VARCHAR(100) DEFAULT '',
+        Resolution VARCHAR(100) DEFAULT '',
+		Type INT(11) DEFAULT 0,
+		Tstamp INT(11) DEFAULT 0
+		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
             cg_echo_last_sql_error($isShowError,$lastError);

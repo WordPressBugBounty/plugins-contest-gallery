@@ -1,5 +1,6 @@
 <?php
 
+
 // 1. Delete Felder in Entries, F_Input, F_Output
 // 2. Swap Field_Order in Entries, F_Input, F_Output (bei post "done-upload" wird alles mitgegeben
 // 3. Neue Felder hinzuf�gen in F_Input, Entries
@@ -246,7 +247,7 @@ if(!empty($_POST['upload'])){
 			if(is_array($value)){
 
 				foreach($value as $id => $name){
-					$name = contest_gal1ery_htmlentities_and_preg_replace($name);
+					$name = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($name);
 					$wpdb->update(
 						"$tablename_categories",
 						array('Name' => $name,'Field_Order' => $order),
@@ -261,7 +262,7 @@ if(!empty($_POST['upload'])){
 			}
 			else{
 
-				$value = contest_gal1ery_htmlentities_and_preg_replace($value);
+				$value = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($value);
 
 				$wpdb->query( $wpdb->prepare(
 					"
@@ -332,31 +333,31 @@ if(!empty($_POST['upload'])){
 					$active = 2;
 				}
 
-				$bhFieldsArray['mandatory']=sanitize_text_field($onOff);
-				$bhFieldsArray['collapsed']=sanitize_text_field($collapsed);
+				$bhFieldsArray['mandatory']=cg1l_sanitize_method($onOff);
+				$bhFieldsArray['collapsed']=cg1l_sanitize_method($collapsed);
 
-				$bhFieldsArray['titel']= sanitize_text_field(htmlentities($field['title'], ENT_QUOTES));
-				$bhFieldsArray['file-type-img']= sanitize_text_field(htmlentities(!empty($field['file-type-img']) ? $field['file-type-img'] : '' , ENT_QUOTES));
-				$bhFieldsArray['alternative-file-title']= sanitize_text_field(htmlentities(!empty($field['alternative-file-title']) ? $field['alternative-file-title'] : '' , ENT_QUOTES));
-				$bhFieldsArray['alternative-file-type-pdf'] = sanitize_text_field(htmlentities(!empty($field['alternative-file-type-pdf']) ? $field['alternative-file-type-pdf'] : '' , ENT_QUOTES));
-				$bhFieldsArray['alternative-file-type-zip'] = sanitize_text_field(htmlentities(!empty($field['alternative-file-type-zip']) ? $field['alternative-file-type-zip'] : '' , ENT_QUOTES));
-				$bhFieldsArray['alternative-file-type-txt'] = sanitize_text_field(htmlentities(!empty($field['alternative-file-type-txt']) ? $field['alternative-file-type-txt'] : '' , ENT_QUOTES));
-				$bhFieldsArray['alternative-file-type-doc'] = sanitize_text_field(htmlentities(!empty($field['alternative-file-type-doc']) ? $field['alternative-file-type-doc'] : '' , ENT_QUOTES));
-				$bhFieldsArray['alternative-file-type-docx'] = sanitize_text_field(htmlentities(!empty($field['alternative-file-type-docx']) ? $field['alternative-file-type-docx'] : '' , ENT_QUOTES));
-				$bhFieldsArray['alternative-file-type-xls'] = sanitize_text_field(htmlentities(!empty($field['alternative-file-type-xls']) ? $field['alternative-file-type-xls'] : '' , ENT_QUOTES));
-				$bhFieldsArray['alternative-file-type-xlsx'] = sanitize_text_field(htmlentities(!empty($field['alternative-file-type-xlsx']) ? $field['alternative-file-type-xlsx'] : '' , ENT_QUOTES));
-				$bhFieldsArray['alternative-file-type-csv'] = sanitize_text_field(htmlentities(!empty($field['alternative-file-type-csv']) ? $field['alternative-file-type-csv'] : '' , ENT_QUOTES));
-				$bhFieldsArray['alternative-file-type-mp3'] = sanitize_text_field(htmlentities(!empty($field['alternative-file-type-mp3']) ? $field['alternative-file-type-mp3'] : '' , ENT_QUOTES));
-				$bhFieldsArray['alternative-file-type-m4a'] = sanitize_text_field(htmlentities(!empty($field['alternative-file-type-m4a']) ? $field['alternative-file-type-m4a'] : '' , ENT_QUOTES));
-				$bhFieldsArray['alternative-file-type-ogg'] = sanitize_text_field(htmlentities(!empty($field['alternative-file-type-ogg']) ? $field['alternative-file-type-ogg'] : '' , ENT_QUOTES));
-				$bhFieldsArray['alternative-file-type-wav'] = sanitize_text_field(htmlentities(!empty($field['alternative-file-type-wav']) ? $field['alternative-file-type-wav'] : '' , ENT_QUOTES));
-				$bhFieldsArray['alternative-file-type-mp4'] = sanitize_text_field(htmlentities(!empty($field['alternative-file-type-mp4']) ? $field['alternative-file-type-mp4'] : '' , ENT_QUOTES));
-				// $bhFieldsArray['alternative-file-type-avi'] = sanitize_text_field(htmlentities(!empty($field['alternative-file-type-avi']) ? $field['alternative-file-type-avi'] : '' , ENT_QUOTES));
-				$bhFieldsArray['alternative-file-type-mov'] = sanitize_text_field(htmlentities(!empty($field['alternative-file-type-mov']) ? $field['alternative-file-type-mov'] : '' , ENT_QUOTES));
-				$bhFieldsArray['alternative-file-type-webm'] = sanitize_text_field(htmlentities(!empty($field['alternative-file-type-webm']) ? $field['alternative-file-type-webm'] : '' , ENT_QUOTES));
-				$bhFieldsArray['alternative-file-type-ppt'] = sanitize_text_field(htmlentities(!empty($field['alternative-file-type-ppt']) ? $field['alternative-file-type-ppt'] : '' , ENT_QUOTES));
-				$bhFieldsArray['alternative-file-type-pptx'] = sanitize_text_field(htmlentities(!empty($field['alternative-file-type-pptx']) ? $field['alternative-file-type-pptx'] : '' , ENT_QUOTES));
-				//$bhFieldsArray['alternative-file-type-wmv'] = sanitize_text_field(htmlentities(!empty($field['alternative-file-type-wmv']) ? $field['alternative-file-type-wmv'] : '' , ENT_QUOTES));
+				$bhFieldsArray['titel']= cg1l_sanitize_method($field['title']);
+				$bhFieldsArray['file-type-img']= cg1l_sanitize_method(!empty($field['file-type-img']) ? $field['file-type-img'] : '' );
+				$bhFieldsArray['alternative-file-title']= cg1l_sanitize_method(!empty($field['alternative-file-title']) ? $field['alternative-file-title'] : '' );
+				$bhFieldsArray['alternative-file-type-pdf'] = cg1l_sanitize_method(!empty($field['alternative-file-type-pdf']) ? $field['alternative-file-type-pdf'] : '' );
+				$bhFieldsArray['alternative-file-type-zip'] = cg1l_sanitize_method(!empty($field['alternative-file-type-zip']) ? $field['alternative-file-type-zip'] : '' );
+				$bhFieldsArray['alternative-file-type-txt'] = cg1l_sanitize_method(!empty($field['alternative-file-type-txt']) ? $field['alternative-file-type-txt'] : '' );
+				$bhFieldsArray['alternative-file-type-doc'] = cg1l_sanitize_method(!empty($field['alternative-file-type-doc']) ? $field['alternative-file-type-doc'] : '' );
+				$bhFieldsArray['alternative-file-type-docx'] = cg1l_sanitize_method(!empty($field['alternative-file-type-docx']) ? $field['alternative-file-type-docx'] : '' );
+				$bhFieldsArray['alternative-file-type-xls'] = cg1l_sanitize_method(!empty($field['alternative-file-type-xls']) ? $field['alternative-file-type-xls'] : '' );
+				$bhFieldsArray['alternative-file-type-xlsx'] = cg1l_sanitize_method(!empty($field['alternative-file-type-xlsx']) ? $field['alternative-file-type-xlsx'] : '' );
+				$bhFieldsArray['alternative-file-type-csv'] = cg1l_sanitize_method(!empty($field['alternative-file-type-csv']) ? $field['alternative-file-type-csv'] : '' );
+				$bhFieldsArray['alternative-file-type-mp3'] = cg1l_sanitize_method(!empty($field['alternative-file-type-mp3']) ? $field['alternative-file-type-mp3'] : '' );
+				$bhFieldsArray['alternative-file-type-m4a'] = cg1l_sanitize_method(!empty($field['alternative-file-type-m4a']) ? $field['alternative-file-type-m4a'] : '' );
+				$bhFieldsArray['alternative-file-type-ogg'] = cg1l_sanitize_method(!empty($field['alternative-file-type-ogg']) ? $field['alternative-file-type-ogg'] : '' );
+				$bhFieldsArray['alternative-file-type-wav'] = cg1l_sanitize_method(!empty($field['alternative-file-type-wav']) ? $field['alternative-file-type-wav'] : '' );
+				$bhFieldsArray['alternative-file-type-mp4'] = cg1l_sanitize_method(!empty($field['alternative-file-type-mp4']) ? $field['alternative-file-type-mp4'] : '' );
+				// $bhFieldsArray['alternative-file-type-avi'] = cg1l_sanitize_method(!empty($field['alternative-file-type-avi']) ? $field['alternative-file-type-avi'] : '' );
+				$bhFieldsArray['alternative-file-type-mov'] = cg1l_sanitize_method(!empty($field['alternative-file-type-mov']) ? $field['alternative-file-type-mov'] : '' );
+				$bhFieldsArray['alternative-file-type-webm'] = cg1l_sanitize_method(!empty($field['alternative-file-type-webm']) ? $field['alternative-file-type-webm'] : '' );
+				$bhFieldsArray['alternative-file-type-ppt'] = cg1l_sanitize_method(!empty($field['alternative-file-type-ppt']) ? $field['alternative-file-type-ppt'] : '' );
+				$bhFieldsArray['alternative-file-type-pptx'] = cg1l_sanitize_method(!empty($field['alternative-file-type-pptx']) ? $field['alternative-file-type-pptx'] : '' );
+				//$bhFieldsArray['alternative-file-type-wmv'] = cg1l_sanitize_method(!empty($field['alternative-file-type-wmv']) ? $field['alternative-file-type-wmv'] : '' );
 
 				if(!empty($cgProFalse)){
 					$bhFieldsArray['alternative-file-type-pdf'] = '';
@@ -380,8 +381,8 @@ if(!empty($_POST['upload'])){
 					$bhFieldsArray['alternative-file-type-pptx'] = '';
 				}
 
-				$bhFieldsArray['alternative-file-preview-required']= sanitize_text_field(htmlentities(!empty($field['alternative-file-preview-required']) ? $field['alternative-file-preview-required'] : '' , ENT_QUOTES));
-				$bhFieldsArray['alternative-file-preview-hide']= sanitize_text_field(htmlentities(!empty($field['alternative-file-preview-hide']) ? $field['alternative-file-preview-hide'] : '' , ENT_QUOTES));
+				$bhFieldsArray['alternative-file-preview-required']= cg1l_sanitize_method(!empty($field['alternative-file-preview-required']) ? $field['alternative-file-preview-required'] : '' );
+				$bhFieldsArray['alternative-file-preview-hide']= cg1l_sanitize_method(!empty($field['alternative-file-preview-hide']) ? $field['alternative-file-preview-hide'] : '' );
 
 				$bhFieldsArray = serialize($bhFieldsArray);
 				$order = $field['order'];
@@ -416,8 +417,8 @@ if(!empty($_POST['upload'])){
 			if($field['type']=='cb' && $cgProVersion){// CHECK AGREEMENT!!!!!!!
 
 				$cbFieldsArray = array();
-				$cbFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace($field['title']);
-				$cbFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace($field['content']);
+				$cbFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
+				$cbFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
 
 				if(!empty($field['infoInSlider'])){
 					$Show_Slider = 1;
@@ -435,7 +436,7 @@ if(!empty($_POST['upload'])){
 
 				$order = $field['order'];
 
-				$cbFieldsArray['mandatory']=sanitize_text_field($onOff);
+				$cbFieldsArray['mandatory']=cg1l_sanitize_method($onOff);
 
 				/*                echo "<pre>";
 								print_r($cbFieldsArray);
@@ -474,10 +475,10 @@ if(!empty($_POST['upload'])){
 			if($field['type']=='nf' OR $field['type']=='fbt'){// TEXT FIELD!!!!!
 
 				$nfFieldsArray = array();
-				$nfFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace($field['title']);
-				$nfFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace($field['content']);
-				$nfFieldsArray['min-char'] = contest_gal1ery_htmlentities_and_preg_replace($field['min-char']);
-				$nfFieldsArray['max-char'] = contest_gal1ery_htmlentities_and_preg_replace($field['max-char']);
+				$nfFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
+				$nfFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
+				$nfFieldsArray['min-char'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['min-char']);
+				$nfFieldsArray['max-char'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['max-char']);
 
 				if(!empty($field['watermarkChecked'])){
 					$WatermarkPosition = $field['watermarkPosition'];
@@ -563,7 +564,7 @@ if(!empty($_POST['upload'])){
 					$active = 0;
 				}
 
-				$nfFieldsArray['mandatory']=sanitize_text_field($onOff);
+				$nfFieldsArray['mandatory']=cg1l_sanitize_method($onOff);
 
 				/*
 				echo "<pre>";
@@ -628,8 +629,8 @@ if(!empty($_POST['upload'])){
 			if($field['type']=='dt'){// TEXT FIELD!!!!!
 
 				$dtFieldsArray = array();
-				$dtFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace($field['title']);
-				$dtFieldsArray['format'] = contest_gal1ery_htmlentities_and_preg_replace($field['format']);
+				$dtFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
+				$dtFieldsArray['format'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['format']);
 
 
 				if(!empty($field['infoInSlider'])){
@@ -654,7 +655,7 @@ if(!empty($_POST['upload'])){
 					$active = 0;
 				}
 
-				$dtFieldsArray['mandatory']=sanitize_text_field($onOff);
+				$dtFieldsArray['mandatory']=cg1l_sanitize_method($onOff);
 
 				/*
 				echo "<pre>";
@@ -722,8 +723,8 @@ if(!empty($_POST['upload'])){
 			if($field['type']=='url'){
 
 				$urlFieldsArray = array();
-				$urlFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace($field['title']);
-				$urlFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace($field['content']);
+				$urlFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
+				$urlFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
 
 				if(!empty($field['infoInSlider'])){
 					$Show_Slider = 1;
@@ -766,7 +767,7 @@ if(!empty($_POST['upload'])){
 					$active = 0;
 				}
 
-				$urlFieldsArray['mandatory']=sanitize_text_field($onOff);
+				$urlFieldsArray['mandatory']=cg1l_sanitize_method($onOff);
 				$urlFieldsArray = serialize($urlFieldsArray);
 				$order = $field['order'];
 
@@ -811,8 +812,8 @@ if(!empty($_POST['upload'])){
 			if($field['type']=='ef' && $cgProVersion){
 
 				$efFieldsArray = array();
-				$efFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace($field['title']);
-				$efFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace($field['content']);
+				$efFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
+				$efFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
 
 				if(!empty($field['infoInSlider'])){
 					$Show_Slider = 1;
@@ -836,7 +837,7 @@ if(!empty($_POST['upload'])){
 					$active = 0;
 				}
 
-				$efFieldsArray['mandatory']=sanitize_text_field($onOff);
+				$efFieldsArray['mandatory']=cg1l_sanitize_method($onOff);
 				$efFieldsArray = serialize($efFieldsArray);
 				$order = $field['order'];
 
@@ -883,10 +884,10 @@ if(!empty($_POST['upload'])){
 				}
 
 				$kfFieldsArray = array();
-				$kfFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace($field['title']);
-				$kfFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_textarea($field['content']);
-				$kfFieldsArray['min-char'] = contest_gal1ery_htmlentities_and_preg_replace($field['min-char']);
-				$kfFieldsArray['max-char'] = contest_gal1ery_htmlentities_and_preg_replace($field['max-char']);
+				$kfFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
+				$kfFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
+				$kfFieldsArray['min-char'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['min-char']);
+				$kfFieldsArray['max-char'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['max-char']);
 
 				if(!empty($field['required'])){
 					if($field['required']=='on'){
@@ -904,7 +905,7 @@ if(!empty($_POST['upload'])){
 					$active = 0;
 				}
 
-				$kfFieldsArray['mandatory']=sanitize_text_field($onOff);
+				$kfFieldsArray['mandatory']=cg1l_sanitize_method($onOff);
 				$kfFieldsArray = serialize($kfFieldsArray);
 				$order = $field['order'];
 
@@ -989,9 +990,9 @@ if(!empty($_POST['upload'])){
 				}
 
 				$htFieldsArray = array();
-				$htFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace($field['title']);
-				//$htFieldsArray['content'] = sanitize_text_field(htmlentities($field['content'], ENT_QUOTES));
-				$htFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace($field['content']);
+				$htFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
+				//$htFieldsArray['content'] = cg1l_sanitize_method($field['content']);
+				$htFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
 
 				// no need for html field
 				/*            if(!empty($field['required'])){
@@ -999,7 +1000,7 @@ if(!empty($_POST['upload'])){
 							}else{
 								$onOff = 'off';
 							}
-							$htFieldsArray['mandatory']=sanitize_text_field($onOff);*/
+							$htFieldsArray['mandatory']=cg1l_sanitize_method($onOff);*/
 
 				if(empty($field['hide'])){
 					$active = 1;
@@ -1043,7 +1044,7 @@ if(!empty($_POST['upload'])){
 			if($field['type']=='caRo'){
 
 				$caFieldsArray = array();
-				$caFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace($field['title']);
+				$caFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
 
 				if(!empty($field['infoInSlider'])){
 					$Show_Slider = 1;
@@ -1059,7 +1060,7 @@ if(!empty($_POST['upload'])){
 					$active = 0;
 				}
 
-				$caFieldsArray['mandatory']=sanitize_text_field($onOff);
+				$caFieldsArray['mandatory']=cg1l_sanitize_method($onOff);
 				$caFieldsArray = serialize($caFieldsArray);
 				$order = $field['order'];
 
@@ -1097,7 +1098,7 @@ if(!empty($_POST['upload'])){
 
 				$caFieldsArray = array();
 				if(!empty($field['title'])){
-					$caFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace($field['title']);
+					$caFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
 				}else{
 					$caFieldsArray['titel']='';
 				}
@@ -1116,7 +1117,7 @@ if(!empty($_POST['upload'])){
 					$active = 0;
 				}
 
-				$caFieldsArray['mandatory']=sanitize_text_field($onOff);
+				$caFieldsArray['mandatory']=cg1l_sanitize_method($onOff);
 				$caFieldsArray = serialize($caFieldsArray);
 				$order = $field['order'];
 				$ReCaKey = $field['ReCaKey'];
@@ -1155,8 +1156,8 @@ if(!empty($_POST['upload'])){
 			if($field['type']=='se'){
 
 				$seFieldsArray = array();
-				$seFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace($field['title']);
-				$seFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace($field['content']);
+				$seFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
+				$seFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
 
 				if(!empty($field['watermarkChecked'])){
 					$WatermarkPosition = $field['watermarkPosition'];
@@ -1187,7 +1188,7 @@ if(!empty($_POST['upload'])){
 					$active = 0;
 				}
 
-				$seFieldsArray['mandatory']=sanitize_text_field($onOff);
+				$seFieldsArray['mandatory']=cg1l_sanitize_method($onOff);
 				$seFieldsArray = serialize($seFieldsArray);
 
 				$order = $field['order'];
@@ -1247,7 +1248,7 @@ if(!empty($_POST['upload'])){
 			if($field['type']=='sec'){
 
 				$secFieldsArray = array();
-				$secFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace($field['title']);
+				$secFieldsArray['titel']=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
 
 				if(!empty($field['watermarkChecked'])){
 					$WatermarkPosition = $field['watermarkPosition'];
@@ -1278,7 +1279,7 @@ if(!empty($_POST['upload'])){
 					$active = 0;
 				}
 
-				$secFieldsArray['mandatory']=sanitize_text_field($onOff);
+				$secFieldsArray['mandatory']=cg1l_sanitize_method($onOff);
 				$secFieldsArray = serialize($secFieldsArray);
 
 				$order = $field['order'];

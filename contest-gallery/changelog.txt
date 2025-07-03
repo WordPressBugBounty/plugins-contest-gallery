@@ -1,5 +1,10 @@
 Contest Gallery
 
+= V26.0.9 =
+* NEW: Successful prompts to OpenAI history.
+* FIXED: Adding HTML field when editing an upload form did not work.
+* FIXED: Security issue.
+
 = V26.0.8 =
 * NEW: Create images via OpenAI API and add them to your WordPress media library.
 

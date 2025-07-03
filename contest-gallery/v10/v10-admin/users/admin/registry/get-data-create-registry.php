@@ -114,8 +114,8 @@ if (!empty($_POST['submit'])) {
 $get_Field_Id = (!empty($_POST['Field_Id'])) ? $_POST['Field_Id'] : [];
 $get_Field_Type = (!empty($_POST['Field_Type'])) ? $_POST['Field_Type'] : [];
 $get_Field_Name = (!empty($_POST['Field_Name'])) ? $_POST['Field_Name'] : [];
-$get_ReCaKey = (!empty($_POST['ReCaKey'])) ? sanitize_text_field($_POST['ReCaKey']) : '';
-$get_ReCaLang = (!empty($_POST['ReCaLang'])) ? sanitize_text_field($_POST['ReCaLang']) : '';
+$get_ReCaKey = (!empty($_POST['ReCaKey'])) ? cg1l_sanitize_method($_POST['ReCaKey']) : '';
+$get_ReCaLang = (!empty($_POST['ReCaLang'])) ? cg1l_sanitize_method($_POST['ReCaLang']) : '';
 $get_Field_Content = (!empty($_POST['Field_Content'])) ? $_POST['Field_Content'] : [];
 $get_Min_Char = (!empty($_POST['Min_Char'])) ? $_POST['Min_Char'] : [];
 $get_Max_Char = (!empty($_POST['Max_Char'])) ? $_POST['Max_Char'] : [];
@@ -150,7 +150,7 @@ foreach($get_Field_Type as $key => $value){
             if($get_Necessary[$i]=='on'){$update_Necessary=1;}
             else{$update_Necessary=0;}
 
-            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Name[$i]);
+            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
 
             if(isset($get_Field_Id[$i])){
                 $wpdb->update(
@@ -199,8 +199,8 @@ foreach($get_Field_Type as $key => $value){
             if($get_Necessary[$i]=='on'){$update_Necessary=1;}
             else{$update_Necessary=0;}
 
-            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Name[$i]);
-            $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Content[$i]);
+            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
+            $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
 
             if(isset($get_Field_Id[$i])){
                 $wpdb->update(
@@ -249,8 +249,8 @@ foreach($get_Field_Type as $key => $value){
             if($get_Necessary[$i]=='on'){$update_Necessary=1;}
             else{$update_Necessary=0;}
 
-            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Name[$i]);
-            $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Content[$i]);
+            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
+            $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
 
             if(isset($get_Field_Id[$i])){
                 $wpdb->update(
@@ -299,8 +299,8 @@ foreach($get_Field_Type as $key => $value){
             if($get_Necessary[$i]=='on'){$update_Necessary=1;}
             else{$update_Necessary=0;}
 
-            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Name[$i]);
-            $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Content[$i]);
+            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
+            $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
 
             if(isset($get_Field_Id[$i])){
                 $wpdb->update(
@@ -344,8 +344,8 @@ foreach($get_Field_Type as $key => $value){
 
             $update_Necessary=1;// so far check agreement is always required
 
-            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Name[$i]);
-            $get_Field_Content[$i] = contest_gal1ery_htmlentities_and_preg_replace($get_Field_Content[$i]);
+            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
+            $get_Field_Content[$i] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
 
             if(!isset($get_Field_Content[$i])){
                 $get_Field_Content[$i] = '';
@@ -391,7 +391,7 @@ foreach($get_Field_Type as $key => $value){
             }
 
 
-					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Name[$i]);
+					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
 
 					if(isset($get_Field_Id[$i])){
 
@@ -434,7 +434,7 @@ foreach($get_Field_Type as $key => $value){
                 $Active = 0;
             }
 
-					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace((isset($get_Field_Name[$i])) ? $get_Field_Name[$i] : '');
+					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method((isset($get_Field_Name[$i])) ? $get_Field_Name[$i] : '');
 
 					if(isset($get_Field_Id[$i])){
 						$wpdb->update(
@@ -475,8 +475,8 @@ foreach($get_Field_Type as $key => $value){
                     $Active = 0;
                 }
 				
-                $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Name[$i]);
-                $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_textarea($get_Field_Content[$i]);
+                $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
+                $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
 
 
                 if(!isset($get_Necessary[$i])){
@@ -540,8 +540,8 @@ foreach($get_Field_Type as $key => $value){
 				    // to go sure, to avoid eventually error 05 December 2021
                     $get_Field_Name[$i] = (!empty($get_Field_Name[$i])) ? $get_Field_Name[$i] : '';
 
-					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Name[$i]);
-					$get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Content[$i]);
+					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
+					$get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
 
 					if(isset($get_Field_Id[$i])){
 						$wpdb->update(
@@ -577,8 +577,8 @@ foreach($get_Field_Type as $key => $value){
 
 	if($value=="main-user-name"){
 		
-					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Name[$i]);
-					$get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Content[$i]);
+					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
+					$get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
 
 						if($get_Field_Id[$i]){
 							$wpdb->update(
@@ -596,8 +596,8 @@ foreach($get_Field_Type as $key => $value){
 
 	if($value=="main-nick-name"){
 
-					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Name[$i]);
-					$get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Content[$i]);
+					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
+					$get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
 
 						if($get_Field_Id[$i]){
 							$wpdb->update(
@@ -615,8 +615,8 @@ foreach($get_Field_Type as $key => $value){
 	
 	if($value=="main-mail"){
 		
-            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Name[$i]);
-            $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Content[$i]);
+            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
+            $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
 
 
         if(!isset($get_Field_Content[$i])){
@@ -640,8 +640,8 @@ foreach($get_Field_Type as $key => $value){
 	
 	if($value=="password"){
 		
-					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Name[$i]);
-					$get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Content[$i]);
+					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
+					$get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
 		
 					if($get_Field_Id[$i]){
 						
@@ -660,8 +660,8 @@ foreach($get_Field_Type as $key => $value){
 		}
 	    if($value=="password-confirm"){
 
-					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Name[$i]);
-					$get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Content[$i]);
+					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
+					$get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
 		
 					if($get_Field_Id[$i]){
 						$wpdb->update(
@@ -684,8 +684,8 @@ foreach($get_Field_Type as $key => $value){
             $Active = 0;
         }
 
-        $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace($get_Field_Name[$i]);
-                    $get_Field_Content[$i] = contest_gal1ery_htmlentities_and_preg_replace($get_Field_Content[$i]);
+        $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
+                    $get_Field_Content[$i] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
 
 
         if(!empty($get_Field_Id[$i])){

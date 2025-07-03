@@ -1222,7 +1222,7 @@ html:lang(he-il) .rtl #wpadminbar * {
 #wpadminbar .ab-icon:before,
 #wpadminbar .ab-item:before {
     position: relative;
-    transition: all .1s ease-in-out
+    transition: all .1s ease-in-out;
 }
 
 #wpadminbar .ab-label {
@@ -4524,7 +4524,7 @@ div.action-links {
     line-height: 18px;
     font-size: 14px;
     text-decoration: none;
-    transition: none
+    transition: none;
 }
 
 #plugin-information-tabs a.current {
@@ -5855,7 +5855,7 @@ textarea {
     background-color: #fff;
     color: #32373c;
     outline: 0;
-    transition: 50ms border-color ease-in-out
+    transition: 50ms border-color ease-in-out;
 }
 
 input[type=checkbox]:focus,
@@ -7353,7 +7353,7 @@ screen and (max-width:450px) {
     display: inline-block;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: all .1s ease-in-out
+    transition: all .1s ease-in-out;
 }
 
 .icon16.icon-dashboard:before {
@@ -7597,7 +7597,7 @@ screen and (max-width:450px) {
 .folded #adminmenu .wp-has-current-submenu li>a {
     padding-right: 16px;
     padding-left: 14px;
-    transition: all .1s ease-in-out, outline 0s
+    transition: all .1s ease-in-out, outline 0s;
 }
 
 #adminmenu .wp-has-current-submenu ul>li>a,
@@ -7659,7 +7659,7 @@ div.wp-menu-image:before {
     color: #a0a5aa;
     color: rgba(240, 245, 250, .6);
     padding: 7px 0;
-    transition: all .1s ease-in-out
+    transition: all .1s ease-in-out;
 }
 
 #adminmenu div.wp-menu-image:before {
@@ -7899,7 +7899,7 @@ ul#adminmenu>li.current>a.current:after {
 
 #collapse-button .collapse-button-icon:after,
 #collapse-button .collapse-button-label {
-    transition: all .1s ease-in-out
+    transition: all .1s ease-in-out;
 }
 
 li#wp-admin-bar-menu-toggle {
@@ -8306,7 +8306,7 @@ li#wp-admin-bar-menu-toggle {
     position: absolute;
     top: 8px;
     left: 0;
-    transition: all .1s ease-in-out
+    transition: all .1s ease-in-out;
 }
 
 .wp-core-ui .welcome-panel .button.button-hero {
@@ -9775,7 +9775,7 @@ table.media .column-title .filename {
 }
 
 .wp-list-table a {
-    transition: none
+    transition: none;
 }
 
 #the-list tr:last-child td,
@@ -9972,7 +9972,7 @@ tr.wp-locked .locked-info {
 
 tr.locked-info,
 tr.wp-locked .locked-info {
-    transition: height 1s, opacity .5s
+    transition: height 1s, opacity .5s;
 }
 
 .fixed .column-comments .sorting-indicator {

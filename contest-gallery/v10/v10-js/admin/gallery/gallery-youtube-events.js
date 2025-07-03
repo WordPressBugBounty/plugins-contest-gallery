@@ -818,11 +818,14 @@ jQuery(document).ready(function ($) {
         $mediaFrame.find('.cg_media_menu_item').removeClass('cg_active');
     });
 
-    cgJsClassAdmin.gallery.functions.loadAiEvents($);
+    cgJsClassAdmin.gallery.functions.loadAiCreateEvents($);
+    cgJsClassAdmin.gallery.functions.loadAiEditEvents($);
 
     $(document).on('click','#menu-item-browse',function (){
         $mediaFrame = $('.media-frame.cg_backend_area');
         $mediaFrame.find('.media-frame-content .attachments-browser.has-load-more').removeClass('cg_hide');
+        $(this).addClass('active');// is required when #cgEditViaOpenAI is clicked
+        $mediaFrame.find('#cgOpenAiSelectToEdit').remove();
     });
 
 });

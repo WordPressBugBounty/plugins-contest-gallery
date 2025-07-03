@@ -191,6 +191,7 @@ jQuery(document).ready(function ($) {
 
     $(document).on('click','#cgSortable .cg_manage_multiple_files_for_post,#cgSortable .cg_manage_multiple_files_for_post_prev,#cgSortable .cg_manage_multiple_files',function () {
         cgJsClassAdmin.gallery.functions.removeUsedFrames();
+        cgJsClassAdmin.gallery.functions.getAiPrompts(jQuery);
         var realId = $(this).closest('.cgSortableDiv').attr('data-cg-real-id');
         cgJsClassAdmin.gallery.vars.multipleFilesNewAdded[realId] = [];
         cgJsClassAdmin.gallery.functions.setMultipleFilesForPostBeforeClone($(this));

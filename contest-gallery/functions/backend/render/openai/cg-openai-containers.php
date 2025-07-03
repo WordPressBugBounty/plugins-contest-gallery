@@ -11,9 +11,38 @@ if (!function_exists('cg_openai_container')) {
 
         echo "<div id='cgOpenAiContainer' class='cg_media_container cg_hide' data-cg-gid='$GalleryID'>";
         ?>
+        <div id='cgOpenAiPrompts' class='cg_openai_main' >
+            <div class="cg_openai_header" style="text-align: center;">
+                <b>Last successful prompts to OpenAI</b>
+            </div>
+            <div id='cgOpenAiPromptsContainer' class='cg_hide' >
+                <div id='cgOpenAiPromptsNotEntered'  class="cg_openai_model_desc cg_hide">
+                    No prompts entered so far
+                </div>
+                <div id='cgOpenAiPromptsEntered'  class="cg_hide">
+                    <div id="cgOpenAiShowMoreLoader" style="padding-left: 0;"
+                         class="cg_hide cg_skeleton_loader_on_page_load_div cg_skeleton_loader_on_page_load_div_thumb_view">
+                        <div class="cg_skeleton_loader_on_page_load_container" style="width: 100%;">
+                            <div class="cg_skeleton_loader_on_page_load" style="width:25%;height:14px;margin-bottom: 10px;"></div>
+                            <div class="cg_skeleton_loader_on_page_load" style="width:50%;height:22px;"></div>
+                        </div>
+                    </div>
+                    <input type="button" id="cgOpenAiMorePrompts" value="Show more prompts"
+                           style="margin-bottom: 15px; margin-top: 15px; background-color: white; color: black;width: auto; left: 50%; transform: translateX(-50%);  position: relative; margin-left: 18px;">
+                </div>
+            </div>
+            <div id='cgOpenAiShowMore' title="Show more" >
+
+            </div>
+            <div id='cgOpenAiShowLess' title="Show less" class="cg_hide" >
+
+            </div>
+        </div>
         <div id='cgOpenAiSelected' class='cg_openai_main cg_hide'>
+            <input type="button" id="cgOpenAiEditSelectImages" value="Select images to edit"
+                   style="margin-bottom: 15px; margin-top: 80px; background-color: white; color: black; width: unset;">
             <input type="button" id="cgOpenAiBackToModels" value="Back"
-                   style="margin-bottom: 15px;    background-color: white; color: black;">
+                   style="margin-bottom: 15px; margin-top: 80px; background-color: white; color: black;">
             <div class="cg_openai_header">
                 <b>Selected model</b>
             </div>
@@ -23,7 +52,7 @@ if (!function_exists('cg_openai_container')) {
                 <?php include(__DIR__ . '/cg-openai-dall-e-2.php'); ?>
             </div>
             <div id="cgOpenAiPromptContainer">
-                <div class='cg_openai_model_desc' style="padding-left: 0; margin-bottom: 15px; margin-top: -10px;">
+                <div id="cgOpenAiPromptShowCurrentBalance" class='cg_openai_model_desc' style="padding-left: 0; margin-bottom: 15px; margin-top: -10px;">
                     <a href="https://platform.openai.com/settings/organization/billing/overview" target="_blank">Show
                         current balance</a>
                 </div>

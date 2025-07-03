@@ -628,7 +628,7 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
             $comment1 = preg_replace("/$emoji/i","$emoji ",$comment1);// do both to go sure
         }
 
-            echo "<hr>";
+        echo "<hr>";
 
         $cg_comment_id = '';
         if(!empty($value['insert_id'])){
