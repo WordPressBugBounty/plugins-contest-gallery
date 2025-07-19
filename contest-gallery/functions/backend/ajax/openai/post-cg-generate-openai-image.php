@@ -78,10 +78,10 @@ if (!function_exists('post_cg_generate_openai_image')) {
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
 
         $response = curl_exec($ch);
-        curl_close($ch);
-
         $curlErrorNo = curl_errno($ch);
         $curlErrorMsg = curl_error($ch);
+
+        curl_close($ch);
 
         if($curlErrorMsg){
             $cgOpenAiGenErrorMessage = $curlErrorMsg;

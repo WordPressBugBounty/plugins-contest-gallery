@@ -822,10 +822,32 @@ jQuery(document).ready(function ($) {
     cgJsClassAdmin.gallery.functions.loadAiEditEvents($);
 
     $(document).on('click','#menu-item-browse',function (){
-        $mediaFrame = $('.media-frame.cg_backend_area');
-        $mediaFrame.find('.media-frame-content .attachments-browser.has-load-more').removeClass('cg_hide');
-        $(this).addClass('active');// is required when #cgEditViaOpenAI is clicked
-        $mediaFrame.find('#cgOpenAiSelectToEdit').remove();
+
+        if($(this).closest('.media-frame').hasClass('cg_openai_edit_clicked')){
+            $('.cg_upload_wp_images_button').removeClass('cg_openai_edit').click();
+        }else{
+            //$mediaFrame = $('.media-frame.cg_backend_area');
+            $mediaFrame = $(this).closest('.media-frame');
+            $mediaFrame.find('.media-frame-content').removeClass('cg_openai_edit');
+            $mediaFrame.find('.media-frame-content .attachments-browser.has-load-more').removeClass('cg_openai_edit cg_hide');
+            $(this).addClass('active');// is required when #cgEditViaOpenAI is clicked
+            $mediaFrame.find('#cgOpenAiSelectToEdit').remove();
+        }
+
     });
+
+    $(document).on('click','#menu-item-upload',function (){
+
+        if($(this).closest('.media-frame').hasClass('cg_openai_edit_clicked')){
+            $('.cg_upload_wp_images_button').removeClass('cg_openai_edit').addClass('cg_openai_edit_upload_clicked').click();
+        }else{
+            $(this).addClass('active');
+            $mediaFrame = $(this).closest('.media-frame');
+            // might have class cg_hide
+            $mediaFrame.find('.media-frame-content').removeClass('cg_openai_edit');
+            $mediaFrame.find('.media-frame-content .uploader-inline').removeClass('cg_openai_edit cg_hide');
+            $mediaFrame.find('#cgOpenAiSelectToEdit').addClass('cg_hide');// somehow might be still there when a lot of clicking
+            $mediaFrame.find('#cgOpenAiSelectToEdit').remove();
+        }});
 
 });

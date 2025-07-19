@@ -1,10 +1,10 @@
 === Photos, Files, YouTube, Twitter, Instagram, TikTok, Ecommerce Contest Gallery – Upload, Vote, Sell via PayPal or Stripe, Social Share Buttons, OpenAI ===
 Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
-Tags: photo contest, competition, contest, voting, youtube
+Tags: photo contest, competition, contest, voting, youtube, openai, upload
 Requires at least: 5.6
-Stable tag: 26.0.9
-Tested up to: 6.8.1
+Stable tag: 26.1.0
+Tested up to: 6.8.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,8 +36,8 @@ File types: **JPG, PNG, GIF, PDF, ZIP, WEBM, MP4, MOV, TXT, DOC, DOCX, XLS, XLSX
 * [Social media embeds and mixed file types gallery](https://www.contest-gallery.com/social-media-embeds-and-mixed-file-types-gallery/)
 
 == OpenAI ==
-* Create images via OpenAI API
-* Add created images to your WordPress media library
+* Create or edit images via OpenAI API
+* Add created or edited images to your WordPress media library
 
 == Plugin limitations ==
 * **Since 2019: No uploads limitation anymore**
@@ -241,6 +241,9 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V26.1.0 =
+* NEW: Edit an image via OpenAI and add edited image to your WordPress media library.
 
 = V26.0.9 =
 * NEW: Successful prompts to OpenAI history.

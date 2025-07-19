@@ -27,6 +27,7 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
         $cgOpenAiContainer.find('.cg_openai_main').addClass('cg_hide');
         $cgOpenAiContainer.find('#cgOpenAiGenLoaderContainer').addClass('cg_hide');
         $cgOpenAiContainer.find('#cgOpenAiEditDesc').addClass('cg_hide');
+        $mediaFrameContent.find('.cg_openai_create_desc').removeClass('cg_hide');
 
         $cgOpenAiContainer.closest('.media-frame-content').css('overflow','visible');// has to otherwise scroll appears twice
         debugger
@@ -166,7 +167,17 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
         $cgOpenAiGenImageContainer.find('#cgOpenAiImageFields .cg_text').val('');
         $cgOpenAiGenImageContainer.addClass('cg_hide').removeClass('cg_horizontal_loader cg_vertical_loader');
         $cgOpenAiSelected.find('#cgOpenAiAddToWpLoaderContainer,#cgOpenAiAddToWpErrorContainer,#cgOpenAiAddToWpSuccessContainer,#cgOpenAiGenError').addClass('cg_hide');
-        $cgOpenAiSelected.find('#cgOpenAiGenLoaderContainer').removeClass('cg_hide').get(0).scrollIntoView();
+        var $cgOpenAiGenLoaderContainer = $cgOpenAiSelected.find('#cgOpenAiGenLoaderContainer');
+        var $cg_skeleton_loader_on_page_load_container = $cgOpenAiSelected.find('.cg_skeleton_loader_on_page_load_container');
+        $cg_skeleton_loader_on_page_load_container.css({
+            'width':'',
+            'height':''
+        });
+        $cgOpenAiSelected.find('.cg_openai_img').css({
+            'width': '',
+            'height': ''
+        });
+        $cgOpenAiGenLoaderContainer.removeClass('cg_hide').get(0).scrollIntoView();
         $cgOpenAiSelected.find('#cgOpenAiPromptSubmit').addClass('cg_disabled_one');
         var $cgOpenAiModel = $cgOpenAiSelected.find('.cg_openai_model:not(.cg_hide)');
         var $cg_openai_res_quality = $cgOpenAiModel.find('.cg_openai_res_quality.cg_selected');
@@ -174,7 +185,9 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
         $cgOpenAiGenLoader.removeClass('cg_horizontal_loader cg_vertical_loader');
         var data = {};
         debugger
+
         if($mediaFrame.find('.media-frame-content.cg_openai_edit').length){
+
             data['action'] = 'post_cg_edit_openai_image';
             data['cg_images'] = [];
 
@@ -187,6 +200,12 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
                     }
                 );
             });
+
+            $cg_skeleton_loader_on_page_load_container.css({
+                'width': cgJsClassAdmin.gallery.vars.openAIImagesToEditWidth,
+                'height': cgJsClassAdmin.gallery.vars.openAIImagesToEditHeight
+            });
+
         }else{
             data['action'] = 'post_cg_generate_openai_image';
         }
@@ -230,6 +249,14 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
                         'height':'0',
                         'overflow':'hidden'
                 }).removeClass('cg_hide');
+
+                if($mediaFrame.find('.media-frame-content.cg_openai_edit').length){
+                    $cgOpenAiSelected.find('.cg_openai_img').css({
+                        'width': cgJsClassAdmin.gallery.vars.openAIImagesToEditWidth,
+                        'height': cgJsClassAdmin.gallery.vars.openAIImagesToEditHeight
+                    });
+                }
+
                 $cgOpenAiSelected.find('#cgOpenAiImg').attr('src',cgJsClassAdmin.gallery.vars.cgOpenAiGenUrl);
 
                 setTimeout(function () {
@@ -336,6 +363,7 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
                 }
                 $cgOpenAiSelected.find('#cgOpenAiAddToWpSuccessContainer').removeClass('cg_hide');
             }else{
+                $cgOpenAiSelected.find('#cgOpenAiGenImageContainer').removeClass('cg_hide');
                 $cgOpenAiSelected.find('#cgOpenAiAddToWpErrorContainer').removeClass('cg_hide').find('#cgOpenAiAddToWpError').html(cgJsClassAdmin.gallery.vars.cgAddOpenAiImageErrorMessage);
             }
 

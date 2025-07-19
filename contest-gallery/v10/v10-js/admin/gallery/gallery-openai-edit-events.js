@@ -10,11 +10,12 @@ cgJsClassAdmin.gallery.functions.loadAiEditEvents = function($){
     $(document).on('click','#cgEditViaOpenAI',function (){
         debugger
         $mediaFrame = $('.media-frame.cg_backend_area');
+        var $element = $(this);
         var $mediaFrameContent =  $mediaFrame.find('.media-frame-content');
         $mediaFrameContent.css('overflow','');// happens when #cgCreateViaOpenAI is clicked
         $mediaFrameContentSub =  $mediaFrame.find('.media-frame-content > *');
         $mediaFrameContentSub.addClass('cg_hide');
-        if($(this).hasClass('cg_select_openai_images')) {
+        if($element.hasClass('cg_select_openai_images')) {
              // continue here
             var toEdit = cgJsClassAdmin.gallery.vars.openAIImagesToEdit;
             cgJsClassAdmin.gallery.vars.openAIImagesToEditById = null;// reset first
@@ -51,25 +52,53 @@ cgJsClassAdmin.gallery.functions.loadAiEditEvents = function($){
                     if(toEditById[id]['sizes']['large']){
                         large = toEditById[id]['sizes']['large']['url'];
                     }
-                    $cgOpenAiEditImages.append('<div class="cg_openai_image_to_edit" style="background: url('+large+')" data-cg-id="'+toEditById[id]['id']+'" data-cg-full="'+toEditById[id]['sizes']['full']['url']+'" data-cg-mime="'+mime+'"  data-cg-filename="'+filename+'" ></div>');
+                    $cgOpenAiEditImages.append('<div class="cg_openai_image_to_edit" style="background: url('+large+')" data-cg-id="'+toEditById[id]['id']+'" data-cg-full="'+toEditById[id]['sizes']['full']['url']+'"  data-cg-large="'+large+'" data-cg-mime="'+mime+'"  data-cg-filename="'+filename+'" ></div>');
+
+                    // required when submitting prompt later
+                    var img = new Image();
+                    img.src = large;
+                    img.onload = function() {
+                        // calculate here the required width
+                        var width = 491;
+                        var height = this.height * width / this.width;
+                        cgJsClassAdmin.gallery.vars.openAIImagesToEditWidth = width;
+                        cgJsClassAdmin.gallery.vars.openAIImagesToEditHeight = height;
+                    };
+
                 }
                 $mediaFrameContent.find('#cgOpenAiEditDesc,#cgOpenAiPrompts').removeClass('cg_hide');
+                $mediaFrameContent.find('.cg_openai_create_desc').addClass('cg_hide');
             }else{
                 $mediaFrameContent.prepend(
                     '<div id="cgOpenAiNoImagesSelected">Only JPG and PNG files are allowed</div>'
                 );
             }
-            $(this).removeClass('cg_select_openai_images')
+            $element.removeClass('cg_select_openai_images');
+
+            if (location.search.indexOf('page=contest-gallery-pro') === -1) {
+                $mediaFrameContent.find('.cg_openai_res.cg_openai_res_quality[data-cg-quality="high"]').addClass('cg-pro-false');
+            }
+
         }else{
-            $mediaFrame.find('#menu-item-browse').click().removeClass('active');
+            // only one image allowed to select for edit
+            //cgJsClassAdmin.gallery.vars.openedFileFrame.multiple = false;
+            // add class click, set multiple false depends on lick
+            //$('.cg_upload_wp_images_button').click();
+            $('.cg_upload_wp_images_button').addClass('cg_openai_edit').click();
+            $mediaFrame = cgJsClassAdmin.gallery.vars.openedFileFrame.$el;
+            $mediaFrame.addClass('cg_openai_edit_clicked');
+            //$mediaFrame.find('#menu-item-browse').click().removeClass('active');
+            $mediaFrame.find('#menu-item-browse').removeClass('active');
+            var $mediaFrameContent = $mediaFrame.find('.media-frame-content');
+            $element = $mediaFrame.find('#cgEditViaOpenAI');
             var $cgOpenAiSelectToEdit = $mediaFrameContent.find('#cgOpenAiSelectToEdit');
             if($cgOpenAiSelectToEdit.length){
                 $cgOpenAiSelectToEdit.removeClass('cg_hide');
             }else{
                 $mediaFrameContent.addClass('cg_openai_edit').prepend(
                     '<div id="cgOpenAiSelectToEdit">' +
-                        '<input class="cg_hide" type="button" id="cgOpenAiEditSelectedImages" value="Edit previous selected images" style="margin-bottom: 20px;  background-color: white; color: black; display: block; width: auto;">' +
-                    'Select media files to be edited by OpenAI' +
+                        '<input class="cg_hide" type="button" id="cgOpenAiEditSelectedImages" value="Edit previous selected image" style="margin-bottom: 20px;  background-color: white; color: black; display: block; width: auto;">' +
+                    'Select an image file to be edited by OpenAI' +
                     '</div>'
                 );
             }
@@ -80,7 +109,7 @@ cgJsClassAdmin.gallery.functions.loadAiEditEvents = function($){
             }
         }
         $mediaFrameContent.addClass('cg_openai_edit');
-        $(this).addClass('cg_active');
+        $element.addClass('cg_active');
     });
 
     $(document).on('click','#cgOpenAiEditSelectImages',function (){

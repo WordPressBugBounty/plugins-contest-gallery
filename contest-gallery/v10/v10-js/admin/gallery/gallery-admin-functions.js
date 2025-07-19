@@ -8,14 +8,19 @@ cgJsClassAdmin.gallery.functions = {
         }
 
     },
-    addSocialTabs: function (file_frame, isReplace, WpUploadToReplace) {
+    addSocialTabs: function (file_frame, isReplace, WpUploadToReplace,isAddFilesOrReplaceFile) {
         cgJsClassAdmin.gallery.vars.file_frame = file_frame;
         // should not be named same name as official wordpress class "media-menu-item" otherwise media library from wordpress not loaded,
         // if trick around with same class names then site freeze might happen
         file_frame.$el.find('.media-frame-router').append('<button class="cg_media_menu_item" id="cgAddYoutube" >Add social embed</button>');
         file_frame.$el.find('.media-frame-router').append('<button class="cg_media_menu_item" id="cgYoutubeLibrary" >Social embed library<span id="cgYoutubeLibraryNewAddedCount" class="cg_hide" >0</span></button>');
-        file_frame.$el.find('.media-frame-router').append('<button class="cg_media_menu_item" id="cgCreateViaOpenAI" >Create via OpenAI</button>');
-        //file_frame.$el.find('.media-frame-router').append('<button class="cg_media_menu_item" id="cgEditViaOpenAI" >Edit via OpenAI</button>');
+
+        if(!isAddFilesOrReplaceFile){// has only to work when .cg_upload_wp_images_button is clicked.
+            // because of many dependencies by clicking #cgCreateViaOpenAI, #cgEditViaOpenAI and #menu-item-browse
+            file_frame.$el.find('.media-frame-router').append('<button class="cg_media_menu_item" id="cgCreateViaOpenAI" >Create via OpenAI</button>');
+            file_frame.$el.find('.media-frame-router').append('<button class="cg_media_menu_item" id="cgEditViaOpenAI" >Edit via OpenAI</button>');
+        }
+
         if (isReplace) {
             file_frame.$el.addClass('cg_is_replace');
         }

@@ -4,12 +4,12 @@ jQuery(document).ready(function ($) {
     cgJsClassAdmin.gallery.vars.openedFileFrame = null;
     var cg_media_uploader_set_to_post_id = 0; // Set this
 
-    jQuery(document).on('click', '.cg_media_note_manage_additional_files', function (event) {
+    $(document).on('click', '.cg_media_note_manage_additional_files', function (event) {
         $(this).closest('.media-modal').find('.media-modal-close').click();
         cgJsClassAdmin.gallery.functions.manageMultipleFilesForPost($, $cg_backend_info_container.find('.cg_manage_multiple_files_for_post'), false);
     });
 
-    jQuery(document).on('click', '.media-modal.cg_add_additional_files .media-modal-close, .media-modal.cg_add_additional_files + .media-modal-backdrop', function (event) {
+    $(document).on('click', '.media-modal.cg_add_additional_files .media-modal-close, .media-modal.cg_add_additional_files + .media-modal-backdrop', function (event) {
         event.preventDefault();
         debugger
         cgJsClassAdmin.gallery.functions.showCgBackendBackgroundDrop();
@@ -17,7 +17,7 @@ jQuery(document).ready(function ($) {
         $cgMultipleFilesForPostContainer.removeClass('cg_hide');
     });
 
-    jQuery(document).on('click', '.media-modal.cg_add_files_to_gallery + .media-modal-backdrop,.media-modal.cg_add_files_to_gallery .media-modal-close', function (event) {
+    $(document).on('click', '.media-modal.cg_add_files_to_gallery + .media-modal-backdrop,.media-modal.cg_add_files_to_gallery .media-modal-close', function (event) {
         debugger
         if(cgJsClassAdmin.gallery.vars.cgNewAiImageToGalleryAdded){
             cgJsClassAdmin.gallery.functions.reloadAfterAddingEntries($,'',1);
@@ -25,10 +25,10 @@ jQuery(document).ready(function ($) {
     });
 
     // Media uploader multiple images to a post
-    jQuery(document).on('click', '#cgSortable .cg_add_multiple_files_to_post_text,#cgSortable .cg_add_multiple_files_to_post, #cgSortable .cg_add_multiple_files_to_post_prev, #cgMultipleFilesForPostContainer .cg_backend_image_add_files_label, #cgMultipleFilesForPostContainer .cg_replace', function (event) {
+    $(document).on('click', '#cgSortable .cg_add_multiple_files_to_post_text,#cgSortable .cg_add_multiple_files_to_post, #cgSortable .cg_add_multiple_files_to_post_prev, #cgMultipleFilesForPostContainer .cg_backend_image_add_files_label, #cgMultipleFilesForPostContainer .cg_replace', function (event) {
         event.preventDefault();
         cgJsClassAdmin.gallery.functions.removeUsedFrames();
-        cgJsClassAdmin.gallery.functions.getAiPrompts(jQuery);
+        //cgJsClassAdmin.gallery.functions.getAiPrompts($);
 
         //    $(document).on('click','#cgMultipleFilesForPostContainer .cg_backend_image_add_files_label',function () {
        //     cgJsClassAdmin.gallery.vars.$cg_backend_info_container.find('.cg_add_multiple_files_to_post').click();
@@ -84,9 +84,9 @@ jQuery(document).ready(function ($) {
 
         // Create the media frame.
         file_frame = wp.media.frames.file_frame = wp.media({
-            title: jQuery(this).data('uploader_title'),
+            title: $(this).data('uploader_title'),
             button: {
-                text: jQuery(this).data('uploader_button_text'),
+                text: $(this).data('uploader_button_text'),
             },
             multiple: isMultiple  // Set to true to allow multiple files to be selected
         });
@@ -105,11 +105,19 @@ jQuery(document).ready(function ($) {
         var order = requiredData.order;
 
         file_frame.on('open', function () { // alert(2);
+
+            // the only way t ensure that always media library shows at the beginning
+            // otherwise don't work correctly if cg_openai_edit exists because edit openai was clicked
+            const content = file_frame.content;
+            if (content) {
+                content.mode('browse'); // Ensures Media Library tab shows
+            }
+
             debugger
             file_frame.$el.addClass('cg_backend_area cg_add_additional_files');
             file_frame.$el.closest('.media-modal').addClass('cg_add_additional_files');
 
-            cgJsClassAdmin.gallery.functions.addSocialTabs(file_frame,isReplace,WpUploadToReplace);
+            cgJsClassAdmin.gallery.functions.addSocialTabs(file_frame,isReplace,WpUploadToReplace,true);
 
             if(!isReplace){
                 file_frame.$el.find('#media-frame-title').html(
@@ -159,7 +167,7 @@ jQuery(document).ready(function ($) {
             // We set multiple to false so only get one image from the uploader
             var attachment = file_frame.state().get('selection').toJSON();
             attachment = cgJsClassAdmin.gallery.functions.orderDescendAttachments(attachment);
-            cgJsClassAdmin.gallery.functions.selectAddAdditionalFiles(attachment,file_frame,data,$cg_backend_info_container,isDynamicMessageVisible,realId,isReplace,newWpUpload,newImgType,NewWpUploadWhichReplace,order,WpUploadToReplace,jQuery);
+            cgJsClassAdmin.gallery.functions.selectAddAdditionalFiles(attachment,file_frame,data,$cg_backend_info_container,isDynamicMessageVisible,realId,isReplace,newWpUpload,newImgType,NewWpUploadWhichReplace,order,WpUploadToReplace,$);
         });
 
         // Finally, open the modal
@@ -183,12 +191,13 @@ jQuery(document).ready(function ($) {
     //var file_frame;
     //var wp_media_post_id = wp.media.model.settings.post.id; // Store the old id
 
-    jQuery(document).on('click', '.cg_upload_wp_images_button', function (event) {
+    $(document).on('click', '.cg_upload_wp_images_button', function (event) {
         cgJsClassAdmin.gallery.functions.removeUsedFrames();
-        cgJsClassAdmin.gallery.functions.getAiPrompts(jQuery);
+        cgJsClassAdmin.gallery.functions.getAiPrompts($);
         debugger
         var file_frame;
         event.preventDefault();
+        var $button = $(this);
 
         var gid = $(this).attr('data-cg-gid');
 
@@ -220,19 +229,38 @@ jQuery(document).ready(function ($) {
             /*'library': {
                 cg_post: '123'// example if require to set own parameters, is $_REQUEST['query']['cg_post'] then
             },*/
+            library: {
+                //type: '*' // or any other media type (e.g., 'video', 'audio'),
+                type: $button.hasClass('cg_openai_edit') ? 'image' : '' // only image possible to edit so far via OpenAI
+            },
             button: {
                 text: jQuery(this).data('uploader_button_text'),
             },
-            multiple: true  // Set to true to allow multiple files to be selected
+            multiple: $button.hasClass('cg_openai_edit') ? false : true // Set to true to allow multiple files to be selected
         });
 
         cgJsClassAdmin.gallery.vars.openedFileFrame = file_frame;
 
         file_frame.on('open', function () { // alert(2);
 
+            // the only way t ensure that always media library shows at the beginning
+            // otherwise don't work correctly if cg_openai_edit exists because edit openai was clicked
+            if(!$button.hasClass('cg_openai_edit_upload_clicked')) {
+                const content = file_frame.content;
+                if (content) {
+                    content.mode('browse'); // Ensures Media Library tab shows
+                }
+            }
+
+            $button.removeClass('cg_openai_edit_upload_clicked');
+
             file_frame.$el.closest('.media-modal').addClass('cg_add_files_to_gallery');
             cgJsClassAdmin.gallery.vars.cgNewAiImageToGalleryAdded = 0; // reset here
             file_frame.$el.addClass('cg_backend_area');
+            if($button.hasClass('cg_openai_edit')){
+                $button.removeClass('cg_openai_edit');
+                file_frame.$el.addClass('cg_openai_edit');
+            }
             //file_frame.$el.addClass('cg_backend_area cg_add_additional_files');
 
             cgJsClassAdmin.gallery.functions.addSocialTabs(file_frame);
@@ -359,7 +387,7 @@ jQuery(document).ready(function ($) {
 
     });
 
-    jQuery(document).on('change', '.cg_media_assign_category_select select', function (event) {
+    $(document).on('change', '.cg_media_assign_category_select select', function (event) {
         var gid = $(this).attr('data-cg-gid');
 
         var cgAssignedFields = {};
@@ -379,7 +407,7 @@ jQuery(document).ready(function ($) {
         $('.cg_media_assigned_field_element.cg_media_assigned_field_element_category').text(text);
     });
 
-    jQuery(document).on('change', '.cg_media_assign_field_select select', function (event) {
+    $(document).on('change', '.cg_media_assign_field_select select', function (event) {
         var gid = $(this).attr('data-cg-gid');
         var inputId = $(this).attr('data-cg-input-id');
         var cgAssignedFields = {};
@@ -404,11 +432,11 @@ jQuery(document).ready(function ($) {
         $('.cg_media_assigned_field_element#inputId' + inputId).last().text(text);
     });
 
-    jQuery(document).on('click', '#cgMediaAssignFieldsSubmitContainerButton', function (event) {
+    $(document).on('click', '#cgMediaAssignFieldsSubmitContainerButton', function (event) {
         $(this).closest('#cgBackendGalleryDynamicMessage').find('.cg_message_close').click();
     });
 
-    jQuery(document).on('click', '.cg_media_assigned_field_container_label_main, .cg_media_assigned_fields_container', function (event) {
+    $(document).on('click', '.cg_media_assigned_field_container_label_main, .cg_media_assigned_fields_container', function (event) {
 
         var gid = $(this).attr('data-cg-gid');
 

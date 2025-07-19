@@ -39,6 +39,9 @@ if (!function_exists('post_cg_edit_openai_image')) {
             if(strpos($_POST['cg_ai_res'],'1536')!==false || strpos($_POST['cg_ai_res'],'1792')!==false){
                 $_POST['cg_ai_res'] = '1024x1024';
             }
+            if(strpos($_POST['cg_ai_quality'],'high')!==false){
+                $_POST['cg_ai_quality'] = 'medium';
+            }
         }
 
         $postFields = [
@@ -51,7 +54,7 @@ if (!function_exists('post_cg_edit_openai_image')) {
             //'image[]' => new CURLFile(__DIR__.'/incense-kit.png', 'image/png', 'incense-kit.png'),
             //'image[]' => new CURLFile(__DIR__.'/soap.png', 'image/png', 'soap.png'),
             //'size' => '1024x1536',
-            'size' => $_POST['cg_ai_res'],
+          //  'size' => $_POST['cg_ai_res'],
             //'quality' => 'medium',
             'quality' => $_POST['cg_ai_quality'],
         ];
@@ -75,10 +78,10 @@ if (!function_exists('post_cg_edit_openai_image')) {
 
 
         $response = curl_exec($ch);
-        curl_close($ch);
-
         $curlErrorNo = curl_errno($ch);
         $curlErrorMsg = curl_error($ch);
+
+        curl_close($ch);
 
         if($curlErrorMsg){
             $cgOpenAiGenErrorMessage = $curlErrorMsg;

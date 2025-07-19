@@ -1,5 +1,8 @@
 Contest Gallery
 
+= V26.1.0 =
+* NEW: Edit an image via OpenAI and add edited image to your WordPress media library.
+
 = V26.0.9 =
 * NEW: Successful prompts to OpenAI history.
 * FIXED: Adding HTML field when editing an upload form did not work.

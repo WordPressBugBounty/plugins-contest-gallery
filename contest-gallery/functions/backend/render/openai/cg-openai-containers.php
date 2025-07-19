@@ -39,7 +39,7 @@ if (!function_exists('cg_openai_container')) {
             </div>
         </div>
         <div id='cgOpenAiSelected' class='cg_openai_main cg_hide'>
-            <input type="button" id="cgOpenAiEditSelectImages" value="Select images to edit"
+            <input type="button" id="cgOpenAiEditSelectImages" value="Select image to edit"
                    style="margin-bottom: 15px; margin-top: 80px; background-color: white; color: black; width: unset;">
             <input type="button" id="cgOpenAiBackToModels" value="Back"
                    style="margin-bottom: 15px; margin-top: 80px; background-color: white; color: black;">

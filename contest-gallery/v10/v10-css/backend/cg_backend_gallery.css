@@ -4175,6 +4175,18 @@ select.cg_action_select:disabled{
     position: relative;
 }
 
+.media-modal .media-frame-content.cg_openai_edit .cg_openai_model .cg_openai_resolutions .cg_openai_res{
+    display: none;
+}
+
+.media-modal .media-frame-content.cg_openai_edit .cg_openai_model .cg_openai_resolutions .cg_openai_res.cg_openai_res_quality{
+    display: flex;
+}
+
+.media-modal .media-frame-content.cg_openai_edit .cg_openai_model .cg_openai_resolutions_container .cg_openai_header{
+    display: none;
+}
+
 .media-modal .cg_openai_model .cg_openai_resolutions .cg_openai_res.cg_selected{
     border: thin solid black;
     cursor: auto;

@@ -9,11 +9,15 @@
         <b>GPT Image 1</b><br>
         <span id="cgOpenAiEditDesc" style="margin-bottom: 10px; display: block;">
             Best OpenAI model to edit images.<br>
-            <a target="_blank" href="https://www.contest-gallery.com/openai-edit-images-example/">Full example of enormous capabilities to edit images</a><br>
+            Editing an image by OpenAI:
+            <a target="_blank" href="https://www.contest-gallery.com/openai-edit-image/">examples</a><br>
         </span>
         State-of-the-art image generation model.<br>
         Offers different quality levels.<br>
         <a href="https://platform.openai.com/docs/models/gpt-image-1" target="_blank">Details</a>
+        <span class="cg_openai_create_desc" style="margin-bottom: 10px; display: block;">
+            Creating an image by OpenAI: <a target="_blank" href="https://www.contest-gallery.com/openai-create-image/">examples</a>
+        </span>
     </div>
     <div id="cgOpenAiModelGpt1Explanation" class='cg_openai_model_desc cg_flex_basis_100' style="margin-top: 15px; margin-left: 0;padding-left:0;" >
         There are <b>additional costs for input and image output</b> using GPT Image 1.<br>

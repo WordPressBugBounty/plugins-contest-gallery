@@ -9,6 +9,9 @@
         <b>DALL·E 3</b><br>Previous generation image generation model.<br>
         Offers "standard" quality.<br>
         <a href="https://platform.openai.com/docs/models/dall-e-3" target="_blank">Details</a>
+        <span class="cg_openai_create_desc" style="margin-bottom: 10px; display: block;">
+            Creating an image by OpenAI: <a target="_blank" href="https://www.contest-gallery.com/openai-create-image/">examples</a>
+        </span>
     </div>
     <div class="cg_openai_resolutions_container" >
         <div class="cg_openai_header" >
