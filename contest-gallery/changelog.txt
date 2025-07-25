@@ -1,5 +1,8 @@
 Contest Gallery
 
+= V26.1.1 =
+* FIXED: Security issue.
+
 = V26.1.0 =
 * NEW: Edit an image via OpenAI and add edited image to your WordPress media library.
 

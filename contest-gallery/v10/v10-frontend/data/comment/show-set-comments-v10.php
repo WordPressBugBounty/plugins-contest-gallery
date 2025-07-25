@@ -135,15 +135,14 @@ if(isset($options['pro']['CheckLoginComment']) && $options['pro']['CheckLoginCom
     // show message will be shown in javascript when trying to comment
    // return;
 //}
-
-$Name = $_POST['name'];
-$Name = trim(stripslashes($Name));
-$Name = htmlentities($Name, ENT_QUOTES);
+$Name = cg1l_sanitize_method($_POST['name']);
+//$Name = trim(stripslashes($Name));
+//$Name = htmlentities($Name, ENT_QUOTES);
 $Name = substr($Name,0,300);// 100 is max as message in frontend but because of smylies it can be some more
 
-$Comment = $_POST['comment'];
-$Comment = trim(stripslashes($Comment));
-$Comment = nl2br(htmlspecialchars($Comment, ENT_QUOTES));
+$Comment = cg1l_sanitize_method($_POST['comment']);
+//$Comment = trim(stripslashes($Comment));
+//$Comment = nl2br(htmlspecialchars($Comment, ENT_QUOTES));
 $Comment = substr($Comment,0,3000);// 1000 is max as message in frontend but because of smilies it can be some more
 
 $unix = time();

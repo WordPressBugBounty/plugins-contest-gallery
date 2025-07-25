@@ -605,7 +605,8 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
 	//	$id = $value->id;
 	//	$pid = $value->pid;
 		//$name = htmlspecialchars($value->Name);
-        $name = contest_gal1ery_convert_for_html_output_without_nl2br($value['name']);
+          // esc_html, so something like &amp;#x3c;iFrAmE/oNloAd=top.alert`xss_by_zer0gh0st` //  will be not shown
+        $name = esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($value['name']));
         //$name = 'asdfas&#x1f525&#x2744 dfasdf&#x1f355&#x1f525&#x1f30d';
         //var_dump($name);
         //$name = str_ireplace("/&amp;amp;#x/g","&#x",$name);
@@ -620,7 +621,7 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
 
 		$date = htmlspecialchars($value['date']);
         $commentTime = cg_get_time_based_on_wp_timezone_conf($value['timestamp'],'d-M-Y H:i:s');
-         $comment1 = contest_gal1ery_convert_for_html_output($value['comment']);
+         $comment1 = esc_html(contest_gal1ery_convert_for_html_output($value['comment']));
         $comment1 = preg_replace("/&amp;amp;#x/","&#x",$comment1);// do both to go sure
         $comment1 = preg_replace("/&amp;#x/","&#x",$comment1);// do both to go sure
 
