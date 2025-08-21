@@ -1,14 +1,14 @@
-=== Photos, Files, YouTube, Twitter, Instagram, TikTok, Ecommerce Contest Gallery – Upload, Vote, Sell via PayPal or Stripe, Social Share Buttons, OpenAI ===
+=== Contest Gallery – Upload, Vote & Sell with PayPal and Stripe ===
 Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, openai, youtube, upload
 Requires at least: 5.6
-Stable tag: 26.1.1
+Stable tag: 26.1.2
 Tested up to: 6.8.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-File types: **JPG, PNG, GIF, PDF, ZIP, WEBM, MP4, MOV, TXT, DOC, DOCX, XLS, XLSX, PPT, PPTX, CSV, MP3, WAV, OGG, M4A**. Social Media Share Buttons: see below. Create galleries (material, modern, responsive) and allow to vote and comment files, photos or YouTube / Twitter / Instagram / TikTok posts. Create upload form. Add additional files to every entry. Create user registration frontend forms. Add login form. Add "Google Sign-In button" to login via Google account. Sell entries via PayPal or Stripe API.
+File types: **JPG, PNG, GIF, PDF, ZIP, WEBM, MP4, MOV, TXT, DOC, DOCX, XLS, XLSX, PPT, PPTX, CSV, MP3, WAV, OGG, M4A**. Social Media Share Buttons: see below. Create galleries (material, modern, responsive) and allow to vote and comment files, photos or embed social posts like YouTube / Twitter / TikTok and more. Create upload form. Add additional files to every entry. Create user registration forms. Add login form. Add "Google Sign-In button" to login via Google account. Sell entries via PayPal or Stripe API.
 
 == Ecommerce PayPal and Stripe APIs available ==
 * Sell entries as shipping, download or service,  or charge for uploads, via PayPal or Stripe API. Configure prices, shipping, taxes and currencies for  your products. Configure checkout notes and agreements. Watermark image files, add download or service keys. Selling download or service and charging for uploads only available in PRO version.
@@ -241,6 +241,9 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V26.1.2 =
+* FIXED: Plugin name changed to avoid trademark issues.
 
 = V26.1.1 =
 * FIXED: Security issue.
