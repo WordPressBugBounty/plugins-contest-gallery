@@ -116,7 +116,7 @@ echo <<<HEREDOC
                         <p>
                             <span class="cg_view_option_title_note"><b>Manually end  recommendation:</b><br>
                                 <b>cg_gallery</b> shortcode can simply be used and then replaced with <b>cg_gallery_no_voting</b> 
-                                 when you decide that contest ends. In gallery contact form can be activated deactivated when required or cg_users_contact shortcode can be added and then removed.
+                                 when you decide that contest ends. In gallery upload form can be activated deactivated when required or cg_users_upload shortcode can be added and then removed.
                             </span>
                         </p>
                     </div>
@@ -133,7 +133,7 @@ if(floatval($galleryDbVersion)<12.10){
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_100_percent'>
                     <div class='cg_view_option_title'>
-                        <p>Show constantly (without hovering)<br>vote, comments and file title in gallery view<br><span class="cg_view_option_title_note">You see it by hovering if not activated.<br>File title can be configured in "Edit contact form" >>> "Show as title in gallery view".<br>Can be configured <a class="cg_go_to_link cg_no_outline_and_shadow_on_focus" href="#" data-cg-go-to-link="ShowAlwaysContainer">here</a> now for each cg_gallery type of shortcode</span>
+                        <p>Show constantly (without hovering)<br>vote, comments and file title in gallery view<br><span class="cg_view_option_title_note">You see it by hovering if not activated.<br>File title can be configured in "Edit upload form" >>> "Show as title in gallery view".<br>Can be configured <a class="cg_go_to_link cg_no_outline_and_shadow_on_focus" href="#" data-cg-go-to-link="ShowAlwaysContainer">here</a> now for each cg_gallery type of shortcode</span>
                         </p>
                     </div>
                 </div>
@@ -141,7 +141,7 @@ if(floatval($galleryDbVersion)<12.10){
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none $deprecatedGalleryHoverDisabledForever'>
                     <div class='cg_view_option_title'>
-                        <p>Title position on gallery file image<br><span class="cg_view_option_title_note">If "Show as title in gallery view" in "Edit contact form" is activated </span></p>
+                        <p>Title position on gallery file image<br><span class="cg_view_option_title_note">If "Show as title in gallery view" in "Edit upload form" is activated </span></p>
                     </div>
                     <div class='cg_view_option_radio_multiple'>
                         <div class='cg_view_option_radio_multiple_container'>

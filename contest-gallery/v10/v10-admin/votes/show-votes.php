@@ -353,7 +353,7 @@ echo "<div id='cgVotesImage'>";
                 cg_tiktok_blockquotes[id] = <?php echo json_encode($blockquote); ?>;
 	        </script>
 	        <?php
-        }else{// then must be simple contact form entry
+        }else{// then must be simple upload form entry
             echo '<div id="cgVotesImageVisualContent">';
             echo "</div>";
         }
@@ -361,7 +361,7 @@ echo "<div id='cgVotesImage'>";
         echo '<div id="cgVotesImageVisualId">';
 
         if($ImgType=='con'){
-            echo "<strong>Contact form entry ID:</strong> $imageData->id";
+            echo "<strong>Upload form entry ID:</strong> $imageData->id";
         }else{
             echo "<strong>Entry ID:</strong> $imageData->id";
         }

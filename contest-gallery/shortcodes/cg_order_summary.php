@@ -54,7 +54,7 @@ if(!function_exists('contest_gal1ery_order_summary')){
 						$GalleryID = $UploadGallery;
 						$wp_upload_dir = wp_upload_dir();
 						$optionsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/'.$galeryID.'-options.json';
-						$shortcode_name = 'cg_users_contact';
+						$shortcode_name = 'cg_users_upload';
 						$isReallyContactForm = true;
 						$options = json_decode(file_get_contents($optionsFile),true);
 						include(__DIR__.'/../v10/include-scripts-v10.php');

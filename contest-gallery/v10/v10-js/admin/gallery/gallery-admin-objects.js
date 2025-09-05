@@ -25,6 +25,16 @@ cgJsClassAdmin.gallery.vars = {
     pdfPreviewsCreated: 0,
     WpUploadFilesForSaleArrayLoaded: [],
     $cg_backend_info_user_link_container: [],
+    draggableDragStartDragEnd: "draggable='true'\n" +
+        " ondragstart='cgJsClassAdmin.createUpload.dragAndDrop.drag(event)' ondragend='cgJsClassAdmin.createUpload.dragAndDrop.dragEnd(event)'  ondrop='cgJsClassAdmin.createUpload.dragAndDrop.drop(event)' ondragover='cgJsClassAdmin.createUpload.dragAndDrop.allowDrop(event)'  ondragenter='cgJsClassAdmin.createUpload.dragAndDrop.hoverOn(event)' ondragleave='cgJsClassAdmin.createUpload.dragAndDrop.hoverOff(event)' ",
+    dragAndDropEvents: 'ondrop="cgJsClassAdmin.createUpload.dragAndDrop.drop(event)" ondragover="cgJsClassAdmin.createUpload.dragAndDrop.allowDrop(event)"\n' +
+        'ondragenter="cgJsClassAdmin.createUpload.dragAndDrop.hoverOn(event)" ondragleave="cgJsClassAdmin.createUpload.dragAndDrop.hoverOff(event)"',
+    cg_row:
+        '        <div class="cg_row">\n' +
+        '            <div class="cg_upl_settings cg_clicked" title="Row settings"></div>\n' +
+        '            <div class="cg_row_col cg_upl_add" title="Add field"></div>\n' +
+      //  '            <div class="cg_del_row" title="Delete row"></div>\n' +
+        '        </div>\n',
     setStarOnStarOffSrc: function(){
         this.setStarOnSrc = jQuery('#cg_rating_star_on').val();
         this.setStarOffSrc = jQuery('#cg_rating_star_off').val();

@@ -66,7 +66,7 @@ cgJsClassAdmin.createUpload.functions = {
                 // condition for html fields. Reinitialize after deactivating when start--- END
 
                 setTimeout(function () {
-                    cgJsClassAdmin.createUpload.functions.addRightFieldOrder($);
+                    cgJsClassAdmin.createUpload.functions.addRightFieldOrderAndAddRowsAndColumns(jQuery);
                 },10);
 
             }
@@ -100,6 +100,7 @@ cgJsClassAdmin.createUpload.functions = {
 
         if(location.hash.indexOf('cgSelectCategoriesField') >= 0 || location.search.indexOf('cgSelectCategoriesField') >= 0){
             var $selectCategoriesField = jQuery('#cgCreateUploadSortableArea .selectCategoriesField');
+            $('#right'+$selectCategoriesField.attr('id')).click();
             cgJsClassAdmin.index.functions.cgGoTo($selectCategoriesField,undefined,undefined,200);
         }
 
@@ -120,9 +121,14 @@ cgJsClassAdmin.createUpload.functions = {
         });
 
         if(localStorage.getItem('cg_remove_category')){
-            $('#cgCreateUploadSortableArea .selectCategoriesField').get(0).scrollIntoView();
-            localStorage.removeItem('cg_remove_category');
-            cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Category field removed',true);
+            var $selectCategoriesField = $('#cgCreateUploadSortableArea .selectCategoriesField');
+            if($selectCategoriesField.length){
+                $selectCategoriesField.get(0).scrollIntoView();
+                localStorage.removeItem('cg_remove_category');
+                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Category field removed',true);
+            }else{
+                localStorage.removeItem('cg_remove_category');
+            }
         }
 
         cgJsClassAdmin.options.vars.cg_create_upload_container_offset = $('#ausgabe1.cg_create_upload').offset().top;
@@ -131,6 +137,20 @@ cgJsClassAdmin.createUpload.functions = {
         cgJsClassAdmin.options.vars.$wpadminbar = $('#wpadminbar');
         cgJsClassAdmin.options.vars.$cgCreateUploadSortableArea = $('#cgCreateUploadSortableArea');
         cgJsClassAdmin.options.vars.wpadminbarHeight  = cgJsClassAdmin.options.vars.$wpadminbar.height();
+
+        $('#cgRightSide .cg_row_col.cg_el.cg_drag_drop').each(function () {
+            var $el = $(this);
+            var $temp = $("<div " + cgJsClassAdmin.gallery.vars.dragAndDropEvents + " " + cgJsClassAdmin.gallery.vars.draggableDragStartDragEnd + "></div>");
+            $.each($temp[0].attributes, function () {
+                $el.attr(this.name, this.value);
+            });
+        });
+
+        cgJsClassAdmin.index.vars.$cgCreateUploadSortableArea = $('#cgCreateUploadSortableArea');
+        cgJsClassAdmin.index.vars.$ausgabe1 = $('#ausgabe1');
+        cgJsClassAdmin.index.vars.$cgRightSide = $('#cgRightSide');
+
+        cgJsClassAdmin.createUpload.functions.addRightFieldOrderAndAddRowsAndColumns(jQuery);
 
     },
     collapseFields: function () {
@@ -194,22 +214,75 @@ cgJsClassAdmin.createUpload.functions = {
 
         });
 
-        v = 0;
+    },
+    addRowsAndColumns: function ($) {
+
+        var v = 1;
+        var fieldOrder = 1;
+        var $cgCreateUploadSortableArea = cgJsClassAdmin.options.vars.$cgCreateUploadSortableArea;
+        var $cgRightSide = cgJsClassAdmin.index.vars.$cgRightSide;
+        $cgCreateUploadSortableArea.find('#40').find('.fieldOrder').val(fieldOrder);
+
+        $cgRightSide.find("> .cg_row:not(.cg_add_row)").each(function (i) {
+
+            if(v==1){
+                v++;
+                return;// then continue simply, because is image
+            }
+
+            var $row = $(this);
+            var rowCols = $row.find('.cg_row_col').length;
+            var rowElCols = $row.find('.cg_row_col.cg_el').length;
+
+            $row.find('.cg_row_col').removeClass('cg_33 cg_50 cg_100');
+
+            if(rowCols==1){
+                $row.find('.cg_row_col').addClass('cg_100');
+            }else if(rowCols==2){
+                $row.find('.cg_row_col').addClass('cg_50');
+            }else if(rowCols==3){
+                $row.find('.cg_row_col').addClass('cg_33');
+            }
+
+            if(rowElCols){
+                $row.removeClass('cg_empty');
+                $(this).find('.cg_row_col').each(function (i) {
+                    if($(this).attr('id')){
+                        fieldOrder++;
+                        var id = $(this).attr('id').split('right')[1];
+                        var $div = $cgCreateUploadSortableArea.find('#'+id);
+                        $div.find('.RowNumber').val(v);
+                        $div.find('.ColNumber').val(i+1);
+                        $div.find('.RowCols').val(rowCols);
+                        $div.find('.fieldOrder').val(fieldOrder);
+                    }
+                });
+                v++;
+            }else{
+                $row.addClass('cg_empty');
+            }
+
+        });
 
     },
-    fDeleteFieldAndData: function ($,fieldContainerId, idToDelete, categoryField) {
-
-        $("#" + fieldContainerId).remove();
+    addRightFieldOrderAndAddRowsAndColumns: function ($) {
+        this.addRightFieldOrder($);
+        this.addRowsAndColumns($);
+    },
+    fDeleteFieldAndDataModifyRowsAndColumns: function ($,fieldContainerId, idToDelete, categoryField) {
+        debugger
+        $("#cgCreateUploadSortableArea #" + idToDelete).remove();
         if (categoryField) {
-            $("#ausgabe1.cg_create_upload").append("<input type='hidden' name='deleteFieldnumber[deleteCategoryFields]' value=" + idToDelete + ">");
+            $("#ausgabe1.cg_create_upload").append("<input type='hidden' name='deleteFieldnumber[deleteCategoryField]' value=" + idToDelete + ">");
         }
         else {
-            $("#ausgabe1.cg_create_upload").append("<input type='hidden' name='deleteFieldnumber' value=" + idToDelete + ">");
+            $("#ausgabe1.cg_create_upload").append("<input type='hidden' name='deleteFieldnumber[normalFields]["+idToDelete+"]' value=" + idToDelete + ">");
         }
 
-        this.addRightFieldOrder($);
+        this.addRightFieldOrderAndAddRowsAndColumns($);
+        $('#cgUplEditFields').removeClass('cg_hide');
 
-        $('#submitForm').click();
+        //$('#submitForm').click();
 
     },
     goToField: function ($,isAddNewField) {
@@ -220,6 +293,57 @@ cgJsClassAdmin.createUpload.functions = {
             toSubstract = 70;
         }
 
-        $("html, body").animate({ scrollTop: $('#dauswahl').offset().top-toSubstract }, 0);
+      //  $("html, body").animate({ scrollTop: $('#dauswahl').offset().top-toSubstract }, 0);
+    },
+    appendCloneRight: function ($,fieldType,newId) {
+        debugger
+        var $clones = $('#cgFieldsToCloneAndAppendCloneRight');
+        var $clone = $clones.find('[data-cg-field="'+fieldType+'"]').clone();
+        $clone.attr('id','right'+newId);
+        var $div = $('#cgRightSide .cg_row_col.cg_upl_add.cg_clicked');
+        $div.replaceWith($clone);
+        $clone.click();
+        cgJsClassAdmin.createUpload.functions.addRightFieldOrderAndAddRowsAndColumns($);
+        setTimeout(function (){
+            if(fieldType!='ht' && fieldType!='caRoRe'){
+                var $newDiv = $('#'+newId);
+                debugger
+                var value = $newDiv.find('.cg_view_option_input_field_title').val();
+                //var newValue = value+' new';
+                var newValue = value;
+                //$newDiv.find('.cg_view_option_input_field_title').val(newValue).focus();
+                $newDiv.find('.cg_view_option_input_field_title').val(newValue);
+                //$('#cgRightSide .cg_row_col.cg_el.cg_edit_left .cg_upl_title').contents().first()[0].nodeValue = newValue;
+                $('#cgRightSide .cg_row_col.cg_el.cg_edit_left .cg_upl_title').text(newValue);
+            }
+            $('#cgRightSide .cg_row_col.cg_el.cg_edit_left').parent().find('.cg_del_row').addClass('cg_hide');
+        },10);
+    },
+    getAddElCol: function () {
+        return '<div class="cg_row_col cg_upl_add" title="Add field" '+cgJsClassAdmin.gallery.vars.dragAndDropEvents+'><div class="cg_upl_add_container"></div><div class="cg_upl_del" title="Delete column"></div></div>';
+    },
+    showDelRow: function () {
+        jQuery('#cgRightSide').find('.cg_row_col.cg_upl_add').each(function (i) {
+            var $row = jQuery(this).parent();
+            if(!$row.find('.cg_row_col.cg_el').length){
+             //   $row.find('.cg_del_row').removeClass('cg_hide');
+            }else{
+                $row.find('.cg_del_row').addClass('cg_hide');
+            }
+        });
+    },
+    removeAddRows: function ($) {
+        // correct double cg_add_row
+        var hasAddRow = false;
+        $('#cgRightSide .cg_row').each(function (){
+            if($(this).hasClass('cg_add_row') && hasAddRow){
+                $(this).remove();
+                hasAddRow = false;
+            }else if($(this).hasClass('cg_add_row')){
+                hasAddRow = true;
+            }else{
+                hasAddRow = false
+            }
+        });
     }
 };

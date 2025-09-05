@@ -119,8 +119,8 @@
     display: table;
     text-align: center;
     background-color: white;
-    margin-bottom: 20px;
-    margin-top: 20px;
+    margin-bottom: 8px;
+    margin-top: 0;
     padding-bottom: 6px;
     box-shadow: 2px 4px 12px rgba(0,0,0,.08);
     border-radius: 8px;
@@ -425,6 +425,7 @@ div#cg_main_container div.cgEcommerceCheckoutBodyContainer div.cg-ecommerce-uplo
     width:100%;
     box-shadow: 2px 4px 12px rgba(0,0,0,.08);
     border-radius: 8px;
+    margin-bottom: 8px;
 }
 
 #cgCatWidgetTable input{
@@ -631,7 +632,7 @@ div#cg_main_container div.cgEcommerceCheckoutBodyContainer div.cg-ecommerce-uplo
 
 .cg_backend_info_container .cg_create_pdf_preview,
 .cg_backend_info_container .cg_backend_image_full_size_target{
-    width: 292.5px;
+    width: 100%;
     height: 220px;
     max-width: 100%;
     overflow: hidden !important;
@@ -810,6 +811,8 @@ div#cg_main_container div.cgEcommerceCheckoutBodyContainer div.cg-ecommerce-uplo
 .cg_backend_info_container .cg_backend_image.cg90degree,.cg_backend_info_container .cg_backend_image.cg270degree{
     width: 66.6%;
     height: 133.33%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .cg_backend_info_container .cg_manage_multiple_files{
@@ -1194,7 +1197,7 @@ div#cg_main_container div.cgEcommerceCheckoutBodyContainer div.cg-ecommerce-uplo
     width: 100%;
     background-color: #ffffff;
     margin-right: 0;
-    margin-bottom: 15px;
+    margin-bottom: 8px;
 }
 
 #cg_view_control_top {
@@ -1211,7 +1214,8 @@ div#cg_main_container div.cgEcommerceCheckoutBodyContainer div.cg-ecommerce-uplo
 #cgViewControl .cg-info-icon{
     margin-left: 0;
     font-size: 15px;
-    cursor: pointer;
+    cursor: auto;
+    user-select: none;
 }
 
 #cgViewControl .cg_search {
@@ -1735,6 +1739,8 @@ select.cg_action_select:disabled{
 
 #cgSellContainer.cg_backend_action_container{
     min-height: 70%;
+    min-width: 85%;
+    transform: translate(-50%,-50%);
 }
 
 #cgSellFormLoaderContainer{

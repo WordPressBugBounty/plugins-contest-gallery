@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, openai, youtube, upload
 Requires at least: 5.6
-Stable tag: 26.1.2
+Stable tag: 27.0.0
 Tested up to: 6.8.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -49,8 +49,8 @@ File types: **JPG, PNG, GIF, PDF, ZIP, WEBM, MP4, MOV, TXT, DOC, DOCX, XLS, XLSX
 
 https://www.youtube.com/watch?v=Us-EYffJtcU
 
-= Contact form and gallery examples =
-* [Different file types contact form and gallery](https://www.contest-gallery.com/different-file-types-upload-form-and-gallery/)
+= Upload form and gallery examples =
+* [Different file types upload form and gallery](https://www.contest-gallery.com/different-file-types-upload-form-and-gallery/)
 * [Different galleries with different options on same page](https://www.contest-gallery.com/multiple-photo-contests/)
 * [Click through galleries on same page](https://www.contest-gallery.com/click-through-galleries-on-same-page/)
 
@@ -87,19 +87,19 @@ https://www.youtube.com/watch?v=Us-EYffJtcU
 
 == Available options ==
 
-= Contact form options =
-* Automatically activate user entries after successful frontend contact
-* Allow only registered users to upload files or to contact you
+= Upload form options =
+* Automatically activate user entries after successful frontend upload
+* Allow only registered users to upload files or to upload you
 * Restrict front end upload size
 * Maximum upload size in MB
 * Activate bulk upload in front end
 * Maximum number of files for bulk upload
 * Minimum number of files for bulk upload
 * Restrict resolution uploaded images
-* Activate in gallery contact form
-* Forward to another page after contact
-* Confirmation text after contact
-* Inform admin e-mail after contact in frontend
+* Activate in gallery upload form
+* Forward to another page after upload
+* Confirmation text after upload
+* Inform admin e-mail after upload in frontend
 * Inform entry activation e-mail
 * Inform successful entry e-mail
 
@@ -194,9 +194,9 @@ https://www.youtube.com/watch?v=Us-EYffJtcU
 1. Install as usual way via your WordPress installer, uploading/installing/activating.
 2. Contest Gallery menu point appears on the left site.
 3. Create a new gallery.
-5. Add files or edit contact form for uploading contest entries.
+5. Add files or edit upload form for uploading contest entries.
 6. Insert the shortcode `[cg_gallery id="1"]` in a page. This shortcode shows the gallery in frontend.
-7. Insert the shortcode `[cg_users_contact id="1"]` in a page. This shortcode shows the contact form in frontend.
+7. Insert the shortcode `[cg_users_upload id="1"]` in a page. This shortcode shows the upload form in frontend.
 
 Documentation to configure different options: [Click here..](https://www.contest-gallery.com/documentation/)
 
@@ -242,6 +242,12 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 
 == Changelog ==
 
+= V27.0.0 =
+* NEW: Multiple columns drag and drop upload form builder for "Edit upload form".
+* NEW: cg_users_contact shortcode ist renamed in cg_users_upload shortcode, but can still be used like always.
+* NEW: "Contact form" renamed to "Upload form" everywhere for more clarity.
+* FIXED: Deleting "Select categories" upload form field caused issues in some cases.
+
 = V26.1.2 =
 * FIXED: Plugin name changed to avoid trademark issues.
 
@@ -280,7 +286,7 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 * FIXED: Using multiple different upload forms if multiple different "uploads" were purchased, did not work on order summary page.
 
 = V26.0.3 =
-* NEW: Show contact form collapsed option if file upload is required. By default is uncollapsed for new galleries.
+* NEW: Show upload form collapsed option if file upload is required. By default is uncollapsed for new galleries.
 * NEW: Slightly improved borders and shadows for bright gallery color style in frontend in case of very bright monitors.
 * NEW: Enable PayPal and Stripe sandbox testing options. By default is disabled, so not desired test purchases in test environment can be done with PayPal or Stripe credit cards for testing.
 * FIXED: Rotating of upload form on mobile devices did not work properly.

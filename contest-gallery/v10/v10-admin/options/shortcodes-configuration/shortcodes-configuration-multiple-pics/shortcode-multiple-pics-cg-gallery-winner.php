@@ -314,7 +314,7 @@ echo <<<HEREDOC
 <div class='cg_view_options_row'>
     <div class='cg_view_option cg_view_option_full_width cg_border_top_none cg_padding_bottom_0 GalleryUploadContainer'>
         <div class='cg_view_option_title'>
-            <p>In gallery contact form button<br><span class="cg_view_option_title_note">Is not available for cg_gallery_winner shortcode</span></p>
+            <p>In gallery upload form button<br><span class="cg_view_option_title_note">Is not available for cg_gallery_winner shortcode</span></p>
         </div>
 HEREDOC;
 
@@ -354,7 +354,7 @@ if(floatval($galleryDbVersion)<21){
 <div class='cg_view_options_row cg_go_to_target' data-cg-go-to-target="ShowAlwaysContainer">
         <div class='cg_view_option cg_view_option_100_percent cg_border_top_none'>
             <div class='cg_view_option_title'>
-                <p>Show constantly (without hovering)<br>vote, comments and file title in gallery view<br><span class="cg_view_option_title_note">You see it by hovering if not activated.<br>File title can be configured in "Edit contact form" >>> "Show as title in gallery view".</span></p>
+                <p>Show constantly (without hovering)<br>vote, comments and file title in gallery view<br><span class="cg_view_option_title_note">You see it by hovering if not activated.<br>File title can be configured in "Edit upload form" >>> "Show as title in gallery view".</span></p>
             </div>
             <div class='cg_view_option_checkbox'>
              <input type="checkbox" name="multiple-pics[cg_gallery_winner][general][ShowAlways]" checked="{$jsonOptions[$GalleryID.'-w']['general']['ShowAlways']}" class="cg_shortcode_checkbox">

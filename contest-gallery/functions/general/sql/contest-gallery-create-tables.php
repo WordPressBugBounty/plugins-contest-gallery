@@ -1137,7 +1137,10 @@ HEREDOC;
 		ForwardToUrl TINYINT DEFAULT 0,
 		ForwardToUrlNewTab TINYINT DEFAULT 0,
         EcommerceTitle TINYINT DEFAULT 0,
-		EcommerceDescription TINYINT DEFAULT 0
+		EcommerceDescription TINYINT DEFAULT 0,
+		RowNumber INT(11) DEFAULT 0,
+		ColNumber INT(11) DEFAULT 0,
+		RowCols INT(11) DEFAULT 0
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);

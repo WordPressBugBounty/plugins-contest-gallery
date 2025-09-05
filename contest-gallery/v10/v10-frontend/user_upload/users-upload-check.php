@@ -90,7 +90,7 @@ if(empty($_POST["cg_upload_action"]) OR empty($_FILES["data"])){
     $wp_upload_dir = wp_upload_dir();
     $optionsPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/'.$galeryID.'-options.json';
     $optionsSource =json_decode(file_get_contents($optionsPath),true);
-    $intervalConf = cg_shortcode_interval_check($galeryID,$optionsSource,'cg_users_contact');
+    $intervalConf = cg_shortcode_interval_check($galeryID,$optionsSource,'cg_users_upload');
     if(!$intervalConf['shortcodeIsActive'] && empty($OrderItem)){
         ?>
         <script data-cg-processing="true">

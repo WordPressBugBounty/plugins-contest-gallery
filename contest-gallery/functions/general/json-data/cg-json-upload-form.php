@@ -52,6 +52,10 @@ if(!function_exists('cg_json_upload_form')){
             $formDataArray[$jsonKey]['WatermarkPosition'] = $object->WatermarkPosition;
             $formDataArray[$jsonKey]['Active'] = $object->Active;
 
+            $formDataArray[$jsonKey]['RowNumber'] = $object->RowNumber;
+            $formDataArray[$jsonKey]['RowCols'] = $object->RowCols;
+            $formDataArray[$jsonKey]['ColNumber'] = $object->ColNumber;
+
 			if(!empty($object->FieldTitleGallery)){
 				$formDataArray[$jsonKey]['FieldTitleGallery'] = $object->FieldTitleGallery;
 			}

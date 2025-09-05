@@ -85,7 +85,7 @@ echo "<div>
             <br>Voting is not possible<br>Show always all votes<br>\"Hide until vote\" and \"Show only user votes\" options are disabled<br>\"Delete votes\" is not possible<br>User can delete own files if they are activated
             <br><strong>User can edit entry fields information if<br>\"Show as info in single entry view\" or \"Show as title in gallery view\"<br>for a field is activated.</strong>
             <br>Can be added multiple times on a page with different id’s
-            <br><b>\"Delete by frontend user deleted files from storage also\"</b> option<br>can be configured in \"Contact options\"
+            <br><b>\"Delete by frontend user deleted files from storage also\"</b> option<br>can be configured in \"Upload options\"
             </span>
         </div>
     </div>
@@ -103,17 +103,17 @@ echo "<div class='td_gallery_info_content'>";
 
 echo "<div class='td_gallery_info_shortcode' >
     <div>
-     <div class='td_gallery_info_name_title'>Contact (upload) form</div>
-    <div class='td_gallery_info_name_span'>[cg_users_contact id=\"".$galeryNR."\"]</div>
+     <div class='td_gallery_info_name_title'>Upload form</div>
+    <div class='td_gallery_info_name_span'>[cg_users_upload id=\"".$galeryNR."\"]</div>
         <div>
             <span class=\"cg-info-icon\">read info</span>
-    <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;top:67px;\">Displays contact/upload form<br><b>\"Contact form\"</b> can be <b>used for uploads</b><br>or as simple contact form without uploads<br>Can be added multiple times on a page<br>with different id’s</span>
+    <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;top:67px;\">Displays upload form<br>Can be added multiple times on a page<br>with different id’s</span>
         </div>
     </div>
     <div class='td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div>
-    <div class='td_gallery_info_shortcode_conf   cg_tooltip'  data-cg-shortcode='cg_users_contact'  data-cg-title-main='Contact form' data-cg-title-sub='[cg_users_contact id=\"".$galeryNR."\"]'></div>
-    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide ' data-cg-shortcode='cg_users_contact' ></div>
-    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide' data-cg-shortcode='cg_users_contact' ></div>
+    <div class='td_gallery_info_shortcode_conf   cg_tooltip'  data-cg-shortcode='cg_users_upload'  data-cg-title-main='Upload form' data-cg-title-sub='[cg_users_upload id=\"".$galeryNR."\"]'></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide ' data-cg-shortcode='cg_users_upload' ></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide' data-cg-shortcode='cg_users_upload' ></div>
 </div>";
 
 echo "<div class='td_gallery_info_shortcode'>";
@@ -189,7 +189,7 @@ echo "<div>
     <div class='td_gallery_info_name_span'>[cg_gallery_winner id=\"".$galeryNR."\"]</div>
         <div>
             <span class=\"cg-info-icon\">read info</span>
-            <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;top:67px;\">Only files which are marked as winner will be displayed<br>Total voting is visible<br>Star voting is not possible<br>\"Hide until vote\" and \"Show only user votes\" options are disabled<br>\"Delete votes\" is not possible<br>\"In gallery contact form button\" is not available<br>Can be added multiple times on a page with different id’s</span>
+            <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;top:67px;\">Only files which are marked as winner will be displayed<br>Total voting is visible<br>Star voting is not possible<br>\"Hide until vote\" and \"Show only user votes\" options are disabled<br>\"Delete votes\" is not possible<br>\"In gallery upload form button\" is not available<br>Can be added multiple times on a page with different id’s</span>
         </div>
     </div>
     <div class='td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div>
@@ -243,7 +243,7 @@ echo "<div>
     <div class='td_gallery_info_name_span' style='padding-left: 0;white-space: pre;'>[cg_gallery_ecommerce id=\"".$galeryNR."\"]</div>
         <div>
             <span class=\"cg-info-icon\">read info</span>
-            <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;top:67px;\">Display only entries activated for selling<br>Every entry can be activated for selling<br>Use \"Sell settings\" button to activate an entry for selling<br>\"In gallery contact form button\" is not available<br>Voting can be enabled/disabled<br>Can be added multiple times on a page with different id’s<br> add <b>test=\"true\"</b> to shortcode to activate test environment<br>Example: <b>[cg_gallery_ecommerce id=\"".$galeryNR."\" test=\"true\"]</b></span>
+            <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;top:67px;left:5%;\">Display only entries activated for selling<br>Every entry can be activated for selling<br>Use \"Sell settings\" button to activate an entry for selling<br>\"In gallery upload form button\" is not available<br>Voting can be enabled/disabled<br>Can be added multiple times on a page with different id’s<br> add <b>test=\"true\"</b> to shortcode to activate test environment<br>Example: <b>[cg_gallery_ecommerce id=\"".$galeryNR."\" test=\"true\"]</b></span>
         </div>
     </div>
     <div class='td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div>

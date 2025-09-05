@@ -16,7 +16,7 @@ if(is_multisite()){
  by default for a WordPress Single Site installation<br>might not be allowed by default for a Multisite.<br><b>Allowed Multisite file types can be configured in:</b><br>
  Network Admin >>> Settings >>> Upload file types</div>";
 }
-echo "<b>Allowed file types frontend:</b> configurable in <b>\"Edit contact form\"</b><br/>";
+echo "<b>Allowed file types frontend:</b> configurable in <b>\"Edit upload form\"</b><br/>";
 
 echo "<span style='position: relative;'>Maximum <b>upload_max_filesize</b> in your PHP configuration: <b>$upload_max_filesize MB</b> 
 <span class=\"cg-info-icon\"><b><u>info</b></u></span>

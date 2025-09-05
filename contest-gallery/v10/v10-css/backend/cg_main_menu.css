@@ -3,6 +3,7 @@
     border-radius: 8px;
     background-color:#ffffff;
     box-sizing: border-box;
+    margin-bottom: 8px;
 }
 
 .cg_main_menu_shortcode{
@@ -33,7 +34,7 @@
     box-shadow: 2px 4px 12px rgba(0,0,0,.08);
     border-radius: 8px;
     background-color:#ffffff;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     display: flex;
     flex-flow: row;
     font-size: 13px;
@@ -299,7 +300,7 @@ input.cg_button_new_gallery:hover{
     border: thin solid #dedede;
     padding: 5px;
     display: none;
-    left: 0;
+    left: 15%;
     top: 85px;
     z-index: 10;
     border-radius: 8px;

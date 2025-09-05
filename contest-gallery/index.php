@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: Contest Gallery
-Description: Contact form, files, photos and videos upload contest gallery plugin for WordPress. Create contact forms for entries with or without file/image upload. Create user registration form. Create login form. Create responsive galleries and allow to vote for any kind of entries. Sell entries via PayPal or Stripe API. Create or edit images via OpenAI API.
-Version: 26.1.2
+Description: Upload form, files, photos and videos upload contest gallery plugin for WordPress. Create upload forms for entries with or without file/image upload. Create user registration form. Create login form. Create responsive galleries and allow to vote for any kind of entries. Sell entries via PayPal or Stripe API. Create or edit images via OpenAI API.
+Version: 27.0.0
 Author: Contest Gallery
 Plugin URI: https://www.contest-gallery.com
 Author URI: https://www.contest-gallery.com
@@ -18,6 +18,7 @@ define('WP_DEBUG',true);*/
 define('WP_DEBUG_LOG', true);
 define('WP_DEBUG_DISPLAY', false);*/
 // $wpdb->show_errors(true);
+//$wpdb->print_error();
 //exit( var_dump( $wpdb->last_query ) ); auch eine möglichkeit
 // $lastid = $wpdb->insert_id;
 
@@ -1001,3 +1002,16 @@ if(!function_exists('cg_download_keys_example')){
         }
     }
 }
+
+/*
+add_filter( 'get_post', 'cg_filter_wp_get_attachment_metadata', 10, 2 );
+function cg_filter_wp_get_attachment_metadata( $data, $attachment_id ){
+    if(!empty($_REQUEST['query']['cg_post'])){
+        echo "<pre>";
+        print_r($data);
+        echo "</pre>";
+    }
+    return $data;
+}*/
+
+

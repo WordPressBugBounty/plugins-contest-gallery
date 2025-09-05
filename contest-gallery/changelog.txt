@@ -1,5 +1,11 @@
 Contest Gallery
 
+= V27.0.0 =
+* NEW: Multiple columns drag and drop upload form builder for "Edit upload form".
+* NEW: cg_users_contact shortcode ist renamed in cg_users_upload shortcode, but can still be used like always.
+* NEW: "Contact form" renamed to "Upload form" everywhere for more clarity.
+* FIXED: Deleting "Select categories" upload form field caused issues in some cases.
+
 = V26.1.2 =
 * FIXED: Plugin name changed to avoid trademark issues.
 

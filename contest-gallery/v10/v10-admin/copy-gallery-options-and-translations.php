@@ -909,8 +909,8 @@ if ($cgVersion < 10) {
     $valueCollect['GalleryUploadTextAfter'] = '';
 
     $confirmationText = '<p>Your entry was successful<br><br><br><b>Note for first time Contest Gallery user:</b>
-<br/><br/>This text can be configurated in "Edit options" > "Contact options" > "In gallery contact form configuration"<br/><br/>
-"Automatically activate users entries after successful frontend contact" can be activated/deactivated in "Edit options" >>> "Contact options"
+<br/><br/>This text can be configurated in "Edit options" > "Upload options" > "In gallery upload form configuration"<br/><br/>
+"Automatically activate users entries after successful frontend upload" can be activated/deactivated in "Edit options" >>> "Upload options"
 </p>';
     $confirmationText = htmlentities($confirmationText, ENT_QUOTES);
     $valueCollect['GalleryUploadConfirmationText'] = $confirmationText;

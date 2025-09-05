@@ -89,7 +89,7 @@ echo "<a href='https://www.contest-gallery.com/documentation/' target='_blank'><
 echo "Contest Gallery documentation";
 echo "</span></a>";
 echo "</div>";
-echo "<table style='box-shadow: 2px 4px 12px rgba(0,0,0,.08);border-radius:8px;background-color:#ffffff;width:100%;' >";
+echo "<table style='box-shadow: 2px 4px 12px rgba(0,0,0,.08);border-radius:8px;background-color:#ffffff;width:100%;margin-bottom: 8px;' >";
 echo "<tr>";
 $cgLink = '';
 if($cgPro){
@@ -148,7 +148,6 @@ if($cgPro){
 ###NORMAL-END###
 
 echo "</table>";
-echo "<br/>";
 
 if (!empty($_GET['option_id']) AND !empty($_POST['cg_delete_gallery'])) {
 
@@ -185,7 +184,7 @@ Example: <b>[cg_galleries ids="1,2,3"]</b><br><br><b>cg_galleries... shortcode t
             <br>Voting is not possible<br>Show always all votes<br>"Hide until vote" and "Show only user votes" options are disabled<br>"Delete votes" is not possible<br>User can delete own files if they are activated
             <br><strong>User can edit entry fields information if<br>"Show as info in single entry view" or "Show as title in gallery view"<br>for a field is activated.</strong>
             <br>Can be added multiple times on a page with different id’s
-            <br><b>"Delete by frontend user deleted files from storage also"</b> option<br>can be configured in "Contact options"<br><br>
+            <br><b>"Delete by frontend user deleted files from storage also"</b> option<br>can be configured in "Upload options"<br><br>
 You can also add ids to display certain galleries<br>
 Example: <b>[cg_galleries_user ids="1,2,3"]</b><br><br><b>cg_galleries... shortcode type can be added only one time on a page</b></span>
     </div>
@@ -195,12 +194,12 @@ You can also add ids to display certain galleries<br>
 Example: <b>[cg_galleries_no_voting ids="1,2,3"]</b><br><br><b>cg_galleries... shortcode type can be added only one time on a page</b></span>
     </div>
     <div class="td_gallery_info_shortcode"><p  class="cg_shortcode_title">Winner galleries<br><strong><span class="td_gallery_info_name_span">[cg_galleries_winner]</span></strong></p><div class="cg_shortcode_copy"><div class="td_gallery_info_shortcode_edit  cg_shortcode_copy_gallery cg_tooltip" style="margin-left: -5px;"></div></div>
-        <span class="cg-info-icon">info</span><span class="cg-info-container">Displays galleries <b>cg_galleries_winner</b> shortcode type<br><br>Only files which are marked as winner will be displayed<br>Total voting is visible<br>Star voting is not possible<br>"Hide until vote" and "Show only user votes" options are disabled<br>"Delete votes" is not possible<br>"In gallery contact form button" is not available<br><br>
+        <span class="cg-info-icon">info</span><span class="cg-info-container">Displays galleries <b>cg_galleries_winner</b> shortcode type<br><br>Only files which are marked as winner will be displayed<br>Total voting is visible<br>Star voting is not possible<br>"Hide until vote" and "Show only user votes" options are disabled<br>"Delete votes" is not possible<br>"In gallery upload form button" is not available<br><br>
 You can also add ids to display certain galleries<br>
 Example: <b>[cg_galleries_winner ids="1,2,3"]</b><br><br><b>cg_galleries... shortcode type can be added only one time on a page</b></span>
     </div>
     <div class="td_gallery_info_shortcode"><p  class="cg_shortcode_title">Ecommerce galleries<br><strong><span class="td_gallery_info_name_span">[cg_galleries_ecommerce]</span></strong></p><div class="td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip"></div>
-        <span class="cg-info-icon">info</span><span class="cg-info-container">Displays galleries <b>cg_galleries_ecommerce</b>  shortcode type<br><br>Display only entries activated for selling<br>Every entry can be activated for selling<br>Use "Sell settings" button to activate an entry for selling<br>"In gallery contact form button" is not available<br>Voting can be enabled/disabled<br>Can be added multiple times on a page with different id’s<br> add <b>test="true"</b> to shortcode to activate test environment<br>Example: <b>[cg_galleries_ecommerce  test="true"]</b><br><br>
+        <span class="cg-info-icon">info</span><span class="cg-info-container" style="left:-5%;">Displays galleries <b>cg_galleries_ecommerce</b>  shortcode type<br><br>Display only entries activated for selling<br>Every entry can be activated for selling<br>Use "Sell settings" button to activate an entry for selling<br>"In gallery upload form button" is not available<br>Voting can be enabled/disabled<br>Can be added multiple times on a page with different id’s<br> add <b>test="true"</b> to shortcode to activate test environment<br>Example: <b>[cg_galleries_ecommerce  test="true"]</b><br><br>
 You can also add ids to display certain galleries<br>
 Example: <b>[cg_galleries_ecommerce ids="1,2,3"]</b><br><br><b>cg_galleries... shortcode type can be added only one time on a page</b></span>
     </div>
@@ -234,7 +233,7 @@ if(count($selectSQL)){
     echo '<input type="hidden" name="create" value="true">
 <input type="hidden" name="page" value="'.cg_get_version().'/index.php">';
     echo "<button type='submit'  id='cgCreateFirstGalleryButton'>
-                <div class='cg_sub_2'>Add entries, edit contact form, see more available shortcodes</div>
+                <div class='cg_sub_2'>Add entries, edit upload form, see more available shortcodes</div>
                 <div class='cg_sub_1'>Create new gallery</div>
                 <div class='cg_sub_3'></div>
             </button>";

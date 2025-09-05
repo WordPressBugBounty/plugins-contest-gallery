@@ -170,7 +170,7 @@ HEREDOC;
                                 <input type="radio" name="cgSellContainer[SaleType]" class="SaleType SaleType_shipping cg_view_option_radio_multiple_input_field"  value="shipping">
                             </div>
                             <div class='cg_view_option_radio_multiple_title' id="SaleType_shipping_option">
-                                <p style="height:10px;">&nbsp;</p><span class="cg_view_option_title_note"><b>NOTE:</b> the default shipping<br>which is set in ecommerce options<br>is currently <br><span id="defaultShippingPriceText" style="font-weight: bold;" ></span> <input type="text" id="defaultShippingPriceInput" class="cg_hide"  /> </span>
+                                <p style="height:10px;">&nbsp;</p><span class="cg_view_option_title_note"><b>NOTE:</b> the default shipping<br>which is set in ecommerce options<br>is currently <span id="defaultShippingPriceText" style="font-weight: bold;" ></span> <input type="text" id="defaultShippingPriceInput" class="cg_hide"  /> </span>
                             </div>
                         </div>
                         <div class='cg_view_option_radio_multiple_container cg_one_third_width cg_flex_flow_column' id="SaleType_download_option_container" style="height:100%;">
@@ -264,8 +264,8 @@ echo <<<HEREDOC
                   <div  class='cg_view_option $cgProFalse cg_key_upload_option cg_sale_conf cg_view_option_full_width   cg_border_bottom_none  cg_border_top_none cg_view_option_flex_flow_column' >
                     <div class='cg_view_option_title  cg_view_option_title_full_width' >
                         <p>
-                            <span class="cg_view_option_title_note">Select which gallery contact form user should use after purchase<br>After purchase <b>user will be forwarded to order page where the contact form will be visible and useable</b><br>
-                                <b class="cg_color_red">NOTE:</b> <b>settings of the cg_users_contact shortcode contact form will be valid</b>
+                            <span class="cg_view_option_title_note">Select which gallery upload form user should use after purchase<br>After purchase <b>user will be forwarded to order page where the upload form will be visible and useable</b><br>
+                                <b class="cg_color_red">NOTE:</b> <b>settings of the cg_users_upload shortcode upload form will be valid</b>
                             </span>
                         </p>
                     </div>
@@ -276,7 +276,7 @@ echo <<<HEREDOC
                         <p>
                             <span class="cg_view_option_title_note">
                                 <b class="cg_color_red">NOTE:</b> <b>reload this page if you just created a gallery in another tab, to be able to select that gallery</b><br><br>
-                            	<a class=" cg_no_outline_and_shadow_on_focus" id="cgContactFormShortcodeConfigurationAreaLink" href="$cgContactFormShortcodeConfigurationAreaLinkPart&option_id=$GalleryID" target="_blank">Go to cg_users_contact form settings</a>
+                            	<a class=" cg_no_outline_and_shadow_on_focus" id="cgContactFormShortcodeConfigurationAreaLink" href="$cgContactFormShortcodeConfigurationAreaLinkPart&option_id=$GalleryID" target="_blank">Go to cg_users_upload form settings</a>
                             </span>
                             <span class="cg_hide"><a href="$cgContactFormShortcodeConfigurationAreaLinkPart"  id="cgContactFormShortcodeConfigurationAreaLinkPart" ></a></span>
                         </p>
@@ -293,7 +293,7 @@ echo <<<HEREDOC
                 </div>
                 <div class='cg_view_option $cgProFalse cg_view_option_full_width cg_border_top_none' id="wp-cgAllUploadsUsedText-wrap-Container">
 		            <div class='cg_view_option_title'>
-		                <p>Text if all uploads were used<br><span class="cg_view_option_title_note"><b>NOTE:</b> "Confirmation text after upload" or "Forward to another URL after upload"<br>are still valid if configured for cg_users_contact shortcode form<br><b>NOTE:</b> If all uploads were used this text will be shown instead of "Confirmation after upload" configuration of upload form</span></p>
+		                <p>Text if all uploads were used<br><span class="cg_view_option_title_note"><b>NOTE:</b> "Confirmation text after upload" or "Forward to another URL after upload"<br>are still valid if configured for cg_users_upload shortcode form<br><b>NOTE:</b> If all uploads were used this text will be shown instead of "Confirmation after upload" configuration of upload form</span></p>
 		            </div>
 		            <div class='cg_view_option_html cg_view_option_input_full_width' >
 		                 <div class='cg-wp-editor-container' data-wp-editor-id="cgAllUploadsUsedText"  >
@@ -361,7 +361,7 @@ HEREDOC;
 <div class='cg_view_options_row '  id="TaxRadioContainerRow">
                 <div class='cg_view_option cg_sale_conf cg_view_option_full_width cg_border_bottom_none'>
                     <div class='cg_view_option_title'>
-                    <p>Tax <br><span class="cg_view_option_title_note"><b>NOTE:</b> the default tax<br>which is set in ecommerce options<br>is currently <br><span id="defaultTaxText" style="font-weight: bold;" ></span> <input type="text" id="defaultTaxInput" class="cg_hide"  /> </span></p>
+                    <p>Tax <br><span class="cg_view_option_title_note"><b>NOTE:</b> the default tax<br>which is set in ecommerce options<br>is currently <span id="defaultTaxText" style="font-weight: bold;" ></span> <input type="text" id="defaultTaxInput" class="cg_hide"  /> </span></p>
                     </div>
                     <div class='cg_view_option_radio_multiple'>
                         <div class='cg_view_option_radio_multiple_container' id="TaxFreeRadioContainerParent">

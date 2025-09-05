@@ -1,6 +1,7 @@
 cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostData,$formLinkObject,submitMessage,cg_picture_id_to_scroll) {
-
+    debugger
     cgJsClassAdmin.index.vars.isCreateUploadAreaLoaded = false;
+    cgJsClassAdmin.index.vars.resizeLeftSideIsActive = false;
     cgJsClassAdmin.index.vars.isOptionsAreaLoaded = false;
     cgJsClassAdmin.index.vars.isCreateRegistryAreaLoaded = false;
     cgJsClassAdmin.index.vars.isGalleryAreaLoaded = false;
@@ -28,7 +29,7 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
         contentType: false,
         processData: false
     }).done(function(response) {
-
+        debugger
         if(cgJsClassAdmin.index.functions.isInvalidNonce($,response)){
             return;
         }
@@ -178,19 +179,19 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
         $cg_nav_menu_row_container.find('.cg_backend_button_general').removeClass('cg_active');
 
         if(location.href.indexOf('define_upload=true')>-1){
-            $cg_nav_menu_row_container.find('#cgNavMenuContactForm .cg_backend_button_general').addClass('cg_active');
+            $cg_nav_menu_row_container.find('#cgNavMenuContactForm.cg_load_backend_link').addClass('cg_active').find('.cg_backend_button_general').addClass('cg_active');
         }else if(location.href.indexOf('create_user_form=true')>-1){
-            $cg_nav_menu_row_container.find('#cgNavMenuRegForm .cg_backend_button_general').addClass('cg_active');
+            $cg_nav_menu_row_container.find('#cgNavMenuRegForm.cg_load_backend_link').addClass('cg_active').find('.cg_backend_button_general').addClass('cg_active');
         }else if(location.href.indexOf('users_management=true')>-1){
-            $cg_nav_menu_row_container.find('#cgNavMenuUsersManagement .cg_backend_button_general').addClass('cg_active');
+            $cg_nav_menu_row_container.find('#cgNavMenuUsersManagement.cg_load_backend_link').addClass('cg_active').find('.cg_backend_button_general').addClass('cg_active');
         }else if(location.href.indexOf('cg_edit_translations=true')>-1){
-            $cg_nav_menu_row_container.find('#cgNavMenuEditTranslations .cg_backend_button_general').addClass('cg_active');
+            $cg_nav_menu_row_container.find('#cgNavMenuEditTranslations.cg_load_backend_link').addClass('cg_active').find('.cg_backend_button_general').addClass('cg_active');
         }else if(location.href.indexOf('cg_edit_ecommerce=true')>-1){
-            $cg_nav_menu_row_container.find('#cgNavMenuEditEcommerce .cg_backend_button_general').addClass('cg_active');
+            $cg_nav_menu_row_container.find('#cgNavMenuEditEcommerce.cg_load_backend_link').addClass('cg_active').find('.cg_backend_button_general').addClass('cg_active');
         }else if(location.href.indexOf('edit_options=true')>-1){
-            $cg_nav_menu_row_container.find('#cgEditOptionsButton .cg_backend_button_general').addClass('cg_active');
+            $cg_nav_menu_row_container.find('#cgEditOptionsButton.cg_load_backend_link').addClass('cg_active').find('.cg_backend_button_general').addClass('cg_active');
         }else if(location.href.indexOf('cg_orders=true')>-1 || location.href.indexOf('cg_show_order=true')>-1){
-            $cg_nav_menu_row_container.find('#cgNavMenuEcommerceOrders .cg_backend_button_general').addClass('cg_active');
+            $cg_nav_menu_row_container.find('#cgNavMenuEcommerceOrders.cg_load_backend_link').addClass('cg_active').find('.cg_backend_button_general').addClass('cg_active');
         }
 
         if(location.href.indexOf('cg_comment_id=')>-1){

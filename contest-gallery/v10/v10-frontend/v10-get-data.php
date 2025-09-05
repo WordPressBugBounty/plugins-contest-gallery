@@ -125,7 +125,7 @@ $isUserGallery = false;
     $isOnlyGalleryWinner = false;
 $isOnlyGalleryEcommerce = false;
 $isEcommerceTest = false;
-$isOnlyUploadForm = false;// since 20.0.0 is always is only contact form
+$isOnlyUploadForm = false;// since 27.0.0 is always is only upload form, from 20.0.0 till 27.0.0 it was contact form
 $isOnlyContactForm = false;
 $WpPageShortCodeType = 'WpPage';
 $WpPageParentShortCodeType = 'WpPageParent';
@@ -214,7 +214,7 @@ if($shortcode_name == 'cg_gallery_user'){
     $galeryIDshort = 'cf';
     $galeryIDuser = $galeryID.'-cf';
     $galeryIDuserForJs = $galeryIDuser;
-    $cg_gallery_shortcode_type = 'cg_users_contact';
+    $cg_gallery_shortcode_type = 'cg_users_upload';
     if(!empty($hasUploadSell) && !empty($OrderItemID)){
         //$galeryIDuserForJs = $OrderItemID;
         $galeryIDuserForJs = $OrderItemID.'itemId';

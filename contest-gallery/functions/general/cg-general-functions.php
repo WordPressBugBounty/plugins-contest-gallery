@@ -1040,4 +1040,169 @@ if(!function_exists('cg_get_galleries_options_all')){
 	}
 }
 
+if(!function_exists('cg_sort_form_input')){
+	function cg_sort_form_input($selectFormInput){
+
+        // remove image first
+        foreach ($selectFormInput as $key => $value) {
+            if($value->Field_Type=='image-f'){
+                unset($selectFormInput[$key]);
+            }
+        }
+
+        $selectFormInputNew = [];
+        $index = 0;
+        foreach ($selectFormInput as $key => $value) {
+            $selectFormInputNew[$index] = $value;
+            $index++;
+        }
+
+        $selectFormInput = $selectFormInputNew;
+
+        if(!empty( $selectFormInput[0]->RowNumber)){
+            $selectFormInputNew = [];
+            foreach ($selectFormInput as $key => $value) {
+                /*
+                if($value->RowCols > 1 && empty($emptyRowCols[$value->RowNumber])){
+                    rowColsCheck($value->RowNumber,$selectFormInput,$emptyRowCols);
+                }
+                */
+                $value->RowHigh = $value->RowNumber*100;
+                $selectFormInputNew[($value->RowNumber*100+$value->ColNumber)] = $value;
+            }
+
+            ksort($selectFormInputNew);
+
+            $processedRowNumbers = [];
+            $selectFormInputNewRowHigh = [];
+
+            foreach ($selectFormInputNew as $key => $value) {
+                if($value->RowCols > 1 && empty($processedRowNumbers[$value->RowNumber])){
+                    $processedRowNumbers[$value->RowNumber] = true;
+                    $rowHigh = $value->RowHigh;
+                    $count = 1;
+                    while ($count <= $value->RowCols) {
+                        if(empty($selectFormInputNew[($rowHigh+$count)])){
+                            $obj = new stdClass();
+                            $obj->RowNumber = $value->RowNumber;
+                            $obj->RowCols = $value->RowCols;
+                            $obj->Field_Type = 'empty-col';
+                            $selectFormInputNew[($rowHigh+$count)] = $obj;
+                        }
+                        $count++;
+                    }
+                }
+            }
+
+            ksort($selectFormInputNew);
+            /*
+
+            var_dump('$selectFormInputNew');
+                echo "<pre>";
+                print_r($selectFormInputNew);
+                echo "</pre>";
+        */
+
+
+            $selectFormInput = $selectFormInputNew;
+            // then sorting is required
+            $selectFormInputNew = [];
+            $index = 0;
+            foreach ($selectFormInput as $key => $value) {
+                $selectFormInputNew[$index] = $value;
+                $index++;
+            }
+            $selectFormInput = $selectFormInputNew;
+            ksort($selectFormInput);
+        }
+        return $selectFormInput;
+    }
+}
+
+if(!function_exists('cg_sort_json_upload_form')){
+	function cg_sort_json_upload_form($jsonUploadFormSortedByFieldOrder){
+        $jsonUploadForm = $jsonUploadFormSortedByFieldOrder;
+
+        // remove image first
+        foreach ($jsonUploadForm as $key => $value) {
+            if(!isset($value['RowNumber'])){
+                $value['RowNumber'] = 0;
+                $value['ColNumber'] = 0;
+                $value['RowCols'] = 0;
+            }
+            $jsonUploadForm[$key] = $value;
+            if($value['Field_Type']=='image-f'){
+                unset($jsonUploadForm[$key]);
+            }
+        }
+
+        $jsonUploadFormNew = [];
+        $index = 0;
+        foreach ($jsonUploadForm as $key => $value) {
+            $jsonUploadFormNew[$index] = $value;
+            $index++;
+        }
+
+        $jsonUploadForm = $jsonUploadFormNew;
+
+        if(!empty( $jsonUploadForm[0]['RowNumber'])){
+            $jsonUploadFormNew = [];
+            foreach ($jsonUploadForm as $key => $value) {
+                /*
+                if($value->RowCols > 1 && empty($emptyRowCols[$value->RowNumber])){
+                    rowColsCheck($value->RowNumber,$jsonUploadForm,$emptyRowCols);
+                }
+                */
+                $value['RowHigh'] = $value['RowNumber']*100;
+                $jsonUploadFormNew[($value['RowNumber']*100+$value['ColNumber'])] = $value;
+            }
+
+            ksort($jsonUploadFormNew);
+
+            $processedRowNumbers = [];
+            $jsonUploadFormNewRowHigh = [];
+
+            foreach ($jsonUploadFormNew as $key => $value) {
+                if($value['RowCols'] > 1 && empty($processedRowNumbers[$value['RowNumber']])){
+                    $processedRowNumbers[$value['RowNumber']] = true;
+                    $rowHigh = $value['RowHigh'];
+                    $count = 1;
+                    while ($count <= $value['RowCols']) {
+                        if(empty($jsonUploadFormNew[($rowHigh+$count)])){
+                            $obj = [];
+                            $obj['RowNumber'] = $value['RowNumber'];
+                            $obj['RowCols'] = $value['RowCols'];
+                            $obj['Field_Type'] = 'empty-col';
+                            $jsonUploadFormNew[($rowHigh+$count)] = $obj;
+                        }
+                        $count++;
+                    }
+                }
+            }
+
+            ksort($jsonUploadFormNew);
+            /*
+
+            var_dump('$selectFormInputNew');
+                echo "<pre>";
+                print_r($selectFormInputNew);
+                echo "</pre>";
+        */
+
+
+            $jsonUploadForm = $jsonUploadFormNew;
+            // then sorting is required
+            $jsonUploadFormNew = [];
+            $index = 0;
+            foreach ($jsonUploadForm as $key => $value) {
+                $jsonUploadFormNew[$index] = $value;
+                $index++;
+            }
+            $jsonUploadForm = $jsonUploadFormNew;
+            ksort($jsonUploadForm);
+        }
+        return $jsonUploadForm;
+    }
+}
+
 ?>

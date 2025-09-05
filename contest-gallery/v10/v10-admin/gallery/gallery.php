@@ -1030,7 +1030,7 @@ if($isAjaxCall){
 
 		if(isset($saleItemsCountArray[$id])){
 			echo '<a target="_blank" href="?page='.cg_get_version().'/index.php&option_id='.$GalleryID.'&cg_orders=true&cg_item_ids='.$id.'&cg_go_to=cgSales">'.
-			     '<div class="cg_for_sale_price_container cg_go_to_sales" style="top:125px;"><span class="cg_for_sale_price_string">Sales</span><br><span class="cg_for_sale_price">'.$saleItemsCountArray[$id].'</span></div>'.
+			     '<div class="cg_for_sale_price_container cg_go_to_sales" style="top:125px;"><span class="cg_for_sale_price_string">Orders</span><br><span class="cg_for_sale_price">'.$saleItemsCountArray[$id].'</span></div>'.
 			     '</a>';
 		}
 
@@ -1089,18 +1089,18 @@ if($isAjaxCall){
 				echo '<div class="cg_backend_image_full_size_target_'.$ImgTypeToShow.'  cg_backend_image_full_size_target_child_video " data-cg-file-type="'.$ImgTypeToShow.'"><span class="cg_post_title">'.$post_title_to_show.'</span></div>';
 			}else{
 				echo '<a href="'.$sourceOriginalImgShow.'" target="_blank" title="Show file" alt="Show file">';
-				echo '<video width="292.5" height="220"  >';
+				echo '<video  style="width:100%;"  height="220"  >';
 				echo '<source src="'.$sourceOriginalImgShow.'?time='.time().'" type="video/mp4">';
 				echo '<source src="'.$sourceOriginalImgShow.'?time='.time().'" type="video/'.$ImgTypeToShow.'">';
 				echo '</video>';
 				echo '</a><span class="cg_post_title cg_video">'.$post_title_to_show.'</span>';
 			}
 		}else if($ImgTypeToShow=='con'){
-			echo '<div class="cg_backend_image cg_backend_image_con_entry"><span>Contact form entry<br>Entry ID: '.$id.'</span></div>';
+			echo '<div class="cg_backend_image cg_backend_image_con_entry"><span>Upload form entry<br>Entry ID: '.$id.'</span></div>';
 		}else if($ImgTypeToShow=='ytb'){
-			echo '<div class="cg_backend_image"><iframe  width="294" height="221" src="'.$image_url_to_show.'"  ></iframe></div>';
+			echo '<div class="cg_backend_image"><iframe  style="width: 100%;" height="221" src="'.$image_url_to_show.'"  ></iframe></div>';
 		}else if($ImgTypeToShow=='inst'){
-			echo '<div class="cg_backend_image"><iframe  width="294" height="221" src="'.$image_url_to_show.'"  ></iframe></div>';
+			echo '<div class="cg_backend_image"><iframe  style="width: 100%;" height="221" src="'.$image_url_to_show.'"  ></iframe></div>';
 		}else if($ImgTypeToShow=='twt'){
 			$blockquote = cg_get_blockquote_from_post_content($post_description_to_show);
 			//var_dump('$blockquote');

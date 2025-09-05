@@ -81,7 +81,7 @@ if(empty($isFromOrderSummary)){
 		ob_start();
 	}
     $cgPreMinHeight = 650;
-    if(!empty($shortcode_name) && $shortcode_name == 'cg_users_contact'){
+    if(!empty($shortcode_name) && $shortcode_name == 'cg_users_upload'){
         $cgPreMinHeight = 250;
 }
 	echo "<pre class='cg_main_pre  cg_10 cg_20' style='max-height:0 !important;overflow:hidden;visibility: hidden;height:".$cgPreMinHeight."px;' >";

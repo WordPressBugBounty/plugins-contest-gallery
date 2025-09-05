@@ -29,11 +29,11 @@ $cgRegistrationGeneralForm = '';
 
 if($cgBeforeSinceV14ExplanationRequired){
     $cgRegistrationGeneralForm = ' (general) ';
-    echo "<div id='cgNewRegistryLogicNote'><span class='cg_color_red'>NOTE:</span> Since plugin version 14 the \"Registration form\" is general<br>and valid for all new created or copied galleries since plugin version 14.</div>";
+    echo "<div id='cgNewRegistryLogicNote'><b class='cg_color_red'>NOTE:</b> Since plugin version 14 the \"Registration form\" is general<br>and valid for all new created or copied galleries since plugin version 14.</div>";
 }else{
     if(intval($galleryDbVersion)>=14){// only if higher then 14 then this explanation required!
         $cgRegistrationGeneralForm = ' (general) ';
-        echo "<div id='cgNewRegistryLogicNote'><span class='cg_color_red'>NOTE:</span> \"Registration form\" is general and valid for all galleries.</div>";
+        echo "<div id='cgNewRegistryLogicNote'><b class='cg_color_green'>NOTE:</b> \"Registration form\" is general and valid for all galleries.</div>";
     }
 }
 
@@ -55,7 +55,7 @@ foreach($langOptions as $langKey => $lang){
 echo '</select>';
 
 echo '<div id="cgRegFormSelect">';
-echo '<p class="cg_edit_form_options_label">Registration'.$cgRegistrationGeneralForm.' form</p>';
+echo '<p class="cg_edit_form_options_label">Registration'.$cgRegistrationGeneralForm.' form<span class="" style="margin-top: 0;display: block;font-size:16px;"><b class="cg_color_green">NOTE:</b> Multiple columns drag and drop upload form builder like for "Upload form" will be available in future for "Registration form" also. </span></p>';
 
 $optGroupWpFields = '';
 
@@ -65,8 +65,6 @@ if(intval($galleryDbVersion)>=14){
 			<option value="wpln">WP Last Name</option>
 		</optgroup>';
 }
-
-
 
 if(intval($galleryDbVersion)>=14){
     $optGroupWpFields = '<optgroup label="WP fields">

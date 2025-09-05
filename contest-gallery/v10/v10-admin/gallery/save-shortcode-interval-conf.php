@@ -52,7 +52,7 @@ if(!$intervalConf['shortcodeIsActive']){
     $isShortcodeIsActive = false;
 }
 
-$shortcodesToCheck = ['cg_gallery','cg_gallery_user','cg_gallery_no_voting','cg_gallery_winner','cg_gallery_ecommerce','cg_users_contact','cg_users_reg','cg_users_login','cg_google_sign_in'];
+$shortcodesToCheck = ['cg_gallery','cg_gallery_user','cg_gallery_no_voting','cg_gallery_winner','cg_gallery_ecommerce','cg_users_upload','cg_users_reg','cg_users_login','cg_google_sign_in'];
 
 if($_POST['shortcodeType']=='cg_users_reg' || $_POST['shortcodeType']=='cg_google_sign_in' || $_POST['shortcodeType']=='cg_users_login'){
     // get real options and combine

@@ -1276,6 +1276,10 @@ cgJsClassAdmin.gallery.functions = {
             jQuery('body').addClass('cg_no_scroll');
         }
     },
+    showModal: function (id) {
+        jQuery(id).removeClass('cg_hide').addClass('cg_active');
+        jQuery('#cgBackendBackgroundDrop').removeClass('cg_hide').addClass('cg_active');
+    },
     showMoveToGalleryContent: function ($, $element) {
         var $cgMoveToAnotherGalleryCompare = $('#cgMoveToAnotherGalleryCompare');
         var $cgMoveToAnotherGalleryContainer = $('#cgMoveToAnotherGalleryContainer');

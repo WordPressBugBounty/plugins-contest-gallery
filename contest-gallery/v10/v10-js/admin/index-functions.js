@@ -18,6 +18,8 @@ cgJsClassAdmin.index.vars = {
 
 cgJsClassAdmin.index.functions = {
     resize: function ($wpBodyContent,$cg_main_container) {
+
+        return;// not required in 27.0.0
         if($wpBodyContent.width()>=1000){
             var marginLeft=($wpBodyContent.width()-1000)/2;
             if($wpBodyContent.width()>1200){
@@ -252,7 +254,7 @@ cgJsClassAdmin.index.functions = {
         return false;
     },
     setCgNonce: function ($){
-
+        debugger
         var version = cgJsClassAdmin.index.functions.cgGetVersionForUrlJs();
         var cg_nonce = $('#cg_nonce').val();
         var $cg_main_container = $('#cg_main_container');
@@ -312,10 +314,10 @@ cgJsClassAdmin.index.functions = {
         return wpVersionInt;
 
     },
-    initializeEditor: function(id){
+    initializeEditor: function(id,onInput){
   /*      console.trace();
         debugger*/
-
+        debugger
         if(cgJsClassAdmin.index.functions.getWpVersionAsInteger()){
             if(cgJsClassAdmin.index.functions.getWpVersionAsInteger()>=cgJsClassAdmin.index.vars.wpVersionForTinyMCE){// then tinymce can be initialized
 
@@ -325,6 +327,7 @@ cgJsClassAdmin.index.functions = {
                         tinymce: true,
                         quicktags: true
                     });
+
                 }else{
                     wp.oldEditor.remove(id);
                     wp.oldEditor.initialize(id, {

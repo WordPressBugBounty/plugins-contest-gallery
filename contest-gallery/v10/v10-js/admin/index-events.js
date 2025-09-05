@@ -15,6 +15,9 @@ jQuery(document).ready(function($){
     $( window ).resize(function(e) {
         cgJsClassAdmin.index.vars.windowHeight = $(window).height();
         cgJsClassAdmin.index.functions.resize(cgJsClassAdmin.index.vars.$wpBodyContent,cgJsClassAdmin.index.vars.$cg_main_container);
+        if(cgJsClassAdmin.index.vars.resizeLeftSideIsActive){
+            cgJsClassAdmin.index.vars.$cgCreateUploadSortableArea.css('width',cgJsClassAdmin.index.vars.$ausgabe1.width()+'px');
+        }
     });
 
     // if user click on wordpress collapse menu
@@ -45,7 +48,7 @@ jQuery(document).ready(function($){
         var formPostData = new FormData();
         formPostData.append('action', 'post_contest_gallery_action_ajax');
         formPostData.append('cgBackendHash',cgBackendHashVal);
-
+        debugger
         cgJsClassAdmin.index.functions.cgLoadBackendAjax('?page='+cgJsClassAdmin.index.functions.cgGetVersionForUrlJs()+'/index.php&'+location.hash.split('#')[1],formPostData);
 
     }else{// then must be main menu load
@@ -55,7 +58,7 @@ jQuery(document).ready(function($){
         var formPostData = new FormData();
         formPostData.append('action', 'post_contest_gallery_action_ajax');
         formPostData.append('cgBackendHash',cgBackendHashVal);
-
+        debugger
         if(location.search.indexOf('option_id') >= 0 && location.search.indexOf('index.php&') >= 0){
             cgJsClassAdmin.gallery.vars.isHashJustChanged = true;
             cgJsClassAdmin.index.functions.cgLoadBackendAjax('?page='+cgJsClassAdmin.index.functions.cgGetVersionForUrlJs()+'/index.php&'+location.search.split('index.php&')[1],formPostData);
@@ -70,6 +73,7 @@ jQuery(document).ready(function($){
             cgJsClassAdmin.gallery.vars.isHashJustChanged = false;
             return;
         }else{
+            debugger
             var formPostData = new FormData();
             formPostData.append('action', 'post_contest_gallery_action_ajax');
             formPostData.append('cgBackendHash',$('#cgBackendHash').val());

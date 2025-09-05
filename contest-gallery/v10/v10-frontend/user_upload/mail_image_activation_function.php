@@ -40,7 +40,7 @@ if (!function_exists('contest_gal1ery_mail_image_activation'))   {
                 if(empty($galeryIDuser) OR strpos($galeryIDuser,'-uf')!==false OR strpos($galeryIDuser,'-cf')!==false){
                     $galeryIDuser = $galeryID;// because might have be send from cg_gallery_user or cg_gallery_no_voting shortcode
                 }
-                if(empty($post_title)){// then must be from contact form
+                if(empty($post_title)){// then must be from upload form
                     $post_title = 'entry';
                 }
                 $url1 = $url."#!gallery/$galeryIDuser/file/$nextId/$post_title";

@@ -13,7 +13,7 @@ if(!function_exists('cg_preview_images_to_delete_container')){
 <div id='cgPreviewImagesToDeleteContainerExplanation' class='cg_files_to_delete_available' >
 You are about to delete the files shown above from Contest Gallery database.<br>You can delete the original file source from storage also if you like.<br>Take care of doing this. When deleted from storage it can not be restored.<br>If  from storage deleted files are in another Contest Gallery galleries<br>their database entries will be deleted there also.
 <br><div id='cgPreviewImagesToDeleteContainerExplanationFrontendOptionNote'><b>note:</b> \"Delete by frontend user deleted files from storage also\" option<br>
-for [cg_gallery_user id=\"".$GalleryID."'\"] shortcode can be configured in \"Contact options\"</div>
+for [cg_gallery_user id=\"".$GalleryID."'\"] shortcode can be configured in \"Upload options\"</div>
 </div>
 
 <div class='cg_preview_images_to_delete_button_container cg_files_to_delete_available' id='cgPreviewImagesToDeleteButtonContinue'>

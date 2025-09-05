@@ -19,6 +19,11 @@ if(!function_exists('cg_shortcode_interval_check')){
         $TextWhenShortcodeIntervalIsOn = '';
         $TextWhenShortcodeIntervalIsOff = '';
 
+        // correction for 27.0.0 from cg_users_contact to cg_users_upload
+        if(!empty($options['interval']['cg_users_contact']) && empty($options['interval']['cg_users_upload'])){
+            $options['interval']['cg_users_upload'] = $options['interval']['cg_users_contact'];
+        }
+
         if(isset($options['interval'][$cg_gallery_shortcode_type])
             && isset($options['interval'][$cg_gallery_shortcode_type]['active'])
             && $options['interval'][$cg_gallery_shortcode_type]['active']=='on'

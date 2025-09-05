@@ -96,7 +96,7 @@ if(!function_exists('cg_votes_csv_export_all')){
             $multipleRatingQueryString = " OR ($tablename_ip.Rating>=1 && $tablename_ip.Rating<=$AllowRatingMax)";
         }
 
-        // Old QUERY WITH WpUpload = 0 check!!! Only important for simple contact form entries without file
+        // Old QUERY WITH WpUpload = 0 check!!! Only important for simple upload form entries without file
         /*$votingData = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT
                  $wpUsers.user_login, $wpUsers.user_email,  
                  $wpPosts.post_title, $wpPosts.guid, 

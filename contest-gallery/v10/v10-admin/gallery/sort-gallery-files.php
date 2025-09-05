@@ -204,7 +204,7 @@ foreach ($galleryFilesArray as $WpUpload => $galleryFile){
             //echo $galleryFile['id'];
             echo '<div class="cg_backend_image_full_size_target_container_drag"></div>';
             echo '<div class="cg_backend_image_full_size_target cg_backend_image_full_size_target_container_'.$galleryFile['ImgTypeToShow'].'" style="display: flex;align-items: center;margin-top: 4px;" >';
-                        echo '<div class="cg_backend_image cg_backend_image_con_entry"><div style="font-size:12px;line-height:16px;font-weight:500;">Contact form entry<br>ID: '.$galleryFile['id'].'</div></div>';
+                        echo '<div class="cg_backend_image cg_backend_image_con_entry"><div style="font-size:12px;line-height:16px;font-weight:500;">Upload form entry<br>ID: '.$galleryFile['id'].'</div></div>';
                     echo '</div>';
                 echo '<div class="cg_backend_image_full_size_target_name" >'.$galleryFile['NamePic'].'</div>';
                 echo "<input type='hidden' class='cg_position' data-cg-real-id=".$galleryFile['id']." name='cg_position[".$galleryFile['id']."]' value='$order' >";

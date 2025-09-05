@@ -351,7 +351,7 @@ echo <<<HEREDOC
 <div class='cg_view_options_row'>
     <div class='cg_view_option  cg_view_option_100_percent cg_border_top_none GalleryUploadContainer'>
         <div class='cg_view_option_title'>
-            <p>In gallery contact form button<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE:</span> not available for cg_gallery_ecommerce shortcode</span></p>
+            <p>In gallery upload form button<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE:</span> not available for cg_gallery_ecommerce shortcode</span></p>
         </div>
         <div class='cg_view_option_checkbox cg_hide'>
 HEREDOC;
@@ -391,7 +391,7 @@ if(floatval($galleryDbVersion)<21){
     <div class='cg_view_options_row cg_go_to_target' data-cg-go-to-target="ShowAlwaysContainer">
 <div class='cg_view_option  cg_view_option_100_percent cg_border_top_none'>
     <div class='cg_view_option_title'>
-        <p>Show constantly (without hovering)<br>vote, comments and file title in gallery view<br><span class="cg_view_option_title_note">You see it by hovering if not activated.<br>File title can be configured in "Edit contact form" >>> "Show as title in gallery view".</span></p>
+        <p>Show constantly (without hovering)<br>vote, comments and file title in gallery view<br><span class="cg_view_option_title_note">You see it by hovering if not activated.<br>File title can be configured in "Edit upload form" >>> "Show as title in gallery view".</span></p>
     </div>
     <div class='cg_view_option_checkbox'>
      <input type="checkbox" name="multiple-pics[cg_gallery_ecommerce][general][ShowAlways]" checked="{$jsonOptions[$GalleryID.'-ec']['general']['ShowAlways']}" class="cg_shortcode_checkbox">
@@ -410,7 +410,7 @@ echo <<<HEREDOC
 
     <div class='cg_view_option cg_hide  cg_view_option_50_percent cg_border_top_none'>
         <div class='cg_view_option_title cg_view_option_title_flex_flow_column'>
-            <p>In gallery contact form text configuration</p>
+            <p>In gallery upload form text configuration</p>
             <a class="cg_no_outline_and_shadow_on_focus" href="#cgInGalleryUploadFormConfiguration"><p>Can be configured here...</p></a>
         </div>
     </div>

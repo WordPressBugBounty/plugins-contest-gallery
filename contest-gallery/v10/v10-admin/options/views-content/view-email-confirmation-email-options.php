@@ -33,7 +33,7 @@ $mConfirmContentText = contest_gal1ery_convert_for_html_output_without_nl2br($se
 
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
-                <p class='cg_view_options_rows_container_title'>Create e-mail field in "Edit contact form" to send this confirmation e-mail after an upload. After an e-mail address is confirmed this e-mail will not be send anymore.</p>
+                <p class='cg_view_options_rows_container_title'>Create e-mail field in "Edit upload form" to send this confirmation e-mail after an upload. After an e-mail address is confirmed this e-mail will not be send anymore.</p>
                 <p class='cg_view_options_rows_container_title'><strong>Use this shortcode on the confirmation page</strong>: <br><span class='cg_shortcode_parent'><span class='cg_shortcode_copy cg_shortcode_copy_mail_confirm cg_tooltip'></span><span class='cg_shortcode_copy_text'>[cg_mail_confirm id="$GalleryID"]</span></span></p>
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_view_option_100_percent $cgProFalse" id="mConfirmSendConfirmContainer">

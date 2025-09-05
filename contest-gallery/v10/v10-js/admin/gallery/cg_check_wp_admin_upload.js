@@ -445,9 +445,9 @@ jQuery(document).ready(function ($) {
         var $cgMediaAssignFieldsContainer = $('<div id="cgMediaAssignFieldsContainer">' +
             '<div id="cgMediaAssignFieldsTitle">Added files will contain assigned content</div>' +
             '<div id="cgMediaAssignFieldsTitleSub">Added files can contain here preselected field content from the original post.<br><b>WordPress post fields</b> can be assigned to <b>Input</b> and <b>Textarea</b> field types.' +
-            '<br>Input and Textarea field types can be added in <b>"Edit contact form"</b>.' +
+            '<br>Input and Textarea field types can be added in <b>"Edit upload form"</b>.' +
             '<br>Files can be also assigned to a category.' +
-            '<br><b>Categories</b> can be edit in "Edit contact form".</div>' +
+            '<br><b>Categories</b> can be edit in "Edit upload form".</div>' +
             '<div class="cg_media_assign_category cg_hide">' +
             '<div class="cg_media_assign_category_title">' +
             'Assign to category' +

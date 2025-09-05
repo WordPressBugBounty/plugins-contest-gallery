@@ -41,7 +41,7 @@ if($isEditOptionsOnly){
                         <div class='cg_view_select' cg-data-view="#view2" data-count="2"><a class="cg_view_select_link" cg-data-view="#view2" cg-data-href="cgViewHelper2">Entry view</a></div>
                         <div class='cg_view_select' cg-data-view="#view3" data-count="3"><a class="cg_view_select_link" cg-data-view="#view3" cg-data-href="cgViewHelper3">Gallery</a></div>
                         <div class='cg_view_select' cg-data-view="#view4" data-count="4"><a class="cg_view_select_link" cg-data-view="#view4" cg-data-href="cgViewHelper4">Voting</a></div>
-                        <div class='cg_view_select' cg-data-view="#view5" data-count="5"><a class="cg_view_select_link" cg-data-view="#view5" cg-data-href="cgViewHelper5">Contact</a></div>
+                        <div class='cg_view_select' cg-data-view="#view5" data-count="5"><a class="cg_view_select_link" cg-data-view="#view5" cg-data-href="cgViewHelper5">Upload</a></div>
                          <div class='cg_view_select' cg-data-view="#view6" data-count="6"><a class="cg_view_select_link" cg-data-view="#view6" cg-data-href="cgViewHelper6">Admin mail</a></div>
                         <div class='cg_view_select' cg-data-view="#view7" data-count="7"><a class="cg_view_select_link" cg-data-view="#view7" cg-data-href="cgViewHelper7">Activation mail</a></div>
                           <div class='cg_view_select cg_view_select_icons' cg-data-view="#view18" data-count="18"><a class="cg_view_select_link" cg-data-view="#view18" cg-data-href="cgViewHelper18">PDF</a></div>
@@ -81,7 +81,7 @@ echo <<<HEREDOC
                         <div class='cg_view_select' cg-data-view="#view2" data-count="2"><a class="cg_view_select_link" cg-data-view="#view2" cg-data-href="cgViewHelper2">Entry view</a></div>
                         <div class='cg_view_select' cg-data-view="#view3" data-count="3"><a class="cg_view_select_link" cg-data-view="#view3" cg-data-href="cgViewHelper3">Gallery</a></div>
                         <div class='cg_view_select' cg-data-view="#view4" data-count="4"><a class="cg_view_select_link" cg-data-view="#view4" cg-data-href="cgViewHelper4">Voting</a></div>
-                        <div class='cg_view_select' cg-data-view="#view5" data-count="5"><a class="cg_view_select_link" cg-data-view="#view5" cg-data-href="cgViewHelper5">Contact</a></div>
+                        <div class='cg_view_select' cg-data-view="#view5" data-count="5"><a class="cg_view_select_link" cg-data-view="#view5" cg-data-href="cgViewHelper5">Upload</a></div>
                          <div class='cg_view_select' cg-data-view="#view6" data-count="6"><a class="cg_view_select_link" cg-data-view="#view6" cg-data-href="cgViewHelper6">Admin mail</a></div>
                         <div class='cg_view_select' cg-data-view="#view7" data-count="7"><a class="cg_view_select_link" cg-data-view="#view7" cg-data-href="cgViewHelper7">Activation mail</a></div>
                           <div class='cg_view_select' cg-data-view="#view8" data-count="8"><a class="cg_view_select_link" cg-data-view="#view8" cg-data-href="cgViewHelper8">Icons</a></div>
@@ -273,11 +273,9 @@ This recognition method would not work for you.<br>Please contact support@contes
 
     echo <<<HEREDOC
  </div>
-             <h4 id="view5" class="cg_view_header">Contact options</h4>
-
+             <h4 id="view5" class="cg_view_header">Upload options</h4>
 			   <div class="cg_view cgUploadOptions cgViewHelper5">
 HEREDOC;
-
 
 // Maximal möglich eingestellter Upload wird ermittelt
     $upload_max_filesize = contest_gal1ery_return_mega_byte(ini_get('upload_max_filesize'));
@@ -288,7 +286,7 @@ HEREDOC;
     echo "</div>";
 
     /*echo <<<HEREDOC
-                <h4 id="view6" class="cg_view_header">Contact options</h4>
+                <h4 id="view6" class="cg_view_header">Upload options</h4>
         <div class="cg_view  cgViewHelper6">
     HEREDOC;
 
@@ -375,7 +373,7 @@ HEREDOC;
 HEREDOC;
         echo <<<HEREDOC
 <div class='cg_view_options_rows_container' style="margin-bottom:15px;">
-     <p class='cg_view_options_rows_container_title' style="line-height:25px;">Check database status, repair cached json files, check if sent mails were all ok</p>
+     <p class='cg_view_options_rows_container_title' style="line-height:25px;">Check database status, repair cached json files, check if sent mails were all ok.</p>
 </div>
 HEREDOC;
         echo "<div style='width:100%;display: flex;flex-flow: column;margin-bottom:15px;margin-top:15px;'>";
@@ -479,7 +477,7 @@ HEREDOC;
 HEREDOC;
         echo <<<HEREDOC
 <div class='cg_view_options_rows_container' style="margin-bottom:15px;">
-     <p class='cg_view_options_rows_container_title' style="line-height:25px;">Check database status, repair cached json files, check if sent mails were all ok</p>
+     <p class='cg_view_options_rows_container_title' style="line-height:25px;">Check database status, repair cached json files, check if sent mails were all ok.</p>
 </div>
 HEREDOC;
         echo "<div style='width:100%;display: flex;flex-flow: column;margin-bottom:15px;margin-top:15px;'>";

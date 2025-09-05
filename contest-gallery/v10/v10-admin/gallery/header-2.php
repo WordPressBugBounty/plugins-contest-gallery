@@ -181,7 +181,6 @@ cg_total_images_shown_in_frontend_zero();
     echo "</tr>";
 
     echo "</table>";
-    echo "<br>";
     echo "</form>";
 }
 
@@ -520,7 +519,7 @@ HEREDOC;
 
 $heredoc = <<<HEREDOC
 	<span class="cg-info-icon"><strong>info</strong></span>
-<span class="cg-info-container cg-info-container-gallery-order" style="display: none;">Custom fields can be added in "Edit contact form".
+<span class="cg-info-container cg-info-container-gallery-order" style="display: none;">Custom fields can be added in "Edit upload form".
 <br>Supported custom fields for sorting are:<br><b>Input, Textarea, Select, Select categories, Date, Email</b></span>
 HEREDOC;
 echo $heredoc;

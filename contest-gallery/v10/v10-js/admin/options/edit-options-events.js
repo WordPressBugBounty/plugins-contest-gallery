@@ -1213,6 +1213,16 @@ jQuery(document).ready(function($){
         //  },10);
     });
 
+    function getVisibleHeightFixedInParent($el) {
+        const rect = $el[0].getBoundingClientRect();
+        const winH = window.innerHeight || document.documentElement.clientHeight;
+
+        const visibleTop = Math.max(rect.top, 0);
+        const visibleBottom = Math.min(rect.bottom, winH);
+
+        return Math.max(0, visibleBottom - visibleTop);
+    }
+
     var isCgUploadFieldsSelectSet = false;
     var isCgRegistryFieldsSelectSet = false;
     $( window ).scroll(function() {
@@ -1236,6 +1246,42 @@ jQuery(document).ready(function($){
         var $wpadminbar = cgJsClassAdmin.options.vars.$wpadminbar;
 
         if(cgJsClassAdmin.index.vars.isCreateUploadAreaLoaded){
+
+            var $cgCreateUploadSortableArea = cgJsClassAdmin.index.vars.$cgCreateUploadSortableArea;
+            var $ausgabe1 = cgJsClassAdmin.index.vars.$ausgabe1;
+            var windowScrollTop = $(window).scrollTop();
+
+            // console.log('windowScrollTop');
+            // console.log(windowScrollTop);
+
+            if((windowScrollTop+50)>cgJsClassAdmin.options.vars.cg_create_upload_container_offset){
+                isCgUploadFieldsSelectSet = true;
+                //$cgCreateUploadSortableArea.addClass('cg_sticky').css({'border-right':'unset','top':cgJsClassAdmin.options.vars.wpadminbarHeight+'px','width':(cgJsClassAdmin.index.vars.$cg_main_container.width()-1)+'px'});
+                $cgCreateUploadSortableArea.addClass('cg_sticky').css({'top':cgJsClassAdmin.options.vars.wpadminbarHeight+'px','width':(cgJsClassAdmin.index.vars.$cg_main_container.width())+'px'});
+                $cgCreateUploadSortableArea.css('width',$ausgabe1.width()+'px');
+
+                // Example usage
+                //const visibleHeight = getVisibleHeightInParent($('.child'), $('.parent'));
+                //const visibleHeight = getVisibleHeightInParent(cgJsClassAdmin.index.vars.$cgCreateUploadSortableArea, cgJsClassAdmin.index.vars.$ausgabe1);
+                var visibleHeight = getVisibleHeightFixedInParent(cgJsClassAdmin.index.vars.$ausgabe1);
+                var parentHeight = cgJsClassAdmin.index.vars.$ausgabe1.height();
+
+                //console.log('visibleHeight');
+                //console.log(visibleHeight);
+                $cgCreateUploadSortableArea.css('height',visibleHeight-50+'px');
+                cgJsClassAdmin.index.vars.resizeLeftSideIsActive = true;
+
+            }else{
+                //$cgCreateUploadSortableArea.removeClass('cg_sticky').css({'top':'','border-right':''} );
+                $cgCreateUploadSortableArea.removeClass('cg_sticky');
+                isCgUploadFieldsSelectSet = false;
+                $cgCreateUploadSortableArea.css('width','');
+                $cgCreateUploadSortableArea.css('height','');
+                cgJsClassAdmin.index.vars.resizeLeftSideIsActive = false;
+
+            }
+
+            return;
             var $cgUploadFieldsSelect = cgJsClassAdmin.options.vars.$cgUploadFieldsSelect;
             var windowScrollTop = $(window).scrollTop();
 

@@ -259,7 +259,7 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 
 
 		}
-		else if (($Version>=22 && $IsForWpPageTitleInputDeleted) || ($Version>=22 && empty($IsForWpPageTitleInputId) && !empty($isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized) && empty($IsForWpPageTitleInputDeleted))){//  $IsForWpPageTitleInputDeleted can only be from edit contact form
+		else if (($Version>=22 && $IsForWpPageTitleInputDeleted) || ($Version>=22 && empty($IsForWpPageTitleInputId) && !empty($isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized) && empty($IsForWpPageTitleInputDeleted))){//  $IsForWpPageTitleInputDeleted can only be from edit upload form
 			// IsForWpPageTitle might be unchecked then this condition here will be used
 
 			// var_dump('change 2');

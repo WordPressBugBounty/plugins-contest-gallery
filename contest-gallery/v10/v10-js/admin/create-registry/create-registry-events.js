@@ -236,7 +236,7 @@ jQuery(document).ready(function ($) {
             }
 
             if ($('#ausgabe1 .regCheckAgreementField').length == 10) {
-                alert("This field can be produced maximum 10 times.");
+                alert("This field can be added maximum 10 times.");
             }
             else {
                 cloneAndAppendNewField('regCheckAgreementField');
@@ -285,7 +285,7 @@ jQuery(document).ready(function ($) {
         if ($('#dauswahl').val() == "nf") {// text field!
 
             if ($('#ausgabe1 .regInputField').length == 20) {
-                alert("This field can be produced maximum 20 times.");
+                alert("This field can be added maximum 20 times.");
             }else {
                 cloneAndAppendNewField('regInputField');
             }
@@ -296,7 +296,7 @@ jQuery(document).ready(function ($) {
         if ($('#dauswahl').val() == "kf") {
 
             if ($('#ausgabe1 .regTextareaField').size() == 10) {
-                alert("This field can be produced maximum 10 times.");
+                alert("This field can be added maximum 10 times.");
             }else {
                 cloneAndAppendNewField('regTextareaField');
             }
@@ -311,7 +311,7 @@ jQuery(document).ready(function ($) {
             }
 
             if ($('#ausgabe1 .regHtmlField').length >= 10) {
-                alert("This field can be produced maximum 10 times.");
+                alert("This field can be added maximum 10 times.");
             }
             else {
                 cloneAndAppendNewField('regHtmlField');
@@ -322,7 +322,7 @@ jQuery(document).ready(function ($) {
         if ($('#dauswahl').val() == "se") {
 
             if ($('#ausgabe1 .regSelectField').length == 10) {
-                alert("This field can be produced maximum 10 times.");
+                alert("This field can be added maximum 10 times.");
             }else {
                 cloneAndAppendNewField('regSelectField');
             }
@@ -332,7 +332,7 @@ jQuery(document).ready(function ($) {
         if ($('#dauswahl').val() == "caRo") {
 
             if ($('#ausgabe1 .regCaptchaRoField').length >= 1) {
-                alert("This field can be produced maximum 1 time.");
+                alert("This field can be added maximum 1 time.");
             }
             else {
                 cloneAndAppendNewField('regCaptchaRoField');
@@ -343,7 +343,7 @@ jQuery(document).ready(function ($) {
         if ($('#dauswahl').val() == "caRoRe") {
 
             if ($('#ausgabe1 .regCaptchaRoReField').length >= 1) {
-                alert("This field can be produced maximum 1 time.");
+                alert("This field can be added maximum 1 time.");
             }
             else {
                 cloneAndAppendNewField('regCaptchaRoReField');

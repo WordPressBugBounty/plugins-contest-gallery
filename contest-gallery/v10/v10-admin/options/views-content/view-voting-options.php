@@ -85,7 +85,7 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_50_percent cg_border_right_none cg_border_border_top_right_radius_unset' id="VotePerCategoryContainer" >
                     <div class='cg_view_option_title'>
-                        <p>One vote per category<br/><span class="cg_view_option_title_note">For every category can be voted only one time by a user. Categories field with categories has to be added in "Edit contact form".</span></p>
+                        <p>One vote per category<br/><span class="cg_view_option_title_note">For every category can be voted only one time by a user. Categories field with categories has to be added in "Edit upload form".</span></p>
                     </div>
                     <div class='cg_view_option_checkbox'>
                         <input type="checkbox" name="VotePerCategory"  id="VotePerCategory" $VotePerCategory>

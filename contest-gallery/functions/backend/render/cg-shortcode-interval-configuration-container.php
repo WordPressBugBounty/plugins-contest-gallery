@@ -20,6 +20,11 @@ if(!function_exists('cg_shortcode_interval_configuration_container')){
 		    $optionsJson['interval'] = [];
 	    }
 
+        // correction for 27.0.0 from cg_users_contact to cg_users_upload
+        if(!empty($optionsJson['interval']['cg_users_contact']) && empty($optionsJson['interval']['cg_users_upload'])){
+            $optionsJson['interval']['cg_users_upload'] = $optionsJson['interval']['cg_users_contact'];
+        }
+
         // because of 22.0.0 update
 	    if(isset($optionsJson['interval']['cg_users_reg'])){unset($optionsJson['interval']['cg_users_reg']);}
 	    if(isset($optionsJson['interval']['cg_users_login'])){unset($optionsJson['interval']['cg_users_login']);}
@@ -48,7 +53,7 @@ if(!function_exists('cg_shortcode_interval_configuration_container')){
         </script>
             <?php
 
-        $shortcodesToCheck = ['cg_gallery','cg_gallery_user','cg_gallery_no_voting','cg_gallery_winner','cg_users_contact','cg_users_reg','cg_users_login','cg_google_sign_in'];
+        $shortcodesToCheck = ['cg_gallery','cg_gallery_user','cg_gallery_no_voting','cg_gallery_winner','cg_users_upload','cg_users_reg','cg_users_login','cg_google_sign_in'];
 
         foreach ($shortcodesToCheck as $shortcodeType){
             if(isset($optionsJson['interval']) && isset($optionsJson['interval'][$shortcodeType])){

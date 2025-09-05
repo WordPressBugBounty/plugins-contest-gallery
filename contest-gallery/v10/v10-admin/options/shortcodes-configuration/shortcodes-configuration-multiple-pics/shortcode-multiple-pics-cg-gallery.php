@@ -284,7 +284,7 @@ echo <<<HEREDOC
 <div class='cg_view_options_row'>
     <div class='cg_view_option cg_view_option_50_percent cg_border_top_right_none GalleryUploadContainer'>
         <div class='cg_view_option_title'>
-            <p>In gallery contact form button<br><span class="cg_view_option_title_note">Translated as "Participation form" in frontend</span></p>
+            <p>In gallery upload form button<br><span class="cg_view_option_title_note">Translated as "Participation form" in frontend</span></p>
         </div>
         <div class='cg_view_option_checkbox'>
 HEREDOC;
@@ -307,7 +307,7 @@ $ShowAlwaysContainer = <<<HEREDOC
 <div class='cg_view_options_row cg_go_to_target' data-cg-go-to-target="ShowAlwaysContainer">
     <div class='cg_view_option cg_view_option_100_percent cg_border_top_none'>
         <div class='cg_view_option_title'>
-            <p>Show constantly (without hovering)<br>vote, comments and file title in gallery view<br><span class="cg_view_option_title_note">You see it by hovering if not activated.<br>File title can be configured in "Edit contact form" >>> "Show as title in gallery view".</span></p>
+            <p>Show constantly (without hovering)<br>vote, comments and file title in gallery view<br><span class="cg_view_option_title_note">You see it by hovering if not activated.<br>File title can be configured in "Edit upload form" >>> "Show as title in gallery view".</span></p>
         </div>
         <div class='cg_view_option_checkbox'>
          <input type="checkbox" name="ShowAlways" $ShowAlways>
@@ -326,7 +326,7 @@ echo <<<HEREDOC
 
     <div class='cg_view_option cg_view_option_50_percent cg_border_top_none cg_border_left_none'>
         <div class='cg_view_option_title cg_view_option_title_flex_flow_column'>
-            <p>In gallery contact form text configuration</p>
+            <p>In gallery upload form text configuration</p>
             <a class="cg_no_outline_and_shadow_on_focus" href="#cgInGalleryUploadFormConfiguration"><p>Can be configured here...</p></a>
         </div>
     </div>

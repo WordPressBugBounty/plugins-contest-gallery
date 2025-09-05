@@ -8,7 +8,7 @@ HEREDOC;
 
 echo <<<HEREDOC
 <div class='cg_view_options_rows_container'>
-    <p class='cg_view_options_rows_container_title'>For using <span class="cg_font_weight_bold">cg_users_contact</span> shortcode<br>or <span class="cg_font_weight_bold">"In gallery contact form"</span></p>
+    <p class='cg_view_options_rows_container_title'>For using <span class="cg_font_weight_bold">cg_users_upload</span> shortcode<br>or <span class="cg_font_weight_bold">"In gallery upload form"</span></p>
 </div>
 HEREDOC;
 
@@ -16,7 +16,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row cg_margin_bottom_30'>
             <div class='cg_view_option cg_view_option_100_percent cg_border_radius_8_px' id="ActivateUploadContainer">
                 <div class='cg_view_option_title' >
-                    <p>Automatically activate users entries in frontend after frontend contact/upload</p>
+                    <p>Automatically activate users entries in frontend after frontend upload</p>
                 </div>
                 <div class='cg_view_option_checkbox'>
                     <input type="checkbox" name="ActivateUpload" id="ActivateUpload" $ActivateUpload>
@@ -24,20 +24,20 @@ echo <<<HEREDOC
             </div>
         </div>
     <div class='cg_view_options_rows_container' id="cgInGalleryUploadFormConfiguration">
-        <p class='cg_view_options_rows_container_title'><span class="cg_font_weight_bold">"In gallery contact form"</span> text configuration
-        <br><span class="cg_view_options_rows_container_title_note"><span class="cg_font_weight_bold">NOTE:</span> to place text before and after <span class="cg_font_weight_bold">cg_users_contact</span> shortcode simply use common WordPress editor blocks</span>
+        <p class='cg_view_options_rows_container_title'><span class="cg_font_weight_bold">"In gallery upload form"</span> text configuration
+        <br><span class="cg_view_options_rows_container_title_note"><span class="cg_font_weight_bold">NOTE:</span> to place text before and after <span class="cg_font_weight_bold">cg_users_upload</span> shortcode simply use common WordPress editor blocks</span>
         </p>
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width' >
                     <div class='cg_view_option_title'>
-                        <p>In gallery contact form button<br/><span class="cg_view_option_title_note"><a class="cg_no_outline_and_shadow_on_focus" href="#cgInGalleryUploadFormButton"  style="padding-top: 10px; display: block;">Can be activated here...</a></span></p>
+                        <p>In gallery upload form button<br/><span class="cg_view_option_title_note"><a class="cg_no_outline_and_shadow_on_focus" href="#cgInGalleryUploadFormButton"  style="padding-top: 10px; display: block;">Can be activated here...</a></span></p>
                     </div>
                 </div>
             </div>
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="wp-GalleryUploadConfirmationText-wrap-Container">
                     <div class='cg_view_option_title'>
-                        <p>Confirmation text after contact</p>
+                        <p>Confirmation text after upload</p>
                     </div>
                     <div class='cg_view_option_html'>
                         <textarea class='cg-wp-editor-template' id='GalleryUploadConfirmationText'  name='GalleryUploadConfirmationText'>$GalleryUploadConfirmationText</textarea>
@@ -47,7 +47,7 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="wp-GalleryUploadTextBefore-wrap-Container">
                     <div class='cg_view_option_title'>
-                        <p>Text before contact form</p>
+                        <p>Text before upload form</p>
                     </div>
                     <div class='cg_view_option_html'>
                         <textarea class='cg-wp-editor-template' id='GalleryUploadTextBefore'  name='GalleryUploadTextBefore'>$GalleryUploadTextBefore</textarea>
@@ -57,7 +57,7 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="wp-GalleryUploadTextAfter-wrap-Container">
                     <div class='cg_view_option_title'>
-                        <p>Text after contact form</p>
+                        <p>Text after upload form</p>
                     </div>
                     <div class='cg_view_option_html'>
                         <textarea class='cg-wp-editor-template' id='GalleryUploadTextAfter'  name='GalleryUploadTextAfter'>$GalleryUploadTextAfter</textarea>
@@ -69,8 +69,8 @@ HEREDOC;
 
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
-        <p class='cg_view_options_rows_container_title'>Contact form shortcode <b>visual</b> configuration<br><span class="cg_view_options_rows_container_title_note">Is not for "In gallery contact form". It is for contact form shortcode: 
-         <span class='cg_shortcode_parent'><span class='cg_shortcode_copy_text cg_font_weight_bold' style="position:relative;">[cg_users_contact id="$galeryNR"]<span class='cg_shortcode_copy cg_shortcode_copy_mail_confirm cg_tooltip' style="margin-top: 8px;"></span></span></span>
+        <p class='cg_view_options_rows_container_title'>Upload form shortcode <b>visual</b> configuration<br><span class="cg_view_options_rows_container_title_note">Is not for "In gallery upload form". It is for upload form shortcode: 
+         <span class='cg_shortcode_parent'><span class='cg_shortcode_copy_text cg_font_weight_bold' style="position:relative;">[cg_users_upload id="$galeryNR"]<span class='cg_shortcode_copy cg_shortcode_copy_mail_confirm cg_tooltip' style="margin-top: 8px;"></span></span></span>
         </span></p>
         <div class="cg_view_options_row">
             <div class="cg_view_option cg_view_option_100_percent" id="BorderRadiusContainer">
@@ -112,12 +112,12 @@ HEREDOC;
 
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container cg_go_to_target' data-cg-go-to-target="cgContactFormShortcodeConfigurationArea" id="cgContactFormShortcodeConfigurationArea">
-        <p class='cg_view_options_rows_container_title'>Contact form shortcode configuration<br><span class="cg_view_options_rows_container_title_note">Is not for "In gallery contact form". It is for contact form shortcode: <span class='cg_shortcode_parent'><span class='cg_shortcode_copy_text cg_font_weight_bold' style="position:relative;">[cg_users_contact id="$galeryNR"]<span class='cg_shortcode_copy cg_shortcode_copy_mail_confirm cg_tooltip' style="margin-top: 8px;"></span></span></span>
+        <p class='cg_view_options_rows_container_title'>Upload form shortcode configuration<br><span class="cg_view_options_rows_container_title_note">Is not for "In gallery upload form". It is for upload form shortcode: <span class='cg_shortcode_parent'><span class='cg_shortcode_copy_text cg_font_weight_bold' style="position:relative;">[cg_users_upload id="$galeryNR"]<span class='cg_shortcode_copy cg_shortcode_copy_mail_confirm cg_tooltip' style="margin-top: 8px;"></span></span></span>
         </span></p>
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_100_percent' id="forwardContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Forward to another page after contact</p>
+                        <p>Forward to another page after upload</p>
                     </div>
                     <div class='cg_view_option_radio'>
                         <input type="radio" name="forward"  id="forward" $ForwardUploadURL>
@@ -137,7 +137,7 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_100_percent cg_border_top_none' id="cg_confirm_textContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Confirmation text on same page after contact instead of forwarding</p>
+                        <p>Confirmation text on same page after upload instead of forwarding</p>
                     </div>
                     <div class='cg_view_option_radio'>
                         <input type="radio" name="cg_confirm_text"  id="cg_confirm_text" $ForwardUploadConf>
@@ -147,7 +147,7 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_100_percent cg_border_top_none' id="ShowFormAfterUploadContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Show contact form again after contact<br><span class="cg_view_option_title_note">Form will appear under the confirmation text</span></p>
+                        <p>Show upload form again after upload<br><span class="cg_view_option_title_note">Form will appear under the confirmation text</span></p>
                     </div>
                     <div class='cg_view_option_checkbox'>
                         <input type="checkbox" name="ShowFormAfterUpload"  id="ShowFormAfterUpload" $ShowFormAfterUpload>
@@ -157,7 +157,7 @@ echo <<<HEREDOC
              <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="wp-confirmation_text-wrap-Container">
                         <div class='cg_view_option_title'>
-                            <p>Confirmation text after contact</p>
+                            <p>Confirmation text after upload</p>
                         </div>
                         <div class='cg_view_option_html'>
                             <textarea class='cg-wp-editor-template' id='confirmation_text'  name='confirmation_text'>$Confirmation_Text</textarea>
@@ -244,7 +244,7 @@ echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
 HEREDOC;
 echo <<<HEREDOC
-        <p class='cg_view_options_rows_container_title'>File types, size and bulk contact options</span></p>
+        <p class='cg_view_options_rows_container_title'>File types, size and bulk upload options</span></p>
             <div class='cg_view_options_row'>
                 <div class='cg_view_option  cg_border_border_top_right_radius_unset  cg_border_right_none cg_border_bottom_none $cgProFalseActivateBulkUpload' id="ActivateBulkUploadContainer">
                     <div class='cg_view_option_title'>
@@ -588,11 +588,11 @@ HEREDOC;
 
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
-        <p class='cg_view_options_rows_container_title'>Limit contact entries and user recognition methods</span></p>
+        <p class='cg_view_options_rows_container_title'>Limit upload entries and user recognition methods</span></p>
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_border_right_none cg_view_option_full_width $cgProFalse cg_border_radius_unset' id="RegUserMaxUploadContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Contact entries total per user<br><span class="cg_view_option_title_note">0 or empty = no limit</span></p>
+                        <p>Upload entries total per user<br><span class="cg_view_option_title_note">0 or empty = no limit</span></p>
                     </div>
                     <div class='cg_view_option_input'>
                         <input id="RegUserMaxUpload" type="text" name="RegUserMaxUpload" value="$RegUserMaxUpload" maxlength="20" style="max-width: 100px; text-align: center;" >
@@ -600,7 +600,7 @@ echo <<<HEREDOC
                 </div>
                 <div class='cg_view_option cg_view_option_50_percent cg_hide $cgProFalse cg_border_top_right_radius_8_px' id="RegUserMaxUploadPerCategoryContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Contact entries for a user per category<br><span class="cg_view_option_title_note">0 or empty = no limit</span></p>
+                        <p>Upload entries for a user per category<br><span class="cg_view_option_title_note">0 or empty = no limit</span></p>
                     </div>
                     <div class='cg_view_option_input'>
                         <input id="RegUserMaxUploadPerCategory" type="text" name="RegUserMaxUploadPerCategory" value="$RegUserMaxUploadPerCategory" maxlength="20" >
@@ -633,14 +633,14 @@ echo <<<HEREDOC
                         <p>Check Cookie alert message if user browser does not allow cookies</p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" class="cg-long-input" placeholder="Please allow cookies to use contact form" id="UploadRequiresCookieMessage" name="UploadRequiresCookieMessage" maxlength="1000" value="$UploadRequiresCookieMessage" >
+                        <input type="text" class="cg-long-input" placeholder="Please allow cookies to use upload form" id="UploadRequiresCookieMessage" name="UploadRequiresCookieMessage" maxlength="1000" value="$UploadRequiresCookieMessage" >
                     </div>
                 </div>
             </div>
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_100_percent CheckMethodUploadContainer cg_border_top_none $cgProFalse'   id="CheckLoginUploadContainer"   >
                     <div class='cg_view_option_title'>
-                        <p>Check if is registered user<br/><span class="cg_view_option_title_note">User have to be registered and logged in to be able to contact.<br>User WordPress ID will be always tracked if user is logged in.
+                        <p>Check if is registered user<br/><span class="cg_view_option_title_note">User have to be registered and logged in to be able to upload.<br>User WordPress ID will be always tracked if user is logged in.
                         <br><strong>NEW!</strong> WordPress account can be easy created via Google sign in button now!<br>Check "Login via Google" options.</span>
                         </span>
                         </p>
@@ -653,7 +653,7 @@ echo <<<HEREDOC
              <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse' id="RegUserUploadOnlyTextContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Show text instead of contact form<br/><span class="cg_view_option_title_note">if user is not logged in</span></p>
+                        <p>Show text instead of upload form<br/><span class="cg_view_option_title_note">if user is not logged in</span></p>
                     </div>
                     <div class='cg_view_option_html'>
                         <textarea class='cg-wp-editor-template' id='RegUserUploadOnlyText'  name='RegUserUploadOnlyText'>$RegUserUploadOnlyText</textarea>
@@ -746,13 +746,13 @@ $InformUserUploadContentInfoWithoutFileSource = ($selectSQLemailUserUpload->Cont
 
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
-        <p class='cg_view_options_rows_container_title'>E-mail to frontend user after frontend contact/upload
+        <p class='cg_view_options_rows_container_title'>E-mail to frontend user after frontend upload
         <br><span class="cg_view_options_rows_container_title_note"><span class="cg_color_red">NOTE:</span> relating testing - e-mail where is send to should not contain $cgYourDomainName.<br>Many servers can not send to own domain.</span></p>
         $mailExceptionUserUploadMail
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px cg_view_option_100_percent $cgProFalse" id="cgInformUserUploadContainer">
                 <div class="cg_view_option_title">
-                    <p>Inform user after successfull contact in frontend
+                    <p>Inform user after successfull upload in frontend
                         <br><span class="cg_view_option_title_note">If user e-mail exists in form or user is registered and logged in</span>
                     </p>
                 </div>
@@ -821,7 +821,7 @@ echo <<<HEREDOC
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse cg_inform_user_upload'  id="wp-InformUserUploadContent-wrap-Container" >
                     <div class='cg_view_option_title cg_copyable'>
                         <p>Mail content<br><span class="cg_view_option_title_note">Use <span style="font-weight:bold;">\$info$</span> 
-                        in the editor if you like to attach user info like contact fields and original file sources</span></p>
+                        in the editor if you like to attach user info like upload fields and original file sources</span></p>
                     </div>
                     <div class='cg_view_option_html'>
                         <textarea class='cg-wp-editor-template' id='InformUserUploadContent'  name='InformUserUploadContent'>$ContentUserUploadContent</textarea>

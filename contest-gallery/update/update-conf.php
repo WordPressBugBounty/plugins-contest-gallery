@@ -229,6 +229,9 @@ return array(
         'ForwardToUrl' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 08.01.2025
         'ForwardToUrlNewTab' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 08.01.2025
         'FieldTitleGallery' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 08.01.2025
+        'RowNumber' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update ab 15.08.2025
+        'ColNumber' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update ab 15.08.2025
+        'RowCols' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update ab 15.08.2025
     ),
     $tablename_form_output => array(
         'Field_Content' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""')// Update ab 23.02.2019

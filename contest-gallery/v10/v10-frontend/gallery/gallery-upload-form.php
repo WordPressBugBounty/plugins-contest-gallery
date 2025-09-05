@@ -53,18 +53,7 @@ echo "<div id='mainCGdivUploadFormResult$galeryIDuserForJs' class='mainCGdivUplo
 
 echo "<div id='cgGalleryUploadConfirmationText$galeryIDuserForJs' class='cgGalleryUploadConfirmationText' data-cg-gid='$galeryIDuserForJs'>";
 
-if(!empty($isOnlyContactForm)){
-    $inputOptionsSQL = $wpdb->get_row( "SELECT * FROM $contest_gal1ery_options_input WHERE GalleryID='$galeryID'");
-    // important! without_nl2br here!
-    echo contest_gal1ery_convert_for_html_output_without_nl2br( $inputOptionsSQL->Confirmation_Text);
-}/*else if(!empty($isOnlyContactForm)){
-    $ConOptConfirmTextAfterContact = $wpdb->get_var( "SELECT ConOptConfirmTextAfterContact FROM $tablename_contact_options WHERE GalleryID='$galeryID'");
-    // important! without_nl2br here!
-    echo contest_gal1ery_convert_for_html_output_without_nl2br($ConOptConfirmTextAfterContact);
-}*/else{
-    // important! without_nl2br here!
-    echo contest_gal1ery_convert_for_html_output_without_nl2br($options['pro']['GalleryUploadConfirmationText']);
-}
+echo contest_gal1ery_convert_for_html_output_without_nl2br($options['pro']['GalleryUploadConfirmationText']);
 
 echo "</div>";
 echo "</div>";
@@ -227,8 +216,52 @@ if((time()>=$ContestEndTime && $ContestEnd==1) OR $ContestEnd==2){
 
             echo "<div class='cg_form_div_inputs_container $cg_hidden_element'  data-cg-index='$i'>";
 
-            foreach($jsonUploadFormSortedByFieldOrder as $fieldOrder => $field){
+            $jsonUploadForm = cg_sort_json_upload_form($jsonUploadFormSortedByFieldOrder);
 
+
+//            echo "<div>";
+//            echo "<pre style='display:block !important;'>";
+//                print_r($jsonUploadForm);
+//            echo "</pre>";
+//            echo "</div>";
+
+
+            $previousRowNumber = -1;
+            $echoRowClosed = false;
+
+            if(!function_exists('cgEchoClosedUploadForm')){
+                function cgEchoClosedUploadForm()
+                {
+                    echo "</div>";
+                }
+            }
+
+            if(!empty($jsonUploadForm)){
+                foreach($jsonUploadForm as $fieldOrder => $field){
+
+                    $echoRowClosed = false;
+                    if($previousRowNumber!=-1 && $field['RowNumber']>$previousRowNumber){
+                        $echoRowClosed = true;
+                        cgEchoClosedUploadForm();
+                    }
+
+                    if($field['RowNumber'] == 0){// if first time load in 27.0.0
+                        echo "<div class='cg_row'>";
+                        $echoRowClosed = true;
+                    }else if($field['RowNumber'] != $previousRowNumber){
+                        echo "<div class='cg_row'>";
+                        $echoRowClosed = false;
+                    }
+
+                    $previousRowNumber = $field['RowNumber'];
+
+                    $cg_empty = '';
+
+                    if ($field['Field_Type']=='empty-col'){
+                        $cg_empty = 'cg_empty';
+                    }
+
+                    echo "<div class='cg_row_col $cg_empty'>";
                     if ($field['Field_Type']=='fbt-f' && $field['Active'] == '1'){
 
                         $fieldId = $field['id'];
@@ -399,9 +432,9 @@ if((time()>=$ContestEndTime && $ContestEnd==1) OR $ContestEnd==2){
 
                         $necessary = ($Field_Content['mandatory']=='on') ? '*' : '' ;
                         $checkIfNeed = ($Field_Content['mandatory']=='on') ? 'on' : '' ;
-                     //   $checkIfNeed = $Field_Content['mandatory'];
+                        //   $checkIfNeed = $Field_Content['mandatory'];
 
-                   //     $checkIfNeed = ($Field_Content['mandatory']=='on') ? 'on' : '' ;
+                        //     $checkIfNeed = ($Field_Content['mandatory']=='on') ? 'on' : '' ;
 
                         if(empty($Field_Version)){// then must be old form and always required
                             $necessary = '*';
@@ -518,7 +551,7 @@ if((time()>=$ContestEndTime && $ContestEnd==1) OR $ContestEnd==2){
                         $fieldGoogleRecaptcha = $field;
 
                         if(!$isDefinitelyBulkUpload && !$isGoogleRecaptchaAlreadyRendered){
-                            
+
                             if(empty($cgGlobalGoogleRecaptchaRendered)){
                                 $cgGlobalGoogleRecaptchaRendered = true;
                                 include ('gallery-upload-form-google-recaptcha.php');
@@ -528,7 +561,17 @@ if((time()>=$ContestEndTime && $ContestEnd==1) OR $ContestEnd==2){
 
                     }
 
+                    echo "</div>";
+
+                    if($field['RowNumber'] == 0){
+                        cgEchoClosedUploadForm();
+                    }
+
                 }
+                if(!$echoRowClosed){
+                    cgEchoClosedUploadForm();
+                }
+            }
 
                 echo "</div>";
 

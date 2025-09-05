@@ -59,15 +59,15 @@ if(!empty($_POST['cg_create'])){
 
     // input options
     $confirmation_text = '<p>Your entry was successful<br><br><br><b>Note for first time Contest Gallery user:</b>
-<br/><br/>This text can be configurated in "Edit options" > "Contact options" > "Upload form shortcode configuration"<br/><br/>
-"Automatically activate users files after frontend upload" can be activated/deactivated in "Edit options" >>> "Contact options"
+<br/><br/>This text can be configurated in "Edit options" > "Upload options" > "Upload form shortcode configuration"<br/><br/>
+"Automatically activate users files after frontend upload" can be activated/deactivated in "Edit options" >>> "Upload options"
 </p>';
     $confirmation_text = htmlentities($confirmation_text, ENT_QUOTES);
 
     // NICHT LÖSCHEN!!!! $GalleryUploadConfirmationText wird in create-options nicht neu kreiert
     $GalleryUploadConfirmationText = '<p>Your entry was successful<br><br><br><b>Note for first time Contest Gallery user:</b>
-<br/><br/>This text can be configurated in "Edit options" > "Contact options" > "In gallery contact form configuration"<br/><br/>
-"Automatically activate users entries after successful frontend contact" can be activated/deactivated in "Edit options" >>> "Contact options"
+<br/><br/>This text can be configurated in "Edit options" > "Upload options" > "In gallery upload form configuration"<br/><br/>
+"Automatically activate users entries after successful frontend upload" can be activated/deactivated in "Edit options" >>> "Upload options"
 </p>';
     $GalleryUploadConfirmationText = htmlentities($GalleryUploadConfirmationText, ENT_QUOTES);
 
