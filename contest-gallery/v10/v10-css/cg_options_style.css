@@ -2239,6 +2239,10 @@ input[type=radio] {
 	margin-top: 0;
 }
 
+.cg_row .cg_row_col .cg_upl_content_note{
+	margin-right: auto;
+}
+
 .cg_row .cg_row_col .cg_row_col_row .cg_row_col_row_col{
 	display: flex;
 	flex-flow: column;
@@ -3957,11 +3961,10 @@ td input, td input:focus, td input:hover{
 
 .cg_shortcode_table .cg-info-icon, .cg_image_description_container .cg-info-icon{
 	font-weight: 700;
-	cursor: default;
-	padding: 0 5px;
-	display: inline;
 	cursor: auto;
 	user-select: none;
+	padding: 0 5px;
+	display: inline;
 }
 
 #cgResetAllInformed .cg-info-icon{

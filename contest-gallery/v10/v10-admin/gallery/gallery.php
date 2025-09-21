@@ -1699,7 +1699,7 @@ if($isAjaxCall){
 						}
 
 						echo "<div class='cg_image_title_container' >";
-						echo "$formvalue:<br/>";
+						echo  cg1l_sanitize_method($formvalue).":<br/>";
 						echo "<input type='text' value='$getEntries1' name='content[$id][$formFieldId][short-text]'  maxlength='1000' class='cg_image_title cg_short_text cg_input_vars_count cg_disabled_send cg_input_by_search_sort_$formFieldId'>";
 						echo "<img src='$titleIcon' title='Insert original WordPress title' alt='Insert original WordPress file title' class='$hideWpFileInfoToInsert cg_title_icon' />";
 						echo "<input type='hidden' class='post_title' value='$post_title' >";
@@ -1813,7 +1813,7 @@ if($isAjaxCall){
 						}
 
 						echo "<div class='cg_image_title_container'>";
-						echo "$formvalue:<br/>";
+						echo cg1l_sanitize_method($formvalue).":<br/>";
 						echo "<input type='text' value='$getEntries1' name='content[$id][$formFieldId][short-text]' maxlength='1000' class='cg_image_title cg_short_text cg_input_vars_count cg_disabled_send cg_input_by_search_sort_$formFieldId'>";
 						echo "<img src='$titleIcon' title='Insert original WordPress file title if exists' alt='Insert original WordPress file title if exists' class='$hideWpFileInfoToInsert cg_title_icon' />";
 						echo "<input type='hidden' class='post_title' value='$post_title' >";
@@ -1839,7 +1839,7 @@ if($isAjaxCall){
 							$formvalue = html_entity_decode(stripslashes($formvalue));
 
 							echo "<div >";
-							echo "$formvalue:<br/>";
+							echo cg1l_sanitize_method($formvalue).":<br/>";
 
 							echo "<select name='imageCategory[$id]' class='cg_category_select cg_input_vars_count cg_disabled_send cg_select_by_search_sort_$formFieldId'>";
 							echo "<option value='0'>Select category</option>";
@@ -1913,7 +1913,7 @@ if($isAjaxCall){
 						$formvalue = html_entity_decode(stripslashes($formvalue));
 
 						echo "<div>";
-						echo "$formvalue$registeredUserMail:<br/>";
+						echo cg1l_sanitize_method($formvalue.$registeredUserMail).":<br/>";
 						echo "<input type='text' value='$getEntriesMail' class='email cg_short_text cg_input_by_search_sort_$formFieldId'  maxlength='1000' $mailReadonly >";
 						echo "</div>";
 
@@ -1973,7 +1973,7 @@ if($isAjaxCall){
 						}
 
 						echo "<div  class='cg_image_description_container cg_image_excerpt_container'>";
-						echo "$formvalue:<br/>";
+						echo cg1l_sanitize_method($formvalue).":<br/>";
 						echo "<textarea name='content[$id][$formFieldId][long-text]' rows='4' maxlength='10000' class='cg_image_description cg_image_excerpt cg_long_text cg_input_vars_count cg_disabled_send cg_input_by_search_sort_$formFieldId'>$getEntries1</textarea>";
 						echo "<div class='cg_comment_icons_div'>";
 						echo "<img src='$descriptionIcon' title='Insert original WordPress file description if exists' alt='Insert original WordPress description' class='$hideWpFileInfoToInsert cg_description_icon' />";

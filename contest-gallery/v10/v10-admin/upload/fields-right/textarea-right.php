@@ -39,7 +39,7 @@ $colId = 'kf';
 
     echo "<div class='cg_row_col cg_el cg_drag_drop $cg_hide_upload_field $cg_el_saved' id='right$kfRightCount'  data-cg-field='$colId'>";
             echo "<div class='cg_upl_title $requiredChecked' >";
-                echo $fieldTitle;
+                echo cg1l_sanitize_method($fieldTitle);
             echo "</div>";
             echo "<div class='cg_upl_content' >";
                 echo "<textarea class='cg_upl_placeholder'>$fieldPlaceholder</textarea>";

@@ -42,7 +42,7 @@ $requiredChecked = 'cg_upl_required';
         ondragstart='cgJsClassAdmin.createUpload.dragAndDrop.drag(event)' ondragend='cgJsClassAdmin.createUpload.dragAndDrop.dragEnd(event)' 
  >";
             echo "<div class='cg_upl_title $requiredChecked' >";
-                echo $fieldTitle;
+                echo cg1l_sanitize_method($fieldTitle);
             echo "</div>";
             echo "<div class='cg_upl_content' >";
                 echo "<input type='checkbox'  />";

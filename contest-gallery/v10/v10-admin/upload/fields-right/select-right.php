@@ -41,12 +41,13 @@ $colId = 'se';
         ondragstart='cgJsClassAdmin.createUpload.dragAndDrop.drag(event)' ondragend='cgJsClassAdmin.createUpload.dragAndDrop.dragEnd(event)' 
  >";
             echo "<div class='cg_upl_title $requiredChecked' >";
-                echo $fieldTitle;
+                echo cg1l_sanitize_method($fieldTitle);
             echo "</div>";
             echo "<div class='cg_upl_content' >";
                 //echo "<input class='cg_upl_placeholder' placeholder='$fieldPlaceholder' type='text' >";
                 echo "<select><option>Please select</option></select>";
             echo "</div>";
+            echo "<div class='cg_upl_content_note' ><b>NOTE:</b> Translation for \"Please select\" can be found in \"Edit translations\"</div>";
             echo "<div class='cg_upl_del' title='Delete field' >";
             echo "</div>";
     echo "</div>";

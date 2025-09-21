@@ -17,7 +17,7 @@ if(!function_exists('cg_get_db_version')){
 if(!function_exists('cg_get_version_for_scripts')){
     function cg_get_version_for_scripts () {
         /**###NORMAL###**/
-        return '27.0.0';
+        return '27.0.1';
         /**###NORMAL-END###**/
     }
 }

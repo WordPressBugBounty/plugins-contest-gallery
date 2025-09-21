@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, openai, youtube, upload
 Requires at least: 5.6
-Stable tag: 27.0.0
+Stable tag: 27.0.1
 Tested up to: 6.8.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -241,6 +241,10 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= V27.0.1 =
+* NEW: Security improvements.
+* FIXED: Adding certain fields in some cases not possible in "Edit upload form" area.
 
 = V27.0.0 =
 * NEW: Multiple columns drag and drop upload form builder for "Edit upload form".

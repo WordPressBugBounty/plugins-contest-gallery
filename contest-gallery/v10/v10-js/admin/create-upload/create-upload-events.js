@@ -326,7 +326,8 @@ jQuery(document).ready(function ($) {
             if(!$row.find('.cg_row_col.cg_el').length){
                // $row.find('.cg_del_row').removeClass('cg_hide');
             }
-            $formField.addClass('cg_hide');
+            //$formField.addClass('cg_hide');
+            $formField.remove();
             cgJsClassAdmin.createUpload.functions.addRightFieldOrderAndAddRowsAndColumns($);
             return true;
         } else {
@@ -384,7 +385,14 @@ jQuery(document).ready(function ($) {
     var cloneAndAppendNewField = function (fieldClass){
         newFieldCounter++;
         debugger
+
+        if(fieldClass == 'selectCategoriesField'){
+            $('#cgCreateUploadSortableArea').find('.formField.selectCategoriesField.cg_hide .cg_category_field').removeAttr('name');
+            // search for div via class and with cg_hide!!! and remove all category names in this previous existing div
+        }
+
         var $newField = $('#cgFieldsToCloneAndAppend').find('.'+fieldClass).clone();
+
         var newId = 'new-'+newFieldCounter;
         $newField.attr('id',newId);
         $newField.find('select,input,textarea').each(function (){
@@ -416,6 +424,10 @@ jQuery(document).ready(function ($) {
         debugger
         if(fieldClass == 'selectCategoriesField'){
             cgJsClassAdmin.createUpload.functions.setSortableCategoriesArena($,$newField.find(".cg_categories_arena"));
+            $newField.find(".cg_category_field:not(.cg_disabled)").each(function (){
+                $(this).closest('.cg_category_field_div').find('.cg_remove_category').removeAttr('data-cg-id');
+                $(this).attr('name','cg_category[]');
+            });
         }
 
         if($('#cgCollapse').hasClass('cg_collapsed')){

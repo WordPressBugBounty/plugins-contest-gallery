@@ -1,5 +1,9 @@
 Contest Gallery
 
+= V27.0.1 =
+* NEW: Security improvements.
+* FIXED: Adding certain fields in some cases not possible in "Edit upload form" area.
+
 = V27.0.0 =
 * NEW: Multiple columns drag and drop upload form builder for "Edit upload form".
 * NEW: cg_users_contact shortcode ist renamed in cg_users_upload shortcode, but can still be used like always.

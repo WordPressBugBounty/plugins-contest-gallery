@@ -68,6 +68,8 @@ if (!empty($_POST['upload'])) {
 //        print_r($_POST);
 //    echo "</pre>";
 
+ //die;
+
     check_admin_referer('cg_admin');
 
     $wp_upload_dir = wp_upload_dir();
@@ -518,8 +520,8 @@ if (!empty($_POST['upload'])) {
                 $nfFieldsArray = array();
                 $nfFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
                 $nfFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
-                $nfFieldsArray['min-char'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['min-char']);
-                $nfFieldsArray['max-char'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['max-char']);
+                $nfFieldsArray['min-char'] = absint($field['min-char']);
+                $nfFieldsArray['max-char'] = absint($field['max-char']);
 
                 if (!empty($field['watermarkChecked'])) {
                     $WatermarkPosition = $field['watermarkPosition'];
@@ -1003,8 +1005,8 @@ if (!empty($_POST['upload'])) {
                 $kfFieldsArray = array();
                 $kfFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
                 $kfFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
-                $kfFieldsArray['min-char'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['min-char']);
-                $kfFieldsArray['max-char'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['max-char']);
+                $kfFieldsArray['min-char'] = absint($field['min-char']);
+                $kfFieldsArray['max-char'] = absint($field['max-char']);
 
                 if (!empty($field['required'])) {
                     if ($field['required'] == 'on') {

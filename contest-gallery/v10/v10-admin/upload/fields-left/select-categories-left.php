@@ -52,7 +52,7 @@ if(!$isOnlyPlaceHolder){
     $inputRow = $wpdb->get_row("SELECT * FROM $tablename_form_input WHERE id = '$id'");
 
     $Show_Slider = $inputRow->Show_Slider;
-	$FieldTitleGallery = $inputRow->FieldTitleGallery;
+    $FieldTitleGallery = $inputRow->FieldTitleGallery;
 
     if($Show_Slider==1){$checkedShow_Slider='checked';}
     else{$checkedShow_Slider='';}
@@ -98,6 +98,40 @@ if(!$isOnlyPlaceHolder){
     }
 }
 
+
+
+
+
+// Formularfelder unserializen
+$fieldContent = unserialize($value->Field_Content);
+
+// Aktuelle Feld ID mit schicken
+echo "<input type='hidden' name='actualID[]' value='$id' >";
+
+$checkCategory = false;
+
+$requiredChecked = '';
+
+foreach($fieldContent as $key => $valueFieldContent){
+
+    if($key=='titel'){
+        $valueFieldContent = contest_gal1ery_convert_for_html_output($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
+        $valueFieldTitle = $valueFieldContent;
+    }
+
+    if($key=='mandatory'){
+        $valueFieldContent = contest_gal1ery_convert_for_html_output($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
+        $requiredChecked = ($valueFieldContent=='on') ? "checked" : "";
+        $secCount++;
+    }
+
+}
+
+if($isOnlyPlaceHolder){
+    $valueFieldTitle = 'Categories';
+}
+
+
 echo <<<HEREDOC
 <div id="cgEditSelectCategoriesField"  class="cg_view_options_row cg_view_options_row_title cg_view_options_row_collapse" title="Collapse">
             <div class="cg_view_options_row_marker cg_hide"><div class="cg_view_options_row_marker_title">Field title</div><div class="cg_view_options_row_marker_content"></div></div>
@@ -140,38 +174,6 @@ echo <<<HEREDOC
     </div>
 </div>
 HEREDOC;
-
-
-
-
-// Formularfelder unserializen
-$fieldContent = unserialize($value->Field_Content);
-
-// Aktuelle Feld ID mit schicken
-echo "<input type='hidden' name='actualID[]' value='$id' >";
-
-$checkCategory = false;
-
-$requiredChecked = '';
-
-foreach($fieldContent as $key => $valueFieldContent){
-
-    if($key=='titel'){
-        $valueFieldContent = contest_gal1ery_convert_for_html_output($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
-        $valueFieldTitle = $valueFieldContent;
-    }
-
-    if($key=='mandatory'){
-        $valueFieldContent = contest_gal1ery_convert_for_html_output($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
-        $requiredChecked = ($valueFieldContent=='on') ? "checked" : "";
-        $secCount++;
-    }
-
-}
-
-if($isOnlyPlaceHolder){
-    $valueFieldTitle = 'Categories';
-}
 
 
 echo <<<HEREDOC

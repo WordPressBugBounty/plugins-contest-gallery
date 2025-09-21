@@ -168,6 +168,8 @@ if(!$isOnlyPlaceHolder){
 
     $kfCount++;
     $kfHiddenCount++;
+}else{
+    $maxChar = 1000;
 }
 
 echo <<<HEREDOC

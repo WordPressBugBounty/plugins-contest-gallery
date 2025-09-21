@@ -77,7 +77,7 @@ if(!$intervalConf['shortcodeIsActive']){
         $cgCheckUsernameNicknameMail = '';
 
         if ($value->Field_Type == 'main-user-name' OR $value->Field_Type == 'main-nick-name' OR $value->Field_Type == 'main-mail') {
-            $placeholder = contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Content);
+            $placeholder = cg1l_sanitize_method(contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Content));
             if ($value->Field_Type == 'main-user-name') {
                 $cgContentField = "<input type='text' maxlength='" . $value->Max_Char . "' placeholder='$placeholder' class='cg_registry_form_field cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_Fields[$i][Field_Content]'>";
                 $cgCheckUsernameNicknameMail = "id='cg_user_name_check_alert'";
@@ -92,7 +92,7 @@ if(!$intervalConf['shortcodeIsActive']){
             }
         }
         if ($value->Field_Type == 'password' OR $value->Field_Type == 'password-confirm') {
-            $placeholder = contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Content);
+            $placeholder = cg1l_sanitize_method(contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Content));
             $cgContentField = "<input type='password' maxlength='" . $value->Max_Char . "' placeholder='$placeholder' autocomplete='off' class='cg_registry_form_field cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_Fields[$i][Field_Content]' readonly onfocus='this.removeAttribute(\"readonly\")';>";
         }
         if ($value->Field_Type == 'user-comment-field') {
@@ -137,9 +137,9 @@ if(!$intervalConf['shortcodeIsActive']){
         if ($value->Field_Type != 'user-html-field' && $value->Field_Type != 'user-robot-recaptcha-field') {
 
             if ($value->Field_Type == 'user-robot-field') {
-                echo "<label for='cg_" . $cg_login_check . "_registry' >".contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Name)." *</label>";
+                echo "<label for='cg_" . $cg_login_check . "_registry' >".cg1l_sanitize_method(contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Name))." *</label>";
             } else {
-                echo "<label for='cg_registry_form_field" . $value->id . "' >" .contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Name) . " $required</label>";
+                echo "<label for='cg_registry_form_field" . $value->id . "' >" .cg1l_sanitize_method(contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Name)) . " $required</label>";
             }
 
             echo "<input type='hidden' name='cg_Fields[$i][Form_Input_ID]' value='" . $value->id . "'>";

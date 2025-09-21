@@ -286,7 +286,7 @@ if(true){
 
 
 echo "<div id='cgUplEditFields'>
-<div id='cgUplEditFieldsText'>Select field to edit</div>
+<div id='cgUplEditFieldsText'>Select fields to edit</div>
 <div  id='cgUplEditFieldsToTheRightIcon'></div>
 </div>";
 
