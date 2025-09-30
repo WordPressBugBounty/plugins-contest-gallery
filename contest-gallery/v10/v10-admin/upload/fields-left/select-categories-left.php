@@ -52,7 +52,7 @@ if(!$isOnlyPlaceHolder){
     $inputRow = $wpdb->get_row("SELECT * FROM $tablename_form_input WHERE id = '$id'");
 
     $Show_Slider = $inputRow->Show_Slider;
-    $FieldTitleGallery = $inputRow->FieldTitleGallery;
+	$FieldTitleGallery = $inputRow->FieldTitleGallery;
 
     if($Show_Slider==1){$checkedShow_Slider='checked';}
     else{$checkedShow_Slider='';}

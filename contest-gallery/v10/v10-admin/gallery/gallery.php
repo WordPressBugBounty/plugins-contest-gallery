@@ -1089,7 +1089,7 @@ if($isAjaxCall){
 				echo '<div class="cg_backend_image_full_size_target_'.$ImgTypeToShow.'  cg_backend_image_full_size_target_child_video " data-cg-file-type="'.$ImgTypeToShow.'"><span class="cg_post_title">'.$post_title_to_show.'</span></div>';
 			}else{
 				echo '<a href="'.$sourceOriginalImgShow.'" target="_blank" title="Show file" alt="Show file">';
-				echo '<video  style="width:100%;"  height="220"  >';
+				echo '<video style="width:100%;" height="220"  >';
 				echo '<source src="'.$sourceOriginalImgShow.'?time='.time().'" type="video/mp4">';
 				echo '<source src="'.$sourceOriginalImgShow.'?time='.time().'" type="video/'.$ImgTypeToShow.'">';
 				echo '</video>';

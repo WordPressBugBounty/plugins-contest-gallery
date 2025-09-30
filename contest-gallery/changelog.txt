@@ -1,5 +1,9 @@
 Contest Gallery
 
+= V27.0.2 =
+* NEW: Security improvements.
+* FIXED: Bugs frontend registration form area.
+
 = V27.0.1 =
 * NEW: Security improvements.
 * FIXED: Adding certain fields in some cases not possible in "Edit upload form" area.

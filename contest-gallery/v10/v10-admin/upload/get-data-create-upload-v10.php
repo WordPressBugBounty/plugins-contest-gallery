@@ -64,9 +64,9 @@ $checkedForwardToUrlNewTab = '';
 
 if (!empty($_POST['upload'])) {
 
-//    echo "<pre>";
-//        print_r($_POST);
-//    echo "</pre>";
+//  echo "<pre>";
+//     print_r($_POST);
+// echo "</pre>";
 
  //die;
 

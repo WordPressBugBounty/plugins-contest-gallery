@@ -358,7 +358,9 @@ if (!defined('ABSPATH')) {
 
         wp_set_auth_cookie( $newWpId,true );
 
-        $url = $currentPageUrl.'?cg_gallery_id_registry='.$GalleryID.'&cg_login_user_after_registration=true&cg_activation_key='.$activation_key;
+        $addOn = 'cg_gallery_id_registry='.$GalleryID.'&cg_login_user_after_registration=true&cg_activation_key='.$activation_key;
+
+        $url = (strpos($currentPageUrl, '?')) ? $currentPageUrl . '&' .$addOn : $currentPageUrl . '?' .$addOn;
 
         // if RegMailOptional and direct login after registration!!!
         ?>
@@ -373,11 +375,13 @@ if (!defined('ABSPATH')) {
 
     }else{
 
-        $url = $currentPageUrl.'?cg_gallery_id_registry='.$GalleryID.'&cg_forward_user_after_reg=true';
+        $addOn = 'cg_gallery_id_registry='.$GalleryID.'&cg_forward_user_after_reg=true';
+
+        $url = (strpos($currentPageUrl, '?')) ? $currentPageUrl . '&' .$addOn : $currentPageUrl . '?' .$addOn;
 
         // show only ForwardAfterRegText, no login
         ?>
-        <script  data-cg-processing="true">
+        <script  data-cg-processing="true" data-cg-success="true">
 
             var url = <?php echo json_encode($url);?>;
             window.location = url;
