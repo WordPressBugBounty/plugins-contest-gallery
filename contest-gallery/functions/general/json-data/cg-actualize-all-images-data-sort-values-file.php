@@ -1,5 +1,61 @@
 <?php
 
+if(!function_exists('cg_correct_entry_count')){
+    function cg_correct_entry_count($pid){
+
+        global $wpdb;
+        $tablename = $wpdb->prefix ."contest_gal1ery";
+        $tablenameIP = $wpdb->prefix ."contest_gal1ery_ip";
+
+        $RatingOverview = $wpdb->get_results( $wpdb->prepare(
+            "
+                                    SELECT * 
+                                    FROM $tablenameIP
+                                    WHERE pid = %d AND (RatingS >=1 OR (Rating >= %d AND Rating <= %d))
+                                ",
+            $pid,1,10
+        ) );
+
+        $CountR = 0;
+        $CountR1 = 0;
+        $CountR2 = 0;
+        $CountR3 = 0;
+        $CountR4 = 0;
+        $CountR5 = 0;
+        $CountR6 = 0;
+        $CountR7 = 0;
+        $CountR8 = 0;
+        $CountR9 = 0;
+        $CountR10 = 0;
+        $Rating = 0;
+        $CountS = 0;
+        foreach($RatingOverview as $row){
+            if($row->RatingS == 1){
+                $CountS++;
+            }else{
+                if($row->Rating == 1){$CountR1++;}
+                if($row->Rating == 2){$CountR2++;}
+                if($row->Rating == 3){$CountR3++;}
+                if($row->Rating == 4){$CountR4++;}
+                if($row->Rating == 5){$CountR5++;}
+                if($row->Rating == 6){$CountR6++;}
+                if($row->Rating == 7){$CountR7++;}
+                if($row->Rating == 8){$CountR8++;}
+                if($row->Rating == 9){$CountR9++;}
+                if($row->Rating == 10){$CountR10++;}
+                $CountR++;
+                $Rating = $Rating + $row->Rating;
+            }
+        }
+
+        $wpdb->query("UPDATE $tablename SET CountR=$CountR, CountS = $CountS, Rating = $Rating, 
+         CountR1 = $CountR1, CountR2 = $CountR2, CountR3 = $CountR3, CountR4=$CountR4, CountR5 = $CountR5,
+         CountR6 = $CountR6, CountR7=$CountR7, CountR8 = $CountR8, CountR9 = $CountR9, CountR10 = $CountR10 
+         WHERE id=$pid");
+
+    }
+}
+
 if(!function_exists('cg_get_correct_rating_overview')){
     function cg_get_correct_rating_overview($GalleryID){
 

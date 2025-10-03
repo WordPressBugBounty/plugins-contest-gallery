@@ -1,7 +1,11 @@
 Contest Gallery
 
-= V27.0.2 =
+= V27.0.3 =
 * NEW: Security improvements.
+* FIXED: Removing votes for an entry in backend area did not reset the total counter of the votes for the entry.
+* FIXED: "Check by IP and Cookie" did work incorrect.
+
+= V27.0.2 =
 * FIXED: Bugs frontend registration form area.
 
 = V27.0.1 =

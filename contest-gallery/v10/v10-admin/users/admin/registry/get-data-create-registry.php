@@ -119,6 +119,15 @@ $get_ReCaLang = (!empty($_POST['ReCaLang'])) ? cg1l_sanitize_method($_POST['ReCa
 $get_Field_Content = (!empty($_POST['Field_Content'])) ? $_POST['Field_Content'] : [];
 $get_Min_Char = (!empty($_POST['Min_Char'])) ? $_POST['Min_Char'] : [];
 $get_Max_Char = (!empty($_POST['Max_Char'])) ? $_POST['Max_Char'] : [];
+
+foreach ($get_Min_Char as $charKey => $char){
+    $get_Min_Char[$charKey] = absint($char);
+}
+
+foreach ($get_Max_Char as $charKey => $char){
+    $get_Max_Char[$charKey] = absint($char);
+}
+
 $get_Necessary = (!empty($_POST['Necessary'])) ? $_POST['Necessary'] : [];
 $get_Hide = (!empty($_POST['Hide'])) ? $_POST['Hide'] : [];
 

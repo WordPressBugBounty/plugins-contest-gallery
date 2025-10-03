@@ -74,9 +74,10 @@ if(!empty($_POST['cg_remove_votes'])){
 
 $multipleRatingQueryString = '';
 
-if($AllowRatingMax){
-    $multipleRatingQueryString = " OR (Rating>=1 AND Rating<=$AllowRatingMax)";
-}
+//if($AllowRatingMax){// all stars should be always visible
+    //$multipleRatingQueryString = " OR (Rating>=1 AND Rating<=$AllowRatingMax)";
+    $multipleRatingQueryString = " OR (Rating>=1 AND Rating<=10)";
+//}
 $votingData = $wpdb->get_results("SELECT * FROM $tablename_ip WHERE pid = '$imageId' AND (RatingS = 1$multipleRatingQueryString)  ORDER BY id DESC LIMIT $start, 50");
 
 $votingDataLength = $wpdb->get_var("SELECT COUNT(*) FROM $tablename_ip WHERE pid = '$imageId' AND (RatingS = 1$multipleRatingQueryString)");

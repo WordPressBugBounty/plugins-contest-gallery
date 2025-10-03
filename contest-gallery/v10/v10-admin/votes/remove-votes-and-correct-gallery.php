@@ -11,7 +11,6 @@ if (!empty($_POST['ipId'])) {
     $isRemoveFiveStar = false;
     $isRemoveOneStar = false;
 
-
     foreach ($_POST['ipId'] as $ipId => $ratingHeight) {
 
         if ($collect == '') {
@@ -31,6 +30,8 @@ if (!empty($_POST['ipId'])) {
 }
 
 if($imageData->Active==1){
+    cg_correct_entry_count($imageId);
+
     $objectRow = $wpdb->get_row( "SELECT DISTINCT $table_posts.*, $tablename.* FROM $table_posts, $tablename WHERE 
                                               ($tablename.GalleryID='$GalleryID' AND $tablename.id=$imageId and $table_posts.ID = $tablename.WpUpload)  OR 
                                               ($tablename.GalleryID='$GalleryID' AND $tablename.id=$imageId AND $tablename.WpUpload = 0) 

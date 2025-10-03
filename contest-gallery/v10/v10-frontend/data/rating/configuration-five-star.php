@@ -258,14 +258,14 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
         }
 
     }else if($options['general']['CheckIp']==1 and $options['general']['CheckCookie']==1){
-
-        if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {// then both combined cookie with IP, same also for voting check then, will be proved with OR, otherwise no check
+    // CheckIpAndCookie
+        if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {
 
             $countSuserCookie = $wpdb->get_results( $wpdb->prepare(
                 "
                             SELECT pid, Rating
                             FROM $tablenameIP
-                            WHERE (GalleryID = %d and CookieId = %s and Rating >= %d and Rating <= %d) or (GalleryID = %d and IP = %s and Rating >= %d and Rating <= %d)
+                            WHERE (GalleryID = %d and CookieId = %s and Rating >= %d and Rating <= %d) AND (GalleryID = %d and IP = %s and Rating >= %d and Rating <= %d)
                         ",
                 $galeryID,$_COOKIE['contest-gal1ery-'.$galeryID.'-voting'],1, $AllowRatingMax,$galeryID,$userIP,1, $AllowRatingMax
             ) );

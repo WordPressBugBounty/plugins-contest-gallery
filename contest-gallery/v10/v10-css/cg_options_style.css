@@ -3465,10 +3465,9 @@ td input, td input:focus, td input:hover{
 }
 
 #cgVotes #cgVotesHeaderContainer{
-	display: flex;
-	flex-flow: row;
-	align-items: end;
-	border-width: 0.5px;
+	display: grid;
+	grid-template-columns: repeat(13, 1fr); /* 13 gleich breite Spalten */
+	gap: 2px; /* optional: Abstand zwischen den "Zellen" */
 }
 
 #cgVotes .cg-votes-header{
@@ -3480,9 +3479,9 @@ td input, td input:focus, td input:hover{
 }
 
 #cgVotes .cg-votes-row-container{
-	display: flex;
-	flex-flow: row;
-	align-items: end;
+	display: grid;
+	grid-template-columns: repeat(13, calc(100% / 13));
+	gap: 0; /* optional: Abstand zwischen den "Zellen" */
 	border-bottom: thin solid black;
 	width: 100%;
 	padding: 5px 0;

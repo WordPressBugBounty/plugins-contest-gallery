@@ -3,8 +3,8 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, openai
 Requires at least: 5.6
-Stable tag: 27.0.2
-Tested up to: 6.8.2
+Stable tag: 27.0.3
+Tested up to: 6.8.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -242,8 +242,12 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 
 == Changelog ==
 
-= V27.0.2 =
+= V27.0.3 =
 * NEW: Security improvements.
+* FIXED: Removing votes for an entry in backend area did not reset the total counter of the votes for the entry.
+* FIXED: "Check by IP and Cookie" did work incorrect.
+
+= V27.0.2 =
 * FIXED: Bugs frontend registration form area.
 
 = V27.0.1 =

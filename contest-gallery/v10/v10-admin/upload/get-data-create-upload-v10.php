@@ -1,5 +1,7 @@
 <?php
 
+// Field1IdGalleryView => Show as main title in gallery view
+// Field2IdGalleryView => Show HTML Attribute
 
 // 1. Delete Felder in Entries, F_Input, F_Output
 // 2. Swap Field_Order in Entries, F_Input, F_Output (bei post "done-upload" wird alles mitgegeben
