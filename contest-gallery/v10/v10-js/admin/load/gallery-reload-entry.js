@@ -1,5 +1,5 @@
 cgJsClassAdmin.gallery.reload = {
-    entry: function (id,isWithSaveChanges,isReloadAfterSaleSettingsSave,NewWpUploadWhichReplace,WpUploadToReplace,newImgType,isAfterWatermark,$cg_backend_info_container) {
+    entry: function (id,isWithSaveChanges,isReloadAfterSaleSettingsSave,NewWpUploadWhichReplace,WpUploadToReplace,newImgType,isAfterWatermark,$cg_backend_info_container,callback,callbackParams,isReloadAfterSaveChangesOrCallback,customMessage,closeEverything) {
 
         var realId = id;
         debugger
@@ -101,18 +101,27 @@ cgJsClassAdmin.gallery.reload = {
 
         var $ = jQuery;
 
+        var $cgGalleryForm = $('#cgGalleryForm');
+
         var $cgGalleryFormClone = $('#cgGalleryForm').clone();
 
         if(isWithSaveChanges){
             $cgGalleryFormClone.find('#cgGalleryFormSubmit').prop('disabled',false);
         }
-        debugger
+
         $cgGalleryFormClone.find('.cgSortableDiv').each(function (){
             if($(this).attr('data-cg-real-id')==id){
                 $(this).find('input.cg_delete').remove();
             }else{
                 $(this).remove();
             }
+        });
+
+        // copy current values/states from original -> clone, required for select especial, because cloning does not kee select values
+        $cgGalleryForm.find('select').each(function(){
+            var name = $(this).attr('name');
+            if (!name) return; // skip selects without name
+            $cgGalleryFormClone.find('select[name="'+name+'"]').val($(this).val());
         });
 
         var form = $cgGalleryFormClone.get(0);
@@ -190,7 +199,14 @@ cgJsClassAdmin.gallery.reload = {
                 }
 
                 $('#cgGalleryForm').find('#div'+id).replaceWith($response.find('#div'+id));
-                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Changes saved',true);
+
+                var message = 'Changes saved';
+                if(!isReloadAfterSaveChangesOrCallback && customMessage){
+                    message = customMessage;
+                }
+                if(!isReloadAfterSaveChangesOrCallback){
+                    cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage(message,true);
+                }
                 $('body').removeClass('cg_pointer_events_none cg_overflow_y_hidden');
 
                 if(cgJsClassAdmin.gallery.vars.$cgReloadEntryLoaderClone){
@@ -208,6 +224,30 @@ cgJsClassAdmin.gallery.reload = {
 
             if(cgPdfPreviewsToCreateString.indexOf('cg-pdf-previews-to-create')>-1){
                 cgJsClassAdmin.gallery.pdf.createAndSetPdfPreviewPrepare($,cgPdfPreviewsToCreateString,true,$response);
+            }
+            debugger
+            if(callback){
+                if(!callbackParams){
+                    callbackParams = [];
+                }
+                if(isReloadAfterSaveChangesOrCallback){
+                    callback.apply(null, callbackParams.concat(function() {
+                        cgJsClassAdmin.gallery.reload.entry(
+                            id, false, isReloadAfterSaleSettingsSave, NewWpUploadWhichReplace,
+                            WpUploadToReplace, newImgType, isAfterWatermark,
+                            $cg_backend_info_container, undefined, undefined, false, customMessage,closeEverything
+                        );
+                    }));
+                    //if(closeEverything){closeEverything has to be executed if exists
+                        //closeEverything = undefined;// because was already forwarded in callback.apply above
+                    //}
+                }else{
+                    callback.apply(null, callbackParams);
+                }
+            }
+
+            if(closeEverything){
+                $('#cgBackendBackgroundDrop.cg_active').click();
             }
 
             return; // so far not neeeded

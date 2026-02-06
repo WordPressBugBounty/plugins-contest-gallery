@@ -373,7 +373,7 @@ if(!empty($galleryToCopy)){
 
         if(!empty($rowObject->InputDate) AND $rowObject->InputDate!='0000-00-00 00:00:00'){
             // simply continue processing then
-        } else if ($rowObject->Short_Text == '' && $rowObject->Long_Text == '') {// to reduce amount of copy
+        } elseif ($rowObject->Short_Text == '' && $rowObject->Long_Text == '') {// to reduce amount of copy
             continue;
         }
 

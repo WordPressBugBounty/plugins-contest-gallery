@@ -11,6 +11,7 @@ $tablename = $wpdb->prefix . "contest_gal1ery";
 $tablenameEcommerceEntries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
 $tablenameOptions = $wpdb->prefix . "contest_gal1ery_options";
 $tablename_pro_options = $wpdb->prefix . "contest_gal1ery_pro_options";
+$tablename_options_visual = $wpdb->prefix . "contest_gal1ery_options_visual";
 $tablename_google_users = $wpdb->prefix . "contest_gal1ery_google_users";
 $tablename_form_input = $wpdb->prefix . "contest_gal1ery_f_input";
 $tablename_ecommerce_options = $wpdb->base_prefix ."contest_gal1ery_ecommerce_options";
@@ -111,7 +112,7 @@ if(isset($_POST['cg_order'])){
 // fallback to go sure if empty or old order options are activated
 if(empty(trim($order))){
     $order = 'date_desc';
-}else if($order=='rating_desc_average' OR $order=='rating_asc_average' OR $order=='rating_desc_average_with_manip' OR $order=='rating_asc_average_with_manip'){
+}elseif($order=='rating_desc_average' OR $order=='rating_asc_average' OR $order=='rating_desc_average_with_manip' OR $order=='rating_asc_average_with_manip'){
     $order = 'date_desc';
 }
 
@@ -126,6 +127,12 @@ foreach ($upload_form_inputs as $key => $upload_input){
 $pro_options = $wpdb->get_row($wpdb->prepare( "SELECT * FROM $tablename_pro_options WHERE GalleryID = %d"  ,[
     $GalleryID
 ]));
+
+$visual_options = $wpdb->get_row($wpdb->prepare( "SELECT * FROM $tablename_options_visual WHERE GalleryID = %d"  ,[
+    $GalleryID
+]));
+
+echo "<input type='hidden' id='cglHeart' value='".$visual_options->FeVotingIconType."' >";
 
 $Manipulate = $pro_options->Manipulate;
 $ShowOther = $pro_options->ShowOther;
@@ -240,7 +247,7 @@ $galleryDbVersion = $optionsSQL->Version;
 $fieldsToSelectString = "id, rowid, Timestamp, NamePic, ImgType, CountC, CountCtoReview, CountR, CountS, Rating, GalleryID, Active, Informed, WpUpload,
              Width, Height, WpUserId, rSource, rThumb, addCountS, addCountR1, addCountR2, addCountR3, addCountR4, addCountR5, addCountR6, addCountR7, 
              addCountR8, addCountR9, addCountR10,Category, Exif, IP, CountR1, CountR2, CountR3, CountR4, CountR5, CountR6, CountR7, CountR8, CountR9, CountR10, 
-             Version, CheckSet, CookieId, Winner, MultipleFiles, WpPage, WpPageUser, WpPageNoVoting, WpPageWinner, WpPageEcommerce, OrderItem, EcommerceEntry";
+             Version, CheckSet, CookieId, Winner, MultipleFiles, WpPage, WpPageUser, WpPageNoVoting, WpPageWinner, WpPageEcommerce, OrderItem, EcommerceEntry, PdfPreview, Mails";
 if($isAjaxCall){
     // dann wurde die seite gerade aufgerufen oder ein reload gemacht nach dem neue gallery kreiert worden ist
     if($isNewGallery){
@@ -257,15 +264,19 @@ if($isAjaxCall){
         // dann muss es ein ajax call sein!!!
         if($search==='' && !($order=='rating_desc_sum' || $order=='rating_asc_sum' || $order=='rating_desc_sum_with_manip' || $order=='rating_asc_sum_with_manip' || $order=='rating_desc_average' || $order=='rating_asc_average' || $order=='rating_desc_average_with_manip' || $order=='rating_asc_average_with_manip') && strpos($order, '_for_id_') === false){
 	        include ('order-gallery/order-without-search-and-average.php');
-        }/*else if(($order=='rating_desc_average' || $order=='rating_asc_average' || $order=='rating_desc_average_with_manip' || $order=='rating_asc_average_with_manip') && strpos($order, '_for_id_') === false){
+        }/*elseif(($order=='rating_desc_average' || $order=='rating_asc_average' || $order=='rating_desc_average_with_manip' || $order=='rating_asc_average_with_manip') && strpos($order, '_for_id_') === false){
             include ('order-gallery/order-by-average-with-and-without-search.php');// will not be used anymore, just average example
-        }*/else if(($order=='rating_desc_sum' || $order=='rating_asc_sum' || $order=='rating_desc_sum_with_manip' || $order=='rating_asc_sum_with_manip') && strpos($order, '_for_id_') === false){
+        }*/elseif(($order=='rating_desc_sum' || $order=='rating_asc_sum' || $order=='rating_desc_sum_with_manip' || $order=='rating_asc_sum_with_manip') && strpos($order, '_for_id_') === false){
 	        include ('order-gallery/order-by-sum-with-and-without-search.php');
-        }else if(strpos($order, '_for_id_') !== false){
+        }elseif(strpos($order, '_for_id_') !== false){
 	        include ('order-gallery/order-custom-fields-with-and-without-search.php');
         }else{
 	        include ('order-gallery/order-with-search-and-without-average.php');
         }
+    }
+
+    if(empty($selectSQL)){// might be NULL or so if voting is deactivated
+        $selectSQL = [];
     }
 
     $countSelectSQL = count($selectSQL);
@@ -363,7 +374,7 @@ foreach ($selectFormInput as $value) {
 
 //$optionsSQL = $wpdb->get_row( "SELECT * FROM $tablename_f_input WHERE id = '$GalleryID'" );
 
-$selectFormInput = $wpdb->get_results($wpdb->prepare("SELECT id, Field_Type, Field_Order, Field_Content FROM $tablename_f_input WHERE GalleryID = %d AND (Field_Type = 'check-f' OR Field_Type = 'text-f' OR Field_Type = 'comment-f' OR Field_Type ='email-f' OR Field_Type ='select-f'  OR Field_Type ='selectc-f' OR Field_Type ='url-f' OR Field_Type ='date-f') ORDER BY Field_Order ASC" ,[
+$selectFormInput = $wpdb->get_results($wpdb->prepare("SELECT id, Field_Type, Field_Order, Field_Content FROM $tablename_f_input WHERE GalleryID = %d AND (Field_Type = 'check-f' OR Field_Type = 'text-f' OR Field_Type = 'radio-f' OR Field_Type = 'chk-f' OR Field_Type = 'comment-f' OR Field_Type ='email-f' OR Field_Type ='select-f'  OR Field_Type ='selectc-f' OR Field_Type ='url-f' OR Field_Type ='date-f') ORDER BY Field_Order ASC" ,[
     $GalleryID
 ]));
 

@@ -81,9 +81,9 @@ if(!function_exists('cg_registry_add_profile_image')){
 
         if(strpos($post_type,'jpg')!==false OR strpos($post_type,'jpeg')!==false){
             $dateityp = 'jpg';
-        }else if(strpos($post_type,'png')!==false){
+        }elseif(strpos($post_type,'png')!==false){
             $dateityp = 'png';
-        }else if(strpos($post_type,'gif')!==false){
+        }elseif(strpos($post_type,'gif')!==false){
             $dateityp = 'gif';
         }
 

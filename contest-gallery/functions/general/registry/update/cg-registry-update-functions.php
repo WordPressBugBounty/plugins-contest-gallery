@@ -24,23 +24,23 @@ if(!function_exists('cg_update_additional_registry_form_user_fields')){
     }
 }
 
-if(!function_exists('cg_update_user_meta_when_register')){
-    function cg_update_user_meta_when_register( $newWpId,$activation_key) {
+if(!function_exists('cg_update_user_meta_when_register_and_delete_user_entries')){
+    function cg_update_user_meta_when_register_and_delete_user_entries( $newWpId,$activation_key,$user_email, $cg_users_pin_from_email_check = 0) {
         global $wpdb;
         $tablenameCreateUserEntries = $wpdb->prefix . "contest_gal1ery_create_user_entries";
         $tablename_create_user_form = $wpdb->prefix . "contest_gal1ery_create_user_form";
 
         $userAccountEntries = $wpdb->get_results("SELECT id, f_input_id, Field_Type, Field_Content, Checked FROM $tablenameCreateUserEntries WHERE
-                 (Field_Type = 'user-check-agreement-field' OR Field_Type = 'user-text-field' OR Field_Type = 'user-comment-field' OR Field_Type = 'user-select-field'
+                 (Field_Type = 'user-check-agreement-field' OR Field_Type = 'user-text-field' OR Field_Type = 'user-comment-field' OR Field_Type = 'user-select-field' OR Field_Type = 'user-radio-field' OR Field_Type = 'user-check-field'  
                       OR Field_Type = 'wpfn' OR Field_Type = 'wpln' OR Field_Type = 'main-nick-name') 
                 AND (activation_key = '$activation_key') ");
 
         if(count($userAccountEntries)){
             foreach ($userAccountEntries as $entry){
+                $f_input_id = $entry->f_input_id;
                 if($entry->Field_Type == 'user-check-agreement-field'){
-                    $f_input_id = $entry->f_input_id;
                     $value = $wpdb->get_row("SELECT Field_Name, Field_Content, Required FROM $tablename_create_user_form WHERE id = '$f_input_id' ");
-                    if(empty($value)){
+                    if(empty($value)){// then field must be already deleted, no user meta add
                         continue;
                     }
                     $RequiredString =  ($value->Required==1) ? 'yes' : 'no' ;
@@ -51,30 +51,38 @@ if(!function_exists('cg_update_user_meta_when_register')){
                     }
                     $value = $value->Field_Name . ' --- required:' . $RequiredString . ' --- ' . $value->Field_Content;// get both in this case name and content for better documentation
                 }else{
+                    $value = $wpdb->get_row("SELECT Field_Name, Field_Content, Required FROM $tablename_create_user_form WHERE id = '$f_input_id' ");
+                    if(empty($value)){// then field must be already deleted, no user meta add, added since 28.0.6
+                        continue;
+                    }
                     $value = $entry->Field_Content;
                 }
 
                 if($entry->Field_Type == 'wpfn'){
                     update_user_meta( $newWpId, 'first_name', $value);
-                } else if($entry->Field_Type == 'wpln'){
+                } elseif($entry->Field_Type == 'wpln'){
                     update_user_meta( $newWpId, 'last_name', $value);
-                } else if($entry->Field_Type == 'main-nick-name'){
+                } elseif($entry->Field_Type == 'main-nick-name'){
                     update_user_meta( $newWpId, 'nickname', $value);
                 } else{
                     $key = 'cg_custom_field_id_'.$entry->f_input_id;
                     update_user_meta( $newWpId, $key, $value);
                 }
 
-
             }
             // now after after data is added to meta_user
             // data ($userAccountEntries) can be deleted
-            $wpdb->query($wpdb->prepare(
+            /*$wpdb->query($wpdb->prepare(
                 "
                                     DELETE FROM $tablenameCreateUserEntries WHERE activation_key = %s
                                 ",
                 $activation_key
-            ));
+            ));*/
+            cg1l_delete_unconfirmed_user($user_email);
+        }else{
+            if(!empty($cg_users_pin_from_email_check)){
+                cg1l_delete_unconfirmed_user($user_email);
+            }
         }
     }
 }
@@ -104,6 +112,9 @@ if(!function_exists('cg_update_registry_and_login_options_v14')){
                 'BackToGalleryLink' => $options['registry-login']['BackToGalleryLink'],
                 'RegistryUserRole' => $options['registry-login']['RegistryUserRole'],
                 'LostPasswordMailActive' => $options['registry-login']['LostPasswordMailActive'],
+                'LoginAfterConfirm' => $options['registry-login']['LoginAfterConfirm'],
+                'ConfirmExpiry' => $options['registry-login']['ConfirmExpiry'],
+                'PinExpiry' => $options['registry-login']['PinExpiry'],
                 'LostPasswordMailAddressor' => $options['registry-login']['LostPasswordMailAddressor'],
                 'LostPasswordMailReply' => $options['registry-login']['LostPasswordMailReply'],
                 'LostPasswordMailSubject' => $options['registry-login']['LostPasswordMailSubject'],
@@ -111,11 +122,12 @@ if(!function_exists('cg_update_registry_and_login_options_v14')){
                 'TextBeforeLoginForm' => $options['registry-login']['TextBeforeLoginForm'],
                 'EditProfileGroups' => $options['registry-login']['EditProfileGroups'],
                 'TextBeforeRegFormBeforeLoggedIn' => $options['registry-login']['TextBeforeRegFormBeforeLoggedIn'],
+                'TextBeforePinFormBeforeLoggedIn' => $options['registry-login']['TextBeforePinFormBeforeLoggedIn'],
                 'PermanentTextWhenLoggedIn' => $options['registry-login']['PermanentTextWhenLoggedIn']
             ),
             array($GalleryGeneralIDString => $GalleryGeneralID),
             array(
-                '%s','%s','%s','%d','%s','%s','%s','%s','%s','%s','%s','%s'
+                '%s','%s','%s','%d','%d','%d','%s','%s','%s','%s','%s','%s','%s','%s'
             ),
             array('%d')
         );
@@ -146,10 +158,10 @@ if(!function_exists('cg_update_registry_and_login_options_v14')){
                 'ForwardAfterLoginUrlCheck' => $options['pro']['ForwardAfterLoginUrlCheck'],'ForwardAfterLoginUrl' => $options['pro']['ForwardAfterLoginUrl'],
                 'ForwardAfterLoginTextCheck' => $options['pro']['ForwardAfterLoginTextCheck'],'ForwardAfterLoginText' => $options['pro']['ForwardAfterLoginText'],
                 'RegMailOptional' => $options['pro']['RegMailOptional'],'ForwardAfterRegText' => $options['pro']['ForwardAfterRegText'],
-                'TextAfterEmailConfirmation' => $options['pro']['TextAfterEmailConfirmation'],'HideRegFormAfterLogin' => $options['pro']['HideRegFormAfterLogin'],
+                'TextAfterEmailConfirmation' => $options['pro']['TextAfterEmailConfirmation'],'TextAfterPinConfirmation' => $options['pro']['TextAfterPinConfirmation'],'HideRegFormAfterLogin' => $options['pro']['HideRegFormAfterLogin'],
                 'HideRegFormAfterLoginShowTextInstead' => $options['pro']['HideRegFormAfterLoginShowTextInstead'],'HideRegFormAfterLoginTextToShow' => $options['pro']['HideRegFormAfterLoginTextToShow'],
                 'RegMailAddressor' => $options['pro']['RegMailAddressor'],'RegMailReply' => $options['pro']['RegMailReply'],
-                'RegMailSubject' => $options['pro']['RegMailSubject'],'TextEmailConfirmation' => $options['pro']['TextEmailConfirmation'],
+                'RegMailSubject' => $options['pro']['RegMailSubject'],'TextEmailConfirmation' => $options['pro']['TextEmailConfirmation'],'TextPinConfirmation' => $options['pro']['TextPinConfirmation'],'RegPinSubject' => $options['pro']['RegPinSubject'],
                 'RegMailCC' => $options['pro']['RegMailCC'],'RegMailBCC' => $options['pro']['RegMailBCC'],
                 'OpenAiKey' => $OpenAiKey,
             ),
@@ -158,10 +170,10 @@ if(!function_exists('cg_update_registry_and_login_options_v14')){
                 '%d','%s',
                 '%d','%s',
                 '%d','%s',
-                '%s','%d',
+                '%s','%s','%d',
                 '%d','%s',
                 '%s','%s',
-                '%s','%s',
+                '%s','%s','%s','%s',
                 '%s','%s',
                 '%s'
             ),

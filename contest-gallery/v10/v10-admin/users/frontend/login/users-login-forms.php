@@ -35,9 +35,9 @@ if(!$isProVersion || intval($galleryDbVersion)<14){
 	$intervalConf['shortcodeIsActive'] = true;
 }
 if(!$intervalConf['shortcodeIsActive']){
-    echo contest_gal1ery_convert_for_html_output($intervalConf['TextWhenShortcodeIntervalIsOff']);
+    echo contest_gal1ery_convert_for_html_output_without_nl2br($intervalConf['TextWhenShortcodeIntervalIsOff']);
 }else{
-    echo contest_gal1ery_convert_for_html_output($intervalConf['TextWhenShortcodeIntervalIsOn']);
+    echo contest_gal1ery_convert_for_html_output_without_nl2br($intervalConf['TextWhenShortcodeIntervalIsOn']);
 
     if(!is_user_logged_in()){
         if(!empty($TextBeforeLoginForm)){
@@ -110,12 +110,7 @@ if(!$intervalConf['shortcodeIsActive']){
 
     echo "</div>";
 
-    if(isset($isForAjax)){
-        echo "<hr class='mainCGdivUploadFormAjaxRegistryButtonDivider'>";
-        echo "<div class='cgRegistryFormButton cgRegistryFormButtonAjaxForm $cgRegistryFormButtonGallery $FeControlsStyleLogin $BorderRadiusLogin' data-cg-gid='$galeryIDuser'><span>Create account</span></div>";
-    }
-
-//echo "$language_MaximumAllowedWidthForJPGsIs";
+  //echo "$language_MaximumAllowedWidthForJPGsIs";
     echo "<input type='hidden' id='cg_show_upload' value='1'>";
 
 //echo "language_ThisFileTypeIsNotAllowed: $language_ThisFileTypeIsNotAllowed";

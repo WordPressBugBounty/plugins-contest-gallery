@@ -34,6 +34,10 @@ if(!function_exists('contest_gal1ery_entry_on_off')){
             wp_localize_script( 'cg_v10_js_cg_gallery', 'post_cg_login_wordpress_ajax_script_function_name', array(
                 'cg_login_ajax_url' => admin_url( 'admin-ajax.php' )
             ));
+            wp_localize_script('cg_v10_js_cg_gallery', 'CG1LAction', [
+                'nonce'   => wp_create_nonce('cg1l_action'),
+                'ajax_url' => admin_url('admin-ajax.php'),
+            ]);
 
         global $wpdb;
 
@@ -88,7 +92,7 @@ if(!function_exists('contest_gal1ery_entry_on_off')){
             if(!empty($_GET['cg_on_id'])){
                 $isActivate = true;
                 $id = absint($_GET['cg_on_id']);
-            }else if(!empty($_GET['cg_off_id'])){
+            }elseif(!empty($_GET['cg_off_id'])){
                 $isDeactivate = true;
                 $id = absint($_GET['cg_off_id']);
             }

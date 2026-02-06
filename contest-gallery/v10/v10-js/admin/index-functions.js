@@ -13,7 +13,10 @@ cgJsClassAdmin.index.vars = {
     isOptionsAreaLoaded: '',
     isCreateUploadAreaLoaded: '',
     cgOptionsJson: null,
-    isShortcodeIntervalConfActive: {}
+    isShortcodeIntervalConfActive: {},
+    cg_nonce: {},
+    cg_nonce_check_active: false,
+    cgNextGalleryId: 0
 };
 
 cgJsClassAdmin.index.functions = {
@@ -53,6 +56,7 @@ cgJsClassAdmin.index.functions = {
     cgLoadBackendLoader: function (isShowNoLoader,isDoNotEmptyContent) {
 
         var $cg_main_container = jQuery('#cg_main_container');
+        cgJsClassAdmin.index.vars.$cg_main_container = $cg_main_container;
 
         // do this first, it will be removed when empty
         var cgBackendHashVal = $cg_main_container.find('#cgBackendHash').val();
@@ -253,17 +257,64 @@ cgJsClassAdmin.index.functions = {
         }
         return false;
     },
-    setCgNonce: function ($){
-        debugger
+    checkCurrentCgNonce: function ($){
+
+        if(cgJsClassAdmin.index.vars.cg_nonce){
+            jQuery.ajax({
+                url: 'admin-ajax.php',
+                type: 'post',
+                data: {
+                    action: 'post_cg_get_current_nonce',
+                    cg_nonce: CG1LBackendNonce.nonce
+                },
+            }).done(function (response) {
+
+                var $response = jQuery(new DOMParser().parseFromString(response, 'text/html'));
+                $response.find('script[data-cg-processing="true"]').each(function () {
+                    var script = jQuery(this).html();
+                    eval(script);
+                });
+
+                if(cgJsClassAdmin.index.vars.cg_current_nonce != cgJsClassAdmin.index.vars.cg_nonce &&
+                    cgJsClassAdmin.index.vars.cg_current_nonce_time > cgJsClassAdmin.index.vars.cg_nonce_time){
+                    CG1LBackendNonce.nonce = cgJsClassAdmin.index.vars.cg_current_nonce;
+                    cgJsClassAdmin.index.functions.setCgNonce($,cgJsClassAdmin.index.vars.cg_current_nonce,true);
+                }
+
+            }).fail(function (xhr, status, error) {
+
+                console.log(xhr);
+                console.log(status);
+                console.log(error);
+
+            }).always(function () {
+
+            });
+        }
+
+    },
+    setCgNonce: function ($,cg_nonce,replaceUrl){
+
         var version = cgJsClassAdmin.index.functions.cgGetVersionForUrlJs();
-        var cg_nonce = $('#cg_nonce').val();
+
         var $cg_main_container = $('#cg_main_container');
+        cgJsClassAdmin.index.vars.$cg_main_container = $cg_main_container;
+
+        if(!cg_nonce){
+            cg_nonce = CG1LBackendNonce.nonce;
+        }
+
+        cgJsClassAdmin.index.vars.cg_nonce = cg_nonce;
+        cgJsClassAdmin.index.vars.cg_nonce_time = new Date().getTime();
 
         $cg_main_container.find('a[href*="page='+version+'/index.php"]').each(function (){
             var href = $(this).attr('href');
             if(href.indexOf('cg_nonce=')===-1){
                 var hrefWithNonce = href+'&cg_nonce='+cg_nonce;
                 $(this).attr('href',hrefWithNonce);
+            }else{
+                var url = cgJsClassAdmin.index.functions.replaceCgNonceInUrl(href,cg_nonce);
+                $(this).attr('href',url);
             }
         });
 
@@ -274,15 +325,31 @@ cgJsClassAdmin.index.functions = {
                 $(this).prepend($('<input type="hidden" id="cgNonce" name="cg_nonce" value="'+cg_nonce+'" />'))
             }
             var action = $(this).attr('action');
-            if(action.indexOf('cg_nonce=')===-1){
+            if(action && action.indexOf('cg_nonce=')===-1){
                 var hrefWithNonce = action+'&cg_nonce='+cg_nonce;
                 $(this).attr('action',hrefWithNonce);
+            }else if(action && action.indexOf('cg_nonce=')>-1){
+                var url = cgJsClassAdmin.index.functions.replaceCgNonceInUrl(action,cg_nonce);
+                $(this).attr('action',url);
             }
         });
+        if(replaceUrl){
+            if(location.href.indexOf('cg_nonce')>-1){
+                var url = cgJsClassAdmin.index.functions.replaceCgNonceInUrl(location.href,cg_nonce);
+                window.history.replaceState({}, '', url);
+            }
+        }
+    },
+    replaceCgNonceInUrl: function (url,cg_nonce) {
+        return url.replace(/([?#&])cg_nonce=[^&#]*/, '$1cg_nonce=' + cg_nonce);
+    },
+    replaceOptionIdInUrl: function (url,option_id) {
+        return url.replace(/([?#&])option_id=[^&#]*/, '$1option_id=' + option_id);
     },
     newVersionReload: function () {
 
         var $cg_main_container = jQuery('#cg_main_container');
+        cgJsClassAdmin.index.vars.$cg_main_container = $cg_main_container;
 
         $cg_main_container.prepend('<p id="cgNewGalleryVersionDetected">New Contest Gallery version detected. Page needs to be reloaded. <br>Reload will be initiated ...</p>');
 
@@ -314,7 +381,7 @@ cgJsClassAdmin.index.functions = {
         return wpVersionInt;
 
     },
-    initializeEditor: function(id,onInput){
+    initializeEditor: function(id,notResize){
   /*      console.trace();
         debugger*/
         debugger
@@ -343,7 +410,9 @@ cgJsClassAdmin.index.functions = {
                 // },100);
             }
             setTimeout(function (){
-                jQuery('.wp-editor-wrap').find('iframe').css('height','100px');
+                if(!notResize){
+                    jQuery('.wp-editor-wrap').find('iframe').css('height','100px');
+                }
             },100);
         }
 
@@ -465,5 +534,48 @@ cgJsClassAdmin.index.functions = {
             },2000);
         },timeout);
 
+    },
+    getParamsFromUrl: function (url) {
+        var params = {};
+        url.replace(/^[^?]*\?/, '').split('&').forEach(function (s) {
+            var p = s.split('=');
+            if (p[0]) params[decodeURIComponent(p[0])] = decodeURIComponent((p[1] || '').replace(/\+/g, ' '));
+        });
+        return params;
+    },
+    loadUnconfirmedUsers: function ($) {
+        debugger
+
+        jQuery.ajax({
+            url: 'admin-ajax.php',
+            type: 'POST',
+            dataType: 'html',
+            data: {
+                action: 'post_cg1l_get_unconfirmed_users',
+                cg_nonce: CG1LBackendNonce.nonce
+            }
+        })
+        .done(function (response) {
+
+            //console.log('response123');
+            //console.log(response);
+
+            $('body').removeClass('cg_pointer_events_none');
+            var $response = $(new DOMParser().parseFromString(response, 'text/html'));
+            //console.log('cgUnconfirmedManagementList length');
+            //console.log($response.find('#cgUnconfirmedManagementList').length);
+            $('#cgUnconfirmedListStepsContainer').replaceWith($response.find('#cgUnconfirmedListStepsContainer'));
+            $('#cgUnconfirmedManagementList').replaceWith($response.find('#cgUnconfirmedManagementList'));
+
+        }).fail(function (xhr, status, error) {
+                $('body').removeClass('cg_pointer_events_none');
+                var msg = 'Error saving user data: ' + (error || status);
+                if (xhr.responseText) {
+                    msg += ' — ' + xhr.responseText;
+                }
+                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage(msg);
+                $('body').removeClass('cg_pointer_events_none');
+                $button.removeClass('cg_skeleton_loader_on_page_load');
+        });
     }
 };

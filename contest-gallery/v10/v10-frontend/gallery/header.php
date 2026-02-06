@@ -86,9 +86,23 @@ if(true){
 
         $pluginsUrl = plugins_url();
 
+        $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/'.$galeryID.'-form-upload.json';
+        $jsonContactForm = json_decode(file_get_contents($jsonFile),true);
+
+        $fileUploadField = [];
+        foreach ($jsonContactForm as $jsonContactFormField){
+            if ($jsonContactFormField['Field_Type'] == 'image-f') {
+                $Field_Content = $jsonContactFormField['Field_Content'];
+                $imageFieldFieldTitle = contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['titel']);
+                break;
+            }
+        }
+
         echo "<div class='cg_sort_div'>";
         if($isInGalleryUpload  && empty($isOnlyGalleryWinner) && empty($isOnlyGalleryEcommerce)){
-            echo "<div data-cg-tooltip='$language_ImageUpload' class='cg-gallery-upload cg_gallery_control_element $cgFeControlsStyle' data-cg-gid='$galeryIDuserForJs'>";
+            //echo "<div data-cg-tooltip='$language_ImageUpload' class='cg-gallery-upload cg_gallery_control_element $cgFeControlsStyle' data-cg-gid='$galeryIDuserForJs'>";
+            echo "<div class='cg-gallery-upload cg_gallery_control_element $cgFeControlsStyle' data-cg-gid='$galeryIDuserForJs'>";
+                echo $imageFieldFieldTitle;
             echo "</div>";
         }
 
@@ -358,6 +372,15 @@ if(true){
 
     if($GalleryUpload){
         include('gallery-upload-form.php');
+    }
+
+    if(!empty($options['visual']['ShowPinFormVoting']) || !empty($options['visual']['ShowPinFormUploading'])){
+        $shortcode_name_temp = $shortcode_name;
+        $isShowPinFormVotingUploading = 1;
+        $shortcode_name = 'cg_users_pin';
+        $InGalleryRegistryHide = ' cg_hide ';
+        include(__DIR__.'/../../../v10/v10-admin/users/frontend/registry/users-registry.php');
+        $shortcode_name = $shortcode_name_temp;
     }
 
     echo "</div>";

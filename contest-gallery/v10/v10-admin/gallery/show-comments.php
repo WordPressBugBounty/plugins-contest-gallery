@@ -35,6 +35,12 @@ include(__DIR__.'/../../../vars/general/emojis.php');
 $wp_upload_dir = wp_upload_dir();
 $dirImageComments = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryNR.'/json/image-comments/ids/'.$pid;
 
+$options = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryNR.'/json/'.$galeryNR.'-options.json';
+$options = json_decode(file_get_contents($options),true);
+if(!empty($options[$galeryNR])){
+    $options = $options[$galeryNR];
+}
+
 // SQL zum Ermitteln von allen Komments mit gesendeter picture id
 // DATEN Löschen und exit
 
@@ -190,13 +196,6 @@ $dirImageComments = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$ga
 
             // has to be done after image-comments...json is ready
             if($hasNewReviewed){
-                $options = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryNR.'/json/'.$galeryNR.'-options.json';
-                $fp = fopen($options, 'r');
-                $options =json_decode(fread($fp,filesize($options)),true);
-                if(!empty($options[$galeryNR])){
-                    $options = $options[$galeryNR];
-                }
-                fclose($fp);
                 contest_gal1ery_user_comment_mail_prepare($options,$pid,$galeryNR,$wp_upload_dir,time());
             }
 
@@ -210,12 +209,17 @@ $dirImageComments = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$ga
             $pid
             ) );*/
 		    $pid = absint($pid);
+
+        $countCommentsSQL = 0;
+        if(floatval($options['general']['Version'])<16){// this condition added later in version 28.1.2.2,
+            // comments will be inserted since 23.1.3, because of allocation correction, but also in dir, so what in dir counts in generally
             $countCommentsSQL = $wpdb->get_var(
             "
                 SELECT COUNT(*) AS NumberOfRows 
                 FROM $tablename_comments 
                 WHERE pid = $pid
-            ",);
+            ");
+        }
 
             /*
             var_dump('$countCommentsSQL');
@@ -246,7 +250,7 @@ $dirImageComments = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$ga
         $ratingCommentsData =json_decode(fread($fp,filesize($dataFile)),true);
         fclose($fp);
 
-        $ratingCommentsData['CountC'] = $countCommentsSQL;
+        $ratingCommentsData['CountC'] = $countCommentsTotal;
 
         $fp = fopen($dataFile, 'w');
         fwrite($fp,json_encode($ratingCommentsData));
@@ -388,25 +392,25 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
                             echo "</div>";
                         echo "</div>";
                     echo '</a>';
-               }else if(cg_is_alternative_file_type_video($ImgType)){
+               }elseif(cg_is_alternative_file_type_video($ImgType)){
                     echo '<a href="'.$sourceOriginalImgShow.'" target="_blank" title="Show file" alt="Show file">';
                         echo '<video width="300" height="200"  >';
                             echo '<source src="'.$sourceOriginalImgShow.'" type="video/mp4">';
                             echo '<source src="'.$sourceOriginalImgShow.'" type="video/'.$ImgType.'">';
                         echo '</video>';
                     echo '</a>';
-                }else if($ImgType=='con'){
+                }elseif($ImgType=='con'){
                     echo '<div id="cgVotesImageVisualContent">';
                     echo "</div>";
-                }else if($ImgType=='ytb'){
+                }elseif($ImgType=='ytb'){
                     echo '<div id="cgVotesImageVisualContent">';
 	                    echo '<iframe  width="300" height="200" src="'.$image_url.'"  ></iframe>';
 	                echo "</div>";
-                }else if($ImgType=='inst'){
+                }elseif($ImgType=='inst'){
                     echo '<div id="cgVotesImageVisualContent">';
 	                    echo '<iframe  width="300" height="200" src="'.$image_url.'"  ></iframe>';
 	                echo "</div>";
-                }else if($ImgType=='twt'){
+                }elseif($ImgType=='twt'){
 	                $blockquote = cg_get_blockquote_from_post_content($post_description);
 	                echo '<div id="cgCommentsImageVisualContent">';
 	                    echo '<div class="cg_backend_image cg_backend_image_twt"  id="cg_backend_image_twt'.$pid.'"></div>';
@@ -418,7 +422,7 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
                         cg_twitter_blockquotes[id] = <?php echo json_encode($blockquote); ?>;
 	                </script>
 	                <?php
-                }else if($ImgType=='tkt'){
+                }elseif($ImgType=='tkt'){
 	                $blockquote = cg_get_blockquote_from_post_content($post_description);
 	                echo '<div id="cgCommentsImageVisualContent">';
 	                    echo '<div class="cg_backend_image cg_backend_image_tkt"  id="cg_backend_image_tkt'.$pid.'"></div>';
@@ -492,7 +496,7 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
                       }
                       $collectWpUserIdsArray[] = $value['WpUserId'];
                   }
-              }else if(!empty($value['IsWpUser']) && $value['IsWpUser']==1 && !empty($value['insert_id'])){
+              }elseif(!empty($value['IsWpUser']) && $value['IsWpUser']==1 && !empty($value['insert_id'])){
 	              $insert_ids_collected_for_wp_user_ids[] = $value['insert_id'];
               }
           }
@@ -621,7 +625,7 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
 
 		$date = htmlspecialchars($value['date']);
         $commentTime = cg_get_time_based_on_wp_timezone_conf($value['timestamp'],'d-M-Y H:i:s');
-         $comment1 = esc_html(contest_gal1ery_convert_for_html_output($value['comment']));
+         $comment1 = esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($value['comment']));
         $comment1 = preg_replace("/&amp;amp;#x/","&#x",$comment1);// do both to go sure
         $comment1 = preg_replace("/&amp;#x/","&#x",$comment1);// do both to go sure
 
@@ -648,7 +652,7 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
             echo "<span style='color:green;font-weight: bold;'>Active</span>";
         }
         if(!empty($value['userIP'])){
-            $userIP = contest_gal1ery_convert_for_html_output($value['userIP']);
+            $userIP = contest_gal1ery_convert_for_html_output_without_nl2br($value['userIP']);
             echo "<br><div id='cg-user-ip' style='display:inline;'>User IP: $userIP</div>";
         }
 		echo "<br>Date: <div id='cg-comment-$id' style='display:inline;'>$commentTime</div>";
@@ -671,8 +675,8 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
         echo "</div>";
         echo "</div>";
 
-            echo "<div>";
-		echo "<div style='display:inline;float:right;margin-right:-10px;'>Delete: <input  class='cg_comment_delete'  type='checkbox' name='delete-comment[]' value='$id'></div>";
+            echo "<div style='margin-left: auto;'>";
+		echo "<div style='display:inline;float:right;margin-right:5px;'>Delete: <input  class='cg_comment_delete'  type='checkbox' name='delete-comment[]' value='$id'></div>";
 		echo "<div style='display:inline;float:right;margin-right:30px;'>Activate: <input class='cg_comment_activate' ".((!empty($value['Active']) && $value['Active']==2) ? "" : "disabled")." type='checkbox' name='activate-comment[]' value='$id'></div>";
 		echo "<div style='display:inline;float:right;margin-right:30px;'>Deactivate: <input class='cg_comment_deactivate' ".((!empty($value['Active']) && $value['Active']==2) ? "disabled" : "")." type='checkbox' name='deactivate-comment[]' value='$id'></div>";
             echo "</div>";

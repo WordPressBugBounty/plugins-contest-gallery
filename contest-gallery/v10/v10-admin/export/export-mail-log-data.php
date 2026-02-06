@@ -27,8 +27,12 @@ if(!empty($downloadContent)){
 		mkdir($folder,0755,true);
 		$usersTableHtmlStart = <<<HEREDOC
 <Files "*.log">
-   order deny,allow
-   deny from all
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Deny from all
+  </IfModule>
 </Files>
 HEREDOC;
 		$htaccessFile = $folder.'/.htaccess';

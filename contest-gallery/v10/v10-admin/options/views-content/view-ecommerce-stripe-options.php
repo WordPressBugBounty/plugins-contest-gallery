@@ -96,7 +96,7 @@ echo <<<HEREDOC
                 </div>
                  <div class='cg_view_options_row'>
 				    <div class='cg_border_radius_unset  cg_border_top_none cg_view_option cg_border_bottom_none cg_view_option_100_percent cg_border_right_none' id="StripeTestActiveOption">
-				        <div class='cg_view_option_title'>
+				        <div class='cg_view_option_title'  style="width: 75%;">
 				            <p>Enable Stripe Sandbox Testing<br>
 				                <span class="cg_view_option_title_note"><b>NOTE:</b> Disable this option after testing is finished. Otherwise not desired test purchases might happen if somebody knows the logic and use official credit card numbers for testing from Stripe.</span>
 				            </p>

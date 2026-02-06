@@ -552,7 +552,7 @@ jQuery(document).ready(function($){
                 '<div class="cg_view_options_row">\n' +
                 '            <div class="cg_view_option cg_view_option_100_percent OnlyGalleryViewContainer cg_border_radius_8_px  ">\n' +
                 '                <div class="cg_view_option_title">\n' +
-                '                    <p>Make entries unclickable<br>Good for displaying entries only<br><span class="cg_view_option_title_note">Files images can not be clicked. Configuration of voting out of gallery is possible. Only for gallery views. Slider and blog view will work as usual.</span></p>\n' +
+                '                    <p>Make entries unclickable<br>Good for displaying entries only<br><span class="cg_view_option_title_note">Files images can not be clicked. Configuration of voting out of gallery is possible.<br>Only for gallery views. Slider and blog view will work as usual.</span></p>\n' +
                 '                </div>\n' +
                 '                <div class="cg_view_option_radio cg_margin_top_5 cg_view_option_unchecked">\n' +
                 '                    <input type="radio" name="OnlyGalleryView" class="OnlyGalleryView">\n' +
@@ -623,7 +623,7 @@ jQuery(document).ready(function($){
             '<div class="cg_view_options_row">\n' +
                 '<div class="cg_view_option cg_view_option_100_percent FullSizeImageOutGalleryContainer   cg_border_radius_8_px">\n' +
                 '                <div class="cg_view_option_title">\n' +
-                '                    <p>Forward directly to original source after clicking an entry from in a gallery<br><span class="cg_view_option_title_note">Configuration of voting out of gallery is possible. Only for gallery views. Slider and blog view will work as usual.</span></p>\n' +
+                '                    <p>Forward directly to original source after clicking an entry from in a gallery<br><span class="cg_view_option_title_note">Configuration of voting out of gallery is possible.<br>Only for gallery views. Slider and blog view will work as usual.</span></p>\n' +
                 '                </div>\n' +
                 '                <div class="cg_view_option_radio cg_margin_top_5 cg_view_option_unchecked">\n' +
                 '                    <input type="radio" name="FullSizeImageOutGallery" class="FullSizeImageOutGallery">\n' +
@@ -1051,6 +1051,7 @@ jQuery(document).ready(function($){
 
     $(document).on('click', '.CheckMethodContainer', function(e){
         cgJsClassAdmin.options.functions.cg_user_reocgnising_method($,$(this).find('.CheckMethod'));
+        cgJsClassAdmin.options.functions.showHideShowCheckLoginVotingRelated($,$(this).closest('#CheckMethodsContainer').find('#CheckLogin'));
     });
 
     // reset votes confirm
@@ -1213,16 +1214,6 @@ jQuery(document).ready(function($){
         //  },10);
     });
 
-    function getVisibleHeightFixedInParent($el) {
-        const rect = $el[0].getBoundingClientRect();
-        const winH = window.innerHeight || document.documentElement.clientHeight;
-
-        const visibleTop = Math.max(rect.top, 0);
-        const visibleBottom = Math.min(rect.bottom, winH);
-
-        return Math.max(0, visibleBottom - visibleTop);
-    }
-
     var isCgUploadFieldsSelectSet = false;
     var isCgRegistryFieldsSelectSet = false;
     $( window ).scroll(function() {
@@ -1247,39 +1238,7 @@ jQuery(document).ready(function($){
 
         if(cgJsClassAdmin.index.vars.isCreateUploadAreaLoaded){
 
-            var $cgCreateUploadSortableArea = cgJsClassAdmin.index.vars.$cgCreateUploadSortableArea;
-            var $ausgabe1 = cgJsClassAdmin.index.vars.$ausgabe1;
-            var windowScrollTop = $(window).scrollTop();
-
-            // console.log('windowScrollTop');
-            // console.log(windowScrollTop);
-
-            if((windowScrollTop+50)>cgJsClassAdmin.options.vars.cg_create_upload_container_offset){
-                isCgUploadFieldsSelectSet = true;
-                //$cgCreateUploadSortableArea.addClass('cg_sticky').css({'border-right':'unset','top':cgJsClassAdmin.options.vars.wpadminbarHeight+'px','width':(cgJsClassAdmin.index.vars.$cg_main_container.width()-1)+'px'});
-                $cgCreateUploadSortableArea.addClass('cg_sticky').css({'top':cgJsClassAdmin.options.vars.wpadminbarHeight+'px','width':(cgJsClassAdmin.index.vars.$cg_main_container.width())+'px'});
-                $cgCreateUploadSortableArea.css('width',$ausgabe1.width()+'px');
-
-                // Example usage
-                //const visibleHeight = getVisibleHeightInParent($('.child'), $('.parent'));
-                //const visibleHeight = getVisibleHeightInParent(cgJsClassAdmin.index.vars.$cgCreateUploadSortableArea, cgJsClassAdmin.index.vars.$ausgabe1);
-                var visibleHeight = getVisibleHeightFixedInParent(cgJsClassAdmin.index.vars.$ausgabe1);
-                var parentHeight = cgJsClassAdmin.index.vars.$ausgabe1.height();
-
-                //console.log('visibleHeight');
-                //console.log(visibleHeight);
-                $cgCreateUploadSortableArea.css('height',visibleHeight-50+'px');
-                cgJsClassAdmin.index.vars.resizeLeftSideIsActive = true;
-
-            }else{
-                //$cgCreateUploadSortableArea.removeClass('cg_sticky').css({'top':'','border-right':''} );
-                $cgCreateUploadSortableArea.removeClass('cg_sticky');
-                isCgUploadFieldsSelectSet = false;
-                $cgCreateUploadSortableArea.css('width','');
-                $cgCreateUploadSortableArea.css('height','');
-                cgJsClassAdmin.index.vars.resizeLeftSideIsActive = false;
-
-            }
+            cgJsClassAdmin.createUpload.functions.cgCreateUploadSortableAreaScroll($);
 
             return;
             var $cgUploadFieldsSelect = cgJsClassAdmin.options.vars.$cgUploadFieldsSelect;
@@ -1288,7 +1247,7 @@ jQuery(document).ready(function($){
             // console.log('windowScrollTop');
             // console.log(windowScrollTop);
 
-            if((windowScrollTop+50)>cgJsClassAdmin.options.vars.cg_create_upload_container_offset){
+            if((windowScrollTop+50)>cgJsClassAdmin.options.vars.cg_create_upload_registry_container_offset){
                 isCgUploadFieldsSelectSet = true;
                 //$cgUploadFieldsSelect.addClass('cg_sticky').css({'border-right':'unset','top':cgJsClassAdmin.options.vars.wpadminbarHeight+'px','width':(cgJsClassAdmin.index.vars.$cg_main_container.width()-1)+'px'});
                 $cgUploadFieldsSelect.addClass('cg_sticky').css({'top':cgJsClassAdmin.options.vars.wpadminbarHeight+'px','width':(cgJsClassAdmin.index.vars.$cg_main_container.width())+'px'});
@@ -1301,6 +1260,11 @@ jQuery(document).ready(function($){
         }
 
         if(cgJsClassAdmin.index.vars.isCreateRegistryAreaLoaded){
+
+            cgJsClassAdmin.createUpload.functions.cgCreateUploadSortableAreaScroll($);
+
+            return;
+
             var $cgRegFormSelect = cgJsClassAdmin.options.vars.$cgRegFormSelect;
             var windowScrollTop = $(window).scrollTop();
             if((windowScrollTop-50)>cgJsClassAdmin.options.vars.cg_registry_form_container_offset){// -50 has to be for registration area so new added fields no scroll
@@ -2629,6 +2593,14 @@ $(document).on('click','#RatingVisibleForGalleryEcommerceOption',function (e) {
 
     $(document).on('click', '#StripeApiActiveOption', function (e) {
         cgJsClassAdmin.options.functions.checkStripeApiFields($,$(this).find('#StripeApiActive'));
+    });
+
+    $(document).on('input', '#cg_main_options_content .cg_domain_error_input', function (e) {
+        var $el = $(this);
+        clearTimeout(window._cgDomainErrorMethod);
+        window._cgDomainErrorMethod = setTimeout(function () {
+            cgJsClassAdmin.options.functions.cgDomainErrorMethod($el);
+        }, 300);
     });
 
 });

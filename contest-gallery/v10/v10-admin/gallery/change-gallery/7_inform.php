@@ -17,7 +17,7 @@ if ($informORnot == 1) {
 
         $queryArgsArray = [];
 
-        foreach ($informIds as $key => $value) {
+        foreach ($informIds as $key => $value) {// key and value are image ids
 
             $key = absint(sanitize_text_field($key));
             $value = absint(sanitize_text_field($value));
@@ -47,8 +47,8 @@ if ($informORnot == 1) {
                     }
 
                     $headers = array();
-                    $headers[] = "From: $Admin <" . html_entity_decode(strip_tags(@$Reply)) . ">\r\n";
-                    $headers[] = "Reply-To: " . @strip_tags(@$Reply) . "\r\n";
+                    $headers[] = "From: $Admin <" . html_entity_decode(strip_tags($Reply)) . ">\r\n";
+                    $headers[] = "Reply-To: " . strip_tags($Reply) . "\r\n";
 
 
                     if (strpos($cc, ';')) {
@@ -81,7 +81,20 @@ if ($informORnot == 1) {
                     $cgMailAction = "File activation e-mail backend";
                     $cgMailGalleryId = $GalleryID;
                     add_action('wp_mail_failed', 'cg_on_wp_mail_error', 10, 1);
-                    wp_mail($To, $Subject, $Msg, $headers);
+
+                    if(wp_mail($To, $Subject, $Msg, $headers)){
+                        $WpUserId = 0;
+                        foreach($picsSQL as $object){
+                            if($object->id==$value && !empty($object->WpUserId)){
+                                $WpUserId = $object->WpUserId;
+                            }
+                        }
+                        $ReplyMail = $Reply;
+                        $FromMail = $Reply;
+                        $ReplyName = $Admin;
+                        $FromName = $Admin;
+                        cg_save_sent_mail($GalleryID,$value,$WpUserId,$To,$ReplyName,$ReplyMail,$FromName,$FromMail,$ccPlain,$bccPlain,$Subject, $Msg, 'entry-backend-inform-image-activation');
+                    }
 
                     $isInformedAtLeastOnce = true;
 

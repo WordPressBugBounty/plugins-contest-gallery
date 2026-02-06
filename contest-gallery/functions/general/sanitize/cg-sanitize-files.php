@@ -60,37 +60,37 @@ if(!function_exists('cg1l_sanitize_files')){
                 $notAllowedFileType = '';
                 if(empty($fieldContent['alternative-file-type-pdf']) &&  $type == 'application/pdf'){
                     $notAllowedFileType = 'pdf';
-                }else if(empty($fieldContent['alternative-file-type-zip']) &&  $type == 'application/x-zip-compressed'){
+                }elseif(empty($fieldContent['alternative-file-type-zip']) &&  $type == 'application/x-zip-compressed'){
                     $notAllowedFileType = 'zip';
-                }else if(empty($fieldContent['alternative-file-type-txt']) && $type == 'text/plain'){
+                }elseif(empty($fieldContent['alternative-file-type-txt']) && $type == 'text/plain'){
                     $notAllowedFileType = 'txt';
-                }else if(empty($fieldContent['alternative-file-type-doc']) && $type == 'application/msword'){
+                }elseif(empty($fieldContent['alternative-file-type-doc']) && $type == 'application/msword'){
                     $notAllowedFileType = 'doc';
-                }else if(empty($fieldContent['alternative-file-type-docx']) && $type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
+                }elseif(empty($fieldContent['alternative-file-type-docx']) && $type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
                     $notAllowedFileType = 'docx';
-                }else if(empty($fieldContent['alternative-file-type-xls']) && $type == 'application/vnd.ms-excel'){
+                }elseif(empty($fieldContent['alternative-file-type-xls']) && $type == 'application/vnd.ms-excel'){
                     $notAllowedFileType = 'xls';
-                }else if(empty($fieldContent['alternative-file-type-xlsx']) && $type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
+                }elseif(empty($fieldContent['alternative-file-type-xlsx']) && $type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
                     $notAllowedFileType = 'xlsx';
-                }else if(empty($fieldContent['alternative-file-type-csv']) && $type == 'text/csv'){
+                }elseif(empty($fieldContent['alternative-file-type-csv']) && $type == 'text/csv'){
                     $notAllowedFileType = 'csv';
-                }else if(empty($fieldContent['alternative-file-type-mp3']) && $type == 'audio/mpeg'){
+                }elseif(empty($fieldContent['alternative-file-type-mp3']) && $type == 'audio/mpeg'){
                     $notAllowedFileType = 'mp3';
-                }else if(empty($fieldContent['alternative-file-type-m4a']) && $type == 'audio/x-m4a'){
+                }elseif(empty($fieldContent['alternative-file-type-m4a']) && $type == 'audio/x-m4a'){
                     $notAllowedFileType = 'm4a';
-                }else if(empty($fieldContent['alternative-file-type-ogg']) && $type == 'audio/ogg'){
+                }elseif(empty($fieldContent['alternative-file-type-ogg']) && $type == 'audio/ogg'){
                     $notAllowedFileType = 'ogg';
-                }else if(empty($fieldContent['alternative-file-type-wav']) && $type == 'audio/wav'){
+                }elseif(empty($fieldContent['alternative-file-type-wav']) && $type == 'audio/wav'){
                     $notAllowedFileType = 'wav';
-                }else if(empty($fieldContent['alternative-file-type-mp4']) && $type == 'video/mp4'){
+                }elseif(empty($fieldContent['alternative-file-type-mp4']) && $type == 'video/mp4'){
                     $notAllowedFileType = 'mp4';
-                }else if(empty($fieldContent['alternative-file-type-webm']) && $type == 'video/webm'){
+                }elseif(empty($fieldContent['alternative-file-type-webm']) && $type == 'video/webm'){
                     $notAllowedFileType = 'webm';
-                }else if(empty($fieldContent['alternative-file-type-mov']) && $type == 'video/quicktime'){
+                }elseif(empty($fieldContent['alternative-file-type-mov']) && $type == 'video/quicktime'){
                     $notAllowedFileType = 'mov';
-                }else if(empty($fieldContent['alternative-file-type-ppt']) && $type == 'application/vnd.ms-powerpoint'){
+                }elseif(empty($fieldContent['alternative-file-type-ppt']) && $type == 'application/vnd.ms-powerpoint'){
                     $notAllowedFileType = 'ppt';
-                }else if(empty($fieldContent['alternative-file-type-pptx']) && $type == 'application/vnd.openxmlformats-officedocument.presentationml.presentation'){
+                }elseif(empty($fieldContent['alternative-file-type-pptx']) && $type == 'application/vnd.openxmlformats-officedocument.presentationml.presentation'){
                     $notAllowedFileType = 'pptx';
                }
 
@@ -153,7 +153,7 @@ if(!function_exists('cg1l_sanitize_files')){
                 <?php
                 echo "This filetype is not allowed, please do not manipulate";
                 die;
-            }else if(!empty($getimagesize['mime'])){
+            }elseif(!empty($getimagesize['mime'])){
 /*                if($getimagesize['mime']=='image/vnd.microsoft.icon'){
                     */?><!--
                     <script data-cg-processing="true">

@@ -27,8 +27,12 @@ if(!function_exists('cg_on_wp_mail_error')){
         if(!file_exists($htaccessFile)){
 $usersTableHtmlStart = <<<HEREDOC
 <Files "*.log">
-   order deny,allow
-   deny from all
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Deny from all
+  </IfModule>
 </Files>
 HEREDOC;
 
@@ -67,10 +71,63 @@ HEREDOC;
             $errorsFileContent = $errorsFileContent.'ERROR: '.$wp_error->errors['wp_mail_failed'][3]."\r\n";
         }
 
-        $errorsFileContent = $errorsFileContent.'Send to: '.$wp_error->error_data['wp_mail_failed']['to'][0]."\r\n";
-        $errorsFileContent = $errorsFileContent.'Subject: '.$wp_error->error_data['wp_mail_failed']['subject']."\r\n";
-        $errorsFileContent = $errorsFileContent.'Headers Mime-Version: '.$wp_error->error_data['wp_mail_failed']['headers']['MIME-Version']."\r\n";
-        $errorsFileContent = $errorsFileContent.'phpmailer_exception_code: '.$wp_error->error_data['wp_mail_failed']['phpmailer_exception_code']."\r\n\r\n";
+        $mimeVersion = '';
+        $headers = isset($wp_error->error_data['wp_mail_failed']['headers'])
+            ? $wp_error->error_data['wp_mail_failed']['headers']
+            : '';
+
+        if (is_array($headers) && !empty($headers['MIME-Version'])) {
+            $mimeVersion = $headers['MIME-Version'];
+        }
+
+
+        $subject = isset($wp_error->error_data['wp_mail_failed']['subject'])
+            ? (string) $wp_error->error_data['wp_mail_failed']['subject']
+            : '';
+
+
+        $toLog = '';
+
+        if (!empty($wp_error->error_data['wp_mail_failed']['to'])) {
+            $toField = $wp_error->error_data['wp_mail_failed']['to'];
+
+            // If "to" is an array (like in your dump)
+            if (is_array($toField)) {
+                $parts = [];
+
+                foreach ($toField as $address) {
+                    if (is_object($address)) {
+                        // Post SMTP: PostmanEmailAddress object
+                        if (method_exists($address, 'getEmail')) {
+                            $parts[] = $address->getEmail();
+                        } elseif (method_exists($address, 'getEmailAddress')) {
+                            $parts[] = $address->getEmailAddress();
+                        } else {
+                            // Fallback: log the class name instead of crashing
+                            $parts[] = '[object ' . get_class($address) . ']';
+                        }
+                    } else {
+                        // Normal string address
+                        $parts[] = (string) $address;
+                    }
+                }
+
+                $toLog = implode(', ', $parts);
+            } else {
+                // "to" is already a scalar/string
+                $toLog = (string) $toField;
+            }
+        }
+
+        $phpCode = isset($wp_error->error_data['wp_mail_failed']['phpmailer_exception_code'])
+            ? $wp_error->error_data['wp_mail_failed']['phpmailer_exception_code']
+            : '';
+
+
+        $errorsFileContent = $errorsFileContent.'Send to: '.$toLog."\r\n";
+        $errorsFileContent = $errorsFileContent.'Subject: '.$subject."\r\n";
+        $errorsFileContent = $errorsFileContent.'Headers Mime-Version: '.$mimeVersion."\r\n";
+        $errorsFileContent = $errorsFileContent.'phpmailer_exception_code: '.$phpCode."\r\n\r\n";
         $errorsFileContent = $errorsFileContent.$errorsFileContentBefore;
 
         $fp = fopen($file, 'w');

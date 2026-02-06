@@ -106,3 +106,7 @@
 	width: 25px;
 	height: 25px;
 }
+
+div.cg_send_mail {
+	margin-top: -10px;
+}

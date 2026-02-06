@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Contest Gallery\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-14 20:50+0100\n"
-"PO-Revision-Date: 2025-02-14 20:50+0100\n"
+"POT-Creation-Date: 2025-11-30 20:10+0100\n"
+"PO-Revision-Date: 2025-11-30 20:12+0100\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Loco-Source-Locale: sk_SK\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.4.2\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
 "X-Poedit-WPHeader: index.php\n"
@@ -348,6 +348,54 @@ msgstr "Späť do galérií"
 #: check-language-general.php:78
 msgid "No gallery entries"
 msgstr "Žiadne záznamy v galérii"
+
+#: check-language-general.php:80
+msgid "Resend confirmation email"
+msgstr "Znova odoslať potvrdzovací e-mail"
+
+#: check-language-general.php:82
+msgid "Confirmation link expired"
+msgstr "Potvrdzovací odkaz vypršal"
+
+#: check-language-general.php:84
+msgid "E-mail sent"
+msgstr "E-mail odoslaný"
+
+#: check-language-general.php:86
+msgid "Activation key not found"
+msgstr "Aktivačný kľúč sa nenašiel"
+
+#: check-language-general.php:88
+msgid "A PIN has been sent to your email"
+msgstr "PIN bol odoslaný na váš e-mail"
+
+#: check-language-general.php:90
+msgid "Enter PIN"
+msgstr "Zadajte PIN"
+
+#: check-language-general.php:92
+msgid "Send PIN"
+msgstr "Odoslať PIN"
+
+#: check-language-general.php:94
+msgid "Confirm PIN"
+msgstr "Potvrdiť PIN"
+
+#: check-language-general.php:96
+msgid "Send new PIN"
+msgstr "Odoslať nový PIN"
+
+#: check-language-general.php:98
+msgid "Incorrect PIN. Please try again."
+msgstr "Nesprávny PIN. Skúste znova."
+
+#: check-language-general.php:100
+msgid "PIN has expired. Please request a new one."
+msgstr "PIN vypršal. Požiadajte o nový."
+
+#: check-language-general.php:102
+msgid "Only jury members can vote"
+msgstr "Iba členovia poroty môžu hlasovať"
 
 #: check-language.php:56
 msgid "Participation form"
@@ -1101,6 +1149,14 @@ msgstr "žiadny"
 msgid "Logout?"
 msgstr "Odhlásiť sa?"
 
+#: functions/general/registry/cg-registry-functions.php:356
+msgid "Please enter a nickname."
+msgstr "Zadajte prezývku."
+
+#: functions/general/registry/cg-registry-functions.php:382
+msgid "This nickname is already in use. Please choose another one."
+msgstr "Táto prezývka sa už používa. Vyberte si inú."
+
 #: functions/general/registry/create/cg-registry-create-functions.php:7
 msgid "Contest Gallery User since v14"
 msgstr ""
@@ -1158,24 +1214,13 @@ msgstr ""
 msgid "No contest gallery pages found."
 msgstr ""
 
-#. Plugin Name of the plugin/theme
-#. Author of the plugin/theme
 #, fuzzy
-#| msgid "Contest Gallery - PRO"
-msgid "Contest Gallery"
-msgstr "Contest Gallery - PRO"
+#~| msgid "Contest Gallery - PRO"
+#~ msgid "Contest Gallery"
+#~ msgstr "Contest Gallery - PRO"
 
-#. Description of the plugin/theme
-msgid ""
-"Upload form, files, photos and videos upload contest gallery plugin for "
-"WordPress. Create contact forms for entries with or without file/image "
-"upload. Create user registration form. Create login form. Create responsive "
-"galleries and allow to vote for any kind of entries."
-msgstr ""
-
-#. Author URI of the plugin/theme
-msgid "http://www.contest-gallery.com/"
-msgstr "http://www.contest-gallery.com/"
+#~ msgid "http://www.contest-gallery.com/"
+#~ msgstr "http://www.contest-gallery.com/"
 
 #~ msgid "Contest Gallery - PRO Version"
 #~ msgstr "Contest Gallery - PRO Version"

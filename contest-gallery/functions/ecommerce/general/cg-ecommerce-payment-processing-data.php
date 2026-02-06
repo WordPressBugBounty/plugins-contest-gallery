@@ -83,11 +83,11 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
                         $IsAlternativeShipping = true;
                     }
                 }
-            }else if($item['IsService']){
+            }elseif($item['IsService']){
                 //var_dump('$IsService123');
                 //var_dump($IsService);
                 $IsService = true;
-            }else if($item['IsUpload']){
+            }elseif($item['IsUpload']){
                 //var_dump('$IsService123');
                 //var_dump($IsService);
                 $IsUpload = true;
@@ -129,7 +129,7 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
 					);
 				}
 
-            }else if($IsDownload && ($isWithSaveToDatabase || $isGenerateKeyAfterPurchase) && $isFullPaid){
+            }elseif($IsDownload && ($isWithSaveToDatabase || $isGenerateKeyAfterPurchase) && $isFullPaid){
 				//var_dump('before cg_filter_get_own_key');
 	            $filterData = apply_filters( 'cg_filter_get_own_key', $LogForDatabase, $realId);
 
@@ -165,7 +165,7 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
 			            array('%d')
 		            );
 	            }
-            }else if($IsService && ($isWithSaveToDatabase || $isGenerateKeyAfterPurchase) && $isFullPaid){
+            }elseif($IsService && ($isWithSaveToDatabase || $isGenerateKeyAfterPurchase) && $isFullPaid){
 
 	            $filterData = apply_filters( 'cg_filter_get_own_key', $LogForDatabase, $realId);
 
@@ -243,14 +243,14 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
             if(!empty($DownloadKey) && $IsDownload && ($PaymentStatus=='COMPLETED' || $PaymentStatus=='succeeded') && empty($beforeFilter['ownKeys'][$realId]['DownloadKey'])){
                 $SENT_POST['ownKeys'][$realId] = $DownloadKey;
                 $ordersummaryandpage .= '<tr><td><b>'.$nameForMailToShow.' '.$language_Key.':</b> </td><td style="padding-left:30px;">'.$DownloadKey.'</td></tr>';
-            }else if(!empty($ServiceKey) && $IsService && ($PaymentStatus=='COMPLETED' || $PaymentStatus=='succeeded') && empty($beforeFilter['ownKeys'][$realId]['ServiceKey'])){
+            }elseif(!empty($ServiceKey) && $IsService && ($PaymentStatus=='COMPLETED' || $PaymentStatus=='succeeded') && empty($beforeFilter['ownKeys'][$realId]['ServiceKey'])){
                 $SENT_POST['ownKeys'][$realId] = $ServiceKey;
                 $ordersummaryandpage .= '<tr><td><b>'.$nameForMailToShow.' '.$language_Key.':</b> </td><td style="padding-left:30px;">'.$ServiceKey.'</td></tr>';
-            }else if(!empty($beforeFilter['ownKeys'][$realId]['DownloadKey'])){
+            }elseif(!empty($beforeFilter['ownKeys'][$realId]['DownloadKey'])){
                 $DownloadKey = $beforeFilter['ownKeys'][$realId]['DownloadKey'];
                 $SENT_POST['ownKeys'][$realId] = $DownloadKey;
                 $ordersummaryandpage .= '<tr><td><b>'.$nameForMailToShow.' '.$language_Key.':</b> </td><td style="padding-left:30px;">'.$DownloadKey.'</td></tr>';
-            }else if(!empty($beforeFilter['ownKeys'][$realId]['ServiceKey'])){
+            }elseif(!empty($beforeFilter['ownKeys'][$realId]['ServiceKey'])){
                 $ServiceKey = $beforeFilter['ownKeys'][$realId]['ServiceKey'];
                 $SENT_POST['ownKeys'][$realId] = $ServiceKey;
                 $ordersummaryandpage .= '<tr><td><b>'.$nameForMailToShow .' '.$language_Key.':</b> </td><td style="padding-left:30px;">'.$ServiceKey.'</td></tr>';

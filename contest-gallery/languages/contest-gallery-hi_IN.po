@@ -1,0 +1,1333 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Contest Gallery\n"
+"POT-Creation-Date: 2025-11-30 19:55+0100\n"
+"PO-Revision-Date: 2025-11-30 19:56+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: hi_IN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.4.2\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: index.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;"
+"_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+
+#: check-language-ecommerce.php:41
+msgid "Buy now"
+msgstr "खरीदें"
+
+#: check-language-ecommerce.php:43
+msgid "Add to cart"
+msgstr "कार्ट में जोड़ें"
+
+#: check-language-ecommerce.php:45
+msgid "Shopping cart"
+msgstr "शॉपिंग कार्ट"
+
+#: check-language-ecommerce.php:47
+msgid "Close shopping cart"
+msgstr "कार्ट बंद करें"
+
+#: check-language-ecommerce.php:49
+msgid "Invoice"
+msgstr "चालान"
+
+#: check-language-ecommerce.php:51
+msgid "Download invoice"
+msgstr "चालान डाउनलोड करें"
+
+#: check-language-ecommerce.php:53
+msgid "Billing address different from delivery address?"
+msgstr "बिलिंग पता डिलीवरी पते से अलग है?"
+
+#: check-language-ecommerce.php:55
+msgid "Country"
+msgstr "देश"
+
+#: check-language-ecommerce.php:57
+msgid "Price"
+msgstr "कीमत"
+
+#: check-language-ecommerce.php:59
+msgid "Quantity"
+msgstr "मात्रा"
+
+#: check-language-ecommerce.php:61
+msgid "Shipping"
+msgstr "शिपिंग"
+
+#: check-language-ecommerce.php:63 check-language-ecommerce.php:65
+msgid "Alternative shipping"
+msgstr "वैकल्पिक शिपिंग"
+
+#: check-language-ecommerce.php:67
+msgid "Alternative shipping costs"
+msgstr "वैकल्पिक शिपिंग शुल्क"
+
+#: check-language-ecommerce.php:69
+msgid "Standard shipping costs"
+msgstr "मानक शिपिंग शुल्क"
+
+#: check-language-ecommerce.php:71
+msgid "Free shipping"
+msgstr "मुफ़्त शिपिंग"
+
+#: check-language-ecommerce.php:73 check-language.php:128
+msgid "Download"
+msgstr "डाउनलोड करें"
+
+#: check-language-ecommerce.php:75
+msgid "Please check agreement"
+msgstr "कृपया सहमति चुनें"
+
+#: check-language-ecommerce.php:77
+msgid "Shipping country not allowed"
+msgstr "शिपिंग देश अनुमत नहीं"
+
+#: check-language-ecommerce.php:80
+msgid "Select country"
+msgstr "देश चुनें"
+
+#: check-language-ecommerce.php:82
+msgid "Shipping only possible for the following countries"
+msgstr "शिपिंग केवल इन देशों के लिए उपलब्ध है"
+
+#: check-language-ecommerce.php:84
+msgid "Shipping address"
+msgstr "शिपिंग पता"
+
+#: check-language-ecommerce.php:88
+msgid "Billing address"
+msgstr "बिलिंग पता"
+
+#: check-language-ecommerce.php:90
+msgid "First Name"
+msgstr "पहला नाम"
+
+#: check-language-ecommerce.php:92
+msgid "Last Name"
+msgstr "अंतिम नाम"
+
+#: check-language-ecommerce.php:94
+msgid "Company"
+msgstr "कंपनी"
+
+#: check-language-ecommerce.php:96
+msgid "Address Line 1"
+msgstr "पता पंक्ति 1"
+
+#: check-language-ecommerce.php:98
+msgid "Address Line 2"
+msgstr "पता पंक्ति 2"
+
+#: check-language-ecommerce.php:100
+msgid "City"
+msgstr "शहर"
+
+#: check-language-ecommerce.php:102
+msgid "Postal Code"
+msgstr "पिन कोड"
+
+#: check-language-ecommerce.php:104
+msgid "Select state/territory"
+msgstr "राज्य/क्षेत्र चुनें"
+
+#: check-language-ecommerce.php:106
+msgid "Billing address identical to delivery address"
+msgstr "बिलिंग पता डिलीवरी पते जैसा है"
+
+#: check-language-ecommerce.php:108
+msgid "Date of invoice"
+msgstr "चालान तिथि"
+
+#: check-language-ecommerce.php:110
+msgid "Payment date"
+msgstr "भुगतान तिथि"
+
+#: check-language-ecommerce.php:112
+msgid "Paid via"
+msgstr "भुगतान माध्यम"
+
+#: check-language-ecommerce.php:114
+msgid "PayPal"
+msgstr "PayPal"
+
+#: check-language-ecommerce.php:116
+msgid "Stripe"
+msgstr "Stripe"
+
+#: check-language-ecommerce.php:118
+msgid "Nr."
+msgstr "सं."
+
+#: check-language-ecommerce.php:120
+msgid "Tax rate"
+msgstr "कर दर"
+
+#: check-language-ecommerce.php:122
+msgid "VAT Number"
+msgstr "VAT नंबर"
+
+#: check-language-ecommerce.php:124
+msgid "optional"
+msgstr "वैकल्पिक"
+
+#: check-language-ecommerce.php:126
+msgid "Price unit net"
+msgstr "नेट यूनिट कीमत"
+
+#: check-language-ecommerce.php:128
+msgid "Price total net"
+msgstr "कुल नेट कीमत"
+
+#: check-language-ecommerce.php:130
+msgid "Total net"
+msgstr "कुल नेट"
+
+#: check-language-ecommerce.php:132
+msgid "Total gross"
+msgstr "कुल ग्रॉस"
+
+#: check-language-ecommerce.php:134
+msgid "Total price"
+msgstr "कुल कीमत"
+
+#: check-language-ecommerce.php:136
+msgid "Added to shopping cart"
+msgstr "कार्ट में जोड़ा गया"
+
+#: check-language-ecommerce.php:138
+msgid "To shopping cart"
+msgstr "कार्ट पर जाएँ"
+
+#: check-language-ecommerce.php:140
+msgid "Title"
+msgstr "शीर्षक"
+
+#: check-language-ecommerce.php:142
+msgid "Key"
+msgstr "कुंजी"
+
+#: check-language-ecommerce.php:144
+msgid "Copy Key"
+msgstr "कुंजी कॉपी करें"
+
+#: check-language-ecommerce.php:146
+msgid "No products selected"
+msgstr "कोई उत्पाद चयनित नहीं"
+
+#: check-language-ecommerce.php:148
+msgid "Full order details"
+msgstr "पूरी आदेश जानकारी"
+
+#: check-language-ecommerce.php:150
+msgid "Order number"
+msgstr "ऑर्डर नंबर"
+
+#: check-language-ecommerce.php:152
+msgid "Your order was successful. You will be redirected."
+msgstr "आपका ऑर्डर सफल रहा। आपको रीडायरेक्ट किया जाएगा।"
+
+#: check-language-ecommerce.php:154
+msgid "Order failed. Please contact administrator."
+msgstr "ऑर्डर असफल। कृपया व्यवस्थापक से संपर्क करें।"
+
+#: check-language-ecommerce.php:156
+msgid "Checkout processing impossible. No internet connection."
+msgstr "चेकआउट संभव नहीं। इंटरनेट कनेक्शन नहीं।"
+
+#: check-language-ecommerce.php:158
+msgid "Maximum uploads"
+msgstr "अधिकतम अपलोड"
+
+#: check-language-ecommerce.php:160
+msgid "Uploaded"
+msgstr "अपलोड हुआ"
+
+#: check-language-ecommerce.php:162
+msgid "All uploads used"
+msgstr "सभी अपलोड उपयोग किए गए"
+
+#: check-language-general.php:40
+#: functions/general/registry/cg-registry-functions.php:74
+msgid "Account"
+msgstr "खाता"
+
+#: check-language-general.php:42
+msgid "Edit profile"
+msgstr "प्रोफ़ाइल संपादित करें"
+
+#: check-language-general.php:44
+msgid "Log out"
+msgstr "लॉग आउट"
+
+#: check-language-general.php:46 check-language.php:400
+msgid "This nickname is already taken"
+msgstr "यह उपनाम पहले से उपयोग में है"
+
+#: check-language-general.php:48
+msgid "Contest Gallery profile information"
+msgstr "कॉन्टेस्ट गैलरी प्रोफ़ाइल जानकारी"
+
+#: check-language-general.php:50
+msgid "Remove profile image"
+msgstr "प्रोफ़ाइल छवि हटाएँ"
+
+#: check-language-general.php:52 check-language.php:308
+msgid "This file type is not allowed"
+msgstr "यह फ़ाइल प्रकार अनुमत नहीं है"
+
+#: check-language-general.php:54 check-language.php:310
+msgid "The selected file is too large, max allowed size"
+msgstr "चयनित फ़ाइल बहुत बड़ी है, अधिकतम आकार सीमा"
+
+#: check-language-general.php:56
+msgid "Select your image"
+msgstr "अपनी छवि चुनें"
+
+#: check-language-general.php:58
+msgid "Required"
+msgstr "आवश्यक"
+
+#: check-language-general.php:60
+msgid "Remove"
+msgstr "हटाएँ"
+
+#: check-language-general.php:62
+msgid "content blocked"
+msgstr "सामग्री अवरुद्ध"
+
+#: check-language-general.php:64
+msgid "To view the content you must agree privacy policy"
+msgstr "सामग्री देखने के लिए आपको गोपनीयता नीति स्वीकार करनी होगी"
+
+#: check-language-general.php:66
+msgid "I Agree"
+msgstr "मैं सहमत हूँ"
+
+#: check-language-general.php:68
+msgid ""
+"By agreeing all content on this page gets unblocked during current session"
+msgstr "सहमति देने पर यह पृष्ठ मौजूदा सत्र में अनब्लॉक हो जाएगा"
+
+#: check-language-general.php:70
+msgid "content"
+msgstr "सामग्री"
+
+#: check-language-general.php:72
+msgid "Until current tab gets closed"
+msgstr "जब तक यह टैब बंद नहीं होता"
+
+#: check-language-general.php:74
+msgid "Back to gallery"
+msgstr "गैलरी पर लौटें"
+
+#: check-language-general.php:76
+msgid "Back to galleries"
+msgstr "गैलरी सूची पर लौटें"
+
+#: check-language-general.php:78
+msgid "No gallery entries"
+msgstr "कोई गैलरी प्रविष्टियाँ नहीं"
+
+#: check-language-general.php:80
+msgid "Resend confirmation email"
+msgstr "पुष्टि ईमेल पुनः भेजें"
+
+#: check-language-general.php:82
+msgid "Confirmation link expired"
+msgstr "पुष्टि लिंक की अवधि समाप्त"
+
+#: check-language-general.php:84
+msgid "E-mail sent"
+msgstr "ईमेल भेजा गया"
+
+#: check-language-general.php:86
+msgid "Activation key not found"
+msgstr "सक्रियण कुंजी नहीं मिली"
+
+#: check-language-general.php:88
+msgid "A PIN has been sent to your email"
+msgstr "आपके ईमेल पर एक PIN भेजा गया है"
+
+#: check-language-general.php:90
+msgid "Enter PIN"
+msgstr "PIN दर्ज करें"
+
+#: check-language-general.php:92
+msgid "Send PIN"
+msgstr "PIN भेजें"
+
+#: check-language-general.php:94
+msgid "Confirm PIN"
+msgstr "PIN पुष्टि करें"
+
+#: check-language-general.php:96
+msgid "Send new PIN"
+msgstr "नया PIN भेजें"
+
+#: check-language-general.php:98
+msgid "Incorrect PIN. Please try again."
+msgstr "गलत PIN. कृपया पुनः प्रयास करें।"
+
+#: check-language-general.php:100
+msgid "PIN has expired. Please request a new one."
+msgstr "PIN की समय-सीमा समाप्त हो गई है। नया अनुरोध करें।"
+
+#: check-language-general.php:102
+msgid "Only jury members can vote"
+msgstr "केवल जूरी सदस्य वोट कर सकते हैं"
+
+#: check-language.php:56
+msgid "Participation form"
+msgstr "भागीदारी फ़ॉर्म"
+
+#: check-language.php:58
+msgid "Minimize participation form"
+msgstr "भागीदारी फ़ॉर्म छोटा करें"
+
+#: check-language.php:60
+msgid "Further entry"
+msgstr "और प्रविष्टि"
+
+#: check-language.php:62
+msgid "Search"
+msgstr "खोजें"
+
+#: check-language.php:64
+msgid "Sort by"
+msgstr "क्रमबद्ध करें"
+
+#: check-language.php:66
+msgid "Random sort"
+msgstr "यादृच्छिक क्रम"
+
+#: check-language.php:68
+msgid "Show all categories"
+msgstr "सभी श्रेणियाँ दिखाएँ"
+
+#: check-language.php:70
+msgid "Show less categories"
+msgstr "कम श्रेणियाँ दिखाएँ"
+
+#: check-language.php:72
+msgid "Masonry"
+msgstr "मेसनरी"
+
+#: check-language.php:74
+msgid "Slider view"
+msgstr "स्लाइडर दृश्य"
+
+#: check-language.php:76
+msgid "Blog view"
+msgstr "ब्लॉग दृश्य"
+
+#: check-language.php:78
+msgid "Thumb view"
+msgstr "थंब दृश्य"
+
+#: check-language.php:80
+msgid "Height view"
+msgstr "ऊँचाई दृश्य"
+
+#: check-language.php:82
+msgid "Row view"
+msgstr "पंक्ति दृश्य"
+
+#: check-language.php:84
+msgid "Dark style"
+msgstr "डार्क शैली"
+
+#: check-language.php:86
+msgid "Bright style"
+msgstr "ब्राइट शैली"
+
+#: check-language.php:88
+msgid "Select page"
+msgstr "पृष्ठ चुनें"
+
+#: check-language.php:90
+msgid "Previous page"
+msgstr "पिछला पृष्ठ"
+
+#: check-language.php:92
+msgid "Next page"
+msgstr "अगला पृष्ठ"
+
+#: check-language.php:94
+msgid "Previous entry"
+msgstr "पिछली प्रविष्टि"
+
+#: check-language.php:96
+msgid "Next entry"
+msgstr "अगली प्रविष्टि"
+
+#: check-language.php:98
+msgid "Previous file in entry"
+msgstr "प्रविष्टि में पिछली फ़ाइल"
+
+#: check-language.php:100
+msgid "Next file in entry"
+msgstr "प्रविष्टि में अगली फ़ाइल"
+
+#: check-language.php:102
+msgid "Go to top of the gallery"
+msgstr "गैलरी के शीर्ष पर जाएँ"
+
+#: check-language.php:104
+msgid "Search or sort"
+msgstr "खोजें या क्रमबद्ध करें"
+
+#: check-language.php:106
+msgid "Close"
+msgstr "बंद करें"
+
+#: check-language.php:108
+msgid "Open gallery in full window"
+msgstr "गैलरी पूर्ण विंडो में खोलें"
+
+#: check-language.php:110
+msgid "Close view"
+msgstr "दृश्य बंद करें"
+
+#: check-language.php:112
+msgid "Full screen mode"
+msgstr "फ़ुल स्क्रीन मोड"
+
+#: check-language.php:114
+msgid "Close full screen mode"
+msgstr "फ़ुल स्क्रीन मोड बंद करें"
+
+#: check-language.php:116
+msgid "Copy gallery file link"
+msgstr "गैलरी फ़ाइल लिंक कॉपी करें"
+
+#: check-language.php:118
+msgid "Copy gallery entry link"
+msgstr "गैलरी प्रविष्टि लिंक कॉपी करें"
+
+#: check-language.php:120
+msgid "Copy original file source link"
+msgstr "मूल फ़ाइल स्रोत लिंक कॉपी करें"
+
+#: check-language.php:122
+msgid "Share to"
+msgstr "साझा करें"
+
+#: check-language.php:124
+msgid "Open original file in new tab"
+msgstr "मूल फ़ाइल नए टैब में खोलें"
+
+#: check-language.php:126
+msgid "Download original file"
+msgstr "मूल फ़ाइल डाउनलोड करें"
+
+#: check-language.php:130
+msgid "Service"
+msgstr "सेवा"
+
+#: check-language.php:132
+msgid "Delete entry"
+msgstr "प्रविष्टि हटाएँ"
+
+#: check-language.php:134
+msgid "Delete entries"
+msgstr "प्रविष्टियाँ हटाएँ"
+
+#: check-language.php:136
+msgid "Show more info"
+msgstr "और जानकारी दिखाएँ"
+
+#: check-language.php:138
+msgid "Show less info"
+msgstr "कम जानकारी दिखाएँ"
+
+#: check-language.php:140
+msgid "Add comment"
+msgstr "टिप्पणी जोड़ें"
+
+#: check-language.php:142
+msgid "Show more comments"
+msgstr "और टिप्पणियाँ दिखाएँ"
+
+#: check-language.php:144
+msgid "Show less comments"
+msgstr "कम टिप्पणियाँ दिखाएँ"
+
+#: check-language.php:146
+msgid "Add an emoji"
+msgstr "इमोजी जोड़ें"
+
+#: check-language.php:148
+msgid "Hide emojis"
+msgstr "इमोजी छिपाएँ"
+
+#: check-language.php:150
+msgid "Vote"
+msgstr "मत दें"
+
+#: check-language.php:152
+msgid "Thank you for voting"
+msgstr "मतदान के लिए धन्यवाद"
+
+#: check-language.php:154
+msgid "Undo your last vote"
+msgstr "अंतिम वोट वापस लें"
+
+#: check-language.php:157
+msgid "of"
+msgstr "का"
+
+#: check-language.php:159
+msgid "No files found"
+msgstr "कोई फ़ाइल नहीं मिली"
+
+#: check-language.php:161
+msgid "No entries found"
+msgstr "कोई प्रविष्टि नहीं मिली"
+
+#: check-language.php:163
+msgid "Random"
+msgstr "यादृच्छिक"
+
+#: check-language.php:165
+msgid "Custom"
+msgstr "कस्टम"
+
+#: check-language.php:167
+msgid "Date descend"
+msgstr "तिथि अवरोही"
+
+#: check-language.php:169
+msgid "Date ascend"
+msgstr "तिथि आरोही"
+
+#: check-language.php:171
+msgid "Comments descend"
+msgstr "टिप्पणियाँ अवरोही"
+
+#: check-language.php:173
+msgid "Comments ascend"
+msgstr "टिप्पणियाँ आरोही"
+
+#: check-language.php:175
+msgid "Rating descend"
+msgstr "रेटिंग अवरोही"
+
+#: check-language.php:177
+msgid "Rating ascend"
+msgstr "रेटिंग आरोही"
+
+#: check-language.php:179
+msgid "Rating quantity descend"
+msgstr "रेटिंग संख्या अवरोही"
+
+#: check-language.php:181
+msgid "Rating quantity ascend"
+msgstr "रेटिंग संख्या आरोही"
+
+#: check-language.php:183
+msgid "Rating sum descend"
+msgstr "रेटिंग योग अवरोही"
+
+#: check-language.php:185
+msgid "Rating sum ascend"
+msgstr "रेटिंग योग आरोही"
+
+#: check-language.php:187
+msgid "Full size"
+msgstr "पूर्ण आकार"
+
+#: check-language.php:189
+msgid "Picture comments"
+msgstr "चित्र टिप्पणियाँ"
+
+#: check-language.php:191
+msgid "Comments"
+msgstr "टिप्पणियाँ"
+
+#: check-language.php:193
+msgid "Your comment"
+msgstr "आपकी टिप्पणी"
+
+#: check-language.php:195
+msgid "Name"
+msgstr "नाम"
+
+#: check-language.php:197
+msgid "Comment"
+msgstr "टिप्पणी"
+
+#: check-language.php:199
+msgid "I am not a robot"
+msgstr "मैं रोबोट नहीं हूँ"
+
+#: check-language.php:201
+msgid "You can not vote in own gallery"
+msgstr "आप अपनी गैलरी में वोट नहीं कर सकते"
+
+#: check-language.php:203
+msgid "You can not comment in own gallery"
+msgstr "आप अपनी गैलरी में टिप्पणी नहीं कर सकते"
+
+#: check-language.php:205
+msgid "You have to be logged in to comment"
+msgstr "टिप्पणी करने के लिए लॉगिन करें"
+
+#: check-language.php:207
+msgid "Please use available emojis"
+msgstr "कृपया उपलब्ध इमोजी का उपयोग करें"
+
+#: check-language.php:209
+msgid "Emojis are not allowed"
+msgstr "इमोजी अनुमत नहीं हैं"
+
+#: check-language.php:211
+msgid "Send"
+msgstr "भेजें"
+
+#: check-language.php:214
+msgid "File was deleted"
+msgstr "फ़ाइल हटाई गई"
+
+#: check-language.php:217
+msgid "Files were deleted"
+msgstr "फ़ाइलें हटाई गईं"
+
+#: check-language.php:220
+msgid "Successfully logged in via Google. Page will be reloaded..."
+msgstr "Google से सफलतापूर्वक लॉग इन। पृष्ठ पुनः लोड होगा..."
+
+#: check-language.php:224
+msgid "Second"
+msgstr "सेकंड"
+
+#: check-language.php:226
+msgid "Seconds"
+msgstr "सेकंड"
+
+#: check-language.php:228
+msgid "Minute"
+msgstr "मिनट"
+
+#: check-language.php:230
+msgid "Minutes"
+msgstr "मिनट"
+
+#: check-language.php:232
+msgid "Hour"
+msgstr "घंटा"
+
+#: check-language.php:234
+msgid "Hours"
+msgstr "घंटे"
+
+#: check-language.php:236
+msgid "Day"
+msgstr "दिन"
+
+#: check-language.php:238
+msgid "Days"
+msgstr "दिन"
+
+#: check-language.php:240
+msgid "Week"
+msgstr "सप्ताह"
+
+#: check-language.php:242
+msgid "Weeks"
+msgstr "सप्ताह"
+
+#: check-language.php:244
+msgid "Month"
+msgstr "महीना"
+
+#: check-language.php:246
+msgid "Months"
+msgstr "महीने"
+
+#: check-language.php:248
+msgid "Year"
+msgstr "साल"
+
+#: check-language.php:250
+msgid "Years"
+msgstr "साल"
+
+#: check-language.php:254
+msgid "Delete entry?"
+msgstr "प्रविष्टि हटाएँ?"
+
+#: check-language.php:256
+msgid "Delete entries?"
+msgstr "प्रविष्टियाँ हटाएँ?"
+
+#: check-language.php:258
+msgid "Entry successfully deleted"
+msgstr "प्रविष्टि सफलतापूर्वक हटाई गई"
+
+#: check-language.php:260
+msgid "Entries successfully deleted"
+msgstr "प्रविष्टियाँ सफलतापूर्वक हटाई गईं"
+
+#: check-language.php:262
+msgid "Edit"
+msgstr "संपादित करें"
+
+#: check-language.php:263
+msgid "Save"
+msgstr "सहेजें"
+
+#: check-language.php:265
+msgid "Data saved"
+msgstr "डेटा सहेजा गया"
+
+#: check-language.php:267
+msgid "Only visible to registered and logged in owner of the entry"
+msgstr "केवल प्रविष्टि के लॉग-इन मालिक को दिखाई देगा"
+
+#: check-language.php:269
+msgid "Original file source link copied"
+msgstr "मूल फ़ाइल लिंक कॉपी किया गया"
+
+#: check-language.php:271
+msgid "Gallery file link copied"
+msgstr "गैलरी फ़ाइल लिंक कॉपी किया गया"
+
+#: check-language.php:273
+msgid "Gallery entry link copied"
+msgstr "गैलरी प्रविष्टि लिंक कॉपी किया गया"
+
+#: check-language.php:275
+msgid "Sum"
+msgstr "योग"
+
+#: check-language.php:277
+msgid "Your vote"
+msgstr "आपका वोट"
+
+#: check-language.php:280
+msgid "The name field must contain two characters or more"
+msgstr "नाम फ़ील्ड में कम से कम दो अक्षर होने चाहिए"
+
+#: check-language.php:282
+msgid "The comment field must contain three characters or more"
+msgstr "टिप्पणी फ़ील्ड में कम से कम तीन अक्षर होने चाहिए"
+
+#: check-language.php:284
+msgid "Plz check the checkbox to prove that you are not a robot"
+msgstr "कृपया बॉक्स चुनें यह साबित करने के लिए कि आप रोबोट नहीं हैं"
+
+#: check-language.php:286
+msgid "Your comment will be reviewed"
+msgstr "आपकी टिप्पणी की समीक्षा की जाएगी"
+
+#: check-language.php:288 check-language.php:290
+msgid "Thank you for your comment"
+msgstr "आपकी टिप्पणी के लिए धन्यवाद"
+
+#: check-language.php:292
+msgid "You have already voted for this entry"
+msgstr "आप पहले ही इस प्रविष्टि के लिए वोट कर चुके हैं"
+
+#: check-language.php:294
+msgid "This entry is not a winner"
+msgstr "यह प्रविष्टि विजेता नहीं है"
+
+#: check-language.php:296
+msgid "You have already voted for this category"
+msgstr "आप इस श्रेणी में पहले ही वोट कर चुके हैं"
+
+#: check-language.php:298
+msgid "You have no more votes in this category"
+msgstr "इस श्रेणी में आपके पास और वोट नहीं हैं"
+
+#: check-language.php:300
+msgid "You have already used all your votes"
+msgstr "आप अपने सभी वोट उपयोग कर चुके हैं"
+
+#: check-language.php:304
+msgid "It is not allowed to vote for your own file"
+msgstr "आप अपनी फ़ाइल के लिए वोट नहीं कर सकते"
+
+#: check-language.php:306
+msgid "Only registered users are allowed to vote"
+msgstr "केवल पंजीकृत उपयोगकर्ताओं को वोट करने की अनुमति है"
+
+#: check-language.php:312
+msgid "The resolution of this image is"
+msgstr "इस छवि का रिज़ॉल्यूशन है"
+
+#: check-language.php:314
+msgid "Maximum number of files for one upload is"
+msgstr "एक अपलोड के लिए अधिकतम फ़ाइलें हैं"
+
+#: check-language.php:315
+msgid "Minimum number of files for one upload is"
+msgstr "एक अपलोड के लिए न्यूनतम फ़ाइलें हैं"
+
+#: check-language.php:317
+msgid "Maximum allowed resolution for JPG is"
+msgstr "JPG के लिए अधिकतम अनुमत रिज़ॉल्यूशन है"
+
+#: check-language.php:319
+msgid "Maximum allowed width for JPG is"
+msgstr "JPG के लिए अधिकतम अनुमत चौड़ाई है"
+
+#: check-language.php:321
+msgid "Maximum allowed height for JPG is"
+msgstr "JPG के लिए अधिकतम अनुमत ऊँचाई है"
+
+#: check-language.php:323
+msgid "Minimum required width for JPG is"
+msgstr "JPG के लिए न्यूनतम आवश्यक चौड़ाई है"
+
+#: check-language.php:325
+msgid "Minimum required height for JPG is"
+msgstr "JPG के लिए न्यूनतम आवश्यक ऊँचाई है"
+
+#: check-language.php:327
+msgid "Maximum allowed resolution for PNG is"
+msgstr "PNG के लिए अधिकतम अनुमत रिज़ॉल्यूशन है"
+
+#: check-language.php:329
+msgid "Maximum allowed width for PNG is"
+msgstr "PNG के लिए अधिकतम अनुमत चौड़ाई है"
+
+#: check-language.php:331
+msgid "Maximum allowed height for PNG is"
+msgstr "PNG के लिए अधिकतम अनुमत ऊँचाई है"
+
+#: check-language.php:333
+msgid "Minimum required width for PNG is"
+msgstr "PNG के लिए न्यूनतम आवश्यक चौड़ाई है"
+
+#: check-language.php:335
+msgid "Minimum required height for PNG is"
+msgstr "PNG के लिए न्यूनतम आवश्यक ऊँचाई है"
+
+#: check-language.php:337
+msgid "Maximum allowed resolution for GIF is"
+msgstr "GIF के लिए अधिकतम अनुमत रिज़ॉल्यूशन है"
+
+#: check-language.php:339
+msgid "Maximum allowed width for GIF is"
+msgstr "GIF के लिए अधिकतम अनुमत चौड़ाई है"
+
+#: check-language.php:341
+msgid "Maximum allowed height for GIF is"
+msgstr "GIF के लिए अधिकतम अनुमत ऊँचाई है"
+
+#: check-language.php:343
+msgid "Minimum required width for GIF is"
+msgstr "GIF के लिए न्यूनतम आवश्यक चौड़ाई है"
+
+#: check-language.php:345
+msgid "Minimum required height for GIF is"
+msgstr "GIF के लिए न्यूनतम आवश्यक ऊँचाई है"
+
+#: check-language.php:347
+msgid "Maximum allowed width for ICO is"
+msgstr "ICO के लिए अधिकतम अनुमत चौड़ाई है"
+
+#: check-language.php:349
+msgid "Maximum allowed height for ICO is"
+msgstr "ICO के लिए अधिकतम अनुमत ऊँचाई है"
+
+#: check-language.php:351
+msgid "You have to check this agreement"
+msgstr "आपको इस सहमति को चुनना होगा"
+
+#: check-language.php:353
+msgid "This email is not valid"
+msgstr "यह ईमेल मान्य नहीं है"
+
+#: check-language.php:355
+msgid "Reset password link is not valid anymore"
+msgstr "पासवर्ड रीसेट लिंक अब मान्य नहीं है"
+
+#: check-language.php:357
+msgid "Password successfully changed"
+msgstr "पासवर्ड सफलतापूर्वक बदला गया"
+
+#: check-language.php:359
+msgid "Back to login form"
+msgstr "लॉगिन फ़ॉर्म पर वापस जाएँ"
+
+#: check-language.php:361
+msgid "Min amount of characters"
+msgstr "न्यूनतम अक्षर"
+
+#: check-language.php:363
+msgid "Max amount of characters"
+msgstr "अधिकतम अक्षर"
+
+#: check-language.php:365
+msgid "Select your file"
+msgstr "अपनी फ़ाइल चुनें"
+
+#: check-language.php:367
+msgid "The photo contest has not started yet"
+msgstr "फ़ोटो प्रतियोगिता अभी शुरू नहीं हुई है"
+
+#: check-language.php:369
+msgid "The photo contest is over"
+msgstr "फ़ोटो प्रतियोगिता समाप्त हो गई है"
+
+#: check-language.php:371
+msgid "Hold left mouse to see user info"
+msgstr "उपयोगकर्ता जानकारी देखने के लिए माउस दबाकर रखें"
+
+#: check-language.php:373
+msgid "Maximum amount of uploads per user is"
+msgstr "प्रति उपयोगकर्ता अधिकतम अपलोड हैं"
+
+#: check-language.php:375
+msgid "Maximum amount of uploads per category is"
+msgstr "प्रति श्रेणी अधिकतम अपलोड हैं"
+
+#: check-language.php:377
+msgid "You have already uploaded"
+msgstr "आप पहले ही अपलोड कर चुके हैं"
+
+#: check-language.php:379
+msgid "You have already uploaded in category"
+msgstr "आप इस श्रेणी में पहले ही अपलोड कर चुके हैं"
+
+#: check-language.php:381
+msgid "Maximum amount of uploads left for you"
+msgstr "आपके लिए बचे हुए अधिकतम अपलोड"
+
+#: check-language.php:386
+msgid "Lost password?"
+msgstr "पासवर्ड भूल गए?"
+
+#: check-language.php:388
+msgid "This email address is already registered"
+msgstr "यह ईमेल पहले से पंजीकृत है"
+
+#: check-language.php:390
+msgid "This username is already taken"
+msgstr "यह उपयोगकर्ता नाम पहले से लिया गया है"
+
+#: check-language.php:392
+msgid "Username or email"
+msgstr "उपयोगकर्ता नाम या ईमेल"
+
+#: check-language.php:394
+msgid "Username or email required"
+msgstr "उपयोगकर्ता नाम या ईमेल आवश्यक"
+
+#: check-language.php:396
+msgid "Username or email does not exist"
+msgstr "उपयोगकर्ता नाम या ईमेल मौजूद नहीं है"
+
+#: check-language.php:398
+msgid "This username already exists"
+msgstr "यह उपयोगकर्ता नाम मौजूद है"
+
+#: check-language.php:402
+msgid "Email"
+msgstr "ईमेल"
+
+#: check-language.php:404
+msgid "An email was sent to reset password"
+msgstr "पासवर्ड रीसेट के लिए ईमेल भेजा गया"
+
+#: check-language.php:406
+msgid "Type in your e-mail to receive link for resetting your password"
+msgstr "पासवर्ड रीसेट लिंक पाने के लिए अपना ईमेल दर्ज करें"
+
+#: check-language.php:408
+msgid "Email required"
+msgstr "ईमेल आवश्यक"
+
+#: check-language.php:410
+msgid "Password"
+msgstr "पासवर्ड"
+
+#: check-language.php:412
+msgid "Current Password"
+msgstr "वर्तमान पासवर्ड"
+
+#: check-language.php:414
+msgid "New Password"
+msgstr "नया पासवर्ड"
+
+#: check-language.php:416
+msgid "New Password repeat"
+msgstr "नया पासवर्ड दोहराएँ"
+
+#: check-language.php:418
+msgid "Password required"
+msgstr "पासवर्ड आवश्यक"
+
+#: check-language.php:420
+msgid "Email and password do not match"
+msgstr "ईमेल और पासवर्ड मेल नहीं खाते"
+
+#: check-language.php:422
+msgid "Login and password do not match"
+msgstr "लॉगिन और पासवर्ड मेल नहीं खाते"
+
+#: check-language.php:424
+msgid "Please fill out"
+msgstr "कृपया भरें"
+
+#: check-language.php:426
+msgid "Passwords do not match"
+msgstr "पासवर्ड मेल नहीं खाते"
+
+#: check-language.php:428
+msgid "Upload"
+msgstr "अपलोड करें"
+
+#: check-language.php:430
+msgid "Register"
+msgstr "पंजीकरण करें"
+
+#: check-language.php:432
+msgid "Login"
+msgstr "लॉगिन"
+
+#: check-language.php:434
+msgid "Please select"
+msgstr "कृपया चुनें"
+
+#: check-language.php:436
+msgid "You have not selected"
+msgstr "आपने चयन नहीं किया"
+
+#: check-language.php:438
+msgid "Please confirm"
+msgstr "कृपया पुष्टि करें"
+
+#: check-language.php:440
+msgid "File is not activated"
+msgstr "फ़ाइल सक्रिय नहीं है"
+
+#: check-language.php:442
+msgid "Your email could not be confirmed."
+msgstr "आपका ईमेल पुष्टि नहीं किया जा सका।"
+
+#: check-language.php:444
+msgid "Please enter a valid URL"
+msgstr "कृपया मान्य URL दर्ज करें"
+
+#: check-language.php:446
+msgid "Other"
+msgstr "अन्य"
+
+#: check-language.php:449
+msgid "Yes"
+msgstr "हाँ"
+
+#: check-language.php:450
+msgid "No"
+msgstr "नहीं"
+
+#: functions/general/registry/cg-registry-functions.php:75
+msgid "Logout?"
+msgstr "लॉगआउट करें?"
+
+#: functions/general/registry/cg-registry-functions.php:356
+msgid "Please enter a nickname."
+msgstr "कृपया उपनाम दर्ज करें।"
+
+#: functions/general/registry/cg-registry-functions.php:382
+msgid "This nickname is already in use. Please choose another one."
+msgstr "यह उपनाम पहले से उपयोग में है। कृपया दूसरा चुनें।"
+
+#: functions/general/registry/create/cg-registry-create-functions.php:7
+msgid "Contest Gallery User since v14"
+msgstr "Contest Gallery User since v14"
+
+#: register_post_type.php:24
+msgctxt "plural"
+msgid "Cgallery"
+msgstr ""
+
+#: register_post_type.php:25
+msgctxt "singular"
+msgid "Cgallery"
+msgstr ""
+
+#: register_post_type.php:26
+msgctxt "admin menu"
+msgid "Cgallery"
+msgstr ""
+
+#: register_post_type.php:27
+msgctxt "admin bar"
+msgid "Cgallery"
+msgstr ""
+
+#: register_post_type.php:28
+msgctxt "add new"
+msgid "Add New"
+msgstr ""
+
+#: register_post_type.php:29
+msgid "Add New Cgallery"
+msgstr ""
+
+#: register_post_type.php:30
+msgid "New Cgallery"
+msgstr ""
+
+#: register_post_type.php:31
+msgid "Edit Page (Contest Gallery Custom Post Type)"
+msgstr ""
+
+#: register_post_type.php:32
+msgid "View Cgallery"
+msgstr ""
+
+#: register_post_type.php:33
+msgid "All Cgallery"
+msgstr ""
+
+#: register_post_type.php:34
+msgid "Search Cgallery"
+msgstr ""
+
+#: register_post_type.php:35
+msgid "No contest gallery pages found."
+msgstr ""
+
+#, fuzzy
+#~| msgid "Contest Gallery - PRO"
+#~ msgid "Contest Gallery"
+#~ msgstr "Contest Gallery - PRO"
+
+#~ msgid ""
+#~ "Upload form, files, photos and videos upload contest gallery plugin for "
+#~ "WordPress. Create contact forms for entries with or without file/image "
+#~ "upload. Create user registration form. Create login form. Create "
+#~ "responsive galleries and allow to vote for any kind of entries."
+#~ msgstr ""
+#~ "Upload form, files, photos and videos upload contest gallery plugin for "
+#~ "WordPress. Create contact forms for entries with or without file/image "
+#~ "upload. Create user registration form. Create login form. Create "
+#~ "responsive galleries and allow to vote for any kind of entries."
+
+#~ msgid "http://www.contest-gallery.com/"
+#~ msgstr "http://www.contest-gallery.com/"
+
+#~ msgid "Contest Gallery - PRO Version"
+#~ msgstr "Contest Gallery - PRO Version"
+
+#~ msgid "Rating average descend"
+#~ msgstr "Rating average descend"
+
+#~ msgid "Rating average ascend"
+#~ msgstr "Rating average ascend"
+
+#~ msgid "Same as Billing address"
+#~ msgstr "Same as Billing address"
+
+#~ msgid "Date"
+#~ msgstr "Date"
+
+#~ msgid "Go to basket"
+#~ msgstr "Go to basket"
+
+#~ msgid "Address Line 3"
+#~ msgstr "Address Line 3"
+
+#, fuzzy
+#~| msgid "Maximum allowed resolution for PNG is"
+#~ msgid "Maximum required resolution for PNG is"
+#~ msgstr "Maximum allowed resolution for PNG is"
+
+#, fuzzy
+#~| msgid "Maximum allowed width for PNG is"
+#~ msgid "Maximum required width for PNG is"
+#~ msgstr "Maximum allowed width for PNG is"
+
+#~ msgid "Previous file"
+#~ msgstr "Previous file"
+
+#~ msgid "Next file"
+#~ msgstr "Next file"
+
+#~ msgid "You have already voted for this file"
+#~ msgstr "You have already voted for this file"
+
+#~ msgid "You have already voted for this files"
+#~ msgstr "You have already voted for this files"
+
+#~ msgid "Upload file"
+#~ msgstr "Upload file"
+
+#~ msgid "Further upload"
+#~ msgstr "Further upload"
+
+#~ msgid "Copy file link"
+#~ msgstr "Copy file link"
+
+#~ msgid "Upload image"
+#~ msgstr "Upload image"
+
+#~ msgid "Previous image"
+#~ msgstr "Previous image"
+
+#~ msgid "Next image"
+#~ msgstr "Next image"
+
+#~ msgid "Copy image link"
+#~ msgstr "Copy image link"
+
+#~ msgid "Delete image"
+#~ msgstr "Delete image"
+
+#~ msgid "File comments"
+#~ msgstr "File comments"
+
+#~ msgid "Image was deleted"
+#~ msgstr "Image was deleted"
+
+#~ msgid "Delete image?"
+#~ msgstr "Delete image?"
+
+#~ msgid "Image successfully deleted"
+#~ msgstr "Image successfully deleted"
+
+#~ msgid "Image link copied"
+#~ msgstr "Image link copied"
+
+#~ msgid "You have already voted for this picture"
+#~ msgstr "You have already voted for this picture"
+
+#~ msgid "It is not allowed to vote for your own picture"
+#~ msgstr "It is not allowed to vote for your own picture"
+
+#~ msgid "Image is not activated"
+#~ msgstr "Image is not activated"
+
+#~ msgid "Please use Google sign in to be able to vote"
+#~ msgstr "Please use Google sign in to be able to vote"
+
+#~ msgid "Email does not exist"
+#~ msgstr "Email does not exist"
+
+#~ msgid "Password is wrong"
+#~ msgstr "Password is wrong"
+
+#~ msgid "Image upload"
+#~ msgstr "Image upload"
+
+#~ msgid "Image download"
+#~ msgstr "Image download"
+
+#~ msgid "Vote first"
+#~ msgstr "Vote first"

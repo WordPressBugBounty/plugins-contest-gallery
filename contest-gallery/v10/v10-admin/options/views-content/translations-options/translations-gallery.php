@@ -285,6 +285,16 @@ echo <<<HEREDOC
                     </div>
                 </div>
         </div>
+        <div class='cg_view_options_row'>
+            <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+                <div class='cg_view_option_title'>
+                    <p>$language_OnlyJuryMembersCanVote$cgShortcodeCopy</p>
+                </div>
+                <div class='cg_view_option_input'>
+                    <input type="text" name="translations[$l_OnlyJuryMembersCanVote]" maxlength="100" value="$translations[$l_OnlyJuryMembersCanVote]">
+                </div>
+            </div>
+        </div>
 HEREDOC;
 
 echo <<<HEREDOC

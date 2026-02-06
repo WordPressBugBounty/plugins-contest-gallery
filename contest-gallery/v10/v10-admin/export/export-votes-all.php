@@ -201,6 +201,8 @@ if(!function_exists('cg_votes_csv_export_all')){
 
         }
 
+        $csvData = cg_neutralize_csv_array($csvData);
+
         $filename = "cg-votes-gallery-id-$GalleryID.csv";
 
         header("Content-type: text/csv");

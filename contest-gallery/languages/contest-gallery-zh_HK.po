@@ -1,17 +1,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Contest Gallery\n"
-"POT-Creation-Date: 2025-02-14 20:51+0100\n"
-"PO-Revision-Date: 2025-02-14 20:53+0100\n"
+"POT-Creation-Date: 2025-11-30 20:13+0100\n"
+"PO-Revision-Date: 2025-11-30 20:15+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_HK\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.3\n"
-"X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.4.2\n"
+"X-Poedit-Basepath: ..\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
 "X-Poedit-WPHeader: index.php\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -345,6 +345,54 @@ msgstr "返回畫廊"
 msgid "No gallery entries"
 msgstr "沒有畫廊條目"
 
+#: check-language-general.php:80
+msgid "Resend confirmation email"
+msgstr "重新發送確認電子郵件"
+
+#: check-language-general.php:82
+msgid "Confirmation link expired"
+msgstr "確認連結已過期"
+
+#: check-language-general.php:84
+msgid "E-mail sent"
+msgstr "電郵已發送"
+
+#: check-language-general.php:86
+msgid "Activation key not found"
+msgstr "找不到啟動金鑰"
+
+#: check-language-general.php:88
+msgid "A PIN has been sent to your email"
+msgstr "已將驗證碼(PIN)發送到你的電郵"
+
+#: check-language-general.php:90
+msgid "Enter PIN"
+msgstr "輸入驗證碼"
+
+#: check-language-general.php:92
+msgid "Send PIN"
+msgstr "發送驗證碼"
+
+#: check-language-general.php:94
+msgid "Confirm PIN"
+msgstr "確認驗證碼"
+
+#: check-language-general.php:96
+msgid "Send new PIN"
+msgstr "發送新驗證碼"
+
+#: check-language-general.php:98
+msgid "Incorrect PIN. Please try again."
+msgstr "驗證碼錯誤，請再試一次。"
+
+#: check-language-general.php:100
+msgid "PIN has expired. Please request a new one."
+msgstr "驗證碼已失效，請重新索取。"
+
+#: check-language-general.php:102
+msgid "Only jury members can vote"
+msgstr "只有評審成員可以投票"
+
 #: check-language.php:56
 msgid "Participation form"
 msgstr "參與形式"
@@ -667,59 +715,59 @@ msgstr "通過谷歌成功登錄。頁面將重新加載..."
 
 #: check-language.php:224
 msgid "Second"
-msgstr ""
+msgstr "秒"
 
 #: check-language.php:226
 msgid "Seconds"
-msgstr ""
+msgstr "秒"
 
 #: check-language.php:228
 msgid "Minute"
-msgstr ""
+msgstr "分鐘"
 
 #: check-language.php:230
 msgid "Minutes"
-msgstr ""
+msgstr "分鐘"
 
 #: check-language.php:232
 msgid "Hour"
-msgstr ""
+msgstr "小時"
 
 #: check-language.php:234
 msgid "Hours"
-msgstr ""
+msgstr "小時"
 
 #: check-language.php:236
 msgid "Day"
-msgstr ""
+msgstr "日"
 
 #: check-language.php:238
 msgid "Days"
-msgstr ""
+msgstr "日"
 
 #: check-language.php:240
 msgid "Week"
-msgstr ""
+msgstr "星期"
 
 #: check-language.php:242
 msgid "Weeks"
-msgstr ""
+msgstr "星期"
 
 #: check-language.php:244
 msgid "Month"
-msgstr ""
+msgstr "月"
 
 #: check-language.php:246
 msgid "Months"
-msgstr ""
+msgstr "月"
 
 #: check-language.php:248
 msgid "Year"
-msgstr ""
+msgstr "年"
 
 #: check-language.php:250
 msgid "Years"
-msgstr ""
+msgstr "年"
 
 #: check-language.php:254
 msgid "Delete entry?"
@@ -1097,6 +1145,14 @@ msgstr "沒有"
 msgid "Logout?"
 msgstr "登出？"
 
+#: functions/general/registry/cg-registry-functions.php:356
+msgid "Please enter a nickname."
+msgstr "請輸入暱稱。"
+
+#: functions/general/registry/cg-registry-functions.php:382
+msgid "This nickname is already in use. Please choose another one."
+msgstr "此暱稱已被使用。請選擇另一個。"
+
 #: functions/general/registry/create/cg-registry-create-functions.php:7
 msgid "Contest Gallery User since v14"
 msgstr ""
@@ -1154,24 +1210,10 @@ msgstr ""
 msgid "No contest gallery pages found."
 msgstr ""
 
-#. Plugin Name of the plugin/theme
-#. Author of the plugin/theme
 #, fuzzy
-#| msgid "Contest Gallery - PRO"
-msgid "Contest Gallery"
-msgstr "Contest Gallery - PRO"
-
-#. Description of the plugin/theme
-msgid ""
-"Contact form, files, photos and videos upload contest gallery plugin for "
-"WordPress. Create contact forms for entries with or without file/image "
-"upload. Create user registration form. Create login form. Create responsive "
-"galleries and allow to vote for any kind of entries."
-msgstr ""
-
-#. Author URI of the plugin/theme
-msgid "http://www.contest-gallery.com/"
-msgstr ""
+#~| msgid "Contest Gallery - PRO"
+#~ msgid "Contest Gallery"
+#~ msgstr "Contest Gallery - PRO"
 
 #~ msgid "Contest Gallery - PRO Version"
 #~ msgstr "Contest Gallery - PRO Version"

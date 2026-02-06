@@ -74,20 +74,22 @@ $LostPasswordMailActive = 0;
 if((!empty($galleryDbVersion) && intval($galleryDbVersion)>=14) || empty($GalleryID)){
     $registry_and_login_options = $wpdb->get_row("SELECT * FROM $tablename_registry_and_login_options WHERE GeneralID='1'");//get row here to not rewrite RegistryUserRole if not exists
     $LostPasswordMailActive = $registry_and_login_options->LostPasswordMailActive;
-    $TextBeforeLoginForm = contest_gal1ery_convert_for_html_output($registry_and_login_options->TextBeforeLoginForm);
-    $PermanentTextWhenLoggedIn = contest_gal1ery_convert_for_html_output($registry_and_login_options->PermanentTextWhenLoggedIn);
+    $TextBeforeLoginForm = contest_gal1ery_convert_for_html_output_without_nl2br($registry_and_login_options->TextBeforeLoginForm);
+    $PermanentTextWhenLoggedIn = contest_gal1ery_convert_for_html_output_without_nl2br($registry_and_login_options->PermanentTextWhenLoggedIn);
     $optionsVisual = $wpdb->get_row( "SELECT * FROM $tablename_options_visual WHERE GeneralID='1'");
 }else{
     $registry_and_login_options = $wpdb->get_row("SELECT * FROM $tablename_registry_and_login_options WHERE GalleryID='$GalleryID'");//get row here to not rewrite RegistryUserRole if not exists
     $LostPasswordMailActive = $registry_and_login_options->LostPasswordMailActive;
-    $TextBeforeLoginForm = contest_gal1ery_convert_for_html_output($registry_and_login_options->TextBeforeLoginForm);
-    $PermanentTextWhenLoggedIn = contest_gal1ery_convert_for_html_output($registry_and_login_options->PermanentTextWhenLoggedIn);
+    $TextBeforeLoginForm = contest_gal1ery_convert_for_html_output_without_nl2br($registry_and_login_options->TextBeforeLoginForm);
+    $PermanentTextWhenLoggedIn = contest_gal1ery_convert_for_html_output_without_nl2br($registry_and_login_options->PermanentTextWhenLoggedIn);
     $optionsVisual = $wpdb->get_row( "SELECT * FROM $tablename_options_visual WHERE GalleryID='$GalleryID'");
 }
 
 $FeControlsStyleLogin = ($optionsVisual->FeControlsStyleLogin=='white' || empty($optionsVisual->FeControlsStyleLogin)) ?  'cg_fe_controls_style_white' : 'cg_fe_controls_style_black';
 $BorderRadiusLogin = ($optionsVisual->BorderRadiusLogin=='1' || empty($optionsVisual->FeControlsStyleLogin)) ? 'cg_border_radius_controls_and_containers' : '';
-
+$cgFeControlsStyle = $FeControlsStyleLogin;
+$BorderRadiusClass = $BorderRadiusLogin;
+include(__DIR__.'/../../../../../v10/v10-frontend/gallery/cg-messages.php');
 if(!empty($_GET['cg_login_check'])){
     include('users-login-text-after-login.php');
 }

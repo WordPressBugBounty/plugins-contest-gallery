@@ -133,9 +133,9 @@ if(!function_exists('cg_ecommerce_prepare_payment_mail')) {
         $cc = $ecommerce_options->OrderConfirmationMailCc;
         $bcc = $ecommerce_options->OrderConfirmationMailBcc;
 
-        $subject = contest_gal1ery_convert_for_html_output($ecommerce_options->OrderConfirmationMailSubject);
+        $subject = contest_gal1ery_convert_for_html_output_without_nl2br($ecommerce_options->OrderConfirmationMailSubject);
         $Msg = contest_gal1ery_convert_for_html_output_without_nl2br($ecommerce_options->OrderConfirmationMail);
-        $url = trim(sanitize_text_field($ecommerce_options->OCMailOrderSummaryURL))."?order_id=$OrderId";
+        $url = trim(sanitize_text_field($ecommerce_options->OCMailOrderSummaryURL));
 
         $replacePosUrl = '$order$';
 

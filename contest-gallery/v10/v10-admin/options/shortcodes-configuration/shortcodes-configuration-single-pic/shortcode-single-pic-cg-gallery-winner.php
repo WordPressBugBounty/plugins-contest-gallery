@@ -236,7 +236,7 @@ echo <<<HEREDOC
                         <span class="cg_view_option_title_note">
                         Only comment textarea will be visible and required to enter<br>Comment form translations (for name, comment etc.)<br>can be found
 <a class=" cg_no_outline_and_shadow_on_focus" href="{$editTranslationLink}TranslationsCommentFormArea"  target="_blank">here</a>
-<br><strong><span class="cg_color_red">NOTE:</span> If logged in user comment then "Nickname" (WordPress profile field) and "Profile image" (available in "Edit registration form") will be shown</strong>
+<br><strong><span class="cg_color_red">NOTE:</span> If logged in user comment then "Nickname" (WordPress profile field)<br>and "Profile image" (available in "Edit registration form") will be shown</strong>
 </span></p>
                     </div>
                     <div class="cg_view_option_checkbox cg_view_option_checked">
@@ -825,12 +825,12 @@ if(floatval($galleryDbVersion)>=21){
     if(!isset($jsonOptions[$GalleryID.'-w']['visual']['TextBeforeWpPageEntry'])){
         $jsonOptions[$GalleryID.'-w']['visual']['TextBeforeWpPageEntry'] = $TextBeforeWpPageEntry;
     }else{
-        $jsonOptions[$GalleryID.'-w']['visual']['TextBeforeWpPageEntry'] = contest_gal1ery_convert_for_html_output($jsonOptions[$GalleryID.'-w']['visual']['TextBeforeWpPageEntry']);
+        $jsonOptions[$GalleryID.'-w']['visual']['TextBeforeWpPageEntry'] = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID.'-w']['visual']['TextBeforeWpPageEntry']);
     }
     if(!isset($jsonOptions[$GalleryID.'-w']['visual']['TextAfterWpPageEntry'])){
         $jsonOptions[$GalleryID.'-w']['visual']['TextAfterWpPageEntry'] = $TextAfterWpPageEntry;
     }else{
-        $jsonOptions[$GalleryID.'-w']['visual']['TextAfterWpPageEntry'] = contest_gal1ery_convert_for_html_output($jsonOptions[$GalleryID.'-w']['visual']['TextAfterWpPageEntry']);
+        $jsonOptions[$GalleryID.'-w']['visual']['TextAfterWpPageEntry'] = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID.'-w']['visual']['TextAfterWpPageEntry']);
     }
     if(!isset($jsonOptions[$GalleryID.'-w']['visual']['ShowBackToGalleryButton'])){
         $jsonOptions[$GalleryID.'-w']['visual']['ShowBackToGalleryButton'] = 0;
@@ -838,7 +838,7 @@ if(floatval($galleryDbVersion)>=21){
     if(!isset($jsonOptions[$GalleryID.'-w']['visual']['TextDeactivatedEntry'])){
         $jsonOptions[$GalleryID.'-w']['visual']['TextDeactivatedEntry'] = $TextDeactivatedEntry;
     }else{
-        $jsonOptions[$GalleryID.'-w']['visual']['TextDeactivatedEntry'] = contest_gal1ery_convert_for_html_output($jsonOptions[$GalleryID.'-w']['visual']['TextDeactivatedEntry']);
+        $jsonOptions[$GalleryID.'-w']['visual']['TextDeactivatedEntry'] = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID.'-w']['visual']['TextDeactivatedEntry']);
     }
     if(!isset($jsonOptions[$GalleryID.'-w']['pro']['RedirectURLdeletedEntry'])){
         $jsonOptions[$GalleryID.'-w']['pro']['RedirectURLdeletedEntry'] = $RedirectURLdeletedEntry;
@@ -884,11 +884,31 @@ HEREDOC;
 </div>
 HEREDOC;
 
+    // only json option, not in database available
+    if(!isset($jsonOptions[$GalleryID.'-w']['visual']['HeaderWpPageEntry'])){
+        $HeaderWpPageEntry = "";
+    }else{
+        $HeaderWpPageEntry = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID.'-w']['visual']['HeaderWpPageEntry']);
+    }
+
+    $HeaderWpPageEntryRow = <<<HEREDOC
+    <div class='cg_view_options_row'>
+        <div class='cg_view_option cg_view_option_full_width  cg_border_top_none '>
+            <div class='cg_view_option_title '>
+                <p>Header tracking code on entry landing page<br><span class="cg_view_option_title_note">Paste your tracking scripts here —<br>for example Google Tag Manager, Google Analytics, or Meta Pixel.<br>The code will be added inside the &lt;head&gt; section of entry landing pages.</span></p>
+            </div>
+            <div class='cg_view_option_textarea' >
+                <textarea type="text" name="multiple-pics[cg_gallery_winner][visual][HeaderWpPageEntry]" rows="7" style="width:100%;" class="HeaderWpPageEntry"  >$HeaderWpPageEntry</textarea>
+            </div>
+        </div>
+    </div>
+HEREDOC;
+
     $TextBeforeWpPageEntryRow = <<<HEREDOC
 <div class='cg_view_options_row'>
     <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="wp-TextBeforeWpPageEntryWinner-wrap-Container">
         <div class='cg_view_option_title'>
-            <p>General text on entry landing page before an activated entry</p>
+            <p>General text on entry landing page before an activated entry<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of entry landing pages.<br><span class="cg_font_weight_500">NOTE: </span>appears only on entry landing page, not if cg_gallery... shortcode with entry_id is used on another page.</span></p>
         </div>
         <div class='cg_view_option_html'>
             <textarea class='cg-wp-editor-template' name='multiple-pics[cg_gallery_winner][visual][TextBeforeWpPageEntry]'  id='TextBeforeWpPageEntryWinner'>{$jsonOptions[$GalleryID.'-w']['visual']['TextBeforeWpPageEntry']}</textarea>
@@ -900,7 +920,7 @@ HEREDOC;
 <div class='cg_view_options_row'>
     <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="wp-TextAfterWpPageEntry-wrap-Container">
         <div class='cg_view_option_title'>
-            <p>General text on entry landing page after an activated entry</p>
+            <p>General text on entry landing page after an activated entry<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of entry landing pages.<br><span class="cg_font_weight_500">NOTE: </span>appears only on entry landing page, not if cg_gallery... shortcode with entry_id is used on another page.</span></p>
         </div>
         <div class='cg_view_option_html'>
             <textarea class='cg-wp-editor-template' name='multiple-pics[cg_gallery_winner][visual][TextAfterWpPageEntry]'  id='TextAfterWpPageEntryWinner'>{$jsonOptions[$GalleryID.'-w']['visual']['TextAfterWpPageEntry']}</textarea>
@@ -913,7 +933,7 @@ HEREDOC;
 <div class='cg_view_options_row'>
     <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="wp-TextDeactivatedEntryWinner-wrap-Container">
         <div class='cg_view_option_title'>
-            <p>Text on entry landing page if entry is deactivated</p>
+            <p>Text on entry landing page if entry is deactivated<br>The code will be inserted inside the &lt;body&gt; section of entry landing pages.<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br><span class="cg_font_weight_500">NOTE: </span>appears only on entry landing page, not if cg_gallery... shortcode with entry_id is used on another page.</span></p>
         </div>
         <div class='cg_view_option_html'>
             <textarea class='cg-wp-editor-template' name='multiple-pics[cg_gallery_winner][visual][TextDeactivatedEntry]'  id='TextDeactivatedEntryWinner'>{$jsonOptions[$GalleryID.'-w']['visual']['TextDeactivatedEntry']}</textarea>
@@ -963,6 +983,7 @@ HEREDOC;
             $ShowBackToGalleryButtonRow
             $BackToGalleryButtonTextRow
             $BackToGalleryButtonURLRow
+            $HeaderWpPageEntryRow
             $TextBeforeWpPageEntryRow
             $TextAfterWpPageEntryRow
             $TextDeactivatedEntryRow
@@ -986,7 +1007,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
             <div class='cg_view_option cg_view_option_100_percent FullSizeImageOutGalleryContainer cg_border_radius_8_px'>
                 <div class='cg_view_option_title'>
-                    <p>Forward directly to original source after clicking an entry from in a gallery<br><span class="cg_view_option_title_note">Configuration of voting out of gallery is possible. Only for gallery views. Slider and blog view will work as usual.</span></p>
+                    <p>Forward directly to original source after clicking an entry from in a gallery<br><span class="cg_view_option_title_note">Configuration of voting out of gallery is possible.<br>Only for gallery views. Slider and blog view will work as usual.</span></p>
                 </div>
                 <div class='cg_view_option_radio cg_margin_top_5'>
                     <input type="radio" name="multiple-pics[cg_gallery_winner][general][FullSizeImageOutGallery]" checked="{$jsonOptions[$GalleryID.'-w']['general']['FullSizeImageOutGallery']}" class="FullSizeImageOutGallery">
@@ -1003,7 +1024,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
             <div class='cg_view_option cg_view_option_100_percent OnlyGalleryViewContainer cg_border_radius_8_px'>
                 <div class='cg_view_option_title'>
-                    <p>Make entries unclickable<br>Good for displaying entries only<br><span class="cg_view_option_title_note">Files images can not be clicked. Configuration of voting out of gallery is possible. Only for gallery views. Slider and blog view will work as usual.</span></p>
+                    <p>Make entries unclickable<br>Good for displaying entries only<br><span class="cg_view_option_title_note">Files images can not be clicked. Configuration of voting out of gallery is possible.<br>Only for gallery views. Slider and blog view will work as usual.</span></p>
                 </div>
                 <div class='cg_view_option_radio cg_margin_top_5'>
                        <input type="radio" name="multiple-pics[cg_gallery_winner][general][OnlyGalleryView]" checked="{$jsonOptions[$GalleryID.'-w']['general']['OnlyGalleryView']}" class="OnlyGalleryView">

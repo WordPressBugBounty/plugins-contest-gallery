@@ -54,7 +54,6 @@ include('index-hash-backend.php');
 
 // if is not ajax it does not execute further not necessary processing
 if(!empty($isAjaxCall)){
-
 //------------------------------------------------------------
 // ----------------------------------------------------------- Neue Galerie kreieren ----------------------------------------------------------
 //------------------------------------------------------------
@@ -75,6 +74,12 @@ if(!empty($isAjaxCall)){
         $uploadFolder = wp_upload_dir();
         if(!file_exists($uploadFolder['basedir'] . '/contest-gallery/cg-copying-gallery.txt')){
             require_once('v10/v10-admin/create-gallery.php');
+            $_GET['option_id'] = $nextIDgallery;
+            ?>
+            <script  data-cg-processing-new-gallery-id="true">
+                cgJsClassAdmin.index.vars.cgNextGalleryId = <?php echo json_encode($nextIDgallery); ?>;
+            </script>
+            <?php
         };
 
         // $time_post = microtime(true)*1000000;
@@ -84,15 +89,12 @@ if(!empty($isAjaxCall)){
         //var_dump($exec_time);
 
         if($dbVersion>=10){
-
             require_once('v10/v10-admin/gallery/gallery.php');
-
         }
 
         return;
 
     }
-
 
     global $wpdb;
     $tablenameOptions = $wpdb->prefix . "contest_gal1ery_options";
@@ -137,7 +139,6 @@ if(!empty($isAjaxCall)){
 
 
     if($dbVersion>=10){
-
         require_once('v10/include-conditions-v10.php');
         return;
     }

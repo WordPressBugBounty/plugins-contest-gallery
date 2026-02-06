@@ -38,7 +38,7 @@ if(file_exists($translationsFile)){
                    // var_dump($translations[$translationKey][$translationProKey] );
                 }
             }else{
-                $translations[$translationKey] = contest_gal1ery_convert_for_html_output($translation);
+                $translations[$translationKey] = contest_gal1ery_convert_for_html_output_without_nl2br($translation);
             }
         }
     }else{

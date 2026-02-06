@@ -3,7 +3,7 @@
 if (!function_exists('contest_gal1ery_user_vote_mail'))   {
     function contest_gal1ery_user_vote_mail($selectSQLemailUserVote,$Msg,$galeryID,$to) {
 
-        $Subject = contest_gal1ery_convert_for_html_output($selectSQLemailUserVote->Subject);
+        $Subject = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserVote->Subject);
         $Header = $selectSQLemailUserVote->Header;
         $Reply = $selectSQLemailUserVote->Reply;
         $cc = $selectSQLemailUserVote->CC;

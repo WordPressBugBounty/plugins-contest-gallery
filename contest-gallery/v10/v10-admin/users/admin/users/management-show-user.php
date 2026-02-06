@@ -37,7 +37,7 @@ if(!empty($_POST['cg_input_image_upload_file_to_delete_wp_id'])){// then image m
 /*Save user data here*/
 if(isset($_POST['get-data-management'])){
     include("get-data-management.php");
-    echo "<div id='cg_changes_saved' style='font-size:18px;'>Data saved<br><br></div>";
+    //echo "<div id='cg_changes_saved' style='font-size:18px;'>Data saved<br><br></div>";
 }
 
 $userEntries = [];
@@ -47,7 +47,7 @@ if(!empty($_GET['wp_user_meta_entries']) OR !empty($_POST['wp_user_meta_entries'
     $userEntriesNew = $wpdb->get_results($wpdb->prepare( "SELECT * FROM $table_usermeta WHERE (user_id  = %d) AND (meta_key LIKE '%cg_custom_field_id_%')",[$wpUserId]));
 
     $selectUserForm = $wpdb->get_results("SELECT * FROM $tablenameCreateUserForm WHERE GeneralID = '1' && 
-                (Field_Type = 'user-text-field' OR Field_Type = 'user-comment-field' OR Field_Type = 'user-select-field') 
+                (Field_Type = 'user-text-field' OR Field_Type = 'user-comment-field' OR Field_Type = 'user-select-field' OR Field_Type = 'user-check-field' OR Field_Type = 'user-radio-field') 
         ORDER BY Field_Order ASC");
     $selectUserFormSorted = [];
     foreach($selectUserForm as $formField){
@@ -76,8 +76,8 @@ else {$GalleryNameOrId = "id $GalleryID";}
 
 echo "<div style='width:100%;background-color:#fff;padding-bottom:15px;box-shadow: 2px 4px 12px rgba(0,0,0,.08);border-radius: 8px;' id='cg-search-results-container'>";
 echo "<div  id='cgManagementShowUsers' style='clear:both;padding: 25px 20px 10px;'>";
-
-echo "<form method='POST' action='?page=".cg_get_version()."/index.php&users_management=true&option_id=$GalleryID&wp_user_id=$wpUserId&edit_registration_entries=true'  data-cg-submit-message='Changes saved' class='cg_load_backend_submit'>";
+echo "<div id='cgBackToUsersManagementList'>Back to users list</div>";
+echo "<form  id='cgRegUserAdminForm' data-cg-gid='$GalleryID' method='POST' action='?page=".cg_get_version()."/index.php&users_management=true&option_id=$GalleryID&wp_user_id=$wpUserId&edit_registration_entries=true'  data-cg-submit-message='Changes saved'>";
 echo "<input type='hidden' name='get-data-management' value='true' >";
 
 if(!empty($_GET['wp_user_meta_entries']) OR !empty($_POST['wp_user_meta_entries'])){
@@ -86,7 +86,7 @@ if(!empty($_GET['wp_user_meta_entries']) OR !empty($_POST['wp_user_meta_entries'
 
 echo "<div style='margin-bottom:10px;' id='cg-user-$wpUserId'>";
 echo "<div style='float:left;display:inline;width:50%;border-bottom: 1px dotted #DFDFDF;'><strong>Username</strong></div>";
-echo "<div style='float:right;display:inline;width:50%;text-align:right;border-bottom: 1px dotted #DFDFDF;'><a href=".get_edit_user_link($wpUserId)."><button type=\"button\" class='cg-show-fields'>Edit Wordpress Profile</button></a></div>";
+echo "<div style='float:right;display:inline;width:50%;text-align:right;border-bottom: 1px dotted #DFDFDF;'><a href=".get_edit_user_link($wpUserId)."  target='_blank' ><button type=\"button\" class='cg-show-fields'>Edit WordPress Profile</button></a></div>";
 echo "<div>$wpUserLogin</div>";
 echo "</div>";
 
@@ -134,10 +134,16 @@ foreach($userEntriesNew as $entry){
 
     if(!empty($selectUserFormSorted[$entry->meta_key])){
 
-        $fieldTitle = contest_gal1ery_convert_for_html_output($selectUserFormSorted[$entry->meta_key]->Field_Name);
+        $fieldTitle = contest_gal1ery_convert_for_html_output_without_nl2br($selectUserFormSorted[$entry->meta_key]->Field_Name);
         $fieldName = $entry->meta_key;
         $formFieldType = $selectUserFormSorted[$entry->meta_key]->Field_Type;
-        $userFieldContent = contest_gal1ery_convert_for_html_output($entry->meta_value);
+
+        if($formFieldType=="user-comment-field"){
+            $userFieldContent = esc_textarea( $entry->meta_value );
+        }else{
+            $userFieldContent = contest_gal1ery_convert_for_html_output_without_nl2br($entry->meta_value);
+        }
+
 
         echo "<div style='margin-bottom:10px;'>";
 
@@ -180,7 +186,7 @@ foreach($userEntries as $entry){
     $checkAgreementBorder = ($formFieldType=='user-check-agreement-field') ? "border-bottom: 1px dotted #DFDFDF;" : "";
 
     echo "<div style='margin-bottom:10px;'>";
-    if($formFieldType!="user-html-field" && $formFieldType!="user-robot-field" && $formFieldType!="main-user-name" && $formFieldType!="main-mail"){
+    if($formFieldType!="user-html-field" && $formFieldType!="user-robot-field" && $formFieldType!="main-user-name" && $formFieldType!="main-mail" && $formFieldType!="unconfirmed-mail"){
 
         echo "<div style='float:left;display:inline;width:50%;$checkAgreementBorder'>";
         echo "<strong>$formFieldName:</strong>";
@@ -234,7 +240,7 @@ foreach($userEntries as $entry){
 
 
 echo "<div style='height:30px;' id='cg_go_to_save_button'>";
-echo "<input type='submit' value='Save data' class='cg_backend_button_gallery_action' style='float:right;text-align:center;width:80px;'>";
+echo "<button id='cgRegUserAdminFormSubmit' type='submit' value='Save data' class='cg_backend_button_gallery_action' style='float:right;text-align:center;width:80px;' data-cg-gid='$GalleryID'>Save data</button>";
 echo "</div>";
 
 

@@ -1,5 +1,5 @@
 <?php
-    $ForwardAfterLoginText = contest_gal1ery_convert_for_html_output($wpdb->get_var("SELECT ForwardAfterLoginText FROM $tablename_pro_options WHERE GeneralID = '1'"));
+    $ForwardAfterLoginText = contest_gal1ery_convert_for_html_output_without_nl2br($wpdb->get_var("SELECT ForwardAfterLoginText FROM $tablename_pro_options WHERE GeneralID = '1'"));
 
 global $isForwardAfterLoginTextAppears;
 $isForwardAfterLoginTextAppears = true;

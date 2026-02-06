@@ -332,20 +332,20 @@ if(!empty($jsonOptions[$GalleryID.'-u']['general']['ShowTextUntilAnImageAdded'])
 
 if(!isset($jsonOptions[$GalleryID.'-u']['general']['ShowAlways']) && $ShowAlways == 'checked') {
     $jsonOptions[$GalleryID.'-u']['general']['ShowAlways'] = 1;
-} else if(!isset($jsonOptions[$GalleryID.'-u']['general']['ShowAlways']) && $ShowAlways != 'checked') {
+} elseif(!isset($jsonOptions[$GalleryID.'-u']['general']['ShowAlways']) && $ShowAlways != 'checked') {
     $jsonOptions[$GalleryID.'-u']['general']['ShowAlways'] = 0;
 }
 
 if(!isset($jsonOptions[$GalleryID.'-u']['general']['RegUserGalleryOnly']) && $RegUserGalleryOnly == 'checked') {
     $jsonOptions[$GalleryID.'-u']['general']['RegUserGalleryOnly'] = 1;
-} else if(!isset($jsonOptions[$GalleryID.'-u']['general']['RegUserGalleryOnly']) && $RegUserGalleryOnly != 'checked') {
+} elseif(!isset($jsonOptions[$GalleryID.'-u']['general']['RegUserGalleryOnly']) && $RegUserGalleryOnly != 'checked') {
     $jsonOptions[$GalleryID.'-u']['general']['RegUserGalleryOnly'] = 0;
 }
 
 if(!isset($jsonOptions[$GalleryID.'-u']['pro']['RegUserGalleryOnlyText'])){
     $jsonOptions[$GalleryID.'-u']['pro']['RegUserGalleryOnlyText'] = $RegUserGalleryOnlyText;
 }else{
-    $jsonOptions[$GalleryID.'-u']['pro']['RegUserGalleryOnlyText'] = contest_gal1ery_convert_for_html_output($jsonOptions[$GalleryID.'-u']['pro']['RegUserGalleryOnlyText']);
+    $jsonOptions[$GalleryID.'-u']['pro']['RegUserGalleryOnlyText'] = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID.'-u']['pro']['RegUserGalleryOnlyText']);
 }
 $ShowAlwaysContainer = '';
 if(floatval($galleryDbVersion)<21){
@@ -519,6 +519,66 @@ HEREDOC;
             </div>
 </div>
     </div>
+HEREDOC;
+
+    // only json option, not in database available
+    if(!isset($jsonOptions[$GalleryID.'-u']['visual']['HeaderWpPageParent'])){
+        $HeaderWpPageParent = "";
+    }else{
+        $HeaderWpPageParent = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID.'-u']['visual']['HeaderWpPageParent']);
+    }
+
+    echo <<<HEREDOC
+    <div class='cg_view_options_row'>
+        <div class='cg_view_option cg_view_option_full_width  cg_border_top_none '>
+            <div class='cg_view_option_title '>
+                <p>Header tracking code on gallery landing page<br><span class="cg_view_option_title_note">Paste your tracking scripts here —<br>for example Google Tag Manager, Google Analytics, or Meta Pixel.<br>The code will be added inside the &lt;head&gt; section of gallery landing page.</span></p>
+            </div>
+            <div class='cg_view_option_textarea' >
+                <textarea type="text" name="multiple-pics[cg_gallery_user][visual][HeaderWpPageParent]" rows="7" style="width:100%;" class="HeaderWpPageParent"  >$HeaderWpPageParent</textarea>
+            </div>
+        </div>
+    </div>
+HEREDOC;
+
+    // only json option, not in database available
+    if(!isset($jsonOptions[$GalleryID.'-u']['visual']['TextBeforeWpPageParent'])){
+        $TextBeforeWpPageParent = "";
+    }else{
+        $TextBeforeWpPageParent = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID.'-u']['visual']['TextBeforeWpPageParent']);
+    }
+
+    echo <<<HEREDOC
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="wp-TextBeforeWpPageParentUser-wrap-Container">
+        <div class='cg_view_option_title'>
+            <p>General text on gallery landing page before gallery<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of gallery landing page.<br><span class="cg_font_weight_500">NOTE: </span>appears only on gallery landing page, not if cg_gallery... shortcode is used on another page.</span></p>
+        </div>
+        <div class='cg_view_option_html'>
+            <textarea class='cg-wp-editor-template' name='multiple-pics[cg_gallery_user][visual][TextBeforeWpPageParent]'  id='TextBeforeWpPageParentUser'>$TextBeforeWpPageParent</textarea>
+        </div>
+    </div>
+</div>
+HEREDOC;
+
+    // only json option, not in database available
+    if(!isset($jsonOptions[$GalleryID.'-u']['visual']['TextAfterWpPageParent'])){
+        $TextAfterWpPageParent = "";
+    }else{
+        $TextAfterWpPageParent = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID.'-u']['visual']['TextAfterWpPageParent']);
+    }
+
+    echo <<<HEREDOC
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="wp-TextAfterWpPageParentUser-wrap-Container">
+        <div class='cg_view_option_title'>
+            <p>General text on gallery landing page after gallery<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of gallery landing page.<br><span class="cg_font_weight_500">NOTE: </span>appears only on gallery landing page, not if cg_gallery... shortcode is used on another page.</span></p>
+        </div>
+        <div class='cg_view_option_html'>
+            <textarea class='cg-wp-editor-template' name='multiple-pics[cg_gallery_user][visual][TextAfterWpPageParent]'  id='TextAfterWpPageParentUser'>$TextAfterWpPageParent</textarea>
+        </div>
+    </div>
+</div>
 HEREDOC;
 
 

@@ -102,9 +102,7 @@ echo "</div>";
 
 echo "<div id='cgCreateSaleOrdersDataCSVdiv' class='cg_export_data_div' >";
 echo "<input type='button' class='cg_backend_button_gallery_action' id='cg_create_sale_orders_csv_submit' value='Export orders data' style='text-align:center;width:210px;margin: 1px auto;' />";
-echo "<div style='padding-top:2px;position: relative;'><span class=\"cg-info-icon\" style='font-weight:bold;margin-bottom:10px;'>info</span>
-    <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"top: 25px; margin-left: 270px; display: none;\">CSV file will be exported separated by semicolon ( ; )<br></span>
-    </div>";
+echo "<div style='padding-top:2px;position: relative;'><span class=\"cg-info-icon\" style='font-weight:bold;margin-bottom:10px;position: relative;'>info<span class=\"cg-info-container cg-info-container-gallery-user\" style=\"top: 25px; margin-left: -210px; display: none; font-weight: normal;\">CSV file will be exported separated by semicolon ( ; )</span></span></div>";
 echo "</div>";
 
 $nr1 = $start + 1;
@@ -216,19 +214,20 @@ HEREDOC;
     }
 
 
-    $saleItems = $wpdb->get_results("SELECT * FROM $tablename_ecommerce_orders_items WHERE ($saleItemsCollectedParentOrders)");
-
-    foreach($saleItems as $saleItem){
-        if(!isset($saleItemsIdsByParentOrderArray[$saleItem->ParentOrder])){
-            $saleItemsIdsByParentOrderArray[$saleItem->ParentOrder] = [];
+    if($saleItemsCollectedParentOrders){
+        $saleItems = $wpdb->get_results("SELECT * FROM $tablename_ecommerce_orders_items WHERE ($saleItemsCollectedParentOrders)");
+        foreach($saleItems as $saleItem){
+            if(!isset($saleItemsIdsByParentOrderArray[$saleItem->ParentOrder])){
+                $saleItemsIdsByParentOrderArray[$saleItem->ParentOrder] = [];
+            }
+            $saleItemsIdsByParentOrderArray[$saleItem->ParentOrder][] = $saleItem->pid;
+            if(!isset($saleItemsGalleryIDsByParentOrderArray[$saleItem->ParentOrder])){
+                $saleItemsGalleryIDsByParentOrderArray[$saleItem->ParentOrder] = [];
+            }
+            if(in_array($saleItem->GalleryID,$saleItemsGalleryIDsByParentOrderArray[$saleItem->ParentOrder])===false){
+                $saleItemsGalleryIDsByParentOrderArray[$saleItem->ParentOrder][] = $saleItem->GalleryID;
+            }
         }
-        $saleItemsIdsByParentOrderArray[$saleItem->ParentOrder][] = $saleItem->pid;
-        if(!isset($saleItemsGalleryIDsByParentOrderArray[$saleItem->ParentOrder])){
-	        $saleItemsGalleryIDsByParentOrderArray[$saleItem->ParentOrder] = [];
-        }
-		if(in_array($saleItem->GalleryID,$saleItemsGalleryIDsByParentOrderArray[$saleItem->ParentOrder])===false){
-			$saleItemsGalleryIDsByParentOrderArray[$saleItem->ParentOrder][] = $saleItem->GalleryID;
-		}
     }
 
     if(!empty($saleOrders)){

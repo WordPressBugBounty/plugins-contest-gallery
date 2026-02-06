@@ -12,5 +12,5 @@ return ['AllowSortOptions','PicsPerSite','FullSizeGallery','FullSize','Search','
     'CopyOriginalFileLink','ForwardOriginalFile','InformUserVote','InformUserVote','InformUserComment','InformUserCommentMailInterval',
     'ShareButtons','BackToGalleryButtonText','BackToGalleryButtonURL','BackToGalleriesButtonURL','TextBeforeWpPageEntry','TextAfterWpPageEntry',
     'ShowBackToGalleryButton','WpPageParentRedirectURL','RedirectURLdeletedEntry','TextDeactivatedEntry','ForwardToWpPageEntry','ForwardToWpPageEntryInNewTab',
-    'AdditionalCssGalleryPage','AdditionalCssEntryLandingPage','WpPageParent','WpPageParentUser','WpPageParentNoVoting','WpPageParentWinner','WpPageParentEcommerce','MainTitleGalleriesView','SubTitleGalleriesView','ThirdTitleGalleriesView','ShowDate','ShowDateFormat','PdfPreviewBackend','PdfPreviewFrontend','ShowBackToGalleriesButton'
+    'AdditionalCssGalleryPage','AdditionalCssEntryLandingPage','WpPageParent','WpPageParentUser','WpPageParentNoVoting','WpPageParentWinner','WpPageParentEcommerce','MainTitleGalleriesView','SubTitleGalleriesView','ThirdTitleGalleriesView','ShowDate','ShowDateFormat','PdfPreviewBackend','PdfPreviewFrontend','ShowBackToGalleriesButton','HeaderWpPageEntry','HeaderWpPageParent','TextBeforeWpPageParent','TextAfterWpPageParent','ShowPinFormVoting','ShowPinFormUploading','FeVotingIconType'
 ];

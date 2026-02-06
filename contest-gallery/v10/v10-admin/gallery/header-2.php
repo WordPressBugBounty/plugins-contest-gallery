@@ -224,6 +224,12 @@ cg_download_ecommerce_form($GalleryID, $ecommerceOptions);
 
 cg_deactivate_ecommerce_form($GalleryID);
 
+cg1l_email_backend_template();
+
+cg_mails_list();
+
+cg1lCreateTemplateFromBody();
+
 $assign_fields_png = plugins_url('/../../../v10/v10-css/assign-fields.png', __FILE__);
 
 ?>
@@ -481,7 +487,7 @@ if($AllowRating==2){
             $selectFurtherFieldsOptGroup
 	</select>
 HEREDOC;
-}else if($AllowRating>=12 && $AllowRating<=20){
+}elseif($AllowRating>=12 && $AllowRating<=20){
     echo <<<HEREDOC
 	<select id="cgOrderSelect">
 		<optgroup label="General" id="cgOrderSelectGeneral">
@@ -501,6 +507,9 @@ HEREDOC;
 	</select>
 HEREDOC;
 }else{
+    if($AllowRating==0){
+        $orderByRatingMultipleStarsWithManip = '';
+    }
     echo <<<HEREDOC
 	<select id="cgOrderSelect">
 		<optgroup label="General" id="cgOrderSelectGeneral">
@@ -601,7 +610,7 @@ $checkCookieIdOrIP = '';
 
 /*if($pro_options->RegUserUploadOnly=='2'){
     $checkCookieIdOrIP = ", Cookie ID";
-}else if($pro_options->RegUserUploadOnly=='3'){
+}elseif($pro_options->RegUserUploadOnly=='3'){
     $checkCookieIdOrIP = ", IP";
 }*/
 

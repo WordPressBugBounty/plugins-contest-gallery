@@ -20,7 +20,6 @@ cgJsClassAdmin.gallery.functions = {
             file_frame.$el.find('.media-frame-router').append('<button class="cg_media_menu_item" id="cgCreateViaOpenAI" >Create via OpenAI</button>');
             file_frame.$el.find('.media-frame-router').append('<button class="cg_media_menu_item" id="cgEditViaOpenAI" >Edit via OpenAI</button>');
         }
-
         if (isReplace) {
             file_frame.$el.addClass('cg_is_replace');
         }
@@ -81,7 +80,7 @@ cgJsClassAdmin.gallery.functions = {
         if (!cgJsClassAdmin.gallery.vars.moveContactFieldsAssigns[selectedGid]) {
             cgJsClassAdmin.gallery.vars.moveContactFieldsAssigns[selectedGid] = {};
         }
-        var fieldTypes = ['date-f', 'text-f', 'url-f', 'email-f', 'comment-f', 'date-f', 'select-f', 'selectc-f'];
+        var fieldTypes = ['date-f', 'text-f', 'url-f', 'email-f', 'comment-f', 'date-f', 'select-f', 'radio-f', 'chk-f', 'selectc-f'];
         var hasFieldsToAssign = false;
         cgJsClassAdmin.gallery.vars.contact_forms_by_gallery_id[gid].forEach(function (field) {
             if (fieldTypes.indexOf(field.Field_Type) > -1) {
@@ -288,7 +287,8 @@ cgJsClassAdmin.gallery.functions = {
         return false;
     },
     loadBlockquote: function ($, realIdReloadEntry) {
-
+        cgJsClassAdmin.gallery.vars.cgMailBodyToSendTinyMce = false;
+        cgJsClassAdmin.gallery.vars.cgMailTemplatesLoaded = false;
         var $cgSortable = $('#cgSortable');
         var $cgVotesImageVisualContent = $('#cgVotesImageVisualContent');
         var votesRealId = 0;
@@ -1077,25 +1077,42 @@ cgJsClassAdmin.gallery.functions = {
             cgJsClassAdmin.gallery.functions.insertLoaderBeforeSortableDiv();
             cgJsClassAdmin.gallery.vars.multipleFilesNewAdded[realId] = [];// has to be reseted
             debugger
-            cgJsClassAdmin.gallery.reload.entry(realId, true, false, NewWpUploadWhichReplace, WpUploadToReplace, newImgType, false, $cg_backend_info_container, WpUploadToReplace);
+            cgJsClassAdmin.gallery.reload.entry(realId, true, false, NewWpUploadWhichReplace, WpUploadToReplace, newImgType, false, $cg_backend_info_container);
         }
         /*            if(countAdded && !isBreakDone){// seems to be better without it for understanding in the moment
                         $cg_backend_info_container.find('.cg_manage_multiple_files_for_post').click();
                     }*/
     },
     setAndAppearBackendGalleryDynamicMessage: function (message, isNoActionMessage, classToAdd, isBackendActionContainer, isShowLoader) {
+        debugger
         var $cgBackendBackgroundDrop = jQuery('#cgBackendBackgroundDrop');
         var $cgBackendGalleryDynamicMessage = jQuery('#cgBackendGalleryDynamicMessage');
+        $cgBackendBackgroundDrop.removeClass('cg_high_overlay');
+        $cgBackendGalleryDynamicMessage.removeClass('cg_high_overlay');
         var wasLoader = false;
         if (!$cgBackendGalleryDynamicMessage.find('.cg-lds-dual-ring-div-gallery-hide').hasClass('cg_hide')) {
             wasLoader = true;
             $cgBackendGalleryDynamicMessage.find('.cg-lds-dual-ring-div-gallery-hide').addClass('cg_hide');
         }
-
+        if(message){
+            $cgBackendGalleryDynamicMessage.find('.cg_notification_message_dynamic_content').removeClass('cg_hide');
+        }
         if (message && !$cgBackendGalleryDynamicMessage.hasClass('cg_hide') && wasLoader) {
             $cgBackendGalleryDynamicMessage.find('.cg_notification_message_dynamic_content').html(message);
         } else if ($cgBackendBackgroundDrop.hasClass('cg_hide') && !isNoActionMessage) {
             $cgBackendBackgroundDrop.removeClass('cg_hide').addClass('cg_active');
+            if (isBackendActionContainer) {
+                $cgBackendGalleryDynamicMessage.addClass('cg_backend_action_container');
+            } else {
+                $cgBackendGalleryDynamicMessage.removeClass('cg_backend_action_container');
+            }
+            $cgBackendGalleryDynamicMessage.removeClass('cg_hide_slow cg_no_action_message cg_hide').find('.cg_notification_message_dynamic_content').html(message);
+            if (classToAdd) {
+                $cgBackendGalleryDynamicMessage.addClass(classToAdd);
+            }
+        }else if (!$cgBackendBackgroundDrop.hasClass('cg_hide') && !isNoActionMessage) {
+            $cgBackendBackgroundDrop.addClass('cg_high_overlay');
+            $cgBackendGalleryDynamicMessage.addClass('cg_high_overlay');
             if (isBackendActionContainer) {
                 $cgBackendGalleryDynamicMessage.addClass('cg_backend_action_container');
             } else {
@@ -1122,6 +1139,16 @@ cgJsClassAdmin.gallery.functions = {
 
         if (isShowLoader) {
             $cgBackendGalleryDynamicMessage.find('.cg-lds-dual-ring-div-gallery-hide').removeClass('cg_hide');
+            if(!message){
+                $cgBackendGalleryDynamicMessage.find('.cg_notification_message_dynamic_content').addClass('cg_hide');
+            }
+            $cgBackendGalleryDynamicMessage.find('.cg_message_close').addClass('cg_hide');
+        }else{
+            if (isNoActionMessage) {
+                $cgBackendGalleryDynamicMessage.find('.cg_message_close').addClass('cg_hide');
+            }else{
+                $cgBackendGalleryDynamicMessage.find('.cg_message_close').removeClass('cg_hide');
+            }
         }
 
     },
@@ -1276,9 +1303,16 @@ cgJsClassAdmin.gallery.functions = {
             jQuery('body').addClass('cg_no_scroll');
         }
     },
-    showModal: function (id) {
-        jQuery(id).removeClass('cg_hide').addClass('cg_active');
-        jQuery('#cgBackendBackgroundDrop').removeClass('cg_hide').addClass('cg_active');
+    showModal: function (id,highOverlay) {
+        var $modal = jQuery(id);
+        if(highOverlay){
+            jQuery('#cgBackendBackgroundDrop').addClass('cg_high_overlay').removeClass('cg_hide').addClass('cg_active');
+            $modal.addClass('cg_high_overlay').removeClass('cg_hide').addClass('cg_active');
+        }else{
+            $modal.removeClass('cg_hide').addClass('cg_active');
+            jQuery('#cgBackendBackgroundDrop').removeClass('cg_hide').addClass('cg_active');
+        }
+        return $modal;
     },
     showMoveToGalleryContent: function ($, $element) {
         var $cgMoveToAnotherGalleryCompare = $('#cgMoveToAnotherGalleryCompare');
@@ -1476,5 +1510,125 @@ cgJsClassAdmin.gallery.functions = {
                 $cgOpenAiContainer.find('#cgOpenAiPromptsEntered').prepend(content);
             }
         }
+    },
+    createMailTemplateButton: function (id,name,scroll) {
+        var $button = jQuery('<div class="cg_template" data-cg-id="'+id+'"><div>'+name+'</div><div><div class="cg_select" data-cg-id="'+id+'">Select</div><div class="cg_edit_template cg_grey_button_color cg_hide" data-cg-id="'+id+'">Edit name</div><div class="cg_delete cg_yellow_button_color" data-cg-id="'+id+'">Delete</div></div></div>');
+        if(scroll){
+            $button.addClass('cg_blink');
+            setTimeout(function (){
+                $button.get(0).scrollIntoView({behavior: 'smooth'});
+            },10);
+            setTimeout(function (){
+                $button.removeClass('cg_blink');
+            },2000);
+        }
+        return $button;
+    },
+    callBackSendCustomMail: function (gid,pid,mail,replyName,replyMail,fromName,fromMail,cc,bcc,body,subject,mailType) {
+        debugger
+        jQuery.ajax({
+            url: 'admin-ajax.php',
+            type: 'post',
+            data: {
+                action: 'post_cg_send_custom_mail',
+                cg_gid: gid,
+                cg_pid: pid,
+                cg_mail: mail,
+                cg_reply_mail: replyMail,
+                cg_from_name: fromName,
+                cg_reply_name: replyName,
+                cg_from_mail: fromMail,
+                cg_cc: cc,
+                cg_bcc: bcc,
+                cg_body: body,
+                cg_subject: subject,
+                cg_mail_type: mailType,
+                cg_nonce: CG1LBackendNonce.nonce
+            },
+        }).done(function (response) {
+
+            var $response = jQuery(new DOMParser().parseFromString(response, 'text/html'));
+
+            $response.find('script[data-cg-processing="true"]').each(function () {
+                var script = jQuery(this).html();
+                eval(script);
+            });
+            debugger
+            if(cgJsClassAdmin.gallery.vars.cgEntryMailSent){
+                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Mail sent',true);
+                var $mails = jQuery('#div'+pid+'.cgSortableDiv').find('.cg_sent_mails').removeClass('cg_hide');
+                var $b = $mails.find('b');
+                var count = parseInt($b.text(), 10);
+                $b.text(count + 1);
+            }else{
+                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Error: mail could not be sent');
+            }
+
+        }).fail(function (xhr, status, error) {
+
+            console.log('sending mail not possible');
+            console.log(xhr);
+            console.log(status);
+            console.log(error);
+
+            cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Error: '+xhr.responseText);
+
+        }).always(function () {
+
+        });
+    },
+    mailDomainCheck: function ($,$element) {
+        var ownDomain = window.location.hostname.replace(/^www\./, '');
+        var val = $element.val();
+        if (val.indexOf(ownDomain) !== -1) {
+            $element.parent().find('.cg_domain_error').removeClass('cg_hide');
+        } else {
+            $element.parent().find('.cg_domain_error').addClass('cg_hide');
+        }
+    },
+    initOverlayWatcher: function ($) {
+        var target = document.getElementById('cgBackendBackgroundDrop');
+
+        // Vorherige Observer/Intervalle aufräumen
+        if (cgJsClassAdmin.gallery.vars.cgOverlayObserver) {
+            cgJsClassAdmin.gallery.vars.cgOverlayObserver.disconnect();
+            cgJsClassAdmin.gallery.vars.cgOverlayObserver = null;
+        }
+        if (cgJsClassAdmin.gallery.vars.cgOverlayInterval) {
+            clearInterval(cgJsClassAdmin.gallery.vars.cgOverlayInterval);
+            cgJsClassAdmin.gallery.vars.cgOverlayInterval = null;
+        }
+
+        if (!target) {
+            return; // kein Element gefunden
+        }
+
+        if (window.MutationObserver) {
+            cgJsClassAdmin.gallery.vars.cgOverlayObserver = new MutationObserver(function(mutations) {
+                for (var i = 0; i < mutations.length; i++) {
+                    if ($(target).is(':visible')) {
+                        $('body').addClass('cg_overflow_hidden');
+                    } else {
+                        $('body').removeClass('cg_overflow_hidden');
+                    }
+                }
+            });
+            cgJsClassAdmin.gallery.vars.cgOverlayObserver.observe(target, { attributes: true, attributeFilter: ['style', 'class'] });
+        } else {
+            var $drop = $('#cgBackendBackgroundDrop');
+            cgJsClassAdmin.gallery.vars.cgOverlayInterval = setInterval(function() {
+                if ($drop.is(':visible')) {
+                    $('body').addClass('cg_overflow_hidden');
+                } else {
+                    $('body').removeClass('cg_overflow_hidden');
+                }
+            }, 500);
+        }
+    },
+    createCgUsersManagementListLoaderClone: function ($,$box) {
+        var load = '<td style="vertical-align: middle;" colspan="3"><div class="cg_skeleton_loader_on_page_load" style="width: 100%;height: 30px;"></div></td>';
+        $box.find('tbody tr').each(function () {
+            $(this).height($(this).height()).empty().append($(load));
+        });
     }
 };

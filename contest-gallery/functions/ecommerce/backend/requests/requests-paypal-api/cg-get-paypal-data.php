@@ -40,7 +40,7 @@ if(!function_exists('cg_get_paypal_data')){
         if($_POST['cg_paypal_environment']=='sandbox'){
             $clientId = $payPalOptions->ClientIdSandbox;
             $secret = $payPalOptions->SecretSandbox;
-        } else if($_POST['cg_paypal_environment']=='live'){
+        } elseif($_POST['cg_paypal_environment']=='live'){
             $clientId = $payPalOptions->ClientIdLive;
             $secret = $payPalOptions->SecretLive;
         }

@@ -15,6 +15,8 @@ HEREDOC;
 
 $cgShortcodeCopy = '<span class="td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip td_gallery_translation_edit"></span>';
 
+include(__DIR__ ."/../../../../check-language-general.php");
+
 include(__DIR__.'/translations-options/translations-gallery-upload.php');
 include(__DIR__.'/translations-options/translations-gallery-icons-tooltip.php');
 include(__DIR__.'/translations-options/translations-gallery.php');
@@ -25,8 +27,6 @@ include(__DIR__.'/translations-options/translations-upload-registry.php');
 include(__DIR__.'/translations-options/translations-registry.php');
 include(__DIR__.'/translations-options/translations-login.php');
 include(__DIR__.'/translations-options/translations-login-lost-password.php');
-
-include(__DIR__ ."/../../../../check-language-general.php");
 
 include(__DIR__.'/translations-options/translations-menu-bar-edit-profile-area.php');
 

@@ -56,7 +56,7 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '#cgGalleryBackendContainer #cgPicsPerSite .cg_step', function (e) {
         e.preventDefault();
         cgJsClassAdmin.gallery.functions.abortRequest();
-
+debugger
         removeCgActiveFromViewControl();
 
         $('#cgPicsPerSite .cg_step').removeClass('cg_step_selected');
@@ -76,6 +76,8 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '#cgGalleryBackendContainer .cg_steps_navigation .cg_step', function (e) {
         e.preventDefault();
         cgJsClassAdmin.gallery.functions.abortRequest();
+
+        debugger
 
         removeCgActiveFromViewControl();
 
@@ -269,7 +271,7 @@ jQuery(document).ready(function ($) {
     });
 
 
-    $(document).on('input', '#cgGalleryBackendContainer .cg_manipulate_countS_input', function (e) {
+    $(document).on('input', '#cgGalleryBackendContainer .cg_manipulate_counts_input', function (e) {
 
         if (parseInt(this.value) < 0) {
             this.value = 0;
@@ -1978,7 +1980,7 @@ jQuery(document).ready(function ($) {
         var $cgAttachToAnotherUserForm = $(form);
         $cgAttachToAnotherUserForm.find('input[name="action"]').val('post_cg_attach_to_another_user_select');
         var formPostData = new FormData(form);
-        var cg_nonce = $('#cg_nonce').val();
+        var cg_nonce = CG1LBackendNonce.nonce;
 
         $cgAttachToAnotherUserForm.find('input[name="cgEntryId"]').val(cgEntryId);
         $cgAttachToAnotherUserForm.addClass('cg_hide');
@@ -2041,7 +2043,7 @@ jQuery(document).ready(function ($) {
         var text = $option.text();
         var user_login = $option.attr('data-user_login');
         var user_email = $option.attr('data-user_email');
-        var cg_nonce = $('#cg_nonce').val();
+        var cg_nonce = CG1LBackendNonce.nonce;
         var gid = $('#cgBackendGalleryId').val();
 
         if($el.attr('id')=='cgAttachToAnotherUserDetachButton'){

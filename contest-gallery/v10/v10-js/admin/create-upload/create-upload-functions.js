@@ -131,13 +131,67 @@ cgJsClassAdmin.createUpload.functions = {
             }
         }
 
-        cgJsClassAdmin.options.vars.cg_create_upload_container_offset = $('#ausgabe1.cg_create_upload').offset().top;
+        cgJsClassAdmin.options.vars.cg_create_upload_registry_container_offset = $('#ausgabe1.cg_create_upload').offset().top;
         cgJsClassAdmin.options.vars.$cgUploadFieldsSelect = $('#cgUploadFieldsSelect');
         cgJsClassAdmin.options.vars.$imageUploadField = $('#ausgabe1 .imageUploadField');
         cgJsClassAdmin.options.vars.$wpadminbar = $('#wpadminbar');
         cgJsClassAdmin.options.vars.$cgCreateUploadSortableArea = $('#cgCreateUploadSortableArea');
         cgJsClassAdmin.options.vars.wpadminbarHeight  = cgJsClassAdmin.options.vars.$wpadminbar.height();
 
+        // setDragAndDropEvents
+        cgJsClassAdmin.createUpload.functions.setDragAndDropEvents($);
+
+        cgJsClassAdmin.index.vars.$cgCreateUploadSortableArea = cgJsClassAdmin.options.vars.$cgCreateUploadSortableArea;
+        cgJsClassAdmin.index.vars.$ausgabe1 = $('#ausgabe1');
+        cgJsClassAdmin.index.vars.$cgRightSide = $('#cgRightSide');
+
+        cgJsClassAdmin.createUpload.functions.addRightFieldOrderAndAddRowsAndColumns(jQuery);
+
+    },
+    getVisibleHeightFixedInParent: function ($el) {
+        const rect = $el[0].getBoundingClientRect();
+        const winH = window.innerHeight || document.documentElement.clientHeight;
+
+        const visibleTop = Math.max(rect.top, 0);
+        const visibleBottom = Math.min(rect.bottom, winH);
+
+        return Math.max(0, visibleBottom - visibleTop);
+    },
+    cgCreateUploadSortableAreaScroll: function ($) {
+
+        var $cgCreateUploadSortableArea = cgJsClassAdmin.index.vars.$cgCreateUploadSortableArea;
+        var $ausgabe1 = cgJsClassAdmin.index.vars.$ausgabe1;
+        var windowScrollTop = $(window).scrollTop();
+
+        // console.log('windowScrollTop');
+        // console.log(windowScrollTop);
+
+        if((windowScrollTop+50)>cgJsClassAdmin.options.vars.cg_create_upload_registry_container_offset){
+            //$cgCreateUploadSortableArea.addClass('cg_sticky').css({'border-right':'unset','top':cgJsClassAdmin.options.vars.wpadminbarHeight+'px','width':(cgJsClassAdmin.index.vars.$cg_main_container.width()-1)+'px'});
+            $cgCreateUploadSortableArea.addClass('cg_sticky').css({'top':cgJsClassAdmin.options.vars.wpadminbarHeight+'px','width':(cgJsClassAdmin.index.vars.$cg_main_container.width())+'px'});
+            $cgCreateUploadSortableArea.css('width',$ausgabe1.width()+'px');
+
+            // Example usage
+            //const visibleHeight = getVisibleHeightInParent($('.child'), $('.parent'));
+            //const visibleHeight = getVisibleHeightInParent(cgJsClassAdmin.index.vars.$cgCreateUploadSortableArea, cgJsClassAdmin.index.vars.$ausgabe1);
+            var visibleHeight = cgJsClassAdmin.createUpload.functions.getVisibleHeightFixedInParent(cgJsClassAdmin.index.vars.$ausgabe1);
+
+            //console.log('visibleHeight');
+            //console.log(visibleHeight);
+            $cgCreateUploadSortableArea.css('height',visibleHeight-50+'px');
+            cgJsClassAdmin.index.vars.resizeLeftSideIsActive = true;
+
+        }else{
+            //$cgCreateUploadSortableArea.removeClass('cg_sticky').css({'top':'','border-right':''} );
+            $cgCreateUploadSortableArea.removeClass('cg_sticky');
+            $cgCreateUploadSortableArea.css('width','');
+            $cgCreateUploadSortableArea.css('height','');
+            cgJsClassAdmin.index.vars.resizeLeftSideIsActive = false;
+
+        }
+
+    },
+    setDragAndDropEvents: function ($) {
         $('#cgRightSide .cg_row_col.cg_el.cg_drag_drop').each(function () {
             var $el = $(this);
             var $temp = $("<div " + cgJsClassAdmin.gallery.vars.dragAndDropEvents + " " + cgJsClassAdmin.gallery.vars.draggableDragStartDragEnd + "></div>");
@@ -145,13 +199,6 @@ cgJsClassAdmin.createUpload.functions = {
                 $el.attr(this.name, this.value);
             });
         });
-
-        cgJsClassAdmin.index.vars.$cgCreateUploadSortableArea = $('#cgCreateUploadSortableArea');
-        cgJsClassAdmin.index.vars.$ausgabe1 = $('#ausgabe1');
-        cgJsClassAdmin.index.vars.$cgRightSide = $('#cgRightSide');
-
-        cgJsClassAdmin.createUpload.functions.addRightFieldOrderAndAddRowsAndColumns(jQuery);
-
     },
     collapseFields: function () {
         var $cgCreateUploadSortableArea = cgJsClassAdmin.options.vars.$cgCreateUploadSortableArea;
@@ -187,8 +234,6 @@ cgJsClassAdmin.createUpload.functions = {
 
                 var $element = $(ui.item);
 
-                console.log('dragging start');
-
                 $element.closest('.cg_categories_arena').find('.ui-state-highlight').addClass($element.get(0).classList.value).html($element.html());
 
             },
@@ -196,13 +241,11 @@ cgJsClassAdmin.createUpload.functions = {
 
                 var $element = $(ui.item);
 
-                console.log('dragging stop');
-
             }
         });
 
     },
-    addRightFieldOrder: function ($) {
+    addUploadFieldOrder: function ($) {
 
         var v = 1;
 
@@ -225,9 +268,11 @@ cgJsClassAdmin.createUpload.functions = {
 
         $cgRightSide.find("> .cg_row:not(.cg_add_row)").each(function (i) {
 
-            if(v==1){
-                v++;
-                return;// then continue simply, because is image
+            if(cgJsClassAdmin.index.vars.isCreateUploadAreaLoaded){
+                if(v==1){
+                    v++;
+                    return;// then continue simply, because is image
+                }
             }
 
             var $row = $(this);
@@ -266,7 +311,11 @@ cgJsClassAdmin.createUpload.functions = {
 
     },
     addRightFieldOrderAndAddRowsAndColumns: function ($) {
-        this.addRightFieldOrder($);
+        if(cgJsClassAdmin.index.vars.isCreateRegistryAreaLoaded){
+            cgJsClassAdmin.createRegistry.functions.cgSortOrder($);
+        }else{
+            this.addUploadFieldOrder($);
+        }
         this.addRowsAndColumns($);
     },
     fDeleteFieldAndDataModifyRowsAndColumns: function ($,fieldContainerId, idToDelete, categoryField) {
@@ -345,5 +394,10 @@ cgJsClassAdmin.createUpload.functions = {
                 hasAddRow = false
             }
         });
+    },
+    removeFieldRightSide: function ($,fieldContainerId) {
+        var $el = $('#cgRightSide').find('#right'+fieldContainerId);
+        $el.replaceWith(cgJsClassAdmin.createUpload.functions.getAddElCol());
+        cgJsClassAdmin.createUpload.functions.addRightFieldOrderAndAddRowsAndColumns($);
     }
 };

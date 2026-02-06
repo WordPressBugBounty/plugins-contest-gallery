@@ -174,34 +174,54 @@ $cgGalleriesShortcodesDisabled = (!count($selectSQL)) ? 'cg_disabled_background_
 
 $cgGalleriesShortcodes  = <<<HEREDOC
 <div id='cgGalleriesShortcodes' style="flex-flow: row;" class="$cgGalleriesShortcodesDisabled" >
-    <div class="td_gallery_info_shortcode" style="margin-right: -20px;"><p class="cg_shortcode_title">Voting galleries<br><strong><span class="td_gallery_info_name_span">[cg_galleries]</span></strong></p><div class="cg_shortcode_copy"><div class="td_gallery_info_shortcode_edit  cg_shortcode_copy_gallery cg_tooltip" style="margin-left: -18px;"></div></div>
-    <span class="cg-info-icon">info</span><span class="cg-info-container">Displays galleries <b>cg_galleries</b> shortcode type<br><br>All files are visible<br>All configured options are active<br>Voting is possible<br><br>
-You can also add ids to display certain galleries<br>
-Example: <b>[cg_galleries ids="1,2,3"]</b><br><br><b>cg_galleries... shortcode type can be added only one time on a page</b></span>
+    <div class="td_gallery_info_shortcode" style="margin-right: -20px;"><p class="cg_shortcode_title">Voting galleries<br><strong><span class="td_gallery_info_name_span cg_shortcode_copy cg_tooltip">[cg_galleries]</span></strong></p><div class="cg_shortcode_copy"><div class="td_gallery_info_shortcode_edit  cg_shortcode_copy_gallery cg_tooltip" style="margin-left: -18px;"></div></div>
+    <span class="cg-info-icon">info</span><span class="cg-info-container">Displays galleries of the <b>cg_gallery</b> shortcode type.<br><br>
+
+Shows <b>all activated entries</b> in the gallery.<br>
+Visitors <b>can vote</b> on entries.<br><br>
+
+You can also add <b>ids</b> to display specific galleries.<br>
+Example: <b>[cg_galleries ids="1,2,3"]</b><br><br>
+
+The <b>cg_galleries</b> shortcode type <b>can be used only once per page.</b></span>
     </div>
-    <div class="td_gallery_info_shortcode"><p  class="cg_shortcode_title">User galleries<br><strong><span class="td_gallery_info_name_span">[cg_galleries_user]</span></strong></p><div class="cg_shortcode_copy"><div class="td_gallery_info_shortcode_edit  cg_shortcode_copy_gallery cg_tooltip" style="margin-left: -10px;"></div></div>
-        <span class="cg-info-icon">info</span><span class="cg-info-container">Displays galleries <b>cg_galleries_user</b> shortcode type<br><br>Display only uploaded files of logged in user
-            <br>Voting is not possible<br>Show always all votes<br>"Hide until vote" and "Show only user votes" options are disabled<br>"Delete votes" is not possible<br>User can delete own files if they are activated
-            <br><strong>User can edit entry fields information if<br>"Show as info in single entry view" or "Show as title in gallery view"<br>for a field is activated.</strong>
-            <br>Can be added multiple times on a page with different id’s
-            <br><b>"Delete by frontend user deleted files from storage also"</b> option<br>can be configured in "Upload options"<br><br>
-You can also add ids to display certain galleries<br>
-Example: <b>[cg_galleries_user ids="1,2,3"]</b><br><br><b>cg_galleries... shortcode type can be added only one time on a page</b></span>
+    <div class="td_gallery_info_shortcode"><p  class="cg_shortcode_title">User galleries<br><strong><span class="td_gallery_info_name_span cg_shortcode_copy cg_tooltip">[cg_galleries_user]</span></strong></p><div class="cg_shortcode_copy"><div class="td_gallery_info_shortcode_edit  cg_shortcode_copy_gallery cg_tooltip" style="margin-left: -10px;"></div></div>
+        <span class="cg-info-icon">info</span><span class="cg-info-container">Displays galleries of the <b>cg_gallery_user</b> shortcode type.<br><br>Shows only the entries<br> uploaded by the logged-in user.<br>
+Voting is <b>not available</b>.<br>
+All votes are always displayed.<br>
+The options <b>"Hide until vote"</b> and <b>"Show only user votes"</b> are disabled.<br>
+Deleting votes is <b>not possible</b>.<br><br>
+<b>Users can edit</b> their entry information.<br><br>
+You can also add <b>ids</b> to display specific galleries.<br>
+Example: <b>[cg_galleries_user ids="1,2,3"]</b><br><br>
+The <b>cg_galleries_user</b> shortcode type <b>can be used only once per page.</b></span>
     </div>
-    <div class="td_gallery_info_shortcode"><p  class="cg_shortcode_title">No voting galleries<br><strong><span class="td_gallery_info_name_span">[cg_galleries_no_voting]</span></strong></p><div class="td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip"></div>
-        <span class="cg-info-icon">info</span><span class="cg-info-container">Displays galleries <b>cg_galleries_no_voting</b> shortcode type<br><br>All files are visible<br>Voting, sort by voting and preselect by voting is not possible and not visible<br>Not visible by default but can be make visible in "Gallery view options"<br>Can be used as normal gallery without voting<br><br>
-You can also add ids to display certain galleries<br>
-Example: <b>[cg_galleries_no_voting ids="1,2,3"]</b><br><br><b>cg_galleries... shortcode type can be added only one time on a page</b></span>
+    <div class="td_gallery_info_shortcode"><p  class="cg_shortcode_title">No voting galleries<br><strong><span class="td_gallery_info_name_span cg_shortcode_copy cg_tooltip">[cg_galleries_no_voting]</span></strong></p><div class="td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip"></div>
+        <span class="cg-info-icon">info</span><span class="cg-info-container">Displays galleries of the <b>cg_gallery_no_voting</b> shortcode type.<br><br>All <b>activated entries</b> are <b>visible</b>.<br>
+<b>Voting, sorting by votes</b>, and <b>preselecting by votes</b> options are <b>not available</b> and not displayed.<br>
+Can be used as a <b>normal gallery without voting</b>.<br><br>
+You can also add <b>ids</b> to display specific galleries.<br>
+Example: <b>[cg_galleries_no_voting ids="1,2,3"]</b><br><br>
+The <b>cg_galleries_no_voting</b> shortcode type <b>can be used only once per page.</b></span>
     </div>
-    <div class="td_gallery_info_shortcode"><p  class="cg_shortcode_title">Winner galleries<br><strong><span class="td_gallery_info_name_span">[cg_galleries_winner]</span></strong></p><div class="cg_shortcode_copy"><div class="td_gallery_info_shortcode_edit  cg_shortcode_copy_gallery cg_tooltip" style="margin-left: -5px;"></div></div>
-        <span class="cg-info-icon">info</span><span class="cg-info-container">Displays galleries <b>cg_galleries_winner</b> shortcode type<br><br>Only files which are marked as winner will be displayed<br>Total voting is visible<br>Star voting is not possible<br>"Hide until vote" and "Show only user votes" options are disabled<br>"Delete votes" is not possible<br>"In gallery upload form button" is not available<br><br>
-You can also add ids to display certain galleries<br>
-Example: <b>[cg_galleries_winner ids="1,2,3"]</b><br><br><b>cg_galleries... shortcode type can be added only one time on a page</b></span>
+    <div class="td_gallery_info_shortcode"><p  class="cg_shortcode_title">Winner galleries<br><strong><span class="td_gallery_info_name_span cg_shortcode_copy cg_tooltip">[cg_galleries_winner]</span></strong></p><div class="cg_shortcode_copy"><div class="td_gallery_info_shortcode_edit  cg_shortcode_copy_gallery cg_tooltip" style="margin-left: -5px;"></div></div>
+        <span class="cg-info-icon">info</span><span class="cg-info-container">Displays galleries of the <b>cg_gallery_winner</b> shortcode type.<br><br>Total <b>voting is visible</b> but <b>can’t be voted</b>.<br>
+The options <b>"Hide until vote"</b> and <b>"Show only user votes"</b> are disabled.<br>
+Deleting votes is <b>not possible</b>.<br>
+The <b>"In gallery upload form" button</b> is not available.<br><br>
+You can also add <b>ids</b> to display specific galleries.<br>
+Example: <b>[cg_galleries_winner ids="1,2,3"]</b><br><br>
+The <b>cg_galleries_winner</b> shortcode type <b>can be used only once per page.</b></span>
     </div>
-    <div class="td_gallery_info_shortcode"><p  class="cg_shortcode_title">Ecommerce galleries<br><strong><span class="td_gallery_info_name_span">[cg_galleries_ecommerce]</span></strong></p><div class="td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip"></div>
-        <span class="cg-info-icon">info</span><span class="cg-info-container" style="left:-5%;">Displays galleries <b>cg_galleries_ecommerce</b>  shortcode type<br><br>Display only entries activated for selling<br>Every entry can be activated for selling<br>Use "Sell settings" button to activate an entry for selling<br>"In gallery upload form button" is not available<br>Voting can be enabled/disabled<br>Can be added multiple times on a page with different id’s<br> add <b>test="true"</b> to shortcode to activate test environment<br>Example: <b>[cg_galleries_ecommerce  test="true"]</b><br><br>
-You can also add ids to display certain galleries<br>
-Example: <b>[cg_galleries_ecommerce ids="1,2,3"]</b><br><br><b>cg_galleries... shortcode type can be added only one time on a page</b></span>
+    <div class="td_gallery_info_shortcode"><p  class="cg_shortcode_title">Ecommerce galleries<br><strong><span class="td_gallery_info_name_span cg_shortcode_copy cg_tooltip">[cg_galleries_ecommerce]</span></strong></p><div class="td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip"></div>
+        <span class="cg-info-icon">info</span><span class="cg-info-container"  style="left:-5%;">Displays galleries of the <b>cg_gallery_ecommerce</b> shortcode type.<br><br>isplays only entries that are activated for selling.<br>
+Every entry can be activated for selling.<br>
+Use the <b>"Sales settings"</b> button to activate an entry for selling.<br>
+The <b>"In gallery upload form" button</b> is not available.<br>
+Voting can be enabled or disabled.<br><br>Add <b>test="true"</b> to shortcode to activate test environment<br>Example: <b>[cg_galleries_ecommerce  test="true"]</b><br><br>
+You can also add <b>ids</b> to display specific galleries.<br>
+Example: <b>[cg_galleries_ecommerce ids="1,2,3"]</b><br><br>
+The <b>cg_galleries_ecommerce</b> shortcode type <b>can be used only once per page.</b></span>
     </div>
 </div>
 HEREDOC;
@@ -285,7 +305,7 @@ foreach($selectSQL as $value){
     echo "<div class='td_gallery_info_content'>";
 
         echo "<div class='td_gallery_info_name'><p>Gallery name<br>$GalleryName</p><a class='cg_load_backend_link' href=\"?page=".cg_get_version()."/index.php&edit_options=true&option_id=".$option_id."&cg_go_to=cgEditGalleryNameRow\" ><div class='td_gallery_info_name_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div></a></div>";
-    echo "<div class='td_gallery_info_shortcode'><p>Gallery shortcode<br><strong><span class='td_gallery_info_name_span'>[cg_gallery id=\"".$option_id."\"]</span></strong></p><div class='td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div></div>";
+    echo "<div class='td_gallery_info_shortcode'><p>Gallery shortcode<br><strong><span class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip'>[cg_gallery id=\"".$option_id."\"]</span></strong></p><div class='td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div></div>";
     // echo "<div class='cg_shortcode_parent tg_gallery_info_shortcode'>Shortcode: <span class='cg_main_menu_shortcode cg_shortcode_copy_text'>[cg_gallery id=\"".$option_id."\"]</span><div class=\"cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip\"></div></div>";
 
     echo "</div>";

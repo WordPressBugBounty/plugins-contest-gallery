@@ -65,6 +65,14 @@ if(!function_exists('cg_get_correct_rating_overview')){
         $tablenameIP = $wpdb->prefix ."contest_gal1ery_ip";
         $tablenameComments = $wpdb->prefix . "contest_gal1ery_comments";
 
+        $wp_upload_dir = wp_upload_dir();
+
+        $options = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/'.$GalleryID.'-options.json';
+        $options = json_decode(file_get_contents($options),true);
+        if(!empty($options[$GalleryID])){
+            $options = $options[$GalleryID];
+        }
+
         $RatingOverview = $wpdb->get_results( $wpdb->prepare(
             "
                                         SELECT pid, RatingS, Rating
@@ -165,6 +173,16 @@ if(!function_exists('cg_get_correct_rating_overview')){
             }
         }
 
+        // this condition added later in version 28.1.2.2
+        // then $CommentsOverview has to be added. Because before version 16 comments might be inserted
+        // But with and after 16 no comments inserted in database till version 23.1.2. In 23.1.3 inserted again.
+        // Between 16 and 23.1.2 $CommentsOverview will be always 0, but also good for case if before 16.
+        // comments will be inserted since 23.1.3, because of allocation correction, but also in dir, so what in dir counts in generally
+        $toAdd = false;
+        if(cg_format_options_version($options['general']['Version'])>16 && cg_format_options_version($options['general']['Version'])<23.13){
+            $toAdd = true;
+        }
+
         // process now comments data since 16.0.0
         //$fileImageComment = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/image-comments/ids/'.$row->pid.'/'.$commentId.'.json';
         if(is_dir($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/image-comments/ids')){
@@ -185,7 +203,7 @@ if(!function_exists('cg_get_correct_rating_overview')){
                     }
 
                     // add database entries if existed
-                    if(!empty($processedDatabaseComments[$imageId])){
+                    if(!empty($processedDatabaseComments[$imageId]) && $toAdd){
                         $RatingOverviewArray[$imageId]['CountC'] = $fileImageCommentDirCount+$processedDatabaseComments[$imageId];
                     }
 

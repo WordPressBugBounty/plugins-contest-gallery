@@ -3,7 +3,7 @@
 if (!function_exists('contest_gal1ery_user_comment_mail'))   {
     function contest_gal1ery_user_comment_mail($selectSQLemailUserComment,$Msg,$galeryID,$to) {
 
-        $Subject = contest_gal1ery_convert_for_html_output($selectSQLemailUserComment->Subject);
+        $Subject = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserComment->Subject);
         $Header = $selectSQLemailUserComment->Header;
         $Reply = $selectSQLemailUserComment->Reply;
         $cc = $selectSQLemailUserComment->CC;

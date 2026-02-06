@@ -60,7 +60,7 @@ if(!function_exists('cg_ecommerce_sale_activate')){
                 var_dump($EcommerceEntry);*/
 
                 cg_move_file_from_ecommerce_sale_folder($realId, $GalleryID,$EcommerceEntry);
-            } else if($sqlObjectFileEcommerceEntry->IsDownload && $SaleType=='download' && !empty($removedWpUploadIdsFromSale)){
+            } elseif($sqlObjectFileEcommerceEntry->IsDownload && $SaleType=='download' && !empty($removedWpUploadIdsFromSale)){
 				//var_dump('move here!!!');
 		        cg_move_file_from_ecommerce_sale_folder($realId, $GalleryID, $EcommerceEntry, $removedWpUploadIdsFromSale);
             }
@@ -92,8 +92,12 @@ if(!function_exists('cg_ecommerce_sale_activate')){
         $htaccessFileContent = <<<HEREDOC
 #Do not remove htaccess in this folder. It prevents for getting files which are selected for sale from getting from outside.
 <Files "*">
-   order deny,allow
-   deny from all
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Deny from all
+  </IfModule>
 </Files>
 HEREDOC;
 

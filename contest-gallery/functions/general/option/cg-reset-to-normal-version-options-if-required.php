@@ -54,9 +54,9 @@ if(!function_exists('cg_reset_to_normal_version_options_if_required')){
 
                     $wpdb->update(
                         "$tablename_registry_and_login_options",
-                        array('LostPasswordMailActive' => 0),
+                        array('LostPasswordMailActive' => 0,'ConfirmExpiry' => 0,'PinExpiry' => 0,'LoginAfterConfirm' => 0),
                         array('GeneralID' => 1),
-                        array('%d'),
+                        array('%d','%d','%d','%d'),
                         array('%d')
                     );
 
@@ -87,7 +87,7 @@ if(!function_exists('cg_reset_to_normal_version_options_if_required')){
 
                     $optionsPro = array('VotesPerCategory' => 0, 'RegUserMaxUpload' => 0, 'RegUserGalleryOnly' => 0, 'ShowNickname' => 0,
                         'VoteMessageSuccessActive' => 0, 'VoteMessageWarningActive' => 0, 'MinusVote' => 0, 'ForwardAfterLoginUrlCheck' => 0, 'ForwardAfterLoginTextCheck' => 0, 'VotesInTime' => 0,
-                        'HideRegFormAfterLogin' => 0, 'HideRegFormAfterLoginShowTextInstead' => 0, 'FbLikeNoShare' => 0, 'FbLikeOnlyShare' => 0,'VoteNotOwnImage' => 0,
+                        'FbLikeNoShare' => 0, 'FbLikeOnlyShare' => 0,'VoteNotOwnImage' => 0,
                         'RegMailOptional' => 0, 'CustomImageName' => 0, 'CommNoteActive' => 0, 'ShowProfileImage' => 0,
                         'AllowUploadPNG' => 0, 'AllowUploadGIF' => 0,'AdditionalFilesCount' => 2, 'ReviewComm' => 0,'InformAdminAllowActivateDeactivate' => 0,
                         'ConsentYoutube' => 0, 'ConsentTwitter' => 0, 'ConsentInstagram' => 0, 'ConsentTikTok' => 0
@@ -95,7 +95,7 @@ if(!function_exists('cg_reset_to_normal_version_options_if_required')){
 
                     $optionsProParameters = array('%d', '%d', '%d', '%d',
                         '%d', '%d', '%d', '%d', '%d','%d',
-                        '%d', '%d', '%d', '%d', '%d',
+                        '%d', '%d', '%d',
                         '%d', '%d', '%d', '%d',
                         '%d', '%d', '%d', '%d', '%d',
                         '%d', '%d', '%d', '%d');

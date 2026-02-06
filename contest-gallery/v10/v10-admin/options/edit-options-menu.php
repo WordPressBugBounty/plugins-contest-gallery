@@ -23,9 +23,9 @@ $isEditTranslationsOnly = false;
 $isEditEcommerceOnly = false;
 if(empty($_POST['cg_edit_translations']) && empty($_POST['cg_edit_ecommerce']) && empty($_GET['cg_edit_translations']) && empty($_GET['cg_edit_ecommerce'])){
     $isEditOptionsOnly = true;
-}else if(!empty($_POST['cg_edit_translations']) || !empty($_GET['cg_edit_translations'])){
+}elseif(!empty($_POST['cg_edit_translations']) || !empty($_GET['cg_edit_translations'])){
     $isEditTranslationsOnly = true;
-}else if(!empty($_POST['cg_edit_ecommerce']) || !empty($_GET['cg_edit_ecommerce'])){
+}elseif(!empty($_POST['cg_edit_ecommerce']) || !empty($_GET['cg_edit_ecommerce'])){
     $isEditEcommerceOnly = true;
 }
 if($isEditOptionsOnly){
@@ -45,9 +45,9 @@ if($isEditOptionsOnly){
                          <div class='cg_view_select' cg-data-view="#view6" data-count="6"><a class="cg_view_select_link" cg-data-view="#view6" cg-data-href="cgViewHelper6">Admin mail</a></div>
                         <div class='cg_view_select' cg-data-view="#view7" data-count="7"><a class="cg_view_select_link" cg-data-view="#view7" cg-data-href="cgViewHelper7">Activation mail</a></div>
                           <div class='cg_view_select cg_view_select_icons' cg-data-view="#view18" data-count="18"><a class="cg_view_select_link" cg-data-view="#view18" cg-data-href="cgViewHelper18">PDF</a></div>
-                          <div class='cg_view_select cg_view_select_icons' cg-data-view="#view8" data-count="8"><a class="cg_view_select_link" cg-data-view="#view8" cg-data-href="cgViewHelper8">Icons</a></div>
                 </div>
 HEREDOC;
+// <div class='cg_view_select cg_view_select_icons' cg-data-view="#view8" data-count="8"><a class="cg_view_select_link" cg-data-view="#view8" cg-data-href="cgViewHelper8">Icons</a></div>
 
     echo <<<HEREDOC
                 <div id="cg_main_options_tab_second_row">
@@ -84,9 +84,10 @@ echo <<<HEREDOC
                         <div class='cg_view_select' cg-data-view="#view5" data-count="5"><a class="cg_view_select_link" cg-data-view="#view5" cg-data-href="cgViewHelper5">Upload</a></div>
                          <div class='cg_view_select' cg-data-view="#view6" data-count="6"><a class="cg_view_select_link" cg-data-view="#view6" cg-data-href="cgViewHelper6">Admin mail</a></div>
                         <div class='cg_view_select' cg-data-view="#view7" data-count="7"><a class="cg_view_select_link" cg-data-view="#view7" cg-data-href="cgViewHelper7">Activation mail</a></div>
-                          <div class='cg_view_select' cg-data-view="#view8" data-count="8"><a class="cg_view_select_link" cg-data-view="#view8" cg-data-href="cgViewHelper8">Icons</a></div>
                 </div>
 HEREDOC;
+//<div class='cg_view_select' cg-data-view="#view8" data-count="8"><a class="cg_view_select_link" cg-data-view="#view8" cg-data-href="cgViewHelper8">Icons</a></div>
+
         echo <<<HEREDOC
                 <div id="cg_main_options_tab_second_row">
                     <div id="cg_main_options_tab_second_row_inner" class="cg_main_options_tab_row">
@@ -103,7 +104,7 @@ HEREDOC;
                 </div>
 HEREDOC;
     }
-}else if($isEditTranslationsOnly){
+}elseif($isEditTranslationsOnly){
 
     $styleTabContents = "style='border-radius:none !important;position:relative;'";
     echo <<<HEREDOC
@@ -124,7 +125,7 @@ HEREDOC;
                 </div>
 HEREDOC;
 
-}else if($isEditEcommerceOnly){
+}elseif($isEditEcommerceOnly){
     $styleTabContents = "style='border-radius:none !important;position:relative;'";
     echo <<<HEREDOC
     <div id="cg_main_options" class="cg_main_options cg_hidden">
@@ -321,12 +322,12 @@ HEREDOC;
         echo "</div>";
     }
 
-    echo <<<HEREDOC
+    /*echo <<<HEREDOC
             <h4 id="view8" class="cg_view_header">Icons</h4>
             <div class="cg_view cgViewHelper8" >
 HEREDOC;
     include(__DIR__.'/views-content/view-icons-options.php');
-    echo "</div>";
+    echo "</div>";*/
 
     echo <<<HEREDOC
             <h4 id="view20" class="cg_view_header">Social embed</h4>

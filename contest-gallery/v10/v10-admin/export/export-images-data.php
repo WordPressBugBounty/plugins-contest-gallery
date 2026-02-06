@@ -37,7 +37,7 @@ if(!function_exists('cg_images_data_csv_export')){
         $Manipulate = $proOptions->Manipulate;
         $selectSQLall = $wpdb->get_results($wpdb->prepare( "SELECT * FROM $tablename WHERE GalleryID = %d ORDER BY id DESC",[$GalleryID]));
 
-        $selectFormInput = $wpdb->get_results($wpdb->prepare(  "SELECT id, Field_Type, Field_Order, Field_Content FROM $tablename_f_input WHERE GalleryID = %d AND (Field_Type = 'fbt-f' OR Field_Type = 'fbd-f' OR Field_Type = 'url-f' OR Field_Type = 'check-f' OR Field_Type = 'text-f' OR Field_Type = 'comment-f' OR Field_Type ='email-f' OR Field_Type ='select-f' OR Field_Type ='selectc-f' OR Field_Type ='url-f' OR Field_Type ='date-f') ORDER BY Field_Order ASC" ,[$GalleryID]));
+        $selectFormInput = $wpdb->get_results($wpdb->prepare(  "SELECT id, Field_Type, Field_Order, Field_Content FROM $tablename_f_input WHERE GalleryID = %d AND (Field_Type = 'fbt-f' OR Field_Type = 'fbd-f' OR Field_Type = 'url-f' OR Field_Type = 'check-f' OR Field_Type = 'text-f' OR Field_Type = 'radio-f' OR Field_Type = 'chk-f' OR Field_Type = 'comment-f' OR Field_Type ='email-f' OR Field_Type ='select-f' OR Field_Type ='selectc-f' OR Field_Type ='url-f' OR Field_Type ='date-f') ORDER BY Field_Order ASC" ,[$GalleryID]));
 
         $selectAllGalleryVotes = $wpdb->get_results($wpdb->prepare( "
                 SELECT pid, Rating, RatingS
@@ -365,6 +365,18 @@ if(!function_exists('cg_images_data_csv_export')){
                     $n=0;
                 }
 
+                if(@$formvalue=='radio-f'){$fieldtype="ra"; $n=1; continue;}
+                if(@$fieldtype=="ra" AND $n==1){$formFieldId=$formvalue; $n=2; continue;}
+                if(@$fieldtype=="ra" AND $n==2){$fieldOrder=$formvalue; $n=3; continue;}
+                if (@$fieldtype=='ra' AND $n==3) {
+
+                    $csvData[$i][$r]="$formvalue";
+                    $selectFormIdArrayAndRow[$formFieldId] = $r;
+                    $r++;
+
+                    $n=0;
+                }
+
 
                 if(@$formvalue=='url-f'){$fieldtype="url"; $n=1; continue;}
                 if(@$fieldtype=="url" AND $n==1){$formFieldId=$formvalue; $n=2; continue;}
@@ -657,7 +669,7 @@ if(!function_exists('cg_images_data_csv_export')){
                     }
                     if(!empty($ExifData['MakeAndModel'])){
                         $MakeAndModel = $ExifData['MakeAndModel'];
-                    }else if(!empty($ExifData['Model'])){
+                    }elseif(!empty($ExifData['Model'])){
                         $MakeAndModel = $ExifData['Model'];
                     }
                     if(!empty($ExifData['ApertureFNumber'])){
@@ -722,9 +734,9 @@ if(!function_exists('cg_images_data_csv_export')){
                     //    var_dump($value_entries);
                         $csvData[$i][$emailFieldCsvNumber]=$value_entries->Short_Text;
                     }
-                    else if($fieldType=="comment-f"){$csvData[$i][$selectFormIdArrayAndRow[$value_entries->f_input_id]]=$value_entries->Long_Text;}
-                    else if($fieldType=="check-f"){$csvData[$i][$selectFormIdArrayAndRow[$value_entries->f_input_id]]=($value_entries->Checked==1) ? 'checked' : 'not checked';}
-                    else if($fieldType=="date-f"){
+                    elseif($fieldType=="comment-f"){$csvData[$i][$selectFormIdArrayAndRow[$value_entries->f_input_id]]=$value_entries->Long_Text;}
+                    elseif($fieldType=="check-f"){$csvData[$i][$selectFormIdArrayAndRow[$value_entries->f_input_id]]=($value_entries->Checked==1) ? 'checked' : 'not checked';}
+                    elseif($fieldType=="date-f"){
 
                         $newDateTimeString = '';
 
@@ -902,6 +914,7 @@ if(!function_exists('cg_images_data_csv_export')){
 
         $filename = $code."_userdata.csv";*/
 
+        $csvData = cg_neutralize_csv_array($csvData);
 
         $filename = "cg-images-data-gallery-id-$GalleryID.csv";
 

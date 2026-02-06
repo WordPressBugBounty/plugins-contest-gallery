@@ -177,7 +177,7 @@ if(empty($Order)){
 
                 if(!empty($result['latest_charge']['amount_refunded']) && $result['latest_charge']['amount_refunded'] == $result['latest_charge']['amount_refunded']){
 	                $status = 'refunded';
-                }else if(!empty($result['latest_charge']['amount_refunded']) && $result['latest_charge']['amount_refunded'] != $result['latest_charge']['amount_refunded']){
+                }elseif(!empty($result['latest_charge']['amount_refunded']) && $result['latest_charge']['amount_refunded'] != $result['latest_charge']['amount_refunded']){
 	                $status = 'partially refunded';
                 }
 
@@ -233,7 +233,7 @@ if(empty($Order)){
 				}
 
 			}
-		}else if($Order->PaymentType == 'paypal'){
+		}elseif($Order->PaymentType == 'paypal'){
 
             if($Order->IsTest){
                 $accessToken = cg_paypal_get_access_token($ecommerceOptions['PayPalSandboxClientId'],$ecommerceOptions['PayPalSandboxSecret'],true);
@@ -246,7 +246,7 @@ if(empty($Order)){
                 echo "<div  id='mainCGdivOrderContainer'  class='mainCGdivOrderContainer'>
     <p style='text-align: center;margin:10px;'>No internet connection</p>
     </div>"; return;
-            }else if($accessToken=='error'){
+            }elseif($accessToken=='error'){
                 //Access Token could not be created. Wrong client id or wrong secret.
                 echo "<div  id='mainCGdivOrderContainer' class='mainCGdivOrderContainer' >
     <p style='text-align: center;margin:10px;'>PayPal client authentication failed</p>

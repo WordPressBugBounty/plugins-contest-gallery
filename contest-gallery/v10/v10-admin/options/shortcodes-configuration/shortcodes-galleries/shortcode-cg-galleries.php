@@ -193,28 +193,68 @@ if($galleryDbVersion>=24){
         </div>
     </div>
 HEREDOC;
-    // GalleryPageRedirectURL
-/*
-	$galleriesOptions['g']['GalleryPageRedirectURL'] = contest_gal1ery_convert_for_html_output_without_nl2br($galleriesOptions['g']['GalleryPageRedirectURL']);
 
-	$slugName = (!empty($CgEntriesOwnSlugNameGalleries)) ? $CgEntriesOwnSlugNameGalleries : 'contest-galleries';
+}
 
-	$page = get_page_by_path( $slugName, OBJECT, 'page');
-	$pageGalleryExample = (!empty($page)) ? get_permalink($page->ID).'/contest-gallery-{gallery id}' : '/contest-gallery-{gallery id}';
+// only json option, not in database available
+if(!isset($galleriesOptions['g']['HeaderWpPageGalleries'])){
+    $HeaderWpPageGalleries = "";
+}else{
+    $HeaderWpPageGalleries = contest_gal1ery_convert_for_html_output_without_nl2br($galleriesOptions['g']['HeaderWpPageGalleries']);
+}
 
-	echo <<<HEREDOC
+echo <<<HEREDOC
     <div class='cg_view_options_row'>
-        <div class='cg_view_option cg_view_option_full_width cg_border_top_none  '>
+        <div class='cg_view_option cg_view_option_full_width  cg_border_top_none '>
             <div class='cg_view_option_title '>
-                <p>Redirect URL for all cg_gallery shortcode type of pages of Contest Gallery<br><span class="cg_view_option_title_note">The cg_gallery shortcodes type of pages are<br><b>$pageGalleryExample</b><br>(But you can place the cg_gallery_{gallery id} also on any other page)<br>If Redirect URL is set, then HTTP 301 redirect will be executed if a <b>$pageGalleryExample</b> URL gets called<br><span class="cg_font_weight_500">NOTE: </span> has to start with <span class="cg_font_weight_500">http://</span> or <span class="cg_font_weight_500">https://</span>, like https://www.example.com</span><br><b>"Redirect URL for parent site of Contest Gallery entries"</b> in <b>"Gallery view"</b> will overwrite this setting</p>
+                <p>Header tracking code on galleries landing page<br><span class="cg_view_option_title_note">Paste your tracking scripts here —<br>for example Google Tag Manager, Google Analytics, or Meta Pixel.<br>The code will be added inside the &lt;head&gt; section of galleries landing page.</span></p>
             </div>
-            <div class='cg_view_option_input '>
-                <input type="text" name='cg_galleries[g][GalleryPageRedirectURL]' class="GalleryPageRedirectURL"  value="{$galleriesOptions['g']['GalleryPageRedirectURL']}"  >
+            <div class='cg_view_option_textarea' >
+                <textarea type="text" name="cg_galleries[g][HeaderWpPageGalleries]" rows="7" style="width:100%;" class="HeaderWpPageGalleries"  >$HeaderWpPageGalleries</textarea>
             </div>
         </div>
     </div>
-HEREDOC;*/
+HEREDOC;
+
+// only json option, not in database available
+if(!isset($galleriesOptions['g']['TextBeforeWpPageGalleries'])){
+    $TextBeforeWpPageGalleries = "";
+}else{
+    $TextBeforeWpPageGalleries = contest_gal1ery_convert_for_html_output_without_nl2br($galleriesOptions['g']['TextBeforeWpPageGalleries']);
 }
+
+echo <<<HEREDOC
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="wp-TextBeforeWpPageGalleries-wrap-Container">
+        <div class='cg_view_option_title'>
+            <p>General text on galleries landing page before galleries<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of gallery landing page.<br><span class="cg_font_weight_500">NOTE: </span>appears only on gallery landing page, not if cg_galleries... shortcode is used on another page.</span></p>
+        </div>
+        <div class='cg_view_option_html'>
+            <textarea class='cg-wp-editor-template' name='cg_galleries[g][TextBeforeWpPageGalleries]'  id='TextBeforeWpPageGalleries'>$TextBeforeWpPageGalleries</textarea>
+        </div>
+    </div>
+</div>
+HEREDOC;
+
+// only json option, not in database available
+if(!isset($galleriesOptions['g']['TextAfterWpPageGalleries'])){
+    $TextAfterWpPageGalleries = "";
+}else{
+    $TextAfterWpPageGalleries = contest_gal1ery_convert_for_html_output_without_nl2br($galleriesOptions['g']['TextAfterWpPageGalleries']);
+}
+
+echo <<<HEREDOC
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="wp-TextAfterWpPageGalleries-wrap-Container">
+        <div class='cg_view_option_title'>
+            <p>General text on galleries landing page after galleries<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of gallery landing page.<br><span class="cg_font_weight_500">NOTE: </span>appears only on gallery landing page, not if cg_galleries... shortcode is used on another page.</span></p>
+        </div>
+        <div class='cg_view_option_html'>
+            <textarea class='cg-wp-editor-template' name='cg_galleries[g][TextAfterWpPageGalleries]'  id='TextAfterWpPageGalleries'>$TextAfterWpPageGalleries</textarea>
+        </div>
+    </div>
+</div>
+HEREDOC;
 
 if(!empty($galleriesOptions['g']['GalleriesPagesNoIndex'])){
 	$GalleriesPagesNoIndex = 'checked';

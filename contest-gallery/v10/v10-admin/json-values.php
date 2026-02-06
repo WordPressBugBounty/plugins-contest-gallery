@@ -74,7 +74,6 @@ $FullSizeImageOutGallery = 0;
 $FullSizeImageOutGalleryNewTab = 0;
 $Inform = 0;
 $InformAdmin = 0;
-$TimestampPicDownload = 0;
 
 $ThumbLook = 1;
 $AdjustThumbLook = 1;
@@ -281,6 +280,8 @@ $AllowRatingForGalleryEcommerce = 1;
 $VoteMessageSuccessText = '';
 $VoteMessageWarningText = '';
 
+$VotesPerUserAllVotesUsedHtmlMessage = '';
+
 // JSON only, no database option
 $ShowTextUntilAnImageAdded = '<p><b>This text is visible until first entry appears in the gallery.</b>
 <br/>This text can be configurated in "Edit options" >>> "Gallery view options" >>> "This text is visible until first entry appears in the gallery"
@@ -299,6 +300,9 @@ $EnableSwitchStyleImageViewButton = 1;
 $SwitchStyleImageViewButtonOnlyImageView = 0;
 
 $ThankVote = 1;
+$ShowPinFormVoting = 0;
+$ShowPinFormUploading = 0;
+$AllowedUsersToVote = '';
 
 $GoogleSignInUserUploadOnlyText = 'Please sign in via Google to upload your files.';
 
@@ -322,4 +326,4 @@ if(cg_get_version()=='contest-gallery-pro'){$AdditionalFilesCount = 9;}
 
 
 // version 21 release values here
-include ('json-values-21-version-release.php');
+include ('json-values-21-version-release-and-later.php');

@@ -93,8 +93,21 @@ else {
         $isMultipleFilesDelete = false;
 
         $DeleteFromStorageIfDeletedInFrontend = $wpdb->get_var("SELECT DeleteFromStorageIfDeletedInFrontend FROM $tablename_pro_options WHERE GalleryID = '$galeryID'");
-        $MultipleFilesFromUserFrontendDelete = $wpdb->get_var("SELECT MultipleFiles FROM $tablename WHERE id = '$pictureID'");
+        $entryRow = $wpdb->get_row("SELECT MultipleFiles FROM $tablename WHERE id = '$pictureID'");
 
+        if(!empty($entryRow->EcommerceEntry)){
+            ?>
+            <script data-cg-processing="true">
+
+                var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
+                cgJsClass.gallery.function.message.showPro(galeryIDuser,'Entries which are activated for selling can not be deleted.<br>Deactivate entries for sale in "Sales settings" area first.');
+
+            </script>
+            <?php
+            return;
+        }
+
+        $MultipleFilesFromUserFrontendDelete = $entryRow->MultipleFiles;
         $MultipleFilesToDelete = [];
 
         if(!empty($MultipleFilesFromUserFrontendDelete)){

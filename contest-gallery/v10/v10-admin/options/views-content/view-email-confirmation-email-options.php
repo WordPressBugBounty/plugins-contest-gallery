@@ -38,7 +38,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_view_option_100_percent $cgProFalse" id="mConfirmSendConfirmContainer">
                 <div class="cg_view_option_title">
-                    <p>Activate this confirmation e-mail<br><span class="cg_view_option_title_note"><span class="cg_color_red">NOTE:</span> relating testing - e-mail where is send to should not contain $cgYourDomainName.<br>Many servers can not send to own domain.</span></span></p>
+                    <p>Activate this confirmation e-mail<br><span class="cg_view_option_title_note">$cgDomainErrorText</span></p>
                 </div>
                 <div class="cg_view_option_checkbox">
                     <input type="checkbox" name="mConfirmSendConfirm" id="mConfirmSendConfirm" value="1" $mConfirmSendConfirm >
@@ -110,7 +110,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse'  id="wp-mConfirmContent-wrap-Container" >
                     <div class='cg_view_option_title cg_copyable'>
-                        <p>Mail content<br><span class="cg_view_option_title_note">Put this variable in the mail content editor: <span style="font-weight:bold;user-select: all;">\$url$</span><br>Link to confirmation page will appear in the e-mail then<br><a href="https://www.contest-gallery.com/documentation/#cgDisplayConfirmationURL" target="_blank" class="cg-documentation-link">Documentation: How to make the link clickable in e-mail</a></span></p>
+                        <p>Email content<br><span class="cg_view_option_title_note">Put this variable in the email content editor: <span style="font-weight:bold;user-select: all;" class="cg_tooltip cg_copy_param">\$url$</span><br>Link to confirmation page will appear in the e-mail then<br><a href="https://www.contest-gallery.com/documentation/#cgDisplayConfirmationURL" target="_blank" class="cg-documentation-link">Documentation: How to make the link clickable in e-mail</a></span></p>
                     </div>
                     <div class='cg_view_option_html'>
                         <textarea class='cg-wp-editor-template' id='mConfirmContent'  name='mConfirmContent'>$mConfirmContent</textarea>

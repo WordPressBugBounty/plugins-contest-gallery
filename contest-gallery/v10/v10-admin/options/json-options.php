@@ -44,7 +44,10 @@ $ForwardAfterLoginTextCheck = 1;
 $ForwardAfterLoginText = $ForwardAfterLoginText;
 
 $TextEmailConfirmation = $TextEmailConfirmation;
+$TextPinConfirmation = $TextPinConfirmation;
+$RegPinSubject = $RegPinSubject;
 $TextAfterEmailConfirmation = $TextAfterEmailConfirmation;
+$TextAfterPinConfirmation = $TextAfterPinConfirmation;
 
 $RegMailAddressor = $RegMailAddressor;
 $RegMailReply = $RegMailReply;
@@ -79,6 +82,7 @@ $jsonOptions['visual']['FeControlsStyleUpload'] = $FeControlsStyleUpload;
 $jsonOptions['visual']['FeControlsStyleRegistry'] = $FeControlsStyleRegistry;
 $jsonOptions['visual']['FeControlsStyleLogin'] = $FeControlsStyleLogin;
 $jsonOptions['visual']['GalleryStyle'] = $GalleryStyle;
+$jsonOptions['visual']['FeVotingIconType'] = $FeVotingIconType;
 $jsonOptions['visual']['AllowSortOptions'] = $AllowSortOptions;
 $jsonOptions['visual']['BlogLook'] = $BlogLook;
 $jsonOptions['visual']['BlogLookOrder'] = $BlogLookOrder;
@@ -253,7 +257,9 @@ $jsonOptions['pro']['ForwardAfterLoginUrl'] = $ForwardAfterLoginUrl;
 $jsonOptions['pro']['ForwardAfterLoginTextCheck'] = $ForwardAfterLoginTextCheck;
 $jsonOptions['pro']['ForwardAfterLoginText'] = $ForwardAfterLoginText;
 $jsonOptions['pro']['TextEmailConfirmation'] = $TextEmailConfirmation;
+$jsonOptions['pro']['TextPinConfirmation'] = $TextPinConfirmation;
 $jsonOptions['pro']['TextAfterEmailConfirmation'] = $TextAfterEmailConfirmation;
+$jsonOptions['pro']['TextAfterPinConfirmation'] = $TextAfterPinConfirmation;
 $jsonOptions['pro']['RegMailAddressor'] = $RegMailAddressor;
 $jsonOptions['pro']['RegMailReply'] = $RegMailReply;
 $jsonOptions['pro']['RegMailSubject'] = $RegMailSubject;
@@ -307,6 +313,8 @@ $jsonOptions['pro']['VoteMessageWarningActive'] = $VoteMessageWarningActive;
 $jsonOptions['pro']['VoteMessageSuccessText'] = $VoteMessageSuccessText;
 $jsonOptions['pro']['VoteMessageWarningText'] = $VoteMessageWarningText;
 
+$jsonOptions['pro']['VotesPerUserAllVotesUsedHtmlMessage'] = !empty($VotesPerUserAllVotesUsedHtmlMessage) ? $VotesPerUserAllVotesUsedHtmlMessage : '';
+
 $jsonOptions['visual']['CommentsDateFormat'] = $CommentsDateFormat;
 $jsonOptions['visual']['ShowDateFormat'] = $ShowDateFormat;
 $jsonOptions['general']['HideCommentNameField'] = $HideCommentNameField;
@@ -338,6 +346,11 @@ if(!empty($ThirdTitleGalleriesView)){
 }else{
 	$jsonOptions['pro']['ThirdTitleGalleriesView'] = '';// has to be simply set for other type galleries processing
 }
+if(!empty($MainTitleGalleriesView)){
+    $jsonOptions['pro']['MainTitleGalleriesView'] = $MainTitleGalleriesView;
+}else{
+    $jsonOptions['pro']['MainTitleGalleriesView'] = '';// has to be simply set for other type galleries processing
+}
 
 $jsonOptions['pro']['AllowUploadJPG'] = $AllowUploadJPG;
 $jsonOptions['pro']['AllowUploadPNG'] = $AllowUploadPNG;
@@ -351,12 +364,16 @@ $jsonOptions['pro']['PdfPreviewBackend'] = $PdfPreviewBackend;
 $jsonOptions['pro']['PdfPreviewFrontend'] = $PdfPreviewFrontend;
 
 $jsonOptions['visual']['ThankVote'] = $ThankVote;
+$jsonOptions['visual']['ShowPinFormVoting'] = $ShowPinFormVoting;
+$jsonOptions['visual']['ShowPinFormUploading'] = $ShowPinFormUploading;
 
 $jsonOptions['visual']['EnableSwitchStyleGalleryButton'] = $EnableSwitchStyleGalleryButton;
 $jsonOptions['visual']['SwitchStyleGalleryButtonOnlyTopControls'] = $SwitchStyleGalleryButtonOnlyTopControls;
 $jsonOptions['visual']['ShareButtons'] = $ShareButtons;
 $jsonOptions['visual']['TextBeforeWpPageEntry'] = $TextBeforeWpPageEntry;
+$jsonOptions['visual']['TextBeforeWpPageParent'] = $TextBeforeWpPageParent;
 $jsonOptions['visual']['TextAfterWpPageEntry'] = $TextAfterWpPageEntry;
+$jsonOptions['visual']['TextAfterWpPageParent'] = $TextAfterWpPageParent;
 $jsonOptions['visual']['ForwardToWpPageEntry'] = $ForwardToWpPageEntry;
 $jsonOptions['visual']['ForwardToWpPageEntryInNewTab'] = $ForwardToWpPageEntryInNewTab;
 $jsonOptions['visual']['ShowBackToGalleryButton'] = $ShowBackToGalleryButton;
@@ -365,6 +382,8 @@ $jsonOptions['visual']['BackToGalleryButtonText'] = $BackToGalleryButtonText;
 $jsonOptions['visual']['TextDeactivatedEntry'] = $TextDeactivatedEntry;
 $jsonOptions['visual']['AdditionalCssEntryLandingPage'] = $AdditionalCssEntryLandingPage;
 $jsonOptions['visual']['AdditionalCssGalleryPage'] = $AdditionalCssGalleryPage;
+$jsonOptions['visual']['HeaderWpPageEntry'] = $HeaderWpPageEntry;// since 28.0.4
+$jsonOptions['visual']['HeaderWpPageParent'] = $HeaderWpPageParent;// since 28.0.5
 
 $jsonOptions['visual']['EnableSwitchStyleImageViewButton'] = $EnableSwitchStyleImageViewButton;
 $jsonOptions['visual']['SwitchStyleImageViewButtonOnlyImageView'] = $SwitchStyleImageViewButtonOnlyImageView;

@@ -1,307 +1,1339 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Contest Gallery\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-08 10:33+0000\n"
-"PO-Revision-Date: 2018-03-08 13:08+0000\n"
-"Last-Translator: admin <admin@127.0.0.1>\n"
-"Language-Team: Swedish\n"
+"POT-Creation-Date: 2025-11-30 20:12+0100\n"
+"PO-Revision-Date: 2025-11-30 20:13+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
 "Language: sv_SE\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Loco https://localise.biz/"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.4.2\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: index.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;"
+"_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
 
-#: index.php:2103
+#: check-language-ecommerce.php:41
+msgid "Buy now"
+msgstr "Köp nu"
+
+#: check-language-ecommerce.php:43
+msgid "Add to cart"
+msgstr "Lägg i varukorgen"
+
+#: check-language-ecommerce.php:45
+msgid "Shopping cart"
+msgstr "Varukorg"
+
+#: check-language-ecommerce.php:47
+msgid "Close shopping cart"
+msgstr "Stäng varukorgen"
+
+#: check-language-ecommerce.php:49
+msgid "Invoice"
+msgstr "Faktura"
+
+#: check-language-ecommerce.php:51
+msgid "Download invoice"
+msgstr "Ladda ner faktura"
+
+#: check-language-ecommerce.php:53
+msgid "Billing address different from delivery address?"
+msgstr "Är fakturaadressen annan än leveransadressen?"
+
+#: check-language-ecommerce.php:55
+msgid "Country"
+msgstr "Land"
+
+#: check-language-ecommerce.php:57
+msgid "Price"
+msgstr "Pris"
+
+#: check-language-ecommerce.php:59
+msgid "Quantity"
+msgstr "Antal"
+
+#: check-language-ecommerce.php:61
+msgid "Shipping"
+msgstr "Frakt"
+
+#: check-language-ecommerce.php:63 check-language-ecommerce.php:65
+msgid "Alternative shipping"
+msgstr "Alternativ frakt"
+
+#: check-language-ecommerce.php:67
+msgid "Alternative shipping costs"
+msgstr "Alternativa fraktkostnader"
+
+#: check-language-ecommerce.php:69
+msgid "Standard shipping costs"
+msgstr "Standardfraktkostnader"
+
+#: check-language-ecommerce.php:71
+msgid "Free shipping"
+msgstr "Fri frakt"
+
+#: check-language-ecommerce.php:73 check-language.php:128
+msgid "Download"
+msgstr "Ladda ner"
+
+#: check-language-ecommerce.php:75
+msgid "Please check agreement"
+msgstr "Vänligen godkänn villkoren"
+
+#: check-language-ecommerce.php:77
+msgid "Shipping country not allowed"
+msgstr "Leverans till detta land är inte tillåten"
+
+#: check-language-ecommerce.php:80
+msgid "Select country"
+msgstr "Välj land"
+
+#: check-language-ecommerce.php:82
+msgid "Shipping only possible for the following countries"
+msgstr "Frakt är endast möjlig till följande länder"
+
+#: check-language-ecommerce.php:84
+msgid "Shipping address"
+msgstr "Leveransadress"
+
+#: check-language-ecommerce.php:88
+msgid "Billing address"
+msgstr "Fakturaadress"
+
+#: check-language-ecommerce.php:90
+msgid "First Name"
+msgstr "Förnamn"
+
+#: check-language-ecommerce.php:92
+msgid "Last Name"
+msgstr "Efternamn"
+
+#: check-language-ecommerce.php:94
+msgid "Company"
+msgstr "Företag"
+
+#: check-language-ecommerce.php:96
+msgid "Address Line 1"
+msgstr "Adressrad 1"
+
+#: check-language-ecommerce.php:98
+msgid "Address Line 2"
+msgstr "Adressrad 2"
+
+#: check-language-ecommerce.php:100
+msgid "City"
+msgstr "Stad"
+
+#: check-language-ecommerce.php:102
+msgid "Postal Code"
+msgstr "Postnummer"
+
+#: check-language-ecommerce.php:104
+msgid "Select state/territory"
+msgstr "Välj stat/region"
+
+#: check-language-ecommerce.php:106
+msgid "Billing address identical to delivery address"
+msgstr "Fakturaadress är samma som leveransadress"
+
+#: check-language-ecommerce.php:108
+msgid "Date of invoice"
+msgstr "Fakturadatum"
+
+#: check-language-ecommerce.php:110
+msgid "Payment date"
+msgstr "Betalningsdatum"
+
+#: check-language-ecommerce.php:112
+msgid "Paid via"
+msgstr "Betalt via"
+
+#: check-language-ecommerce.php:114
+msgid "PayPal"
+msgstr "PayPal"
+
+#: check-language-ecommerce.php:116
+msgid "Stripe"
+msgstr "Stripe"
+
+#: check-language-ecommerce.php:118
+msgid "Nr."
+msgstr "Nr."
+
+#: check-language-ecommerce.php:120
+msgid "Tax rate"
+msgstr "Skattesats"
+
+#: check-language-ecommerce.php:122
+msgid "VAT Number"
+msgstr "Momsregistreringsnummer"
+
+#: check-language-ecommerce.php:124
+msgid "optional"
+msgstr "valfritt"
+
+#: check-language-ecommerce.php:126
+msgid "Price unit net"
+msgstr "Pris per enhet netto"
+
+#: check-language-ecommerce.php:128
+msgid "Price total net"
+msgstr "Totalt pris netto"
+
+#: check-language-ecommerce.php:130
+msgid "Total net"
+msgstr "Summa netto"
+
+#: check-language-ecommerce.php:132
+msgid "Total gross"
+msgstr "Summa brutto"
+
+#: check-language-ecommerce.php:134
+msgid "Total price"
+msgstr "Totalpris"
+
+#: check-language-ecommerce.php:136
+msgid "Added to shopping cart"
+msgstr "Lagt i varukorgen"
+
+#: check-language-ecommerce.php:138
+msgid "To shopping cart"
+msgstr "Till varukorgen"
+
+#: check-language-ecommerce.php:140
+msgid "Title"
+msgstr "Titel"
+
+#: check-language-ecommerce.php:142
+msgid "Key"
+msgstr "Nyckel"
+
+#: check-language-ecommerce.php:144
+msgid "Copy Key"
+msgstr "Kopiera nyckel"
+
+#: check-language-ecommerce.php:146
+msgid "No products selected"
+msgstr "Inga produkter valda"
+
+#: check-language-ecommerce.php:148
+msgid "Full order details"
+msgstr "Fullständig orderinformation"
+
+#: check-language-ecommerce.php:150
+msgid "Order number"
+msgstr "Ordernummer"
+
+#: check-language-ecommerce.php:152
+msgid "Your order was successful. You will be redirected."
+msgstr "Din beställning lyckades. Du kommer att omdirigeras."
+
+#: check-language-ecommerce.php:154
+msgid "Order failed. Please contact administrator."
+msgstr "Beställningen misslyckades. Kontakta administratören."
+
+#: check-language-ecommerce.php:156
+msgid "Checkout processing impossible. No internet connection."
+msgstr "Kassan kan inte behandlas. Ingen internetanslutning."
+
+#: check-language-ecommerce.php:158
+msgid "Maximum uploads"
+msgstr "Maximalt antal uppladdningar"
+
+#: check-language-ecommerce.php:160
+msgid "Uploaded"
+msgstr "Uppladdat"
+
+#: check-language-ecommerce.php:162
+msgid "All uploads used"
+msgstr "Alla uppladdningar använda"
+
+#: check-language-general.php:40
+#: functions/general/registry/cg-registry-functions.php:74
 msgid "Account"
 msgstr "Konto"
 
-#: index.php:2104
-msgid "Logout?"
-msgstr "Logga ut?"
+#: check-language-general.php:42
+#, fuzzy
+#| msgid "Edit Profile"
+msgid "Edit profile"
+msgstr "Redigera profil"
 
-#: frontend/check-language.php:3
-msgid "Sort by"
-msgstr "Sortering"
+#: check-language-general.php:44
+#, fuzzy
+#| msgid "Log Out"
+msgid "Log out"
+msgstr "Logga ut"
 
-#: frontend/check-language.php:4
-msgid "Comments"
-msgstr "Kommentarer"
+#: check-language-general.php:46 check-language.php:400
+msgid "This nickname is already taken"
+msgstr "Detta smeknamn är redan upptaget"
 
-#: frontend/check-language.php:5
-msgid "Vote first"
-msgstr "Rösta först"
+#: check-language-general.php:48
+msgid "Contest Gallery profile information"
+msgstr "Contest Gallery-profilinformation"
 
-#: frontend/check-language.php:6
-msgid "Thumb view"
-msgstr "Miniatyrvy"
+#: check-language-general.php:50
+msgid "Remove profile image"
+msgstr "Ta bort profilbild"
 
-#: frontend/check-language.php:7
-msgid "Height view"
-msgstr "Höjdvy"
-
-#: frontend/check-language.php:8
-msgid "Row view"
-msgstr "Radvy"
-
-#: frontend/check-language.php:9
-msgid "Random"
-msgstr "Slumpvis"
-
-#: frontend/check-language.php:10
-msgid "Date descend"
-msgstr "Nyare datum"
-
-#: frontend/check-language.php:11
-msgid "Date ascend"
-msgstr "Äldre datum"
-
-#: frontend/check-language.php:12
-msgid "Comments descend"
-msgstr "Nyare kommentarer"
-
-#: frontend/check-language.php:13
-msgid "Comments ascend"
-msgstr "Äldre kommentarer"
-
-#: frontend/check-language.php:14
-msgid "Rating descend"
-msgstr "Lägre betyg"
-
-#: frontend/check-language.php:15
-msgid "Rating ascend"
-msgstr "Högre betyg"
-
-#: frontend/check-language.php:16
-msgid "Full size"
-msgstr "Fullstorlek"
-
-#: frontend/check-language.php:17
-msgid "Picture comments"
-msgstr "Bildkommentarer"
-
-#: frontend/check-language.php:18
-msgid "Your comment"
-msgstr "Din kommentar"
-
-#: frontend/check-language.php:19
-msgid "Name"
-msgstr "Namn"
-
-#: frontend/check-language.php:20
-msgid "Comment"
-msgstr "Kommentar"
-
-#: frontend/check-language.php:21
-msgid "I am not a robot"
-msgstr "Jag är ingen robot"
-
-#: frontend/check-language.php:22
-msgid "Send"
-msgstr "Skicka"
-
-#: frontend/check-language.php:23
-msgid "The name field must contain two characters or more"
-msgstr "Namnet måste vara minst två tecken"
-
-#: frontend/check-language.php:24
-msgid "The comment field must contain three characters or more"
-msgstr "Kommentaren måste innehålla minst tre tecken."
-
-#: frontend/check-language.php:25
-msgid "Plz check the checkbox to prove that you are not a robot"
-msgstr "Vänligen bekräfta i kryssrutan, att du inte är en robot"
-
-#: frontend/check-language.php:26
-msgid "Thank you for your comment"
-msgstr "Tack för din kommentar"
-
-#: frontend/check-language.php:27
-msgid "You have already voted for this picture"
-msgstr "Du har redan röstat på denna bild"
-
-#: frontend/check-language.php:28
-msgid "You have already used all your votes"
-msgstr "Du har redan använt alla dina röster"
-
-#: frontend/check-language.php:29
-msgid "Only registered users are allowed to vote"
-msgstr "Endast registrerade användare kan rösta"
-
-#: frontend/check-language.php:30
-msgid "Back to gallery"
-msgstr "Tillbaka till galleri"
-
-#: frontend/check-language.php:31
+#: check-language-general.php:52 check-language.php:308
 msgid "This file type is not allowed"
 msgstr "Denna filtyp är inte tillåten"
 
-#: frontend/check-language.php:32
+#: check-language-general.php:54 check-language.php:310
 msgid "The selected file is too large, max allowed size"
-msgstr "Den valda filen är för stor, max storlek är"
+msgstr "Den valda filen är för stor, maximal tillåten storlek"
 
-#: frontend/check-language.php:33
+#: check-language-general.php:56
+msgid "Select your image"
+msgstr "Välj din bild"
+
+#: check-language-general.php:58
+msgid "Required"
+msgstr "Obligatoriskt"
+
+#: check-language-general.php:60
+msgid "Remove"
+msgstr "Ta bort"
+
+#: check-language-general.php:62
+msgid "content blocked"
+msgstr "innehåll blockerat"
+
+#: check-language-general.php:64
+msgid "To view the content you must agree privacy policy"
+msgstr "För att visa innehållet måste du godkänna integritetspolicyn"
+
+#: check-language-general.php:66
+msgid "I Agree"
+msgstr "Jag godkänner"
+
+#: check-language-general.php:68
+msgid ""
+"By agreeing all content on this page gets unblocked during current session"
+msgstr "Genom att godkänna låses allt innehåll upp under denna session"
+
+#: check-language-general.php:70
+msgid "content"
+msgstr "innehåll"
+
+#: check-language-general.php:72
+msgid "Until current tab gets closed"
+msgstr "Tills nuvarande flik stängs"
+
+#: check-language-general.php:74
+#, fuzzy
+#| msgid "Back To Gallery"
+msgid "Back to gallery"
+msgstr "Tillbaka till galleriet"
+
+#: check-language-general.php:76
+msgid "Back to galleries"
+msgstr "Tillbaka till gallerier"
+
+#: check-language-general.php:78
+msgid "No gallery entries"
+msgstr "Inga galleriobjekt"
+
+#: check-language-general.php:80
+msgid "Resend confirmation email"
+msgstr "Skicka bekräftelsemejlet igen"
+
+#: check-language-general.php:82
+msgid "Confirmation link expired"
+msgstr "Bekräftelselänken har löpt ut"
+
+#: check-language-general.php:84
+msgid "E-mail sent"
+msgstr "E-post skickad"
+
+#: check-language-general.php:86
+msgid "Activation key not found"
+msgstr "Aktiveringsnyckel hittades inte"
+
+#: check-language-general.php:88
+msgid "A PIN has been sent to your email"
+msgstr "En PIN har skickats till din e-post"
+
+#: check-language-general.php:90
+msgid "Enter PIN"
+msgstr "Ange PIN"
+
+#: check-language-general.php:92
+msgid "Send PIN"
+msgstr "Skicka PIN"
+
+#: check-language-general.php:94
+msgid "Confirm PIN"
+msgstr "Bekräfta PIN"
+
+#: check-language-general.php:96
+msgid "Send new PIN"
+msgstr "Skicka ny PIN"
+
+#: check-language-general.php:98
+msgid "Incorrect PIN. Please try again."
+msgstr "Fel PIN. Försök igen."
+
+#: check-language-general.php:100
+msgid "PIN has expired. Please request a new one."
+msgstr "PIN har gått ut. Begär en ny."
+
+#: check-language-general.php:102
+msgid "Only jury members can vote"
+msgstr "Endast jurymedlemmar kan rösta"
+
+#: check-language.php:56
+msgid "Participation form"
+msgstr "Deltagandeformulär"
+
+#: check-language.php:58
+msgid "Minimize participation form"
+msgstr "Minimera deltagandeformulär"
+
+#: check-language.php:60
+msgid "Further entry"
+msgstr "Ytterligare bidrag"
+
+#: check-language.php:62
+msgid "Search"
+msgstr "Sök"
+
+#: check-language.php:64
+msgid "Sort by"
+msgstr "Sortera efter"
+
+#: check-language.php:66
+msgid "Random sort"
+msgstr "Slumpmässig sortering"
+
+#: check-language.php:68
+msgid "Show all categories"
+msgstr "Visa alla kategorier"
+
+#: check-language.php:70
+msgid "Show less categories"
+msgstr "Visa färre kategorier"
+
+#: check-language.php:72
+msgid "Masonry"
+msgstr "Masonry"
+
+#: check-language.php:74
+msgid "Slider view"
+msgstr "Bildspelsvy"
+
+#: check-language.php:76
+msgid "Blog view"
+msgstr "Bloggvyn"
+
+#: check-language.php:78
+msgid "Thumb view"
+msgstr "Miniatyrvy"
+
+#: check-language.php:80
+msgid "Height view"
+msgstr "Höjdvy"
+
+#: check-language.php:82
+msgid "Row view"
+msgstr "Radvy"
+
+#: check-language.php:84
+msgid "Dark style"
+msgstr "Mörk stil"
+
+#: check-language.php:86
+msgid "Bright style"
+msgstr "Ljus stil"
+
+#: check-language.php:88
+msgid "Select page"
+msgstr "Välj sida"
+
+#: check-language.php:90
+msgid "Previous page"
+msgstr "Föregående sida"
+
+#: check-language.php:92
+msgid "Next page"
+msgstr "Nästa sida"
+
+#: check-language.php:94
+msgid "Previous entry"
+msgstr "Föregående bidrag"
+
+#: check-language.php:96
+msgid "Next entry"
+msgstr "Nästa bidrag"
+
+#: check-language.php:98
+msgid "Previous file in entry"
+msgstr "Föregående fil i bidrag"
+
+#: check-language.php:100
+msgid "Next file in entry"
+msgstr "Nästa fil i bidrag"
+
+#: check-language.php:102
+msgid "Go to top of the gallery"
+msgstr "Gå till galleriets topp"
+
+#: check-language.php:104
+msgid "Search or sort"
+msgstr "Sök eller sortera"
+
+#: check-language.php:106
+msgid "Close"
+msgstr "Stäng"
+
+#: check-language.php:108
+msgid "Open gallery in full window"
+msgstr "Öppna galleriet i fullskärm"
+
+#: check-language.php:110
+msgid "Close view"
+msgstr "Stäng vy"
+
+#: check-language.php:112
+msgid "Full screen mode"
+msgstr "Fullskärmsläge"
+
+#: check-language.php:114
+msgid "Close full screen mode"
+msgstr "Stäng fullskärmsläge"
+
+#: check-language.php:116
+msgid "Copy gallery file link"
+msgstr "Kopiera gallerifillänk"
+
+#: check-language.php:118
+msgid "Copy gallery entry link"
+msgstr "Kopiera galleriobjektlänk"
+
+#: check-language.php:120
+msgid "Copy original file source link"
+msgstr "Kopiera originalfilens källänk"
+
+#: check-language.php:122
+msgid "Share to"
+msgstr "Dela till"
+
+#: check-language.php:124
+msgid "Open original file in new tab"
+msgstr "Öppna originalfil i ny flik"
+
+#: check-language.php:126
+msgid "Download original file"
+msgstr "Ladda ner originalfil"
+
+#: check-language.php:130
+msgid "Service"
+msgstr "Tjänst"
+
+#: check-language.php:132
+msgid "Delete entry"
+msgstr "Radera bidrag"
+
+#: check-language.php:134
+msgid "Delete entries"
+msgstr "Radera bidrag"
+
+#: check-language.php:136
+msgid "Show more info"
+msgstr "Visa mer info"
+
+#: check-language.php:138
+msgid "Show less info"
+msgstr "Visa mindre info"
+
+#: check-language.php:140
+msgid "Add comment"
+msgstr "Lägg till kommentar"
+
+#: check-language.php:142
+msgid "Show more comments"
+msgstr "Visa fler kommentarer"
+
+#: check-language.php:144
+msgid "Show less comments"
+msgstr "Visa färre kommentarer"
+
+#: check-language.php:146
+msgid "Add an emoji"
+msgstr "Lägg till en emoji"
+
+#: check-language.php:148
+msgid "Hide emojis"
+msgstr "Dölj emojis"
+
+#: check-language.php:150
+msgid "Vote"
+msgstr "Rösta"
+
+#: check-language.php:152
+msgid "Thank you for voting"
+msgstr "Tack för din röst"
+
+#: check-language.php:154
+msgid "Undo your last vote"
+msgstr "Ångra din senaste röst"
+
+#: check-language.php:157
+msgid "of"
+msgstr "av"
+
+#: check-language.php:159
+msgid "No files found"
+msgstr "Inga filer hittades"
+
+#: check-language.php:161
+msgid "No entries found"
+msgstr "Inga poster hittades"
+
+#: check-language.php:163
+msgid "Random"
+msgstr "Slumpmässig"
+
+#: check-language.php:165
+msgid "Custom"
+msgstr "Anpassad"
+
+#: check-language.php:167
+msgid "Date descend"
+msgstr "Datum nedåtgående"
+
+#: check-language.php:169
+msgid "Date ascend"
+msgstr "Datum uppåtgående"
+
+#: check-language.php:171
+msgid "Comments descend"
+msgstr "Kommentarer nedåtgående"
+
+#: check-language.php:173
+msgid "Comments ascend"
+msgstr "Kommentarer uppåtgående"
+
+#: check-language.php:175
+msgid "Rating descend"
+msgstr "Betyg nedåtgående"
+
+#: check-language.php:177
+msgid "Rating ascend"
+msgstr "Betyg uppåtgående"
+
+#: check-language.php:179
+msgid "Rating quantity descend"
+msgstr "Antal betyg nedåtgående"
+
+#: check-language.php:181
+msgid "Rating quantity ascend"
+msgstr "Antal betyg uppåtgående"
+
+#: check-language.php:183
+msgid "Rating sum descend"
+msgstr "Betygssumma nedåtgående"
+
+#: check-language.php:185
+msgid "Rating sum ascend"
+msgstr "Betygssumma uppåtgående"
+
+#: check-language.php:187
+msgid "Full size"
+msgstr "Full storlek"
+
+#: check-language.php:189
+msgid "Picture comments"
+msgstr "Bildkommentarer"
+
+#: check-language.php:191
+msgid "Comments"
+msgstr "Kommentarer"
+
+#: check-language.php:193
+msgid "Your comment"
+msgstr "Din kommentar"
+
+#: check-language.php:195
+msgid "Name"
+msgstr "Namn"
+
+#: check-language.php:197
+msgid "Comment"
+msgstr "Kommentar"
+
+#: check-language.php:199
+msgid "I am not a robot"
+msgstr "Jag är inte en robot"
+
+#: check-language.php:201
+msgid "You can not vote in own gallery"
+msgstr "Du kan inte rösta i ditt eget galleri"
+
+#: check-language.php:203
+msgid "You can not comment in own gallery"
+msgstr "Du kan inte kommentera i ditt eget galleri"
+
+#: check-language.php:205
+msgid "You have to be logged in to comment"
+msgstr "Du måste vara inloggad för att kommentera"
+
+#: check-language.php:207
+msgid "Please use available emojis"
+msgstr "Använd tillgängliga emojis"
+
+#: check-language.php:209
+msgid "Emojis are not allowed"
+msgstr "Emojis är inte tillåtna"
+
+#: check-language.php:211
+msgid "Send"
+msgstr "Skicka"
+
+#: check-language.php:214
+msgid "File was deleted"
+msgstr "Filen har tagits bort"
+
+#: check-language.php:217
+msgid "Files were deleted"
+msgstr "Filerna har tagits bort"
+
+#: check-language.php:220
+msgid "Successfully logged in via Google. Page will be reloaded..."
+msgstr "Inloggad via Google. Sidan laddas om..."
+
+#: check-language.php:224
+msgid "Second"
+msgstr "Sekund"
+
+#: check-language.php:226
+msgid "Seconds"
+msgstr "Sekunder"
+
+#: check-language.php:228
+msgid "Minute"
+msgstr "Minut"
+
+#: check-language.php:230
+msgid "Minutes"
+msgstr "Minuter"
+
+#: check-language.php:232
+msgid "Hour"
+msgstr "Timme"
+
+#: check-language.php:234
+msgid "Hours"
+msgstr "Timmar"
+
+#: check-language.php:236
+msgid "Day"
+msgstr "Dag"
+
+#: check-language.php:238
+msgid "Days"
+msgstr "Dagar"
+
+#: check-language.php:240
+msgid "Week"
+msgstr "Vecka"
+
+#: check-language.php:242
+msgid "Weeks"
+msgstr "Veckor"
+
+#: check-language.php:244
+msgid "Month"
+msgstr "Månad"
+
+#: check-language.php:246
+msgid "Months"
+msgstr "Månader"
+
+#: check-language.php:248
+msgid "Year"
+msgstr "År"
+
+#: check-language.php:250
+msgid "Years"
+msgstr "År"
+
+#: check-language.php:254
+msgid "Delete entry?"
+msgstr "Radera bidrag?"
+
+#: check-language.php:256
+msgid "Delete entries?"
+msgstr "Radera bidrag?"
+
+#: check-language.php:258
+msgid "Entry successfully deleted"
+msgstr "Bidraget har raderats"
+
+#: check-language.php:260
+msgid "Entries successfully deleted"
+msgstr "Bidragen har raderats"
+
+#: check-language.php:262
+msgid "Edit"
+msgstr "Redigera"
+
+#: check-language.php:263
+msgid "Save"
+msgstr "Spara"
+
+#: check-language.php:265
+msgid "Data saved"
+msgstr "Data sparad"
+
+#: check-language.php:267
+msgid "Only visible to registered and logged in owner of the entry"
+msgstr "Endast synligt för registrerad och inloggad ägare till bidraget"
+
+#: check-language.php:269
+msgid "Original file source link copied"
+msgstr "Länk till originalfilen kopierad"
+
+#: check-language.php:271
+msgid "Gallery file link copied"
+msgstr "Länk till gallerifilen kopierad"
+
+#: check-language.php:273
+msgid "Gallery entry link copied"
+msgstr "Länk till galleribidraget kopierad"
+
+#: check-language.php:275
+msgid "Sum"
+msgstr "Summa"
+
+#: check-language.php:277
+msgid "Your vote"
+msgstr "Din röst"
+
+#: check-language.php:280
+msgid "The name field must contain two characters or more"
+msgstr "Namnfältet måste innehålla minst två tecken"
+
+#: check-language.php:282
+msgid "The comment field must contain three characters or more"
+msgstr "Kommentarsfältet måste innehålla minst tre tecken"
+
+#: check-language.php:284
+msgid "Plz check the checkbox to prove that you are not a robot"
+msgstr "Vänligen markera kryssrutan för att bekräfta att du inte är en robot"
+
+#: check-language.php:286
+msgid "Your comment will be reviewed"
+msgstr "Din kommentar kommer att granskas"
+
+#: check-language.php:288 check-language.php:290
+msgid "Thank you for your comment"
+msgstr "Tack för din kommentar"
+
+#: check-language.php:292
+msgid "You have already voted for this entry"
+msgstr "Du har redan röstat på detta bidrag"
+
+#: check-language.php:294
+msgid "This entry is not a winner"
+msgstr "Detta bidrag är inte en vinnare"
+
+#: check-language.php:296
+msgid "You have already voted for this category"
+msgstr "Du har redan röstat i denna kategori"
+
+#: check-language.php:298
+msgid "You have no more votes in this category"
+msgstr "Du har inga fler röster i denna kategori"
+
+#: check-language.php:300
+msgid "You have already used all your votes"
+msgstr "Du har redan använt alla dina röster"
+
+#: check-language.php:304
+msgid "It is not allowed to vote for your own file"
+msgstr "Det är inte tillåtet att rösta på din egen fil"
+
+#: check-language.php:306
+msgid "Only registered users are allowed to vote"
+msgstr "Endast registrerade användare får rösta"
+
+#: check-language.php:312
 msgid "The resolution of this image is"
-msgstr "Bildens upplösning är"
+msgstr "Upplösningen på denna bild är"
 
-#: frontend/check-language.php:35
-msgid "Maximum number of images for one upload is"
-msgstr "Max antal bilder per uppladdning är"
+#: check-language.php:314
+msgid "Maximum number of files for one upload is"
+msgstr "Maximalt antal filer för en uppladdning är"
 
-#: frontend/check-language.php:36
-msgid "Minimum number of images for one upload is"
-msgstr "Minsta antal bilder per uppladdning är"
+#: check-language.php:315
+msgid "Minimum number of files for one upload is"
+msgstr "Minsta antal filer för en uppladdning är"
 
-#: frontend/check-language.php:38
+#: check-language.php:317
 msgid "Maximum allowed resolution for JPG is"
-msgstr "Max tillåten upplösning för JPG är"
+msgstr "Maximal tillåten upplösning för JPG är"
 
-#: frontend/check-language.php:39
+#: check-language.php:319
 msgid "Maximum allowed width for JPG is"
-msgstr "Max tillåten bredd för JPG är"
+msgstr "Maximal tillåten bredd för JPG är"
 
-#: frontend/check-language.php:40
+#: check-language.php:321
 msgid "Maximum allowed height for JPG is"
-msgstr "Max tillåten höjd för JPG är"
+msgstr "Maximal tillåten höjd för JPG är"
 
-#: frontend/check-language.php:42
+#: check-language.php:323
+msgid "Minimum required width for JPG is"
+msgstr "Minsta tillåtna bredd för JPG är"
+
+#: check-language.php:325
+msgid "Minimum required height for JPG is"
+msgstr "Minsta tillåtna höjd för JPG är"
+
+#: check-language.php:327
 msgid "Maximum allowed resolution for PNG is"
-msgstr "Max tillåten upplösning för PNG är"
+msgstr "Maximal tillåten upplösning för PNG är"
 
-#: frontend/check-language.php:43
+#: check-language.php:329
 msgid "Maximum allowed width for PNG is"
-msgstr "Max tillåten bredd för PNG är"
+msgstr "Maximal tillåten bredd för PNG är"
 
-#: frontend/check-language.php:44
+#: check-language.php:331
 msgid "Maximum allowed height for PNG is"
-msgstr "Max tillåten höjd för PNG är"
+msgstr "Maximal tillåten höjd för PNG är"
 
-#: frontend/check-language.php:46
+#: check-language.php:333
+msgid "Minimum required width for PNG is"
+msgstr "Minsta tillåtna bredd för PNG är"
+
+#: check-language.php:335
+msgid "Minimum required height for PNG is"
+msgstr "Minsta tillåtna höjd för PNG är"
+
+#: check-language.php:337
 msgid "Maximum allowed resolution for GIF is"
-msgstr "Max tillåten upplösning för GIF är"
+msgstr "Maximal tillåten upplösning för GIF är"
 
-#: frontend/check-language.php:47
+#: check-language.php:339
 msgid "Maximum allowed width for GIF is"
-msgstr "Max tillåten bredd för GIF är"
+msgstr "Maximal tillåten bredd för GIF är"
 
-#: frontend/check-language.php:48
+#: check-language.php:341
 msgid "Maximum allowed height for GIF is"
-msgstr "Max tillåten höjd för GIF är"
+msgstr "Maximal tillåten höjd för GIF är"
 
-#: frontend/check-language.php:50
+#: check-language.php:343
+msgid "Minimum required width for GIF is"
+msgstr "Minsta tillåtna bredd för GIF är"
+
+#: check-language.php:345
+msgid "Minimum required height for GIF is"
+msgstr "Minsta tillåtna höjd för GIF är"
+
+#: check-language.php:347
+msgid "Maximum allowed width for ICO is"
+msgstr "Maximal tillåten bredd för ICO är"
+
+#: check-language.php:349
+msgid "Maximum allowed height for ICO is"
+msgstr "Maximal tillåten höjd för ICO är"
+
+#: check-language.php:351
 msgid "You have to check this agreement"
-msgstr "Du måste bekräfta villkoren"
+msgstr "Du måste godkänna detta villkor"
 
-#: frontend/check-language.php:51
+#: check-language.php:353
 msgid "This email is not valid"
-msgstr "Ogiltig mejladress"
+msgstr "Denna e-postadress är inte giltig"
 
-#: frontend/check-language.php:52
+#: check-language.php:355
+msgid "Reset password link is not valid anymore"
+msgstr "Länken för att återställa lösenordet är inte längre giltig"
+
+#: check-language.php:357
+msgid "Password successfully changed"
+msgstr "Lösenordet har ändrats"
+
+#: check-language.php:359
+msgid "Back to login form"
+msgstr "Tillbaka till inloggningsformuläret"
+
+#: check-language.php:361
 msgid "Min amount of characters"
 msgstr "Minsta antal tecken"
 
-#: frontend/check-language.php:53
+#: check-language.php:363
 msgid "Max amount of characters"
-msgstr "Max antal tecken"
+msgstr "Största antal tecken"
 
-#: frontend/check-language.php:54
-msgid "Select your image"
-msgstr "Välj en bild"
+#: check-language.php:365
+msgid "Select your file"
+msgstr "Välj din fil"
 
-#: frontend/check-language.php:55
+#: check-language.php:367
+msgid "The photo contest has not started yet"
+msgstr "Fototävlingen har inte startat ännu"
+
+#: check-language.php:369
 msgid "The photo contest is over"
 msgstr "Fototävlingen är avslutad"
 
-#: frontend/check-language.php:56
+#: check-language.php:371
 msgid "Hold left mouse to see user info"
-msgstr "Håll vänster musknapp för användarinfo"
+msgstr "Håll vänster musknapp för att se användarinformation"
 
-#: frontend/check-language.php:58
+#: check-language.php:373
+msgid "Maximum amount of uploads per user is"
+msgstr "Maximalt antal uppladdningar per användare är"
+
+#: check-language.php:375
+msgid "Maximum amount of uploads per category is"
+msgstr "Maximalt antal uppladdningar per kategori är"
+
+#: check-language.php:377
+msgid "You have already uploaded"
+msgstr "Du har redan laddat upp"
+
+#: check-language.php:379
+msgid "You have already uploaded in category"
+msgstr "Du har redan laddat upp i kategorin"
+
+#: check-language.php:381
+msgid "Maximum amount of uploads left for you"
+msgstr "Antalet uppladdningar du har kvar är"
+
+#: check-language.php:386
+msgid "Lost password?"
+msgstr "Glömt lösenord?"
+
+#: check-language.php:388
 msgid "This email address is already registered"
-msgstr "Denna mejladress är redan registrerad"
+msgstr "Denna e-postadress är redan registrerad"
 
-#: frontend/check-language.php:59
+#: check-language.php:390
 msgid "This username is already taken"
-msgstr "Användarnamnet är upptaget"
+msgstr "Detta användarnamn är redan taget"
 
-#: frontend/check-language.php:61
-msgid "Username or e-mail"
-msgstr "Användarnamn eller mejladress"
+#: check-language.php:392
+msgid "Username or email"
+msgstr "Användarnamn eller e-post"
 
-#: frontend/check-language.php:62
-msgid "Username or e-mail required"
-msgstr "Användarnamn eller mejladress krävs"
+#: check-language.php:394
+msgid "Username or email required"
+msgstr "Användarnamn eller e-post krävs"
 
-#: frontend/check-language.php:64
-msgid "Username or e-mail does not exist"
-msgstr "Användarnamn eller mejladress saknas"
+#: check-language.php:396
+msgid "Username or email does not exist"
+msgstr "Användarnamn eller e-post finns inte"
 
-#: frontend/check-language.php:66
+#: check-language.php:398
+msgid "This username already exists"
+msgstr "Detta användarnamn finns redan"
+
+#: check-language.php:402
+msgid "Email"
+msgstr "E-post"
+
+#: check-language.php:404
+msgid "An email was sent to reset password"
+msgstr "Ett e-postmeddelande har skickats för att återställa lösenordet"
+
+#: check-language.php:406
+msgid "Type in your e-mail to receive link for resetting your password"
+msgstr ""
+"Ange din e-postadress för att få en länk för att återställa ditt lösenord"
+
+#: check-language.php:408
+msgid "Email required"
+msgstr "E-post krävs"
+
+#: check-language.php:410
 msgid "Password"
 msgstr "Lösenord"
 
-#: frontend/check-language.php:67
+#: check-language.php:412
+msgid "Current Password"
+msgstr "Nuvarande lösenord"
+
+#: check-language.php:414
+msgid "New Password"
+msgstr "Nytt lösenord"
+
+#: check-language.php:416
+msgid "New Password repeat"
+msgstr "Upprepa nytt lösenord"
+
+#: check-language.php:418
 msgid "Password required"
 msgstr "Lösenord krävs"
 
-#: frontend/check-language.php:69
-msgid "Password is wrong"
-msgstr "Lösenordet är felaktigt"
+#: check-language.php:420
+msgid "Email and password do not match"
+msgstr "E-post och lösenord matchar inte"
 
-#: frontend/check-language.php:71
-msgid "You are already logged in"
-msgstr "Du är redan inloggad"
+#: check-language.php:422
+msgid "Login and password do not match"
+msgstr "Inloggning och lösenord matchar inte"
 
-#: frontend/check-language.php:73
+#: check-language.php:424
 msgid "Please fill out"
 msgstr "Vänligen fyll i"
 
-#: frontend/check-language.php:75
+#: check-language.php:426
 msgid "Passwords do not match"
-msgstr "Lösenordet är inte korrekt"
+msgstr "Lösenorden stämmer inte överens"
 
-#: frontend/check-language.php:77
+#: check-language.php:428
 msgid "Upload"
 msgstr "Ladda upp"
 
-#: frontend/check-language.php:78
+#: check-language.php:430
 msgid "Register"
 msgstr "Registrera"
 
-#: frontend/check-language.php:79
+#: check-language.php:432
 msgid "Login"
 msgstr "Logga in"
 
-#: frontend/check-language.php:81
+#: check-language.php:434
 msgid "Please select"
-msgstr "Gör ett val"
+msgstr "Vänligen välj"
 
-#: frontend/check-language.php:82
+#: check-language.php:436
 msgid "You have not selected"
-msgstr "Du har inte gjort nåt val"
+msgstr "Du har inte valt"
 
-#: frontend/check-language.php:84
+#: check-language.php:438
 msgid "Please confirm"
 msgstr "Vänligen bekräfta"
 
-#: frontend/check-language.php:85
-msgid "Image is not activated"
-msgstr "Bilden är inte aktiverad"
+#: check-language.php:440
+msgid "File is not activated"
+msgstr "Filen är inte aktiverad"
 
-#: frontend/check-language.php:88
+#: check-language.php:442
 msgid "Your email could not be confirmed."
-msgstr "Din mejladress kunde inte verifieras."
+msgstr "Din e-post kunde inte bekräftas."
 
-#. Name of the plugin
-#. Author of the plugin
-msgid "Contest Gallery"
-msgstr "Fotogalleri"
+#: check-language.php:444
+msgid "Please enter a valid URL"
+msgstr "Ange en giltig URL"
 
-#. Description of the plugin
-msgid "Create a professional photo contest."
-msgstr "Skapa en professionell fototävling"
+#: check-language.php:446
+msgid "Other"
+msgstr "Annat"
 
-#. Author URI of the plugin
-msgid "http://www.contest-gallery.com/"
-msgstr "http://www.contest-gallery.com/"
+#: check-language.php:449
+msgid "Yes"
+msgstr "Ja"
+
+#: check-language.php:450
+msgid "No"
+msgstr "Nej"
+
+#: functions/general/registry/cg-registry-functions.php:75
+msgid "Logout?"
+msgstr ""
+
+#: functions/general/registry/cg-registry-functions.php:356
+#, fuzzy
+#| msgid "Please enter a valid URL"
+msgid "Please enter a nickname."
+msgstr "Ange en giltig URL"
+
+#: functions/general/registry/cg-registry-functions.php:382
+#, fuzzy
+#| msgid "This nickname is already taken"
+msgid "This nickname is already in use. Please choose another one."
+msgstr "Detta smeknamn är redan upptaget"
+
+#: functions/general/registry/create/cg-registry-create-functions.php:7
+msgid "Contest Gallery User since v14"
+msgstr ""
+
+#: register_post_type.php:24
+msgctxt "plural"
+msgid "Cgallery"
+msgstr ""
+
+#: register_post_type.php:25
+msgctxt "singular"
+msgid "Cgallery"
+msgstr ""
+
+#: register_post_type.php:26
+msgctxt "admin menu"
+msgid "Cgallery"
+msgstr ""
+
+#: register_post_type.php:27
+msgctxt "admin bar"
+msgid "Cgallery"
+msgstr ""
+
+#: register_post_type.php:28
+msgctxt "add new"
+msgid "Add New"
+msgstr ""
+
+#: register_post_type.php:29
+msgid "Add New Cgallery"
+msgstr ""
+
+#: register_post_type.php:30
+msgid "New Cgallery"
+msgstr ""
+
+#: register_post_type.php:31
+msgid "Edit Page (Contest Gallery Custom Post Type)"
+msgstr ""
+
+#: register_post_type.php:32
+msgid "View Cgallery"
+msgstr ""
+
+#: register_post_type.php:33
+msgid "All Cgallery"
+msgstr ""
+
+#: register_post_type.php:34
+msgid "Search Cgallery"
+msgstr ""
+
+#: register_post_type.php:35
+msgid "No contest gallery pages found."
+msgstr ""
+
+#~ msgid "Go back"
+#~ msgstr "Gå tillbaka"
+
+#~ msgid "Contest Gallery - PRO Version"
+#~ msgstr "Contest Gallery - PRO Version"
+
+#~ msgid "Rating average descend"
+#~ msgstr "Bewertungen Durchschnitt absteigend"
+
+#~ msgid "Rating average ascend"
+#~ msgstr "Bewertungen Durchschnitt aufsteigend"
+
+#~ msgid "Same as Billing address"
+#~ msgstr "Identisch mit Rechnungsadresse"
+
+#~ msgid "Date"
+#~ msgstr "Datum"
+
+#~ msgid "Added to basket"
+#~ msgstr "Zum Warenkorb hinzugefügt"
+
+#~ msgid "Go to basket"
+#~ msgstr "Zum Warenkorb"
+
+#, fuzzy
+#~| msgid "Contest Gallery profile information"
+#~ msgid "Contact information"
+#~ msgstr "Profilinformationen der Wettbewerbsgalerie"
+
+#~ msgid "Address Line 3"
+#~ msgstr "Adresszeile 3"
+
+#~ msgid "Previous file"
+#~ msgstr "Vorheriges Datei"
+
+#~ msgid "Next file"
+#~ msgstr "Nächstes Datei"
+
+#~ msgid "You have already voted for this file"
+#~ msgstr "Du hast für diese Datei bereits abgestimmt"
+
+#~ msgid "You have already voted for this files"
+#~ msgstr "Du hast bereits für diese Dateien gestimmt"
+
+#~ msgid "Upload file"
+#~ msgstr "Datei hochladen"
+
+#~ msgid "Further upload"
+#~ msgstr "Weiterer Upload"
+
+#~ msgid "Copy file link"
+#~ msgstr "Dateilink kopieren"
+
+#~ msgid "Upload image"
+#~ msgstr "Bild hochladen"
+
+#~ msgid "Previous image"
+#~ msgstr "Vorheriges Bild"
+
+#~ msgid "Next image"
+#~ msgstr "Nächstes Bild"
+
+#~ msgid "Copy image link"
+#~ msgstr "Bildlink kopieren"
+
+#~ msgid "Delete image"
+#~ msgstr "Lösche Bild"
+
+#~ msgid "File comments"
+#~ msgstr "Kommentare zur Datei"
+
+#~ msgid "Image was deleted"
+#~ msgstr "Bild wurde gelöscht"
+
+#~ msgid "Delete image?"
+#~ msgstr "Bild löschen?"
+
+#~ msgid "Image successfully deleted"
+#~ msgstr "Bild erfolgreich gelöscht"
+
+#~ msgid "Image link copied"
+#~ msgstr "Bildlink kopiert"
+
+#~ msgid "You have already voted for this picture"
+#~ msgstr "Du hast für dieses Bild bereits abgestimmt"
+
+#~ msgid "It is not allowed to vote for your own picture"
+#~ msgstr "Es ist nicht erlaubt für das eigene Bild abzustimmen"
+
+#~ msgid "Image is not activated"
+#~ msgstr "Bild is nicht aktiviert"
+
+#~ msgid "Email does not exist"
+#~ msgstr "E-Mail ist nicht vorhanden"
+
+#~ msgid "Password is wrong"
+#~ msgstr "Passwort ist falsch"
+
+#~ msgid "Image upload"
+#~ msgstr "Bild hochladen"
+
+#~ msgid "Image download"
+#~ msgstr "Bild-Download"
+
+#~ msgid "Close full window"
+#~ msgstr "Fenster verlassen"
+
+#, fuzzy
+#~| msgid "Full size"
+#~ msgid "Full window"
+#~ msgstr "Volle Größe"
+
+#~ msgid "Vote first"
+#~ msgstr "Bewerte"
+
+#, fuzzy
+#~| msgid "You have already voted for this category"
+#~ msgid "All votes for this category used"
+#~ msgstr "Du hast für diese Kategorie bereits abgestimmt"
+
+#~ msgid "jdsalkfsajdlkfjdsaf"
+#~ msgstr "2222222222222"

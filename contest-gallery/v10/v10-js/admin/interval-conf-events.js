@@ -133,7 +133,11 @@ jQuery(document).ready(function ($) {
 
         $cgShortcodeIntervalConfigurationContainer.find('.cg_shortcode_conf_title_main').text($(this).attr('data-cg-title-main'));
         $cgShortcodeIntervalConfigurationContainer.find('.cg_shortcode_conf_title_sub').text($(this).attr('data-cg-title-sub'));
-        $cgShortcodeIntervalConfigurationContainer.find('.cg_shortcode_conf_activate_type').text($(this).attr('data-cg-shortcode'));
+        if($(this).attr('data-cg-shortcode')=='cg_users_reg'){
+            $cgShortcodeIntervalConfigurationContainer.find('.cg_shortcode_conf_activate_type').text($(this).attr('data-cg-title-sub'));
+        }else{
+            $cgShortcodeIntervalConfigurationContainer.find('.cg_shortcode_conf_activate_type').text($(this).attr('data-cg-shortcode'));
+        }
 
         $cgShortcodeIntervalConfigurationContainer.attr('data-cg-shortcode',shortcode);
         $cgShortcodeIntervalConfigurationContainer.find('.shortcodeType').val(shortcode);

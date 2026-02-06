@@ -273,7 +273,7 @@ $RegUserOrderSummaryOnlyText
 
 				if(!empty($result['latest_charge']['amount_refunded']) && $result['latest_charge']['amount_refunded'] == $result['latest_charge']['amount_refunded']){
 					$status = 'refunded';
-				}else if(!empty($result['latest_charge']['amount_refunded']) && $result['latest_charge']['amount_refunded'] != $result['latest_charge']['amount_refunded']){
+				}elseif(!empty($result['latest_charge']['amount_refunded']) && $result['latest_charge']['amount_refunded'] != $result['latest_charge']['amount_refunded']){
 					$status = 'partially refunded';
 				}
 
@@ -330,7 +330,7 @@ $RegUserOrderSummaryOnlyText
 
             }
 
-		}else if($Order->PaymentType == 'paypal'){
+		}elseif($Order->PaymentType == 'paypal'){
 
 			if($Order->IsTest){
 				$accessToken = cg_paypal_get_access_token($ecommerceOptions['PayPalSandboxClientId'],$ecommerceOptions['PayPalSandboxSecret'],true);
@@ -342,7 +342,7 @@ $RegUserOrderSummaryOnlyText
 				echo "<div  id='mainCGdivOrderContainer'  class='mainCGdivOrderContainer mainCGdiv $FeControlsStyleOrder $BorderRadiusOrder' >
 <p style='text-align: center;margin:10px;'>No internet connection</p>
 </div>"; return;
-			}else if($accessToken=='error'){
+			}elseif($accessToken=='error'){
 				$isPayPalResponseError = true;
 				//Access Token could not be created. Wrong client id or wrong secret.
 				echo "<div  id='mainCGdivOrderContainer'  class='mainCGdivOrderContainer mainCGdiv $FeControlsStyleOrder $BorderRadiusOrder'>
@@ -460,7 +460,7 @@ Payment type not set
         cgJsClass.gallery.vars.ecommerce.RawDataWhenBuyed = <?php echo json_encode($RawDataWhenBuyed);?>;
         cgJsClass.gallery.vars.ecommerce.uploadedEntriesData = <?php echo json_encode($uploadedEntriesData);?>;
 
-        debugger
+        //debugger
 
         for(var realId in cgJsClass.gallery.vars.ecommerce.rawData){
             if(!cgJsClass.gallery.vars.ecommerce.rawData.hasOwnProperty(realId)){
@@ -501,7 +501,7 @@ Payment type not set
 
             cgJsData[gid].vars.rawData[realId] = cgJsClass.gallery.vars.ecommerce.rawData[realId];
             cgJsData[gid].vars.rawDataPreProcessed[realId] = cgJsData[gid].vars.rawData[realId];
-            debugger
+            //debugger
             cgJsData[gid].vars.ecommerceFilesData[realId] = cgJsClass.gallery.vars.ecommerce.ecommerceFilesData[realId];
 
             if(typeof cgJsData[gid].vars.queryDataArray == 'undefined' ){
@@ -530,7 +530,7 @@ Payment type not set
         cgJsClass.gallery.vars.ecommerce.EUshortcodes = <?php echo json_encode(cg_get_eu_countries_shortcodes());?>;
         cgJsClassEcommerceShowSaleOrderLoaded = true;
 
-        debugger
+        //debugger
 
     </script>
     </pre>

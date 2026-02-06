@@ -1,4 +1,4 @@
-#your-profile .cg_input_error{
+.cg_input_error{
     background-color: #ff5555;
     padding: 2px 7px;
     box-sizing: border-box;
@@ -31,5 +31,31 @@
     margin-left: 5px;
     margin-bottom: -5px;
     cursor: pointer;
+}
+
+.cg_radio,
+.cg_check {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 5px;
+    margin-bottom: -15px;
+}
+
+.cg_radio .cg_radio_button,
+.cg_check .cg_check_button{
+    width: fit-content;
+    margin-right: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-flow: column;
+}
+
+.cg_radio .cg_radio_button label,
+.cg_check .cg_check_button label{
+    margin-bottom: 10px;
+}
+
+.cg_check + .cg_input_error {
+    margin-top: 15px;
 }
 

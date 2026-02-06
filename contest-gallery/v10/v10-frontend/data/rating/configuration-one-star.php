@@ -75,8 +75,8 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
 
     }
     // cookie users check
-    //else if (($options['general']['ShowOnlyUsersVotes']==1 or $options['general']['HideUntilVote']==1 or $options['pro']['MinusVote']==1) and $options['general']['CheckCookie']==1 and $options['general']['CheckIp']!=1){//old logic before 10.07.2022
-    else if ($options['general']['CheckCookie']==1 and $options['general']['CheckIp']!=1){
+    //elseif (($options['general']['ShowOnlyUsersVotes']==1 or $options['general']['HideUntilVote']==1 or $options['pro']['MinusVote']==1) and $options['general']['CheckCookie']==1 and $options['general']['CheckIp']!=1){//old logic before 10.07.2022
+    elseif ($options['general']['CheckCookie']==1 and $options['general']['CheckIp']!=1){
 
         if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {
 
@@ -130,7 +130,7 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
         }
 
     }
-     else if ($options['general']['CheckIp']==1 and $options['general']['CheckCookie']==1){
+     elseif ($options['general']['CheckIp']==1 and $options['general']['CheckCookie']==1){
      // CheckIpAndCookie
         if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {
             $countSuserIp = $wpdb->get_results( $wpdb->prepare(
@@ -179,8 +179,8 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
         }
 
     }
-     //else if (($options['general']['ShowOnlyUsersVotes']==1 or $options['general']['HideUntilVote']==1 or $options['pro']['MinusVote']==1) and $options['general']['CheckIp']==1 and $options['general']['CheckCookie']!=1){//old logic before 10.07.2022
-     else if ($options['general']['CheckIp']==1 and $options['general']['CheckCookie']!=1){// IP check then
+     //elseif (($options['general']['ShowOnlyUsersVotes']==1 or $options['general']['HideUntilVote']==1 or $options['pro']['MinusVote']==1) and $options['general']['CheckIp']==1 and $options['general']['CheckCookie']!=1){//old logic before 10.07.2022
+     elseif ($options['general']['CheckIp']==1 and $options['general']['CheckCookie']!=1){// IP check then
 
             $countSuserIp = $wpdb->get_results( $wpdb->prepare(
                 "

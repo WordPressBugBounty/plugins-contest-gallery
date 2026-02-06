@@ -163,7 +163,7 @@ echo "<div id='cg_nav_menu_row_container'  class='cg_do_not_remove_when_ajax_loa
     echo "<div ><a href='?page=".cg_get_version()."/index.php'  class='cg_load_backend_link cg_load_backend_link_back_to_menu'><input class='cg_backend_button cg_backend_button_back ' type='button' value='Back to menu' ></a><br/></div>";
     echo "<div><a id='cgNavMenuContactForm' href='?page=".cg_get_version()."/index.php&option_id=$GalleryID&define_upload=true' class='cg_load_backend_link'><input type='submit' class='cg_backend_button cg_backend_button_general'  style='padding-left: 20px;'  value='Edit upload form' /></form><br/></div>";
     echo "<div>";
-    echo "<a id='cgNavMenuRegForm'  href='?page=".cg_get_version()."/index.php&create_user_form=true&option_id=$GalleryID' class='cg_load_backend_link'><input type='hidden' name='option_id' value='$GalleryID'><input class='cg_backend_button cg_backend_button_general'  type='submit'   style='padding-left: 25px;'   value='Edit registration form'  /></a>";
+    echo "<a id='cgNavMenuRegForm'  href='?page=".cg_get_version()."/index.php&create_user_form=true&option_id=$GalleryID' class='cg_load_backend_link'><input type='hidden' name='option_id' value='$GalleryID'><input class='cg_backend_button cg_backend_button_general'  type='submit'   style='padding-left: 25px;'   value='Edit user form'  /></a>";
     echo "</div>";
     echo "<div>";
     echo "<a  id='cgNavMenuUsersManagement'  href='?page=".cg_get_version()."/index.php&users_management=true&option_id=$GalleryID' class='cg_load_backend_link'><input class='cg_backend_button cg_backend_button_general'  style='padding-left: 20px;'   type='button' id='cgUsersManagement' value='Users management' /></a>";

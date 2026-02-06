@@ -605,21 +605,21 @@ if(isset($_POST['action_correct_not_visible_for_frontend'])){
 		$isAlternativeFile=false;
 
 		if($object->post_mime_type=="application/pdf"){$isAlternativeFile=true;}
-		else if($object->post_mime_type=="application/zip"){$isAlternativeFile=true;}
-		else if($object->post_mime_type=="text/plain"){$isAlternativeFile=true;}
-		else if($object->post_mime_type=="application/msword"){$isAlternativeFile=true;}
-		else if($object->post_mime_type=="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){$isAlternativeFile=true;}
-		else if($object->post_mime_type=="application/vnd.ms-excel"){$isAlternativeFile=true;}
-		else if($object->post_mime_type=="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){$isAlternativeFile=true;}
-		else if($object->post_mime_type=="text/csv"){$isAlternativeFile=true;}
-		else if($object->post_mime_type=="audio/mpeg"){$isAlternativeFile=true;}
-		else if($object->post_mime_type=="audio/wav"){$isAlternativeFile=true;}
-		else if($object->post_mime_type=="audio/ogg"){$isAlternativeFile=true;}
-		else if($object->post_mime_type=="video/mp4"){$isAlternativeFile=true;}
-		else if($object->post_mime_type=="video/x-ms-wmv"){$isAlternativeFile=true;}
-		else if($object->post_mime_type=="video/quicktime"){$isAlternativeFile=true;}
-		else if($object->post_mime_type=="video/avi"){$isAlternativeFile=true;}
-		else if($object->post_mime_type=="video/webm"){$isAlternativeFile=true;}
+		elseif($object->post_mime_type=="application/zip"){$isAlternativeFile=true;}
+		elseif($object->post_mime_type=="text/plain"){$isAlternativeFile=true;}
+		elseif($object->post_mime_type=="application/msword"){$isAlternativeFile=true;}
+		elseif($object->post_mime_type=="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){$isAlternativeFile=true;}
+		elseif($object->post_mime_type=="application/vnd.ms-excel"){$isAlternativeFile=true;}
+		elseif($object->post_mime_type=="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){$isAlternativeFile=true;}
+		elseif($object->post_mime_type=="text/csv"){$isAlternativeFile=true;}
+		elseif($object->post_mime_type=="audio/mpeg"){$isAlternativeFile=true;}
+		elseif($object->post_mime_type=="audio/wav"){$isAlternativeFile=true;}
+		elseif($object->post_mime_type=="audio/ogg"){$isAlternativeFile=true;}
+		elseif($object->post_mime_type=="video/mp4"){$isAlternativeFile=true;}
+		elseif($object->post_mime_type=="video/x-ms-wmv"){$isAlternativeFile=true;}
+		elseif($object->post_mime_type=="video/quicktime"){$isAlternativeFile=true;}
+		elseif($object->post_mime_type=="video/avi"){$isAlternativeFile=true;}
+		elseif($object->post_mime_type=="video/webm"){$isAlternativeFile=true;}
 
 		if(!$isAlternativeFile && intval($options->Version)<17){
 			include(__DIR__.'/../../../v10/v10-admin/gallery/change-gallery/4_2_fb-creation.php');

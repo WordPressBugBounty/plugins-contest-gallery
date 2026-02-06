@@ -86,7 +86,7 @@ $checkCookieIdOrIP = '';
                                       $tablename.GalleryID = $GalleryID AND
                                       $tablename.CookieId LIKE '%$search%'
                                       UNION";
-}else if($pro_options->RegUserUploadOnly=='3'){
+}elseif($pro_options->RegUserUploadOnly=='3'){
     $checkCookieIdOrIP = "SELECT
                                     DISTINCT $tablename.*$orderByCount
                                     FROM

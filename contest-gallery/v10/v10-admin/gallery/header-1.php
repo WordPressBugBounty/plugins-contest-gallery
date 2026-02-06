@@ -24,9 +24,9 @@ echo "<span style='position: relative;'>Maximum <b>upload_max_filesize</b> in yo
  <br>To increase in php.ini file use:<br><b>upload_max_filesize = 10MB</b> (example, equal to sign required!)<br><br><b>Some server providers does not allow manually increase in files.<br>It has to be done in providers backend or they have to be contacted.</b></span>
  </span>";
 
-echo "<span style='position: relative;'>Maximum <b>post_max_size</b> in your PHP configuration: <b>$post_max_size MB</b> 
+echo "<br><span style='position: relative;'>Maximum <b>post_max_size</b> in your PHP configuration: <b>$post_max_size MB</b> 
 <span class=\"cg-info-icon\"><b><u>info</b></u></span>
- <span class=\"cg-info-container\" style=\"top: 43px;left: -130px;display: none;\"><br>Describes the maximum size of a post which can be done when form submits.<br>
+ <span class=\"cg-info-container\" style=\"top: 20px;left: 320px;display: none;\"><br>Describes the maximum size of a post which can be done when form submits.<br>
  Example: you try to upload 3 files with each 3MB and post_max_size is 6MB, then it will not work.<br><br>To increase in htaccess file use:<br><b>php_value post_max_size 10MB</b> (example, no equal to sign!)
  <br>To increase in php.ini file use:<br><b>post_max_size = 10MB</b> (example, equal to sign required!)<br><br><b>Some server providers does not allow manually increase in files.<br>It has to be done in providers backend or they have to be contacted.</b></span>
  </span>";
@@ -312,7 +312,8 @@ echo "</div>";
 }
 echo "</div></td>";
 
-echo "<td align='center'>
+// since 28.0.2 not available anymore, because not required, a mail for an entry can be sent anytime
+echo "<td align='center' class='cg_hidden cg_pointer_events_none'>
 <div id='cgResetAllInformed'>";
 
 echo "<form method='POST' action='?page=".cg_get_version()."/index.php&option_id=$GalleryID&edit_gallery=true'  class='cg_load_backend_submit cg_load_backend_submit_form_submit cg_reset_all_informed'>

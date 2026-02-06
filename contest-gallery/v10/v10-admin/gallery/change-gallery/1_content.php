@@ -91,7 +91,7 @@ if (!empty($content)) {
 			$field_content = '';
 
 			// 6. Content
-			if (($field_type=='text-f' OR $field_type=='email-f' OR $field_type=='select-f' OR $field_type=='url-f') && array_key_exists('short-text',$value)){
+			if (($field_type=='text-f' OR $field_type=='email-f' OR $field_type=='select-f' OR $field_type=='radio-f' OR $field_type == 'chk-f' OR $field_type=='check-f' OR $field_type=='url-f') && array_key_exists('short-text',$value)){
 				$field_content = contest_gal1ery_htmlentities_and_preg_replace($value['short-text']);
 				$checkEntries = $wpdb->get_var("SELECT COUNT(*) as NumberOfRows FROM $tablenameentries WHERE pid = '$imageId' AND f_input_id = '$formFieldId' LIMIT 1");
 
@@ -144,7 +144,7 @@ if (!empty($content)) {
 
 			// 5. Content
 			if (($field_type=='comment-f') && array_key_exists('long-text',$value)) {
-				$field_content = contest_gal1ery_htmlentities_and_preg_replace_textarea($value['long-text']);
+				$field_content = contest_gal1ery_htmlentities_and_preg_replace($value['long-text']);
 				$field_content = $sanitize_textarea_field($field_content);
 
 				$imageInfoArray[$formFieldId]['field-content'] = $field_content;

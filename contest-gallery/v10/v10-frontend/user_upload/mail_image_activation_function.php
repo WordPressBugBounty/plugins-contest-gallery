@@ -7,11 +7,13 @@ if (!function_exists('contest_gal1ery_mail_image_activation'))   {
         global $wpdb;
         $tablename = $wpdb->prefix . "contest_gal1ery";
 
-        $Subject = contest_gal1ery_convert_for_html_output($selectSQLemail->Header);
+        $Subject = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemail->Header);
         $Admin = $selectSQLemail->Admin;
         $Reply = $selectSQLemail->Reply;
         $cc = $selectSQLemail->CC;
         $bcc = $selectSQLemail->BCC;
+        $ccPlain = $selectSQLemail->CC;
+        $bccPlain = $selectSQLemail->BCC;
 
         $url = trim(sanitize_text_field($selectSQLemail->URL));
 
@@ -27,11 +29,11 @@ if (!function_exists('contest_gal1ery_mail_image_activation'))   {
                 $rowObject = $wpdb->get_row("SELECT * FROM $tablename WHERE id = $nextId");
                 if(strpos($galeryIDuser,'-u')!==false && strpos($galeryIDuser,'-uf')===false){
                     $url1 = get_permalink($rowObject->WpPageUser);
-                }else if(strpos($galeryIDuser,'-nv')!==false){
+                }elseif(strpos($galeryIDuser,'-nv')!==false){
                     $url1 = get_permalink($rowObject->WpPageNoVoting);
-                }else if(strpos($galeryIDuser,'-w')!==false){
+                }elseif(strpos($galeryIDuser,'-w')!==false){
                     $url1 = get_permalink($rowObject->WpPageWinner);
-                }else if(strpos($galeryIDuser,'-ec')!==false){
+                }elseif(strpos($galeryIDuser,'-ec')!==false){
                     $url1 = get_permalink($rowObject->WpPageEcommerce);
                 }else{
                     $url1 = get_permalink($rowObject->WpPage);
@@ -84,7 +86,18 @@ if (!function_exists('contest_gal1ery_mail_image_activation'))   {
         $cgMailGalleryId = $galeryID;
         add_action( 'wp_mail_failed', 'cg_on_wp_mail_error', 10, 1 );
 
-        wp_mail($userMail, $Subject, $Msg, $headers);
+        if(wp_mail($userMail, $Subject, $Msg, $headers)){
+            $WpUserId = 0;
+            if(is_user_logged_in()){
+                $user = wp_get_current_user();
+                $WpUserId = $user->ID;
+            }
+            $ReplyMail = $Reply;
+            $FromMail = $Reply;
+            $FromName = $Admin;
+            $ReplyName = $Admin;
+            cg_save_sent_mail($galeryID,$nextId,$WpUserId,$userMail,$ReplyName,$ReplyMail,$FromName,$FromMail,$ccPlain,$bccPlain,$Subject, $Msg, 'entry-frontend');
+        }
 
     }
 }

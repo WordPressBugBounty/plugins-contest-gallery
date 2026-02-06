@@ -1,9 +1,24 @@
 jQuery(document).ready(function($){
 
+
+    var cgCheckingNickname = false;
+    var nickname = $("#nickname").val();
+
+    $(document).on('input',"#nickname",function (e) {
+        var $el = $(this);
+        clearTimeout(window._cgInputNickname);
+        window._cgInputNickname = setTimeout(function () {
+            var $form = $el.closest("form");
+            $form.find('#submit').prop("disabled", false);
+            $form.find('#cg_input_error_ThisNicknameAlreadyExists').addClass("cg_hide");
+        }, 300);
+    });
+
     $(document).on('focusout',"#nickname",function (e) {
 
         var errorMessage = $('#cg_language_ThisNicknameAlreadyExists').val();
         var $errorMessageContainer = $('<p class="cg_input_error" id="cg_input_error_ThisNicknameAlreadyExists">'+errorMessage+'</p>');
+        var value = $(this).val();
 
         var $form = $('#your-profile');
         $form.find('input[name="action"]').prop('disabled',true);// all not required other action posts will be removed this way
@@ -12,6 +27,9 @@ jQuery(document).ready(function($){
 
         var form = document.getElementById('your-profile');
         var formPostData = new FormData(form);
+
+        // 🔐 start: validation running
+        cgCheckingNickname = true;
 
         $.ajax({
             url: 'admin-ajax.php',
@@ -22,18 +40,21 @@ jQuery(document).ready(function($){
             processData: false
         }).done(function (response) {
 
-
             $form.find('input[name="action"]').prop('disabled',false);
             $form.find('#post_cg_check_nickname_edit_profile').prop('disabled',true);
 
             if(response.indexOf('nickname-exists') > - 1){
                 $form.find('#submit').prop('disabled',true);
                 $errorMessageContainer.insertAfter($form.find('#nickname'));
+                $('#display_name option').each(function () {
+                    if ($(this).text() === value) {
+                        $(this).remove();
+                        return false; // stop loop early
+                    }
+                });
             }else{
                 $form.find('#submit').prop('disabled',false);
             }
-
-            return;
 
         }).fail(function (xhr, status, error) {
 
@@ -41,13 +62,20 @@ jQuery(document).ready(function($){
             $form.find('#post_cg_check_nickname_edit_profile').prop('disabled',true);
             $form.find('#submit').prop('disabled',false);
 
-            return;
-
         }).always(function () {
-
+            // 🔓 end: validation finished
+            cgCheckingNickname = false;
         });
 
     });
+
+    $(document).on('click', '#submit', function (e) {
+        var currentValue = $("#nickname").val().trim();
+        if (cgCheckingNickname && nickname != currentValue && currentValue != '') {
+            e.preventDefault();
+        }
+    });
+
 
     $(document).on('click',"#cgShowExistingProfileImage",function (e) {
         $(this).addClass('cg_hide');
@@ -229,19 +257,29 @@ jQuery(document).ready(function($){
         localStorage.removeItem('cg_input_image_upload_file_src');
     }*/
 
-    $(document).on('change',".cg_input_field_required",function (e) {
+    $(document).on('change input',".cg_input_field_required",function (e) {
         $(this).parent().find('.cg_input_error').remove();
-        if($(this).val().trim()==''){
+        var hasRequiredError = false;
+        if($(this).hasClass('cg_check')){
+            if(!$(this).find('input[type="checkbox"]:checked').length){
+                hasRequiredError = true;
+            }
+        }else{
+            if($(this).val().trim()==''){
+                hasRequiredError = true;
+            }
+        }
+        if(hasRequiredError){
             var errorMessage = $('#cg_language_required').val();
-            var $errorMessageContainer = $('<p class="cg_input_error" id="cg_input_error_required">'+errorMessage+'</p>');
+            var $errorMessageContainer = $('<p class="cg_input_error">'+errorMessage+'</p>');
             $errorMessageContainer.insertAfter($(this));
         }
-
-        var $form = $('#your-profile');
+        var $form = $(this).closest('form');
         if(!$form.find('.cg_input_error:visible').length){
-            $('#submit').prop('disabled',false);
+            $form.find('#submit').prop('disabled',false);
+        }else{
+            $form.find('#submit').prop('disabled',true);
         }
-
     });
 
     $(document).on('submit',"#your-profile",function (e) {
@@ -256,9 +294,19 @@ jQuery(document).ready(function($){
         $form.find('#post_cg_check_nickname_edit_profile').remove();
 
         $form.find('.cg_input_field_required').each(function (){
-            if($(this).val().trim()==''){
+            var hasRequiredError = false;
+            if($(this).hasClass('cg_check')){
+                if(!$(this).find('input[type="checkbox"]:checked').length){
+                    hasRequiredError = true;
+                }
+            }else{
+                if($(this).val().trim()==''){
+                    hasRequiredError = true;
+                }
+            }
+            if(hasRequiredError){
                 var errorMessage = $('#cg_language_required').val();
-                var $errorMessageContainer = $('<p class="cg_input_error" id="cg_input_error_required">'+errorMessage+'</p>');
+                var $errorMessageContainer = $('<p class="cg_input_error">'+errorMessage+'</p>');
                 $errorMessageContainer.insertAfter($(this));
                 hasError = true;
             }
@@ -278,10 +326,11 @@ jQuery(document).ready(function($){
                 hasError = true;
             }
         }
-
+        debugger
         if(hasError){
             e.preventDefault();
             $form.find('#submit').prop('disabled',true);
+            $form.find('.submit .spinner').removeClass('is-active');
             return;
         }
 
@@ -346,5 +395,26 @@ jQuery(document).ready(function($){
         $form.find('#post_cg_backend_image_upload').remove();
         $form.find('#cg_input_image_upload_file').removeAttr('name').prop('disabled',true);// only disabled true because if true remove then visible
     }
+
+
+    /*var $nickname      = $('#nickname');
+    var $displayName   = $('#display_name');
+    var originalDisplay = $('#cg1l_original_display_name').val();
+
+    if (!originalDisplay) {
+        return;
+    }
+
+    // Check if the nickname row is marked as invalid (WordPress style)
+    var $nicknameRow = $nickname.closest('tr');
+    var hasNicknameError = $nicknameRow.hasClass('form-invalid');
+
+    // Optional: also detect inline error message text, if you want to be extra safe
+    // var hasNicknameError = hasNicknameError || $nicknameRow.find('.error').length > 0;
+
+    if (hasNicknameError) {
+        // Restore original display_name instead of the temporary "invalid nickname" value
+        $displayName.val(originalDisplay);
+    }*/
 
 });

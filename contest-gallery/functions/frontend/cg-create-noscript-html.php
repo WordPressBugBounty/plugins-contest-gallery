@@ -11,7 +11,7 @@ if(!function_exists('cg_create_no_script_html')){
 
             if(!empty($imageData['large'])){
                 $imageDataLargeSrc = $imageData['large'];
-            }else if(!empty($imageData['guid'])){
+            }elseif(!empty($imageData['guid'])){
                 $imageDataLargeSrc = $imageData['guid'];
             }else{
                 $imageDataLargeSrc = '';

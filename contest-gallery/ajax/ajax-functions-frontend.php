@@ -113,7 +113,7 @@ if (!function_exists('post_cg_set_frontend_cookie')) {
 			        cg_set_cookie($galeryID,'upload');
 			        // thats it cookie is set... after that cookie is available in browser
 		        }
-	        }else if(!empty($_POST['cgOrderIdHash'])){
+	        }elseif(!empty($_POST['cgOrderIdHash'])){
 		        setcookie('cg_order',  cg_hash_function('---cg_order---'.sanitize_text_field($_POST['cgOrderIdHash'])), time() + ( 7 * 24 * 60 * 60), "/");
 	        }else{
             if(!isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {
@@ -139,6 +139,8 @@ if(!function_exists('post_cg_rate_v10_oneStar')){
 
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 
+            cg_check_frontend_nonce();
+
             require_once(__DIR__.'/../v10/v10-frontend/data/rating/rate-picture-one-star.php');
 
             exit();
@@ -159,6 +161,8 @@ if(!function_exists('post_cg_rate_v10_fiveStar')){
 
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 
+            cg_check_frontend_nonce();
+
             require_once(__DIR__.'/../v10/v10-frontend/data/rating/rate-picture-five-star.php');
 
             exit();
@@ -170,6 +174,91 @@ if(!function_exists('post_cg_rate_v10_fiveStar')){
 }
 
 // AJAX Script für rate picture ---- ENDE
+
+
+add_action('wp_ajax_nopriv_post_cg1l_current_frontend_nonce', 'post_cg1l_current_frontend_nonce');
+add_action('wp_ajax_post_cg1l_current_frontend_nonce', 'post_cg1l_current_frontend_nonce');// has to run also for logged in users
+if (!function_exists('post_cg1l_current_frontend_nonce')) {
+
+    function post_cg1l_current_frontend_nonce()
+    {
+        if (defined('DOING_AJAX') && DOING_AJAX) {
+            $WpUserId = absint($_POST['cgJustLoggedInWpUserId']);
+            $cgGetLoggedInFrontendUserKey = sanitize_text_field($_POST['cgGetLoggedInFrontendUserKey']);
+            $cgGetLoggedInFrontendUserKeyToCompare = get_user_meta( $WpUserId,'cgGetLoggedInFrontendUserKey',true);
+            if(!empty($cgGetLoggedInFrontendUserKeyToCompare) && $cgGetLoggedInFrontendUserKeyToCompare == $cgGetLoggedInFrontendUserKey){
+        ?>
+        <script data-cg-processing-current-nonce="true">
+            cgJsClass.gallery.vars.currentCgNonce = <?php echo json_encode(wp_create_nonce('cg1l_action')); ?>;
+        </script>
+        <?php
+                delete_user_meta( $WpUserId,'cgGetLoggedInFrontendUserKey');
+            }
+            exit();
+        } else {
+            exit();
+        }
+    }
+}
+
+add_action('wp_ajax_nopriv_post_cg1l_login_user_by_key', 'post_cg1l_login_user_by_key');
+if (!function_exists('post_cg1l_login_user_by_key')) {
+    function post_cg1l_login_user_by_key()
+    {
+        if (defined('DOING_AJAX') && DOING_AJAX) {
+            cg_check_frontend_nonce();
+            global $wpdb;
+            $tablename = $wpdb->prefix . "contest_gal1ery";
+            $gid = absint($_POST['cgl_gid']);
+            $activation_key = sanitize_text_field($_POST['cglKey']);
+            if(empty($activation_key)){
+                exit();
+            }
+            $userRow = $wpdb->get_row(
+                $wpdb->prepare(
+                    "SELECT * 
+             FROM {$wpdb->users} 
+             WHERE user_activation_key = %s",
+                    $activation_key
+                )
+            );
+            if ( !empty($userRow)) {
+                $wpNickname = $userRow->display_name;
+                $WpUserEmail = $userRow->user_email;
+                $WpUserId = $userRow->ID;
+                wp_set_auth_cookie( $WpUserId,true );
+                $profileImage = '';
+                $wpUploadProfileImage = $wpdb->get_var( $wpdb->prepare(
+                    "SELECT WpUpload FROM $tablename WHERE IsProfileImage = %d AND WpUserId = %d",
+                    1,
+                    $WpUserId
+                ));
+                if(!empty($wpUploadProfileImage)){
+                    $profileImage=wp_get_attachment_image_src($wpUploadProfileImage, 'large');
+                    $profileImage=$profileImage[0];
+                }
+                ?>
+                <script data-cg-processing-current-nonce="true">
+                    var gid = <?php echo json_encode($gid); ?>;
+                    cgJsClass.gallery.vars.wpNickname = <?php echo json_encode($wpNickname); ?>;
+                    cgJsClass.gallery.vars.WpUserEmail = <?php echo json_encode($WpUserEmail); ?>;
+                    cgJsClass.gallery.vars.wpUserId = <?php echo json_encode($WpUserId); ?>;
+                    cgJsClass.gallery.vars.cglCurrentUserId = <?php echo json_encode(absint($WpUserId)); ?>;
+                    if(typeof cgJsData != 'undefined' && cgJsData[gid] && cgJsData[gid].vars && cgJsData[gid].vars.nicknames) {
+                        cgJsData[gid].vars.nicknames[cgJsClass.gallery.vars.wpUserId] = <?php echo json_encode($wpNickname); ?>;
+                    }
+                    if(typeof cgJsData != 'undefined' && cgJsData[gid] && cgJsData[gid].vars && cgJsData[gid].vars.profileImages) {
+                        cgJsData[gid].vars.profileImages[cgJsClass.gallery.vars.wpUserId] = <?php echo json_encode($profileImage); ?>;
+                    }
+                </script>
+                <?php
+                exit();
+            } else {
+                exit();
+            }
+        }
+    }
+}
 
 // Add image gallery form upload
 
@@ -183,6 +272,8 @@ if(!function_exists('post_cg_gallery_form_upload')){
         global $wpdb;
 
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+
+            cg_check_frontend_nonce();
 
             include(__DIR__.'/../v10/v10-frontend/user_upload/users-upload-check.php');
 
@@ -212,6 +303,8 @@ if(!function_exists('post_cg_gallery_user_delete_image')){
 
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 
+            cg_check_frontend_nonce();
+
             include(__DIR__.'/../v10/v10-frontend/gallery/gallery-user-delete-image.php');
 
             exit();
@@ -240,6 +333,8 @@ if(!function_exists('post_cg_gallery_user_edit_image_data')){
 
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 
+            cg_check_frontend_nonce();
+
             include(__DIR__.'/../v10/v10-frontend/gallery/gallery-user-edit-image-data.php');
 
             exit();
@@ -266,7 +361,7 @@ if(!function_exists('post_cg_changes_recognized')){
         }
 
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-
+            cg_check_frontend_nonce();
             include(__DIR__.'/../v10/v10-frontend/gallery/changes-recognized.php');
 
             exit();
@@ -322,6 +417,8 @@ if(!function_exists('cg_show_set_comments_v10')){
 
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 
+            cg_check_frontend_nonce();
+
             require_once(__DIR__.'/../v10/v10-frontend/data/comment/show-set-comments-v10.php');
             exit();
 
@@ -339,7 +436,6 @@ if(!function_exists('cg_show_set_comments_v10')){
 
 
 add_action( 'wp_ajax_nopriv_post_cg_login', 'post_cg_login' );
-add_action( 'wp_ajax_post_cg_login', 'post_cg_login' );
 
 if(!function_exists('post_cg_login')){
 
@@ -349,9 +445,109 @@ if(!function_exists('post_cg_login')){
 
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 
+            cg_check_frontend_nonce();
+
             require_once(__DIR__.'/../v10/v10-admin/users/frontend/login/users-login-check-ajax.php');
 
             die();
+        }
+        else {
+            exit();
+        }
+    }
+
+}
+
+add_action( 'wp_ajax_nopriv_post_cg1l_resend_unconfirmed_mail_frontend', 'post_cg1l_resend_unconfirmed_mail_frontend' );
+
+if(!function_exists('post_cg1l_resend_unconfirmed_mail_frontend')){
+    function post_cg1l_resend_unconfirmed_mail_frontend(){
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+            cg_check_frontend_nonce();
+
+            global $wpdb;
+            $tablenameProOptions = $wpdb->prefix . "contest_gal1ery_pro_options";
+
+            $proOptions = $wpdb->get_row("SELECT * FROM $tablenameProOptions WHERE GeneralID = '1'");
+            $activationKey = sanitize_text_field(wp_unslash($_POST["cgl_activation_key"]));
+
+            $gid = 0;
+            $pid = 0;
+            $ReceiverMail = sanitize_email($_POST['cgl_mail']);
+            $page_id = intval($_POST['cgl_page_id']);
+            $pageUrl = get_permalink($page_id);
+            $FromName = html_entity_decode(strip_tags($proOptions->RegMailAddressor));
+            $ReplyName = $FromName;
+            if (is_email($proOptions->RegMailReply)) {
+                $ReplyMail = $proOptions->RegMailReply;
+            } else {
+                $ReplyMail = get_option('admin_email');
+            }
+            $FromMail = $ReplyMail;
+            $RegMailCC = (empty($proOptions->RegMailCC)) ? '' : $proOptions->RegMailCC;
+            $RegMailBCC = (empty($proOptions->RegMailBCC)) ? '' : $proOptions->RegMailBCC;
+            $body = contest_gal1ery_convert_for_html_output_without_nl2br($proOptions->TextEmailConfirmation);
+            $Subject = contest_gal1ery_convert_for_html_output_without_nl2br($proOptions->RegMailSubject);
+
+            $sent = cg1l_resend_unconfirmed_mail($gid,$pid,$ReceiverMail,$pageUrl,$ReplyMail,$FromName,$ReplyName,$FromMail,$RegMailCC,$RegMailBCC,$body,$Subject,$activationKey,true);
+
+            ?>
+            <script data-cg-processing="true">
+                cgJsClass.gallery.vars.resendConfirmationMailSent = <?php echo json_encode($sent);?>;
+            </script>
+            <?php
+            die();
+        }else {
+            exit();
+        }
+    }
+}
+
+add_action( 'wp_ajax_nopriv_post_cg1l_verify_pin', 'post_cg1l_verify_pin' );
+if(!function_exists('post_cg1l_verify_pin')){
+
+    function post_cg1l_verify_pin() {
+
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+
+            global $wpdb;
+
+            cg_check_frontend_nonce();
+
+            // PLUGIN VERSION CHECK HERE
+            contest_gal1ery_db_check();
+
+            $cg_users_pin_from_email_check = 1;
+
+            include(__DIR__.'/../v10/v10-admin/users/frontend/registry/users-registry.php');
+
+            exit();
+
+        }
+        else {
+            exit();
+        }
+    }
+
+}
+
+add_action( 'wp_ajax_nopriv_post_cg1l_resend_pin', 'post_cg1l_resend_pin' );
+if(!function_exists('post_cg1l_resend_pin')){
+
+    function post_cg1l_resend_pin() {
+
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+
+            global $wpdb;
+
+            cg_check_frontend_nonce();
+
+            // PLUGIN VERSION CHECK HERE
+            contest_gal1ery_db_check();
+
+            include(__DIR__.'/../v10/v10-admin/users/frontend/registry/users-registry-resend-pin.php');
+            exit();
+
         }
         else {
             exit();
@@ -418,6 +614,8 @@ if(!function_exists('post_cg_ecommerce_payment_processing')){
 
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 
+            cg_check_frontend_nonce();
+
             include (__DIR__.'/../v10/v10-frontend/ecommerce/ecommerce-payment-processing.php');
             exit();
 
@@ -436,6 +634,7 @@ if(!function_exists('post_cg_get_raw_data_from_galleries')){
     function post_cg_get_raw_data_from_galleries() {
         global $wpdb;
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+            cg_check_frontend_nonce();
             include (__DIR__.'/../v10/v10-frontend/ecommerce/ecommerce-get-raw-data-from-galleries.php');
             exit();
         }else {
@@ -452,6 +651,7 @@ if(!function_exists('post_cg_get_stripe_payment_intent')){
     function post_cg_get_stripe_payment_intent() {
         global $wpdb;
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+            cg_check_frontend_nonce();
             include (__DIR__.'/../v10/v10-frontend/ecommerce/ecommerce-get-stripe-payment-intent.php');
             exit();
         }else {

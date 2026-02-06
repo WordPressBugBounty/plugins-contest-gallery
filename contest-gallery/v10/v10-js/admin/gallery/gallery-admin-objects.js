@@ -5,6 +5,8 @@ cgJsClassAdmin.gallery.vars = cgJsClassAdmin.gallery.vars|| {};
 cgJsClassAdmin.gallery.vars.ecommerce = cgJsClassAdmin.gallery.vars.ecommerce|| {};
 cgJsClassAdmin.gallery.functions = cgJsClassAdmin.gallery.functions|| {};
 cgJsClassAdmin.gallery.vars = {
+    cgOverlayObserver: undefined,
+    cgOverlayInterval: undefined,
     $cg_backend_info_container: null,
     allowedFileEndings: ['jpg','jpeg','gif','png','pdf','zip','txt','doc','docx','xls','xlsx','csv','mp3','m4a','ogg','wav','mp4','mov','webm','ppt','pptx','inst','tkt','twt','ytb'],// ico not allowed anymore since wp 6.0, status 02 Jul 2022
     multipleFilesNewAdded: {},
@@ -23,6 +25,7 @@ cgJsClassAdmin.gallery.vars = {
     openAiPrompts: null,
     moveSelected: '',
     pdfPreviewsCreated: 0,
+    WpUsersData: {},
     WpUploadFilesForSaleArrayLoaded: [],
     $cg_backend_info_user_link_container: [],
     draggableDragStartDragEnd: "draggable='true'\n" +

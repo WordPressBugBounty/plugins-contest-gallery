@@ -33,7 +33,9 @@ if(floatval($dbGalleryVersion)>=22){
 }
 
 cg_row_columns($GalleryID);
-cg_add_column($GalleryID,$cgProFalse,$dbGalleryVersion);
+
+cg_add_upl_field($GalleryID,$cgProFalse,$dbGalleryVersion);
+
 cg_delete_existing_fields_first($GalleryID);
 
 echo "<input type='hidden' id='cgIsV22OrHigher' value='$cgIsV22OrHigher'/>";
@@ -71,7 +73,7 @@ echo '</select>';
 echo '<div id="cg_main_options" style="margin-top: 0;box-shadow: unset;margin-bottom: 0;" class="cg_main_options">';
 
 echo '<div id="cgUploadFieldsSelect">';
-echo '<p class="cg_edit_form_options_label" style="margin-bottom: 0;">Upload form<span class="" style="margin-top: 0;display: block;font-size:16px;"><b class="cg_color_green">NEW:</b> Multiple columns drag and drop upload form builder since version 27.0.0. </span></p>';
+echo '<p class="cg_edit_form_options_label" style="margin-bottom: 0;">Upload form<span class="cg_hide" style="margin-top: 0;display: block;font-size:16px;"><b class="cg_color_green">NEW:</b> Multiple columns drag and drop upload form builder since version 27.0.0. </span></p>';
 //echo "<form name='defineUpload' enctype='multipart/form-data' action='?page='.cg_get_version().'/index.php&optionID=$GalleryID&defineUpload=true' id='form' method='post'>";
 
 $fbLikeTitleAndDesc = '';
@@ -89,7 +91,9 @@ $heredoc = <<<HEREDOC
 		<optgroup label="User fields">
 			<option  value="nf">Input</option>
 			<option value="kf">Textarea</option>
-			<option value="se">Select</option>
+			<option value="se" class="$cgProFalse">Select</option>
+			<option value="ra" class="$cgProFalse">Radio</option>
+			<option value="chk" class="$cgProFalse">Checkbox</option>
 			<option value="sec">Select Categories</option>
 			<option class="$cgProFalse" value="dt">Date $cgProFalseText</option>
 			<option class="$cgProFalse" value="ef">Email $cgProFalseText</option>
@@ -131,18 +135,18 @@ echo "<input type='hidden' id='isFromEditContactFormIsForWpPageTitleChangedOrHas
 
 ?>
 
-<div id="cgCreateUploadContainer" ondragover="cgJsClassAdmin.createUpload.dragAndDrop.ondragoverCreateUploadContainer(event)"   >
+<div id="cgCreateUploadContainer" class="cgCreateUploadContainer" ondragover="cgJsClassAdmin.createUpload.dragAndDrop.ondragoverCreateUploadContainer(event)"   >
     <?php
     echo '<div id="cgUploadFormDescription" ><b>NOTE:</b> added fields will be available as content fields for all file entries, or entries without files</div>';
     ?>
     <div id="ausgabe1" class="cg_create_upload" >
         <?php
-        include ('left-side.php');
+        include ('upload-left-side.php');
         ?>
     </div>
     <div id="cgRightSide" >
         <?php
-        include ('right-side.php');
+        include ('upload-right-side.php');
         ?>
     </div>
 

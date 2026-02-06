@@ -73,7 +73,6 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
             $cgOpenAiSelected.find('#cgOpenAiGenImageContainer').addClass('cg_hide');
             $cgOpenAiSelected.find('#cgOpenAiKeyContainer').addClass('cg_hide');
             $cgOpenAiSelected.find('#cgOpenAiShowMoreSupportedLanguages').removeClass('cg_hide');
-            $cgOpenAiContainer.find('#cgOpenAiPrompts').removeClass('cg_hide');
         }else{
             var $cgOpenAiKeyContainer = $cgOpenAiContainer.find('#cgOpenAiKeyContainer');
             $cgOpenAiSelected.find('#cgOpenAiPromptContainer').addClass('cg_hide');
@@ -85,6 +84,8 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
             $cgOpenAiKeyContainer.removeClass('cg_hide');
             $cgOpenAiKeyContainer.find('#cgOpenAiKeyError').addClass('cg_hide');
         }
+
+        $cgOpenAiContainer.find('#cgOpenAiPrompts').removeClass('cg_hide');
 
         if(cgJsClassAdmin.gallery.vars.openAiPrompts.length){
             $cgOpenAiContainer.find('#cgOpenAiPromptsEntered').removeClass('cg_hide');
@@ -189,6 +190,7 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
         if($mediaFrame.find('.media-frame-content.cg_openai_edit').length){
 
             data['action'] = 'post_cg_edit_openai_image';
+            data['cg_nonce'] = CG1LBackendNonce.nonce;
             data['cg_images'] = [];
 
             $mediaFrame.find('.cg_openai_image_to_edit').each(function () {
@@ -208,6 +210,7 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
 
         }else{
             data['action'] = 'post_cg_generate_openai_image';
+            data['cg_nonce'] = CG1LBackendNonce.nonce;
         }
 
         data['cg_ai_model'] = $cgOpenAiModel.attr('data-ai-model-name');
@@ -324,6 +327,7 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
         var $cgOpenAiSelected = $(this).closest('#cgOpenAiSelected');
         var data = {};
         data['action'] = 'post_cg_add_openai_image';
+        data['cg_nonce'] = CG1LBackendNonce.nonce;
         //data['cg_openai_image_url'] = $cgOpenAiSelected.find('#cgOpenAiImg').attr('src');
         data['cg_openai_image_url'] = cgJsClassAdmin.gallery.vars.cgOpenAiGenUrl;
         data['cg_openai_image_name'] = $cgOpenAiSelected.find('#cgOpenAiImageName').val().trim();
@@ -391,10 +395,13 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
     });
 
     $(document).on('input','#cgOpenAiPromptInput',function (){
+        var $cg_openai_button_container = $(this).closest('.cg_openai_button_container');
         if($(this).val().trim() == ''){
-            $(this).closest('.cg_openai_button_container').find('#cgOpenAiPromptSubmit').addClass('cg_disabled_one');
+            $cg_openai_button_container.find('#cgOpenAiPromptSubmit').addClass('cg_disabled_one');
+            $cg_openai_button_container.find('#cgOpenAiPromptInputClear').addClass('cg_hide');
         }else{
-            $(this).closest('.cg_openai_button_container').find('#cgOpenAiPromptSubmit').removeClass('cg_disabled_one');
+            $cg_openai_button_container.find('#cgOpenAiPromptSubmit').removeClass('cg_disabled_one');
+            $cg_openai_button_container.find('#cgOpenAiPromptInputClear').removeClass('cg_hide');
         }
         cgJsClassAdmin.gallery.vars.openAiPrompt = $(this).val();
     });
@@ -443,6 +450,16 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
         if($(this).attr('id')=='cgOpenAiPromptInputClear'){
             cgJsClassAdmin.gallery.vars.openAiPrompt = '';
             $(this).closest('.cg_openai_button_container').find('#cgOpenAiPromptSubmit').addClass('cg_disabled_one');
+        }
+        $(this).addClass('cg_hide');
+    });
+
+    $(document).on('input','#cgOpenAiImageFields .cg_text',function (){
+        var $cg_clear_container = $(this).closest('.cg_clear_container');
+        if($(this).val().trim() == ''){
+            $cg_clear_container.find('.cg_clear').addClass('cg_hide');
+        }else{
+            $cg_clear_container.find('.cg_clear').removeClass('cg_hide');
         }
     });
 

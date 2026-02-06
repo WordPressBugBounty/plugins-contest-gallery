@@ -18,17 +18,17 @@ if (!function_exists('contest_gal1ery_user_comment_mail_prepare'))   {
         $lastTstampFor = $wpdb->get_var("SELECT Tstamp FROM $tablename_user_comment_mails WHERE WpUserId = $wpUserIdOfCommentedFile  AND GalleryID = $galeryID ORDER BY id DESC LIMIT 1");
         $tstampToCompare=1*60*60;
         if($InformUserCommentMailInterval=='1m'){$tstampToCompare=1*60;}// for testing
-        else if($InformUserCommentMailInterval=='2m'){$tstampToCompare=1*120;}// for testing
-        else if($InformUserCommentMailInterval=='1h'){$tstampToCompare=1*60*60;}
-        else if($InformUserCommentMailInterval=='2h'){$tstampToCompare=1*60*60*2;}
-        else if($InformUserCommentMailInterval=='4h'){$tstampToCompare=1*60*60*4;}
-        else if($InformUserCommentMailInterval=='6h'){$tstampToCompare=1*60*60*6;}
-        else if($InformUserCommentMailInterval=='12h'){$tstampToCompare=1*60*60*12;}
-        else if($InformUserCommentMailInterval=='24h'){$tstampToCompare=1*60*60*24;}
-        else if($InformUserCommentMailInterval=='48h'){$tstampToCompare=1*60*60*48;}
-        else if($InformUserCommentMailInterval=='1week'){$tstampToCompare=1*60*60*168;}
-        else if($InformUserCommentMailInterval=='2weeks'){$tstampToCompare=1*60*60*336;}
-        else if($InformUserCommentMailInterval=='4weeks'){$tstampToCompare=1*60*60*672;}
+        elseif($InformUserCommentMailInterval=='2m'){$tstampToCompare=1*120;}// for testing
+        elseif($InformUserCommentMailInterval=='1h'){$tstampToCompare=1*60*60;}
+        elseif($InformUserCommentMailInterval=='2h'){$tstampToCompare=1*60*60*2;}
+        elseif($InformUserCommentMailInterval=='4h'){$tstampToCompare=1*60*60*4;}
+        elseif($InformUserCommentMailInterval=='6h'){$tstampToCompare=1*60*60*6;}
+        elseif($InformUserCommentMailInterval=='12h'){$tstampToCompare=1*60*60*12;}
+        elseif($InformUserCommentMailInterval=='24h'){$tstampToCompare=1*60*60*24;}
+        elseif($InformUserCommentMailInterval=='48h'){$tstampToCompare=1*60*60*48;}
+        elseif($InformUserCommentMailInterval=='1week'){$tstampToCompare=1*60*60*168;}
+        elseif($InformUserCommentMailInterval=='2weeks'){$tstampToCompare=1*60*60*336;}
+        elseif($InformUserCommentMailInterval=='4weeks'){$tstampToCompare=1*60*60*672;}
         if(empty($lastTstampFor) OR (time()-$tstampToCompare)>$lastTstampFor){
             if(empty($lastTstampFor)){$lastTstampFor = time()-$tstampToCompare;}
 
@@ -62,7 +62,7 @@ if (!function_exists('contest_gal1ery_user_comment_mail_prepare'))   {
                                 if(empty($filesAndCommentsCounterSinceTstampArray[$file->id])){$filesAndCommentsCounterSinceTstampArray[$file->id] = [];}
                                 $counter++;
                                 $filesAndCommentsCounterSinceTstampArray[$file->id] = ['counter' => $counter,'NamePic' => $file->NamePic,'id' => $file->id];
-                            }else if(!empty($comment['ReviewTstamp']) && $comment['ReviewTstamp'] > $lastTstampFor && isset($comment['Active']) && $comment['Active'] != 2){// if was reviewd later
+                            }elseif(!empty($comment['ReviewTstamp']) && $comment['ReviewTstamp'] > $lastTstampFor && isset($comment['Active']) && $comment['Active'] != 2){// if was reviewd later
                                 if(empty($filesAndCommentsCounterSinceTstampArray[$file->id])){$filesAndCommentsCounterSinceTstampArray[$file->id] = [];}
                                 $counter++;
                                 $filesAndCommentsCounterSinceTstampArray[$file->id] = ['counter' => $counter,'NamePic' => $file->NamePic,'id' => $file->id];

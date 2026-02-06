@@ -127,6 +127,8 @@ die('please contact site administrator if you see this, code 274');
     $code = $wpdb->base_prefix; // database prefix
     $code = md5($code.$adminHashedPass);
 
+    $csvData = cg_neutralize_csv_array($csvData);
+
     $dir = plugin_dir_path( __FILE__ );
     $dir = $dir.$code."_userregdata.csv";
     //echo "$dir";

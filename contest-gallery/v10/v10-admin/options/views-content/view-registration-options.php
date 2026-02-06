@@ -40,10 +40,32 @@ if(intval($galleryDbVersion)>=14){
 }
 
 echo <<<HEREDOC
+            <div class='cg_view_options_row'>
+                <div class="cg_view_option cg_view_option_100_percent cg_border_bottom_none" >
+                    <div class="cg_view_option_title" style="width: 100%;">
+                        <p style="margin-left: 0;">Two different user registration shortcode types available</p>
+                    </div>
+                </div>
+           </div>
+            <div class='cg_view_options_row'>
+                <div class="cg_view_option cg_view_option_50_percent cg_border_bottom_none cg_border_right_none ">
+                    <div class="cg_view_option_title" style="width: 100%;">
+                        <p><code class="cg_shortcode_copy cg_tooltip"><span>[cg_users_reg]</span></code><br><span class="cg_view_option_title_note">User receives an email and <b>confirms 
+        registration by clicking a link</b> (<b>page opens</b>).<br>
+        <b>Typical registration form</b> requiring password, username, and nickname.</span></p>
+                    </div>
+                </div>
+                <div class="cg_view_option cg_view_option_50_percent cg_border_bottom_none" >
+                    <div class="cg_view_option_title"  style="width: 100%;">
+                        <p><code class="cg_shortcode_copy cg_tooltip"><span>[cg_users_pin]</span></code><br><span class="cg_view_option_title_note">User receives an <b>email with a PIN</b> and 
+        <b>confirms it on the same page</b> (<b>no page reload</b>).<br><b>Only the email field is required</b> to fill out.<br>Additional fields can be added in "Edit user form".</span></p>
+                    </div>
+                </div>
+           </div>
         <div class='cg_view_options_row cg_go_to_target'  data-cg-go-to-target="RegOptionsUserGroupRolesContainer" >
             <div class="cg_view_option cg_view_option_full_width" id="RegistryUserRoleContainer">
                 <div class="cg_view_option_title">
-                    <p>Select user role group for registered users over Contest Gallery registration form
+                    <p>Select user role group for registered users over Contest Gallery user registration form
                         <br>
                         or Contest Gallery Google sign in button
                         $cgV14UserGroupRoleNote
@@ -275,13 +297,24 @@ echo <<<HEREDOC
     </div>
 HEREDOC;
 
+// Calculate days, hours, seconds
+$confirmExpiryDays    = (int) floor( $ConfirmExpiry / 86400);
+$rest    = $ConfirmExpiry % 86400;
+$confirmExpiryHours   = (int) floor($rest / 3600);
+$rest2   = $rest % 3600;
+$confirmExpiryMinutes = (int) floor($rest2 / 60);
+// Calculate hours, seconds
+$pinExpiryHours   = (int) floor($PinExpiry / 3600);
+$rest2   = $PinExpiry % 3600;
+$pinExpiryMinutes = (int) floor($rest2 / 60);
+
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
         <p class='cg_view_options_rows_container_title'>Registration options</p>
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_view_option_full_width $cgProFalse" id="wp-TextBeforeRegFormBeforeLoggedIn-wrap-Container">
                 <div class="cg_view_option_title">
-                    <p>Text before registration form before logged in</p>
+                    <p>Text before email confirmation form before logged in<br><span class="cg_view_option_title_note">For [cg_users_reg] shortcodes.</span></p>
                 </div>
                 <div class="cg_view_option_html">
                     <textarea class='cg-wp-editor-template' id='TextBeforeRegFormBeforeLoggedIn'  name='TextBeforeRegFormBeforeLoggedIn'>$TextBeforeRegFormBeforeLoggedIn</textarea>
@@ -289,10 +322,20 @@ echo <<<HEREDOC
              </div>
         </div>
         <div class='cg_view_options_row'>
+            <div class="cg_view_option cg_view_option_full_width $cgProFalse" id="wp-TextBeforePinFormBeforeLoggedIn-wrap-Container">
+                <div class="cg_view_option_title">
+                    <p>Text before PIN confirmation form before logged in<br><span class="cg_view_option_title_note">For [cg_users_pin] shortcodes.</span></p>
+                </div>
+                <div class="cg_view_option_html">
+                    <textarea class='cg-wp-editor-template' id='TextBeforePinFormBeforeLoggedIn'  name='TextBeforePinFormBeforeLoggedIn'>$TextBeforePinFormBeforeLoggedIn</textarea>
+                </div>
+             </div>
+        </div>
+        <div class='cg_view_options_row'>
             <div class="cg_view_option cg_view_option_100_percent cg_border_top_none $cgProFalse" id="RegMailOptionalContainer">
                 <div class="cg_view_option_title">
-                    <p>Login user immediately after registration<br><span class="cg_view_option_title_note">User account will be created right after registration and user will be logged in. 
-User has not to confirm e-mail to be able to login. Confirmation e-mail will be sent additionally.</span></p>
+                    <p>Log in user instantly after registration<br><span class="cg_view_option_title_note">For [cg_users_reg] shortcode.<br>The account is created immediately after registration and the user is logged in automatically.<br>
+E-mail confirmation is not required to access the account, but a confirmation email will still be sent.</span></p>
                 </div>
                 <div class="cg_view_option_checkbox">
                     <input id='RegMailOptional' type='checkbox' name='RegMailOptional' $RegMailOptional >
@@ -302,7 +345,7 @@ User has not to confirm e-mail to be able to login. Confirmation e-mail will be 
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse" id="wp-ForwardAfterRegText-wrap-Container">
                 <div class="cg_view_option_title">
-                    <p>Confirmation text after registration</p>
+                    <p>Confirmation text after registration<br><span class="cg_view_option_title_note">For [cg_users_reg] shortcode.</span></p>
                 </div>
                 <div class="cg_view_option_html">
                     <textarea class='cg-wp-editor-template' id='ForwardAfterRegText'  name='ForwardAfterRegText'>$ForwardAfterRegText</textarea>
@@ -312,7 +355,7 @@ User has not to confirm e-mail to be able to login. Confirmation e-mail will be 
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse" id="wp-TextAfterEmailConfirmation-wrap-Container">
                 <div class="cg_view_option_title">
-                    <p>Confirmation text after e-mail confirmation</p>
+                    <p>Confirmation text after email confirmation<br><span class="cg_view_option_title_note">For [cg_users_reg] shortcode.</span></p>
                 </div>
                 <div class="cg_view_option_html">
                     <textarea class='cg-wp-editor-template' id='TextAfterEmailConfirmation'  name='TextAfterEmailConfirmation'>$TextAfterEmailConfirmation</textarea>
@@ -320,9 +363,52 @@ User has not to confirm e-mail to be able to login. Confirmation e-mail will be 
              </div>
         </div>
         <div class='cg_view_options_row'>
-            <div class="cg_view_option cg_view_option_100_percent cg_border_top_none $cgProFalse" id="HideRegFormAfterLoginContainer">
+            <div class="cg_view_option cg_view_option_100_percent cg_border_top_none $cgProFalse" id="LoginAfterConfirmContainer">
+                <div class="cg_view_option_title">
+                    <p>Login user immediately after email confirmation<br><span class="cg_view_option_title_note">For [cg_users_reg] shortcode.<br>The user will be logged in automatically after clicking the confirmation link in the e-mail.</span></p>
+                </div>
+                <div class="cg_view_option_checkbox">
+                    <input id='LoginAfterConfirm' type='checkbox' name='LoginAfterConfirm' $LoginAfterConfirm >
+                </div>
+            </div>
+       </div>
+       <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="ConfirmDaysHoursMinutesContainer" >
+            <div class='cg_view_option_title'>
+                <p>Confirmation link lifetime<br><span class="cg_view_option_title_note">For [cg_users_reg] shortcode.<br>(Days : Hours : Minutes)</span></p>
+            </div>
+            <div class='cg_view_option_input'>
+                <input type="number" id="confirmExpiryDays" name="confirm_expiry_days" min="0" max="100" step="1" value="$confirmExpiryDays" style="width:60px;margin-right: 15px;" >
+                <input type="number" id="confirmExpiryHours" name="confirm_expiry_hours" 
+min="0" max="24" step="1" value="$confirmExpiryHours" style="width:60px;margin-right: 15px;" >
+                <input type="number" id="confirmExpiryMinutes" name="confirm_expiry_minutes" 
+min="0" max="59" step="1" value="$confirmExpiryMinutes" style="width:60px;" >
+            </div>
+        </div>
+        <div class='cg_view_options_row'>
+            <div class="cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse" id="wp-TextAfterPinConfirmation-wrap-Container">
+                <div class="cg_view_option_title">
+                    <p>Confirmation text after PIN verification<br><span class="cg_view_option_title_note">For [cg_users_pin] shortcode.</span></p>
+                </div>
+                <div class="cg_view_option_html">
+                    <textarea class='cg-wp-editor-template' id='TextAfterPinConfirmation'  name='TextAfterPinConfirmation'>$TextAfterPinConfirmation</textarea>
+                </div>
+             </div>
+        </div>
+       <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="PinHoursMinutesContainer" >
+            <div class='cg_view_option_title'>
+                <p>PIN lifetime<br><span class="cg_view_option_title_note">For [cg_users_pin] shortcode.<br>(Hours : Minutes)</span></p>
+            </div>
+            <div class='cg_view_option_input'>
+                <input type="number" id="pinExpiryHours" name="pin_expiry_hours" 
+min="0" max="24" step="1" value="$pinExpiryHours" style="width:60px;margin-right: 15px;" >
+                <input type="number" id="pinExpiryMinutes" name="pin_expiry_minutes" 
+min="0" max="59" step="1" value="$pinExpiryMinutes" style="width:60px;" >
+            </div>
+        </div>
+        <div class='cg_view_options_row'>
+            <div class="cg_view_option cg_view_option_100_percent cg_border_top_none" id="HideRegFormAfterLoginContainer">
                     <div class="cg_view_option_title">
-                        <p>Hide registration form if user is logged in</p>
+                        <p>Hide registration form if user is logged in<br><span class="cg_view_option_title_note">For [cg_users_reg] and [cg_users_pin] shortcodes.</span></p>
                     </div>
                     <div class="cg_view_option_checkbox">
                         <input id='HideRegFormAfterLogin' type='checkbox' name='HideRegFormAfterLogin' $HideRegFormAfterLogin >
@@ -330,9 +416,9 @@ User has not to confirm e-mail to be able to login. Confirmation e-mail will be 
                 </div>
         </div>
         <div class='cg_view_options_row'>
-            <div class="cg_view_option cg_view_option_100_percent cg_border_top_none $cgProFalse" id="HideRegFormAfterLoginShowTextInsteadContainer">
+            <div class="cg_view_option cg_view_option_100_percent cg_border_top_none" id="HideRegFormAfterLoginShowTextInsteadContainer">
                     <div class="cg_view_option_title">
-                        <p>Show text instead</p>
+                        <p>Show text instead<br><span class="cg_view_option_title_note">For [cg_users_reg] and [cg_users_pin] shortcodes.</span></p>
                     </div>
                     <div class="cg_view_option_checkbox">
                         <input id='HideRegFormAfterLoginShowTextInstead' type='checkbox' name='HideRegFormAfterLoginShowTextInstead' $HideRegFormAfterLoginShowTextInstead >
@@ -340,9 +426,9 @@ User has not to confirm e-mail to be able to login. Confirmation e-mail will be 
                 </div>
             </div>
         <div class='cg_view_options_row'>
-            <div class="cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse" id="wp-HideRegFormAfterLoginTextToShow-wrap-Container">
+            <div class="cg_view_option cg_view_option_full_width cg_border_top_none" id="wp-HideRegFormAfterLoginTextToShow-wrap-Container">
                     <div class="cg_view_option_title">
-                        <p  style="padding-right: 20px;">Text to show</p>
+                        <p  style="padding-right: 20px;">Text to show<br><span class="cg_view_option_title_note">For [cg_users_reg] and [cg_users_pin] shortcodes.</span></p>
                     </div>
                     <div class="cg_view_option_html">
                         <textarea class='cg-wp-editor-template' id='HideRegFormAfterLoginTextToShow'  name='HideRegFormAfterLoginTextToShow'>$HideRegFormAfterLoginTextToShow</textarea>
@@ -355,7 +441,7 @@ HEREDOC;
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
         <p class='cg_view_options_rows_container_title'>Confirmation e-mail options
-            <br><span class='cg_view_options_rows_container_title_note'><span class="cg_color_red">NOTE:</span> relating testing - e-mail where is send to should not contain $cgYourDomainName.<br>Many servers can not send to own domain.</span>
+            <br><span class='cg_view_options_rows_container_title_note'>For [cg_users_reg] and [cg_users_pin] shortcodes.<br>$cgDomainErrorText</span>
         </p>
 HEREDOC;
 
@@ -414,7 +500,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_view_option_full_width cg_border_top_none" id="RegMailSubjectContainer">
                 <div class="cg_view_option_title">
-                    <p>Subject</p>
+                    <p>Subject<br><span class="cg_view_option_title_note">For [cg_users_reg] shortcode.</span></p>
                 </div>
                 <div class="cg_view_option_input">
                     <input type="text" name="RegMailSubject" class="cg-long-input" value="$RegMailSubject"  maxlength="200">
@@ -424,7 +510,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse" id="wp-TextEmailConfirmation-wrap-Container">
                 <div class="cg_view_option_title cg_copyable">
-                    <p>Mail content<br><span class="cg_view_option_title_note">Put this variable in the mail content editor: <span style="font-weight:bold;">\$regurl$</span><br>(Link to confirmation page will appear in the e-mail<br>It will be the same page where your registration shortcode is inserted)
+                    <p>Email content shortcode<br><span class="cg_view_option_title_note">For [cg_users_reg] shortcode.<br>Put this variable in the email content editor: <span style="font-weight:bold;" class="cg_tooltip cg_copy_param">\$regurl$</span><br>(Link to confirmation page will appear in the e-mail<br>It will be the same page where your registration shortcode is inserted)
 <br><a href="https://www.contest-gallery.com/documentation/#cgDisplayConfirmationURL" target="_blank" class="cg-documentation-link">Documentation: How to make the link clickable in e-mail</a></span></p>
                 </div>
                 <div class="cg_view_option_html">
@@ -432,7 +518,31 @@ echo <<<HEREDOC
                 </div>
             </div>
        </div>
+        <div class='cg_view_options_row'>
+            <div class="cg_view_option cg_border_border_bottom_left_radius_unset cg_border_border_bottom_right_radius_unset cg_view_option_full_width cg_border_top_none" id="RegPinSubjectContainer">
+                <div class="cg_view_option_title">
+                    <p>Subject<br><span class="cg_view_option_title_note">For [cg_users_pin] shortcode.<br>Put this variable in the subject field: <span style="font-weight:bold;" class="cg_tooltip cg_copy_param">\$pin$</span><br>(PIN for confirmation will appear in the subject)</span></p>
+                </div>
+                <div class="cg_view_option_input">
+                    <input type="text" name="RegPinSubject" class="cg-long-input" value="$RegPinSubject"  maxlength="200">
+                </div>
+            </div>
+       </div>
+        <div class='cg_view_options_row'>
+            <div class="cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse" id="wp-TextPinConfirmation-wrap-Container">
+                <div class="cg_view_option_title cg_copyable">
+                    <p>Email content<br><span class="cg_view_option_title_note">For [cg_users_pin] shortcode.<br>Put this variable in the email content editor: <span style="font-weight:bold;" class="cg_tooltip cg_copy_param">\$pin$</span><br>(PIN for confirmation will appear in the e-mail)</span></p>
+                </div>
+                <div class="cg_view_option_html">
+                    <textarea class='cg-wp-editor-template' id='TextPinConfirmation'  name='TextPinConfirmation'>$TextPinConfirmation</textarea
+                </div>
+            </div>
+       </div>
     </div>
+HEREDOC;
+
+echo <<<HEREDOC
+</div>
 HEREDOC;
 
 echo <<<HEREDOC

@@ -35,7 +35,7 @@ if(!function_exists('cg_create_general_registration_form_v14')){
 						%d,%d,%d)
 					",
                 '',0,'main-user-name',1,
-                'Username (for login)','',6,100,
+                'Username (for login)','',3,100,
                 1,1,1
             ) );
 
@@ -50,7 +50,7 @@ if(!function_exists('cg_create_general_registration_form_v14')){
 						%d,%d,%d)
 					",
                 '',0,'main-nick-name',1,
-                'Nickname (to display in frontend)','',6,100,
+                'Nickname (to display in frontend)','',3,100,
                 1,1,1
             ) );
 
@@ -129,14 +129,19 @@ if(!function_exists('cg_create_registry_and_login_options_v14')){
             $RegMailReply = get_option('admin_email');
             $RegMailSubject = 'Please complete your registration';
             $TextEmailConfirmation = 'Complete your registration by clicking on the link below: <br/><br/> $regurl$';
+            $TextPinConfirmation = 'Complete your registration by using the PIN below: <br/><br/> $pin$';
+            $RegPinSubject= 'Please verify your PIN';
             $ForwardAfterRegText = 'Thank you for your registration<br/>Check your email account to confirm your email and complete the registration. If you don\'t see any message then plz check also the spam folder.';
-            $TextAfterEmailConfirmation = 'Thank you for your registration. You are now able to login and to take part on the photo contest.';
+
+            $TextAfterEmailConfirmation = 'Email confirmed — you can now participate in the contest.';
+            $TextAfterPinConfirmation = 'PIN verified — you can now participate in the contest.';
+
             $ForwardAfterLoginText = 'You are now logged in. Have fun with photo contest.';
             $ForwardAfterLoginTextCheck = 1;
             $ForwardAfterLoginUrlCheck = 0;
             $ForwardAfterLoginUrl = '';
             $RegMailOptional = 0;
-            $HideRegFormAfterLogin = 0;
+            $HideRegFormAfterLogin = 1;
             $HideRegFormAfterLoginShowTextInstead = 0;
             $HideRegFormAfterLoginTextToShow = '';
 
@@ -145,23 +150,23 @@ if(!function_exists('cg_create_registry_and_login_options_v14')){
 				INSERT INTO $tablename_pro_options
 				(
 				 id, GalleryID, GeneralID, 
-				RegMailOptional, ForwardAfterRegText, TextAfterEmailConfirmation,
+				RegMailOptional, ForwardAfterRegText, TextAfterEmailConfirmation, TextAfterPinConfirmation,
 				HideRegFormAfterLogin, HideRegFormAfterLoginShowTextInstead,HideRegFormAfterLoginTextToShow,
-				RegMailAddressor, RegMailReply, RegMailSubject, TextEmailConfirmation,
+				RegMailAddressor, RegMailReply, RegMailSubject, TextEmailConfirmation, TextPinConfirmation, RegPinSubject,
 				ForwardAfterLoginUrlCheck,ForwardAfterLoginUrl, ForwardAfterLoginTextCheck, ForwardAfterLoginText
 				)
 				VALUES (
 				%s,%d,%d,
-				%d,%s,%s,
+				%d,%s,%s,%s,
 				%d,%d,%s,
-				%s,%s,%s,%s,
+				%s,%s,%s,%s,%s,%s,
 				%d,%s,%d,%s
 				)
 			",
                 '',0,1,
-                $RegMailOptional, $ForwardAfterRegText, $TextAfterEmailConfirmation,
+                $RegMailOptional, $ForwardAfterRegText, $TextAfterEmailConfirmation, $TextAfterPinConfirmation,
                 $HideRegFormAfterLogin, $HideRegFormAfterLoginShowTextInstead, $HideRegFormAfterLoginTextToShow,
-                $RegMailAddressor, $RegMailReply, $RegMailSubject, $TextEmailConfirmation,
+                $RegMailAddressor, $RegMailReply, $RegMailSubject, $TextEmailConfirmation, $TextPinConfirmation,$RegPinSubject,
                 $ForwardAfterLoginUrlCheck,$ForwardAfterLoginUrl,$ForwardAfterLoginTextCheck,$ForwardAfterLoginText
             ) );
 
@@ -197,29 +202,36 @@ if(!function_exists('cg_create_registry_and_login_options')){
         $LostPasswordMailAddressor = trim(get_option('blogname'));
         $LostPasswordMailReply = get_option('admin_email');
         $LostPasswordMailSubject = 'Reset your password';
-        $LostPasswordMailConfirmation = 'Reset your password by using link below: <br/><br/> $resetpasswordurl$';
+        $LostPasswordMailConfirmation = 'Reset your password by using link below: <br><br> $resetpasswordurl$';
         $TextBeforeLoginForm = '';
-        $TextBeforeRegFormBeforeLoggedIn = '';
+        $TextBeforeRegFormBeforeLoggedIn = 'Register to participate in the contest. Enter your email to receive confirmation link.';
+        $TextBeforePinFormBeforeLoggedIn = 'Register to participate in the contest. Enter your email to receive confirmation PIN.';
         $PermanentTextWhenLoggedIn = '';
-
+        $LoginAfterConfirm = 0;
+        if(cg_get_version()=='contest-gallery-pro'){
+            $LoginAfterConfirm = 1;
+        }
         $wpdb->query( $wpdb->prepare(
             "
 						INSERT INTO $tablename_registry_and_login_options
 						( id, GalleryID, GeneralID, LogoutLink, BackToGalleryLink,RegistryUserRole,
 						 LostPasswordMailAddressor, LostPasswordMailReply,
 						 LostPasswordMailSubject, LostPasswordMailConfirmation,
-						 TextBeforeLoginForm,TextBeforeRegFormBeforeLoggedIn,PermanentTextWhenLoggedIn
+						 TextBeforeLoginForm,TextBeforeRegFormBeforeLoggedIn,TextBeforePinFormBeforeLoggedIn,PermanentTextWhenLoggedIn,
+						 ConfirmExpiry, PinExpiry, LoginAfterConfirm
 						 )
 						VALUES ( %s,%d,%d,%s,%s,%s,
 						        %s,%s,
 						        %s,%s,
-						        %s,%s,%s
+						        %s,%s,%s,%s,
+						        %d,%d,%d
 						        )
 					",
             '',$GalleryID,$GeneralID,'', '',$RegistryUserRole,
             $LostPasswordMailAddressor,$LostPasswordMailReply,
             $LostPasswordMailSubject,$LostPasswordMailConfirmation,
-            $TextBeforeLoginForm,$TextBeforeRegFormBeforeLoggedIn,$PermanentTextWhenLoggedIn
+            $TextBeforeLoginForm,$TextBeforeRegFormBeforeLoggedIn,$TextBeforePinFormBeforeLoggedIn,$PermanentTextWhenLoggedIn,
+            86400,900,$LoginAfterConfirm
         ) );
 
     }

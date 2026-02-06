@@ -9,7 +9,7 @@ $registryAndLoginOptions = $wpdb->get_row( "SELECT * FROM $tablename_registry_an
 if(true){
     // if($registryAndLoginOptions->LostPasswordMailActive==1){
 
-    $cgLostPasswordEmail = sanitize_text_field($_REQUEST['cgLostPasswordEmail']);
+    $cgLostPasswordEmail = sanitize_email($_REQUEST['cgLostPasswordEmail']);
 
     // Check if valid mail. Wenn nicht dann admin Mail nehmen.
     if (!is_email($cgLostPasswordEmail)) {
@@ -34,11 +34,13 @@ if(true){
 	    update_user_meta( $wpUserID, 'cgResetPasswordKey', $cgResetPasswordKey);
 	    //$cgLostPasswordSiteUrl = cg_get_blog_option( get_current_blog_id(),'cgLostPasswordPermalink');
 	    $cgLostPasswordSiteUrl = wp_get_referer();
+        $cgLostPasswordSiteUrl = strtok($cgLostPasswordSiteUrl, '?');
+        $cgLostPasswordSiteUrl = strtok($cgLostPasswordSiteUrl, '#');
 
 	    $LostPasswordMailAddressor = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailAddressor);
         $LostPasswordMailReply = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailReply);
         $LostPasswordMailSubject = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailSubject);
-        $LostPasswordMailConfirmation = contest_gal1ery_convert_for_html_output($registryAndLoginOptions->LostPasswordMailConfirmation);
+        $LostPasswordMailConfirmation = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailConfirmation);
 
 	    $headers = array();
         $headers[] = "From: " . html_entity_decode(strip_tags($LostPasswordMailAddressor)) . " <" . strip_tags($LostPasswordMailReply) . ">";

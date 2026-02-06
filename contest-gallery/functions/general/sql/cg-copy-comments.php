@@ -19,12 +19,24 @@ if(!function_exists('cg_copy_comments')){
 
             $whenThenString = '';
             foreach($collectImageIdsArray as $oldImageId => $newImageId){
-                $whenThenString .= "WHEN $oldImageId THEN $newImageId ";
+                if (
+                    $oldImageId !== null && $oldImageId !== '' && is_numeric($oldImageId) &&
+                    $newImageId !== null && $newImageId !== '' && is_numeric($newImageId)
+                ) {
+                    // Avoid degenerate WHEN x THEN x entries
+                    if ((int)$oldImageId === (int)$newImageId) {
+                        continue;
+                    }
+                    $oldImageId           = (int)$oldImageId;
+                    $newImageId           = (int)$newImageId;
+                    $whenThenString .= "WHEN $oldImageId THEN $newImageId ";
+                }
             }
 
-            $whenThenString = substr_replace($whenThenString ,"", -1);
-
-            $wpdb->query($wpdb->prepare("UPDATE $tablename_comments SET pid = CASE pid $whenThenString ELSE pid END WHERE GalleryID IN (%d)",[$nextGalleryID]));
+            if(!empty($whenThenString)){
+                $whenThenString = rtrim($whenThenString);
+                $wpdb->query($wpdb->prepare("UPDATE $tablename_comments SET pid = CASE pid $whenThenString ELSE pid END WHERE GalleryID IN (%d)",[$nextGalleryID]));
+            }
 
             $wp_upload_dir = wp_upload_dir();
             $time = time();

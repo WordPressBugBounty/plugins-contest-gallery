@@ -82,7 +82,7 @@ if(!function_exists('cg_user_data_registry_csv_new_export')){
 
             }
 
-        }else if(!empty($cgSearchGalleryId)){
+        }elseif(!empty($cgSearchGalleryId)){
 
             $selectWPusers = $wpdb->get_results("SELECT DISTINCT $toSelect FROM $wpUsers, $entriesShort WHERE $wpUsers.ID = $entriesShort.wp_user_id AND $entriesShort.GalleryID = '$cgSearchGalleryId' ORDER BY $wpUsers.ID ASC");
 
@@ -375,14 +375,14 @@ if(!function_exists('cg_user_data_registry_csv_new_export')){
                             if(!empty($entry->meta_value)){
                                 if(strpos($entry->meta_value,'yes(cg-user-checked) ---')!==false){
                                     $csvData[$i][$headerColumnsArray[$formFieldId]] = 'checked';
-                                }else if(strpos($entry->meta_value,'yes(cg-user-not-checked) ---')!==false){
+                                }elseif(strpos($entry->meta_value,'yes(cg-user-not-checked) ---')!==false){
                                     $csvData[$i][$headerColumnsArray[$formFieldId]] = 'not checked';
                                 }else{
                                     $csvData[$i][$headerColumnsArray[$formFieldId]] = $entry->meta_value;
                                 }
-                            }else if(!empty($entry->imgSrcLarge)){
+                            }elseif(!empty($entry->imgSrcLarge)){
                             $csvData[$i][$headerColumnsArray[$formFieldId]] = $entry->imgSrcLarge;
-                            }else if(!empty($entry->Field_Content)){
+                            }elseif(!empty($entry->Field_Content)){
                             $csvData[$i][$headerColumnsArray[$formFieldId]] = $entry->Field_Content;
                             }
                         }
@@ -435,6 +435,8 @@ if(!function_exists('cg_user_data_registry_csv_new_export')){
         }
 
         // old logic do not remove
+
+        $csvData = cg_neutralize_csv_array($csvData);
 
         $filename = "wordpress-users-export-from-contest-gallery.csv";
 

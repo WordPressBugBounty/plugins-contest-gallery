@@ -122,7 +122,7 @@ echo <<<HEREDOC
 <div class='cg_view_options_row'>
         <div class="cg_view_option  cg_view_option_100_percent cg_border_top_none $cgProFalse" >
             <div class="cg_view_option_title">
-                <p>Create @googlemail Google Sign In users as @gmail WordPress users in the database<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE:</span> older Google users from certain countries might have @googlemail as official address, but using @gmail everywhere for registration and login. This users can be created as @gmail users, so they can login with @gmail as WordPress user without using Google Sign In. Google handles @googlemail and @gmail as same e-mail address.</span></span></p>
+                <p>Create @googlemail Google Sign In users as @gmail WordPress users in the database<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE:</span> older Google users from certain<br> countries might have @googlemail as official address,<br>but using @gmail everywhere for registration and login. This users can be created as @gmail users,<br>so they can login with @gmail as WordPress user without using Google Sign In.<br>Google handles @googlemail and @gmail as same e-mail address.</span></span></p>
             </div>
             <div class="cg_view_option_checkbox">
                 <input type="checkbox" name="GooglemailConvert" id="GooglemailConvert" value="1" $GooglemailConvert >

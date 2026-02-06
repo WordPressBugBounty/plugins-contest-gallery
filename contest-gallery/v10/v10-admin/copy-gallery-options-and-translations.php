@@ -47,7 +47,7 @@ if(!empty($valueCollect['AllowGalleryScript'])){
     $isAllowGalleryScriptWasActivated = true;
 }
 
-include ('json-values-21-version-release.php');
+include ('json-values-21-version-release-and-later.php');
 
 // V10 adaption
 if ($cgVersion < 10) {
@@ -385,6 +385,7 @@ if ($cgVersion < 10) {
     $valueCollect['FeControlsStyle'] = 'white';
     $valueCollect['AllowSortOptions'] = 'custom,date-desc,date-asc,rate-desc,rate-asc,rate-average-desc,rate-average-asc,rate-sum-desc,rate-sum-asc,comment-desc,comment-asc,random';
     $valueCollect['GalleryStyle'] = 'center-white';
+    $valueCollect['FeVotingIconType'] = 'star';
     $valueCollect['BlogLook'] = 1;
     $valueCollect['BlogLookOrder'] = 5;
     $valueCollect['BlogLookFullWindow'] = 0;// since 15.05 version always 0. Slideout will be not used anymore.
@@ -401,6 +402,9 @@ if ($cgVersion < 10) {
     $valueCollect['BorderRadiusRegistry'] = 1;
     $valueCollect['BorderRadiusLogin'] = 1;
     $valueCollect['ThankVote'] = 1;
+    $valueCollect['ShowPinFormVoting'] = 0;
+    $valueCollect['ShowPinFormUploading'] = 0;
+    $valueCollect['AllowedUsersToVote'] = '';
     $valueCollect['GeneralID'] = 0;
     $valueCollect['CopyOriginalFileLink'] = 1;
     $valueCollect['ForwardOriginalFile'] = 1;
@@ -424,12 +428,17 @@ if ($cgVersion < 10) {
     $jsonOptions['visual']['BorderRadiusRegistry'] = $valueCollect['BorderRadiusRegistry'];
     $jsonOptions['visual']['BorderRadiusLogin'] = $valueCollect['BorderRadiusLogin'];
     $jsonOptions['visual']['ThankVote'] = $valueCollect['ThankVote'];
+    $jsonOptions['visual']['ShowPinFormVoting'] = $valueCollect['ShowPinFormVoting'];
+    $jsonOptions['visual']['ShowPinFormUploading'] = $valueCollect['ShowPinFormUploading'];
+    $jsonOptions['visual']['AllowedUsersToVote'] = $valueCollect['AllowedUsersToVote'];
     $jsonOptions['visual']['GeneralID'] = $valueCollect['GeneralID'];
     $jsonOptions['visual']['CopyOriginalFileLink'] = $valueCollect['CopyOriginalFileLink'];
     $jsonOptions['visual']['ForwardOriginalFile'] = $valueCollect['ForwardOriginalFile'];
     $jsonOptions['visual']['ShareButtons'] = $valueCollect['ShareButtons'];
     $jsonOptions['visual']['TextBeforeWpPageEntry'] = $valueCollect['TextBeforeWpPageEntry'];
+    $jsonOptions['visual']['TextBeforeWpPageParent'] = $valueCollect['TextBeforeWpPageParent'];
     $jsonOptions['visual']['TextAfterWpPageEntry'] = $valueCollect['TextAfterWpPageEntry'];
+    $jsonOptions['visual']['TextAfterWpPageParent'] = $valueCollect['TextAfterWpPageParent'];
     $jsonOptions['visual']['ForwardToWpPageEntry'] = $valueCollect['ForwardToWpPageEntry'];
     $jsonOptions['visual']['ForwardToWpPageEntryInNewTab'] = $valueCollect['ForwardToWpPageEntryInNewTab'];
     $jsonOptions['visual']['ShowBackToGalleryButton'] = $valueCollect['ShowBackToGalleryButton'];
@@ -442,7 +451,9 @@ if ($cgVersion < 10) {
 if ($cgVersion < 21) {
     $valueCollect['ShareButtons'] = $ShareButtons;
     $valueCollect['TextBeforeWpPageEntry'] = $TextBeforeWpPageEntry;
+    $valueCollect['TextBeforeWpPageParent'] = $TextBeforeWpPageParent;
     $valueCollect['TextAfterWpPageEntry'] = $TextAfterWpPageEntry;
+    $valueCollect['TextAfterWpPageParent'] = $TextAfterWpPageParent;
     $valueCollect['ForwardToWpPageEntry'] = $ForwardToWpPageEntry;
     $valueCollect['ForwardToWpPageEntryInNewTab'] = $ForwardToWpPageEntryInNewTab;
     $valueCollect['ShowBackToGalleryButton'] = $ShowBackToGalleryButton;
@@ -451,7 +462,9 @@ if ($cgVersion < 21) {
     $valueCollect['TextDeactivatedEntry'] = $TextDeactivatedEntry;
     $jsonOptions['visual']['ShareButtons'] = $ShareButtons;
     $jsonOptions['visual']['TextBeforeWpPageEntry'] = $TextBeforeWpPageEntry;
+    $jsonOptions['visual']['TextBeforeWpPageParent'] = $TextBeforeWpPageParent;
     $jsonOptions['visual']['TextAfterWpPageEntry'] = $TextAfterWpPageEntry;
+    $jsonOptions['visual']['TextAfterWpPageParent'] = $TextAfterWpPageParent;
     $jsonOptions['visual']['ForwardToWpPageEntry'] = $ForwardToWpPageEntry;
     $jsonOptions['visual']['ForwardToWpPageEntryInNewTab'] = $ForwardToWpPageEntryInNewTab;
     $jsonOptions['visual']['ShowBackToGalleryButton'] = $ShowBackToGalleryButton;
@@ -460,9 +473,17 @@ if ($cgVersion < 21) {
     $jsonOptions['visual']['TextDeactivatedEntry'] = $TextDeactivatedEntry;
     $jsonOptions['visual']['AdditionalCssEntryLandingPage'] = $AdditionalCssEntryLandingPage;// json only
     $jsonOptions['visual']['AdditionalCssGalleryPage'] = $AdditionalCssGalleryPage;// json only
+    $jsonOptions['visual']['HeaderWpPageEntry'] = $HeaderWpPageEntry;// json only
+    $jsonOptions['visual']['HeaderWpPageParent'] = $HeaderWpPageParent;// json only
+    $jsonOptions['visual']['HeaderWpPageGalleries'] = $HeaderWpPageGalleries;// json only
+    $jsonOptions['visual']['TextBeforeWpPageGalleries'] = $TextBeforeWpPageGalleries;// json only
+    $jsonOptions['visual']['TextAfterWpPageGalleries'] = $TextAfterWpPageGalleries;// json only
+    $jsonOptions['pro']['VotesPerUserAllVotesUsedHtmlMessage'] = !empty($VotesPerUserAllVotesUsedHtmlMessage) ? $VotesPerUserAllVotesUsedHtmlMessage : '';// json only
 }else{// because only json
     if(!isset($jsonOptions['visual']['AdditionalCssEntryLandingPage'])){$jsonOptions['visual']['AdditionalCssEntryLandingPage'] = $AdditionalCssEntryLandingPage;}// json only
     if(!isset($jsonOptions['visual']['AdditionalCssGalleryPage'])){$jsonOptions['visual']['AdditionalCssGalleryPage'] = $AdditionalCssGalleryPage;}// json only
+    if(!isset($jsonOptions['visual']['HeaderWpPageEntry'])){$jsonOptions['visual']['HeaderWpPageEntry'] = $HeaderWpPageEntry;}// json only
+    if(!isset($jsonOptions['visual']['HeaderWpPageParent'])){$jsonOptions['visual']['HeaderWpPageParent'] = $HeaderWpPageParent;}// json only
 }
 
 if(!empty($isAllowGalleryScriptWasActivated)){// since 15.05 version always 0. Slideout will be not used anymore.
@@ -1198,11 +1219,21 @@ if(file_exists($jsonOptionsGalleryPrev)){
             $jsonOptions[$nextIDgallery.'-nv']['visual']['TextBeforeWpPageEntry'] = $TextBeforeWpPageEntry;
             $jsonOptions[$nextIDgallery.'-w']['visual']['TextBeforeWpPageEntry'] = $TextBeforeWpPageEntry;
             $jsonOptions[$nextIDgallery.'-ec']['visual']['TextBeforeWpPageEntry'] = $TextBeforeWpPageEntry;
+            $jsonOptions[$nextIDgallery]['visual']['TextBeforeWpPageParent'] = $TextBeforeWpPageParent;
+            $jsonOptions[$nextIDgallery.'-u']['visual']['TextBeforeWpPageParent'] = $TextBeforeWpPageParent;
+            $jsonOptions[$nextIDgallery.'-nv']['visual']['TextBeforeWpPageParent'] = $TextBeforeWpPageParent;
+            $jsonOptions[$nextIDgallery.'-w']['visual']['TextBeforeWpPageParent'] = $TextBeforeWpPageParent;
+            $jsonOptions[$nextIDgallery.'-ec']['visual']['TextBeforeWpPageParent'] = $TextBeforeWpPageParent;
             $jsonOptions[$nextIDgallery]['visual']['TextAfterWpPageEntry'] = $TextAfterWpPageEntry;
             $jsonOptions[$nextIDgallery.'-u']['visual']['TextAfterWpPageEntry'] = $TextAfterWpPageEntry;
             $jsonOptions[$nextIDgallery.'-nv']['visual']['TextAfterWpPageEntry'] = $TextAfterWpPageEntry;
             $jsonOptions[$nextIDgallery.'-w']['visual']['TextAfterWpPageEntry'] = $TextAfterWpPageEntry;
             $jsonOptions[$nextIDgallery.'-ec']['visual']['TextAfterWpPageEntry'] = $TextAfterWpPageEntry;
+            $jsonOptions[$nextIDgallery]['visual']['TextAfterWpPageParent'] = $TextAfterWpPageParent;
+            $jsonOptions[$nextIDgallery.'-u']['visual']['TextAfterWpPageParent'] = $TextAfterWpPageParent;
+            $jsonOptions[$nextIDgallery.'-nv']['visual']['TextAfterWpPageParent'] = $TextAfterWpPageParent;
+            $jsonOptions[$nextIDgallery.'-w']['visual']['TextAfterWpPageParent'] = $TextAfterWpPageParent;
+            $jsonOptions[$nextIDgallery.'-ec']['visual']['TextAfterWpPageParent'] = $TextAfterWpPageParent;
             $jsonOptions[$nextIDgallery]['visual']['ForwardToWpPageEntry'] = $ForwardToWpPageEntry;
             $jsonOptions[$nextIDgallery.'-u']['visual']['ForwardToWpPageEntry'] = $ForwardToWpPageEntry;
             $jsonOptions[$nextIDgallery.'-nv']['visual']['ForwardToWpPageEntry'] = $ForwardToWpPageEntry;
@@ -1243,6 +1274,31 @@ if(file_exists($jsonOptionsGalleryPrev)){
             $jsonOptions[$nextIDgallery.'-nv']['visual']['AdditionalCssGalleryPage'] = $AdditionalCssGalleryPage;
             $jsonOptions[$nextIDgallery.'-w']['visual']['AdditionalCssGalleryPage'] = $AdditionalCssGalleryPage;
             $jsonOptions[$nextIDgallery.'-ec']['visual']['AdditionalCssGalleryPage'] = $AdditionalCssGalleryPage;
+            $jsonOptions[$nextIDgallery]['visual']['HeaderWpPageEntry'] = $HeaderWpPageEntry;
+            $jsonOptions[$nextIDgallery.'-u']['visual']['HeaderWpPageEntry'] = $HeaderWpPageEntry;
+            $jsonOptions[$nextIDgallery.'-nv']['visual']['HeaderWpPageEntry'] = $HeaderWpPageEntry;
+            $jsonOptions[$nextIDgallery.'-w']['visual']['HeaderWpPageEntry'] = $HeaderWpPageEntry;
+            $jsonOptions[$nextIDgallery.'-ec']['visual']['HeaderWpPageEntry'] = $HeaderWpPageEntry;
+            $jsonOptions[$nextIDgallery]['visual']['HeaderWpPageParent'] = $HeaderWpPageParent;
+            $jsonOptions[$nextIDgallery.'-u']['visual']['HeaderWpPageParent'] = $HeaderWpPageParent;
+            $jsonOptions[$nextIDgallery.'-nv']['visual']['HeaderWpPageParent'] = $HeaderWpPageParent;
+            $jsonOptions[$nextIDgallery.'-w']['visual']['HeaderWpPageParent'] = $HeaderWpPageParent;
+            $jsonOptions[$nextIDgallery.'-ec']['visual']['HeaderWpPageParent'] = $HeaderWpPageParent;
+            $jsonOptions[$nextIDgallery]['visual']['HeaderWpPageGalleries'] = $HeaderWpPageGalleries;
+            $jsonOptions[$nextIDgallery.'-u']['visual']['HeaderWpPageGalleries'] = $HeaderWpPageGalleries;
+            $jsonOptions[$nextIDgallery.'-nv']['visual']['HeaderWpPageGalleries'] = $HeaderWpPageGalleries;
+            $jsonOptions[$nextIDgallery.'-w']['visual']['HeaderWpPageGalleries'] = $HeaderWpPageGalleries;
+            $jsonOptions[$nextIDgallery.'-ec']['visual']['HeaderWpPageGalleries'] = $HeaderWpPageGalleries;
+            $jsonOptions[$nextIDgallery]['visual']['TextBeforeWpPageGalleries'] = $TextBeforeWpPageGalleries;
+            $jsonOptions[$nextIDgallery.'-u']['visual']['TextBeforeWpPageGalleries'] = $TextBeforeWpPageGalleries;
+            $jsonOptions[$nextIDgallery.'-nv']['visual']['TextBeforeWpPageGalleries'] = $TextBeforeWpPageGalleries;
+            $jsonOptions[$nextIDgallery.'-w']['visual']['TextBeforeWpPageGalleries'] = $TextBeforeWpPageGalleries;
+            $jsonOptions[$nextIDgallery.'-ec']['visual']['TextBeforeWpPageGalleries'] = $TextBeforeWpPageGalleries;
+            $jsonOptions[$nextIDgallery]['visual']['TextAfterWpPageGalleries'] = $TextAfterWpPageGalleries;
+            $jsonOptions[$nextIDgallery.'-u']['visual']['TextAfterWpPageGalleries'] = $TextAfterWpPageGalleries;
+            $jsonOptions[$nextIDgallery.'-nv']['visual']['TextAfterWpPageGalleries'] = $TextAfterWpPageGalleries;
+            $jsonOptions[$nextIDgallery.'-w']['visual']['TextAfterWpPageGalleries'] = $TextAfterWpPageGalleries;
+            $jsonOptions[$nextIDgallery.'-ec']['visual']['TextAfterWpPageGalleries'] = $TextAfterWpPageGalleries;
         }
 
         $jsonOptions[$nextIDgallery]['general']['ShowAlways'] = 3;

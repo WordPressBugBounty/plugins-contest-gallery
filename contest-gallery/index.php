@@ -2,7 +2,7 @@
 /*
 Plugin Name: Contest Gallery
 Description: Upload form, files, photos and videos upload contest gallery plugin for WordPress. Create upload forms for entries with or without file/image upload. Create user registration form. Create login form. Create responsive galleries and allow to vote for any kind of entries. Sell entries via PayPal or Stripe API. Create or edit images via OpenAI API.
-Version: 27.0.3
+Version: 28.1.3
 Author: Contest Gallery
 Plugin URI: https://www.contest-gallery.com
 Author URI: https://www.contest-gallery.com
@@ -103,8 +103,10 @@ include('functions/general/cg-create-json-files-when-activating.php');
 include('functions/general/convert-values.php');
 include('functions/general/cg-hash.php');
 include('functions/general/cg-general-functions.php');
+include('functions/general/cgl1-texts.php');
 include('functions/general/cg-contest-gallery-plugin-page-functions.php');
 include('functions/frontend/cg-create-noscript-html.php');
+include('functions/frontend/cg-general-frontend.php');
 include('functions/frontend/cg-shortcode-interval-check.php');
 include('functions/google/cg-create-get-google-options.php');
 include('functions/frontend/cg-google-sign-in-verification.php');
@@ -112,6 +114,7 @@ include('functions/general/registry/cg-registry-functions.php');
 include('functions/general/registry/cg-registry-add-profile-image.php');
 include('functions/general/registry/create/cg-registry-create-functions.php');
 include('functions/general/registry/update/cg-registry-update-functions.php');
+include('functions/general/mail/cg-mail-functions.php');
 include('ajax/ajax-functions-frontend.php');
 include('ajax/ajax-functions-backend.php');
 include('functions/backend/ajax/openai/cg-ai-general-functions.php');
@@ -283,6 +286,8 @@ include(__DIR__.'/shortcodes/cg_mail_confirm.php');
 
 // setup_theme runs before theme is loaded!
 // see https://codex.wordpress.org/Plugin_API/Action_Reference
+add_shortcode('cg_users_pin', 'cg1l_cg_users_pin');
+include(__DIR__ . '/shortcodes/cg_users_pin.php');
 add_shortcode( 'cg_users_reg', 'contest_gal1ery_users_registry' );
 include(__DIR__.'/shortcodes/cg_users_reg.php');
 add_shortcode( 'cg_users_login', 'contest_gal1ery_users_login' );
@@ -417,6 +422,7 @@ include('functions/general/cg-delete-images-of-deleted-wp-uploads.php');
 include('functions/general/cg-deactivate-images.php');
 include('functions/general/cg-plugin-mce-css-to-add.php');
 include('functions/general/cg-remove-folder-recursively.php');
+include('functions/general/cg-user-functions.php');
 include('functions/general/json-data/cg-actualize-all-images-data-deleted-images.php');
 include('functions/general/json-data/cg-actualize-all-images-data-sort-values-file.php');
 include('functions/general/json-data/cg-actualize-all-images-data-sort-values-file-set-array.php');
@@ -433,6 +439,8 @@ include('functions/backend/render/cg-backend-gallery-dynamic-message.php');
 include('functions/backend/render/cg-backend-render-go-top-options.php');
 include('functions/backend/render/cg-total-images-shown-in-frontend-zero.php');
 include('functions/backend/render/cg-add-fields-pressed-after-content-modification.php');
+include('functions/backend/render/templates/cg-create-template-from-body.php');
+include('functions/backend/render/templates/cg-email-backend-template.php');
 
 add_action('cg_delete_files_and_folder','cg_delete_files_and_folder');
 if(!function_exists('cg_delete_files_and_folder')){
@@ -560,7 +568,6 @@ if(!function_exists('cg_template_include_for_cg_post_type')){
         global $post;
 	    if(!empty($post) && ($post->post_mime_type == 'contest-gallery-plugin-page-galleries-slug' || $post->post_mime_type == 'contest-gallery-plugin-page-galleries-user-slug' || $post->post_mime_type == 'contest-gallery-plugin-page-galleries-ecommerce-slug' || $post->post_mime_type == 'contest-gallery-plugin-page-galleries-winner-slug' || $post->post_mime_type == 'contest-gallery-plugin-page-galleries-no-voting-slug')){
 
-		    $isCGalleries = 1;
 		    $shortcode_name = 'cg_gallery';
 		    $shortCodeType = 'cg_gallery';
 
@@ -568,6 +575,8 @@ if(!function_exists('cg_template_include_for_cg_post_type')){
 		    $cgShortCodeType = $shortCodeType;
 		    global $isGalleriesMainPage;
 		    $isGalleriesMainPage = true;
+		    global $isCGalleries;
+            $isCGalleries = 1;
 
 		    global $wpdb;
 		    $tablename_options = $wpdb->prefix . "contest_gal1ery_options";
@@ -589,7 +598,7 @@ if(!function_exists('cg_template_include_for_cg_post_type')){
 
 		    return $template;
 
-	    }else if(!empty($post) && ($post->post_type=='contest-gallery' || $post->post_type=='contest-g' || $post->post_type=='contest-g-user' || $post->post_type=='contest-g-no-voting' || $post->post_type=='contest-g-winner' || $post->post_type=='contest-g-ecommerce')){
+	    }elseif(!empty($post) && ($post->post_type=='contest-gallery' || $post->post_type=='contest-g' || $post->post_type=='contest-g-user' || $post->post_type=='contest-g-no-voting' || $post->post_type=='contest-g-winner' || $post->post_type=='contest-g-ecommerce')){
 
             global $wpdb;
             global $wp;
@@ -625,10 +634,10 @@ if(!function_exists('cg_template_include_for_cg_post_type')){
                     $wp_upload_dir = wp_upload_dir();
                     $GalleryIDuser = 0;
                     if($optionsRowObject->WpPageParent == $WpPageParent){$GalleryIDuser=$GalleryID;}
-                    else if($optionsRowObject->WpPageParentUser == $WpPageParent){$GalleryIDuser=$GalleryID.'-u';}
-                    else if($optionsRowObject->WpPageParentNoVoting == $WpPageParent){$GalleryIDuser=$GalleryID.'-nv';}
-                    else if($optionsRowObject->WpPageParentWinner == $WpPageParent){$GalleryIDuser=$GalleryID.'-w';}
-                    else if($optionsRowObject->WpPageParentEcommerce == $WpPageParent){$GalleryIDuser=$GalleryID.'-ec';}
+                    elseif($optionsRowObject->WpPageParentUser == $WpPageParent){$GalleryIDuser=$GalleryID.'-u';}
+                    elseif($optionsRowObject->WpPageParentNoVoting == $WpPageParent){$GalleryIDuser=$GalleryID.'-nv';}
+                    elseif($optionsRowObject->WpPageParentWinner == $WpPageParent){$GalleryIDuser=$GalleryID.'-w';}
+                    elseif($optionsRowObject->WpPageParentEcommerce == $WpPageParent){$GalleryIDuser=$GalleryID.'-ec';}
 
                     $optionsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/'.$GalleryID.'-options.json';
                     $options = json_decode(file_get_contents($optionsFile),true);
@@ -742,13 +751,13 @@ if(!function_exists('cg_wp_upe_upgrade_completed_post_type_check_new')){
 							$galleriesTypeWitSuffix = $type.'-';
 							if($type=='galleries'){
 								$slugNameSuffix = 'Galleries';
-							}else if($type=='galleries-user'){
+							}elseif($type=='galleries-user'){
 								$slugNameSuffix = 'GalleriesUser';
-							}else if($type=='galleries-no-voting'){
+							}elseif($type=='galleries-no-voting'){
 								$slugNameSuffix = 'GalleriesNoVoting';
-							}else if($type=='galleries-winner'){
+							}elseif($type=='galleries-winner'){
 								$slugNameSuffix = 'GalleriesWinner';
-							}else if($type=='galleries-ecommerce'){
+							}elseif($type=='galleries-ecommerce'){
 								$slugNameSuffix = 'GalleriesEcommerce';
 							}
 						}
@@ -811,7 +820,7 @@ if(!function_exists('cg_download_invoice')){
 
                 if(!empty($Order->InvoiceNumberChanged)){
                     $fileNameToShow = 'invoice-'.$Order->InvoiceNumberChanged.'.pdf';
-                }else if(!empty($Order->InvoiceNumber) && $Order->InvoiceEdited == '0000-00-00 00:00:00'){// might be edited but then InvoiceNumberChanged empty
+                }elseif(!empty($Order->InvoiceNumber) && $Order->InvoiceEdited == '0000-00-00 00:00:00'){// might be edited but then InvoiceNumberChanged empty
                     $fileNameToShow = 'invoice-'.$Order->InvoiceNumber.'.pdf';
                 }else{
                     $fileNameToShow = basename($fileUrl);

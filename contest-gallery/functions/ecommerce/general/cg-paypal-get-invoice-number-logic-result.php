@@ -22,13 +22,13 @@ HEREDOC;
 	    if(!empty($InvoiceNumberLogicSelect)){
             if($InvoiceNumberLogicSelect=='year'){$InvoiceNumberLogicResult.=date('Y');$InvoiceNumberLogicSelectOptions=str_replace('value="year"','value="year" selected',$InvoiceNumberLogicSelectOptions);
 	            $selected = 'year';
-            }else if($InvoiceNumberLogicSelect=='month'){$InvoiceNumberLogicResult.=date('m');
+            }elseif($InvoiceNumberLogicSelect=='month'){$InvoiceNumberLogicResult.=date('m');
                 $InvoiceNumberLogicSelectOptions=str_replace('value="month"','value="month" selected',$InvoiceNumberLogicSelectOptions);
 	            $selected = 'month';
-            }else if($InvoiceNumberLogicSelect=='year-month'){$InvoiceNumberLogicResult.=date('Y-m');
+            }elseif($InvoiceNumberLogicSelect=='year-month'){$InvoiceNumberLogicResult.=date('Y-m');
                 $InvoiceNumberLogicSelectOptions=str_replace('value="year-month"','value="year-month" selected',$InvoiceNumberLogicSelectOptions);
 	            $selected = 'year-month';
-            }else if($InvoiceNumberLogicSelect=='timestamp'){$InvoiceNumberLogicResult = time();$isTimestamp=true;
+            }elseif($InvoiceNumberLogicSelect=='timestamp'){$InvoiceNumberLogicResult = time();$isTimestamp=true;
                 $InvoiceNumberLogicSelectOptions=str_replace('value="timestamp"','value="timestamp" selected',$InvoiceNumberLogicSelectOptions);
 	            $selected = 'timestamp';
             }
@@ -57,7 +57,7 @@ HEREDOC;
 
         if(empty($InvoiceNumberLogicResult) && !empty($InvoiceNumberLogicCustomNumber)){
             $InvoiceNumberLogicResult = $InvoiceNumberLogicCustomNumber;
-        }else if(empty($InvoiceNumberLogicResult) && empty($InvoiceNumberLogicCustomNumber)){
+        }elseif(empty($InvoiceNumberLogicResult) && empty($InvoiceNumberLogicCustomNumber)){
             $InvoiceNumberLogicResult = '0001';
         }
 
@@ -111,13 +111,13 @@ HEREDOC;
             $InvoiceNumberLogicSelectOptionsSelectedForPart = '';
             if($InvoiceNumberLogicSelect=='unset' OR empty(key($InvoiceNumberLogicPart))){$InvoiceNumberLogicResult.='';
                 $InvoiceNumberLogicSelectOptionsSelectedForPart = str_replace('value="unset"','value="unset" selected',$InvoiceNumberLogicSelectOptions);
-            }else if($InvoiceNumberLogicSelect=='year'){$InvoiceNumberLogicResult.=date('Y').'-';
+            }elseif($InvoiceNumberLogicSelect=='year'){$InvoiceNumberLogicResult.=date('Y').'-';
                 $InvoiceNumberLogicSelectOptionsSelectedForPart = str_replace('value="year"','value="year" selected',$InvoiceNumberLogicSelectOptions);
-            }else if($InvoiceNumberLogicSelect=='month'){$InvoiceNumberLogicResult.=date('m').'-';
+            }elseif($InvoiceNumberLogicSelect=='month'){$InvoiceNumberLogicResult.=date('m').'-';
                 $InvoiceNumberLogicSelectOptionsSelectedForPart = str_replace('value="month"','value="month" selected',$InvoiceNumberLogicSelectOptions);}
             if($InvoiceNumberLogicSelect=='year-month'){$InvoiceNumberLogicResult.=date('Y-m').'-';
                 $InvoiceNumberLogicSelectOptionsSelectedForPart = str_replace('value="year-month"','value="year-month" selected',$InvoiceNumberLogicSelectOptions);
-            }else if($InvoiceNumberLogicSelect=='ownprefix'){$InvoiceNumberLogicResult.=$InvoiceNumberLogicPart[key($InvoiceNumberLogicPart)].'-';$InvoiceNumberLogicPartResultPrefix=$InvoiceNumberLogicPart[key($InvoiceNumberLogicPart)];$InvoiceNumberLogicPartResultPrefixDisabled='';
+            }elseif($InvoiceNumberLogicSelect=='ownprefix'){$InvoiceNumberLogicResult.=$InvoiceNumberLogicPart[key($InvoiceNumberLogicPart)].'-';$InvoiceNumberLogicPartResultPrefix=$InvoiceNumberLogicPart[key($InvoiceNumberLogicPart)];$InvoiceNumberLogicPartResultPrefixDisabled='';
                 $InvoiceNumberLogicSelectOptionsSelectedForPart = str_replace('value="ownprefix"','value="ownprefix" selected',$InvoiceNumberLogicSelectOptions);
             }
 
@@ -134,7 +134,7 @@ HEREDOC;
                 }else{
                     $InvoiceNumberLogicResult = substr($InvoiceNumberLogicResult,0,strlen($InvoiceNumberLogicResult)-1);
                 }
-            }else if(empty($InvoiceNumberLogicResult)){
+            }elseif(empty($InvoiceNumberLogicResult)){
                 if(!empty($ownFinalPart)){
                     $InvoiceNumberLogicResult = $ownFinalPart;
                 }else{

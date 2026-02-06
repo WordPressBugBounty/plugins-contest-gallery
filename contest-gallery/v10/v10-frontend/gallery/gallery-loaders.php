@@ -80,25 +80,25 @@ if($isOnlyContactForm){
 		echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:100%;'></div>";
 		echo "</div>";
 		echo "</div>";
-	}else if($currentLook=='thumb'){
+	}elseif($currentLook=='thumb'){
 		echo "<div class='$cg_skeleton_loader_on_page_load_div_hide cg_skeleton_loader_on_page_load_div cg_skeleton_loader_on_page_load_div_thumb_view cg_display_flex cg_flex_flow_column '>";
 		echo "<div class='cg_skeleton_loader_on_page_load_container'>";
 		echo "<div class='cg_skeleton_loader_on_page_load' style='height:60px;width:100%;'></div>";
 		echo "</div>";
 		echo "<div class='cg_display_flex cg_justify_content_space_between'>";
-		echo "<div class='cg_skeleton_loader_on_page_load_container cg_container cg_display_flex cg_flex_flow_column' style='width:32.00%;' >";
+		echo "<div class='cg_skeleton_loader_on_page_load_container cg_container cg_display_flex cg_flex_flow_column' style='width:32.10%;' >";
 		echo "<div class='cg_skeleton_loader_on_page_load' style='height:300px;width: 100%;margin-bottom: 30px;'></div>";
 		echo "<div class='cg_skeleton_loader_on_page_load' style='height:600px;width: 100%;margin-bottom: 30px;'></div>";
 		echo "<div class='cg_skeleton_loader_on_page_load' style='height:300px;width: 100%;margin-bottom: 30px;'></div>";
 		echo "<div class='cg_skeleton_loader_on_page_load' style='height:600px;width: 100%;margin-bottom: 30px;'></div>";
 		echo "</div>";
-		echo "<div class='cg_skeleton_loader_on_page_load_container cg_container cg_display_flex cg_flex_flow_column'  style='width:32.00%;'>";
+		echo "<div class='cg_skeleton_loader_on_page_load_container cg_container cg_display_flex cg_flex_flow_column'  style='width:32.10%;'>";
 		echo "<div class='cg_skeleton_loader_on_page_load' style='height:600px;width: 100%;margin-bottom: 30px;'></div>";
 		echo "<div class='cg_skeleton_loader_on_page_load' style='height:300px;width: 100%;margin-bottom: 30px;'></div>";
 		echo "<div class='cg_skeleton_loader_on_page_load' style='height:600px;width: 100%;margin-bottom: 30px;'></div>";
 		echo "<div class='cg_skeleton_loader_on_page_load' style='height:300px;width: 100%;margin-bottom: 30px;'></div>";
 		echo "</div>";
-		echo "<div class='cg_skeleton_loader_on_page_load_container cg_container cg_display_flex cg_flex_flow_column'  style='width:32.00%;'>";
+		echo "<div class='cg_skeleton_loader_on_page_load_container cg_container cg_display_flex cg_flex_flow_column'  style='width:32.10%;'>";
 		echo "<div class='cg_skeleton_loader_on_page_load' style='height:300px;width: 100%;margin-bottom: 30px;'></div>";
 		echo "<div class='cg_skeleton_loader_on_page_load' style='height:600px;width: 100%;margin-bottom: 30px;'></div>";
 		echo "<div class='cg_skeleton_loader_on_page_load' style='height:300px;width: 100%;margin-bottom: 30px;'></div>";
@@ -106,7 +106,7 @@ if($isOnlyContactForm){
 		echo "</div>";
 		echo "</div>";
 		echo "</div>";
-	}else if($currentLook=='height'){
+	}elseif($currentLook=='height'){
 		echo "<div class='$cg_skeleton_loader_on_page_load_div_hide cg_skeleton_loader_on_page_load_div cg_skeleton_loader_on_page_load_div_height_view'>";
 		echo "<div class='cg_skeleton_loader_on_page_load_container'>";
 		echo "<div class='cg_skeleton_loader_on_page_load' style='height:60px;width:100%;'></div>";
@@ -135,6 +135,6 @@ if(empty($cg_skeleton_loader_on_page_load_div_hide)){
 
 ?>
 <script>
-    console.log('console.log test loader load');
-    debugger
+    //console.log('console.log test loader load');
+    //debugger
 </script>

@@ -125,7 +125,11 @@ jQuery(document).ready(function ($) {
     $(document).on('click','#cgRightSide .cg_upl_add',function (e) {
         $(this).closest('#cgRightSide').find('.cg_upl_add').removeClass('cg_clicked');
         $(this).addClass('cg_clicked');
-        cgJsClassAdmin.gallery.functions.showModal('#cgAddCol');
+        if($(this).closest('#cg_registry_form_container_parent').length){
+            cgJsClassAdmin.gallery.functions.showModal('#cgAddRegField');
+        }else{
+            cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+        }
     });
 
     $(document).on('click','#cgRightSide .cg_row_col .cg_upl_del',function (e) {
@@ -185,7 +189,7 @@ jQuery(document).ready(function ($) {
         $(this).addClass('cg_edit_left');
         var $cgCreateUploadSortableArea = $('#cgCreateUploadSortableArea');
         $cgCreateUploadSortableArea.find('> div').addClass('cg_hide');
-
+        debugger
         if(id==40){
             $('#40').removeClass('cg_hide');
         }else{
@@ -201,11 +205,11 @@ jQuery(document).ready(function ($) {
         cgJsClassAdmin.createUpload.functions.addRightFieldOrderAndAddRowsAndColumns($);
     });
 
-    $(document).on('click','#cgAddCol .cg_field',function (e) {
-        $(this).closest('#cgAddCol').find('.cg_message_close').click();
+    $(document).on('click','#cgAddUplField .cg_field,#cgAddRegField .cg_field',function (e) {
+        $(this).closest('#cgAddUplField,#cgAddRegField').find('.cg_message_close').click();
         var type = $(this).attr('data-cg-field');
         $('#dauswahl').val(type);
-        $('#cg_create_upload_add_field.cg_upload_dauswahl').click();
+        $('#cg_create_upload_add_field.cg_upload_dauswahl,#cg_create_upload_add_field.cg_registry_dauswahl').click();
     });
 
     $(document).on('click', '.cg_row.cg_add_row',function (e) {
@@ -223,7 +227,7 @@ jQuery(document).ready(function ($) {
     });
 
     $(document).on('input', '#ausgabe1 .cg_view_option_input_field_title',function (e) {
-        var $cgRightSide = $(this).closest('#cgCreateUploadContainer').find('#cgRightSide');
+        var $cgRightSide = $(this).closest('.cgCreateUploadContainer').find('#cgRightSide');
         var id = $(this).closest('.formField').attr('id');
         debugger
         if($(this).closest('.formField').hasClass('imageUploadField')){
@@ -235,19 +239,78 @@ jQuery(document).ready(function ($) {
 
     $(document).on('input', '#cgCreateUploadSortableArea .cg_title_placeholder,#cgCreateUploadSortableArea .cg_textarea_placeholder',function (e) {
         debugger
-        var $cgRightSide = $(this).closest('#cgCreateUploadContainer').find('#cgRightSide');
+        var $cgRightSide = $(this).closest('.cgCreateUploadContainer').find('#cgRightSide');
         var id = $(this).closest('.formField').attr('id');
         var $cg_upl_placeholder = $cgRightSide.find('#right'+id).find('.cg_upl_content .cg_upl_placeholder');
         if($(this).hasClass('cg_title_placeholder')) {
-            $cg_upl_placeholder.val($(this).val());
+            $cg_upl_placeholder.attr('placeholder',$(this).val());
         }else if($(this).hasClass('cg_textarea_placeholder')) {
-                $cg_upl_placeholder.text($(this).val());
+            $cg_upl_placeholder.attr('placeholder',$(this).val());
         }
+    });
+
+    $(document).on('input', '#cgCreateUploadSortableArea .cg_radio_placeholder',function (e) {
+        debugger
+        var $cgRightSide = $(this).closest('.cgCreateUploadContainer').find('#cgRightSide');
+        var id = $(this).closest('.formField').attr('id');
+        var $cg_upl_content = $cgRightSide.find('#right'+id).find('.cg_upl_content');
+
+        var raw = $(this).val();
+
+        $cg_upl_content.empty();
+
+        if(raw.trim()){
+            // Split by any newline style (Windows \r\n, Unix \n, old Mac \r)
+            var lines = raw.split(/\r\n|\r|\n/);
+            // Trim each line and remove empties
+            lines = lines.map(l => l.trim()).filter(l => l.length > 0);
+            // Example: iterate (forEach) to do something with each line
+            // Here we’ll render a preview list
+            $.each(lines, function (i, line) {
+                $cg_upl_content.append($('<div class="cg_upl_radio_button">' +
+                    '<div class="cg_upl_radio_button_text">'+line+'</div>' +
+                    '<input type="radio" />' +
+                    '</div>'));
+            });
+        }else{
+            $cg_upl_content.append('<div class="cg_upl_add_radio">No radio buttons added</div>');
+        }
+
+    });
+
+    $(document).on('input', '#cgCreateUploadSortableArea .cg_check_placeholder',function (e) {
+        debugger
+        var $cgRightSide = $(this).closest('.cgCreateUploadContainer').find('#cgRightSide');
+        var id = $(this).closest('.formField').attr('id');
+        var $cg_upl_content = $cgRightSide.find('#right'+id).find('.cg_upl_content');
+
+        var raw = $(this).val();
+
+        $cg_upl_content.empty();
+
+        if(raw.trim()){
+            // Split by any newline style (Windows \r\n, Unix \n, old Mac \r)
+            var lines = raw.split(/\r\n|\r|\n/);
+            // Trim each line and remove empties
+            lines = lines.map(l => l.trim()).filter(l => l.length > 0);
+            // Example: iterate (forEach) to do something with each line
+            // Here we’ll render a preview list
+            $.each(lines, function (i, line) {
+                // your per-line logic here
+                $cg_upl_content.append($('<div class="cg_upl_check_button">' +
+                    '<div class="cg_upl_check_button_text">'+line+'</div>' +
+                    '<input type="checkbox" />' +
+                    '</div>'));
+            });
+        }else{
+            $cg_upl_content.append('<div class="cg_upl_add_check">No checkboxes added</div>');
+        }
+
     });
 
     $(document).on('click', '#cgCreateUploadSortableArea .cg_view_option_required',function (e) {
         debugger
-        var $cgRightSide = $(this).closest('#cgCreateUploadContainer').find('#cgRightSide');
+        var $cgRightSide = $(this).closest('.cgCreateUploadContainer').find('#cgRightSide');
         var id = $(this).closest('.formField').attr('id');
         if($(this).find('.cg_view_option_checkbox').hasClass('cg_view_option_checked')) {
             $cgRightSide.find('#right'+id).find('.cg_upl_title').addClass('cg_upl_required');
@@ -258,7 +321,7 @@ jQuery(document).ready(function ($) {
 
     $(document).on('click', '#ausgabe1 .cg_view_option_image_required',function (e) {
         debugger
-        var $cgRightSide = $(this).closest('#cgCreateUploadContainer').find('#cgRightSide');
+        var $cgRightSide = $(this).closest('.cgCreateUploadContainer').find('#cgRightSide');
         var id = $(this).closest('.formField').attr('id');
         debugger
         if($(this).find('.cg_view_option_checkbox').hasClass('cg_view_option_checked')) {
@@ -270,12 +333,23 @@ jQuery(document).ready(function ($) {
 
     $(document).on('click', '#cgCreateUploadSortableArea .cg_view_option_hide_upload_field',function (e) {
         debugger
-        var $cgRightSide = $(this).closest('#cgCreateUploadContainer').find('#cgRightSide');
+        var $cgRightSide = $(this).closest('.cgCreateUploadContainer').find('#cgRightSide');
         var id = $(this).closest('.formField').attr('id');
         if($(this).find('.cg_view_option_checkbox').hasClass('cg_view_option_checked')) {
             $cgRightSide.find('#right'+id).addClass('cg_hide_upload_field');
         }else if($(this).find('.cg_view_option_checkbox').hasClass('cg_view_option_unchecked')) {
             $cgRightSide.find('#right'+id).removeClass('cg_hide_upload_field');
+        }
+    });
+
+    $(document).on('click', '#cgCreateUploadSortableArea .cg_pin_field_check',function (e) {
+        debugger
+        var $cgRightSide = $(this).closest('.cgCreateUploadContainer').find('#cgRightSide');
+        var id = $(this).closest('.formField').attr('id');
+        if($(this).find('.cg_view_option_checkbox').hasClass('cg_view_option_checked')) {
+            $('<div class=\'cg_pin_field\' title="Available in [cg_users_pin] form"></div>').insertAfter($cgRightSide.find('#right'+id+' .cg_upl_title'));
+        }else if($(this).find('.cg_view_option_checkbox').hasClass('cg_view_option_unchecked')) {
+            $cgRightSide.find('#right'+id+' .cg_pin_field').remove();
         }
     });
 
@@ -287,6 +361,44 @@ jQuery(document).ready(function ($) {
             cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Row removed',true);
             cgJsClassAdmin.gallery.vars.$clickedRow.remove();
             cgJsClassAdmin.createUpload.functions.addRightFieldOrderAndAddRowsAndColumns($);
+        }
+    });
+
+    $(document).on('input keypress', '#cgCreateUploadSortableArea .Min_Char,#cgCreateUploadSortableArea .Max_Char',function (e) {
+        var $input = $(this);
+
+        // --- Handle keypress (block non-numeric keys) ---
+        if (e.type === 'keypress') {
+            var char = String.fromCharCode(e.which);
+            // Allow control keys (backspace, delete, arrows)
+            if (e.which === 0 || e.which === 8) return true;
+            // Block anything that's not 0–9
+            if (!/[0-9]/.test(char)) {
+                e.preventDefault();
+                return false;
+            }
+        }
+
+        // --- Handle input (clean up and default 0) ---
+        if (e.type === 'input') {
+            var value = $input.val().replace(/[^0-9]/g, '');
+            if (value === '') {
+                value = '0';
+                $input.val(value);
+
+                // ✅ Select the "0" so user can type right away
+                setTimeout(function() {
+                    var inputEl = $input.get(0);
+                    if (inputEl.setSelectionRange) {
+                        inputEl.setSelectionRange(0, inputEl.value.length);
+                    } else if (inputEl.createTextRange) { // IE fallback
+                        var range = inputEl.createTextRange();
+                        range.select();
+                    }
+                }, 0);
+            } else {
+                $input.val(value);
+            }
         }
     });
 

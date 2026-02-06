@@ -279,6 +279,114 @@ if(!function_exists('cgHasUserGroupAllowedToEdit')){
     }
 }
 
+add_action( 'personal_options_update', 'cg1l_sync_nickname_display_name' );
+//add_action( 'edit_user_profile_update', 'cg1l_sync_nickname_display_name' ); // when an admin does edit, later to implement logic
+if(!function_exists('cg1l_sync_nickname_display_name')){
+    function cg1l_sync_nickname_display_name( $user_id ) {
+        // Only run when the update comes from the Contest Gallery form
+        if ( empty( $_POST['cg1l_save_profile'] ) ) {
+            return;
+        }
+
+        // Nickname must be present
+        if ( ! isset( $_POST['nickname'] ) ) {
+            return;
+        }
+
+        // Sanitize nickname
+        $nickname_raw = wp_unslash( $_POST['nickname'] );
+        $nickname     = sanitize_text_field( $nickname_raw );
+
+        // Get current user data
+        $user = get_userdata( $user_id );
+        if ( ! $user ) {
+            return;
+        }
+
+        // Current display_name stored in the database
+        $old_display_name = $user->display_name;
+
+        // Posted display_name from the dropdown
+        $posted_display_name = '';
+        if ( isset( $_POST['display_name'] ) ) {
+            $posted_display_name = sanitize_text_field( wp_unslash( $_POST['display_name'] ) );
+        }
+
+        /**
+         * If the user has changed the display_name dropdown manually,
+         * we respect that choice and do NOT force it to the nickname.
+         *
+         * We only auto-sync when the dropdown was untouched.
+         */
+        if ( $posted_display_name !== '' && $posted_display_name !== $old_display_name ) {
+            return;
+        }
+
+        // Auto-sync display_name to nickname
+        $_POST['display_name'] = $nickname;
+    }
+
+}
+
+// 2) Validate nickname uniqueness when saving profile (backend)
+add_action( 'user_profile_update_errors', 'cg1l_validate_nickname_profile', 10, 3 );
+if(!function_exists('cg1l_validate_nickname_profile')){
+function cg1l_validate_nickname_profile( $errors, $update, $user ) {
+
+    // Only run on own profile page (profile.php), not user-edit.php
+    if ( $user->ID != get_current_user_id() ) {
+        return;
+    }
+
+    // Only run when the update comes from Contest Gallery block
+    if ( empty( $_POST['cg1l_save_profile'] ) ) {
+        return;
+    }
+
+    if ( ! isset( $_POST['nickname'] ) ) {
+        return;
+    }
+
+    $nickname_raw = wp_unslash( $_POST['nickname'] );
+    $nickname     = trim( $nickname_raw );
+
+    // Basic empty check
+    if ( $nickname === '' ) {
+        $errors->add(
+            'cg1l_nickname_empty',
+            __( 'Please enter a nickname.', 'contest-gallery' )
+        );
+        return;
+    }
+
+    // Use DB collation for case-insensitive comparison (usually *_ci)
+    global $wpdb;
+    $usermeta_table = $wpdb->usermeta;
+
+    $existing_user_id = $wpdb->get_var(
+        $wpdb->prepare(
+            "SELECT user_id
+             FROM $usermeta_table
+             WHERE meta_key = 'nickname'
+               AND meta_value = %s
+               AND user_id != %d
+             LIMIT 1",
+            $nickname,
+            $user->ID
+        )
+    );
+
+    if ( ! empty( $existing_user_id ) ) {
+        // just fallback, validation already ajax in backend
+        $errors->add(
+            'cg1l_nickname_taken',
+            __( 'This nickname is already in use. Please choose another one.', 'contest-gallery' )
+        );
+        return;
+    }
+}
+}
+
 
 add_action( 'show_user_profile', 'cg_edit_additional_registry_form_user_fields' );
 add_action( 'edit_user_profile', 'cg_edit_additional_registry_form_user_fields' );
@@ -311,6 +419,7 @@ if(!function_exists('cg_edit_additional_registry_form_user_fields')){
 
                 if($hasUserGroupAllowedToEdit){
 
+                 echo "<input type='hidden' name='cg1l_save_profile' value='1' >";
                  echo "<input type='hidden' name='cg_user_data_available' value='true' >";
                  echo "<input type='hidden' id='cg_language_ThisNicknameAlreadyExists' value='$language_ThisNicknameAlreadyExistsGeneral'>";
                  echo "<input type='hidden' id='cg_language_ThisFileTypeIsNotAllowed' value='$language_ThisFileTypeIsNotAllowed'>";
@@ -322,7 +431,7 @@ if(!function_exists('cg_edit_additional_registry_form_user_fields')){
                  echo "<input type='hidden' name='cg_user_id' value='".$user->ID."' >";
 
                 $selectUserForm = $wpdb->get_results("SELECT * FROM $tablenameCreateUserForm WHERE GeneralID = '1' && 
-                (Field_Type = 'user-text-field' OR Field_Type = 'user-comment-field' OR Field_Type = 'user-select-field')
+                (Field_Type = 'user-text-field' OR Field_Type = 'user-comment-field' OR Field_Type = 'user-select-field' OR Field_Type = 'user-radio-field' OR Field_Type = 'user-check-field')
         ORDER BY Field_Order ASC");
 
                 $selectProfileImage = $wpdb->get_row("SELECT * FROM $tablenameCreateUserForm WHERE GeneralID = '1' && 
@@ -389,10 +498,16 @@ if(!function_exists('cg_edit_additional_registry_form_user_fields')){
 
                     foreach ($selectUserForm as $formField){
 
-                            $fieldId = contest_gal1ery_convert_for_html_output($formField->id);
-                            $fieldTitle = contest_gal1ery_convert_for_html_output($formField->Field_Name);
+                            $fieldId = contest_gal1ery_convert_for_html_output_without_nl2br($formField->id);
+                            $fieldTitle = contest_gal1ery_convert_for_html_output_without_nl2br($formField->Field_Name);
                             $fieldName = "cg_custom_field_id_".$fieldId;
-                            $userValue = contest_gal1ery_convert_for_html_output(get_the_author_meta( $fieldName, $user->ID ) );
+
+                            if($formField->Field_Type=="user-comment-field"){
+                                $userValue = esc_textarea(get_the_author_meta( $fieldName, $user->ID ) );
+                            }else{
+                                $userValue = contest_gal1ery_convert_for_html_output_without_nl2br(get_the_author_meta( $fieldName, $user->ID ) );
+
+                            }
 
                             $fieldContent = html_entity_decode(stripslashes($formField->Field_Content));
 
@@ -445,6 +560,58 @@ if(!function_exists('cg_edit_additional_registry_form_user_fields')){
                                 }
                                 echo '</select>
                                     </td>
+                                </tr>';
+
+                            }
+
+                            if ($formField->Field_Type == 'user-radio-field') {
+                                echo '<tr>
+                                    <th><label for="'.$fieldName.'">'.$fieldTitle.$required.'</label></th>
+                                    <td>';
+                                $textAr = explode("\n", $formField->Field_Content);// sanitazing happens after that in foreach
+                                $cgContentField = '<div class="cg_radio">';
+                                foreach ($textAr as $optionKey => $optionValue) {
+                                    $optionValue = sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($optionValue));
+                                    $checked = '';
+                                    if($optionValue==$userValue){
+                                        $checked = 'checked';
+                                    }
+                                    $cgContentField .= '<div class="cg_radio_button">
+                                <label for="cg_reg_radio_button_'.$formField->id.$optionKey.'">'.$optionValue.'</label>
+                                <input type="radio" id="cg_reg_radio_button_'.$formField->id.$optionKey.'" name="'.$fieldName.'" value="'.$optionValue.'" class="cg_radio_button_input" '.$checked.'>
+                        </div>';
+                                }
+                                $cgContentField .= '</div>';
+                                echo $cgContentField;
+                                echo '</td>
+                                </tr>';
+
+                            }
+
+                            if ($formField->Field_Type == 'user-check-field') {
+                                echo '<tr>
+                                    <th><label for="'.$fieldName.'">'.$fieldTitle.$required.'</label></th>
+                                    <td>';
+                                $textAr = explode("\n", $formField->Field_Content);// sanitazing happens after that in foreach
+                                $cgContentField = '<div class="cg_check '.$cg_input_field_required.'">';
+
+                                $userValuesArray = array_map('trim', explode(',', $userValue));
+
+                                foreach ($textAr as $optionKey => $optionValue) {
+                                    $optionValue = sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($optionValue));
+                                    $checked = '';
+
+                                    if (in_array($optionValue, $userValuesArray)!==false) {
+                                        $checked = 'checked';
+                                    }
+                                    $cgContentField .= '<div class="cg_check_button">
+                                <label for="cg_reg_check_button_'.$formField->id.$optionKey.'">'.$optionValue.'</label>
+                                <input type="checkbox" id="cg_reg_check_button_'.$formField->id.$optionKey.'" name="'.$fieldName.'" value="'.$optionValue.'" class="cg_check_button_input" '.$checked.'>
+                        </div>';
+                                }
+                                $cgContentField .= '</div>';
+                                echo $cgContentField;
+                                echo '</td>
                                 </tr>';
 
                             }
@@ -521,13 +688,16 @@ if(!function_exists('cg_get_registry_and_login_options_v14')){
         $optionsForGeneralIDsinceV14['pro']['RegMailOptional'] = $optionsPRO->RegMailOptional;
         $optionsForGeneralIDsinceV14['pro']['ForwardAfterRegText'] = $optionsPRO->ForwardAfterRegText;
         $optionsForGeneralIDsinceV14['pro']['TextAfterEmailConfirmation'] = $optionsPRO->TextAfterEmailConfirmation;
+        $optionsForGeneralIDsinceV14['pro']['TextAfterPinConfirmation'] = $optionsPRO->TextAfterPinConfirmation;
         $optionsForGeneralIDsinceV14['pro']['HideRegFormAfterLogin'] = $optionsPRO->HideRegFormAfterLogin;
         $optionsForGeneralIDsinceV14['pro']['HideRegFormAfterLoginShowTextInstead'] = $optionsPRO->HideRegFormAfterLoginShowTextInstead;
         $optionsForGeneralIDsinceV14['pro']['HideRegFormAfterLoginTextToShow'] = $optionsPRO->HideRegFormAfterLoginTextToShow;
         $optionsForGeneralIDsinceV14['pro']['RegMailAddressor'] = $optionsPRO->RegMailAddressor;
         $optionsForGeneralIDsinceV14['pro']['RegMailReply'] = $optionsPRO->RegMailReply;
         $optionsForGeneralIDsinceV14['pro']['RegMailSubject'] = $optionsPRO->RegMailSubject;
+        $optionsForGeneralIDsinceV14['pro']['RegPinSubject'] = $optionsPRO->RegPinSubject;
         $optionsForGeneralIDsinceV14['pro']['TextEmailConfirmation'] = $optionsPRO->TextEmailConfirmation;
+        $optionsForGeneralIDsinceV14['pro']['TextPinConfirmation'] = $optionsPRO->TextPinConfirmation;
         $optionsForGeneralIDsinceV14['pro']['OpenAiKey'] = $optionsPRO->OpenAiKey;
 
         return $optionsForGeneralIDsinceV14;

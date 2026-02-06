@@ -37,14 +37,14 @@ if(!empty($_POST['cg_edit_translations'])){
         $translations['pro'] = array();
     }
 
-// set PRO json messages here
-    if(!empty($_POST['VotesPerUserAllVotesUsedHtmlMessage'])){
+// set PRO json messages here, pro option JSON only since 28.1.0
+    /*if(!empty($_POST['VotesPerUserAllVotesUsedHtmlMessage'])){
         $translations['pro']['VotesPerUserAllVotesUsedHtmlMessage'] =  contest_gal1ery_htmlentities_and_preg_replace(trim($_POST['VotesPerUserAllVotesUsedHtmlMessage']));
     }else {
         if(empty($translations['pro']['VotesPerUserAllVotesUsedHtmlMessage'])){
             $translations['pro']['VotesPerUserAllVotesUsedHtmlMessage'] = '';
         }
-    }
+    }*/
 
 	cg_convert_previous_translation_to_general_translations($wp_upload_dir);
 	//$translationsFile = $wp_upload_dir["basedir"] . "/contest-gallery/gallery-id-$id/json/$id-translations.json";
@@ -82,7 +82,7 @@ if(!empty($_POST['cg_edit_translations'])){
     }
 // Save translations --- ENDE
 
-}else if(!empty($_POST['cg_edit_ecommerce'])){
+}elseif(!empty($_POST['cg_edit_ecommerce'])){
 
     // Update ecommerce options
     if(floatval($_POST['cgDbVersion'])>=22){
@@ -174,11 +174,11 @@ if (!is_dir($galleryUploadFolder)) {
 		$typeWithSuffix = $type.'-';
         if($type=='gallery-user'){
 	        $ucFirstPrefix = 'GalleriesUser';
-        }else if($type=='gallery-no-voting'){
+        }elseif($type=='gallery-no-voting'){
 	        $ucFirstPrefix = 'GalleriesNoVoting';
-        }else if($type=='gallery-winner'){
+        }elseif($type=='gallery-winner'){
 	        $ucFirstPrefix = 'GalleriesWinner';
-        }else if($type=='gallery-ecommerce'){
+        }elseif($type=='gallery-ecommerce'){
 	        $ucFirstPrefix = 'GalleriesEcommerce';
         }
 
@@ -530,8 +530,6 @@ if (!empty($_POST['changeSize'])) {
         unset($_POST['ForwardAfterLoginUrlCheck']);// bool $tablename_pro_options$jsonOptions['pro']['ForwardAfterLoginUrlCheck']
         unset($_POST['ForwardAfterLoginTextCheck']);// bool $tablename_pro_options $jsonOptions['pro']['ForwardAfterLoginUrlCheck']
         unset($_POST['VotesInTime']);// bool $tablename_pro_options $jsonOptions['pro']['VotesInTime']
-        unset($_POST['HideRegFormAfterLogin']);// bool $tablename_pro_options $jsonOptions['pro']['HideRegFormAfterLogin']
-        unset($_POST['HideRegFormAfterLoginShowTextInstead']);// bool $tablename_pro_options $jsonOptions['pro']['HideRegFormAfterLoginShowTextInstead']
         unset($_POST['FbLikeNoShare']);// added on 26.03.2020 // bool $tablename_pro_options no json options!
         unset($_POST['FbLikeOnlyShare']); // bool $tablename_pro_options no json options!
         unset($_POST['VoteNotOwnImage']);// added on 13.04.2020 // bool $tablename_pro_options $jsonOptions['pro']['VoteNotOwnImage']
@@ -544,6 +542,12 @@ if (!empty($_POST['changeSize'])) {
 	        unset($_POST['ConsentTikTok']);// added on 30.08.2021 // bool $tablename_pro_options $jsonOptions['pro']['ConsentTwitter']
         unset($_POST['VotesPerUserAllVotesUsedHtmlMessage']);// added on 01.02.2020 // string - not reset
         unset($_POST['LostPasswordMailActive']);// added on 02.21.2021 // bool
+            $_POST['PinExpiry']=0;// added on 24.11.2025 // unset might break processing in this case
+            $_POST['ConfirmExpiry']=0;// added on 16.11.2025 // unset might break processing in this case
+            $_POST['LoginAfterConfirm']=0;// added on 16.11.2025 // unset might break processing in this case
+            $_POST['ShowPinFormVoting']=0;// added on 25.11.2025 // unset might break processing in this case
+            $_POST['ShowPinFormUploading']=0;// added on 25.11.2025 // unset might break processing in this case
+            $_POST['AllowedUsersToVote']='';// added on 25.11.2025 // unset might break processing in this case
         //unset($_POST['ActivateBulkUpload']);// do not remove!!!! Because user has to be able to deactivate manually!!!! added on 28.04.2021 //
         unset($_POST['AllowUploadPNG']);// added on 03.05.2022 // bool
         unset($_POST['AllowUploadGIF']);// added on 03.05.2022 // bool
@@ -846,6 +850,7 @@ if (!empty($_POST['changeSize'])) {
 
     $FeControlsStyle = (!empty($_POST['FeControlsStyle'])) ? sanitize_text_field($_POST['FeControlsStyle']) : 'white';
     $GalleryStyle = (!empty($_POST['GalleryStyle'])) ? sanitize_text_field($_POST['GalleryStyle']) : 'center-black';
+        $FeVotingIconType = (!empty($_POST['FeVotingIconType'])) ? sanitize_text_field($_POST['FeVotingIconType']) : 'star';
 
     $FeControlsStyleUpload = (!empty($_POST['FeControlsStyleWhiteUpload'])) ? 'white' : 'black';
     $FeControlsStyleRegistry = (!empty($_POST['FeControlsStyleWhiteRegistry'])) ? 'white' : 'black';// will be also saved for general options in cg_update_registry_and_login_options_v14
@@ -916,6 +921,9 @@ if (!empty($_POST['changeSize'])) {
     $BorderRadiusRegistry = (!empty($_POST['BorderRadiusRegistry'])) ? 1 : 0;// will be also saved for general options in cg_update_registry_and_login_options_v14
     $BorderRadiusLogin = (!empty($_POST['BorderRadiusLogin'])) ? 1 : 0;// will be also saved for general options in cg_update_registry_and_login_options_v14
     $ThankVote = (!empty($_POST['ThankVote'])) ? 1 : 0;
+        $ShowPinFormVoting = (!empty($_POST['ShowPinFormVoting'])) ? 1 : 0;
+        $ShowPinFormUploading = (!empty($_POST['ShowPinFormUploading'])) ? 1 : 0;
+        $AllowedUsersToVote = (isset($_POST['AllowedUsersToVote'])) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['AllowedUsersToVote']) : '';
     $CopyImageLink = (!empty($_POST['CopyImageLink'])) ? 1 : 0;
     $CopyOriginalFileLink = (!empty($_POST['CopyOriginalFileLink'])) ? 1 : 0;
     $ForwardOriginalFile = (!empty($_POST['ForwardOriginalFile'])) ? 1 : 0;
@@ -961,7 +969,8 @@ if (!empty($_POST['changeSize'])) {
             'CopyOriginalFileLink' => $CopyOriginalFileLink,'ForwardOriginalFile' => $ForwardOriginalFile , 'ShareButtons' => $ShareButtons,
             'ForwardToWpPageEntry' => $ForwardToWpPageEntry, 'ForwardToWpPageEntryInNewTab' => $ForwardToWpPageEntryInNewTab,'TextBeforeWpPageEntry' => $TextBeforeWpPageEntry,'TextAfterWpPageEntry' => $TextAfterWpPageEntry,
                 'ShowBackToGalleryButton' => $ShowBackToGalleryButton, 'BackToGalleryButtonText' => $BackToGalleryButtonText, 'TextDeactivatedEntry' => $TextDeactivatedEntry,
-                'ShowBackToGalleriesButton' => $ShowBackToGalleriesButton
+                'ShowBackToGalleriesButton' => $ShowBackToGalleriesButton,'ShowPinFormVoting' => $ShowPinFormVoting,'ShowPinFormUploading' => $ShowPinFormUploading, 'AllowedUsersToVote' => $AllowedUsersToVote,
+                'FeVotingIconType' => $FeVotingIconType
         ),
         array('GalleryID' => $id),
         array('%d', '%d',
@@ -982,7 +991,8 @@ if (!empty($_POST['changeSize'])) {
             '%d', '%d', '%s',
             '%d', '%d', '%s', '%s',
                 '%d', '%s', '%s',
-                '%d'
+                '%d', '%d', '%d', '%s',
+                '%s'
         ),
         array('%d')
     );
@@ -1078,9 +1088,9 @@ if (!empty($_POST['changeSize'])) {
 
         if ($ScaleAndCut == 1 AND empty($_POST['ScaleWidthGalery'])) {
             $ScaleAndCut = 1;
-        } else if ($ScaleOnly == 1 AND empty($_POST['ScaleSizesGalery'])) {
+        } elseif ($ScaleOnly == 1 AND empty($_POST['ScaleSizesGalery'])) {
             $ScaleOnly = 1;
-        } else if ($ScaleOnly != 1 AND empty($_POST['ScaleSizesGalery'])) {
+        } elseif ($ScaleOnly != 1 AND empty($_POST['ScaleSizesGalery'])) {
             $ScaleOnly = 1;
         } else {
             $ScaleAndCut = 1;
@@ -1108,9 +1118,9 @@ if (!empty($_POST['changeSize'])) {
     // 1 = Height, 2 = Thumb, 3 = Row
     if (!empty($_POST['InfiniteScrollHeight'])) {
         $InfiniteScroll = 1;
-    } else if (!empty($_POST['InfiniteScrollThumb'])) {
+    } elseif (!empty($_POST['InfiniteScrollThumb'])) {
         $InfiniteScroll = 2;
-    } else if (!empty($_POST['InfiniteScrollRow'])) {
+    } elseif (!empty($_POST['InfiniteScrollRow'])) {
         $InfiniteScroll = 3;
     } else {
         $InfiniteScroll = 0;
@@ -1191,7 +1201,7 @@ if (!empty($_POST['changeSize'])) {
             //var_dump(2);
             $AllowRating = intval($_POST['AllowRating3']);// will be 12-20
         }
-    } else if (!empty($_POST['AllowRating2'])) {
+    } elseif (!empty($_POST['AllowRating2'])) {
         //var_dump(3);
         $AllowRating = 2;
     } else {
@@ -1281,10 +1291,10 @@ if (!empty($_POST['changeSize'])) {
     if ($AllowGalleryScript == 1 && empty($_POST['ForwardFromGallery'])) {
         $ForwardFrom = 1;
     } // Wenn ForwardFromGallery mitgeschickt wurde dann 2
-    else if (empty(['ForwardFromGallery'])) {
+    elseif (empty(['ForwardFromGallery'])) {
         $ForwardFrom = 2;
     } // Wenn SinglePic Ansicht gew�hlt ist dann 3
-    else if ($SinglePicView == 1) {
+    elseif ($SinglePicView == 1) {
         $ForwardFrom = 3;
     } else {
         $ForwardFrom = $ForwardFrom;
@@ -1734,8 +1744,11 @@ if (!empty($_POST['changeSize'])) {
     $ForwardAfterRegUrl = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['ForwardAfterRegUrl']) ? $_POST['ForwardAfterRegUrl'] : '');
     $ForwardAfterRegText = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['ForwardAfterRegText']) ? $_POST['ForwardAfterRegText'] : '');
     $TextEmailConfirmation = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['TextEmailConfirmation']) ? $_POST['TextEmailConfirmation'] : '');
+        $TextPinConfirmation = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['TextPinConfirmation']) ? $_POST['TextPinConfirmation'] : '');
+        $RegPinSubject = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['RegPinSubject']) ? $_POST['RegPinSubject'] : '');
 
     $TextAfterEmailConfirmation = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['TextAfterEmailConfirmation']) ? $_POST['TextAfterEmailConfirmation'] : '');
+        $TextAfterPinConfirmation = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['TextAfterPinConfirmation']) ? $_POST['TextAfterPinConfirmation'] : '');
     $RegMailAddressor = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['RegMailAddressor']) ? $_POST['RegMailAddressor'] : '');
     $RegMailReply = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['RegMailReply']) ? $_POST['RegMailReply'] : '');
         $RegMailCC = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['RegMailCC']) ? $_POST['RegMailCC'] : '');
@@ -1765,6 +1778,7 @@ if (!empty($_POST['changeSize'])) {
     $optionsForGeneralIDsinceV14['pro']['RegMailOptional'] = $RegMailOptional;
     $optionsForGeneralIDsinceV14['pro']['ForwardAfterRegText'] = $ForwardAfterRegText;
     $optionsForGeneralIDsinceV14['pro']['TextAfterEmailConfirmation'] = $TextAfterEmailConfirmation;
+        $optionsForGeneralIDsinceV14['pro']['TextAfterPinConfirmation'] = $TextAfterPinConfirmation;
     $optionsForGeneralIDsinceV14['pro']['HideRegFormAfterLogin'] = $HideRegFormAfterLogin;
     $optionsForGeneralIDsinceV14['pro']['HideRegFormAfterLoginShowTextInstead'] = $HideRegFormAfterLoginShowTextInstead;
     $optionsForGeneralIDsinceV14['pro']['HideRegFormAfterLoginTextToShow'] = $HideRegFormAfterLoginTextToShow;
@@ -1774,6 +1788,8 @@ if (!empty($_POST['changeSize'])) {
         $optionsForGeneralIDsinceV14['pro']['RegMailBCC'] = $RegMailBCC;
     $optionsForGeneralIDsinceV14['pro']['RegMailSubject'] = $RegMailSubject;
     $optionsForGeneralIDsinceV14['pro']['TextEmailConfirmation'] = $TextEmailConfirmation;
+        $optionsForGeneralIDsinceV14['pro']['TextPinConfirmation'] = $TextPinConfirmation;
+        $optionsForGeneralIDsinceV14['pro']['RegPinSubject'] = $RegPinSubject;
 
     // save number values extra
     $wpdb->update(
@@ -1838,8 +1854,8 @@ if (!empty($_POST['changeSize'])) {
         array(
             'ForwardAfterLoginUrl' => $ForwardAfterLoginUrl,'ForwardAfterRegText' => $ForwardAfterRegText,
                 'ForwardAfterRegUrl' => $ForwardAfterRegUrl,
-            'ForwardAfterLoginText' => $ForwardAfterLoginText,'TextEmailConfirmation' => $TextEmailConfirmation,
-            'TextAfterEmailConfirmation' => $TextAfterEmailConfirmation,'RegMailAddressor' => $RegMailAddressor,
+                'ForwardAfterLoginText' => $ForwardAfterLoginText,'TextEmailConfirmation' => $TextEmailConfirmation,'TextPinConfirmation' => $TextPinConfirmation,
+                'TextAfterEmailConfirmation' => $TextAfterEmailConfirmation,'TextAfterPinConfirmation' => $TextAfterPinConfirmation,'RegMailAddressor' => $RegMailAddressor,
                 'RegMailReply' => $RegMailReply,'RegMailCC' => $RegMailCC,'RegMailBCC' => $RegMailBCC, 'RegMailSubject' => $RegMailSubject,
             'RegUserUploadOnlyText' => $RegUserUploadOnlyText,'GalleryUploadTextBefore' => $GalleryUploadTextBefore,
             'GalleryUploadTextAfter' => $GalleryUploadTextAfter,'GalleryUploadConfirmationText' => $GalleryUploadConfirmationText,
@@ -1856,7 +1872,7 @@ if (!empty($_POST['changeSize'])) {
         array(
             '%s','%s',
                 '%s',
-            '%s','%s',
+                '%s','%s','%s',
             '%s','%s',
                 '%s','%s','%s','%s',
             '%s','%s',
@@ -2011,13 +2027,45 @@ if (!empty($_POST['changeSize'])) {
         $LostPasswordMailConfirmation = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['LostPasswordMailConfirmation']) ? $_POST['LostPasswordMailConfirmation'] : '');
         $TextBeforeLoginForm = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['TextBeforeLoginForm']) ? $_POST['TextBeforeLoginForm'] : '');
     $TextBeforeRegFormBeforeLoggedIn = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['TextBeforeRegFormBeforeLoggedIn']) ? $_POST['TextBeforeRegFormBeforeLoggedIn'] : '');
+        $TextBeforePinFormBeforeLoggedIn = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['TextBeforePinFormBeforeLoggedIn']) ? $_POST['TextBeforePinFormBeforeLoggedIn'] : '');
     $PermanentTextWhenLoggedIn = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['PermanentTextWhenLoggedIn']) ? $_POST['PermanentTextWhenLoggedIn'] : '');
+
+        $confirmExpiryDays    = isset($_POST['confirm_expiry_days']) ? (int) $_POST['confirm_expiry_days'] : 0;
+        $confirmExpiryHours   = isset($_POST['confirm_expiry_hours']) ? (int) $_POST['confirm_expiry_hours'] : 0;
+        $confirmExpiryMinutes = isset($_POST['confirm_expiry_minutes']) ? (int) $_POST['confirm_expiry_minutes'] : 0;
+
+// Limits
+        if ($confirmExpiryDays < 0) $confirmExpiryDays = 0;
+        if ($confirmExpiryDays > 100) $confirmExpiryDays = 100;
+
+        if ($confirmExpiryHours < 0) $confirmExpiryHours = 0;
+        if ($confirmExpiryHours > 24) $confirmExpiryHours = 24;
+
+        if ($confirmExpiryMinutes < 0) $confirmExpiryMinutes = 0;
+        if ($confirmExpiryMinutes > 59) $confirmExpiryMinutes = 59;
+
+        $confirmExpiry = $confirmExpiryDays * 86400 + $confirmExpiryHours * 3600 + $confirmExpiryMinutes * 60;
+
+        $pinExpiryHours   = isset($_POST['pin_expiry_hours']) ? (int) $_POST['pin_expiry_hours'] : 0;
+        $pinExpiryMinutes = isset($_POST['pin_expiry_minutes']) ? (int) $_POST['pin_expiry_minutes'] : 0;
+
+        // Limits
+        if ($pinExpiryHours < 0) $pinExpiryHours = 0;
+        if ($pinExpiryHours > 24) $pinExpiryHours = 24;
+
+        if ($pinExpiryMinutes < 0) $pinExpiryMinutes = 0;
+        if ($pinExpiryMinutes > 59) $pinExpiryMinutes = 59;
+
+        $pinExpiry = $pinExpiryHours * 3600 + $pinExpiryMinutes * 60;
 
     $optionsForGeneralIDsinceV14['registry-login'] = [];
     $optionsForGeneralIDsinceV14['registry-login']['LogoutLink'] = $LogoutLink;
     $optionsForGeneralIDsinceV14['registry-login']['BackToGalleryLink'] = $BackToGalleryLink;
     $optionsForGeneralIDsinceV14['registry-login']['RegistryUserRole'] = $RegistryUserRoleForRegistryAndLoginOptions;
-    $optionsForGeneralIDsinceV14['registry-login']['LostPasswordMailActive'] = (isset($_POST['LostPasswordMailActive'])) ? 1 : 0;
+        $optionsForGeneralIDsinceV14['registry-login']['LostPasswordMailActive'] = (!empty($_POST['LostPasswordMailActive'])) ? 1 : 0;
+        $optionsForGeneralIDsinceV14['registry-login']['LoginAfterConfirm'] = (!empty($_POST['LoginAfterConfirm'])) ? 1 : 0;
+        $optionsForGeneralIDsinceV14['registry-login']['ConfirmExpiry'] = absint($confirmExpiry);
+        $optionsForGeneralIDsinceV14['registry-login']['PinExpiry'] = absint($pinExpiry);
     $optionsForGeneralIDsinceV14['registry-login']['LostPasswordMailAddressor'] = $LostPasswordMailAddressor;
     $optionsForGeneralIDsinceV14['registry-login']['LostPasswordMailReply'] = $LostPasswordMailReply;
     $optionsForGeneralIDsinceV14['registry-login']['LostPasswordMailSubject'] = $LostPasswordMailSubject;
@@ -2025,6 +2073,7 @@ if (!empty($_POST['changeSize'])) {
     $optionsForGeneralIDsinceV14['registry-login']['TextBeforeLoginForm'] = $TextBeforeLoginForm;
     $optionsForGeneralIDsinceV14['registry-login']['EditProfileGroups'] = (!empty($_POST['EditProfileGroups'])) ? serialize($_POST['EditProfileGroups'])  : serialize([]);
     $optionsForGeneralIDsinceV14['registry-login']['TextBeforeRegFormBeforeLoggedIn'] = $TextBeforeRegFormBeforeLoggedIn;
+        $optionsForGeneralIDsinceV14['registry-login']['TextBeforePinFormBeforeLoggedIn'] = $TextBeforePinFormBeforeLoggedIn;
     $optionsForGeneralIDsinceV14['registry-login']['PermanentTextWhenLoggedIn'] = $PermanentTextWhenLoggedIn;
 
     if($dbVersion>=14){
@@ -2212,6 +2261,8 @@ if (!empty($_POST['changeSize'])) {
     $SwitchStyleGalleryButtonOnlyTopControls = $_POST['multiple-pics']['cg_gallery']['visual']['SwitchStyleGalleryButtonOnlyTopControls'];
     $EnableSwitchStyleImageViewButton = $_POST['multiple-pics']['cg_gallery']['visual']['EnableSwitchStyleImageViewButton'];
     $SwitchStyleImageViewButtonOnlyImageView = $_POST['multiple-pics']['cg_gallery']['visual']['SwitchStyleImageViewButtonOnlyImageView'];
+        $TextBeforeWpPageParent = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery']['visual']['TextBeforeWpPageParent']);
+        $TextAfterWpPageParent = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery']['visual']['TextAfterWpPageParent']);
 
     $_POST['multiple-pics']['cg_gallery']['general']['ShowAlways'] = $ShowAlways;
     if($dbVersion<21){
@@ -2254,6 +2305,8 @@ if (!empty($_POST['changeSize'])) {
     // has to be set here for json-options.php
     $AdditionalCssGalleryPage = '';
     $AdditionalCssEntryLandingPage = '';
+        $HeaderWpPageEntry = '';// since 28.0.4
+        $HeaderWpPageParent = '';// since 28.0.5
 
     if(!empty($WpPageParent)){
         $_POST['multiple-pics']['cg_gallery']['visual']['ShareButtons'] = $ShareButtons;
@@ -2271,12 +2324,28 @@ if (!empty($_POST['changeSize'])) {
 		        $_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['TextBeforeWpPageEntry'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['TextBeforeWpPageEntry']);
 	        }
 
+            $_POST['multiple-pics']['cg_gallery']['visual']['TextBeforeWpPageParent'] = $TextBeforeWpPageParent;
+            $_POST['multiple-pics']['cg_gallery_user']['visual']['TextBeforeWpPageParent'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_user']['visual']['TextBeforeWpPageParent']);
+            $_POST['multiple-pics']['cg_gallery_no_voting']['visual']['TextBeforeWpPageParent'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_no_voting']['visual']['TextBeforeWpPageParent']);
+            $_POST['multiple-pics']['cg_gallery_winner']['visual']['TextBeforeWpPageParent'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_winner']['visual']['TextBeforeWpPageParent']);
+	        if($dbVersion>=22){
+		        $_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['TextBeforeWpPageParent'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['TextBeforeWpPageParent']);
+	        }
+
         $_POST['multiple-pics']['cg_gallery']['visual']['TextAfterWpPageEntry'] = $TextAfterWpPageEntry;
         $_POST['multiple-pics']['cg_gallery_user']['visual']['TextAfterWpPageEntry'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_user']['visual']['TextAfterWpPageEntry']);
         $_POST['multiple-pics']['cg_gallery_no_voting']['visual']['TextAfterWpPageEntry'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_no_voting']['visual']['TextAfterWpPageEntry']);
         $_POST['multiple-pics']['cg_gallery_winner']['visual']['TextAfterWpPageEntry'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_winner']['visual']['TextAfterWpPageEntry']);
 	        if($dbVersion>=22){
 		        $_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['TextAfterWpPageEntry'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['TextAfterWpPageEntry']);
+	        }
+
+            $_POST['multiple-pics']['cg_gallery']['visual']['TextAfterWpPageParent'] = $TextAfterWpPageEntry;
+            $_POST['multiple-pics']['cg_gallery_user']['visual']['TextAfterWpPageParent'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_user']['visual']['TextAfterWpPageParent']);
+            $_POST['multiple-pics']['cg_gallery_no_voting']['visual']['TextAfterWpPageParent'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_no_voting']['visual']['TextAfterWpPageParent']);
+            $_POST['multiple-pics']['cg_gallery_winner']['visual']['TextAfterWpPageParent'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_winner']['visual']['TextAfterWpPageParent']);
+	        if($dbVersion>=22){
+		        $_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['TextAfterWpPageParent'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['TextAfterWpPageParent']);
 	        }
 
         $_POST['multiple-pics']['cg_gallery']['visual']['TextDeactivatedEntry'] = $TextDeactivatedEntry;
@@ -2309,6 +2378,28 @@ if (!empty($_POST['changeSize'])) {
 		            $_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['AdditionalCssEntryLandingPage'] = sanitize_textarea_field($_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['AdditionalCssEntryLandingPage']);
 	            }
         }
+
+            if(isset($_POST['multiple-pics']['cg_gallery']['visual']['HeaderWpPageEntry'])){
+                $HeaderWpPageEntry = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery']['visual']['HeaderWpPageEntry']);
+                $_POST['multiple-pics']['cg_gallery']['visual']['HeaderWpPageEntry'] = $HeaderWpPageEntry;
+                $_POST['multiple-pics']['cg_gallery_user']['visual']['HeaderWpPageEntry'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_user']['visual']['HeaderWpPageEntry']);
+                $_POST['multiple-pics']['cg_gallery_no_voting']['visual']['HeaderWpPageEntry'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_no_voting']['visual']['HeaderWpPageEntry']);
+                $_POST['multiple-pics']['cg_gallery_winner']['visual']['HeaderWpPageEntry'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_winner']['visual']['HeaderWpPageEntry']);
+                if($dbVersion>=22){
+                    $_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['HeaderWpPageEntry'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['HeaderWpPageEntry']);
+                }
+            }
+
+            if(isset($_POST['multiple-pics']['cg_gallery']['visual']['HeaderWpPageParent'])){
+                $HeaderWpPageParent = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery']['visual']['HeaderWpPageParent']);
+                $_POST['multiple-pics']['cg_gallery']['visual']['HeaderWpPageParent'] = $HeaderWpPageEntry;
+                $_POST['multiple-pics']['cg_gallery_user']['visual']['HeaderWpPageParent'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_user']['visual']['HeaderWpPageParent']);
+                $_POST['multiple-pics']['cg_gallery_no_voting']['visual']['HeaderWpPageParent'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_no_voting']['visual']['HeaderWpPageParent']);
+                $_POST['multiple-pics']['cg_gallery_winner']['visual']['HeaderWpPageParent'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_winner']['visual']['HeaderWpPageParent']);
+                if($dbVersion>=22){
+                    $_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['HeaderWpPageParent'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['HeaderWpPageParent']);
+                }
+            }
 
         $_POST['multiple-pics']['cg_gallery']['pro']['BackToGalleryButtonURL'] = $BackToGalleryButtonURL;
         $_POST['multiple-pics']['cg_gallery_user']['pro']['BackToGalleryButtonURL'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_user']['pro']['BackToGalleryButtonURL']);
@@ -2376,6 +2467,9 @@ if (!empty($_POST['changeSize'])) {
 	    if($dbVersion>=22){
 	    $_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['ThirdTitleGalleriesView'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['ThirdTitleGalleriesView']);
 	    }
+
+        // pro option JSON only since 28.1.0
+        $VotesPerUserAllVotesUsedHtmlMessage = !empty($_POST['VotesPerUserAllVotesUsedHtmlMessage']) ? contest_gal1ery_htmlentities_and_preg_replace(trim($_POST['VotesPerUserAllVotesUsedHtmlMessage'])) : '';
 
     include('json-options.php');
 
@@ -2671,9 +2765,9 @@ if (!empty($_POST['changeSize'])) {
                         $jsonOptionsAllGalleryVariants[$GalleryID . '-u'][$type][$key] = $jsonOptionsAllGalleryVariants[$GalleryID][$type][$key] ;
                     }
                 }
-            } else if ($key == 'AllowSortOptions') {
+            } elseif ($key == 'AllowSortOptions') {
                 $jsonOptionsAllGalleryVariants[$GalleryID . '-u'][$type][$key] = $AllowSortOptionsCgGalleryUser;
-            } else if (isset($_POST['multiple-pics']['cg_gallery_user'][$type][$key])) {
+            } elseif (isset($_POST['multiple-pics']['cg_gallery_user'][$type][$key])) {
                 $jsonOptionsAllGalleryVariants[$GalleryID . '-u'][$type][$key] = 0;
             }
         }
@@ -2698,9 +2792,9 @@ if (!empty($_POST['changeSize'])) {
                         $jsonOptionsAllGalleryVariants[$GalleryID . '-nv'][$type][$key] = $jsonOptionsAllGalleryVariants[$GalleryID][$type][$key] ;
                     }
                 }
-            } else if ($key == 'AllowSortOptions') {
+            } elseif ($key == 'AllowSortOptions') {
                 $jsonOptionsAllGalleryVariants[$GalleryID . '-nv'][$type][$key] = $AllowSortOptionsCgGalleryNoVoting;
-            } else if (isset($_POST['multiple-pics']['cg_gallery_no_voting'][$type][$key])) {
+            } elseif (isset($_POST['multiple-pics']['cg_gallery_no_voting'][$type][$key])) {
                 $jsonOptionsAllGalleryVariants[$GalleryID . '-nv'][$type][$key] = 0;
             }
         }
@@ -2721,9 +2815,9 @@ if (!empty($_POST['changeSize'])) {
                         $jsonOptionsAllGalleryVariants[$GalleryID . '-w'][$type][$key] = $jsonOptionsAllGalleryVariants[$GalleryID][$type][$key] ;
                     }
                 }
-            } else if ($key == 'AllowSortOptions') {
+            } elseif ($key == 'AllowSortOptions') {
                 $jsonOptionsAllGalleryVariants[$GalleryID . '-w'][$type][$key] = $AllowSortOptionsCgGalleryWinner;
-            } else if (isset($_POST['multiple-pics']['cg_gallery_winner'][$type][$key])) {
+            } elseif (isset($_POST['multiple-pics']['cg_gallery_winner'][$type][$key])) {
                 $jsonOptionsAllGalleryVariants[$GalleryID . '-w'][$type][$key] = 0;
             }
         }
@@ -2744,9 +2838,9 @@ if (!empty($_POST['changeSize'])) {
                             $jsonOptionsAllGalleryVariants[$GalleryID . '-ec'][$type][$key] = $jsonOptionsAllGalleryVariants[$GalleryID][$type][$key] ;
                         }
                     }
-                } else if ($key == 'AllowSortOptions') {
+                } elseif ($key == 'AllowSortOptions') {
                     $jsonOptionsAllGalleryVariants[$GalleryID . '-ec'][$type][$key] = $AllowSortOptionsCgGalleryEcommerce;
-                } else if (isset($_POST['multiple-pics']['cg_gallery_ecommerce'][$type][$key])) {
+                } elseif (isset($_POST['multiple-pics']['cg_gallery_ecommerce'][$type][$key])) {
                     $jsonOptionsAllGalleryVariants[$GalleryID . '-ec'][$type][$key] = 0;
                 }
             }
@@ -2889,22 +2983,18 @@ if (!empty($_POST['changeSize'])) {
 	        $namesBool = [ 'BorderRadius','ShowGalleryNameAsTitle', 'PreviewLastAdded', 'PreviewHighestRated', 'PreviewMostCommented','GalleriesPagesNoIndex','GalleriesPagesNoFollow'];
 	        $namesInt = [ 'WidthThumb', 'HeightThumb', 'DistancePicsV', 'DistancePics', 'PicsPerSite'];
 	        $namesString = [ 'GalleriesPageRedirectURL','FeControlsStyle'];
+            $namesTextarea  = ['HeaderWpPageGalleries','TextBeforeWpPageGalleries','TextAfterWpPageGalleries'];
 
-            // unset first
+            $allowedKeys = array_merge($namesBool, $namesInt, $namesString, $namesTextarea);
+
             foreach ($galleryTypes as $type){
-                foreach ($namesBool as $nameBool){
-                    if(array_search($nameBool,$namesBool)===false){
-	                    unset($_POST['cg_galleries'][$type][$nameBool]);// unset for sure if others are sent
-                    }
+                if (empty($_POST['cg_galleries'][$type]) || !is_array($_POST['cg_galleries'][$type])) {
+                    continue;
                 }
-                foreach ($namesInt as $nameInt){
-                    if(array_search($nameInt,$namesInt)===false){
-	                    unset($_POST['cg_galleries'][$type][$nameInt]);// unset for sure if others are sent
-                    }
-                }
-                foreach ($namesString as $nameString){
-                    if(array_search($nameString,$namesString)===false){
-	                    unset($_POST['cg_galleries'][$type][$nameString]);// unset for sure if others are sent
+                // 1) Drop anything not whitelisted
+                foreach (array_keys($_POST['cg_galleries'][$type]) as $key) {
+                    if (!in_array($key, $allowedKeys, true)) {
+                        unset($_POST['cg_galleries'][$type][$key]);
                     }
                 }
             }
@@ -2924,7 +3014,7 @@ if (!empty($_POST['changeSize'])) {
                     if(!empty($_POST['cg_galleries'][$type][$nameInt])){
 	                    $_POST['cg_galleries'][$type][$nameInt] = intval($_POST['cg_galleries'][$type][$nameInt]);
                     }else{// have to be set for sure, might not be sent for version 24 or lower
-	                    $_POST['cg_galleries'][$type][$nameString] = 0;
+	                    $_POST['cg_galleries'][$type][$nameInt] = 0;
                     }
                 }
             }
@@ -2937,6 +3027,16 @@ if (!empty($_POST['changeSize'])) {
                     }
                 }
             }
+            foreach ($galleryTypes as $type){
+                foreach ($namesTextarea as $nameTextarea){
+                    if(!empty($_POST['cg_galleries'][$type][$nameTextarea])){
+	                    $_POST['cg_galleries'][$type][$nameTextarea] = contest_gal1ery_htmlentities_and_preg_replace($_POST['cg_galleries'][$type][$nameTextarea]);
+                    }else{// have to be set for sure, might not be sent for version 24 or lower
+	                    $_POST['cg_galleries'][$type][$nameTextarea] = '';
+                    }
+                }
+            }
+
 	        $galleriesOptionsPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/json/galleries-options.json';
 	        file_put_contents($galleriesOptionsPath,json_encode($_POST['cg_galleries']));
         }

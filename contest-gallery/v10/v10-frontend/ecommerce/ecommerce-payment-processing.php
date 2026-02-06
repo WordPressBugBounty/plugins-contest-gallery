@@ -100,7 +100,7 @@ if($PaymentType == 'paypal'){
 		$IsFullPaid = true;
 	}
 
-}else if($PaymentType == 'stripe'){
+}elseif($PaymentType == 'stripe'){
 
 	$StripePiClientSecret = (isset($_POST['StripePiClientSecret'])) ? $_POST['StripePiClientSecret'] : '';
 	$StripePiId = (isset($_POST['StripePiId'])) ? $_POST['StripePiId'] : '';
@@ -319,7 +319,11 @@ $ShippingTotal = round(floatval($_POST['purchase_units'][0]['amount']['breakdown
 $CurrencyShort = $_POST['purchase_units'][0]['amount']['currency_code'];
 $CurrencyPosition = $_POST['CurrencyPosition'];
 $TaxPercentageDefault = $_POST['TaxPercentageDefault'];
-$TaxPercentageDefaultToShow = number_format(floatval($TaxPercentageDefault),2,$PriceDivider);
+$ThousandsSeparator = '.';
+if($PriceDivider=='.'){
+    $ThousandsSeparator = ',';
+}
+$TaxPercentageDefaultToShow = number_format(floatval($TaxPercentageDefault),2,$PriceDivider,$ThousandsSeparator);
 //var_dump('$TaxPercentageDefaultToShow');
 //var_dump($TaxPercentageDefaultToShow);
 if($StripeEmail){
@@ -362,8 +366,12 @@ $ecommerceLogsHtaccess = $ecommerceLogsFolder.'/.htaccess';
 if(!file_exists($ecommerceLogsHtaccess)){
     $denyFromAllContent = <<<HEREDOC
 <Files "*">
-order deny, allow
-deny from all
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Deny from all
+  </IfModule>
 </Files>
 HEREDOC;
     file_put_contents($ecommerceLogsHtaccess,$denyFromAllContent);

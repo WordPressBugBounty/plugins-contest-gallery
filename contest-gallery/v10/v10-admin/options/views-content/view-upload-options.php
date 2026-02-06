@@ -587,10 +587,10 @@ echo <<<HEREDOC
 HEREDOC;
 
 echo <<<HEREDOC
-    <div class='cg_view_options_rows_container'>
+    <div class='cg_view_options_rows_container' id="cgLimitUploadEntries">
         <p class='cg_view_options_rows_container_title'>Limit upload entries and user recognition methods</span></p>
             <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_border_right_none cg_view_option_full_width $cgProFalse cg_border_radius_unset' id="RegUserMaxUploadContainer" >
+                <div class='cg_view_option cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px cg_view_option_full_width $cgProFalse cg_border_radius_unset' id="RegUserMaxUploadContainer" >
                     <div class='cg_view_option_title'>
                         <p>Upload entries total per user<br><span class="cg_view_option_title_note">0 or empty = no limit</span></p>
                     </div>
@@ -620,7 +620,7 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_100_percent CheckMethodUploadContainer cg_border_top_none $cgProFalse'  id="CheckCookieUploadContainer"  >
                     <div class='cg_view_option_title'>
-                        <p>Check by cookie<br/><span class="cg_view_option_title_note">Cookie will be only set and tracked if this option is activated. Will be not set if administrator uploads files in WordPress backend area.</span></p>
+                        <p>Check by cookie<br/><span class="cg_view_option_title_note">Cookie will be only set and tracked if this option is activated.<br>Will be not set if administrator uploads files in WordPress backend area.</span></p>
                     </div>
                     <div class='cg_view_option_radio'>
                         <input type="radio" name="RegUserUploadOnly" class="CheckMethodUpload" id="CheckCookieUpload" value="2" $CheckCookieUpload>
@@ -638,10 +638,9 @@ echo <<<HEREDOC
                 </div>
             </div>
             <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_view_option_100_percent CheckMethodUploadContainer cg_border_top_none $cgProFalse'   id="CheckLoginUploadContainer"   >
+                <div class='cg_view_option cg_view_option_100_percent CheckMethodUploadContainer cg_border_bottom_none cg_border_top_none $cgProFalse'   id="CheckLoginUploadContainer"   >
                     <div class='cg_view_option_title'>
                         <p>Check if is registered user<br/><span class="cg_view_option_title_note">User have to be registered and logged in to be able to upload.<br>User WordPress ID will be always tracked if user is logged in.
-                        <br><strong>NEW!</strong> WordPress account can be easy created via Google sign in button now!<br>Check "Login via Google" options.</span>
                         </span>
                         </p>
                     </div>
@@ -651,12 +650,26 @@ echo <<<HEREDOC
                 </div>
             </div>
              <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse' id="RegUserUploadOnlyTextContainer" >
+                <div class='cg_view_option cg_view_option_50_percent cg_border_border_bottom_left_radius_8_px cg_border_top_none cg_border_right_none $cgProFalse' id="RegUserUploadOnlyTextContainer" style="flex-flow: column;" >
                     <div class='cg_view_option_title'>
                         <p>Show text instead of upload form<br/><span class="cg_view_option_title_note">if user is not logged in</span></p>
                     </div>
                     <div class='cg_view_option_html'>
                         <textarea class='cg-wp-editor-template' id='RegUserUploadOnlyText'  name='RegUserUploadOnlyText'>$RegUserUploadOnlyText</textarea>
+                    </div>
+                </div>
+                <div class='cg_view_option cg_view_option_50_percent cg_border_border_bottom_left_radius_unset cg_border_left_none cg_border_top_none' id="ShowPinFormUploadingContainer" >
+                    <div class='cg_view_option_title'>
+                        <p>Show user-friendly PIN-based email verification form for unregistered users<br/>
+                            <span class="cg_view_option_title_note">
+                                When a not-logged-in user clicks on "In gallery upload form button", the [cg_users_pin] form appears.<br/>
+                                The user can enter an email address and receive a PIN.<br/>
+                                After entering the PIN, the <b>user can start uploading without reloading the page.</b>
+                            </span>
+                        </p>
+                    </div>
+                    <div class='cg_view_option_checkbox'>
+                        <input type="checkbox" name="ShowPinFormUploading" id="ShowPinFormUploading" $ShowPinFormUploading>
                     </div>
                 </div>
             </div>
@@ -747,7 +760,7 @@ $InformUserUploadContentInfoWithoutFileSource = ($selectSQLemailUserUpload->Cont
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
         <p class='cg_view_options_rows_container_title'>E-mail to frontend user after frontend upload
-        <br><span class="cg_view_options_rows_container_title_note"><span class="cg_color_red">NOTE:</span> relating testing - e-mail where is send to should not contain $cgYourDomainName.<br>Many servers can not send to own domain.</span></p>
+        <br><span class="cg_view_options_rows_container_title_note">$cgDomainErrorText</span></p>
         $mailExceptionUserUploadMail
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px cg_view_option_100_percent $cgProFalse" id="cgInformUserUploadContainer">
@@ -820,7 +833,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse cg_inform_user_upload'  id="wp-InformUserUploadContent-wrap-Container" >
                     <div class='cg_view_option_title cg_copyable'>
-                        <p>Mail content<br><span class="cg_view_option_title_note">Use <span style="font-weight:bold;">\$info$</span> 
+                        <p>Email content<br><span class="cg_view_option_title_note">Use <span style="font-weight:bold;">\$info$</span> 
                         in the editor if you like to attach user info like upload fields and original file sources</span></p>
                     </div>
                     <div class='cg_view_option_html'>

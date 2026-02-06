@@ -1328,6 +1328,220 @@ if (!empty($_POST['upload'])) {
                 }
             }
 
+            if ($field['type'] == 'chk' && $cgProVersion) {
+
+                $ColNumber = (!empty($field['ColNumber'])) ? absint($field['ColNumber']) : 1;
+                $RowNumber = (!empty($field['RowNumber'])) ? absint($field['RowNumber']) : 1;
+                $RowCols = (!empty($field['RowCols'])) ? absint($field['RowCols']) : 1;
+
+                $seFieldsArray = array();
+                $seFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
+                $seFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
+
+                if (!empty($field['watermarkChecked'])) {
+                    $WatermarkPosition = $field['watermarkPosition'];
+                    $WatermarkPositionForVisualOptions = $field['watermarkPosition'];
+                } else {
+                    $WatermarkPosition = '';
+                }
+
+                if (!empty($field['infoInSlider'])) {
+                    $Show_Slider = 1;
+                } else {
+                    $Show_Slider = 0;
+                }
+
+                if (!empty($field['required'])) {
+                    if ($field['required'] == 'on') {
+                        $onOff = 'on';
+                    } else {
+                        $onOff = 'off';
+                    }
+                } else {
+                    $onOff = 'off';
+                }
+
+                if (empty($field['hide'])) {
+                    $active = 1;
+                } else {
+                    $active = 0;
+                }
+
+                $seFieldsArray['mandatory'] = cg1l_sanitize_method($onOff);
+                $seFieldsArray = serialize($seFieldsArray);
+
+                $order = $field['order'];
+
+                if (!empty($field['SubTitle'])) {
+                    $SubTitle = 1;
+                } else {
+                    $SubTitle = 0;
+                }
+
+                $FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? trim($field['FieldTitleGallery']) : '';
+
+                if (strpos($Version, '-PRO') === false) {
+                    $SubTitle = 0;
+                }
+                if (!empty($field['ThirdTitle'])) {
+                    $ThirdTitle = 1;
+                } else {
+                    $ThirdTitle = 0;
+                }
+
+                if (empty($field['new'])) {
+                    $wpdb->update(
+                        "$tablename_form_input",
+                        array('GalleryID' => $GalleryID, 'Field_Type' => 'chk-f', 'Field_Order' => $order, 'Field_Content' => $seFieldsArray, 'Active' => $active, 'Show_Slider' => $Show_Slider, 'WatermarkPosition' => $WatermarkPosition, 'SubTitle' => $SubTitle, 'ThirdTitle' => $ThirdTitle,
+                            'FieldTitleGallery' => $FieldTitleGallery, 'RowNumber' => $RowNumber, 'ColNumber' => $ColNumber, 'RowCols' => $RowCols),
+                        array('id' => $id),
+                        array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d', '%d', '%d'),
+                        array('%d')
+                    );
+                    if (!empty($SubTitle)) {
+                        $SubTitleToSet = $id;
+                    }
+                    if (!empty($ThirdTitle)) {
+                        $ThirdTitleToSet = $id;
+                    }
+                    if (!empty($field['infoInGallery'])) {
+                        $infoInGalleryId = $id;
+                    }
+                    if (!empty($field['tagInGallery'])) {
+                        $tagInGalleryId = $id;
+                    }
+
+                } else {
+
+                    $wpdb->query($wpdb->prepare(
+                        "
+                                INSERT INTO $tablename_form_input
+                      ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,WatermarkPosition,SubTitle,ThirdTitle,FieldTitleGallery,RowNumber,ColNumber,RowCols)
+                      VALUES ( %s,%d,%s,%d,%s,%d,%d,%s,%d,%d,%s,%d,%d,%d )
+                            ",
+                        '', $GalleryID, 'chk-f', $order, $seFieldsArray, $Show_Slider, $active, $WatermarkPosition, $SubTitle, $ThirdTitle, $FieldTitleGallery, $RowNumber, $ColNumber, $RowCols
+                    ));
+
+                    if (!empty($SubTitle)) {
+                        $SubTitleToSet = $wpdb->insert_id;
+                    }
+                    if (!empty($ThirdTitle)) {
+                        $ThirdTitleToSet = $wpdb->insert_id;
+                    }
+                    if (!empty($field['infoInGallery'])) {
+                        $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                    }
+                    if (!empty($field['tagInGallery'])) {
+                        $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                    }
+
+
+                }
+            }
+
+            if ($field['type'] == 'ra' && $cgProVersion) {
+
+                $ColNumber = (!empty($field['ColNumber'])) ? absint($field['ColNumber']) : 1;
+                $RowNumber = (!empty($field['RowNumber'])) ? absint($field['RowNumber']) : 1;
+                $RowCols = (!empty($field['RowCols'])) ? absint($field['RowCols']) : 1;
+
+                $seFieldsArray = array();
+                $seFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
+                $seFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
+
+                if (!empty($field['watermarkChecked'])) {
+                    $WatermarkPosition = $field['watermarkPosition'];
+                    $WatermarkPositionForVisualOptions = $field['watermarkPosition'];
+                } else {
+                    $WatermarkPosition = '';
+                }
+
+                if (!empty($field['infoInSlider'])) {
+                    $Show_Slider = 1;
+                } else {
+                    $Show_Slider = 0;
+                }
+
+                $onOff = 'off';// I am not robot captcha always required
+
+                if (empty($field['hide'])) {
+                    $active = 1;
+                } else {
+                    $active = 0;
+                }
+
+                $seFieldsArray['mandatory'] = cg1l_sanitize_method($onOff);
+                $seFieldsArray = serialize($seFieldsArray);
+
+                $order = $field['order'];
+
+                if (!empty($field['SubTitle'])) {
+                    $SubTitle = 1;
+                } else {
+                    $SubTitle = 0;
+                }
+
+                $FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? trim($field['FieldTitleGallery']) : '';
+
+                if (strpos($Version, '-PRO') === false) {
+                    $SubTitle = 0;
+                }
+                if (!empty($field['ThirdTitle'])) {
+                    $ThirdTitle = 1;
+                } else {
+                    $ThirdTitle = 0;
+                }
+
+                if (empty($field['new'])) {
+                    $wpdb->update(
+                        "$tablename_form_input",
+                        array('GalleryID' => $GalleryID, 'Field_Type' => 'radio-f', 'Field_Order' => $order, 'Field_Content' => $seFieldsArray, 'Active' => $active, 'Show_Slider' => $Show_Slider, 'WatermarkPosition' => $WatermarkPosition, 'SubTitle' => $SubTitle, 'ThirdTitle' => $ThirdTitle,
+                            'FieldTitleGallery' => $FieldTitleGallery, 'RowNumber' => $RowNumber, 'ColNumber' => $ColNumber, 'RowCols' => $RowCols),
+                        array('id' => $id),
+                        array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d', '%d', '%d'),
+                        array('%d')
+                    );
+                    if (!empty($SubTitle)) {
+                        $SubTitleToSet = $id;
+                    }
+                    if (!empty($ThirdTitle)) {
+                        $ThirdTitleToSet = $id;
+                    }
+                    if (!empty($field['infoInGallery'])) {
+                        $infoInGalleryId = $id;
+                    }
+                    if (!empty($field['tagInGallery'])) {
+                        $tagInGalleryId = $id;
+                    }
+
+                } else {
+
+                    $wpdb->query($wpdb->prepare(
+                        "
+                                INSERT INTO $tablename_form_input
+                      ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,WatermarkPosition,SubTitle,ThirdTitle,FieldTitleGallery,RowNumber,ColNumber,RowCols)
+                      VALUES ( %s,%d,%s,%d,%s,%d,%d,%s,%d,%d,%s,%d,%d,%d )
+                            ",
+                        '', $GalleryID, 'radio-f', $order, $seFieldsArray, $Show_Slider, $active, $WatermarkPosition, $SubTitle, $ThirdTitle, $FieldTitleGallery, $RowNumber, $ColNumber, $RowCols
+                    ));
+
+                    if (!empty($SubTitle)) {
+                        $SubTitleToSet = $wpdb->insert_id;
+                    }
+                    if (!empty($ThirdTitle)) {
+                        $ThirdTitleToSet = $wpdb->insert_id;
+                    }
+                    if (!empty($field['infoInGallery'])) {
+                        $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                    }
+                    if (!empty($field['tagInGallery'])) {
+                        $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                    }
+
+
+                }
+            }
+
             if ($field['type'] == 'se' && ($cgProVersion || !$cgProVersion && floatval($dbGalleryVersion)<27)) {
 
                 $ColNumber = (!empty($field['ColNumber'])) ? absint($field['ColNumber']) : 1;
@@ -1888,7 +2102,7 @@ if (!empty($_POST['upload'])) {
 
     if (empty($IsForWpPageTitleInputDeleted)) {
         cg_json_upload_form_info_data_files_new($GalleryID, [], $_POST['isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized'], $IsForWpPageTitleInputDeleted, true);
-    } else if (!empty($IsForWpPageTitleInputDeleted) && !empty($_POST['isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized'])) {
+    } elseif (!empty($IsForWpPageTitleInputDeleted) && !empty($_POST['isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized'])) {
         cg_json_upload_form_info_data_files_new($GalleryID, [], '', $IsForWpPageTitleInputDeleted, true);
         $IsForWpPageTitleInputDeleted = false;// has to be set false then after first cg_json_upload_form_info_data_files_new with $IsForWpPageTitleInputDeleted as true was processed
         cg_json_upload_form_info_data_files_new($GalleryID, [], $_POST['isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized'], $IsForWpPageTitleInputDeleted, true);

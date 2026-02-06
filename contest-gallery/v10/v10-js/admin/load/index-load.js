@@ -1,4 +1,6 @@
 cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostData,$formLinkObject,submitMessage,cg_picture_id_to_scroll) {
+    //console.trace();
+
     debugger
     cgJsClassAdmin.index.vars.isCreateUploadAreaLoaded = false;
     cgJsClassAdmin.index.vars.resizeLeftSideIsActive = false;
@@ -14,7 +16,7 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
     var version = cgJsClassAdmin.index.functions.cgGetVersionForUrlJs();
 
     if(urlString === '?page='+version+'/index.php'){// only set nonce at the beginning then
-        var cg_nonce = $('#cg_nonce').val();
+        var cg_nonce = CG1LBackendNonce.nonce;
         urlString += '&cg_nonce='+cg_nonce;
     }
 
@@ -47,6 +49,15 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
         var cgVersionCurrent = $response.find('#cgVersion').val();
         $response.find('#cgGallerySubmitTop').addClass('cg_hide');
 
+        if($response.find('script[data-cg-processing-new-gallery-id="true"]').length){
+            $response.find('script[data-cg-processing-new-gallery-id="true"]').each(function () {
+                var script = jQuery(this).html();
+                eval(script);
+            });
+            var urlWithNewOptionId = cgJsClassAdmin.index.functions.replaceOptionIdInUrl(location.href,cgJsClassAdmin.index.vars.cgNextGalleryId);
+            window.history.replaceState({}, '', urlWithNewOptionId);
+        }
+
         cgJsClassAdmin.index.functions.cgSetVersionForUrlJs($response.find('#cgGetVersionForUrlJs').val());
 
         if(cgJsClassAdmin.index.vars.cgVersion===0){
@@ -71,6 +82,8 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
             //cgJsClassAdmin.index.indexeddb.setAdminData(cgVersionCurrent);
 
             var $cg_main_container = $('#cg_main_container');
+            cgJsClassAdmin.index.vars.$cg_main_container = $cg_main_container;
+
             cgJsClassAdmin.index.functions.cgMainContainerEmpty($cg_main_container);
 
             if(!$formLinkObject.hasClass('cg_load_backend_copy_gallery') && submitMessage){
@@ -79,6 +92,14 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
 
             cgJsClassAdmin.gallery.functions.hideCgBackendBackgroundDropAndContainer();
             $cg_main_container.find('#cgBackendLoader').remove();
+
+            if($response.find('#cglHeart').val()=='heart'){
+                $cg_main_container.addClass('cgl_heart');
+            }
+
+            if($response.find('#cglHeart').val()=='star'){
+                $cg_main_container.removeClass('cgl_heart');
+            }
 
             $cg_main_container.append($response.find('body').html());// stats with html and contains body. Body content has to be inserted. Otherwise error because html can not be inserted in html.
             $('#cgGalleryLoader').addClass('cg_hide');
@@ -93,7 +114,7 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
                 }else{
                     if($cg_main_container.find('#cgGalleryBackendDataManagement').length){
                         cgJsClassAdmin.gallery.vars.isHashJustChanged = true;
-                        location.hash = '#option_id='+$cg_main_container.find('#cgNextIdGallery').val()+'&edit_gallery=true&cg_nonce='+$('#cg_nonce').val();
+                        location.hash = '#option_id='+$cg_main_container.find('#cgNextIdGallery').val()+'&edit_gallery=true&cg_nonce='+CG1LBackendNonce.nonce;
                         $('.cg_first_in_progress').remove();
                         cgJsClassAdmin.gallery.load.init($,false,$formLinkObject,undefined,undefined,cg_picture_id_to_scroll);
                         cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Gallery copied',true);
@@ -126,6 +147,11 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
 
                 if($cg_main_container.find('#cgMainMenuTable').length){
                     cgJsClassAdmin.mainMenu.functions.load($,$formLinkObject,$response);
+                }
+
+                if($cg_main_container.find('#cgUsersListSteps').length){
+                    cgJsClassAdmin.gallery.vars.cgMailBodyToSendTinyMceUnconfirmed = false;
+                    cgJsClassAdmin.index.functions.loadUnconfirmedUsers($);
                 }
 
                 if($cg_main_container.find('#cgVotesImageVisualContent').length || $cg_main_container.find('#cgCommentsImageVisualContent').length){
@@ -203,7 +229,17 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
             },2000);
         }
 
+        if(!cgJsClassAdmin.index.vars.cg_nonce_check_active){
+            cgJsClassAdmin.index.vars.cg_nonce_check_active=true;
+            setInterval(function() {
+                cgJsClassAdmin.index.functions.checkCurrentCgNonce($);
+            }, 580000); // approx ten 10 minutes in ms, 600000 would be 10 minutes exactly, 20 seconds less
+            //}, 1800000); // 30 minutes in ms
+        }
+
         cgJsClassAdmin.index.functions.setCgNonce($);
+
+        cgJsClassAdmin.gallery.functions.initOverlayWatcher($);
 
     }).fail(function(xhr, status, error) {
         cgJsClassAdmin.index.functions.noteIfIsIE();

@@ -2,7 +2,7 @@
 
 $ShowTextUntilAnImageAdded = '';
 if(!empty($options['general']['ShowTextUntilAnImageAdded'])){
-    $ShowTextUntilAnImageAdded = contest_gal1ery_convert_for_html_output($options['general']['ShowTextUntilAnImageAdded']);
+    $ShowTextUntilAnImageAdded = contest_gal1ery_convert_for_html_output_without_nl2br($options['general']['ShowTextUntilAnImageAdded']);
 }
 
 $heredoc = <<<HEREDOC
@@ -22,7 +22,7 @@ HEREDOC;
 
 if($isUserGallery == true && $is_user_logged_in){// then show definetly for user gallery
     echo $heredoc;
-} else if(!empty($isShowGallery) && $isUserGallery == false){// if not logged in not user gallery and Reg
+} elseif(!empty($isShowGallery) && $isUserGallery == false){// if not logged in not user gallery and Reg
 echo $heredoc;
 }
 

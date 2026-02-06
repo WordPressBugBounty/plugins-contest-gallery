@@ -160,6 +160,7 @@ if(!empty($options['pro']['ReviewComm'])){
 	$Active = 2;
 }
 
+// reinserted in 23.1.3, after removed in 16 and higher
 $wpdb->query( $wpdb->prepare(
     "
 				INSERT INTO $tablenameComments
@@ -233,6 +234,10 @@ $countCountCtoReview = 0;
 // process rating comments data file --- ENDE
 
 // check if there were some database entries of before version 16
+$countCommentsSQL = 0;
+if(floatval($options['general']['Version'])<16){// this condition added later in version 28.1.2.2,
+    // the only way it will be repaired in database, 'CountC' => $countCommentsTotal below and since  28.1.2.2
+    // comments will be inserted since 23.1.3, because of allocation correction, but also in dir, so what in dir counts in generally
 $countCommentsSQL = $wpdb->get_var( $wpdb->prepare(
     "
                 SELECT COUNT(1)
@@ -241,6 +246,8 @@ $countCommentsSQL = $wpdb->get_var( $wpdb->prepare(
             ",
     $pictureID
 ) );
+}
+
 
 // save comments for future repair eventually
 $dirImageComments = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/image-comments/ids/'.$pictureID;
@@ -265,6 +272,7 @@ $countCommentsTotal = $countCommentsSQL + $fileImageCommentsDirCount;
 $ratingCommentsData['CountC'] = $countCommentsTotal;
 
 // the rest will be done in cg_actualize_all_images_data_sort_values_file
+// $countCommentsSQL condition above if(floatval($options['general']['Version'])<16){ since  28.1.2.2
 $wpdb->update(
     "$tablename",
     array('CountC' => $countCommentsTotal, 'CountCtoReview' => $countCountCtoReview),
@@ -332,7 +340,7 @@ if(!empty($options['pro']['CommNoteActive'])){
     $CommNoteBCC = contest_gal1ery_convert_for_html_output_without_nl2br($checkCommentsNotificationOptions->CommNoteBCC);
     $CommNoteReply = contest_gal1ery_convert_for_html_output_without_nl2br($checkCommentsNotificationOptions->CommNoteReply);
     $CommNoteSubject = contest_gal1ery_convert_for_html_output_without_nl2br($checkCommentsNotificationOptions->CommNoteSubject);
-    $CommNoteContent = contest_gal1ery_convert_for_html_output($checkCommentsNotificationOptions->CommNoteContent);
+    $CommNoteContent = contest_gal1ery_convert_for_html_output_without_nl2br($checkCommentsNotificationOptions->CommNoteContent);
 
     $headers = array();
     $headers[] = "From: " . html_entity_decode(strip_tags($CommNoteAddressor)) . " <" . strip_tags($CommNoteReply) . ">";
@@ -340,11 +348,11 @@ if(!empty($options['pro']['CommNoteActive'])){
     $headers[] = "MIME-Version: 1.0";
     $headers[] = "Content-Type: text/html; charset=utf-8";
 
-    $NameForMail = contest_gal1ery_convert_for_html_output($Name);
+    $NameForMail = contest_gal1ery_convert_for_html_output_without_nl2br($Name);
     $NameForMail = preg_replace("/&amp;amp;#x/","&#x",$NameForMail);// do both to go sure
     $NameForMail = preg_replace("/&amp;#x/","&#x",$NameForMail);// do both to go sure
 
-    $CommentForMail = contest_gal1ery_convert_for_html_output($Comment);
+    $CommentForMail = contest_gal1ery_convert_for_html_output_without_nl2br($Comment);
     $CommentForMail = preg_replace("/&amp;amp;#x/","&#x",$CommentForMail);// do both to go sure
     $CommentForMail = preg_replace("/&amp;#x/","&#x",$CommentForMail);// do both to go sure
 

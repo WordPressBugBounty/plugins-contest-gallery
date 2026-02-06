@@ -247,8 +247,12 @@ if(!function_exists('cg_move_file_ecommerce_sale_folder')){
             $htaccessFileContent = <<<HEREDOC
 #Do not remove htaccess in this folder. It prevents for getting files which are selected for sale from getting from outside.
 <Files "*">
-   order deny,allow
-   deny from all
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Deny from all
+  </IfModule>
 </Files>
 HEREDOC;
             $htaccessFile = $ecommerceFileFolderWpUploadFolder.'/.htaccess';
@@ -401,8 +405,12 @@ if(!function_exists('cg_create_htaccess_ecommerce_sale_folder_if_not_exists')){
         $htaccessFileContent = <<<HEREDOC
 #Do not remove htaccess in this folder. It prevents for getting files which are selected for sale from getting from outside.
 <Files "*">
-   order deny,allow
-   deny from all
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Deny from all
+  </IfModule>
 </Files>
 HEREDOC;
         $htaccessFile = $attached_file_dir_watermarked.'/.htaccess';

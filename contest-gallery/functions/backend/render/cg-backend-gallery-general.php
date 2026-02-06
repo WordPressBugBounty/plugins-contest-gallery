@@ -196,8 +196,8 @@ HEREDOC;
 	}
 }
 
-if(!function_exists('cg_add_column')){
-	function cg_add_column($GalleryID,$cgProFalse,$dbGalleryVersion){
+if(!function_exists('cg_add_upl_field')){
+	function cg_add_upl_field($GalleryID,$cgProFalse,$dbGalleryVersion){
         $cgProFalseV27 = '';
         $marginRight = '';
         if($cgProFalse && floatval($dbGalleryVersion)>=27){
@@ -207,7 +207,7 @@ if(!function_exists('cg_add_column')){
             $marginRight = 'margin-right: 15px;';
         }
             echo <<<HEREDOC
-<div id='cgAddCol' class='cg_hide cg_height_auto cg_backend_action_container  cg_backend_action_container_high_overlay cg_overflow_y_hidden' style='z-index: 9999999;width: fit-content;min-width: 300px; overflow-y: auto !important; max-width: 70%;'>
+<div id='cgAddUplField' class='cg_hide cg_height_auto cg_backend_action_container  cg_backend_action_container_high_overlay cg_overflow_y_hidden cg_select_field_type' style='z-index: 9999999;width: fit-content;min-width: 300px; overflow-y: auto !important; max-width: 70%;'>
 	<span  class='cg_message_close '></span>
 	<div class='cg_sel' style='margin-bottom: 0;margin-top: 20px; box-shadow: unset;'>
              <div class='cg_sel_title' style="margin-bottom: 20px;" >
@@ -298,6 +298,24 @@ HEREDOC;
 
 echo <<<HEREDOC
             <div class='cg_row' style="gap: 60px;justify-content: center;">
+                <div class='cg_row_col cg_field $cgProFalse'  id="cgAddRadioField" title="Add radio buttons field" data-cg-field="ra">
+                    <div class='cg_sel_col_title' >
+                        Radio<br>buttons
+                    </div>
+                    <div class='cg_col_row' >
+                        <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                        </div>
+                    </div>
+                </div>
+                <div class='cg_row_col cg_field $cgProFalse'  id="cgAddCheckField" title="Add checkboxes field" data-cg-field="chk">
+                    <div class='cg_sel_col_title' >
+                        Checkboxes<br><br>
+                    </div>
+                    <div class='cg_col_row' >
+                        <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                        </div>
+                    </div>
+                </div>
                <div class='cg_row_col cg_field $cgProFalse'  id="cgAddHtmlField" title="Add HTML field" data-cg-field="ht">
                     <div class='cg_sel_col_title' >
                         HTML<br><br>
@@ -306,26 +324,275 @@ echo <<<HEREDOC
                         <div class='cg_row_col_row_col cg_border_radius_8_px' >
                         </div>
                     </div>
-                </div>
+                </div>                
+            </div>
+HEREDOC;
+
+echo <<<HEREDOC
+            <div class='cg_row' style="gap: 60px;justify-content: center;">
                 <div class='cg_row_col cg_field'  id="cgAddSimpleCaptchaField" title="Add simple captcha field" data-cg-field="caRo">
-                    <div class='cg_sel_col_title' >
-                        Simple<br>captcha
-                    </div>
-                    <div class='cg_col_row' >
-                        <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                        <div class='cg_sel_col_title' >
+                            Simple<br>captcha
                         </div>
-                    </div>
-                </div>    
-                <div class='cg_row_col cg_field $cgProFalseV27'  id="cgAddCaptchaRoReFieldField" title="Add Google reCAPTCHA field" data-cg-field="caRoRe">
-                    <div class='cg_sel_col_title' >
-                        Google<br>reCAPTCHA
-                    </div>
-                    <div class='cg_col_row' >
-                        <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                        <div class='cg_col_row' >
+                            <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                            </div>
                         </div>
-                    </div>
+                    </div>    
+                    <div class='cg_row_col cg_field $cgProFalseV27'  id="cgAddCaptchaRoReFieldField" title="Add Google reCAPTCHA field" data-cg-field="caRoRe">
+                        <div class='cg_sel_col_title' >
+                            Google<br>reCAPTCHA
+                        </div>
+                        <div class='cg_col_row' >
+                            <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                            </div>
+                        </div>
                 </div>
             </div>
+HEREDOC;
+
+echo <<<HEREDOC
+ </div>
+HEREDOC;
+	}
+}
+
+if(!function_exists('cg_add_reg_field')){
+	function cg_add_reg_field($GalleryID,$cgProFalse,$dbGalleryVersion){
+        $marginRight = '';
+        if($cgProFalse){
+            $marginRight = 'margin-right: 15px;';
+        }
+            echo <<<HEREDOC
+<div id='cgAddRegField' class='cg_hide cg_height_auto cg_backend_action_container  cg_backend_action_container_high_overlay cg_overflow_y_hidden cg_select_field_type' style='z-index: 9999999;width: fit-content;min-width: 300px; overflow-y: auto !important; max-width: 70%;'>
+	<span  class='cg_message_close '></span>
+	<div class='cg_sel' style='margin-bottom: 0;margin-top: 20px; box-shadow: unset;'>
+             <div class='cg_sel_title' style="margin-bottom: 20px;" >
+                Select field type
+            </div>
+    </div>
+HEREDOC;
+echo <<<HEREDOC
+	        <div class='cg_row' style="gap: 60px;justify-content: center; margin-bottom: 30px;">
+                   <div class='cg_row_col cg_field cg_visibility_hidden cg_pointer_events_none'  >
+                        <div class='cg_sel_col_title' style="width: max-content;" >
+                            Wp First Name<br><br>
+                        </div>
+                        <div class='cg_col_row' >
+                            <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                            </div>
+                        </div>
+                    </div>
+                   <div class='cg_row_col cg_field'  id="cgWpFirstNameField" title="Add first name field" data-cg-field="wpfn">
+                        <div class='cg_sel_col_title' style="width: max-content;"  >
+                            Wp First Name<br><br>
+                        </div>
+                        <div class='cg_col_row' >
+                            <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                            </div>
+                        </div>
+                    </div>
+                   <div class='cg_row_col cg_field'  id="cgWpLastNameField" title="Add last name field" data-cg-field="wpln">
+                        <div class='cg_sel_col_title' >
+                            Wp Last Name<br><br>
+                        </div>
+                        <div class='cg_col_row' >
+                            <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                            </div>
+                        </div>
+                    </div>
+                   <div class='cg_row_col cg_field cg_visibility_hidden cg_pointer_events_none' >
+                        <div class='cg_sel_col_title' >
+                            Wp Last Name<br><br>
+                        </div>
+                        <div class='cg_col_row' >
+                            <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                            </div>
+                        </div>
+                    </div>
+            </div>
+HEREDOC;
+echo <<<HEREDOC
+	        <div class='cg_row' style="gap: 60px;justify-content: center; margin-bottom: 30px;">
+                   <div class='cg_row_col cg_field'  id="cgAddInputField" title="Add input field" data-cg-field="nf">
+                        <div class='cg_sel_col_title' >
+                            Input<br><br>
+                        </div>
+                        <div class='cg_col_row' >
+                            <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                            </div>
+                        </div>
+                    </div>
+                   <div class='cg_row_col cg_field'  id="cgAddTextareaField" title="Add textarea field" data-cg-field="kf">
+                        <div class='cg_sel_col_title' >
+                            Textarea<br><br>
+                        </div>
+                        <div class='cg_col_row' >
+                            <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                            </div>
+                        </div>
+                    </div>
+                   <div class='cg_row_col cg_field $cgProFalse'  id="cgAddSelectField" title="Add select field" data-cg-field="se">
+                        <div class='cg_sel_col_title' >
+                            Select<br><br>
+                        </div>
+                        <div class='cg_col_row' >
+                            <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                            </div>
+                        </div>
+                    </div>
+                     <div class='cg_row_col cg_field $cgProFalse'  id="cgAddCheckAgreementField" title="Add check agreement field" data-cg-field="cb" style="$marginRight">
+                        <div class='cg_sel_col_title' >
+                            Check<br>agreement
+                        </div>
+                        <div class='cg_col_row' >
+                            <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                            </div>
+                        </div>
+                    </div>
+            </div>
+HEREDOC;
+
+echo <<<HEREDOC
+            <div class='cg_row' style="gap: 60px;justify-content: center;">
+               <div class='cg_row_col cg_field $cgProFalse'  id="cgProfileImageField" title="Add profile image field" data-cg-field="pi">
+                    <div class='cg_sel_col_title' >
+                        Profile image<br><br>
+                    </div>
+                    <div class='cg_col_row' >
+                        <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                        </div>
+                    </div>
+                </div>
+                <div class='cg_row_col cg_field $cgProFalse'  id="cgAddRadioField" title="Add radio buttons field" data-cg-field="ra">
+                    <div class='cg_sel_col_title' >
+                        Radio<br>buttons
+                    </div>
+                    <div class='cg_col_row' >
+                        <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                        </div>
+                    </div>
+                </div>
+                <div class='cg_row_col cg_field $cgProFalse'  id="cgAddCheckField" title="Add checkboxes field" data-cg-field="chk">
+                    <div class='cg_sel_col_title' >
+                        Checkboxes<br><br>
+                    </div>
+                    <div class='cg_col_row' >
+                        <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                        </div>
+                    </div>
+                </div>
+               <div class='cg_row_col cg_field $cgProFalse'  id="cgAddHtmlField" title="Add HTML field" data-cg-field="ht">
+                    <div class='cg_sel_col_title' >
+                        HTML<br><br>
+                    </div>
+                    <div class='cg_col_row' >
+                        <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                        </div>
+                    </div>
+                </div>                
+            </div>
+            <div class='cg_row' style="gap: 60px;justify-content: center;">
+               <div class='cg_row_col cg_field cg_visibility_hidden cg_pointer_events_none'  >
+                    <div class='cg_sel_col_title' style="width: max-content;" >
+                        Wp First Name<br><br>
+                    </div>
+                    <div class='cg_col_row' >
+                        <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                        </div>
+                    </div>
+                </div>
+                <div class='cg_row_col cg_field'  id="cgAddSimpleCaptchaField" title="Add simple captcha field" data-cg-field="caRo">
+                        <div class='cg_sel_col_title' >
+                            Simple<br>captcha
+                        </div>
+                        <div class='cg_col_row' >
+                            <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                            </div>
+                        </div>
+                    </div>    
+                    <div class='cg_row_col cg_field $cgProFalse'  id="cgAddCaptchaRoReFieldField" title="Add Google reCAPTCHA field" data-cg-field="caRoRe">
+                        <div class='cg_sel_col_title' >
+                            Google<br>reCAPTCHA
+                        </div>
+                        <div class='cg_col_row' >
+                            <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                            </div>
+                        </div>
+                    </div>
+                   <div class='cg_row_col cg_field cg_visibility_hidden cg_pointer_events_none' >
+                        <div class='cg_sel_col_title' >
+                            Wp Last Name<br><br>
+                        </div>
+                        <div class='cg_col_row' >
+                            <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                            </div>
+                        </div>
+                    </div>
+            </div>
+ </div>
+HEREDOC;
+	}
+}
+
+
+
+if(!function_exists('cg_mails_list')){
+	function cg_mails_list(){
+            echo <<<HEREDOC
+<div id='cgMailsList' class='cg_hide cg_height_auto cg_backend_action_container  cg_overflow_y_hidden' style='width: fit-content;min-width: 600px; overflow-y: auto !important; max-width: 80%;min-height:70%;'>
+	<span  class='cg_message_close'></span>
+	<div class='cg_sel' style='margin-bottom: 0;margin-top: 20px; box-shadow: unset;'>
+             <div class='cg_sel_title' style="margin-bottom: 20px;" >
+                Mails <span class="cg_mails_count" style="font-weight: normal;"></span>   <span class="cg_entry_id" style="font-weight: normal;"></span> 
+            </div>
+    </div>
+HEREDOC;
+    echo <<<HEREDOC
+    <div class='cg_row cg_row_loader' >
+            <div class='cg_row_col' >
+                <div class="cg-lds-dual-ring-gallery-hide"></div>
+            </div>
+    </div>
+    <div class='cg_row cg_row_error' >
+            <div class='cg_row_col' style="align-items: start;">
+                Error response:<span class="cg_row_error_message"></span> 
+            </div>
+    </div>
+HEREDOC;
+        echo <<<HEREDOC
+        <div class='cg_row'>
+               <div class='cg_row_col '>
+                    <label for="cgMail">To</label>
+                    <input type="text" id="cgMail" value="" />
+                </div>
+        </div>
+HEREDOC;
+        echo <<<HEREDOC
+        <div class='cg_row'>
+               <div class='cg_row_col '>
+                    <label for="cgCcToSend">Cc</label>
+                    <input type="text" id="cgCcToSend" value="" />
+                </div>
+        </div>
+HEREDOC;
+        echo <<<HEREDOC
+        <div class='cg_row'>
+               <div class='cg_row_col '>
+                    <label for="cgBcc">Bcc</label>
+                    <input type="text" id="cgBcc" value="" />
+                </div>
+        </div>
+HEREDOC;
+        echo <<<HEREDOC
+        <div class='cg_row'>
+               <div class='cg_row_col'>
+                    <label for="cgMailBody">Body</label>
+                    <div id="cgMailBody" ></div>
+                </div>
+        </div>
+HEREDOC;
+echo <<<HEREDOC
  </div>
 HEREDOC;
 	}
@@ -377,5 +644,6 @@ if(!function_exists('cg_ecommerce_show_api_response')){
 
     }
 }
+
 
 ?>

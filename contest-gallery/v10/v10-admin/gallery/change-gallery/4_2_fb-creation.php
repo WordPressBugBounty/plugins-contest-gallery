@@ -93,14 +93,14 @@ if(!file_exists($dirHTML) OR !empty($isCorrectAndImprove)){
                                                 var userBrowserLang = navigator.language || navigator.userLanguage;
     
                                                 if(userBrowserLang.indexOf("en")==0){var userLang = "en_US";}
-                                                else if(userBrowserLang.indexOf("de")==0){var userLang = "de_DE";}
-                                                else if(userBrowserLang.indexOf("fr")==0){var userLang = "fr_FR";}
-                                                else if(userBrowserLang.indexOf("es")==0){var userLang = "es_ES";}
-                                                else if(userBrowserLang.indexOf("pt")==0){var userLang = "pt_PT";}
-                                                else if(userBrowserLang.indexOf("nl")==0){var userLang = "nl_NL";}
-                                                else if(userBrowserLang.indexOf("ru")==0){var userLang = "ru_RU";}
-                                                else if(userBrowserLang.indexOf("zh")==0){var userLang = "zh_CN";}
-                                                else if(userBrowserLang.indexOf("ja")==0){var userLang = "ja_JP";}
+                                                elseif(userBrowserLang.indexOf("de")==0){var userLang = "de_DE";}
+                                                elseif(userBrowserLang.indexOf("fr")==0){var userLang = "fr_FR";}
+                                                elseif(userBrowserLang.indexOf("es")==0){var userLang = "es_ES";}
+                                                elseif(userBrowserLang.indexOf("pt")==0){var userLang = "pt_PT";}
+                                                elseif(userBrowserLang.indexOf("nl")==0){var userLang = "nl_NL";}
+                                                elseif(userBrowserLang.indexOf("ru")==0){var userLang = "ru_RU";}
+                                                elseif(userBrowserLang.indexOf("zh")==0){var userLang = "zh_CN";}
+                                                elseif(userBrowserLang.indexOf("ja")==0){var userLang = "ja_JP";}
                                                 else{var userLang = "en_US";}
                                                 
                                                 (function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0];

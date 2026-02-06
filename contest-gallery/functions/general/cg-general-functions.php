@@ -353,7 +353,7 @@ if(!function_exists('cg_remove_emoji')){
 	function cg_remove_emoji($string)
 	{
 		// Match Enclosed Alphanumeric Supplement
-		$regex_alphanumeric = '/[\x{1F100}-\x{1F1FF}]/u';
+		/*$regex_alphanumeric = '/[\x{1F100}-\x{1F1FF}]/u';
 		$clear_string = preg_replace($regex_alphanumeric, '', $string);
 
 		// Match Miscellaneous Symbols and Pictographs
@@ -380,20 +380,33 @@ if(!function_exists('cg_remove_emoji')){
 		$regex_dingbats = '/[\x{2700}-\x{27BF}]/u';
 		$clear_string = preg_replace($regex_dingbats, '', $clear_string);
 
-		return $clear_string;
+		return $clear_string;*/
+
+        $regex = '/[' .
+            '\x{1F100}-\x{1F1FF}' .  // Enclosed Alphanumeric Supplement
+            '\x{1F300}-\x{1F5FF}' .  // Misc Symbols and Pictographs
+            '\x{1F600}-\x{1F64F}' .  // Emoticons
+            '\x{1F680}-\x{1F6FF}' .  // Transport and Map
+            '\x{1F900}-\x{1F9FF}' .  // Supplemental Symbols and Pictographs
+            '\x{2600}-\x{26FF}'   .  // Misc Symbols
+            '\x{2700}-\x{27BF}'   .  // Dingbats
+            ']/u';
+        return preg_replace($regex, '', $string);
 	}
 }
 
 if(!function_exists('cg_pre_process_name_for_url_name')){
 	function cg_pre_process_name_for_url_name($name){
-		$array = ['@','.',',',';','(',')','{','}','[',']','!','?','§','$','%','&','*','/','\\',' ','<','>','|','^','"','\'','#','+','´','~','~',' ','\'','"','^','´','`','’'];
+		/*$array = ['@','.',',',';','(',')','{','}','[',']','!','?','§','$','%','&','*','/','\\',' ','<','>','|','^','"','\'','#','+','´','~','~',' ','\'','"','^','´','`','’'];
 		// name example
 		// $name = 'e/$%//\\\'"$%&/-.,;rr_rff.lala';
 		$name = str_replace($array,'-',sanitize_text_field($name));
 		$name = preg_replace('/-+/', '-', $name);
 		$name = preg_replace('/_+/', '_', $name);
         $name = cg_remove_emoji($name);
-		return strtolower($name);// mysql statements are caseinsensitive by default
+        return strtolower($name);// mysql statements are caseinsensitive by default*/
+        $name = cg_remove_emoji( $name );
+        return sanitize_title($name);
 	}
 }
 
@@ -466,7 +479,7 @@ if(!function_exists('cg_convert_previous_translation_to_general_translations')){
 								if(!empty($value)){
 									$contentCountToCompare++;
 								}
-							}else if(is_array($value)){
+							}elseif(is_array($value)){
 								foreach ($value as $key1 => $value1){
 									if(is_string($value1)){
 										if(!empty($value1)){
@@ -511,7 +524,7 @@ if(!function_exists('cg_check_nonce')){
 		$cg_nonce = '';
 		if(isset($_POST['cg_nonce'])){
 			$cg_nonce = $_POST['cg_nonce'];
-		}else if(isset($_GET['cg_nonce'])){
+		}elseif(isset($_GET['cg_nonce'])){
 			$cg_nonce = $_GET['cg_nonce'];
 		}
 		if(empty($cg_nonce) || !wp_verify_nonce($cg_nonce, 'cg_nonce')){
@@ -626,7 +639,7 @@ if(!function_exists('cg_copy_table_row')){
 			if($cgCopyType=='cg_copy_type_options_and_images'  && $tableNameStringPart=='contest_gal1ery' && in_array($rowObject->Field,$ratingFieldsArray)){// all rating has to be set on 0
 				// has to be simply in quotes then ""
 				$columnsString .= ', "0"';
-			} else if(!empty($valueCollect[$tableNameStringPart]) && !empty($valueCollect[$tableNameStringPart][$rowObject->Field])){
+			} elseif(!empty($valueCollect[$tableNameStringPart]) && !empty($valueCollect[$tableNameStringPart][$rowObject->Field])){
 				// has to be simply in quotes then ""#
 				if(is_serialized($valueCollect[$tableNameStringPart][$rowObject->Field])){
 					$columnsString .= ', \''.$valueCollect[$tableNameStringPart][$rowObject->Field].'\'';
@@ -646,7 +659,7 @@ if(!function_exists('cg_copy_table_row')){
 			$wpdb->query($query);
 			$nextId = $wpdb->insert_id;
 			return $nextId;
-		}else if(
+		}elseif(
 			$tableNameStringPart=='contest_gal1ery' ||
 			$tableNameStringPart=='contest_gal1ery_f_input' ||
 			$tableNameStringPart=='contest_gal1ery_f_output' ||
@@ -933,13 +946,13 @@ if(!function_exists('cg_get_galleries_slug_name')){
 		if($shortcode_name=='cg_gallery_user' || $post_mime_type == 'contest-gallery-plugin-page-galleries-user-slug'){
 			$gType = 'User';
 			$gTypeLowerCase = '-user';
-		}else if($shortcode_name=='cg_gallery_winner' || $post_mime_type == 'contest-gallery-plugin-page-galleries-winner-slug'){
+		}elseif($shortcode_name=='cg_gallery_winner' || $post_mime_type == 'contest-gallery-plugin-page-galleries-winner-slug'){
 			$gType = 'Winner';
 			$gTypeLowerCase = '-winner';
-		}else if($shortcode_name=='cg_gallery_no_voting' || $post_mime_type == 'contest-gallery-plugin-page-galleries-no-voting-slug'){
+		}elseif($shortcode_name=='cg_gallery_no_voting' || $post_mime_type == 'contest-gallery-plugin-page-galleries-no-voting-slug'){
 			$gType = 'NoVoting';
 			$gTypeLowerCase = '-no-voting';
-		}else if($shortcode_name=='cg_gallery_ecommerce' || $post_mime_type == 'contest-gallery-plugin-page-galleries-ecommerce-slug'){
+		}elseif($shortcode_name=='cg_gallery_ecommerce' || $post_mime_type == 'contest-gallery-plugin-page-galleries-ecommerce-slug'){
 			$gType = 'Ecommerce';
 			$gTypeLowerCase = '-ecommerce';
 		}
@@ -961,11 +974,11 @@ if(!function_exists('cg_galleries_options')){
 		$gType = 'g';
 		if($shortcode_name=='cg_gallery_user' || $post_mime_type == 'contest-gallery-plugin-page-galleries-user-slug'){
 			$gType = 'u';
-		}else if($shortcode_name=='cg_gallery_winner' || $post_mime_type == 'contest-gallery-plugin-page-galleries-winner-slug'){
+		}elseif($shortcode_name=='cg_gallery_winner' || $post_mime_type == 'contest-gallery-plugin-page-galleries-winner-slug'){
 			$gType = 'w';
-		}else if($shortcode_name=='cg_gallery_no_voting' || $post_mime_type == 'contest-gallery-plugin-page-galleries-no-voting-slug'){
+		}elseif($shortcode_name=='cg_gallery_no_voting' || $post_mime_type == 'contest-gallery-plugin-page-galleries-no-voting-slug'){
 			$gType = 'nv';
-		}else if($shortcode_name=='cg_gallery_ecommerce' || $post_mime_type == 'contest-gallery-plugin-page-galleries-ecommerce-slug'){
+		}elseif($shortcode_name=='cg_gallery_ecommerce' || $post_mime_type == 'contest-gallery-plugin-page-galleries-ecommerce-slug'){
 			$gType = 'ec';
 		}
 
@@ -1042,7 +1055,10 @@ if(!function_exists('cg_get_galleries_options_all')){
 
 if(!function_exists('cg_sort_form_input')){
 	function cg_sort_form_input($selectFormInput){
-
+        /*var_dump('$selectFormInput');
+        echo "<pre>";
+        print_r($selectFormInput);
+        echo "</pre>";*/
         // remove image first
         foreach ($selectFormInput as $key => $value) {
             if($value->Field_Type=='image-f'){
@@ -1181,6 +1197,7 @@ if(!function_exists('cg_sort_json_upload_form')){
             }
 
             ksort($jsonUploadFormNew);
+
             /*
 
             var_dump('$selectFormInputNew');
@@ -1191,6 +1208,7 @@ if(!function_exists('cg_sort_json_upload_form')){
 
 
             $jsonUploadForm = $jsonUploadFormNew;
+
             // then sorting is required
             $jsonUploadFormNew = [];
             $index = 0;
@@ -1198,11 +1216,67 @@ if(!function_exists('cg_sort_json_upload_form')){
                 $jsonUploadFormNew[$index] = $value;
                 $index++;
             }
+
             $jsonUploadForm = $jsonUploadFormNew;
             ksort($jsonUploadForm);
+
         }
+
         return $jsonUploadForm;
     }
+}
+
+if(!function_exists('cg_create_tablename_mails_check')){
+	function cg_create_tablename_mails_check(){
+        global $cg_create_tablename_mails_checked;
+        global $cg_create_tablename_mails;
+        $cg_create_tablename_mails = true;
+        if(empty($cg_create_tablename_mails_checked)){
+            $cg_check_create_tablename_mails_checked = true;
+            $cg_create_tablename_mails = true;
+        }elseif(!empty($cg_create_tablename_mails_checked)){
+            $cg_create_tablename_mails = false;
+        }
+        return $cg_create_tablename_mails;
+    }
+}
+
+if(!function_exists('cg_create_tablename_mails_check')){
+	function cg_create_tablename_mails_check(){
+        global $cg_create_tablename_mails_checked;
+        global $cg_create_tablename_mails;
+        $cg_create_tablename_mails = true;
+        if(empty($cg_create_tablename_mails_checked)){
+            $cg_check_create_tablename_mails_checked = true;
+            $cg_create_tablename_mails = true;
+        }elseif(!empty($cg_create_tablename_mails_checked)){
+            $cg_create_tablename_mails = false;
+        }
+        return $cg_create_tablename_mails;
+    }
+}
+
+function cg_format_options_version($Version) {
+    $parts = explode('.', $Version);
+    $main = $parts[0];
+
+    // If no dot is present, return the main part
+    if (count($parts) < 2) return $main;
+
+    // Merge all decimals into one string
+    $decimalString = implode('', array_slice($parts, 1));
+
+    // Special case: Only zeros (e.g., 23.0.0 -> 23)
+    if (ltrim($decimalString, '0') === '') {
+        return (float)$main;
+    }
+
+    // Combine and round to max 2 decimal places
+    $combined = $main . '.' . $decimalString;
+    $rounded = round((float)$combined, 2);
+
+    // Casting to float ensures that trailing zeros are removed (e.g., 23.10 -> 23.1)
+    return (float)$rounded;
 }
 
 ?>

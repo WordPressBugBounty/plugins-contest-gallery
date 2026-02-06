@@ -6,7 +6,7 @@ if(!defined('ABSPATH')){exit;}
 if (!function_exists('contest_gal1ery_mail_admin'))   {
     function contest_gal1ery_mail_admin($selectSQLemailAdmin,$Msg,$galeryID) {
 
-        $Subject = contest_gal1ery_convert_for_html_output($selectSQLemailAdmin->Header);
+        $Subject = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailAdmin->Header);
         $Admin = $selectSQLemailAdmin->Admin;
         $AdminMail = $selectSQLemailAdmin->AdminMail;
         $Reply = $selectSQLemailAdmin->Reply;
@@ -80,7 +80,7 @@ foreach($collectImageIDs as $key => $imageID){
 
     if(stripos($contentMail,$posUserInfo)!==false){
 
-        $selectFormInput = $wpdb->get_results( "SELECT id, Field_Type, Field_Order, Field_Content FROM $tablename_f_input WHERE GalleryID = '$galeryID' AND (Field_Type = 'text-f' OR Field_Type = 'comment-f' OR Field_Type ='email-f' OR Field_Type ='select-f' OR Field_Type ='url-f') ORDER BY Field_Order ASC" );
+        $selectFormInput = $wpdb->get_results( "SELECT id, Field_Type, Field_Order, Field_Content FROM $tablename_f_input WHERE GalleryID = '$galeryID' AND (Field_Type = 'text-f' OR Field_Type = 'comment-f' OR Field_Type ='email-f' OR Field_Type ='select-f' OR Field_Type ='radio-f' OR Field_Type = 'chk-f' OR Field_Type ='url-f') ORDER BY Field_Order ASC" );
 
         $selectContentFieldArray = array();
 
@@ -164,6 +164,50 @@ foreach($collectImageIDs as $key => $imageID){
             if($fieldtype=="se" AND $n==1){$formFieldId=$formvalue; $n=2; continue;}
             if($fieldtype=="se" AND $n==2){$fieldOrder=$formvalue; $n=3; continue;}
             if ($fieldtype=='se' AND $n==3) {
+
+                $getEntries = $wpdb->get_var( $wpdb->prepare(
+                    "
+															SELECT Short_Text
+															FROM $tablenameentries 
+															WHERE pid = %d and f_input_id = %d
+														",
+                    $imageID,$formFieldId
+                ) );
+
+                $UserEntries .= "<br/><strong>".contest_gal1ery_convert_for_html_output_without_nl2br($formvalue).":</strong><br/>";
+                $UserEntries .= contest_gal1ery_convert_for_html_output_without_nl2br($getEntries)."<br/>";
+
+                $fieldtype='';
+                $i=0;
+
+            }
+
+            if($formvalue=='radio-f'){$fieldtype="ra";  $n=1; continue;}
+            if($fieldtype=="ra" AND $n==1){$formFieldId=$formvalue; $n=2; continue;}
+            if($fieldtype=="ra" AND $n==2){$fieldOrder=$formvalue; $n=3; continue;}
+            if ($fieldtype=='ra' AND $n==3) {
+
+                $getEntries = $wpdb->get_var( $wpdb->prepare(
+                    "
+															SELECT Short_Text
+															FROM $tablenameentries 
+															WHERE pid = %d and f_input_id = %d
+														",
+                    $imageID,$formFieldId
+                ) );
+
+                $UserEntries .= "<br/><strong>".contest_gal1ery_convert_for_html_output_without_nl2br($formvalue).":</strong><br/>";
+                $UserEntries .= contest_gal1ery_convert_for_html_output_without_nl2br($getEntries)."<br/>";
+
+                $fieldtype='';
+                $i=0;
+
+            }
+
+            if($formvalue=='chk-f'){$fieldtype="chk";  $n=1; continue;}
+            if($fieldtype=="chk" AND $n==1){$formFieldId=$formvalue; $n=2; continue;}
+            if($fieldtype=="chk" AND $n==2){$fieldOrder=$formvalue; $n=3; continue;}
+            if ($fieldtype=='chk' AND $n==3) {
 
                 $getEntries = $wpdb->get_var( $wpdb->prepare(
                     "

@@ -149,11 +149,24 @@ cgJsClassAdmin.createRegistry.functions = {
             }
         });
 
+        // setDragAndDropEvents
         cgJsClassAdmin.options.vars.cg_registry_form_container_offset = $('#ausgabe1.cg_registry_form_container').offset().top;
+        cgJsClassAdmin.options.vars.cg_create_upload_registry_container_offset = cgJsClassAdmin.options.vars.cg_registry_form_container_offset;
+
         cgJsClassAdmin.options.vars.$cgRegFormSelect = $('#cgRegFormSelect');
         cgJsClassAdmin.options.vars.$wpadminbar = $('#wpadminbar');
         cgJsClassAdmin.options.vars.$cg_registry_form_container = $('#ausgabe1.cg_registry_form_container');
+        cgJsClassAdmin.options.vars.$cgCreateUploadSortableArea = $('#cgCreateUploadSortableArea');
         cgJsClassAdmin.options.vars.wpadminbarHeight  = cgJsClassAdmin.options.vars.$wpadminbar.height();
+
+        // setDragAndDropEvents
+        cgJsClassAdmin.createUpload.functions.setDragAndDropEvents($);
+
+        cgJsClassAdmin.index.vars.$cgCreateUploadSortableArea = cgJsClassAdmin.options.vars.$cgCreateUploadSortableArea;
+        cgJsClassAdmin.index.vars.$ausgabe1 = $('#ausgabe1');
+        cgJsClassAdmin.index.vars.$cgRightSide = $('#cgRightSide');
+
+        cgJsClassAdmin.createUpload.functions.addRightFieldOrderAndAddRowsAndColumns(jQuery);
 
     },
     collapseFields: function () {
@@ -174,12 +187,15 @@ cgJsClassAdmin.createRegistry.functions = {
 
         var v = 0;
 
-        $("#ausgabe1.cg_registry_form_container .formField").each(function (i) {
+        $("#ausgabe1.cg_registry_form_container #cgCreateUploadSortableArea .formField").each(function (i) {
 
             v++;
 
             $(this).find('.Field_Type').attr("name", "Field_Type[" + v + "]");
             $(this).find('.Field_Order').attr("name", "Field_Order[" + v + "]");
+            $(this).find('.RowNumber').attr("name", "RowNumber[" + v + "]");
+            $(this).find('.RowCols').attr("name", "RowCols[" + v + "]");
+            $(this).find('.ColNumber').attr("name", "ColNumber[" + v + "]");
             $(this).find('.Field_Name').attr("name", "Field_Name[" + v + "]");
             $(this).find('.Field_Id').attr("name", "Field_Id[" + v + "]");
             $(this).find('.Field_Content').attr("name", "Field_Content[" + v + "]");
@@ -193,12 +209,12 @@ cgJsClassAdmin.createRegistry.functions = {
     },
     fDeleteFieldAndData: function ($, fieldContainerId, idToDelete) {
 
-        $("#" + fieldContainerId + "").remove();
-        $("#ausgabe1.cg_registry_form_container").append("<input type='hidden' name='deleteFieldnumber' value=" + idToDelete + ">");
+        $("#cgCreateUploadSortableArea #" + fieldContainerId + "").remove();
+        $("#ausgabe1.cg_registry_form_container").append("<input type='hidden' name='deleteFieldnumber[]' value=" + idToDelete + ">");
 
         this.cgSortOrder($);
 
-        $('#submitForm').click();
+        // $('#submitForm').click();
 
     },
     cgCheckHideField: function ($) {

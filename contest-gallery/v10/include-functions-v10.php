@@ -39,12 +39,13 @@ add_action('admin_enqueue_scripts', 'cg_options_tabcontent_v10' );
 // AJAX Script für Check Admin Image Upload im Backend
 // Achtung! Für Backend AJAX Calls ist der FrontEnd Aufbau nicht erforderlich, nur die Action muss registriert werden
 
-add_action( 'wp_ajax_nopriv_cg_check_wp_admin_upload_v10', 'cg_check_wp_admin_upload_v10' );
 add_action( 'wp_ajax_cg_check_wp_admin_upload_v10', 'cg_check_wp_admin_upload_v10' );
 
 if(!function_exists('cg_check_wp_admin_upload_v10')){
 
     function cg_check_wp_admin_upload_v10(){
+
+        cg_check_nonce();
 
         contest_gal1ery_db_check();
 
@@ -83,6 +84,10 @@ if(!function_exists('post_cg_registry')){
         global $wpdb;
 
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+
+            cg_check_frontend_nonce();
+
+            contest_gal1ery_db_check();
 
             require_once(__DIR__.'/../v10/v10-admin/users/frontend/registry/users-registry-check-name-mail-ajax.php');
             die();

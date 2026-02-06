@@ -235,7 +235,7 @@ echo <<<HEREDOC
                         <span class="cg_view_option_title_note">
                         Only comment textarea will be visible and required to enter<br>Comment form translations (for name, comment etc.)<br>can be found
 <a class=" cg_no_outline_and_shadow_on_focus" href="{$editTranslationLink}TranslationsCommentFormArea"   target="_blank">here</a>
-<br><strong><span class="cg_color_red">NOTE:</span> If logged in user comment then "Nickname" (WordPress profile field) and "Profile image" (available in "Edit registration form") will be shown</strong>
+<br><strong><span class="cg_color_red">NOTE:</span> If logged in user comment then "Nickname" (WordPress profile field)<br>and "Profile image" (available in "Edit registration form") will be shown</strong>
 </span></p>
                     </div>
                     <div class="cg_view_option_checkbox cg_view_option_checked">
@@ -796,12 +796,12 @@ if(floatval($galleryDbVersion)>=21){
     if(!isset($jsonOptions[$GalleryID.'-ec']['visual']['TextBeforeWpPageEntry'])){
         $jsonOptions[$GalleryID.'-ec']['visual']['TextBeforeWpPageEntry'] = $TextBeforeWpPageEntry;
     }else{
-        $jsonOptions[$GalleryID.'-ec']['visual']['TextBeforeWpPageEntry'] = contest_gal1ery_convert_for_html_output($jsonOptions[$GalleryID.'-ec']['visual']['TextBeforeWpPageEntry']);
+        $jsonOptions[$GalleryID.'-ec']['visual']['TextBeforeWpPageEntry'] = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID.'-ec']['visual']['TextBeforeWpPageEntry']);
     }
     if(!isset($jsonOptions[$GalleryID.'-ec']['visual']['TextAfterWpPageEntry'])){
         $jsonOptions[$GalleryID.'-ec']['visual']['TextAfterWpPageEntry'] = $TextAfterWpPageEntry;
     }else{
-        $jsonOptions[$GalleryID.'-ec']['visual']['TextAfterWpPageEntry'] = contest_gal1ery_convert_for_html_output($jsonOptions[$GalleryID.'-ec']['visual']['TextAfterWpPageEntry']);
+        $jsonOptions[$GalleryID.'-ec']['visual']['TextAfterWpPageEntry'] = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID.'-ec']['visual']['TextAfterWpPageEntry']);
     }
     if(!isset($jsonOptions[$GalleryID.'-ec']['visual']['ShowBackToGalleryButton'])){
         $jsonOptions[$GalleryID.'-ec']['visual']['ShowBackToGalleryButton'] = 0;
@@ -809,7 +809,7 @@ if(floatval($galleryDbVersion)>=21){
     if(!isset($jsonOptions[$GalleryID.'-ec']['visual']['TextDeactivatedEntry'])){
         $jsonOptions[$GalleryID.'-ec']['visual']['TextDeactivatedEntry'] = $TextDeactivatedEntry;
     }else{
-        $jsonOptions[$GalleryID.'-ec']['visual']['TextDeactivatedEntry'] = contest_gal1ery_convert_for_html_output($jsonOptions[$GalleryID.'-ec']['visual']['TextDeactivatedEntry']);
+        $jsonOptions[$GalleryID.'-ec']['visual']['TextDeactivatedEntry'] = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID.'-ec']['visual']['TextDeactivatedEntry']);
     }
     if(!isset($jsonOptions[$GalleryID.'-ec']['pro']['RedirectURLdeletedEntry'])){
         $jsonOptions[$GalleryID.'-ec']['pro']['RedirectURLdeletedEntry'] = $RedirectURLdeletedEntry;
@@ -855,12 +855,32 @@ HEREDOC;
 </div>
 HEREDOC;
 
+    // only json option, not in database available
+    if(!isset($jsonOptions[$GalleryID.'-ec']['visual']['HeaderWpPageEntry'])){
+        $HeaderWpPageEntry = "";
+    }else{
+        $HeaderWpPageEntry = contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID.'-ec']['visual']['HeaderWpPageEntry']);
+    }
+
+    $HeaderWpPageEntryRow = <<<HEREDOC
+    <div class='cg_view_options_row'>
+        <div class='cg_view_option cg_view_option_full_width  cg_border_top_none '>
+            <div class='cg_view_option_title '>
+                <p>Header tracking code on entry landing page<br><span class="cg_view_option_title_note">Paste your tracking scripts here —<br>for example Google Tag Manager, Google Analytics, or Meta Pixel.<br>The code will be added inside the &lt;head&gt; section of entry landing pages.</span></p>
+            </div>
+            <div class='cg_view_option_textarea' >
+                <textarea type="text" name="multiple-pics[cg_gallery_ecommerce][visual][HeaderWpPageEntry]" rows="7" style="width:100%;" class="HeaderWpPageEntry"  >$HeaderWpPageEntry</textarea>
+            </div>
+        </div>
+    </div>
+HEREDOC;
+
     $TextBeforeWpPageEntryRow = <<<HEREDOC
 <div class='cg_view_options_row'>
     <div class='cg_view_option  cg_view_option_full_width cg_border_top_none' id="wp-TextBeforeWpPageEntryEcommerce-wrap-Container">
         <div class='cg_view_option_title'>
             <p>General text on entry landing page before an activated entry
-            <br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE: </span>appears only on entry landing page, not if cg_gallery shortcode with entry_id is copied on some other page</span>
+            <br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of entry landing pages.<br><span class="cg_font_weight_500">NOTE: </span>appears only on entry landing page, not if cg_gallery... shortcode with entry_id is used on another page.</span>
             </p>
         </div>
         <div class='cg_view_option_html'>
@@ -875,7 +895,7 @@ HEREDOC;
     <div class='cg_view_option  cg_view_option_full_width cg_border_top_none' id="wp-TextAfterWpPageEntryEcommerce-wrap-Container">
         <div class='cg_view_option_title'>
             <p>General text on entry landing page after an activated entry
-            <br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE: </span>appears only on entry landing page, not if cg_gallery shortcode with entry_id is copied on some other page</span>
+            <br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of entry landing pages.<br><span class="cg_font_weight_500">NOTE: </span>appears only on entry landing page, not if cg_gallery... shortcode with entry_id is used on another page.</span>
             </p>
         </div>
         <div class='cg_view_option_html'>
@@ -889,7 +909,7 @@ HEREDOC;
 <div class='cg_view_options_row'>
     <div class='cg_view_option  cg_view_option_full_width cg_border_top_none' id="wp-TextDeactivatedEntryEcommerce-wrap-Container">
         <div class='cg_view_option_title'>
-            <p>Text on entry landing page if entry is deactivated</p>
+            <p>Text on entry landing page if entry is deactivated<br>The code will be inserted inside the &lt;body&gt; section of entry landing pages.<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br><span class="cg_font_weight_500">NOTE: </span>appears only on entry landing page, not if cg_gallery... shortcode with entry_id is used on another page.</span></p>
         </div>
         <div class='cg_view_option_html'>
             <textarea class='cg-wp-editor-template' name='multiple-pics[cg_gallery_ecommerce][visual][TextDeactivatedEntry]'  id='TextDeactivatedEntryEcommerce'>{$jsonOptions[$GalleryID.'-ec']['visual']['TextDeactivatedEntry']}</textarea>
@@ -938,6 +958,7 @@ HEREDOC;
             $ShowBackToGalleryButtonRow
             $BackToGalleryButtonTextRow
             $BackToGalleryButtonURLRow
+            $HeaderWpPageEntryRow
             $TextBeforeWpPageEntryRow
             $TextAfterWpPageEntryRow
             $TextDeactivatedEntryRow

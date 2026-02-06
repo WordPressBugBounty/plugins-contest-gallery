@@ -38,14 +38,14 @@ if(!function_exists('contest_gal1ery_create_table')){
         $tablename_wp_pages = $wpdb->base_prefix . "$i"."contest_gal1ery_wp_pages";
         $tablename_wp_pdf_previews = $wpdb->base_prefix . "$i"."contest_gal1ery_pdf_previews";
         $tablename_ai_prompts = $wpdb->base_prefix . "$i"."contest_gal1ery_ai_prompts";
-      //  $tablename_general = $wpdb->base_prefix . "$i"."contest_gal1ery_general";
+        //  $tablename_general = $wpdb->base_prefix . "$i"."contest_gal1ery_general";
 
         $charset_collate = $wpdb->get_charset_collate();
 
         if($wpdb->get_var("SHOW TABLES LIKE '$tablename_categories'") != $tablename_categories){
             $sql = "CREATE TABLE $tablename_categories (
 		id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-		GalleryID INT (20),
+		GalleryID INT(20),
 	    Name VARCHAR(1000),
 	    Field_Order INT(3),
         Active TINYINT
@@ -63,7 +63,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		rowid INT(20),
 		Timestamp INT(20),
-		NamePic VARCHAR(512),
+		NamePic VARCHAR(1000),
 		ImgType VARCHAR(5),
 		CountC INT(11) DEFAULT 0,
 		CountR INT(11) DEFAULT 0,
@@ -73,9 +73,9 @@ if(!function_exists('contest_gal1ery_create_table')){
 		Active INT(1) DEFAULT 0,
 		Informed INT(1) DEFAULT 0,
 		WpUpload INT(11) DEFAULT 0,
-		Width INT (11),
-		Height INT (11),
-		WpUserId INT (11) DEFAULT 0,
+		Width INT(11),
+		Height INT(11),
+		WpUserId INT(11) DEFAULT 0,
 		rSource INT(11),
 		rThumb INT(11),
 		addCountS INT(11) DEFAULT 0,
@@ -90,7 +90,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		addCountR9 INT(11) DEFAULT 0,
 		addCountR10 INT(11) DEFAULT 0,
 		Category INT(20) DEFAULT 0,
-		Exif TEXT DEFAULT '',
+		Exif TEXT NOT NULL,
 		IP VARCHAR(256),
 		CountR1 INT(11) DEFAULT 0,
 		CountR2 INT(11) DEFAULT 0,
@@ -107,7 +107,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		CookieId VARCHAR (99),
 		Winner TINYINT DEFAULT 0,
 		IsProfileImage TINYINT DEFAULT 0,
-		MultipleFiles TEXT DEFAULT '',
+		MultipleFiles TEXT NOT NULL,
 		CountCtoReview TINYINT DEFAULT 0,
 		PositionNumber INT(11) DEFAULT 0,
 		WpPage BIGINT(20) DEFAULT 0,
@@ -123,17 +123,10 @@ if(!function_exists('contest_gal1ery_create_table')){
 		EcommerceEntry BIGINT(20) DEFAULT 0,
 		OrderItem INT(11) DEFAULT 0,
 		PdfPreview BIGINT(20) DEFAULT 0,
+		Mails INT(11) DEFAULT 0,
         INDEX GalleryID_index (GalleryID),
         INDEX PdfPreview_index (PdfPreview)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
-            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-            dbDelta($sql);
-            cg_echo_last_sql_error($isShowError,$lastError);
-        }
-
-        else{
-
-            $sql = "ALTER TABLE $tablename MODIFY COLUMN NamePic VARCHAR(1000) NOT NULL";
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
             cg_echo_last_sql_error($isShowError,$lastError);
@@ -145,15 +138,17 @@ if(!function_exists('contest_gal1ery_create_table')){
 		pid INT(20),
 		IP VARCHAR (99),
 		GalleryID INT(20),
-		Rating INT (1),
-		RatingS INT (1),
-		WpUserId INT (11),
+		Rating INT(1),
+		RatingS INT(1),
+		WpUserId INT(11),
 		VoteDate VARCHAR (30),
-		Tstamp INT (11),
+		Tstamp INT(11),
         OptionSet VARCHAR (30),
         CookieId VARCHAR (99),
-        Category INT (11) DEFAULT 0,
-        CategoriesOn TINYINT DEFAULT 0
+        Category INT(11) DEFAULT 0,
+        CategoriesOn TINYINT DEFAULT 0,
+        INDEX pid (pid),
+        INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -163,15 +158,17 @@ if(!function_exists('contest_gal1ery_create_table')){
             $sql = "CREATE TABLE $tablename_comments (
 		id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		pid INT(20) DEFAULT 0,
-		GalleryID INT (6) DEFAULT 0,
-		Name VARCHAR(1000) DEFAULT '',
-		Date VARCHAR(50) DEFAULT '',
-		Comment TEXT DEFAULT '',
-		Timestamp VARCHAR(20) DEFAULT '',
-		IP VARCHAR (200) DEFAULT '',
-		WpUserId INT (11) DEFAULT 0,
+		GalleryID INT(11) DEFAULT 0,
+		Name VARCHAR(1000) NOT NULL,
+		Date VARCHAR(50) NOT NULL,
+		Comment TEXT NOT NULL,
+		Timestamp VARCHAR(20) NOT NULL,
+		IP VARCHAR (200) NOT NULL,
+		WpUserId INT(11) DEFAULT 0,
 		ReviewTstamp INT(11) DEFAULT 0,
-		Active TINYINT DEFAULT 0
+		Active TINYINT DEFAULT 0,
+        INDEX pid (pid),
+        INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -200,14 +197,14 @@ if(!function_exists('contest_gal1ery_create_table')){
         if($wpdb->get_var("SHOW TABLES LIKE '$tablename_options'") != $tablename_options){
             $sql = "CREATE TABLE $tablename_options(
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-		GalleryName VARCHAR(200) DEFAULT '',
-		PicsPerSite INT (3) DEFAULT 0,
-		WidthThumb INT (5) DEFAULT 0,
-		HeightThumb INT (5) DEFAULT 0,
-		WidthGallery INT (5) DEFAULT 0,
-		HeightGallery INT (5) DEFAULT 0,
-		DistancePics INT (5) DEFAULT 0,
-		DistancePicsV INT (5) DEFAULT 0,
+		GalleryName VARCHAR(200) NOT NULL,
+		PicsPerSite INT(3) DEFAULT 0,
+		WidthThumb INT(5) DEFAULT 0,
+		HeightThumb INT(5) DEFAULT 0,
+		WidthGallery INT(5) DEFAULT 0,
+		HeightGallery INT(5) DEFAULT 0,
+		DistancePics INT(5) DEFAULT 0,
+		DistancePicsV INT(5) DEFAULT 0,
         MinResJPGon INT(1) DEFAULT 0,
 		MinResPNGon INT(1) DEFAULT 0,
 		MinResGIFon INT(1) DEFAULT 0,
@@ -273,7 +270,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		HideInfo TINYINT DEFAULT 0,
 		ActivateUpload TINYINT DEFAULT 0,
 		ContestEnd TINYINT DEFAULT 0,
-		ContestEndTime VARCHAR(100) DEFAULT '',
+		ContestEndTime VARCHAR(100) NOT NULL,
 		ForwardToURL TINYINT DEFAULT 0,
 		ForwardFrom TINYINT DEFAULT 0,
 		ForwardType TINYINT DEFAULT 0,
@@ -283,16 +280,16 @@ if(!function_exists('contest_gal1ery_create_table')){
 		BulkUploadQuantity INT(20) DEFAULT 0,
 		BulkUploadMinQuantity INT(20) DEFAULT 0,
 		ShowOnlyUsersVotes TINYINT DEFAULT 0,
-		FbLikeGoToGalleryLink VARCHAR(1000) DEFAULT '',
+		FbLikeGoToGalleryLink VARCHAR(1000) NOT NULL,
 		Version VARCHAR(20) DEFAULT 0,
 		CheckIp TINYINT DEFAULT 1,
 		CheckCookie TINYINT DEFAULT 0,
-		CheckCookieAlertMessage VARCHAR(1000) DEFAULT '',
+		CheckCookieAlertMessage VARCHAR(1000) NOT NULL,
 		SliderLook TINYINT DEFAULT 0,
 		SliderLookOrder TINYINT DEFAULT 0,
-		RegistryUserRole VARCHAR(1000) DEFAULT '',
+		RegistryUserRole VARCHAR(1000) NOT NULL,
 		ContestStart TINYINT DEFAULT 0,
-		ContestStartTime VARCHAR(100) DEFAULT '',
+		ContestStartTime VARCHAR(100) NOT NULL,
 		MaxResICOon INT(1) DEFAULT 0,
 		MaxResICOwidth INT(20) DEFAULT 0,
 		MaxResICOheight INT(20) DEFAULT 0,
@@ -380,14 +377,14 @@ if(!function_exists('contest_gal1ery_create_table')){
         if($wpdb->get_var("SHOW TABLES LIKE '$tablename_mail_user_upload'") != $tablename_mail_user_upload){
             $sql = "CREATE TABLE $tablename_mail_user_upload (
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-		GalleryID INT (11) DEFAULT 0,
+		GalleryID INT(11) DEFAULT 0,
 		InformUserUpload TINYINT DEFAULT 0,
-		Header TEXT DEFAULT '',
-		Subject TEXT DEFAULT '',
-		Reply TEXT DEFAULT '',
-		CC TEXT DEFAULT '',
-		BCC TEXT DEFAULT '',
-		Content TEXT DEFAULT '',
+		Header TEXT NOT NULL,
+		Subject TEXT NOT NULL,
+		Reply TEXT NOT NULL,
+		CC TEXT NOT NULL,
+		BCC TEXT NOT NULL,
+		Content TEXT NOT NULL,
 		ContentInfoWithoutFileSource TINYINT DEFAULT 0
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -427,16 +424,16 @@ if(!function_exists('contest_gal1ery_create_table')){
         if($wpdb->get_var("SHOW TABLES LIKE '$tablename_mail_user_comment'") != $tablename_mail_user_comment){
             $sql = "CREATE TABLE $tablename_mail_user_comment (
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-		GalleryID INT (11) DEFAULT 0,
+		GalleryID INT(11) DEFAULT 0,
 		InformUserComment TINYINT DEFAULT 0,
-		Header TEXT DEFAULT '',
-		Subject TEXT DEFAULT '',
-		Reply TEXT DEFAULT '',
-		CC TEXT DEFAULT '',
-		BCC TEXT DEFAULT '',
-		Content TEXT DEFAULT '',
-		URL TEXT DEFAULT '',
-		MailInterval VARCHAR(30) DEFAULT ''
+		Header TEXT NOT NULL,
+		Subject TEXT NOT NULL,
+		Reply TEXT NOT NULL,
+		CC TEXT NOT NULL,
+		BCC TEXT NOT NULL,
+		Content TEXT NOT NULL,
+		URL TEXT NOT NULL,
+		MailInterval VARCHAR(30) NOT NULL
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -475,16 +472,16 @@ if(!function_exists('contest_gal1ery_create_table')){
         if($wpdb->get_var("SHOW TABLES LIKE '$tablename_mail_user_vote'") != $tablename_mail_user_vote){
             $sql = "CREATE TABLE $tablename_mail_user_vote (
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-		GalleryID INT (11) DEFAULT 0,
+		GalleryID INT(11) DEFAULT 0,
 		InformUserVote TINYINT DEFAULT 0,
-		Header TEXT DEFAULT '',
-		Subject TEXT DEFAULT '',
-		Reply TEXT DEFAULT '',
-		CC TEXT DEFAULT '',
-		BCC TEXT DEFAULT '',
-		Content TEXT DEFAULT '',
-		URL TEXT DEFAULT '',
-		MailInterval VARCHAR(30) DEFAULT ''
+		Header TEXT NOT NULL,
+		Subject TEXT NOT NULL,
+		Reply TEXT NOT NULL,
+		CC TEXT NOT NULL,
+		BCC TEXT NOT NULL,
+		Content TEXT NOT NULL,
+		URL TEXT NOT NULL,
+		MailInterval VARCHAR(30) NOT NULL
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -523,10 +520,10 @@ if(!function_exists('contest_gal1ery_create_table')){
         if($wpdb->get_var("SHOW TABLES LIKE '$tablename_user_comment_mails'") != $tablename_user_comment_mails){
             $sql = "CREATE TABLE $tablename_user_comment_mails (
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-		GalleryID INT (11) DEFAULT 0,
-		Tstamp INT (11) DEFAULT 0,
-		WpUserId INT (11) DEFAULT 0,
-		Content TEXT DEFAULT ''
+		GalleryID INT(11) DEFAULT 0,
+		Tstamp INT(11) DEFAULT 0,
+		WpUserId INT(11) DEFAULT 0,
+		Content TEXT NOT NULL
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -536,10 +533,10 @@ if(!function_exists('contest_gal1ery_create_table')){
         if($wpdb->get_var("SHOW TABLES LIKE '$tablename_user_vote_mails'") != $tablename_user_vote_mails){
             $sql = "CREATE TABLE $tablename_user_vote_mails (
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-		GalleryID INT (11) DEFAULT 0,
-		Tstamp INT (11) DEFAULT 0,
-		WpUserId INT (11) DEFAULT 0,
-		Content TEXT DEFAULT ''
+		GalleryID INT(11) DEFAULT 0,
+		Tstamp INT(11) DEFAULT 0,
+		WpUserId INT(11) DEFAULT 0,
+		Content TEXT NOT NULL
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -552,7 +549,7 @@ if(!function_exists('contest_gal1ery_create_table')){
         if($wpdb->get_var("SHOW TABLES LIKE '$tablename_comments_notification_options'") != $tablename_comments_notification_options){
             $sql = "CREATE TABLE $tablename_comments_notification_options (
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-		GalleryID INT (11),
+		GalleryID INT(11),
 		CommNoteAddressor TEXT,
 		CommNoteAdminMail TEXT,
 		CommNoteCC TEXT,
@@ -577,46 +574,46 @@ if(!function_exists('contest_gal1ery_create_table')){
             $sql = "CREATE TABLE $tablename_options_visual(
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		GalleryID INT(20),
-		CommentsAlignGallery VARCHAR(20) DEFAULT '',
-		RatingAlignGallery VARCHAR(20) DEFAULT '',
+		CommentsAlignGallery VARCHAR(20) NOT NULL,
+		RatingAlignGallery VARCHAR(20) NOT NULL,
 		Field1IdGalleryView INT(20),
-		Field1AlignGalleryView VARCHAR(20) DEFAULT '',
+		Field1AlignGalleryView VARCHAR(20) NOT NULL,
 		Field2IdGalleryView INT(20),
-		Field2AlignGalleryView VARCHAR(20) DEFAULT '',
+		Field2AlignGalleryView VARCHAR(20) NOT NULL,
 		Field3IdGalleryView INT(20),
-		Field3AlignGalleryView VARCHAR(20) DEFAULT '',
+		Field3AlignGalleryView VARCHAR(20) NOT NULL,
 		ThumbViewBorderWidth INT(20),
 		ThumbViewBorderRadius INT(20),		
-		ThumbViewBorderColor VARCHAR(20) DEFAULT '',
-		ThumbViewBorderOpacity VARCHAR(20) DEFAULT '',
+		ThumbViewBorderColor VARCHAR(20) NOT NULL,
+		ThumbViewBorderOpacity VARCHAR(20) NOT NULL,
 		HeightViewBorderWidth INT(20),
 		HeightViewBorderRadius INT(20),
-		HeightViewBorderColor VARCHAR(20) DEFAULT '',
-		HeightViewBorderOpacity VARCHAR(20) DEFAULT '',
+		HeightViewBorderColor VARCHAR(20) NOT NULL,
+		HeightViewBorderOpacity VARCHAR(20) NOT NULL,
 		HeightViewSpaceWidth INT(20),
 		HeightViewSpaceHeight INT(20),
 		RowViewBorderWidth INT(20),
 		RowViewBorderRadius INT(20),
-		RowViewBorderColor VARCHAR(20) DEFAULT '',
-		RowViewBorderOpacity VARCHAR(20) DEFAULT '',
+		RowViewBorderColor VARCHAR(20) NOT NULL,
+		RowViewBorderOpacity VARCHAR(20) NOT NULL,
 		RowViewSpaceWidth INT(20),
 		RowViewSpaceHeight INT(20),
 		TitlePositionGallery TINYINT,
 		RatingPositionGallery TINYINT,
 		CommentPositionGallery TINYINT,
 		ActivateGalleryBackgroundColor TINYINT,
-		GalleryBackgroundColor VARCHAR(20) DEFAULT '',
-		GalleryBackgroundOpacity VARCHAR(20) DEFAULT '',
+		GalleryBackgroundColor VARCHAR(20) NOT NULL,
+		GalleryBackgroundOpacity VARCHAR(20) NOT NULL,
 		FormRoundBorder INT(11),
-		FormBorderColor VARCHAR(256) DEFAULT '',
-		FormButtonColor VARCHAR(256) DEFAULT '',
+		FormBorderColor VARCHAR(256) NOT NULL,
+		FormButtonColor VARCHAR(256) NOT NULL,
 		FormButtonWidth INT(11),
 		FormInputWidth INT(11),
         OriginalSourceLinkInSlider TINYINT,
         PreviewInSlider TINYINT,
-        FeControlsStyle VARCHAR(20) DEFAULT '',
-        AllowSortOptions VARCHAR(256) DEFAULT '',
-        GalleryStyle VARCHAR(256) DEFAULT '',
+        FeControlsStyle VARCHAR(20) NOT NULL,
+        AllowSortOptions VARCHAR(256) NOT NULL,
+        GalleryStyle VARCHAR(256) NOT NULL,
 		BlogLook TINYINT DEFAULT 0,
 		BlogLookOrder TINYINT DEFAULT 0,
 		BlogLookFullWindow TINYINT DEFAULT 0,
@@ -625,10 +622,10 @@ if(!function_exists('contest_gal1ery_create_table')){
 		SliderThumbNav TINYINT DEFAULT 0,
 		BorderRadius TINYINT DEFAULT 0,
 		CopyImageLink TINYINT DEFAULT 0,
-		CommentsDateFormat VARCHAR(20) DEFAULT '',
-		FeControlsStyleUpload VARCHAR(20) DEFAULT '',
-		FeControlsStyleRegistry VARCHAR(20) DEFAULT '',
-		FeControlsStyleLogin VARCHAR(20) DEFAULT '',
+		CommentsDateFormat VARCHAR(20) NOT NULL,
+		FeControlsStyleUpload VARCHAR(20) NOT NULL,
+		FeControlsStyleRegistry VARCHAR(20) NOT NULL,
+		FeControlsStyleLogin VARCHAR(20) NOT NULL,
 		BorderRadiusUpload TINYINT DEFAULT 0,
 		BorderRadiusRegistry TINYINT DEFAULT 0,
 		BorderRadiusLogin TINYINT DEFAULT 0,
@@ -636,15 +633,19 @@ if(!function_exists('contest_gal1ery_create_table')){
 		GeneralID TINYINT DEFAULT 0,
 		CopyOriginalFileLink TINYINT DEFAULT 0,
 		ForwardOriginalFile TINYINT DEFAULT 0,
-        ShareButtons TEXT DEFAULT '',
-        TextBeforeWpPageEntry TEXT DEFAULT '',
-        TextAfterWpPageEntry TEXT DEFAULT '',
+        ShareButtons TEXT NOT NULL,
+        TextBeforeWpPageEntry TEXT NOT NULL,
+        TextAfterWpPageEntry TEXT NOT NULL,
         ForwardToWpPageEntry TINYINT DEFAULT 0,
         ForwardToWpPageEntryInNewTab TINYINT DEFAULT 0,
         ShowBackToGalleryButton TINYINT DEFAULT 0,
-        BackToGalleryButtonText TEXT DEFAULT '',
-        TextDeactivatedEntry TEXT DEFAULT '',
+        BackToGalleryButtonText TEXT NOT NULL,
+        TextDeactivatedEntry TEXT NOT NULL,
         ShowBackToGalleriesButton TINYINT DEFAULT 0,
+        ShowPinFormVoting TINYINT DEFAULT 0,
+        ShowPinFormUploading TINYINT DEFAULT 0,
+        AllowedUsersToVote TEXT NOT NULL,
+		FeVotingIconType VARCHAR(20) NOT NULL,
         INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
 
@@ -675,7 +676,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 								 CopyOriginalFileLink,ForwardOriginalFile,ShareButtons,
 								 TextBeforeWpPageEntry,TextAfterWpPageEntry,ForwardToWpPageEntry,ForwardToWpPageEntryInNewTab,
 								 ShowBackToGalleryButton,BackToGalleryButtonText,TextDeactivatedEntry,
-								 ShowBackToGalleriesButton
+								 ShowBackToGalleriesButton,ShowPinFormVoting,ShowPinFormUploading,AllowedUsersToVote
 								 )
 								VALUES ( %s,%d,%s,%s,
 								%s,%s,%s,%s,%s,%s,
@@ -691,7 +692,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 								%d,%d,%s,
 								%s,%s,%d,%d,
 							    %d,%s,%s,
-							    %d
+							    %d,%d,%d,%s
 								)
 							",
                         '',$value,'left','left',
@@ -708,7 +709,7 @@ if(!function_exists('contest_gal1ery_create_table')){
                         1,1,'',
                         '','',0,0,
                         1,'','',
-                        1
+                        1,0,0,''
                     ) );
 
                 }
@@ -747,7 +748,9 @@ if(!function_exists('contest_gal1ery_create_table')){
 		ConfMailId INT(20) DEFAULT 0,
 		Checked TINYINT DEFAULT 0,
 		InputDate DateTime DEFAULT '0000-00-00 00:00:00',
-		Tstamp INT(11) DEFAULT 0
+		Tstamp INT(11) DEFAULT 0,
+        INDEX pid (pid),
+        INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -756,8 +759,8 @@ if(!function_exists('contest_gal1ery_create_table')){
 
         cg_create_contest_gallery_user_role();
 
-            if($wpdb->get_var("SHOW TABLES LIKE '$tablename_pro_options'") != $tablename_pro_options){
-                $sql = "CREATE TABLE $tablename_pro_options (
+        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_pro_options'") != $tablename_pro_options){
+            $sql = "CREATE TABLE $tablename_pro_options (
 			id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 			GalleryID INT(20),
 			ForwardAfterRegUrl VARCHAR(999),
@@ -767,12 +770,15 @@ if(!function_exists('contest_gal1ery_create_table')){
 			ForwardAfterLoginTextCheck TINYINT,
 			ForwardAfterLoginText TEXT,
 			TextEmailConfirmation TEXT,
+			TextPinConfirmation TEXT,
 			TextAfterEmailConfirmation TEXT,
+			TextAfterPinConfirmation TEXT,
 			RegMailAddressor VARCHAR(200),
 			RegMailReply VARCHAR(200),
-			RegMailSubject VARCHAR(200),
-			RegMailCC TEXT DEFAULT '',
-			RegMailBCC TEXT DEFAULT '',
+			RegMailSubject VARCHAR(300),
+			RegPinSubject VARCHAR(300),
+			RegMailCC TEXT NOT NULL,
+			RegMailBCC TEXT NOT NULL,
 			RegUserUploadOnly TINYINT,
 			RegUserUploadOnlyText TEXT,
 			Manipulate TINYINT DEFAULT 1,
@@ -795,7 +801,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 			SliderFullWindow TINYINT DEFAULT 0,
             HideRegFormAfterLogin TINYINT,
             HideRegFormAfterLoginShowTextInstead TINYINT,
-            HideRegFormAfterLoginTextToShow VARCHAR(1000) DEFAULT '',
+            HideRegFormAfterLoginTextToShow VARCHAR(1000) NOT NULL,
             RegUserGalleryOnly TINYINT,
 			RegUserGalleryOnlyText TEXT,
 			RegUserMaxUpload INT(11) DEFAULT 0,
@@ -805,13 +811,13 @@ if(!function_exists('contest_gal1ery_create_table')){
 			FbLikeNoShare TINYINT DEFAULT 0,
 			FbLikeOnlyShare TINYINT DEFAULT 0,
 			VoteNotOwnImage TINYINT DEFAULT 0,
-			PreselectSort VARCHAR(30) DEFAULT '',
-			UploadRequiresCookieMessage VARCHAR(1000) DEFAULT '',
+			PreselectSort VARCHAR(30) NOT NULL,
+			UploadRequiresCookieMessage VARCHAR(1000) NOT NULL,
 			ShowCatsUnchecked TINYINT DEFAULT 0,
 			ShowCatsUnfolded TINYINT DEFAULT 0,
 			RegMailOptional TINYINT DEFAULT 0,
 			CustomImageName TINYINT DEFAULT 0,
-			CustomImageNamePath VARCHAR(200) DEFAULT '',
+			CustomImageNamePath VARCHAR(200) NOT NULL,
 			DeleteFromStorageIfDeletedInFrontend TINYINT DEFAULT 0,
 			VotePerCategory TINYINT DEFAULT 0,
 			VotesPerCategory INT(11) DEFAULT 0,
@@ -829,123 +835,126 @@ if(!function_exists('contest_gal1ery_create_table')){
 			AdditionalFiles TINYINT DEFAULT 0,
 			AdditionalFilesCount TINYINT DEFAULT 0,
 			ReviewComm TINYINT DEFAULT 0,
-            BackToGalleryButtonURL TEXT DEFAULT '',
-            BackToGalleriesButtonURL TEXT DEFAULT '',
-            WpPageParentRedirectURL TEXT DEFAULT '',
-            RedirectURLdeletedEntry TEXT DEFAULT '',
+            BackToGalleryButtonURL TEXT NOT NULL,
+            BackToGalleriesButtonURL TEXT NOT NULL,
+            WpPageParentRedirectURL TEXT NOT NULL,
+            RedirectURLdeletedEntry TEXT NOT NULL,
             InformAdminAllowActivateDeactivate TINYINT DEFAULT 0,
-            InformAdminActivationURL TEXT DEFAULT '',
+            InformAdminActivationURL TEXT NOT NULL,
             ConsentYoutube TINYINT DEFAULT 0,
             ConsentTwitter TINYINT DEFAULT 0,
             ConsentInstagram TINYINT DEFAULT 0,
             ConsentTikTok TINYINT DEFAULT 0,
             PdfPreviewBackend TINYINT DEFAULT 0,
             PdfPreviewFrontend TINYINT DEFAULT 0,
-            OpenAiKey TEXT DEFAULT '',
+            OpenAiKey TEXT NOT NULL,
             INDEX GalleryID_index (GalleryID)
 			) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
-                require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-                dbDelta($sql);
-                cg_echo_last_sql_error($isShowError,$lastError);
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($sql);
+            cg_echo_last_sql_error($isShowError,$lastError);
 
 
-                if($tableOptionsHasToBeCreated==false){
+            if($tableOptionsHasToBeCreated==false){
 
 
-                    $ForwardAfterRegText = <<<HEREDOC
+                $ForwardAfterRegText = <<<HEREDOC
 Thank you for your registration<br/>Check your email account to confirm your email and complete the registration. If you don't see any message then plz check also the spam folder.
 HEREDOC;
-                    $ForwardAfterLoginText = 'You are now logged in. Have fun with contest.';
-                    $TextEmailConfirmation = 'Thank you for your registration by clicking on the link below: <br/><br/> $regurl$';
-                    $TextAfterEmailConfirmation = 'Thank you for your registration. You are now able to login and to take part on the contest.';
-                    $RegUserUploadOnlyText = 'You have to be registered and logged in to to add an entry.';
-                    $RegUserGalleryOnly = 0;
-                    $RegUserGalleryOnlyText = 'You have to be registered and logged in to see the gallery.';
+                $ForwardAfterLoginText = 'You are now logged in. Have fun with contest.';
+                $TextEmailConfirmation = 'Complete your registration by clicking on the link below: <br/><br/> $regurl$';
+                $TextPinConfirmation = 'Complete your registration by using on the PIN below: <br/><br/> $pin$';
+                $TextAfterEmailConfirmation = 'Email confirmed — you can now participate in the contest.';
+                $TextAfterPinConfirmation = 'PIN verified — you can now participate in the contest.';
+                $RegUserUploadOnlyText = 'You have to be registered and logged in to to add an entry.';
+                $RegUserGalleryOnly = 0;
+                $RegUserGalleryOnlyText = 'You have to be registered and logged in to see the gallery.';
 
-                    // Determine email of blog admin and variables for email table
-                    $RegMailAddressor = trim(get_option('blogname'));
-                    $RegMailReply = trim(get_option('admin_email'));
-                    $RegMailSubject = 'Please confirm your registration';
+                // Determine email of blog admin and variables for email table
+                $RegMailAddressor = trim(get_option('blogname'));
+                $RegMailReply = trim(get_option('admin_email'));
+                $RegMailSubject = 'Please confirm your registration';
+                $RegPinSubject = 'Your Verification PIN: $pin$';
 
-                    $CatWidget = 0;
-                    $Search = 1;
-                    $GalleryUpload = 1;
-                    $ShowExif = 0;
-                    $RegUserMaxUpload = 0;
-                    $IsModernFiveStar = 0;
+                $CatWidget = 0;
+                $Search = 1;
+                $GalleryUpload = 1;
+                $ShowExif = 0;
+                $RegUserMaxUpload = 0;
+                $IsModernFiveStar = 0;
 
-                    // input options
-                    $GalleryUploadTextBefore = "<h2>Welcome to the contest</h2><p>Do your entry to be a part of the contest</p>";
-                    $GalleryUploadTextBefore = htmlentities($GalleryUploadTextBefore, ENT_QUOTES);
-                    $GalleryUploadTextAfter = '';
+                // input options
+                $GalleryUploadTextBefore = "<h2>Welcome to the contest</h2><p>Do your entry to be a part of the contest</p>";
+                $GalleryUploadTextBefore = htmlentities($GalleryUploadTextBefore, ENT_QUOTES);
+                $GalleryUploadTextAfter = '';
 
-                    $GalleryUploadConfirmationText = "<p>Your entry was successful.<br/>We will activate your file soon.<br/>Your file has to be approved.</p>";
-                    $GalleryUploadConfirmationText = htmlentities($GalleryUploadConfirmationText, ENT_QUOTES);
+                $GalleryUploadConfirmationText = "<p>Your entry was successful.<br/>We will activate your file soon.<br/>Your file has to be approved.</p>";
+                $GalleryUploadConfirmationText = htmlentities($GalleryUploadConfirmationText, ENT_QUOTES);
 
-                    $ShowNickname = 0;
-                    $MinusVote = 0;
-                    $SlideTransition = 'translateX';
+                $ShowNickname = 0;
+                $MinusVote = 0;
+                $SlideTransition = 'translateX';
 
-                    $VotesInTime = 0;
-                    $VotesInTimeQuantity = 1;
-                    $VotesInTimeIntervalReadable = '24:00';
-                    $VotesInTimeIntervalSeconds = 86400;
-                    $VotesInTimeIntervalAlertMessage = "You can vote only 1 time per day";
+                $VotesInTime = 0;
+                $VotesInTimeQuantity = 1;
+                $VotesInTimeIntervalReadable = '24:00';
+                $VotesInTimeIntervalSeconds = 86400;
+                $VotesInTimeIntervalAlertMessage = "You can vote only 1 time per day";
 
-                    $HideRegFormAfterLogin = 0;
-                    $HideRegFormAfterLoginShowTextInstead = 0;
-                    $HideRegFormAfterLoginTextToShow = '';
-                    $GalleryUploadOnlyUser = 0;
-                    $FbLikeNoShare = 0;
-                    $FbLikeOnlyShare = 0;
-                    $VoteNotOwnImage = 0;
-                    $PreselectSort = '';
-                    $UploadRequiresCookieMessage = 'Please allow cookies to upload';
-                    $ShowCatsUnchecked = 1;
-                    $ShowCatsUnfolded = 1;
-                    $RegMailOptional = 0;
+                $HideRegFormAfterLogin = 0;
+                $HideRegFormAfterLoginShowTextInstead = 0;
+                $HideRegFormAfterLoginTextToShow = '';
+                $GalleryUploadOnlyUser = 0;
+                $FbLikeNoShare = 0;
+                $FbLikeOnlyShare = 0;
+                $VoteNotOwnImage = 0;
+                $PreselectSort = '';
+                $UploadRequiresCookieMessage = 'Please allow cookies to upload';
+                $ShowCatsUnchecked = 1;
+                $ShowCatsUnfolded = 1;
+                $RegMailOptional = 0;
 
-                    $CustomImageName = 0;
-                    $CustomImageNamePath = '';
+                $CustomImageName = 0;
+                $CustomImageNamePath = '';
 
-                    $DeleteFromStorageIfDeletedInFrontend = 0;
+                $DeleteFromStorageIfDeletedInFrontend = 0;
 
-                    $VotePerCategory = 0;
-                    $VotesPerCategory = 0;
+                $VotePerCategory = 0;
+                $VotesPerCategory = 0;
 
-                    $VoteMessageSuccessActive  = 0;
-                    $VoteMessageWarningActive  = 0;
+                $VoteMessageSuccessActive  = 0;
+                $VoteMessageWarningActive  = 0;
 
-                    $VoteMessageSuccessText = '';
-                    $VoteMessageWarningText = '';
-                    $CommNoteActive = 0;
-                    $GeneralID = 0;
-                    $ShowProfileImage = 0;
-/*                    $BulkUploadType = 1;
-                    $UploadFormAppearance = 0;*/
+                $VoteMessageSuccessText = '';
+                $VoteMessageWarningText = '';
+                $CommNoteActive = 0;
+                $GeneralID = 0;
+                $ShowProfileImage = 0;
+                /*                    $BulkUploadType = 1;
+                                    $UploadFormAppearance = 0;*/
 
-                    // can be generally set to 1. PNG and GIF are simply deactivated in PRO
-                    $AllowUploadJPG = 1;
-                    $AllowUploadPNG = 1;
-                    $AllowUploadGIF = 1;
-                    $AllowUploadICO = 1;
+                // can be generally set to 1. PNG and GIF are simply deactivated in PRO
+                $AllowUploadJPG = 1;
+                $AllowUploadPNG = 1;
+                $AllowUploadGIF = 1;
+                $AllowUploadICO = 1;
 
-                    $AdditionalFiles = 0;
-                    $AdditionalFilesCount = 1;
-                    $BackToGalleryButtonURL = '';
-                    $BackToGalleriesButtonURL = '';
-                    $WpPageParentRedirectURL = '';
-                    $RedirectURLdeletedEntry = '';
+                $AdditionalFiles = 0;
+                $AdditionalFilesCount = 1;
+                $BackToGalleryButtonURL = '';
+                $BackToGalleriesButtonURL = '';
+                $WpPageParentRedirectURL = '';
+                $RedirectURLdeletedEntry = '';
 
-                    foreach ($collectIDs as $key => $value) {
-                        $wpdb->query( $wpdb->prepare(
-                            "
+                foreach ($collectIDs as $key => $value) {
+                    $wpdb->query( $wpdb->prepare(
+                        "
                                 INSERT INTO $tablename_pro_options
                                 ( id, GalleryID, ForwardAfterRegUrl, ForwardAfterRegText,
                                 ForwardAfterLoginUrlCheck,ForwardAfterLoginUrl,
                                 ForwardAfterLoginTextCheck,ForwardAfterLoginText,
-                                TextEmailConfirmation,TextAfterEmailConfirmation,
-                                RegMailAddressor,RegMailReply,RegMailSubject,RegUserUploadOnly,RegUserUploadOnlyText,
+                                TextEmailConfirmation,TextPinConfirmation,TextAfterEmailConfirmation,TextAfterPinConfirmation,
+                                RegMailAddressor,RegMailReply,RegMailSubject,RegPinSubject,RegUserUploadOnly,RegUserUploadOnlyText,
                                 Manipulate,ShowOther,CatWidget,Search,
                                 GalleryUpload,GalleryUploadTextBefore,GalleryUploadTextAfter,GalleryUploadConfirmationText,ShowNickname,MinusVote,SlideTransition,
                                 VotesInTime,VotesInTimeQuantity,VotesInTimeIntervalReadable,VotesInTimeIntervalSeconds,VotesInTimeIntervalAlertMessage,ShowExif,
@@ -962,8 +971,8 @@ HEREDOC;
                                 VALUES (%s,%d,%s,%s,
                                 %d,%s,
                                 %d,%s,
-                                %s,%s,
-                                %s,%s,%s,%d,%s,
+                                %s,%s,%s,%s,
+                                %s,%s,%s,%s,%d,%s,
                                 %d,%d,%d,%d,
                                 %d,%s,%s,%s,%d,%d,%s,
                                 %d,%d,%s,%d,%s,%d,
@@ -979,49 +988,50 @@ HEREDOC;
                                 %d,%s
                                 )
                             ",
-                            '',$value,'',$ForwardAfterRegText,
-                            0,'',
-                            0,$ForwardAfterLoginText,
-                            $TextEmailConfirmation,$TextAfterEmailConfirmation,
-                            $RegMailAddressor,$RegMailReply,$RegMailSubject,0,$RegUserUploadOnlyText,0,1,$CatWidget,$Search,
-                            $GalleryUpload,$GalleryUploadTextBefore,$GalleryUploadTextAfter,$GalleryUploadConfirmationText,$ShowNickname,$MinusVote,$SlideTransition,
-                            $VotesInTime,$VotesInTimeQuantity,$VotesInTimeIntervalReadable,$VotesInTimeIntervalSeconds,$VotesInTimeIntervalAlertMessage,$ShowExif,
-                            $HideRegFormAfterLogin,$HideRegFormAfterLoginShowTextInstead,$HideRegFormAfterLoginTextToShow,
-                            $RegUserGalleryOnly,$RegUserGalleryOnlyText,$RegUserMaxUpload,$IsModernFiveStar,
-                            $GalleryUploadOnlyUser,$FbLikeNoShare,$VoteNotOwnImage,$PreselectSort,
-                            $UploadRequiresCookieMessage,$ShowCatsUnchecked,$ShowCatsUnfolded,$RegMailOptional,
-                            $CustomImageName,$CustomImageNamePath,$FbLikeOnlyShare,$DeleteFromStorageIfDeletedInFrontend,$VotePerCategory,$VotesPerCategory,
-                            $VoteMessageSuccessActive,$VoteMessageWarningActive,$VoteMessageSuccessText,$VoteMessageWarningText,
-                            $CommNoteActive,$GeneralID,$ShowProfileImage,
-                            $AllowUploadJPG,$AllowUploadPNG,$AllowUploadGIF,$AllowUploadICO,
-                            $AdditionalFiles,$AdditionalFilesCount,$BackToGalleryButtonURL,$BackToGalleriesButtonURL,$WpPageParentRedirectURL,'',
-                            0,''
-                        ) );
-                    }
+                        '',$value,'',$ForwardAfterRegText,
+                        0,'',
+                        0,$ForwardAfterLoginText,
+                        $TextEmailConfirmation,$TextPinConfirmation,$TextAfterEmailConfirmation,$TextAfterPinConfirmation,
+                        $RegMailAddressor,$RegMailReply,$RegMailSubject,$RegPinSubject,0,$RegUserUploadOnlyText,0,1,$CatWidget,$Search,
+                        $GalleryUpload,$GalleryUploadTextBefore,$GalleryUploadTextAfter,$GalleryUploadConfirmationText,$ShowNickname,$MinusVote,$SlideTransition,
+                        $VotesInTime,$VotesInTimeQuantity,$VotesInTimeIntervalReadable,$VotesInTimeIntervalSeconds,$VotesInTimeIntervalAlertMessage,$ShowExif,
+                        $HideRegFormAfterLogin,$HideRegFormAfterLoginShowTextInstead,$HideRegFormAfterLoginTextToShow,
+                        $RegUserGalleryOnly,$RegUserGalleryOnlyText,$RegUserMaxUpload,$IsModernFiveStar,
+                        $GalleryUploadOnlyUser,$FbLikeNoShare,$VoteNotOwnImage,$PreselectSort,
+                        $UploadRequiresCookieMessage,$ShowCatsUnchecked,$ShowCatsUnfolded,$RegMailOptional,
+                        $CustomImageName,$CustomImageNamePath,$FbLikeOnlyShare,$DeleteFromStorageIfDeletedInFrontend,$VotePerCategory,$VotesPerCategory,
+                        $VoteMessageSuccessActive,$VoteMessageWarningActive,$VoteMessageSuccessText,$VoteMessageWarningText,
+                        $CommNoteActive,$GeneralID,$ShowProfileImage,
+                        $AllowUploadJPG,$AllowUploadPNG,$AllowUploadGIF,$AllowUploadICO,
+                        $AdditionalFiles,$AdditionalFilesCount,$BackToGalleryButtonURL,$BackToGalleriesButtonURL,$WpPageParentRedirectURL,'',
+                        0,''
+                    ) );
                 }
             }
+        }
 
-            if($wpdb->get_var("SHOW TABLES LIKE '$tablename_create_user_entries'") != $tablename_create_user_entries){
-                $sql = "CREATE TABLE $tablename_create_user_entries (
+        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_create_user_entries'") != $tablename_create_user_entries){
+            $sql = "CREATE TABLE $tablename_create_user_entries (
 			id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 			GalleryID INT(20) DEFAULT 0,
 			wp_user_id INT(20) DEFAULT 0,
 			f_input_id INT(20) DEFAULT 0,
-			Field_Type VARCHAR(100) DEFAULT '',
-			Field_Content TEXT DEFAULT '',
-			activation_key VARCHAR(200) DEFAULT '',
+			Field_Type VARCHAR(100) NOT NULL,
+			Field_Content TEXT NOT NULL,
+			activation_key VARCHAR(200) NOT NULL,
 			Checked TINYINT DEFAULT 0,
-			Version VARCHAR(20) DEFAULT '',
+			Version VARCHAR(20) NOT NULL,
 			GeneralID TINYINT DEFAULT 0,
-            Tstamp INT (11) DEFAULT 0
+            Tstamp INT(11) DEFAULT 0,
+            INDEX Field_Type_index (Field_Type)
 			) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
-                require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-                dbDelta($sql);
-                cg_echo_last_sql_error($isShowError,$lastError);
-            }
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($sql);
+            cg_echo_last_sql_error($isShowError,$lastError);
+        }
 
-            if($wpdb->get_var("SHOW TABLES LIKE '$tablename_create_user_form'") != $tablename_create_user_form){
-                $sql = "CREATE TABLE $tablename_create_user_form (
+        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_create_user_form'") != $tablename_create_user_form){
+            $sql = "CREATE TABLE $tablename_create_user_form (
 			id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 			GalleryID INT(20),
 			Field_Type VARCHAR(100),
@@ -1032,20 +1042,24 @@ HEREDOC;
 			Max_Char VARCHAR(200),
 			Required TINYINT,
 			Active TINYINT DEFAULT 1,
-            ReCaKey VARCHAR(200) DEFAULT '',
-            ReCaLang VARCHAR(20) DEFAULT '',
-            GeneralID TINYINT DEFAULT 0
+            ReCaKey VARCHAR(200) NOT NULL,
+            ReCaLang VARCHAR(20) NOT NULL,
+            GeneralID TINYINT DEFAULT 0,
+            RowNumber INT(11) DEFAULT 0,
+            ColNumber INT(11) DEFAULT 0,
+            RowCols INT(11) DEFAULT 0,
+		    PinField TINYINT DEFAULT 0
 			) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
-                require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-                dbDelta($sql);
-                cg_echo_last_sql_error($isShowError,$lastError);
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($sql);
+            cg_echo_last_sql_error($isShowError,$lastError);
 
-                if($tableOptionsHasToBeCreated==false){
+            if($tableOptionsHasToBeCreated==false){
 
-                    foreach ($collectIDs as $key => $value) {
+                foreach ($collectIDs as $key => $value) {
 
-                        $wpdb->query( $wpdb->prepare(
-                            "
+                    $wpdb->query( $wpdb->prepare(
+                        "
                                 INSERT INTO $tablename_create_user_form
                                 ( id, GalleryID, Field_Type, Field_Order,
                                 Field_Name,Field_Content,Min_Char,Max_Char,
@@ -1054,13 +1068,13 @@ HEREDOC;
                                 %s,%s,%d,%d,
                                 %d,%d)
                             ",
-                            '',$value,'main-user-name','1',
-                            'Username','',3,100,
-                            1,1
-                        ) );
+                        '',$value,'main-user-name','1',
+                        'Username','',3,100,
+                        1,1
+                    ) );
 
-                        $wpdb->query( $wpdb->prepare(
-                            "
+                    $wpdb->query( $wpdb->prepare(
+                        "
                                 INSERT INTO $tablename_create_user_form
                                 ( id, GalleryID, Field_Type, Field_Order,
                                 Field_Name,Field_Content,Min_Char,Max_Char,
@@ -1069,13 +1083,13 @@ HEREDOC;
                                 %s,%s,%d,%d,
                                 %d,%d)
                             ",
-                            '',$value,'main-mail','2',
-                            'E-mail','','','',
-                            1,1
-                        ) );
+                        '',$value,'main-mail','2',
+                        'E-mail','','','',
+                        1,1
+                    ) );
 
-                        $wpdb->query( $wpdb->prepare(
-                            "
+                    $wpdb->query( $wpdb->prepare(
+                        "
                                 INSERT INTO $tablename_create_user_form
                                 ( id, GalleryID, Field_Type, Field_Order,
                                 Field_Name,Field_Content,Min_Char,Max_Char,
@@ -1084,13 +1098,13 @@ HEREDOC;
                                 %s,%s,%d,%d,
                                 %d,%d)
                             ",
-                            '',$value,'password','3',
-                            'Password','',6,100,
-                            1,1
-                        ) );
+                        '',$value,'password','3',
+                        'Password','',6,100,
+                        1,1
+                    ) );
 
-                        $wpdb->query( $wpdb->prepare(
-                            "
+                    $wpdb->query( $wpdb->prepare(
+                        "
                                 INSERT INTO $tablename_create_user_form
                                 ( id, GalleryID, Field_Type, Field_Order,
                                 Field_Name,Field_Content,Min_Char,Max_Char,
@@ -1099,19 +1113,19 @@ HEREDOC;
                                 %s,%s,%d,%d,
                                 %d,%d)
                             ",
-                            '',$value,'password-confirm','4',
-                            'Confirm Password','',6,100,
-                            1,1
-                        ) );
-
-
-                    }
-
-                    // Anlegen der absolut notwendigen User Form Feldern (Username, E-Mail, Password und Confirm Password) --- ENDE
+                        '',$value,'password-confirm','4',
+                        'Confirm Password','',6,100,
+                        1,1
+                    ) );
 
 
                 }
+
+                // Anlegen der absolut notwendigen User Form Feldern (Username, E-Mail, Password und Confirm Password) --- ENDE
+
+
             }
+        }
 
 
 
@@ -1119,17 +1133,17 @@ HEREDOC;
             $sql = "CREATE TABLE $tablename_form_input (
 		id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		GalleryID INT(20) DEFAULT 0,
-		Field_Type VARCHAR(10) DEFAULT '',
+		Field_Type VARCHAR(10) NOT NULL,
 		Field_Order INT(3) DEFAULT 0,
-		Field_Content TEXT DEFAULT '',
-		FieldTitleGallery TEXT DEFAULT '',
+		Field_Content TEXT NOT NULL,
+		FieldTitleGallery TEXT NOT NULL,
 		Show_Slider TINYINT DEFAULT 0,
 		Use_as_URL TINYINT DEFAULT 0,
 		Active TINYINT DEFAULT 1,
-		ReCaKey VARCHAR(200) DEFAULT '',
-		ReCaLang VARCHAR(20) DEFAULT '',
-		Version VARCHAR(20) DEFAULT '',
-		WatermarkPosition VARCHAR(99) DEFAULT '',
+		ReCaKey VARCHAR(200) NOT NULL,
+		ReCaLang VARCHAR(20) NOT NULL,
+		Version VARCHAR(20) NOT NULL,
+		WatermarkPosition VARCHAR(99) NOT NULL,
 		IsForWpPageTitle TINYINT DEFAULT 0,
 		IsForWpPageDescription TINYINT DEFAULT 0,
 		SubTitle TINYINT DEFAULT 0,
@@ -1221,7 +1235,7 @@ HEREDOC;
                 if($wpdb->get_var("SHOW TABLES LIKE '$tablename_mail_gallery'") != $tablename_mail_gallery){
                     $sql = "CREATE TABLE $tablename_mail_gallery (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                GalleryID INT (11),
+                GalleryID INT(11),
                 Admin VARCHAR(200),
                 Header VARCHAR(200),
                 Reply VARCHAR(200),
@@ -1274,8 +1288,8 @@ HEREDOC;
                 if($wpdb->get_var("SHOW TABLES LIKE '$tablename_mail_gallery_users_history'") != $tablename_mail_gallery_users_history){
                     $sql = "CREATE TABLE $tablename_mail_gallery_users_history (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                GalleryID INT (11),
-                Timestamp INT (11),
+                GalleryID INT(11),
+                Timestamp INT(11),
                 Date VARCHAR(100),
                 Content TEXT
                 ) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
@@ -1286,8 +1300,8 @@ HEREDOC;
                 if($wpdb->get_var("SHOW TABLES LIKE '$tablename_mails_users_relations'") != $tablename_mails_users_relations){
                     $sql = "CREATE TABLE $tablename_mails_users_relations (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                WpMailUserID INT (11),
-                CgMailUserID INT (11),
+                WpMailUserID INT(11),
+                CgMailUserID INT(11),
                 CgSendedMailID INT(11)
                 ) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
                     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -1316,18 +1330,22 @@ HEREDOC;
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		GalleryID INT(20) DEFAULT 0,
 		GeneralID TINYINT DEFAULT 0,
-        LogoutLink VARCHAR(1000) DEFAULT '',
-        BackToGalleryLink VARCHAR(1000) DEFAULT '',
-        RegistryUserRole VARCHAR(1000) DEFAULT '',
+        LogoutLink VARCHAR(1000) NOT NULL,
+        BackToGalleryLink VARCHAR(1000) NOT NULL,
+        RegistryUserRole VARCHAR(1000) NOT NULL,
         LostPasswordMailActive TINYINT DEFAULT 0,
-        LostPasswordMailAddressor VARCHAR(200) DEFAULT '',
-        LostPasswordMailReply VARCHAR(200) DEFAULT '',
-        LostPasswordMailSubject VARCHAR(200) DEFAULT '',
-        LostPasswordMailConfirmation TEXT DEFAULT '',
-        TextBeforeLoginForm TEXT DEFAULT '',
-        EditProfileGroups TEXT DEFAULT '',
-        TextBeforeRegFormBeforeLoggedIn TEXT DEFAULT '',
-        PermanentTextWhenLoggedIn TEXT DEFAULT ''
+        LostPasswordMailAddressor VARCHAR(200) NOT NULL,
+        LostPasswordMailReply VARCHAR(200) NOT NULL,
+        LostPasswordMailSubject VARCHAR(200) NOT NULL,
+        LostPasswordMailConfirmation TEXT NOT NULL,
+        TextBeforeLoginForm TEXT NOT NULL,
+        EditProfileGroups TEXT NOT NULL,
+        TextBeforeRegFormBeforeLoggedIn TEXT NOT NULL,
+            TextBeforePinFormBeforeLoggedIn TEXT NOT NULL,
+            PermanentTextWhenLoggedIn TEXT NOT NULL,
+            ConfirmExpiry INT(11) DEFAULT 172800,
+            PinExpiry INT(11) DEFAULT 900,
+		    LoginAfterConfirm TINYINT DEFAULT 0
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -1338,13 +1356,13 @@ HEREDOC;
             $sql = "CREATE TABLE $tablename_google_options (
     		id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
             GeneralID TINYINT DEFAULT 0,
-            ClientId VARCHAR(1000) DEFAULT '',
-            ButtonTextOnLoad VARCHAR(1000) DEFAULT '',
-            ButtonStyle VARCHAR(100) DEFAULT '',
+            ClientId VARCHAR(1000) NOT NULL,
+            ButtonTextOnLoad VARCHAR(1000) NOT NULL,
+            ButtonStyle VARCHAR(100) NOT NULL,
             BorderRadius TINYINT DEFAULT 0,
             GooglemailConvert TINYINT DEFAULT 0,
-		    FeControlsStyle VARCHAR(20) DEFAULT '',
-		    TextBeforeGoogleSignInButton TEXT DEFAULT ''
+		    FeControlsStyle VARCHAR(20) NOT NULL,
+		    TextBeforeGoogleSignInButton TEXT NOT NULL
             ) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -1357,13 +1375,13 @@ HEREDOC;
         if($wpdb->get_var("SHOW TABLES LIKE '$tablename_google_users'") != $tablename_google_users){
             $sql = "CREATE TABLE $tablename_google_users (
             id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-            GoogleId VARCHAR(1000) DEFAULT '',
-            Email VARCHAR(1000) DEFAULT '',
-            NickName VARCHAR(1000) DEFAULT '',
-            GivenName VARCHAR(1000) DEFAULT '',
-            FamilyName VARCHAR(1000) DEFAULT '',
-            ImageUrl VARCHAR(1000) DEFAULT '',
-            WpUserId INT (11) DEFAULT 0
+            GoogleId VARCHAR(1000) NOT NULL,
+            Email VARCHAR(1000) NOT NULL,
+            NickName VARCHAR(1000) NOT NULL,
+            GivenName VARCHAR(1000) NOT NULL,
+            FamilyName VARCHAR(1000) NOT NULL,
+            ImageUrl VARCHAR(1000) NOT NULL,
+            WpUserId INT(11) DEFAULT 0
             ) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -1401,12 +1419,12 @@ HEREDOC;
         if($wpdb->get_var("SHOW TABLES LIKE '$tablename_ai_prompts'") != $tablename_ai_prompts){
             $sql = "CREATE TABLE $tablename_ai_prompts (
 		id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        Prompt TEXT DEFAULT '',
-        RevisedPrompt TEXT DEFAULT '',
-        Company VARCHAR(100) DEFAULT '',
-        Model VARCHAR(100) DEFAULT '',
-        Quality VARCHAR(100) DEFAULT '',
-        Resolution VARCHAR(100) DEFAULT '',
+        Prompt TEXT NOT NULL,
+        RevisedPrompt TEXT NOT NULL,
+        Company VARCHAR(100) NOT NULL,
+        Model VARCHAR(100) NOT NULL,
+        Quality VARCHAR(100) NOT NULL,
+        Resolution VARCHAR(100) NOT NULL,
 		Type INT(11) DEFAULT 0,
 		Tstamp INT(11) DEFAULT 0
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
@@ -1423,7 +1441,7 @@ HEREDOC;
             $sql = "CREATE TABLE $tablename_general (
             id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
             GeneralID BIGINT(20) DEFAULT 0,
-            CgpTagTermTaxonomyIds TEXT DEFAULT ''
+            CgpTagTermTaxonomyIds TEXT NOT NULL
             ) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -1431,7 +1449,6 @@ HEREDOC;
         }*/
 
         //ADD first first Gallery
-
         $uploads = wp_upload_dir();
         $checkUploads = $uploads['basedir'].'/contest-gallery';
 

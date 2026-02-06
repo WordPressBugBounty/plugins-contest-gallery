@@ -159,7 +159,7 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 							}
 						}
 					}
-				}else if($entry->f_input_id==$IsForWpPageTitleInputId && empty($entry->Short_Text)){
+				}elseif($entry->f_input_id==$IsForWpPageTitleInputId && empty($entry->Short_Text)){
 
 					foreach ($galleryEntries as $galleryEntry){
 						if($galleryEntry->id==$entry->pid){
@@ -259,7 +259,7 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 
 
 		}
-		else if (($Version>=22 && $IsForWpPageTitleInputDeleted) || ($Version>=22 && empty($IsForWpPageTitleInputId) && !empty($isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized) && empty($IsForWpPageTitleInputDeleted))){//  $IsForWpPageTitleInputDeleted can only be from edit upload form
+		elseif (($Version>=22 && $IsForWpPageTitleInputDeleted) || ($Version>=22 && empty($IsForWpPageTitleInputId) && !empty($isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized) && empty($IsForWpPageTitleInputDeleted))){//  $IsForWpPageTitleInputDeleted can only be from edit upload form
 			// IsForWpPageTitle might be unchecked then this condition here will be used
 
 			// var_dump('change 2');
@@ -329,7 +329,7 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 
 					// some date time fields in some systems might start with 1999-01-01 00:00:00
 					// so important to check to $row->Field_Type == 'dt'
-				}else if($row->Field_Type == 'date-f' && !empty($row->InputDate) && $row->InputDate!='0000-00-00 00:00:00'){
+				}elseif($row->Field_Type == 'date-f' && !empty($row->InputDate) && $row->InputDate!='0000-00-00 00:00:00'){
 					$newDateTimeString = '';
 
 					try {

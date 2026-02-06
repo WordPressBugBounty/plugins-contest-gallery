@@ -143,7 +143,12 @@ else {
 
         $collectedFieldIds = '';
 
+
 /*
+        echo "<pre>";
+            print_r($_REQUEST);
+        echo "</pre>";
+        die;
         echo "<pre>";
         print_r($_REQUEST['cg-cat-id']);
         echo "</pre>";
@@ -164,7 +169,7 @@ else {
         }
 
         $selectSQL = $wpdb->get_results( "SELECT * FROM $tablename_form_input WHERE (GalleryID = $galeryID AND ($collectedFieldIds)
-                    AND (Field_Type = 'text-f' OR Field_Type = 'url-f' OR Field_Type = 'comment-f' OR Field_Type = 'select-f' OR Field_Type = 'date-f') AND Show_Slider = 1)$Field1IdGalleryViewToSelect" );
+                    AND (Field_Type = 'text-f' OR Field_Type = 'url-f' OR Field_Type = 'comment-f' OR Field_Type = 'radio-f' OR Field_Type = 'chk-f' OR Field_Type = 'select-f' OR Field_Type = 'date-f') AND Show_Slider = 1)$Field1IdGalleryViewToSelect" );
 
         $isCgWpPageEntryLandingPage = false;
         if(!empty($_POST['isCgWpPageEntryLandingPage'])){
@@ -185,7 +190,7 @@ else {
         if(count($selectSQL)){
             foreach ($selectSQL as $fieldObject){
                 $content[$pictureID][$fieldObject->id] = array();
-                if($fieldObject->Field_Type == 'text-f' OR $fieldObject->Field_Type == 'url-f' OR $fieldObject->Field_Type == 'select-f'){
+                if($fieldObject->Field_Type == 'text-f' OR $fieldObject->Field_Type == 'url-f' OR $fieldObject->Field_Type == 'radio-f' OR $fieldObject->Field_Type == 'chk-f' OR $fieldObject->Field_Type == 'select-f'){
                     $isSetContent=true;
                     if($fieldObject->Field_Type == 'select-f'){
                         if(sanitize_text_field($_REQUEST['cg-field-id'][$fieldObject->id])==='0'){

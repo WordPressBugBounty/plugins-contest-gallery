@@ -202,7 +202,6 @@ HEREDOC;
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
         <p class='cg_view_options_rows_container_title'>Lost password e-mail options
-            <br><span class='cg_view_options_rows_container_title_note'><span class="cg_color_red">NOTE:</span> relating testing - e-mail where is send to should not contain $cgYourDomainName.<br>Many servers can not send to own domain.</span>
         </p>
 HEREDOC;
 
@@ -219,7 +218,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
                 <div class="cg_view_option  cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px cg_view_option_100_percent $cgProFalse" id="LostPasswordMailActiveContainer">
                     <div class="cg_view_option_title">
-                        <p>Lost password reset option in login form<br><span class="cg_view_option_title_note"><span class="cg_color_red">NOTE:</span> relating testing - e-mail where is send to should not contain $cgYourDomainName.<br>Many servers can not send to own domain.</span></span></p>
+                        <p>Lost password reset option in login form<br><span class="cg_view_option_title_note">$cgDomainErrorText</span></p>
                     </div>
                     <div class="cg_view_option_checkbox">
                         <input type="checkbox" name="LostPasswordMailActive" id="LostPasswordMailActive" value="1" $LostPasswordMailActive >
@@ -259,7 +258,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse" id="wp-LostPasswordMailConfirmation-wrap-Container">
                 <div class="cg_view_option_title cg_copyable">
-                    <p>Mail content<br><span class="cg_view_option_title_note">Put this variable in the mail content editor: <span style="font-weight:bold;user-select: all;">\$resetpasswordurl$</span><br>(Reset password link will appear in the e-mail<br>It will be the same page where your login shortcode is inserted)
+                    <p>Email content<br><span class="cg_view_option_title_note">Put this variable in the email content editor: <span style="font-weight:bold;user-select: all;">\$resetpasswordurl$</span><br>(Reset password link will appear in the e-mail<br>It will be the same page where your login shortcode is inserted)
 <br><a href="https://www.contest-gallery.com/documentation/#cgDisplayConfirmationURL" target="_blank" class="cg-documentation-link">Documentation: How to make the link clickable in e-mail</a></span></p>
                 </div>
                 <div class="cg_view_option_html">

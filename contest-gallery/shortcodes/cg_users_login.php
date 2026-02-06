@@ -42,6 +42,10 @@ if(!function_exists('contest_gal1ery_users_login')){
             wp_localize_script( 'cg_v10_js_cg_gallery', 'post_cg_login_wordpress_ajax_script_function_name', array(
                 'cg_login_ajax_url' => admin_url( 'admin-ajax.php' )
             ));
+            wp_localize_script('cg_v10_js_cg_gallery', 'CG1LAction', [
+                'nonce'   => wp_create_nonce('cg1l_action'),
+                'ajax_url' => admin_url('admin-ajax.php'),
+            ]);
         }
        
         ob_start();

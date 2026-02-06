@@ -110,7 +110,8 @@ cgJsClassAdmin.gallery.pdf = {
                             cgRealId: realId,
                             cg_base_64: cg_base_64,
                             cgWpUploadToReplace: cgWpUploadToReplace,
-                            cgNewWpUploadWhichReplace: cgNewWpUploadWhichReplace
+                            cgNewWpUploadWhichReplace: cgNewWpUploadWhichReplace,
+                            cg_nonce: CG1LBackendNonce.nonce
                         },
                     }).done(function (response) {
                         debugger

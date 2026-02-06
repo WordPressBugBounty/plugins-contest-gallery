@@ -125,6 +125,12 @@ if(!function_exists('cgDropTables')){
 
 	    $tablename_contest_gal1ery_pdf_previews = $wpdb->base_prefix . "$i"."contest_gal1ery_pdf_previews";
 
+	    $tablename_contest_gal1ery_ai_prompts = $wpdb->base_prefix . "$i"."contest_gal1ery_ai_prompts";
+
+	    $tablename_contest_gal1ery_mails = $wpdb->base_prefix . "$i"."contest_gal1ery_mails";
+
+	    $tablename_contest_gal1ery_mail_templates = $wpdb->base_prefix . "$i"."contest_gal1ery_mail_templates";
+
         $sqlWpOptionsDelete = 'DELETE FROM ' . $wpOptions . ' WHERE';
         $sqlWpOptionsDelete .= ' option_name = %s';
 
@@ -135,40 +141,43 @@ if(!function_exists('cgDropTables')){
             "p_cgal1ery_db_version"
         ));
 
-        $sql = "DROP TABLE $tablename";
-        $sql1 = "DROP TABLE $tablename_ip";
-        $sql2 = "DROP TABLE $tablename_comments";
-        $sql4 = "DROP TABLE $tablename_options";
-        $sql5 = "DROP TABLE $tablename_options_input";
-        $sql6 = "DROP TABLE $tablename_email";
-        $sql7 = "DROP TABLE $tablename_entries";
-        $sql8 = "DROP TABLE $tablename_form_input";
-        $sql9 = "DROP TABLE $tablename_form_output";
-        $sql10 = "DROP TABLE $tablename_options_visual";
-        $sql11 = "DROP TABLE $tablename_email_admin";
-        $sql12 = "DROP TABLE $tablename_contest_gal1ery_create_user_entries";
-        $sql13 = "DROP TABLE $tablename_contest_gal1ery_create_user_form";
-        $sql14 = "DROP TABLE $tablename_contest_gal1ery_pro_options";
-        $sql15 = "DROP TABLE $tablename_mail_gallery";
-        $sql16 = "DROP TABLE $tablename_mail_confirmation";
-        $sql17 = "DROP TABLE $tablename_mails_collected";
-        $sql18 = "DROP TABLE $tablename_categories";
-        $sql19 = "DROP TABLE $tablename_comments_notification_options";
-        $sql20 = "DROP TABLE $tablename_registry_and_login_options";
-        $sql21 = "DROP TABLE $tablename_google_options";
-        $sql22 = "DROP TABLE $tablename_google_users";
-        $sql23 = "DROP TABLE $tablename_wp_pages";
-        $sql24 = "DROP TABLE $tablename_mail_user_comment";
-        $sql25 = "DROP TABLE $tablename_mail_user_upload";
-        $sql26 = "DROP TABLE $tablename_mail_user_vote";
-        $sql27 = "DROP TABLE $tablename_user_comment_mails";
-        $sql28 = "DROP TABLE $tablename_user_vote_mails";
-        $sql29 = "DROP TABLE $tablename_ecommerce_entries";
-        $sql30 = "DROP TABLE $tablename_ecommerce_options";
-        $sql31 = "DROP TABLE $tablename_ecommerce_invoice_options";
-        $sql32 = "DROP TABLE $tablename_ecommerce_orders";
-        $sql33 = "DROP TABLE $tablename_ecommerce_orders_items";
-        $sql34 = "DROP TABLE $tablename_contest_gal1ery_pdf_previews";
+        $sql = "DROP TABLE IF EXISTS $tablename";
+        $sql1 = "DROP TABLE IF EXISTS $tablename_ip";
+        $sql2 = "DROP TABLE IF EXISTS $tablename_comments";
+        $sql4 = "DROP TABLE IF EXISTS $tablename_options";
+        $sql5 = "DROP TABLE IF EXISTS $tablename_options_input";
+        $sql6 = "DROP TABLE IF EXISTS $tablename_email";
+        $sql7 = "DROP TABLE IF EXISTS $tablename_entries";
+        $sql8 = "DROP TABLE IF EXISTS $tablename_form_input";
+        $sql9 = "DROP TABLE IF EXISTS $tablename_form_output";
+        $sql10 = "DROP TABLE IF EXISTS $tablename_options_visual";
+        $sql11 = "DROP TABLE IF EXISTS $tablename_email_admin";
+        $sql12 = "DROP TABLE IF EXISTS $tablename_contest_gal1ery_create_user_entries";
+        $sql13 = "DROP TABLE IF EXISTS $tablename_contest_gal1ery_create_user_form";
+        $sql14 = "DROP TABLE IF EXISTS $tablename_contest_gal1ery_pro_options";
+        $sql15 = "DROP TABLE IF EXISTS $tablename_mail_gallery";
+        $sql16 = "DROP TABLE IF EXISTS $tablename_mail_confirmation";
+        $sql17 = "DROP TABLE IF EXISTS $tablename_mails_collected";
+        $sql18 = "DROP TABLE IF EXISTS $tablename_categories";
+        $sql19 = "DROP TABLE IF EXISTS $tablename_comments_notification_options";
+        $sql20 = "DROP TABLE IF EXISTS $tablename_registry_and_login_options";
+        $sql21 = "DROP TABLE IF EXISTS $tablename_google_options";
+        $sql22 = "DROP TABLE IF EXISTS $tablename_google_users";
+        $sql23 = "DROP TABLE IF EXISTS $tablename_wp_pages";
+        $sql24 = "DROP TABLE IF EXISTS $tablename_mail_user_comment";
+        $sql25 = "DROP TABLE IF EXISTS $tablename_mail_user_upload";
+        $sql26 = "DROP TABLE IF EXISTS $tablename_mail_user_vote";
+        $sql27 = "DROP TABLE IF EXISTS $tablename_user_comment_mails";
+        $sql28 = "DROP TABLE IF EXISTS $tablename_user_vote_mails";
+        $sql29 = "DROP TABLE IF EXISTS $tablename_ecommerce_entries";
+        $sql30 = "DROP TABLE IF EXISTS $tablename_ecommerce_options";
+        $sql31 = "DROP TABLE IF EXISTS $tablename_ecommerce_invoice_options";
+        $sql32 = "DROP TABLE IF EXISTS $tablename_ecommerce_orders";
+        $sql33 = "DROP TABLE IF EXISTS $tablename_ecommerce_orders_items";
+        $sql34 = "DROP TABLE IF EXISTS $tablename_contest_gal1ery_pdf_previews";
+        $sql35 = "DROP TABLE IF EXISTS $tablename_contest_gal1ery_ai_prompts";
+        $sql36 = "DROP TABLE IF EXISTS $tablename_contest_gal1ery_mails";
+        $sql37 = "DROP TABLE IF EXISTS $tablename_contest_gal1ery_mail_templates";
 
 
         $wpdb->query($sql);
@@ -235,6 +244,9 @@ if(!function_exists('cgDropTables')){
         $wpdb->query($sql32);
         $wpdb->query($sql33);
         $wpdb->query($sql34);
+        $wpdb->query($sql35);
+        $wpdb->query($sql36);
+        $wpdb->query($sql37);
 
 
         cg_delete_blog_option($i,"p_cgal1ery_reg_code");

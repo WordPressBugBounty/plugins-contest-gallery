@@ -87,11 +87,11 @@ $isOnlyProVersionFile = false;
 
     */
 if($post_type=="application/pdf" && $cgProFalse){$isOnlyProVersionFile=true;}
-else if($post_type=="application/zip" && $cgProFalse){$isOnlyProVersionFile=true;}
-else if($post_type=="audio/mpeg" && $fullFilePathEnd=='mp3' && $cgProFalse){$isOnlyProVersionFile=true;}
-else if($post_type=="audio/wav" && $cgProFalse){$isOnlyProVersionFile=true;}
-else if($post_type=="video/mp4" && $cgProFalse){$isOnlyProVersionFile=true;}
-else if($post_type=="video/quicktime" && $cgProFalse){$isOnlyProVersionFile=true;}
+elseif($post_type=="application/zip" && $cgProFalse){$isOnlyProVersionFile=true;}
+elseif($post_type=="audio/mpeg" && $fullFilePathEnd=='mp3' && $cgProFalse){$isOnlyProVersionFile=true;}
+elseif($post_type=="audio/wav" && $cgProFalse){$isOnlyProVersionFile=true;}
+elseif($post_type=="video/mp4" && $cgProFalse){$isOnlyProVersionFile=true;}
+elseif($post_type=="video/quicktime" && $cgProFalse){$isOnlyProVersionFile=true;}
 
 include ('post-type-check.php');
 

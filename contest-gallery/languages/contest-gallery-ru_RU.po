@@ -1,18 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Contest Gallery\n"
-"POT-Creation-Date: 2025-02-14 20:50+0100\n"
-"PO-Revision-Date: 2025-02-14 20:50+0100\n"
+"POT-Creation-Date: 2025-11-30 20:09+0100\n"
+"PO-Revision-Date: 2025-11-30 20:10+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.3\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Poedit 3.4.2\n"
 "X-Poedit-Basepath: ..\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
 "X-Poedit-WPHeader: index.php\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -346,6 +346,54 @@ msgstr "Вернуться к галереям"
 #: check-language-general.php:78
 msgid "No gallery entries"
 msgstr "Нет записей в галерее"
+
+#: check-language-general.php:80
+msgid "Resend confirmation email"
+msgstr "Отправить письмо с подтверждением ещё раз"
+
+#: check-language-general.php:82
+msgid "Confirmation link expired"
+msgstr "Ссылка для подтверждения истекла"
+
+#: check-language-general.php:84
+msgid "E-mail sent"
+msgstr "Электронное письмо отправлено"
+
+#: check-language-general.php:86
+msgid "Activation key not found"
+msgstr "Ключ активации не найден"
+
+#: check-language-general.php:88
+msgid "A PIN has been sent to your email"
+msgstr "PIN был отправлен на вашу электронную почту"
+
+#: check-language-general.php:90
+msgid "Enter PIN"
+msgstr "Введите PIN"
+
+#: check-language-general.php:92
+msgid "Send PIN"
+msgstr "Отправить PIN"
+
+#: check-language-general.php:94
+msgid "Confirm PIN"
+msgstr "Подтвердить PIN"
+
+#: check-language-general.php:96
+msgid "Send new PIN"
+msgstr "Отправить новый PIN"
+
+#: check-language-general.php:98
+msgid "Incorrect PIN. Please try again."
+msgstr "Неверный PIN. Пожалуйста, попробуйте снова."
+
+#: check-language-general.php:100
+msgid "PIN has expired. Please request a new one."
+msgstr "PIN истёк. Пожалуйста, запросите новый."
+
+#: check-language-general.php:102
+msgid "Only jury members can vote"
+msgstr "Только члены жюри могут голосовать"
 
 #: check-language.php:56
 msgid "Participation form"
@@ -1102,6 +1150,14 @@ msgstr "нет"
 msgid "Logout?"
 msgstr "Выйти из системы?"
 
+#: functions/general/registry/cg-registry-functions.php:356
+msgid "Please enter a nickname."
+msgstr "Пожалуйста, введите никнейм."
+
+#: functions/general/registry/cg-registry-functions.php:382
+msgid "This nickname is already in use. Please choose another one."
+msgstr "Этот никнейм уже используется. Пожалуйста, выберите другой."
+
 #: functions/general/registry/create/cg-registry-create-functions.php:7
 msgid "Contest Gallery User since v14"
 msgstr ""
@@ -1159,24 +1215,10 @@ msgstr ""
 msgid "No contest gallery pages found."
 msgstr ""
 
-#. Plugin Name of the plugin/theme
-#. Author of the plugin/theme
 #, fuzzy
-#| msgid "Contest Gallery - PRO"
-msgid "Contest Gallery"
-msgstr "Contest Gallery - PRO"
-
-#. Description of the plugin/theme
-msgid ""
-"Upload form, files, photos and videos upload contest gallery plugin for "
-"WordPress. Create contact forms for entries with or without file/image "
-"upload. Create user registration form. Create login form. Create responsive "
-"galleries and allow to vote for any kind of entries."
-msgstr ""
-
-#. Author URI of the plugin/theme
-msgid "http://www.contest-gallery.com/"
-msgstr ""
+#~| msgid "Contest Gallery - PRO"
+#~ msgid "Contest Gallery"
+#~ msgstr "Contest Gallery - PRO"
 
 #~ msgid "Contest Gallery - PRO Version"
 #~ msgstr "Contest Gallery - PRO Version"

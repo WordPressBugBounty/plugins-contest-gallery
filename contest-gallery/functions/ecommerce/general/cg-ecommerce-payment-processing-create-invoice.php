@@ -24,7 +24,11 @@ if(!function_exists('cg_ecommerce_payment_processing_create_invoice')) {
         }
         $ShippingNet = round(floatval($LogForDatabase['ShippingNet']),2);
         $TaxPercentageDefault = $LogForDatabase['TaxPercentageDefault'];
-        $TaxPercentageDefaultToShow = number_format(floatval($TaxPercentageDefault),2,$PriceDivider);
+        $ThousandsSeparator = '.';
+        if($PriceDivider=='.'){
+            $ThousandsSeparator = ',';
+        }
+        $TaxPercentageDefaultToShow = number_format(floatval($TaxPercentageDefault),2,$PriceDivider,$ThousandsSeparator);
         $PriceTotalNetItems = cg_ecommerce_get_price_total_net_items($LogForDatabase);
         $alternativeShippingTotal = round(floatval($LogForDatabase['alternativeShippingTotal']),2);
         $alternativeShippingTotalTaxValue = round(floatval($LogForDatabase['alternativeShippingTotalTaxValue']),2);
@@ -87,8 +91,12 @@ if(!function_exists('cg_ecommerce_payment_processing_create_invoice')) {
         if(!file_exists($ecommerceInvoicesHtaccess)){
             $denyFromAllContent = <<<HEREDOC
 <Files "*">
-order deny, allow
-deny from all
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Deny from all
+  </IfModule>
 </Files>
 HEREDOC;
             file_put_contents($ecommerceInvoicesHtaccess,$denyFromAllContent);
@@ -166,13 +174,13 @@ HEREDOC;
                         }
                     }
                 }
-            }else if(!empty($lastSale) && (!empty($lastSale->InvoiceNumber) || !empty($lastSaleWithCustomNumber))){// $lastSale->InvoiceNumber has to be not empty then because of the condition above
+            }elseif(!empty($lastSale) && (!empty($lastSale->InvoiceNumber) || !empty($lastSaleWithCustomNumber))){// $lastSale->InvoiceNumber has to be not empty then because of the condition above
                 //var_dump('1123 32234');
                 //file_put_contents(__DIR__.'/0.txt','0');
                 if($InvoiceNumberLogicSelect=='timestamp'){
                     //var_dump('44545 9877987');
                     $InvoiceNumber = $time;
-                }else if($InvoiceNumberLogicSelect=='unset') {
+                }elseif($InvoiceNumberLogicSelect=='unset') {
                     if(!empty($InvoiceNumberLogicOwnPrefix)){
                         //var_dump('unset $InvoiceNumberLogicOwnPrefix');
                         //var_dump($InvoiceNumberLogicOwnPrefix);
@@ -227,7 +235,7 @@ HEREDOC;
                             $cg_increase_number_result = cg_increase_number($lastSaleWithCustomNumber->InvoiceNumberLogicCustomNumber,$InvoiceNumber);
                             $InvoiceNumber = $cg_increase_number_result['InvoiceNumber'];
                             $InvoiceNumberLogicCustomNumber = $cg_increase_number_result['InvoiceNumberLogicCustomNumber'];
-                        }else if(($InvoiceNumberLogicSelect=='month' || $InvoiceNumberLogicSelect=='year-month') && $lastSaleWithCustomNumber->CreatedMonth==$CreatedMonth  && $lastSaleWithCustomNumber->CreatedYear==$CreatedYear){
+                        }elseif(($InvoiceNumberLogicSelect=='month' || $InvoiceNumberLogicSelect=='year-month') && $lastSaleWithCustomNumber->CreatedMonth==$CreatedMonth  && $lastSaleWithCustomNumber->CreatedYear==$CreatedYear){
                             $cg_increase_number_result = cg_increase_number($lastSaleWithCustomNumber->InvoiceNumberLogicCustomNumber,$InvoiceNumber);
                             $InvoiceNumber = $cg_increase_number_result['InvoiceNumber'];
                             $InvoiceNumberLogicCustomNumber = $cg_increase_number_result['InvoiceNumberLogicCustomNumber'];
@@ -239,7 +247,7 @@ HEREDOC;
                         }
                         //var_dump('$InvoiceNumber new generatetd');
                         //var_dump($cg_increase_number_result);
-                    }else if(!empty($InvoiceNumberLogicCustomNumber)){
+                    }elseif(!empty($InvoiceNumberLogicCustomNumber)){
                         //		file_put_contents(__DIR__.'/2.txt','2');
                         $InvoiceNumber .= $InvoiceNumberLogicCustomNumber;
                         $InvoiceNumberLogicCustomNumber = $InvoiceNumberLogicCustomNumber;
@@ -280,7 +288,7 @@ HEREDOC;
             $language_Nr_Part = '';
         }
 
-        $InvoicerHeaderData = contest_gal1ery_convert_for_html_output($selectSQLecommerceInvoiceOptions->InvoicerHeaderData);
+        $InvoicerHeaderData = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceInvoiceOptions->InvoicerHeaderData);
         $InvoicePartInvoicer = $InvoicerHeaderData;
         $headerContestGallery = "$InvoicerHeaderData<br><br>";
 
@@ -521,7 +529,7 @@ HEREDOC;
 
             if(!empty($item['extra_shipping_amount_value'])){
                 $TaxesArray[$DefaultTax] = $TaxesArray[$DefaultTax] + $item['extra_shipping_amount_value'];
-            }else if(empty($item['extra_shipping_amount_value']) && !empty($item['IsShipping']) && !$IsDefaultShippingOneTimeSet){
+            }elseif(empty($item['extra_shipping_amount_value']) && !empty($item['IsShipping']) && !$IsDefaultShippingOneTimeSet){
                 $IsDefaultShippingOneTimeSet = true;
                 $TaxesArray[$DefaultTax] = $TaxesArray[$DefaultTax] + $DefaultShipping;
             }
@@ -711,7 +719,7 @@ HEREDOC;
             $InvoiceNumberLogicOwnPrefix = '';
             $InvoiceNumberLogicCustomNumber = '';
             $InvoiceNumberLogicSelect = '';
-        }else if($InvoiceNumberLogicSelect=='timestamp'){
+        }elseif($InvoiceNumberLogicSelect=='timestamp'){
             $InvoiceNumberLogicOwnPrefix = '';
             $InvoiceNumberLogicCustomNumber = '';
         }

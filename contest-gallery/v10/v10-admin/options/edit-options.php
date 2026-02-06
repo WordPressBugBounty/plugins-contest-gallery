@@ -307,7 +307,13 @@ foreach($selectSQL4 as $value4){
     $ForwardAfterLoginTextStyle = ($value4->ForwardAfterLoginTextCheck==1) ? 'style="height:100px;"' : 'disabled style="background-color:#e0e0e0;height:100px;"';
     $ForwardAfterLoginText = contest_gal1ery_convert_for_html_output_without_nl2br($value4->ForwardAfterLoginText);
     $TextEmailConfirmation = contest_gal1ery_convert_for_html_output_without_nl2br($value4->TextEmailConfirmation);
+    $TextPinConfirmation = contest_gal1ery_convert_for_html_output_without_nl2br($value4->TextPinConfirmation);
+    if(empty($TextPinConfirmation)){// because of update 28.1.0, mighty be empty
+        $TextPinConfirmation = 'Complete your registration by using the PIN below: <br/><br/> $pin$';
+    }
+    $RegPinSubject = contest_gal1ery_convert_for_html_output_without_nl2br($value4->RegPinSubject);
     $TextAfterEmailConfirmation = contest_gal1ery_convert_for_html_output_without_nl2br($value4->TextAfterEmailConfirmation);
+    $TextAfterPinConfirmation = contest_gal1ery_convert_for_html_output_without_nl2br($value4->TextAfterPinConfirmation);
     $RegMailAddressor = contest_gal1ery_convert_for_html_output_without_nl2br($value4->RegMailAddressor);
     $RegMailReply = contest_gal1ery_convert_for_html_output_without_nl2br($value4->RegMailReply);
 	$RegMailCC = contest_gal1ery_convert_for_html_output_without_nl2br($value4->RegMailCC);
@@ -738,12 +744,16 @@ foreach($selectSQL3 as $value3){
     $ForwardToWpPageEntry = ($value3->ForwardToWpPageEntry==1) ? 'checked' : '';
     $ForwardToWpPageEntryInNewTab = ($value3->ForwardToWpPageEntryInNewTab==1) ? 'checked' : '';
     $ThankVote = ($value3->ThankVote==1) ? 'checked' : '';
+    $ShowPinFormVoting = ($value3->ShowPinFormVoting==1) ? 'checked' : '';
+    $ShowPinFormUploading = ($value3->ShowPinFormUploading==1) ? 'checked' : '';
     $CommentsDateFormat = (!empty($value3->CommentsDateFormat)) ? $value3->CommentsDateFormat : 'YYYY-MM-DD';
+    $AllowedUsersToVote = contest_gal1ery_convert_for_html_output_without_nl2br($value3->AllowedUsersToVote);
     $ShareButtons = contest_gal1ery_convert_for_html_output_without_nl2br($value3->ShareButtons);
     $TextBeforeWpPageEntry = contest_gal1ery_convert_for_html_output_without_nl2br($value3->TextBeforeWpPageEntry);
     $TextAfterWpPageEntry = contest_gal1ery_convert_for_html_output_without_nl2br($value3->TextAfterWpPageEntry);
     $BackToGalleryButtonText = contest_gal1ery_convert_for_html_output_without_nl2br($value3->BackToGalleryButtonText);
     $TextDeactivatedEntry = contest_gal1ery_convert_for_html_output_without_nl2br($value3->TextDeactivatedEntry);
+    $FeVotingIconType = contest_gal1ery_convert_for_html_output_without_nl2br($value3->FeVotingIconType);
     $ShowBackToGalleryButton = ($value3->ShowBackToGalleryButton==1) ? 'checked' : '';
     $ShowBackToGalleriesButton = ($value3->ShowBackToGalleriesButton==1) ? 'checked' : '';
 }
@@ -786,6 +796,9 @@ if(intval($galleryDbVersion)>=14){
     $TextAfterEmailConfirmation = $optionsForGeneralIDsinceV14['pro']['TextAfterEmailConfirmation'];
     $TextAfterEmailConfirmation = contest_gal1ery_convert_for_html_output_without_nl2br($TextAfterEmailConfirmation);
 
+    $TextAfterPinConfirmation = $optionsForGeneralIDsinceV14['pro']['TextAfterPinConfirmation'];
+    $TextAfterPinConfirmation = contest_gal1ery_convert_for_html_output_without_nl2br($TextAfterPinConfirmation);
+
     $HideRegFormAfterLogin = $optionsForGeneralIDsinceV14['pro']['HideRegFormAfterLogin'];
     $HideRegFormAfterLogin = ($HideRegFormAfterLogin==1) ? 'checked' : '';
 
@@ -805,7 +818,14 @@ if(intval($galleryDbVersion)>=14){
     $RegMailSubject = contest_gal1ery_convert_for_html_output_without_nl2br($RegMailSubject);
 
     $TextEmailConfirmation = $optionsForGeneralIDsinceV14['pro']['TextEmailConfirmation'];
+    $TextPinConfirmation = $optionsForGeneralIDsinceV14['pro']['TextPinConfirmation'];
+    $RegPinSubject = $optionsForGeneralIDsinceV14['pro']['RegPinSubject'];
     $TextEmailConfirmation = contest_gal1ery_convert_for_html_output_without_nl2br($TextEmailConfirmation);
+    $TextPinConfirmation = contest_gal1ery_convert_for_html_output_without_nl2br($TextPinConfirmation);
+    if(empty($TextPinConfirmation)){// because of update 28.1.0, mighty be empty
+        $TextPinConfirmation = 'Complete your registration by using the PIN below: <br/><br/> $pin$';
+    }
+    $RegPinSubject = contest_gal1ery_convert_for_html_output_without_nl2br($RegPinSubject);
 
 }
 
@@ -819,8 +839,12 @@ $LostPasswordMailSubject = contest_gal1ery_convert_for_html_output_without_nl2br
 $LostPasswordMailConfirmation = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailConfirmation);
 $TextBeforeLoginForm = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->TextBeforeLoginForm);
 $TextBeforeRegFormBeforeLoggedIn = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->TextBeforeRegFormBeforeLoggedIn);
+$TextBeforePinFormBeforeLoggedIn = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->TextBeforePinFormBeforeLoggedIn);
 
 $PermanentTextWhenLoggedIn = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->PermanentTextWhenLoggedIn);
+$ConfirmExpiry = absint($registryAndLoginOptions->ConfirmExpiry);
+$PinExpiry = absint($registryAndLoginOptions->PinExpiry);
+$LoginAfterConfirm = ($registryAndLoginOptions->LoginAfterConfirm==1) ? "checked" : "";
 $EditProfileGroups = (!empty($registryAndLoginOptions->EditProfileGroups)) ? unserialize($registryAndLoginOptions->EditProfileGroups) : [];
 
 $AllowSortOptionsArray = explode(',',$AllowSortOptions);
@@ -949,7 +973,7 @@ if(empty($jsonOptions[$galeryID.'-u'])){
 
 // get JSON PRO values here
 // already converted for html output here (in check-language) if exists
-$VotesPerUserAllVotesUsedHtmlMessage = (!empty($translations['pro']['VotesPerUserAllVotesUsedHtmlMessage'])) ? $translations['pro']['VotesPerUserAllVotesUsedHtmlMessage'] : '';
+//$VotesPerUserAllVotesUsedHtmlMessage = (!empty($translations['pro']['VotesPerUserAllVotesUsedHtmlMessage'])) ? $translations['pro']['VotesPerUserAllVotesUsedHtmlMessage'] : '';
 
 $CommentsDateFormatNamePathSelectedValuesArray = [
 	'modern' => 'Modern way => format like Instagram: ascending seconds, minutes, hours, days, weeks, months and years',
@@ -1010,6 +1034,7 @@ if(strpos($bloginfo_wpurl,'www.')!==false){
     $cgYourDomainName = 'your domain @'.substr($bloginfo_wpurl,strpos($bloginfo_wpurl,'www.')+4,strlen($bloginfo_wpurl));
 }
 // get possible domain mail ending --- END
+$cgDomainErrorText = cgl1_domain_error_test_text();
 
 $deprecatedGalleryHoverDivText = '';
 $deprecatedGalleryHoverDisabledForever = '';
@@ -1026,8 +1051,13 @@ require_once(dirname(__FILE__) . "/../nav-menu.php");
 $cgPHPversionClient = phpversion();
 $cgGoogleSignInLibVersionClient = 'not installed';// is set because of normal version
 
-echo "<form id='cgEditOptionsForm' action='?page=".cg_get_version()."/index.php&edit_options=true&option_id=$galeryNR' method='post'  data-cg-submit-message='Options saved'  class='cg_load_backend_submit cg_load_backend_submit_save_data'>";
+$cg_edit_general = '';
 
+if(empty($_POST['cg_edit_translations']) && empty($_GET['cg_edit_translations']) && empty($_POST['cg_edit_ecommerce']) && empty($_GET['cg_edit_ecommerce'])){
+    $cg_edit_general = 'cg_edit_general';
+}
+
+echo "<form id='cgEditOptionsForm' action='?page=".cg_get_version()."/index.php&edit_options=true&option_id=$galeryNR' method='post'  data-cg-submit-message='Options saved'  class='cg_load_backend_submit cg_load_backend_submit_save_data $cg_edit_general'>";
 echo '<input type="hidden" name="cgDbVersion" value="'.$galleryDbVersion.'" >';
 
 if(!empty($_POST['cg_edit_translations']) || !empty($_GET['cg_edit_translations'])){

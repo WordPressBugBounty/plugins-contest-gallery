@@ -89,6 +89,7 @@ cgJsClassAdmin.gallery.load.changeViewByControl = function ($,$cgStep,$cgStart,i
             if(response=='newversion'){
 
                 var $cg_main_container = jQuery('#cg_main_container');
+                cgJsClassAdmin.index.vars.$cg_main_container = $cg_main_container;
                 cgJsClassAdmin.index.functions.cgMainContainerEmpty($cg_main_container);
                 cgJsClassAdmin.index.functions.newVersionReload();
 

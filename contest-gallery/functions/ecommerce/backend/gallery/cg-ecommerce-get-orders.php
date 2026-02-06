@@ -19,8 +19,10 @@ if(!function_exists('cg_ecommerce_get_orders')){
 
             $rows = $wpdb->get_var(
                 "
-		SELECT COUNT(*) AS NumberOfRows WHERE id = > 0 
-		FROM $tablename_ecommerce_orders"
+		SELECT COUNT(*) AS NumberOfRows
+		FROM $tablename_ecommerce_orders
+     WHERE id >= 0 
+		"
             );
 
         }else{

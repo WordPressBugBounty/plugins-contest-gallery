@@ -175,7 +175,7 @@ foreach($updateArray as $tableName => $tableData){
             if($columnType!=$columnTypeToCompare && !$isBothTinyInt){
                 if(!empty($isJustCheck)){
                     if($columnTypeToCompare=='int' && strpos($columnType,'int')!==false){// for new mysql 8 always simply int will be created not int(11) for example
-                    }else if($columnTypeToCompare=='bigint' && strpos($columnType,'bigint')!==false){// for new mysql 8 always simply bigint will be created not bigint(20) for example
+                    }elseif($columnTypeToCompare=='bigint' && strpos($columnType,'bigint')!==false){// for new mysql 8 always simply bigint will be created not bigint(20) for example
                     }else{
                         if(empty($columnsToRepairArray[$tableName])){$columnsToRepairArray[$tableName] = array();}
                         if(empty($columnsToRepairArray['hasColumnsToImprove'])){$columnsToRepairArray['hasColumnsToImprove'] = true;}

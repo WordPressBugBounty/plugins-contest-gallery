@@ -29,13 +29,14 @@ if(!function_exists('contest_gal1ery_order_summary')){
             'cg_registry_ajax_url' => admin_url( 'admin-ajax.php' )
         ));
 
-        wp_localize_script( 'cg_v10_js_cg_gallery', 'post_cg_ecommerce_download_sale_order_wordpress_ajax_script_function_name', array(
-            'cg_ecommerce_download_sale_order_ajax_url' => admin_url( 'admin-ajax.php' )
-        ));
-
 	    wp_localize_script( 'cg_v10_js_cg_gallery', 'post_cg_set_frontend_cookie_wordpress_ajax_script_function_name', array(
 		    'cg_set_frontend_cookie_ajax_url' => admin_url( 'admin-ajax.php' )
 	    ));
+
+        wp_localize_script('cg_v10_js_cg_gallery', 'CG1LAction', [
+            'nonce'   => wp_create_nonce('cg1l_action'),
+            'ajax_url' => admin_url('admin-ajax.php'),
+        ]);
 
 	    cg_ecommerce_include_javascript_ajax_frontend('cg_v10_js_cg_gallery','post_cg_ecommerce_payment_processing_wordpress_ajax_script_function_name',array('cg_ecommerce_payment_processing_ajax_url' => admin_url( 'admin-ajax.php' )));
 

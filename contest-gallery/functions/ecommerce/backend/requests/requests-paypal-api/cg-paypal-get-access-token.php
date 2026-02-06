@@ -47,7 +47,7 @@ if(!function_exists('cg_paypal_get_access_token')){
 
         if(!empty($result['access_token'])){
             $accessToken = $result['access_token'];
-        }else if(!empty($result['error'])){
+        }elseif(!empty($result['error'])){
             $accessToken = 'error';
         }else{// then must be empty result, happens if no internet
             $accessToken = 'no-internet';

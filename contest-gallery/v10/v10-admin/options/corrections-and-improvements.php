@@ -9,7 +9,7 @@ global $wpdb;
 
 if(isset($_GET['option_id'])){
 	$GalleryID = absint($_GET['option_id']);
-}else if(isset($_POST['option_id'])){
+}elseif(isset($_POST['option_id'])){
 	$GalleryID = absint($_POST['option_id']);
 }
 

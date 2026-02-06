@@ -22,7 +22,7 @@ $ContentUserVoteContent = contest_gal1ery_convert_for_html_output_without_nl2br(
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
         <p class='cg_view_options_rows_container_title'>Votes notification e-mail options for frontend user
-        <br><span class="cg_view_options_rows_container_title_note"><span class="cg_color_red">NOTE:</span> relating testing - e-mail where is send to should not contain $cgYourDomainName.<br>Many servers can not send to own domain.</span></span></p>
+        <br><span class="cg_view_options_rows_container_title_note">$cgDomainErrorText</span></p>
         $mailExceptionUserVoteMail
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_view_option_100_percent $cgProFalse  cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px" id="cgInformUserVoteContainer">
@@ -137,7 +137,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_inform_user_vote cg_border_top_none $cgProFalse'  id="wp-InformUserVoteContent-wrap-Container" >
                     <div class='cg_view_option_title cg_copyable'>
-                        <p>Mail content<br><span class="cg_view_option_title_note">Use <span style="font-weight:bold;">\$info$</span>
+                        <p>Email content<br><span class="cg_view_option_title_note">Use <span style="font-weight:bold;">\$info$</span>
                          in the editor if you like to display added number of votes in the interval and to attach URLs to files where votes were done.<br>Maximum 10 URLs will be displayed in a mail.<br>
                         <span class="$cgHideUrlEntryFieldsForMails"><span style="font-weight: bold;">NOTE:</span> Do not forget to setup URL where gallery shortcode is inserted (above).</span></span></p>
                     </div>

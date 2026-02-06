@@ -12,10 +12,10 @@ $invoiceFilePath = str_replace('WP_UPLOAD_DIR',$wp_upload_dir['basedir'],$Invoic
 
 $InvoicePartNumber = contest_gal1ery_convert_for_html_output_without_nl2br(sanitize_text_field($_POST['InvoicePartNumber']));
 $InvoiceNumber = $InvoicePartNumber;
-$InvoicePartInvoicer = contest_gal1ery_convert_for_html_output($_POST['InvoicePartInvoicer']);
-$InvoicePartRecipient = contest_gal1ery_convert_for_html_output($_POST['InvoicePartRecipient']);
-$InvoicePartInfo = contest_gal1ery_convert_for_html_output($_POST['InvoicePartInfo']);
-$InvoicePartNote = contest_gal1ery_convert_for_html_output($_POST['InvoicePartNote']);
+$InvoicePartInvoicer = contest_gal1ery_convert_for_html_output_without_nl2br($_POST['InvoicePartInvoicer']);
+$InvoicePartRecipient = contest_gal1ery_convert_for_html_output_without_nl2br($_POST['InvoicePartRecipient']);
+$InvoicePartInfo = contest_gal1ery_convert_for_html_output_without_nl2br($_POST['InvoicePartInfo']);
+$InvoicePartNote = contest_gal1ery_convert_for_html_output_without_nl2br($_POST['InvoicePartNote']);
 
 include(__DIR__ ."/../../../check-language-ecommerce.php");
 

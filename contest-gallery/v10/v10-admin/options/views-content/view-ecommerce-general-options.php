@@ -421,7 +421,7 @@ if(strpos($mailExceptionsGeneral,'Order confirmation e-mail') !== false OR strpo
 echo <<<HEREDOC
 <br>
 <p class="cg_view_options_rows_container_title ">
-        Order confirmation email options<br><span class="cg_view_options_rows_container_title_note"><span class="cg_color_red">NOTE:</span> relating testing - e-mail where is send to should not contain $cgYourDomainName.<br>Many servers can not send to own domain.</span></p>
+        Order confirmation email options<br><span class="cg_view_options_rows_container_title_note">$cgDomainErrorText</span></p>
 $mailExceptionOrderConfirmationl
 HEREDOC;
 
@@ -511,7 +511,7 @@ echo <<<HEREDOC
  <div class='cg_view_options_row'>
         <div class='cg_view_option cg_border_border_bottom_right_radius_8_px cg_border_border_bottom_left_radius_8_px  cg_border_radius_unset $cgProFalse $cg_disabled_send_order_confirmation_mail cg_view_option_full_width cg_border_top_none cg_send_order_confirmation_mail ' id="wp-OrderConfirmationMail-wrap-Container  cg_border_border_bottom_right_radius_8_px cg_border_border_bottom_left_radius_8_px" >
             <div class='cg_view_option_title'>
-                <p>Mail<br><span class="cg_view_option_title_note">Use <span style="font-weight:bold;">\$order$</span> so order summary data and "Order summary page URL
+                <p>Mail<br><span class="cg_view_option_title_note">Use <span style="font-weight:bold;" class="cg_tooltip cg_copy_param">\$order$</span> so order summary data and "Order summary page URL
 " (where downloads are also available if purchased) will be inserted in the mail</span>         
 </p>
             </div>

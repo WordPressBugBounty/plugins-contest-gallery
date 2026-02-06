@@ -15,7 +15,7 @@ if(!empty($_GET['confirmation_code'])){
 
         $GalleryID = $checkCgMail->GalleryID;
         $ConfirmationText = $wpdb->get_var( "SELECT ConfirmationText FROM $tablename_mail_confirmation WHERE GalleryID = '$GalleryID'" );
-        $ConfirmationText = contest_gal1ery_convert_for_html_output($ConfirmationText);
+        $ConfirmationText = contest_gal1ery_convert_for_html_output_without_nl2br($ConfirmationText);
 
         if($checkCgMail->Confirmed){
 

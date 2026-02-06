@@ -37,7 +37,7 @@ if(!empty($Order->InvoiceNumberChanged)){
 }
 
 $InvoicePartInvoicer = cg_change_invoice_br2nl_alt(contest_gal1ery_convert_for_html_output_without_nl2br($Order->InvoicePartInvoicer));
-$InvoicePartRecipient =cg_change_invoice_br2nl_alt( contest_gal1ery_convert_for_html_output($Order->InvoicePartRecipient));
+$InvoicePartRecipient =cg_change_invoice_br2nl_alt( contest_gal1ery_convert_for_html_output_without_nl2br($Order->InvoicePartRecipient));
 $InvoicePartInfo = cg_change_invoice_br2nl_alt(contest_gal1ery_convert_for_html_output_without_nl2br($Order->InvoicePartInfo));
 $InvoicePartMain = contest_gal1ery_convert_for_html_output_without_nl2br($Order->InvoicePartMain);
 $InvoicePartNote = cg_change_invoice_br2nl_alt(contest_gal1ery_convert_for_html_output_without_nl2br($Order->InvoicePartNote));

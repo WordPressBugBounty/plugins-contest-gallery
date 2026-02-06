@@ -207,7 +207,7 @@ if(!function_exists('cg_json_upload_form_info_data_files')){
                         //var_dump($row->Long_Text);
                         $arrayDataForImage[$row->pid][$row->f_input_id]['field-content'] = $row->Long_Text;
 
-                    }else if(!empty($row->InputDate) && $row->InputDate!='0000-00-00 00:00:00'){
+                    }elseif(!empty($row->InputDate) && $row->InputDate!='0000-00-00 00:00:00'){
 
                         $newDateTimeString = '';
 

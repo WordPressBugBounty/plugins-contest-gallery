@@ -321,6 +321,8 @@ cgJsClassAdmin.options.functions = {
         cgJsClassAdmin.options.functions.cgVoteMessageSuccessActiveCheck($);
         cgJsClassAdmin.options.functions.cgVoteMessageWarningActiveCheck($);
 
+        cgJsClassAdmin.options.functions.showHideShowCheckLoginVotingRelated($);
+
         // Check gallery
 
         if($("#ScaleSizesGalery").prop( "checked" )){
@@ -471,7 +473,9 @@ cgJsClassAdmin.options.functions = {
             reloadUrl = reloadUrl.replace(/&cgGoogleSignInLib=downloaded/gi,'');
             setTimeout(function () {
                 var $cgGoogleSignInLibDownloadMessage = $('#cgGoogleSignInLibDownloadMessage');
-                $cgGoogleSignInLibDownloadMessage.empty();
+                $cgGoogleSignInLibDownloadMessage
+                    .children(':not(.cg_message_close)')
+                    .remove();
                 $('#cgSignInOptionsTabLink').click();
                 $cgGoogleSignInLibDownloadMessage.append($('#cgGoogleSignInLibDownloadedOptionsHaveToBeConfigured').removeClass('cg_hide'));
                 $cgGoogleSignInLibDownloadMessage.removeClass('cg_hide');
@@ -521,13 +525,23 @@ cgJsClassAdmin.options.functions = {
             cgJsClassAdmin.options.functions.setCurrencyShippingFieldOnLoad();
         }
 
+        cgJsClassAdmin.options.functions.cgDomainErrorInputsCheck($);
+        cgJsClassAdmin.options.functions.cgCenterCheckboxRadioContainerContent($);
+
     },
     cgViewOptionCheck: function (element,e){
         var $ = jQuery;
 
         var $element = $(element);
-
+        //debugger
         //console.log('option will be checked');
+
+        //console.log('e.target');
+        //console.log($(e.target));
+
+        if($(e.target).is('select') || $(e.target).is('option')){
+            return;
+        }
 
         if($(e.target).is('a') && $(e.target).closest('a').length){
             return;
@@ -630,7 +644,7 @@ cgJsClassAdmin.options.functions = {
 
         if($element.find('.cg_view_option_input').length){
             var $input = $element.find('.cg_view_option_input input');
-            if($(e.target).attr('name')==$input.attr('name')){// then already focus directly in field
+            if($(e.target).attr('name')==$input.attr('name') || $input.attr('type')=='number'){// then already focus directly in field, or type of number has not to be focused
                 return;
             }
             if(cgJsClassAdmin.options.vars.focusedInputField){
@@ -1905,7 +1919,7 @@ cgJsClassAdmin.options.functions = {
         var $CheckIpUpload = $('#CheckIpUpload');
         var $CheckCookieUpload = $('#CheckCookieUpload');
         var $CheckLoginUpload = $('#CheckLoginUpload');
-        var $CheckGoogleUpload = $('#CheckGoogleUpload');
+        var $cgLimitUploadEntries = $('#cgLimitUploadEntries');
 
         if($CheckMethodUpload){
             $CheckMethodUpload.closest('.cg_view').find('.CheckMethodUpload').prop('checked',false).removeAttr('checked');// reset first
@@ -1913,45 +1927,31 @@ cgJsClassAdmin.options.functions = {
         }
 
         if($CheckIpUpload.prop('checked') || $CheckIpUpload.attr('checked')){
-            $('#CheckLoginUploadContainer').find('.cg_view_option_radio').removeClass('cg_view_option_checked');
-            $('#CheckCookieUploadContainer').find('.cg_view_option_radio').removeClass('cg_view_option_checked');
-            $('#CheckGoogleUploadContainer').find('.cg_view_option_radio').removeClass('cg_view_option_checked');
-            $('#UploadRequiresCookieMessageContainer').addClass('cg_disabled');
-            $('#RegUserUploadOnlyTextContainer').addClass('cg_disabled');
-            $('#GoogleSignInUserUploadOnlyTextContainer').addClass('cg_disabled');
-            $('#CheckCookieUpload').prop('checked',false);
-            $('#CheckLoginUpload').prop('checked',false);
-            $('#CheckGoogleUpload').prop('checked',false);
+            $cgLimitUploadEntries.find('#CheckLoginUploadContainer').find('.cg_view_option_radio').removeClass('cg_view_option_checked');
+            $cgLimitUploadEntries.find('#CheckCookieUploadContainer').find('.cg_view_option_radio').removeClass('cg_view_option_checked');
+            $cgLimitUploadEntries.find('#UploadRequiresCookieMessageContainer').addClass('cg_disabled');
+            $cgLimitUploadEntries.find('#RegUserUploadOnlyTextContainer').addClass('cg_disabled');
+            $cgLimitUploadEntries.find('#ShowPinFormUploadingContainer').addClass('cg_disabled');
+            $cgLimitUploadEntries.find('#CheckCookieUpload').prop('checked',false);
+            $cgLimitUploadEntries.find('#CheckLoginUpload').prop('checked',false);
         } else if($CheckCookieUpload.prop('checked') || $CheckCookieUpload.attr('checked')){
-            $('#UploadRequiresCookieMessageContainer').removeClass('cg_disabled');
-            $('#RegUserUploadOnlyTextContainer').addClass('cg_disabled');
-            $('#GoogleSignInUserUploadOnlyTextContainer').addClass('cg_disabled');
-            $('#CheckIpUploadContainer').find('.cg_view_option_radio').removeClass('cg_view_option_checked');
-            $('#CheckLoginUploadContainer').find('.cg_view_option_radio').removeClass('cg_view_option_checked');
-            $('#CheckGoogleUploadContainer').find('.cg_view_option_radio').removeClass('cg_view_option_checked');
-            $('#CheckIpUpload').prop('checked',false);
-            $('#CheckLoginUpload').prop('checked',false);
-            $('#CheckGoogleUpload').prop('checked',false);
+            $cgLimitUploadEntries.find('#UploadRequiresCookieMessageContainer').removeClass('cg_disabled');
+            $cgLimitUploadEntries.find('#RegUserUploadOnlyTextContainer').addClass('cg_disabled');
+            $cgLimitUploadEntries.find('#ShowPinFormUploadingContainer').addClass('cg_disabled');
+            $cgLimitUploadEntries.find('#CheckIpUploadContainer').find('.cg_view_option_radio').removeClass('cg_view_option_checked');
+            $cgLimitUploadEntries.find('#CheckLoginUploadContainer').find('.cg_view_option_radio').removeClass('cg_view_option_checked');
+            $cgLimitUploadEntries.find('#CheckIpUpload').prop('checked',false);
+            $cgLimitUploadEntries.find('#CheckLoginUpload').prop('checked',false);
+            $cgLimitUploadEntries.find('#CheckGoogleUpload').prop('checked',false);
         }  else if($CheckLoginUpload.prop('checked') || $CheckLoginUpload.attr('checked')){
-            $('#UploadRequiresCookieMessageContainer').addClass('cg_disabled');
-            $('#RegUserUploadOnlyTextContainer').removeClass('cg_disabled');
-            $('#GoogleSignInUserUploadOnlyTextContainer').addClass('cg_disabled');
-            $('#CheckIpUploadContainer').find('.cg_view_option_radio').removeClass('cg_view_option_checked');
-            $('#CheckCookieUploadContainer').find('.cg_view_option_radio').removeClass('cg_view_option_checked');
-            $('#CheckGoogleUploadContainer').find('.cg_view_option_radio').removeClass('cg_view_option_checked');
-            $('#CheckIpUpload').prop('checked',false);
-            $('#CheckCookieUpload').prop('checked',false);
-            $('#CheckGoogleUpload').prop('checked',false);
-        } else if($CheckGoogleUpload.prop('checked') || $CheckGoogleUpload.attr('checked')){
-            $('#CheckIpUploadContainer').find('.cg_view_option_radio').removeClass('cg_view_option_checked');
-            $('#CheckLoginUploadContainer').find('.cg_view_option_radio').removeClass('cg_view_option_checked');
-            $('#CheckCookieUploadContainer').find('.cg_view_option_radio').removeClass('cg_view_option_checked');
-            $('#UploadRequiresCookieMessageContainer').addClass('cg_disabled');
-            $('#RegUserUploadOnlyTextContainer').addClass('cg_disabled');
-            $('#GoogleSignInUserUploadOnlyTextContainer').removeClass('cg_disabled');
-            $('#CheckIpUpload').prop('checked',false);
-            $('#CheckCookieUpload').prop('checked',false);
-            $('#CheckLoginUpload').prop('checked',false);
+            $cgLimitUploadEntries.find('#UploadRequiresCookieMessageContainer').addClass('cg_disabled');
+            $cgLimitUploadEntries.find('#RegUserUploadOnlyTextContainer').removeClass('cg_disabled');
+            $cgLimitUploadEntries.find('#ShowPinFormUploadingContainer').removeClass('cg_disabled');
+            $cgLimitUploadEntries.find('#CheckIpUploadContainer').find('.cg_view_option_radio').removeClass('cg_view_option_checked');
+            $cgLimitUploadEntries.find('#CheckCookieUploadContainer').find('.cg_view_option_radio').removeClass('cg_view_option_checked');
+            $cgLimitUploadEntries.find('#CheckIpUpload').prop('checked',false);
+            $cgLimitUploadEntries.find('#CheckCookieUpload').prop('checked',false);
+            $cgLimitUploadEntries.find('#CheckGoogleUpload').prop('checked',false);
         }
 
     },
@@ -2243,5 +2243,41 @@ cgJsClassAdmin.options.functions = {
         }else{
             $cg_view.find('.cg_stripe_api .cg_view_option').addClass('cg_disabled');
         }
-    }
+    },
+    cgDomainErrorMethod: function ($el){
+        var ownDomain = window.location.hostname.replace(/^www\./, '');
+        var val = $el.val();
+        var $cg_view_options_row = $el.closest('.cg_view_options_row');
+        if (val.indexOf(ownDomain) !== -1) {
+            $cg_view_options_row.find('.cg_domain_error_test_text').removeClass('cg_hide').find('.cg_domain_error_url').text(val);
+        } else {
+            $cg_view_options_row.find('.cg_domain_error_test_text').addClass('cg_hide');
+        }
+    },
+    cgDomainErrorInputsCheck: function ($){
+        $('.cg_domain_error_input').each(function (){
+            cgJsClassAdmin.options.functions.cgDomainErrorMethod($(this));
+        });
+    },
+    cgCenterCheckboxRadioContainerContent: function ($){
+        $('.cg_view_option_100_percent .cg_view_option_checkbox').each(function (){
+            $(this).closest('.cg_view_option_100_percent').addClass('cg_view_option_checkbox_container');
+        });
+        $('.cg_view_option_100_percent .cg_view_option_radio').each(function (){
+            $(this).closest('.cg_view_option_100_percent').addClass('cg_view_option_radio_container');
+        });
+    },
+    showHideShowCheckLoginVotingRelated: function ($,$el) {
+        if(!$el){
+            $el = $('#CheckLogin');
+        }
+        if($el.prop("checked")){
+            $el.closest('#CheckMethodsContainer').find( "#ShowPinFormVotingContainer" ).removeClass('cg_disabled');
+            $el.closest('#CheckMethodsContainer').find( "#AllowedUsersToVoteContainer" ).removeClass('cg_disabled');
+        }
+        else{
+            $el.closest('#CheckMethodsContainer').find( "#ShowPinFormVotingContainer" ).addClass('cg_disabled');
+            $el.closest('#CheckMethodsContainer').find( "#AllowedUsersToVoteContainer" ).addClass('cg_disabled');
+        }
+    },
 };

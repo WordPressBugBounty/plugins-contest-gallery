@@ -37,12 +37,11 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_flex_flow_column cg_view_option_25_percent cg_border_top_none  cg_border_top_right_none cg_border_bottom_none' >
                     <div class='cg_view_option_title cg_view_option_title_full_width'>
-                        <p>Logic
-                             <br><span class="cg_view_option_title_note cg_ecommerce_option_logic_select_note" >&nbsp;<br><br></span>
+                        <p>Logic<span class="cg_view_option_title_note cg_ecommerce_option_logic_select_note" >&nbsp;<br><br></span>
                          </p>
                     </div>
                     <div class='cg_view_option_select'>
-                            <select id="InvoiceNumberLogicSelectTest" name="InvoiceNumberLogicSelectTest" class="cg_ecommerce_option_logic_select_new" style="width: 100%;"  >
+                            <select id="InvoiceNumberLogicSelectTest" name="InvoiceNumberLogicSelectTest" class="cg_ecommerce_option_logic_select_new" style="width: 100%; margin-top: 0;"  >
 $InvoiceNumberLogicSelectOptionsTest
                             </select>
                     </div>
@@ -57,12 +56,11 @@ $InvoiceNumberLogicSelectOptionsTest
                 </div>
                 <div class='cg_view_option cg_view_option_flex_flow_column cg_view_option_25_percent cg_border_top_none  cg_border_top_right_none cg_border_bottom_none cg_border_right_none' >
                     <div class='cg_view_option_title cg_view_option_title_full_width'>
-                        <p>Logic
-                             <br><span class="cg_view_option_title_note cg_ecommerce_option_logic_select_note" >&nbsp;<br><br></span>
+                        <p>Logic<span class="cg_view_option_title_note cg_ecommerce_option_logic_select_note" >&nbsp;<br><br></span>
                          </p>
                     </div>
                     <div class='cg_view_option_select'>
-                            <select id="InvoiceNumberLogicSelectLive" name="InvoiceNumberLogicSelectLive" class="cg_ecommerce_option_logic_select_new" style="width: 100%;"  >
+                            <select id="InvoiceNumberLogicSelectLive" name="InvoiceNumberLogicSelectLive" class="cg_ecommerce_option_logic_select_new" style="width: 100%;margin-top: 0;"  >
 $InvoiceNumberLogicSelectOptionsLive
                             </select>
                     </div>

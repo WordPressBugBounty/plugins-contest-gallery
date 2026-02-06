@@ -21,7 +21,7 @@ return array(
         'Long_Text' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019
         'ConfMailId' => array('COLUMN_TYPE' => 'INT(99)','DEFAULT' => 0),// Update ab 26.04.2020 afterwards
         'Checked' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 26.04.2020
-        'InputDate' => array('COLUMN_TYPE' => 'DateTime','DEFAULT' => '"0000-00-00 00:00:00"'),// Update ab 14.06.2020, better then null, for all mysql versions and windows server: 0000-00-00 00:00:00
+        'InputDate' => array('COLUMN_TYPE' => 'DateTime','DEFAULT' => '"1970-01-01 00:00:00"'),// Update ab 14.06.2020, better then null, for all mysql versions and windows server: 1970-01-01 00:00:00 is better then 0000-00-00 00:00:00 avoids zero date
         'Tstamp' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0)// Update ab 20.01.2023
     ),
     $tablename => array(
@@ -71,7 +71,8 @@ return array(
         'EcommerceEntry' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0),// Update ab 18.11.2022
         'WpPageEcommerce' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0),// Update ab 17.03.2023
         'OrderItem' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update ab 05.06.2024
-        'PdfPreview' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0)// Update ab 10.04.2025
+        'PdfPreview' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0),// Update ab 10.04.2025
+        'Mails' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0)// Update ab 22.10.2025
     ),
     $tablename_ip => array(
         'RatingS' => array('COLUMN_TYPE' => 'INT(1)','DEFAULT' => 0),// Update ab 11.06.2016
@@ -209,6 +210,10 @@ return array(
         'ShowBackToGalleriesButton' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 1),// Update ab 24.04.2025, DEFAULT 1 because of activated by default before
         'BackToGalleryButtonText' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 20.10.2022
         'TextDeactivatedEntry' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 20.10.2022
+        'ShowPinFormVoting' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 25.11.2025
+        'ShowPinFormUploading' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 25.11.2025
+        'AllowedUsersToVote' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 25.11.2025
+        'FeVotingIconType' => array('COLUMN_TYPE' => 'VARCHAR(20)','DEFAULT' => '""'),// Update ab 21.12.2025
     ),
     $tablename_form_input => array(
         'Show_Slider' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 01.01.2016
@@ -248,7 +253,10 @@ return array(
         'ForwardAfterRegText' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019
         'ForwardAfterLoginText' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019
         'TextEmailConfirmation' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019
+        'TextPinConfirmation' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.11.2025
+        'RegPinSubject' => array('COLUMN_TYPE' => 'VARCHAR(300)','DEFAULT' => '""'),// Update ab 23.11.2025
         'TextAfterEmailConfirmation' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019
+        'TextAfterPinConfirmation' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 24.11.2025
         'RegUserUploadOnlyText' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019
         'MinusVote' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 03.03.2019
         'SlideTransition' => array('COLUMN_TYPE' => 'VARCHAR(20)','DEFAULT' => '"translateX"'),// Update ab 26.04.2019
@@ -324,7 +332,11 @@ return array(
         'ReCaKey' => array('COLUMN_TYPE' => 'VARCHAR(200)','DEFAULT' => '""'),// Update ab 08.04.2019
         'ReCaLang' => array('COLUMN_TYPE' => 'VARCHAR(20)','DEFAULT' => '""'),// Update ab 08.04.2019
         'Active' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 1),// Update ab 23.06.2019 <<< Feld aber schon länger vorhanden
-        'GeneralID' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0)// Update ab 16.11.2021
+        'GeneralID' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 16.11.2021
+        'RowNumber' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update ab 01.10.2025
+        'ColNumber' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update ab 01.10.2025
+        'RowCols' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update ab 01.10.2025
+        'PinField' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 21.11.2025
     ),
     $tablename_mail_confirmation => array(
         'Content' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019
@@ -334,7 +346,11 @@ return array(
         'TextBeforeLoginForm' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 22.12.2021
         'EditProfileGroups' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 28.12.2021
         'TextBeforeRegFormBeforeLoggedIn' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 05.01.2022
-        'PermanentTextWhenLoggedIn' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""')// Update ab 05.01.2022
+        'TextBeforePinFormBeforeLoggedIn' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 24.11.2025
+        'PermanentTextWhenLoggedIn' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 05.01.2022
+        'ConfirmExpiry' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 172800),// Update ab 16.11.2025
+        'PinExpiry' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 900),// Update ab 24.11.2025
+        'LoginAfterConfirm' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0)// Update ab 16.11.2025
     ),
     $tablename_google_options => array(
 	    'TextBeforeGoogleSignInButton' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 22.12.2021

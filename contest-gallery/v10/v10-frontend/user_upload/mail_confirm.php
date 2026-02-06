@@ -19,12 +19,12 @@ if(!empty($checkWpMail)){
 if(empty($checkWpMail) AND $checkCGMailResult==0){
 
 
-        $Subject = contest_gal1ery_convert_for_html_output($mailConfSettings->Header);
+        $Subject = contest_gal1ery_convert_for_html_output_without_nl2br($mailConfSettings->Header);
         $Admin = $mailConfSettings->Admin;
         $Reply = $mailConfSettings->Reply;
         $cc = $mailConfSettings->CC;
         $bcc = $mailConfSettings->BCC;
-        $contentMail = contest_gal1ery_convert_for_html_output(@$mailConfSettings->Content);
+        $contentMail = contest_gal1ery_convert_for_html_output_without_nl2br(@$mailConfSettings->Content);
         $Msg = $contentMail;
 
         $url = $mailConfSettings->URL;

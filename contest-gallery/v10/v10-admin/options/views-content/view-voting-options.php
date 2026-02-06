@@ -12,8 +12,7 @@ echo <<<HEREDOC
                 <div class='cg_view_option_title'>
                     <p>Allow manipulate rating by administrator (you)<br>
                     <span class="cg_view_option_title_note">After activating and saving this option
-                    just go "Back to gallery" and you will
-                    be able to change rating of each file</span></p>
+                    just go "Back to gallery"<br>and you will be able to change rating of each file</span></p>
                 </div>
                 <div class='cg_view_option_checkbox'>
                     <input type="checkbox" name="Manipulate" id="Manipulate" $Manipulate>
@@ -64,10 +63,10 @@ echo <<<HEREDOC
                 </div>
             </div>
             <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_view_option_100_percent CheckMethodContainer cg_border_top_none $cgProFalse'   id="CheckLoginContainer"   >
+                <div class='cg_view_option cg_view_option_100_percent CheckMethodContainer cg_border_top_none cg_border_bottom_none $cgProFalse'   id="CheckLoginContainer"   >
                     <div class='cg_view_option_title'>
                         <p>Check if is registered user<br/><span class="cg_view_option_title_note">User have to be registered and logged in to be able to vote.<br>User WordPress ID based voting  – uncheatable, can not be manipulated.<br>User WordPress ID will be always tracked if user is logged in.
-                        <br><strong>NEW!</strong> WordPress account can be easy created via Google sign in button now!<br>Check "Login via Google" options.</span>
+                        </span>
                         </p>
                     </div>
                     <div class='cg_view_option_radio'>
@@ -75,11 +74,38 @@ echo <<<HEREDOC
                     </div>
                 </div>
             </div>
+            <div class='cg_view_options_row'>
+               <div class='cg_view_option cg_view_option_100_percent cg_border_top_none $cgProFalse' id="ShowPinFormVotingContainer" >
+                    <div class='cg_view_option_title'>
+                        <p>Show user-friendly PIN-based email verification form for unregistered users<br/>
+                            <span class="cg_view_option_title_note">
+                                When a not-logged-in user clicks on voting, the [cg_users_pin] form appears.<br/>
+                                The user can enter an email address and receive a PIN.<br/>
+                                After entering the PIN, the <b>user can start voting without reloading the page.</b>
+                            </span>
+                        </p>
+                    </div>
+                    <div class='cg_view_option_checkbox'>
+                        <input type="checkbox" name="ShowPinFormVoting" id="ShowPinFormVoting" $ShowPinFormVoting>
+                    </div>
+                </div>
+            </div>
+            <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse' id="AllowedUsersToVoteContainer">
+                    <div class='cg_view_option_title '>
+                        <p>Jury (allowed voters)<br><span class="cg_view_option_title_note">Add the email addresses of users who are allowed to vote.<br>Users must be registered and logged in.<br>Setting multiple voters example: mail1@example.com; mail2@example.com; mail3@example.com</span></p>
+                    </div>
+                    <div class='cg_view_option_textarea' >
+                        <textarea type="text" name="AllowedUsersToVote" rows="7" style="width:100%;" class="AllowedUsersToVote" placeholder="mail1@example.com;mail2@example.com;mail3@example.com"  >$AllowedUsersToVote</textarea>
+                    </div>
+                </div>
+            </div>
     </div>
 HEREDOC;
 
-echo <<<HEREDOC
+$VotesPerUserAllVotesUsedHtmlMessage = (!empty($jsonOptions[$GalleryID]['pro']['VotesPerUserAllVotesUsedHtmlMessage'])) ? contest_gal1ery_convert_for_html_output_without_nl2br($jsonOptions[$GalleryID]['pro']['VotesPerUserAllVotesUsedHtmlMessage']) : '';
 
+echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
         <p class='cg_view_options_rows_container_title'>Limit votes</p>
             <div class='cg_view_options_row'>
@@ -132,7 +158,7 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_100_percent cg_border_top_none $cgProFalse' id="VoteMessageSuccessActiveContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Show HTML message after every successful vote<span class="cg_view_option_title_note"><br>If <strong>voting limitation is not reached</strong> like "vote/votes per category, one vote per entry, votes per user" then HTML message appears.<br>"Show thank you for voting message after voting" message will be not used then.</span></p>
+                        <p>Show HTML message after every successful vote<span class="cg_view_option_title_note"><br>If <strong>voting limitation is not reached</strong> like "vote/votes per category,<br>one vote per entry, votes per user" then HTML message appears.<br>"Show thank you for voting message after voting" message will be not used then.</span></p>
                     </div>
                     <div class='cg_view_option_checkbox'>
                         <input type="checkbox" name="VoteMessageSuccessActive"  id="VoteMessageSuccessActive" $VoteMessageSuccessActive>
@@ -152,7 +178,7 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_100_percent cg_border_top_none $cgProFalse' id="VoteMessageWarningActiveContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Show HTML message if voting limitation reached<span class="cg_view_option_title_note"><br>If <strong>voting limitation is reached</strong> like "vote/votes per category, one vote per entry, votes per user" then HTML message appears.<br><strong>If deactivated corresponding translation messages for each case will be shown.</strong></span></p>
+                        <p>Show HTML message if voting limitation reached<span class="cg_view_option_title_note"><br>If <strong>voting limitation is reached</strong> like "vote/votes per category,<br>one vote per entry, votes per user" then HTML message appears.<br><strong>If deactivated corresponding translation messages for each case will be shown.</strong></span></p>
                     </div>
                     <div class='cg_view_option_checkbox'>
                         <input type="checkbox" name="VoteMessageWarningActive"  id="VoteMessageWarningActive" $VoteMessageWarningActive>
@@ -211,10 +237,39 @@ $AllowRating3Select = <<<HEREDOC
     </select>
 HEREDOC;
 
-echo <<<HEREDOC
+$FeVotingIconTypeStar = (empty($FeVotingIconType) || $FeVotingIconType == 'star') ? 'checked' : '';
+$FeVotingIconTypeHeart = ($FeVotingIconType == 'heart') ? 'checked' : '';
 
+echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
         <p class='cg_view_options_rows_container_title'>Voting configuration</p>
+            <div class='cg_view_options_row'  >
+                    <div class='cg_view_option cg_view_option_full_width cg_border_bottom_none'>
+                        <div class='cg_view_option_title'>
+                            <p>Voting icon style</p>
+                        </div>
+                        <div class='cg_view_option_radio_multiple'>
+                            <div class='cg_view_option_radio_multiple_container'>
+                                <div class='cg_view_option_radio_multiple_title'>
+                                    Star
+                                </div>
+                                <div class='cg_view_option_radio_multiple_input'>
+                                    <input type="radio" name="FeVotingIconType" class="FeControlsStyleWhiteRegistry cg_view_option_radio_multiple_input_field" $FeVotingIconTypeStar value="star"/>
+                                </div>
+                                <div class='cg_backend_star_on cg_options_show'></div>
+                            </div>
+                            <div class='cg_view_option_radio_multiple_container'>
+                                <div class='cg_view_option_radio_multiple_title'>
+                                    Heart
+                                </div>
+                                <div class='cg_view_option_radio_multiple_input'>
+                                    <input type="radio" name="FeVotingIconType" class="FeControlsStyleBlackRegistry cg_view_option_radio_multiple_input_field" $FeVotingIconTypeHeart value="heart">
+                                </div>
+                                <div class='cg_backend_star_on cg_options_show cgl_heart'></div>
+                            </div>
+                    </div>
+                </div>
+            </div>
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_50_percent cg_border_right_none cg_border_border_top_right_radius_unset' id="AllowRating2Container" >
                     <div class='cg_view_option_title'>
@@ -352,7 +407,7 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_100_percent cg_border_top_none $cgProFalse' id="VoteNotOwnImageContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Voting of self-added file is not allowed<br/><span class="cg_view_option_title_note">User can not vote own uploaded file. Works only for voting recognition methods:<br>- Check by IP (files added since version 10.9.3.7)<br> - Check by registration</span></p>
+                        <p>Voting on self-added files is not allowed<br/><span class="cg_view_option_title_note">Users can't vote on their own uploads.<br>Works only for voting recognition methods:<br>- Check by IP (files added since version 10.9.3.7)<br> - Check by registration</span></p>
                     </div>
                     <div class='cg_view_option_checkbox'>
                         <input type="checkbox" name="VoteNotOwnImage"  id="VoteNotOwnImage" $VoteNotOwnImage>
@@ -390,10 +445,10 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_border_border_bottom_left_radius_8_px cg_view_option_half_width cg_border_top_right_none $cgProFalse' id="VotesInTimeHoursMinutesContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Votes in time interval per user interval<br/><span class="cg_view_option_title_note">(Hours:Minutes)</span></p>
+                        <p>Votes in time interval per user interval<br/><span class="cg_view_option_title_note">(Hours : Minutes)</span></p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="number" id="cg_date_hours_vote_interval" class="cg_date_hours_unlimited" name="cg_date_hours_vote_interval" placeholder="0" min="-1" max="1000" value="$cg_date_hours_vote_interval" maxlength="3" style="width:60px;" >
+                        <input type="number" id="cg_date_hours_vote_interval" class="cg_date_hours_unlimited" name="cg_date_hours_vote_interval" placeholder="0" min="-1" max="1000" value="$cg_date_hours_vote_interval" maxlength="3" style="width:60px;margin-right: 15px;" >
                         <input type="number" id="cg_date_mins_vote_interval" class="cg_date_mins" name="cg_date_mins_vote_interval" placeholder="00" 
        min="-1" max="60" value="$cg_date_mins_vote_interval" style="width:60px;" >
                     </div>

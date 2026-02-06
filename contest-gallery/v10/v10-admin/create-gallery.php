@@ -76,12 +76,16 @@ if(!empty($_POST['cg_create'])){
     $ForwardAfterRegText = 'Thank you for your registration<br/>Check your email account to confirm your email and complete the registration. If you don\'t see any message then plz check also the spam folder.';
     $ForwardAfterLoginText = 'You are now logged in. Have fun with contest.';
     $TextEmailConfirmation = 'Complete your registration by clicking on the link below: <br/><br/> $regurl$';
-    $TextAfterEmailConfirmation = 'Thank you for your registration. You are now able to login and to take part on the contest.';
+    $TextPinConfirmation = 'Complete your registration by clicking on the PIN below: <br/><br/> $pin$';
+    $RegPinSubject = 'Your Verification PIN: $pin$';
+    $TextAfterEmailConfirmation = 'Email confirmed — you can now participate in the contest.';
+    $TextAfterPinConfirmation = 'PIN verified — you can now participate in the contest.';
     $RegUserUploadOnlyText = 'You have to be registered and logged in to add an entry.';
     // Determine email of blog admin and variables for email table
     $RegMailAddressor = trim(get_option('blogname'));
     $RegMailReply = get_option('admin_email');
     $RegMailSubject = 'Please complete your registration';
+    $FeVotingIconType = 'star';
 
     include('json-values.php');
 
@@ -205,7 +209,8 @@ if(!empty($_POST['cg_create'])){
                     CopyOriginalFileLink,ForwardOriginalFile,ShareButtons,
                     TextBeforeWpPageEntry,TextAfterWpPageEntry,ForwardToWpPageEntry,ForwardToWpPageEntryInNewTab,
                     ShowBackToGalleryButton,BackToGalleryButtonText,TextDeactivatedEntry,
-                    ShowBackToGalleriesButton
+                    ShowBackToGalleriesButton,ShowPinFormVoting,ShowPinFormUploading,AllowedUsersToVote,
+                    FeVotingIconType
 					 )
 					VALUES ( %s,%d,%s,%s,
 					%s,%s,%s,%s,%s,%s,
@@ -221,7 +226,8 @@ if(!empty($_POST['cg_create'])){
 					%d,%d,%s,
 					%s,%s,%d,%d,
 					%d,%s,%s,
-					%d
+					%d,%d,%d,%s,
+					%s
 					)
 				",
         '',$nextIDgallery,$CommentsAlignGallery,$RatingAlignGallery,
@@ -238,7 +244,8 @@ if(!empty($_POST['cg_create'])){
         $CopyOriginalFileLink,$ForwardOriginalFile,$ShareButtons,
         $TextBeforeWpPageEntry,$TextAfterWpPageEntry,$ForwardToWpPageEntry,$ForwardToWpPageEntryInNewTab,
         $ShowBackToGalleryButton,$BackToGalleryButtonText,$TextDeactivatedEntry,
-        $ShowBackToGalleriesButton
+        $ShowBackToGalleriesButton,$ShowPinFormVoting,$ShowPinFormUploading,$AllowedUsersToVote,
+        $FeVotingIconType
     ) );
 
     // $wpdb->insert( $tablename_options_input, array( 'id' => '', 'Forward' => 0, 'Forward_URL' => '', 'Confirmation_Text' => "$confirmationText" ));
@@ -579,7 +586,7 @@ if(!empty($_POST['cg_create'])){
 					( id, GalleryID, ForwardAfterRegUrl, ForwardAfterRegText,
 					ForwardAfterLoginUrlCheck,ForwardAfterLoginUrl,
 					ForwardAfterLoginTextCheck,ForwardAfterLoginText,
-					TextEmailConfirmation,TextAfterEmailConfirmation,
+					TextEmailConfirmation,TextPinConfirmation,RegPinSubject,TextAfterEmailConfirmation,TextAfterPinConfirmation,
 					RegMailAddressor,RegMailReply,RegMailSubject,RegUserUploadOnly,RegUserUploadOnlyText,
 					Manipulate,ShowOther,CatWidget,Search,
 					GalleryUpload,GalleryUploadTextBefore,GalleryUploadTextAfter,GalleryUploadConfirmationText,ShowNickname,MinusVote,SlideTransition,
@@ -599,7 +606,7 @@ if(!empty($_POST['cg_create'])){
 					VALUES (%s,%d,%s,%s,
 					%d,%s,
 					%d,%s,
-					%s,%s,
+					%s,%s,%s,%s,%s,
 					%s,%s,%s,%d,%s,
 					%d,%d,%d,%d,
 					%d,%s,%s,%s,%d,%d,%s,
@@ -620,7 +627,7 @@ if(!empty($_POST['cg_create'])){
             '',$nextIDgallery,$ForwardAfterRegUrl,$ForwardAfterRegText,
             $ForwardAfterLoginUrlCheck,$ForwardAfterLoginUrl,
             $ForwardAfterLoginTextCheck,$ForwardAfterLoginText,
-            $TextEmailConfirmation,$TextAfterEmailConfirmation,
+            $TextEmailConfirmation,$TextPinConfirmation,$RegPinSubject,$TextAfterEmailConfirmation,$TextAfterPinConfirmation,
             $RegMailAddressor,$RegMailReply,$RegMailSubject,$RegUserUploadOnly,$RegUserUploadOnlyText,
             $Manipulate,$ShowOther,$CatWidget,$Search,
             $GalleryUpload,$GalleryUploadTextBefore,$GalleryUploadTextAfter,$GalleryUploadConfirmationText,$ShowNickname,$MinusVote,$SlideTransition,

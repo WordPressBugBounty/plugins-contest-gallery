@@ -13,13 +13,17 @@ if(!function_exists('cg_load_galleries_shortcode')){
 	    $galleriesIds = [];
 	    $is_from_single_view_for_cg_galleries = 0;
 	    $hasGalleriesIds = false;
+        $search = ['”', '“', '„', '"', "'"];
 	    if(!empty($atts['ids'])){
+            $atts['ids'] = str_replace($search, '', $atts['ids']);
 		    $galleriesIds = explode(',',$atts['ids']);
 		    $hasGalleriesIds = true;
-	    }else if(!empty($atts['id'])){
+	    }elseif(!empty($atts['id'])){
+            $atts['id'] = str_replace($search, '', $atts['id']);
 		    $galleriesIds = explode(',',$atts['id']);
 		    $hasGalleriesIds = true;
 	    }
+        $galleriesIds = array_map('trim', $galleriesIds);
 
 	    if(!empty($_GET['cg_gallery_id'])){
 		    $galeryID = intval($_GET['cg_gallery_id']);

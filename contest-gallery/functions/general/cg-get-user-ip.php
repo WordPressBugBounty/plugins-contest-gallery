@@ -69,7 +69,7 @@ if(!function_exists('cg_get_user_ip')){
         // good explanation for many variants: https://stackoverflow.com/questions/3003145/how-to-get-the-client-ip-address-in-php#answer-41382472
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
             $userIP = $_SERVER['HTTP_CLIENT_IP'];
-        } else if (!empty($_SERVER['REMOTE_ADDR'])) {// started with REMOTE_ADDR as second long time ago, localhost is often ONLY REMOTE_ADDR!!!
+        } elseif (!empty($_SERVER['REMOTE_ADDR'])) {// started with REMOTE_ADDR as second long time ago, localhost is often ONLY REMOTE_ADDR!!!
             $userIP = $_SERVER['REMOTE_ADDR'];
             if(cg_check_if_ip_is_private($userIP)){// IF is private then try to get another one, if exists!
 
@@ -81,11 +81,11 @@ if(!function_exists('cg_get_user_ip')){
                     // good explanation for many variants: https://stackoverflow.com/questions/3003145/how-to-get-the-client-ip-address-in-php#answer-41382472
                     if (!empty($_SERVER['REMOTE_HOST'])) {
                         $userIP = $_SERVER['REMOTE_HOST'];
-                    }else if (!empty($_SERVER['HTTP_X_CLUSTER_CLIENT_IP'])) {
+                    }elseif (!empty($_SERVER['HTTP_X_CLUSTER_CLIENT_IP'])) {
                         $userIP = $_SERVER['HTTP_X_CLUSTER_CLIENT_IP'];
-                    }else if (!empty($_SERVER['HTTP_FORWARDED_FOR'])) {
+                    }elseif (!empty($_SERVER['HTTP_FORWARDED_FOR'])) {
                         $userIP = $_SERVER['HTTP_FORWARDED_FOR'];
-                    }else if (!empty($_SERVER['HTTP_FORWARDED'])) {
+                    }elseif (!empty($_SERVER['HTTP_FORWARDED'])) {
                         $userIP = $_SERVER['HTTP_FORWARDED'];
                     }/*else{!IMPORTANT, NO unknown here! At the end, at least REMOTE_ADDR see above $userIP, has to be given to customer if exists, and it will be a private then.
                         $userIP = 'unknown';
@@ -94,7 +94,7 @@ if(!function_exists('cg_get_user_ip')){
                 }
 
             }
-        }else if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        }elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $userIP = $_SERVER['HTTP_X_FORWARDED_FOR'];
         }
         else{
@@ -103,11 +103,11 @@ if(!function_exists('cg_get_user_ip')){
             // good explanation for many variants: https://stackoverflow.com/questions/3003145/how-to-get-the-client-ip-address-in-php#answer-41382472
             if (!empty($_SERVER['REMOTE_HOST'])) {
                 $userIP = $_SERVER['REMOTE_HOST'];
-            }else if (!empty($_SERVER['HTTP_X_CLUSTER_CLIENT_IP'])) {
+            }elseif (!empty($_SERVER['HTTP_X_CLUSTER_CLIENT_IP'])) {
                 $userIP = $_SERVER['HTTP_X_CLUSTER_CLIENT_IP'];
-            }else if (!empty($_SERVER['HTTP_FORWARDED_FOR'])) {
+            }elseif (!empty($_SERVER['HTTP_FORWARDED_FOR'])) {
                 $userIP = $_SERVER['HTTP_FORWARDED_FOR'];
-            }else if (!empty($_SERVER['HTTP_FORWARDED'])) {
+            }elseif (!empty($_SERVER['HTTP_FORWARDED'])) {
                 $userIP = $_SERVER['HTTP_FORWARDED'];
             }else{
                 $userIP = 'unknown';

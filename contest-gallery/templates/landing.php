@@ -12,6 +12,7 @@ global $cgWpPageParent;
 global $cgId;
 global $cgOptionsArray;
 global $cgGalleryIDuser;
+global $isCGalleries;
 $blogname = get_option('blogname');
 $postId = $post->ID;
 $permalink = get_permalink($postId);
@@ -36,11 +37,11 @@ if(!empty($cgWpPageParent)){
     $shortCodeType = 'cg_gallery';
     if($options->WpPageParentUser==$cgWpPageParent){
         $shortCodeType = 'cg_gallery_user';
-    }else if($options->WpPageParentNoVoting==$cgWpPageParent){
+    }elseif($options->WpPageParentNoVoting==$cgWpPageParent){
         $shortCodeType = 'cg_gallery_no_voting';
-    }else if($options->WpPageParentWinner==$cgWpPageParent){
+    }elseif($options->WpPageParentWinner==$cgWpPageParent){
         $shortCodeType = 'cg_gallery_winner';
-    }else if($options->WpPageParentEcommerce==$cgWpPageParent){
+    }elseif($options->WpPageParentEcommerce==$cgWpPageParent){
         $shortCodeType = 'cg_gallery_ecommerce';
     }
     if(!empty($isCgParentPage)){
@@ -77,8 +78,8 @@ if(!empty($cgWpPageParent)){
                 $entry = $wpdb->get_row("SELECT Long_Text, Short_Text, Field_Type FROM $tablenameentries WHERE pid = '$cgId' AND f_input_id=$IsForWpPageDescriptionInputId");
                 if(!empty($entry) && $entry->Field_Type=='text-f'){
                     $WpPageDescription = contest_gal1ery_convert_for_html_output_without_nl2br($entry->Short_Text);
-                }else if(!empty($entry) && $entry->Field_Type=='comment-f'){
-                    $WpPageDescription = contest_gal1ery_convert_for_html_output($entry->Long_Text);
+                }elseif(!empty($entry) && $entry->Field_Type=='comment-f'){
+                    $WpPageDescription = contest_gal1ery_convert_for_html_output_without_nl2br($entry->Long_Text);
                 }
             }
 
@@ -100,9 +101,13 @@ if(!empty($cgWpPageParent)){
 $options = (!empty($cgOptionsArray[$cgGalleryIDuser])) ? $cgOptionsArray[$cgGalleryIDuser] : $cgOptionsArray;
 
 $additionalCss = '';
+$HeaderWpPageEntry = '';
 if(!empty($cgEntryId)){
     if(isset($options['visual']['AdditionalCssEntryLandingPage'])){// only json option, might be not set if options were never saved before
         $additionalCss = $options['visual']['AdditionalCssEntryLandingPage'];
+    }
+    if(!empty($options['visual']['HeaderWpPageEntry'])){// only json option, might be not set if options were never saved before
+        $HeaderWpPageEntry = contest_gal1ery_convert_for_html_header_output($options['visual']['HeaderWpPageEntry']);
     }
 }else{
     if(isset($options['visual']['AdditionalCssGalleryPage'])){// only json option, might be not set if options were never saved before
@@ -116,10 +121,25 @@ $metaRobots = '';
 
 if(empty($galleriesOptions['GalleriesPagesNoIndex']) && empty($galleriesOptions['GalleriesPagesNoFollow'])){
 	$metaRobots = '<meta name="robots" content="noindex, nofollow">'."\r\n";
-}else if(empty($galleriesOptions['GalleriesPagesNoIndex']) && !empty($galleriesOptions['GalleriesPagesNoFollow'])){
+}elseif(empty($galleriesOptions['GalleriesPagesNoIndex']) && !empty($galleriesOptions['GalleriesPagesNoFollow'])){
 	$metaRobots = '<meta name="robots" content="noindex">'."\r\n";
-}else if(!empty($galleriesOptions['GalleriesPagesNoIndex']) && empty($galleriesOptions['GalleriesPagesNoFollow'])){
+}elseif(!empty($galleriesOptions['GalleriesPagesNoIndex']) && empty($galleriesOptions['GalleriesPagesNoFollow'])){
 	$metaRobots = '<meta name="robots" content="nofollow">'."\r\n";
+}
+
+$HeaderWpPageParent = '';
+if(!empty($isCgParentPage)){
+    if(!empty($options['visual']['HeaderWpPageParent'])){// only json option, might be not set if options were never saved before
+        $HeaderWpPageParent = contest_gal1ery_convert_for_html_header_output($options['visual']['HeaderWpPageParent']);
+    }
+}
+
+
+$HeaderWpPageGalleries = '';
+if(!empty($isCGalleries)){
+    if(!empty($galleriesOptions['HeaderWpPageGalleries'])){// only json option, might be not set if options were never saved before
+        $HeaderWpPageGalleries = contest_gal1ery_convert_for_html_header_output($galleriesOptions['HeaderWpPageGalleries']);
+    }
 }
 
 ?>
@@ -144,6 +164,9 @@ if(empty($galleriesOptions['GalleriesPagesNoIndex']) && empty($galleriesOptions[
     <?php
 
         echo $metaRobots;
+        echo $HeaderWpPageGalleries;
+        echo $HeaderWpPageParent;
+        echo $HeaderWpPageEntry;
 
     if(class_exists( 'QM_Plugin' )){
         ?>
@@ -212,7 +235,7 @@ if(empty($galleriesOptions['GalleriesPagesNoIndex']) && empty($galleriesOptions[
                 }
                 echo '<meta property="og:image" content="'.$imgSrcLarge[0].'">'."\r\n";
             }
-        }else if(cg_is_alternative_file_type_video($ImgType)){
+        }elseif(cg_is_alternative_file_type_video($ImgType)){
             $fileData = wp_get_attachment_metadata($rowObject->WpUpload);
             $videoHeight = (!empty($fileData['height'])) ? $fileData['height'] : 0;
             $videoWidth = (!empty($fileData['width'])) ? $fileData['width'] : 0;
@@ -227,19 +250,19 @@ if(empty($galleriesOptions['GalleriesPagesNoIndex']) && empty($galleriesOptions[
             $imgToShow = '';
             include (__DIR__.'/../base64-file-types-data.php');
             if($ImgType=='pdf'){$imgToShow = $pdf; }
-            else if($ImgType=='zip'){$imgToShow = $zip;}
-            else if($ImgType=='txt'){$imgToShow = $txt;}
-            else if($ImgType=='doc'){$imgToShow = $doc;}
-            else if($ImgType=='docx'){$imgToShow = $docx;}
-            else if($ImgType=='xls'){$imgToShow = $xls;}
-            else if($ImgType=='xlsx'){$imgToShow = $xlsx;}
-            else if($ImgType=='csv'){$imgToShow = $csv;}
-            else if($ImgType=='mp3'){$imgToShow = $mp3;}
-            else if($ImgType=='m4a'){$imgToShow = $m4a;}
-            else if($ImgType=='ogg'){$imgToShow = $ogg;}
-            else if($ImgType=='wav'){$imgToShow = $wav;}
-            else if($ImgType=='ppt'){$imgToShow = $ppt;}
-            else if($ImgType=='pptx'){$imgToShow = $pptx;}
+            elseif($ImgType=='zip'){$imgToShow = $zip;}
+            elseif($ImgType=='txt'){$imgToShow = $txt;}
+            elseif($ImgType=='doc'){$imgToShow = $doc;}
+            elseif($ImgType=='docx'){$imgToShow = $docx;}
+            elseif($ImgType=='xls'){$imgToShow = $xls;}
+            elseif($ImgType=='xlsx'){$imgToShow = $xlsx;}
+            elseif($ImgType=='csv'){$imgToShow = $csv;}
+            elseif($ImgType=='mp3'){$imgToShow = $mp3;}
+            elseif($ImgType=='m4a'){$imgToShow = $m4a;}
+            elseif($ImgType=='ogg'){$imgToShow = $ogg;}
+            elseif($ImgType=='wav'){$imgToShow = $wav;}
+            elseif($ImgType=='ppt'){$imgToShow = $ppt;}
+            elseif($ImgType=='pptx'){$imgToShow = $pptx;}
             echo '<meta property="og:image" content="'.$imgToShow.'">'."\r\n";
         }
     }

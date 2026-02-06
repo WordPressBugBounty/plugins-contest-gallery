@@ -611,8 +611,8 @@ jQuery(document).ready(function ($) {
 
         if(!cgJsClassAdmin.index.vars.isSellConfTinyMCEInitialized){
             $cgSellContainer.find('.cg_view_option_textarea').each(function (){
-                console.log('initializeEditor');
-                console.log($(this).attr('id'));
+                //console.log('initializeEditor');
+                //console.log($(this).attr('id'));
                 var id = $(this).attr('id');
                 cgJsClassAdmin.index.functions.initializeEditor(id);
             });

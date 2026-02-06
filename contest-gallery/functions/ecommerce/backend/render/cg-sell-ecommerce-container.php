@@ -20,19 +20,19 @@ if(!function_exists('cg_download_and_service_keys_files_will_be_deleted')){
 
 if(!function_exists('cg_sell_ecommerce_entry_can_not_be_deleted')){
 	function cg_sell_ecommerce_entry_can_not_be_deleted(){
-		echo "<div id='cgEcommerceEntryCanNotBeDeleted' class='cg_hide cg_height_auto cg_backend_action_container   cg_overflow_y_hidden' style='z-index: 9999999;width: fit-content;'><span id='cgEcommerceEntryCanNotBeDeletedClose' class='cg_message_close '></span><p style='margin-top:30px;'>Entries which are activated for selling can not be deleted.<br>Deactivate entries for sale in \"Sell settings\" area first.</p></div>";
+		echo "<div id='cgEcommerceEntryCanNotBeDeleted' class='cg_hide cg_height_auto cg_backend_action_container   cg_overflow_y_hidden' style='z-index: 9999999;width: fit-content;'><span id='cgEcommerceEntryCanNotBeDeletedClose' class='cg_message_close '></span><p style='margin-top:30px;'>Entries which are activated for selling can not be deleted.<br>Deactivate entries for sale in \"Sales settings\" area first.</p></div>";
 	}
 }
 
 if(!function_exists('cg_sell_ecommerce_entry_can_not_be_moved')){
 	function cg_sell_ecommerce_entry_can_not_be_moved(){
-		echo "<div id='cgEcommerceEntryCanNotBeMoved' class='cg_hide cg_height_auto cg_backend_action_container   cg_overflow_y_hidden' style='z-index: 9999999;width: fit-content;'><span id='cgEcommerceEntryCanNotBeDeletedClose' class='cg_message_close '></span><p style='margin-top:30px;'>Entries which are activated for selling can not be moved.<br>Deactivate entries for sale in \"Sell settings\" area first.</p></div>";
+		echo "<div id='cgEcommerceEntryCanNotBeMoved' class='cg_hide cg_height_auto cg_backend_action_container   cg_overflow_y_hidden' style='z-index: 9999999;width: fit-content;'><span id='cgEcommerceEntryCanNotBeDeletedClose' class='cg_message_close '></span><p style='margin-top:30px;'>Entries which are activated for selling can not be moved.<br>Deactivate entries for sale in \"Sales settings\" area first.</p></div>";
 	}
 }
 
 if(!function_exists('cg_sell_ecommerce_download_can_not_be_removed')){
 	function cg_sell_ecommerce_download_can_not_be_removed(){
-		echo "<div id='cgEcommerceFileCanNotBeDeleted' class='cg_hide cg_height_auto cg_backend_action_container  cg_backend_action_container_high_overlay cg_overflow_y_hidden' style='z-index: 9999999;width: fit-content;'><span id='cgEcommerceFileCanNotBeDeletedClose' class='cg_message_close cg_high_overlay'></span><p style='margin-top:30px;'>Files which are set as download for selling can't be removed.<br>Uncheck file as download for selling in \"Sell settings\" area of that entry, or deactivate the whole entry for selling, first.</p></div>";
+		echo "<div id='cgEcommerceFileCanNotBeDeleted' class='cg_hide cg_height_auto cg_backend_action_container  cg_backend_action_container_high_overlay cg_overflow_y_hidden' style='z-index: 9999999;width: fit-content;'><span id='cgEcommerceFileCanNotBeDeletedClose' class='cg_message_close cg_high_overlay'></span><p style='margin-top:30px;'>Files which are set as download for selling can't be removed.<br>Uncheck file as download for selling in \"Sales settings\" area of that entry, or deactivate the whole entry for selling, first.</p></div>";
 	}
 }
 

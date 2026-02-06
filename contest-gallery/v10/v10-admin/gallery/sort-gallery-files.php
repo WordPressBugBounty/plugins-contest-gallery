@@ -151,13 +151,15 @@ foreach ($postMetaImageFiles as $postMetaImageFile){
     }
 }
 
-$postAttachedFileNameFiles = $wpdb->get_results( "SELECT post_id, meta_value FROM $tablenamePostMeta WHERE $collectForAltFiles");
+if($collectForAltFiles){
+    $postAttachedFileNameFiles = $wpdb->get_results( "SELECT post_id, meta_value FROM $tablenamePostMeta WHERE $collectForAltFiles");
 
-foreach ($postAttachedFileNameFiles as $postFile){
-    foreach ($galleryFilesArray as $id => $galleryFileArray){
-        if($galleryFileArray['WpUploadToShow']==$postFile->post_id){
-            $galleryFilesArray[$id]['file'] = '/'.$postFile->meta_value;
-            break;
+    foreach ($postAttachedFileNameFiles as $postFile){
+        foreach ($galleryFilesArray as $id => $galleryFileArray){
+            if($galleryFileArray['WpUploadToShow']==$postFile->post_id){
+                $galleryFilesArray[$id]['file'] = '/'.$postFile->meta_value;
+                break;
+            }
         }
     }
 }
@@ -199,7 +201,7 @@ foreach ($galleryFilesArray as $WpUpload => $galleryFile){
                         </video></div>';
             echo "<input type='hidden' class='cg_position' data-cg-real-id=".$galleryFile['id']."  name='cg_position[".$galleryFile['id']."]' value='$order' >";
             echo "</div>";
-        }else if($galleryFile['ImgTypeToShow']=='con'){
+        }elseif($galleryFile['ImgTypeToShow']=='con'){
             echo "<div class='cg_backend_image_full_size_target_container'>";
             //echo $galleryFile['id'];
             echo '<div class="cg_backend_image_full_size_target_container_drag"></div>';

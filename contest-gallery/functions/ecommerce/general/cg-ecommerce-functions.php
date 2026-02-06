@@ -31,7 +31,7 @@ if(!function_exists('cg_get_set_key')){
 
 		if($DownloadKeysCsvName){
 			$csvPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/ecommerce/real-id-'.$realId.'/download-keys/'.$DownloadKeysCsvName;
-		}else if($ServiceKeysCsvName){
+		}elseif($ServiceKeysCsvName){
 			$csvPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/ecommerce/real-id-'.$realId.'/service-keys/'.$ServiceKeysCsvName;
 		}
 //var_dump('$csvPath');
@@ -94,6 +94,8 @@ if(!function_exists('cg_get_set_key')){
 			}
 		}
 		fclose($handle);
+
+        $newExplode = cg_neutralize_csv_array($newExplode);
 
 		chmod($csvPath,0644);
 		$fpnew = fopen($csvPath, 'w');

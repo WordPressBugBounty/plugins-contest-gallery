@@ -86,6 +86,7 @@
                cgJsData[index].vars.isOnlyUploadForm = <?php echo json_encode($isOnlyUploadForm); ?>;
                cgJsData[index].vars.isOnlyContactForm = <?php echo json_encode($isOnlyContactForm); ?>;
                cgJsData[index].vars.galleryHash = <?php echo json_encode(cg_hash_function('---cngl1---'.$galeryIDuserForJs)); ?>;
+               cgJsData[index].vars.galleryHash = <?php echo json_encode(cg_hash_function('---cngl1---'.$galeryIDuserForJs)); ?>;
                cgJsData[index].vars.RatingVisibleForGalleryNoVoting = <?php echo json_encode($RatingVisibleForGalleryNoVoting); ?>;
                cgJsData[index].vars.isFbLikeOnlyShareOn = <?php echo json_encode($isFbLikeOnlyShareOn); ?>;
                cgJsData[index].vars.upload = {};

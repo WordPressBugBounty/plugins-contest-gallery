@@ -54,45 +54,52 @@ if(!isset($_POST['Necessary'])){
     $_POST['Necessary'] = [];
 }
 
+$deleteFieldnumbersArray = [];
+
 if(!empty($_POST['deleteFieldnumber'])){
 
-    $deleteFieldnumber = intval($_POST['deleteFieldnumber']);
+    foreach($_POST['deleteFieldnumber'] as $fieldnumber){
 
-    if(intval($galleryDbVersion)>=14){
+        $fieldnumber = intval($fieldnumber);
 
-        // wpfn, wpln and profile image will be not deleted because named other way or stored in other table
-        $wpdb->query($wpdb->prepare(
-            "
+        $deleteFieldnumbersArray[] = $fieldnumber;
+
+        if(intval($galleryDbVersion)>=14){
+
+            // wpfn, wpln and profile image will be not deleted because named other way or stored in other table
+            $wpdb->query($wpdb->prepare(
+                "
 				DELETE FROM $wp_usermeta_table WHERE meta_key = %s
 			",
-            'cg_custom_field_id_'.$deleteFieldnumber
-        ));
+                'cg_custom_field_id_'.$fieldnumber
+            ));
 
-        $wpdb->query( $wpdb->prepare(
-            "
+            $wpdb->query( $wpdb->prepare(
+                "
 				DELETE FROM $tablename_create_user_form WHERE GeneralID = %d AND id = %d
 			",
-            1, $deleteFieldnumber
-        ));
+                1, $fieldnumber
+            ));
 
-    }else{
+        }else{
 
-        $wpdb->query( $wpdb->prepare(
-            "
+            $wpdb->query( $wpdb->prepare(
+                "
                 DELETE FROM $tablename_create_user_form WHERE GalleryID = %d AND id = %d
             ",
-                $GalleryID, $deleteFieldnumber
-         ));
+                $GalleryID, $fieldnumber
+            ));
 
-        $wpdb->query( $wpdb->prepare(
-            "
+            $wpdb->query( $wpdb->prepare(
+                "
                 DELETE FROM $tablename_create_user_entries WHERE GalleryID = %d AND f_input_id = %d
             ",
-                $GalleryID, $deleteFieldnumber
-         ));
+                $GalleryID, $fieldnumber
+            ));
+
+        }
 
     }
-
 }
 
 // Check if certain fieldnumber should be deleted --- ENDE
@@ -100,8 +107,8 @@ if(!empty($_POST['deleteFieldnumber'])){
 // Abspeichern von gesendeten Daten
 
 if (!empty($_POST['submit'])) {
-/*
-  echo "<pre>";
+
+/*  echo "<pre>";
     print_r($_POST);
     echo "</pre>";*/
 
@@ -109,8 +116,6 @@ if (!empty($_POST['submit'])) {
 
 
 // Neue Formularfelder werden eingef�gt
-
-
 $get_Field_Id = (!empty($_POST['Field_Id'])) ? $_POST['Field_Id'] : [];
 $get_Field_Type = (!empty($_POST['Field_Type'])) ? $_POST['Field_Type'] : [];
 $get_Field_Name = (!empty($_POST['Field_Name'])) ? $_POST['Field_Name'] : [];
@@ -119,6 +124,9 @@ $get_ReCaLang = (!empty($_POST['ReCaLang'])) ? cg1l_sanitize_method($_POST['ReCa
 $get_Field_Content = (!empty($_POST['Field_Content'])) ? $_POST['Field_Content'] : [];
 $get_Min_Char = (!empty($_POST['Min_Char'])) ? $_POST['Min_Char'] : [];
 $get_Max_Char = (!empty($_POST['Max_Char'])) ? $_POST['Max_Char'] : [];
+$get_RowNumber = (!empty($_POST['RowNumber'])) ? $_POST['RowNumber'] : [];
+$get_ColNumber = (!empty($_POST['ColNumber'])) ? $_POST['ColNumber'] : [];
+$get_RowCols = (!empty($_POST['RowCols'])) ? $_POST['RowCols'] : [];
 
 foreach ($get_Min_Char as $charKey => $char){
     $get_Min_Char[$charKey] = absint($char);
@@ -128,8 +136,21 @@ foreach ($get_Max_Char as $charKey => $char){
     $get_Max_Char[$charKey] = absint($char);
 }
 
+foreach ($get_RowNumber as $charKey => $char){
+    $get_RowNumber[$charKey] = absint($char);
+}
+
+foreach ($get_ColNumber as $charKey => $char){
+    $get_ColNumber[$charKey] = absint($char);
+}
+
+foreach ($get_RowCols as $charKey => $char){
+    $get_RowCols[$charKey] = absint($char);
+}
+
 $get_Necessary = (!empty($_POST['Necessary'])) ? $_POST['Necessary'] : [];
 $get_Hide = (!empty($_POST['Hide'])) ? $_POST['Hide'] : [];
+$get_PinField = (!empty($_POST['PinField'])) ? $_POST['PinField'] : [];
 
 
 // Dient zur Orientierung zum Abarbeiten
@@ -141,7 +162,7 @@ $i=1;
 foreach($get_Field_Type as $key => $value){
 
 		// Das gel�schte Feld soll nicht nochmal kreiert werden. Unbedingt auf true pr�fen! Ansonsten bei zwei leeren Werten ist die Bedingung auch erf�llt.
-		if(!empty($_POST['deleteFieldnumber']) && !empty($get_Field_Id[$i]) && $_POST['deleteFieldnumber']==$get_Field_Id[$i]){continue;}
+		if(!empty($deleteFieldnumbersArray) && !empty($get_Field_Id[$i]) && in_array($get_Field_Id[$i],$deleteFieldnumbersArray)!==false){continue;}
 
         if($value=="profile-image"){
 
@@ -150,6 +171,11 @@ foreach($get_Field_Type as $key => $value){
             $Active = 1;
             if(!empty($get_Hide[$i])){
                 $Active = 0;
+            }
+
+            $PinField = 0;
+            if(!empty($get_PinField[$i])){
+                $PinField = 1;
             }
 
             if(!isset($get_Necessary[$i])){
@@ -165,10 +191,12 @@ foreach($get_Field_Type as $key => $value){
                 $wpdb->update(
                     "$tablename_create_user_form",
                     array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
-                        'Field_Content' => '','Min_Char' => '','Max_Char' => '', 'Required' => $update_Necessary, 'Active' => $Active),
+                        'Field_Content' => '','Min_Char' => '','Max_Char' => '', 'Required' => $update_Necessary, 'Active' => $Active,
+                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField
+                    ),
                     array('id' => $get_Field_Id[$i]),
                     array('%d','%s',
-                        '%s','%s','%s','%d','%d'),
+                        '%s','%s','%s','%d','%d','%d','%d','%d','%d'),
                     array('%d')
                 );
             }
@@ -179,14 +207,19 @@ foreach($get_Field_Type as $key => $value){
                                 INSERT INTO $tablename_create_user_form
                                 ( id, GalleryID, Field_Type, Field_Order,
                                 Field_Name,Field_Content,Min_Char,Max_Char,
-                                Required,Active,GeneralID)
+                                Required,Active,GeneralID,
+                                 RowNumber,ColNumber,RowCols,PinField
+                                 )
                                 VALUES ( %s,%d,%s,%d,
                                 %s,%s,%d,%d,
-                                %d,%d,%d)
+                                %d,%d,%d,
+                                %d,%d,%d,%d
+                                )
                             ",
                     '',$GeneralIDtoInsert,'profile-image',$i,
                     $get_Field_Name[$i],'','','',
-                    $update_Necessary,$Active,$GeneralID
+                    $update_Necessary,$Active,$GeneralID,
+                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
                 ) );
 
             }
@@ -201,6 +234,11 @@ foreach($get_Field_Type as $key => $value){
                 $Active = 0;
             }
 
+            $PinField = 0;
+            if(!empty($get_PinField[$i])){
+                $PinField = 1;
+            }
+
             if(!isset($get_Necessary[$i])){
                 $get_Necessary[$i] = false;
             }
@@ -215,10 +253,11 @@ foreach($get_Field_Type as $key => $value){
                 $wpdb->update(
                     "$tablename_create_user_form",
                     array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
-                        'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i], 'Required' => $update_Necessary, 'Active' => $Active),
+                        'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i], 'Required' => $update_Necessary, 'Active' => $Active,
+                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
                     array('id' => $get_Field_Id[$i]),
                     array('%d','%s',
-                        '%s','%d','%d','%d','%d'),
+                        '%s','%d','%d','%d','%d','%d','%d','%d','%d'),
                     array('%d')
                 );
             }
@@ -229,14 +268,17 @@ foreach($get_Field_Type as $key => $value){
                                 INSERT INTO $tablename_create_user_form
                                 ( id, GalleryID, Field_Type, Field_Order,
                                 Field_Name,Field_Content,Min_Char,Max_Char,
-                                Required,Active,GeneralID)
+                                Required,Active,GeneralID,
+                                 RowNumber,ColNumber,RowCols,PinField)
                                 VALUES ( %s,%d,%s,%d,
                                 %s,%s,%d,%d,
-                                %d,%d,%d)
+                                %d,%d,%d,
+                                %d,%d,%d,%d)
                             ",
                     '',$GeneralIDtoInsert,'wpfn',$i,
                     $get_Field_Name[$i],$get_Field_Content[$i],$get_Min_Char[$i],$get_Max_Char[$i],
-                    $update_Necessary,$Active,$GeneralID
+                    $update_Necessary,$Active,$GeneralID,
+                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
                 ) );
 
             }
@@ -251,6 +293,11 @@ foreach($get_Field_Type as $key => $value){
                 $Active = 0;
             }
 
+            $PinField = 0;
+            if(!empty($get_PinField[$i])){
+                $PinField = 1;
+            }
+
             if(!isset($get_Necessary[$i])){
                 $get_Necessary[$i] = false;
             }
@@ -265,10 +312,11 @@ foreach($get_Field_Type as $key => $value){
                 $wpdb->update(
                     "$tablename_create_user_form",
                     array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
-                        'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i], 'Required' => $update_Necessary, 'Active' => $Active),
+                        'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i], 'Required' => $update_Necessary, 'Active' => $Active,
+                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
                     array('id' => $get_Field_Id[$i]),
                     array('%d','%s',
-                        '%s','%d','%d','%d','%d'),
+                        '%s','%d','%d','%d','%d','%d','%d','%d','%d'),
                     array('%d')
                 );
             }
@@ -279,14 +327,17 @@ foreach($get_Field_Type as $key => $value){
                                 INSERT INTO $tablename_create_user_form
                                 ( id,GalleryID , Field_Type, Field_Order,
                                 Field_Name,Field_Content,Min_Char,Max_Char,
-                                Required,Active,GeneralID)
+                                Required,Active,GeneralID,
+                                 RowNumber,ColNumber,RowCols,PinField)
                                 VALUES ( %s,%d,%s,%d,
                                 %s,%s,%d,%d,
-                                %d,%d,%d)
+                                %d,%d,%d,
+                                %d,%d,%d,%d)
                             ",
                     '',$GeneralIDtoInsert,'wpln',$i,
                     $get_Field_Name[$i],$get_Field_Content[$i],$get_Min_Char[$i],$get_Max_Char[$i],
-                    $update_Necessary,$Active,$GeneralID
+                    $update_Necessary,$Active,$GeneralID,
+                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
                 ) );
 
             }
@@ -301,6 +352,11 @@ foreach($get_Field_Type as $key => $value){
                 $Active = 0;
             }
 
+            $PinField = 0;
+            if(!empty($get_PinField[$i])){
+                $PinField = 1;
+            }
+
             if(!isset($get_Necessary[$i])){
                 $get_Necessary[$i] = false;
             }
@@ -315,10 +371,11 @@ foreach($get_Field_Type as $key => $value){
                 $wpdb->update(
                     "$tablename_create_user_form",
                     array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
-                        'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i], 'Required' => $update_Necessary, 'Active' => $Active),
+                        'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i], 'Required' => $update_Necessary, 'Active' => $Active,
+                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
                     array('id' => $get_Field_Id[$i]),
                     array('%d','%s',
-                        '%s','%d','%d','%d','%d'),
+                        '%s','%d','%d','%d','%d','%d','%d','%d','%d'),
                     array('%d')
                 );
             }
@@ -329,14 +386,17 @@ foreach($get_Field_Type as $key => $value){
                                 INSERT INTO $tablename_create_user_form
                                 ( id, GalleryID, Field_Type, Field_Order,
                                 Field_Name,Field_Content,Min_Char,Max_Char,
-                                Required,Active,GeneralID)
+                                Required,Active,GeneralID,
+                                 RowNumber,ColNumber,RowCols,PinField)
                                 VALUES ( %s,%d,%s,%d,
                                 %s,%s,%d,%d,
-                                %d,%d,%d)
+                                %d,%d,%d,
+                                %d,%d,%d,%d)
                             ",
                     '',$GeneralIDtoInsert,'user-text-field',$i,
                     $get_Field_Name[$i],$get_Field_Content[$i],$get_Min_Char[$i],$get_Max_Char[$i],
-                    $update_Necessary,$Active,$GeneralID
+                    $update_Necessary,$Active,$GeneralID,
+                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
                 ) );
 
             }
@@ -349,6 +409,11 @@ foreach($get_Field_Type as $key => $value){
             $Active = 1;
             if(!empty($get_Hide[$i])){
                 $Active = 0;
+            }
+
+            $PinField = 0;
+            if(!empty($get_PinField[$i])){
+                $PinField = 1;
             }
 
             $update_Necessary=1;// so far check agreement is always required
@@ -364,10 +429,11 @@ foreach($get_Field_Type as $key => $value){
 						$wpdb->update(
 						"$tablename_create_user_form",
 						array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
-						'Field_Content' => $get_Field_Content[$i],'Min_Char' => 0,'Max_Char' => 0, 'Required' => $update_Necessary, 'Active' => $Active),
+						'Field_Content' => $get_Field_Content[$i],'Min_Char' => 0,'Max_Char' => 0, 'Required' => $update_Necessary, 'Active' => $Active,
+                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
 						array('id' => $get_Field_Id[$i]),
 						array('%d','%s',
-						'%s','%s','%s','%d','%d'),
+						'%s','%s','%s','%d','%d','%d','%d','%d','%d'),
 						array('%d')
 						);					
 					}
@@ -377,14 +443,17 @@ foreach($get_Field_Type as $key => $value){
 							INSERT INTO $tablename_create_user_form
 							( id, GalleryID, Field_Type, Field_Order,
 							Field_Name,Field_Content,Min_Char,Max_Char,
-							Required,Active,GeneralID)
+							Required,Active,GeneralID,
+                             RowNumber,ColNumber,RowCols,PinField)
 							VALUES ( %s,%d,%s,%d,
 							%s,%s,%d,%d,
-							%d,%d,%d)
+							%d,%d,%d,
+                            %d,%d,%d,%d)
 						",
 							'',$GeneralIDtoInsert,'user-check-agreement-field',$i,
 							$get_Field_Name[$i],$get_Field_Content[$i],'','',
-                            $update_Necessary,$Active,$GeneralID
+                            $update_Necessary,$Active,$GeneralID,
+                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
 						) );						
 					}			
 
@@ -399,6 +468,11 @@ foreach($get_Field_Type as $key => $value){
                 $Active = 0;
             }
 
+            $PinField = 0;
+            if(!empty($get_PinField[$i])){
+                $PinField = 1;
+            }
+
 
 					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
 
@@ -408,10 +482,11 @@ foreach($get_Field_Type as $key => $value){
 						$wpdb->update(
                             "$tablename_create_user_form",
                             array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
-                            'Field_Content' => '','Min_Char' => '','Max_Char' => '', 'Active' => $Active),
+                            'Field_Content' => '','Min_Char' => '','Max_Char' => '', 'Active' => $Active,
+                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
                             array('id' => $get_Field_Id[$i]),
                             array('%d','%s',
-                            '%s','%s','%s','%d'),
+                            '%s','%s','%s','%d','%d','%d','%d','%d'),
                             array('%d')
 						);
 					}
@@ -422,14 +497,17 @@ foreach($get_Field_Type as $key => $value){
 							INSERT INTO $tablename_create_user_form
 							( id, GalleryID, Field_Type, Field_Order,
 							Field_Name,Field_Content,Min_Char,Max_Char,
-							Required,Active,GeneralID)
+							Required,Active,GeneralID,
+                             RowNumber,ColNumber,RowCols,PinField)
 							VALUES ( %s,%d,%s,%d,
 							%s,%s,%d,%d,
-							%d,%d,%d)
+							%d,%d,%d,
+                            %d,%d,%d,%d)
 						",
 							'',$GeneralIDtoInsert,'user-robot-field',$i,
 							$get_Field_Name[$i],'','','',
-							1,$Active,$GeneralID
+							1,$Active,$GeneralID,
+                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
 						) );
 					}
 
@@ -443,16 +521,22 @@ foreach($get_Field_Type as $key => $value){
                 $Active = 0;
             }
 
+            $PinField = 0;
+            if(!empty($get_PinField[$i])){
+                $PinField = 1;
+            }
+
 					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method((isset($get_Field_Name[$i])) ? $get_Field_Name[$i] : '');
 
 					if(isset($get_Field_Id[$i])){
 						$wpdb->update(
                             "$tablename_create_user_form",
                             array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
-                            'Field_Content' => '','Min_Char' => '','Max_Char' => '', 'Active' => $Active, 'ReCaKey' => $get_ReCaKey, 'ReCaLang' => $get_ReCaLang),
+                            'Field_Content' => '','Min_Char' => '','Max_Char' => '', 'Active' => $Active, 'ReCaKey' => $get_ReCaKey, 'ReCaLang' => $get_ReCaLang,
+                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
                             array('id' => $get_Field_Id[$i]),
                             array('%d','%s',
-                            '%s','%s','%s','%d','%s','%s'),
+                            '%s','%s','%s','%d','%s','%s','%d','%d','%d','%d'),
                             array('%d')
 						);
 					}
@@ -463,14 +547,17 @@ foreach($get_Field_Type as $key => $value){
 							INSERT INTO $tablename_create_user_form
 							( id, GalleryID, Field_Type, Field_Order,
 							Field_Name,Field_Content,Min_Char,Max_Char,
-							Required,Active,ReCaKey,ReCaLang,GeneralID)
+							Required,Active,ReCaKey,ReCaLang,GeneralID,
+                                 RowNumber,ColNumber,RowCols,PinField)
 							VALUES ( %s,%d,%s,%d,
 							%s,%s,%d,%d,
-							%d,%d,%s,%s,%d)
+							%d,%d,%s,%s,%d,
+                                %d,%d,%d,%d)
 						",
 							'',$GeneralIDtoInsert,'user-robot-recaptcha-field',$i,
 							$get_Field_Name[$i],'','','',
-							1,$Active,$get_ReCaKey,$get_ReCaLang,$GeneralID
+							1,$Active,$get_ReCaKey,$get_ReCaLang,$GeneralID,
+                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
 						) );
 					}
 
@@ -482,6 +569,11 @@ foreach($get_Field_Type as $key => $value){
                 $Active = 1;
                 if(!empty($get_Hide[$i])){
                     $Active = 0;
+                }
+
+                $PinField = 0;
+                if(!empty($get_PinField[$i])){
+                    $PinField = 1;
                 }
 				
                 $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
@@ -496,13 +588,15 @@ foreach($get_Field_Type as $key => $value){
 				else{$update_Necessary=0;}
 			
 					if(isset($get_Field_Id[$i])){
+
 						$wpdb->update(
 						"$tablename_create_user_form",
 						array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
-						'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i], 'Required' => $update_Necessary, 'Active' => $Active),
+						'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i], 'Required' => $update_Necessary, 'Active' => $Active,
+                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
 						array('id' => $get_Field_Id[$i]),
 						array('%d','%s',
-						'%s','%d','%d','%d','%d'),
+						'%s','%d','%d','%d','%d','%d','%d','%d','%d'),
 						array('%d')
 						);							
 					}
@@ -512,14 +606,17 @@ foreach($get_Field_Type as $key => $value){
 							INSERT INTO $tablename_create_user_form
 							( id, GalleryID, Field_Type, Field_Order,
 							Field_Name,Field_Content,Min_Char,Max_Char,
-							Required,Active,GeneralID)
+							Required,Active,GeneralID,
+                                 RowNumber,ColNumber,RowCols,PinField)
 							VALUES ( %s,%d,%s,%d,
 							%s,%s,%d,%d,
-							%d,%d,%d)
+							%d,%d,%d,
+                                %d,%d,%d,%d)
 						",
 							'',$GeneralIDtoInsert,'user-comment-field',$i,
 							$get_Field_Name[$i],$get_Field_Content[$i],$get_Min_Char[$i],$get_Max_Char[$i],
-							$update_Necessary,$Active,$GeneralID
+							$update_Necessary,$Active,$GeneralID,
+                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
 						) );						
 					}
 		
@@ -535,8 +632,72 @@ foreach($get_Field_Type as $key => $value){
             $Active = 0;
         }
 
+        $PinField = 0;
+        if(!empty($get_PinField[$i])){
+            $PinField = 1;
+        }
+
         if(!isset($get_Necessary[$i])){
             $get_Necessary[$i] = false;
+        }
+
+        if($get_Necessary[$i]=='on'){$update_Necessary=1;}
+        else{$update_Necessary=0;}
+
+            // to go sure, to avoid eventually error 05 December 2021
+            $get_Field_Name[$i] = (!empty($get_Field_Name[$i])) ? $get_Field_Name[$i] : '';
+
+            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
+            $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
+
+            if(isset($get_Field_Id[$i])){
+                $wpdb->update(
+                "$tablename_create_user_form",
+                array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
+                'Field_Content' => $get_Field_Content[$i],'Min_Char' => '','Max_Char' => '', 'Required' => $update_Necessary, 'Active' => $Active,
+                    'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
+                array('id' => $get_Field_Id[$i]),
+                array('%d','%s',
+                '%s','%s','%s','%d','%d','%d','%d','%d','%d'),
+                array('%d')
+                );
+            }
+            else{
+                $wpdb->query( $wpdb->prepare(
+                "
+                    INSERT INTO $tablename_create_user_form
+                    ( id, GalleryID, Field_Type, Field_Order,
+                    Field_Name,Field_Content,Min_Char,Max_Char,
+                    Required,Active,GeneralID,
+                         RowNumber,ColNumber,RowCols,PinField)
+                    VALUES ( %s,%d,%s,%d,
+                    %s,%s,%s,%s,
+                    %d,%d,%d,
+                        %d,%d,%d,%d)
+                ",
+                    '',$GeneralIDtoInsert,'user-select-field',$i,
+                    $get_Field_Name[$i],$get_Field_Content[$i],'','',
+                    $update_Necessary,$Active,$GeneralID,
+                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
+                ) );
+
+            }
+
+
+	}
+
+
+	if($value=="user-check-field"){
+
+        $fieldOrder++;
+        $Active = 1;
+        if(!empty($get_Hide[$i])){
+            $Active = 0;
+        }
+
+        $PinField = 0;
+        if(!empty($get_PinField[$i])){
+            $PinField = 1;
         }
 
         if(!isset($get_Necessary[$i])){
@@ -556,10 +717,11 @@ foreach($get_Field_Type as $key => $value){
 						$wpdb->update(
 						"$tablename_create_user_form",
 						array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
-						'Field_Content' => $get_Field_Content[$i],'Min_Char' => '','Max_Char' => '', 'Required' => $update_Necessary, 'Active' => $Active),
+						'Field_Content' => $get_Field_Content[$i],'Min_Char' => '','Max_Char' => '', 'Required' => $update_Necessary, 'Active' => $Active,
+                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
 						array('id' => $get_Field_Id[$i]),
 						array('%d','%s',
-						'%s','%s','%s','%d','%d'),
+						'%s','%s','%s','%d','%d','%d','%d','%d','%d'),
 						array('%d')
 						);
 					}
@@ -569,14 +731,74 @@ foreach($get_Field_Type as $key => $value){
 							INSERT INTO $tablename_create_user_form
 							( id, GalleryID, Field_Type, Field_Order,
 							Field_Name,Field_Content,Min_Char,Max_Char,
-							Required,Active,GeneralID)
+							Required,Active,GeneralID,
+                                 RowNumber,ColNumber,RowCols,PinField)
 							VALUES ( %s,%d,%s,%d,
 							%s,%s,%s,%s,
-							%d,%d,%d)
+							%d,%d,%d,
+                                %d,%d,%d,%d)
 						",
-							'',$GeneralIDtoInsert,'user-select-field',$i,
+                    '',$GeneralIDtoInsert,'user-check-field',$i,
+                    $get_Field_Name[$i],$get_Field_Content[$i],'','',
+                    $update_Necessary,$Active,$GeneralID,
+                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
+                ) );
+
+            }
+
+
+	}
+
+	if($value=="user-radio-field"){
+
+        $fieldOrder++;
+        $Active = 1;
+        if(!empty($get_Hide[$i])){
+            $Active = 0;
+        }
+
+        $PinField = 0;
+        if(!empty($get_PinField[$i])){
+            $PinField = 1;
+        }
+
+        $update_Necessary=1;// radio is always required
+
+        // to go sure, to avoid eventually error 05 December 2021
+        $get_Field_Name[$i] = (!empty($get_Field_Name[$i])) ? $get_Field_Name[$i] : '';
+
+        $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
+        $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
+
+        if(isset($get_Field_Id[$i])){
+            $wpdb->update(
+            "$tablename_create_user_form",
+            array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
+            'Field_Content' => $get_Field_Content[$i],'Min_Char' => '','Max_Char' => '', 'Required' => $update_Necessary, 'Active' => $Active,
+                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
+            array('id' => $get_Field_Id[$i]),
+            array('%d','%s',
+            '%s','%s','%s','%d','%d','%d','%d','%d','%d'),
+            array('%d')
+            );
+        }
+        else{
+            $wpdb->query( $wpdb->prepare(
+            "
+                INSERT INTO $tablename_create_user_form
+                ( id, GalleryID, Field_Type, Field_Order,
+                Field_Name,Field_Content,Min_Char,Max_Char,
+                Required,Active,GeneralID,
+                     RowNumber,ColNumber,RowCols,PinField)
+                VALUES ( %s,%d,%s,%d,
+                %s,%s,%s,%s,
+                %d,%d,%d,
+                    %d,%d,%d,%d)
+            ",
+                '',$GeneralIDtoInsert,'user-radio-field',$i,
 							$get_Field_Name[$i],$get_Field_Content[$i],'','',
-							$update_Necessary,$Active,$GeneralID
+							$update_Necessary,$Active,$GeneralID,
+                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
 						) );
 
 					}
@@ -585,7 +807,13 @@ foreach($get_Field_Type as $key => $value){
 	}
 
 	if($value=="main-user-name"){
-		
+
+
+        $PinField = 0;
+        if(!empty($get_PinField[$i])){
+            $PinField = 1;
+        }
+
 					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
 					$get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
 
@@ -593,10 +821,12 @@ foreach($get_Field_Type as $key => $value){
 							$wpdb->update(
 							"$tablename_create_user_form",
 							array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
-							'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i]),
+							'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i],
+                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
 							array('id' => $get_Field_Id[$i]),
 							array('%d','%s',
-							'%s','%s','%s'),
+							'%s','%s','%s',
+                            '%d','%d','%d','%d'),
 							array('%d')
 							);
 						}
@@ -605,6 +835,13 @@ foreach($get_Field_Type as $key => $value){
 
 	if($value=="main-nick-name"){
 
+
+
+        $PinField = 0;
+        if(!empty($get_PinField[$i])){
+            $PinField = 1;
+        }
+
 					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
 					$get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
 
@@ -612,10 +849,12 @@ foreach($get_Field_Type as $key => $value){
 							$wpdb->update(
 							"$tablename_create_user_form",
 							array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
-							'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i]),
+							'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i],
+                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
 							array('id' => $get_Field_Id[$i]),
 							array('%d','%s',
-							'%s','%s','%s'),
+							'%s','%s','%s',
+                            '%d','%d','%d','%d'),
 							array('%d')
 							);
 						}
@@ -623,6 +862,11 @@ foreach($get_Field_Type as $key => $value){
 	}
 	
 	if($value=="main-mail"){
+
+        $PinField = 0;
+        if(!empty($get_PinField[$i])){
+            $PinField = 1;
+        }
 		
             $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
             $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
@@ -636,10 +880,12 @@ foreach($get_Field_Type as $key => $value){
                 $wpdb->update(
                 "$tablename_create_user_form",
                 array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
-                'Field_Content' => $get_Field_Content[$i],'Min_Char' => 0,'Max_Char' => 0),
+                'Field_Content' => $get_Field_Content[$i],'Min_Char' => 0,'Max_Char' => 0,
+                    'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
                 array('id' => $get_Field_Id[$i]),
                 array('%d','%s',
-                '%s','%s','%s'),
+                '%s','%s','%s',
+                    '%d','%d','%d','%d'),
                 array('%d')
                 );
         }
@@ -648,6 +894,11 @@ foreach($get_Field_Type as $key => $value){
 	}
 	
 	if($value=="password"){
+
+        $PinField = 0;
+        if(!empty($get_PinField[$i])){
+            $PinField = 1;
+        }
 		
 					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
 					$get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
@@ -657,10 +908,12 @@ foreach($get_Field_Type as $key => $value){
 						$wpdb->update(
 							"$tablename_create_user_form",
 							array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
-							'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i]),
+							'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i],
+                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
 							array('id' => $get_Field_Id[$i]),
 							array('%d','%s',
-							'%s','%s','%s'),
+							'%s','%s','%s',
+                            '%d','%d','%d','%d'),
 							array('%d')
 						);
 
@@ -669,6 +922,11 @@ foreach($get_Field_Type as $key => $value){
 		}
 	    if($value=="password-confirm"){
 
+            $PinField = 0;
+            if(!empty($get_PinField[$i])){
+                $PinField = 1;
+            }
+
 					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
 					$get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
 		
@@ -676,10 +934,12 @@ foreach($get_Field_Type as $key => $value){
 						$wpdb->update(
 						"$tablename_create_user_form",
 						array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
-						'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i]),
+						'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i],
+                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
 						array('id' => $get_Field_Id[$i]),
 						array('%d','%s',
-						'%s','%s','%s'),
+						'%s','%s','%s',
+                        '%d','%d','%d','%d'),
 						array('%d')
 						);							
 					}
@@ -693,8 +953,13 @@ foreach($get_Field_Type as $key => $value){
             $Active = 0;
         }
 
+        $PinField = 0;
+        if(!empty($get_PinField[$i])){
+            $PinField = 1;
+        }
+
         $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
-                    $get_Field_Content[$i] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
+                $get_Field_Content[$i] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
 
 
         if(!empty($get_Field_Id[$i])){
@@ -702,10 +967,12 @@ foreach($get_Field_Type as $key => $value){
 						$wpdb->update(
 						"$tablename_create_user_form",
 						array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
-						'Field_Content' => $get_Field_Content[$i],'Min_Char' => '','Max_Char' => '', 'Required' => '', 'Active' => $Active),
+						'Field_Content' => $get_Field_Content[$i],'Min_Char' => '','Max_Char' => '', 'Required' => '', 'Active' => $Active,
+                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
 						array('id' => $get_Field_Id[$i]),
 						array('%d','%s',
-						'%s','%s','%s','%d','%d'),
+						'%s','%s','%s','%d','%d',
+                        '%d','%d','%d','%d'),
 						array('%d')
 						);
 						
@@ -716,14 +983,17 @@ foreach($get_Field_Type as $key => $value){
 							INSERT INTO $tablename_create_user_form
 							( id, GalleryID, Field_Type, Field_Order,
 							Field_Name,Field_Content,Min_Char,Max_Char,
-							Required,Active,GeneralID)
+							Required,Active,GeneralID,
+                                 RowNumber,ColNumber,RowCols,PinField)
 							VALUES ( %s,%d,%s,%d,
 							%s,%s,%d,%d,
-							%d,%d,%d)
+							%d,%d,%d,
+                                %d,%d,%d,%d)
 						",
 							'',$GeneralIDtoInsert,'user-html-field',$i,
 							$get_Field_Name[$i],$get_Field_Content[$i],'','',
-							'',$Active,$GeneralID
+							'',$Active,$GeneralID,
+                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
 						) );						
 					}
 

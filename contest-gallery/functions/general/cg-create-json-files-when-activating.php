@@ -31,7 +31,7 @@ if(!function_exists('cg_create_json_files_when_activating')){
 				$imageHeight = (!empty($fileData['height'])) ? $fileData['height'] : 0;
 				$imageWidth = (!empty($fileData['width'])) ? $fileData['width'] : 0;
 			}
-		}else if($rowObject->ImgType=='con'){// then must be upload form entry
+		}elseif($rowObject->ImgType=='con'){// then must be upload form entry
 			$guid = '';
 			$imageWidth = 300;
 			$imageHeight = 200;
@@ -45,7 +45,7 @@ if(!function_exists('cg_create_json_files_when_activating')){
 			$rowObject->post_name = '';
 			$rowObject->post_excerpt = '';
 			$post_alt = '';
-		}else if($rowObject->ImgType=='ytb' || $rowObject->ImgType=='twt' || $rowObject->ImgType=='inst' || $rowObject->ImgType=='tkt'){// then must be upload form entry
+		}elseif($rowObject->ImgType=='ytb' || $rowObject->ImgType=='twt' || $rowObject->ImgType=='inst' || $rowObject->ImgType=='tkt'){// then must be upload form entry
 			$guid = $rowObject->guid;
 			$imgSrcFull =  $rowObject->guid;
 			$imageWidth = 300;
@@ -304,7 +304,7 @@ if(!function_exists('cg_create_json_files_when_activating')){
 		$exifDataArray = array();
 		if($rowObject->Exif == '' or $rowObject->Exif == NULL){
 			$hasExif = false;
-		}else if($rowObject->Exif != '' && $rowObject->Exif != '0'){
+		}elseif($rowObject->Exif != '' && $rowObject->Exif != '0'){
 			$exifDataArray = unserialize($rowObject->Exif);
 			if(empty($exifDataArray['DateTimeOriginal']) && $possibleCorrectDateTimeOriginal){// this EXIF value DateTimeOriginal comes later, is for possible correction required
 				$correctDateTimeOriginal = true;

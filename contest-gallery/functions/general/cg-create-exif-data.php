@@ -83,7 +83,7 @@ if(!function_exists('cg_create_exif_data')){
                     if(!empty($wpImageExifData['EXIF']['ISOSpeedRatings'])){
                         if(!empty($wpImageExifData['EXIF']['ISOSpeedRatings'][0])){
                             $exifDataForImage['ISOSpeedRatings'] = cg1l_sanitize_method($wpImageExifData['EXIF']['ISOSpeedRatings'][0]);
-                        }else if(!empty($wpImageExifData['EXIF']['ISOSpeedRatings'][1])){
+                        }elseif(!empty($wpImageExifData['EXIF']['ISOSpeedRatings'][1])){
                             $exifDataForImage['ISOSpeedRatings'] = cg1l_sanitize_method($wpImageExifData['EXIF']['ISOSpeedRatings'][1]);
                         }else{
                             $exifDataForImage['ISOSpeedRatings'] = cg1l_sanitize_method($wpImageExifData['EXIF']['ISOSpeedRatings']);

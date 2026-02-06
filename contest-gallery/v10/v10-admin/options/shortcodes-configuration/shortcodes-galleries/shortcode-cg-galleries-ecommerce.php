@@ -166,6 +166,68 @@ if($galleryDbVersion>=24){
 HEREDOC;
 }
 
+// only json option, not in database available
+if(!isset($galleriesOptions['ec']['HeaderWpPageGalleries'])){
+    $HeaderWpPageGalleries = "";
+}else{
+    $HeaderWpPageGalleries = contest_gal1ery_convert_for_html_output_without_nl2br($galleriesOptions['ec']['HeaderWpPageGalleries']);
+}
+
+echo <<<HEREDOC
+    <div class='cg_view_options_row'>
+        <div class='cg_view_option cg_view_option_full_width  cg_border_top_none '>
+            <div class='cg_view_option_title '>
+                <p>Header tracking code on galleries landing page<br><span class="cg_view_option_title_note">Paste your tracking scripts here —<br>for example Google Tag Manager, Google Analytics, or Meta Pixel.<br>The code will be added inside the &lt;head&gt; section of galleries landing page.</span></p>
+            </div>
+            <div class='cg_view_option_textarea' >
+                <textarea type="text" name="cg_galleries[ec][HeaderWpPageGalleries]" rows="7" style="width:100%;" class="HeaderWpPageGalleries"  >$HeaderWpPageGalleries</textarea>
+            </div>
+        </div>
+    </div>
+HEREDOC;
+
+// only json option, not in database available
+if(!isset($galleriesOptions['ec']['TextBeforeWpPageGalleries'])){
+    $TextBeforeWpPageGalleries = "";
+}else{
+    $TextBeforeWpPageGalleries = contest_gal1ery_convert_for_html_output_without_nl2br($galleriesOptions['ec']['TextBeforeWpPageGalleries']);
+}
+
+echo <<<HEREDOC
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="wp-TextBeforeWpPageGalleriesEcommerce-wrap-Container">
+        <div class='cg_view_option_title'>
+            <p>General text on galleries landing page before galleries<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of gallery landing page.<br><span class="cg_font_weight_500">NOTE: </span>appears only on gallery landing page, not if cg_galleries... shortcode is used on another page.</span></p>
+        </div>
+        <div class='cg_view_option_html'>
+            <textarea class='cg-wp-editor-template' name='cg_galleries[ec][TextBeforeWpPageGalleries]'  id='TextBeforeWpPageGalleriesEcommerce'>$TextBeforeWpPageGalleries</textarea>
+        </div>
+    </div>
+</div>
+HEREDOC;
+
+// only json option, not in database available
+if(!isset($galleriesOptions['ec']['TextAfterWpPageGalleries'])){
+    $TextAfterWpPageGalleries = "";
+}else{
+    $TextAfterWpPageGalleries = contest_gal1ery_convert_for_html_output_without_nl2br($galleriesOptions['ec']['TextAfterWpPageGalleries']);
+}
+
+echo <<<HEREDOC
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="wp-TextAfterWpPageGalleriesEcommerce-wrap-Container">
+        <div class='cg_view_option_title'>
+            <p>General text on galleries landing page after galleries<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of gallery landing page.<br><span class="cg_font_weight_500">NOTE: </span>appears only on gallery landing page, not if cg_galleries... shortcode is used on another page.</span></p>
+        </div>
+        <div class='cg_view_option_html'>
+            <textarea class='cg-wp-editor-template' name='cg_galleries[ec][TextAfterWpPageGalleries]'  id='TextAfterWpPageGalleriesEcommerce'>$TextAfterWpPageGalleries</textarea>
+        </div>
+    </div>
+</div>
+HEREDOC;
+
+
+
 if(!empty($galleriesOptions['ec']['GalleriesPagesNoIndex'])){
 	$GalleriesPagesNoIndex = 'checked';
 }else{

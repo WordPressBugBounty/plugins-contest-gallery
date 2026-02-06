@@ -201,7 +201,6 @@ input.cg_button_new_gallery:hover{
     box-sizing: border-box;
 }
 
-
 .td_gallery_info_name{
     display: flex;
     padding: 10px 10px;
@@ -256,8 +255,18 @@ input.cg_button_new_gallery:hover{
     width: 30px;
     height: 30px;
     cursor: pointer;
+    position: absolute;
+    right: 0;
+    bottom: -15px;
 }
 
+#cgMainMenuTable .td_gallery_info_name p{
+    padding-right: 35px;
+}
+
+#cgMainMenuTable .td_gallery_info_shortcode p{
+    padding-right: 35px;
+}
 
 .td_gallery_info_shortcode{
     display: flex;
@@ -286,8 +295,8 @@ input.cg_button_new_gallery:hover{
 #cgGalleriesShortcodes .td_gallery_info_shortcode{
     width: 20%;
     padding: 0 0 10px;
-    flex-wrap: wrap;
     position: relative;
+    flex-flow: column;
 }
 
 #cgGalleriesShortcodes .td_gallery_info_shortcode .cg_shortcode_title{
@@ -301,18 +310,21 @@ input.cg_button_new_gallery:hover{
     padding: 5px;
     display: none;
     left: 15%;
-    top: 85px;
+    top: 73px;
     z-index: 10;
     border-radius: 8px;
     min-width: 320px;
     margin-left: -60px;
+    font-size: 14px;
+    line-height: 22px;
 }
 
-#cgGalleriesShortcodes .td_gallery_info_shortcode .cg_shortcode_copy {
+#cgGalleriesShortcodes .td_gallery_info_shortcode div.cg_shortcode_copy {
     width: 18%;
     padding: 10px 0;
     min-width: 25px;
     margin-right: 5px;
+    display: none;
 }
 
 .td_gallery_info_shortcode_edit{
@@ -327,6 +339,7 @@ input.cg_button_new_gallery:hover{
     width: 30px;
     height: 30px;
     cursor: pointer;
+    display: none;
 }
 
 .td_gallery_info_shortcode_edit.td_gallery_translation_edit{
@@ -336,6 +349,13 @@ input.cg_button_new_gallery:hover{
     background-size: 15px 15px;
     margin-left: 8px;
     margin-bottom: -2px;
+}
+
+.cg_view_translations .td_gallery_info_shortcode_edit.td_gallery_translation_edit{
+    height: 20px;
+    width: 20px;
+    background-size: 20px 20px;
+    transform: translateY(3px);
 }
 
 .td_gallery_info_buttons{

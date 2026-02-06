@@ -79,7 +79,7 @@ if (!function_exists('cg_openai_container')) {
                 <div class="cg_openai_button_container" style="display: flex; align-items: center;">
                     <div class="cg_clear_container" style="margin-right: 15px;">
                         <textarea id="cgOpenAiPromptInput" rows="5"></textarea>
-                        <div title="Clear field" id="cgOpenAiPromptInputClear" class="cg_clear" >
+                        <div title="Clear field" id="cgOpenAiPromptInputClear" class="cg_hide cg_clear" >
                             &#x274C;
                         </div>
                     </div>

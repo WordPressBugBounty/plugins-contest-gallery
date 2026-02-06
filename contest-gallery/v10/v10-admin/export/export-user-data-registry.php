@@ -18,16 +18,16 @@ if(!function_exists('cg_user_data_registry_csv_export')){
 // Tabellennamen bestimmen
 
         if(!empty($_GET['wp_uid'])){$selectWPusers = $wpdb->get_results("SELECT DISTINCT * FROM $wpUsers WHERE ID='".@$_GET['wp_uid']."' ORDER BY id ASC");}
-        else if(empty($_POST['cg-user-name']) AND !empty($_POST['galleryIdToSelect'])){
+        elseif(empty($_POST['cg-user-name']) AND !empty($_POST['galleryIdToSelect'])){
 
             $selectWPusers = $wpdb->get_results("SELECT DISTINCT  $wpUsers.* FROM $wpUsers, $entriesShort WHERE $wpUsers.ID=$entriesShort.wp_user_id AND $entriesShort.GalleryID='".$_POST['galleryIdToSelect']."'");
 
         }
-        else if(!empty($_POST['cg-user-name']) AND empty($_POST['galleryIdToSelect'])){
+        elseif(!empty($_POST['cg-user-name']) AND empty($_POST['galleryIdToSelect'])){
             // var_dump(1);
             $selectWPusers = $wpdb->get_results("SELECT DISTINCT  $wpUsers.* FROM $wpUsers WHERE user_login LIKE '%".@$_POST['cg-user-name']."%' or user_email LIKE '%".@$_POST['cg-user-name']."%'");
         }
-        else if(!empty($_POST['cg-user-name']) AND !empty($_POST['galleryIdToSelect'])){
+        elseif(!empty($_POST['cg-user-name']) AND !empty($_POST['galleryIdToSelect'])){
             //  var_dump(2);
             $selectWPusers = $wpdb->get_results("SELECT DISTINCT  $wpUsers.* FROM $wpUsers, $entriesShort WHERE $wpUsers.id=$entriesShort.wp_user_id AND   
         ($wpUsers.user_login LIKE '%".@$_POST['cg-user-name']."%' or $wpUsers.user_email LIKE '%".@$_POST['cg-user-name']."%')
@@ -186,6 +186,7 @@ ORDER BY GalleryID ASC, Field_Order ASC");
 
         $filename = $code."_userregdata.csv";
 
+        $csvData = cg_neutralize_csv_array($csvData);
 
         header("Content-type: text/csv");
         header("Content-Disposition: attachment; filename=$filename");

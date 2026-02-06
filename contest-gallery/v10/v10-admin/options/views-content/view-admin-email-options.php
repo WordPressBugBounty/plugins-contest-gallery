@@ -52,12 +52,12 @@ echo <<<HEREDOC
                 <div class='cg_view_option cg_inform_admin  cg_view_option_full_width cg_border_top_none $cgProFalse' id="cgInformAdminMailContainer" >
                     <div class='cg_view_option_title'>
                         <p>Admin e-mail (To)<br><span class="cg_view_option_title_note">
-                            <span class="cg_color_red">NOTE:</span> relating testing - e-mail where is send to should not contain $cgYourDomainName.<br>Many servers can not send to own domain.</span>
+                            $cgDomainErrorText
                             </span>
                         </p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" name="AdminMail" id="cgInformAdminAdminMail" value="$informAdminMail"  maxlength="200" >
+                        <input type="text" class="cg_domain_error_input" name="AdminMail" id="cgInformAdminAdminMail" value="$informAdminMail"  maxlength="200" >
                     </div>
                 </div>
         </div>
@@ -107,7 +107,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_inform_admin  cg_view_option_full_width cg_border_top_none $cgProFalse'  id="wp-InformAdminText-wrap-Container" >
                     <div class='cg_view_option_title cg_copyable'>
-                        <p>Mail content<br><span class="cg_view_option_title_note">Use <span style="font-weight:bold;">\$info$</span> in the editor if you like to attach user info</span></p>
+                        <p>Email content<br><span class="cg_view_option_title_note">Use <span style="font-weight:bold;">\$info$</span> in the editor if you like to attach user info</span></p>
                     </div>
                     <div class='cg_view_option_html'>
                         <textarea class='cg-wp-editor-template' id='InformAdminText'  name='InformAdminText'>$ContentAdminMail</textarea>

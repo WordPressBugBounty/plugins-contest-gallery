@@ -237,12 +237,14 @@ $DataShare = ($FbLikeNoShare == 1) ? 'true' : 'false';
 $DataClass = ($proOptions->FbLikeOnlyShare==1) ? 'fb-share-button' : 'fb-like';
 $DataLayout = ($proOptions->FbLikeOnlyShare==1) ? 'button' : 'button_count';
 
-$Subject = contest_gal1ery_convert_for_html_output($selectSQLemail->Header);
+$Subject = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemail->Header);
 $Admin = $selectSQLemail->Admin;
 $Reply = $selectSQLemail->Reply;
 $cc = $selectSQLemail->CC;
+$ccPlain = $selectSQLemail->CC;
 $bcc = $selectSQLemail->BCC;
-$contentMail = contest_gal1ery_convert_for_html_output($selectSQLemail->Content);
+$bccPlain = $selectSQLemail->BCC;
+$contentMail = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemail->Content);
 
 $url = trim(sanitize_text_field($selectSQLemail->URL));
 //	$url = (strpos($url,'?')) ? $url.'&' : $url.'?';
@@ -641,7 +643,7 @@ if(!empty($_POST['cg_multiple_files_for_post'])){
 				$queryArgsArray1[] = absint($fileDataForPostArray[1]['Exif']);
                 if(!empty($PdfPreviewIfWpUploadReplace)){
                     $queryArgsArray1[] = $PdfPreviewIfWpUploadReplace;
-                }else if(!empty($fileDataForPostArray[1]['PdfPreview'])){
+                }elseif(!empty($fileDataForPostArray[1]['PdfPreview'])){
                     $queryArgsArray1[] = absint($fileDataForPostArray[1]['PdfPreview']);
                 }else{
                     $queryArgsArray1[] = 0;

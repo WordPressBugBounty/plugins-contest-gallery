@@ -27,27 +27,27 @@ if (!function_exists('contest_gal1ery_user_vote_mail_prepare')) {
                 $tstampToCompare = 1 * 60 * 60;
                 if ($InformUserVoteMailInterval == '1m') {
                     $tstampToCompare = 1 * 60;
-                } else if ($InformUserVoteMailInterval == '2m') {
+                } elseif ($InformUserVoteMailInterval == '2m') {
                     $tstampToCompare = 1 * 120;
-                } else if ($InformUserVoteMailInterval == '1h') {
+                } elseif ($InformUserVoteMailInterval == '1h') {
                     $tstampToCompare = 1 * 60 * 60;
-                } else if ($InformUserVoteMailInterval == '2h') {
+                } elseif ($InformUserVoteMailInterval == '2h') {
                     $tstampToCompare = 1 * 60 * 60 * 2;
-                } else if ($InformUserVoteMailInterval == '4h') {
+                } elseif ($InformUserVoteMailInterval == '4h') {
                     $tstampToCompare = 1 * 60 * 60 * 4;
-                } else if ($InformUserVoteMailInterval == '6h') {
+                } elseif ($InformUserVoteMailInterval == '6h') {
                     $tstampToCompare = 1 * 60 * 60 * 6;
-                } else if ($InformUserVoteMailInterval == '12h') {
+                } elseif ($InformUserVoteMailInterval == '12h') {
                     $tstampToCompare = 1 * 60 * 60 * 12;
-                } else if ($InformUserVoteMailInterval == '24h') {
+                } elseif ($InformUserVoteMailInterval == '24h') {
                     $tstampToCompare = 1 * 60 * 60 * 24;
-                } else if ($InformUserVoteMailInterval == '48h') {
+                } elseif ($InformUserVoteMailInterval == '48h') {
                     $tstampToCompare = 1 * 60 * 60 * 48;
-                } else if ($InformUserVoteMailInterval == '1week') {
+                } elseif ($InformUserVoteMailInterval == '1week') {
                     $tstampToCompare = 1 * 60 * 60 * 168;
-                } else if ($InformUserVoteMailInterval == '2weeks') {
+                } elseif ($InformUserVoteMailInterval == '2weeks') {
                     $tstampToCompare = 1 * 60 * 60 * 336;
-                } else if ($InformUserVoteMailInterval == '4weeks') {
+                } elseif ($InformUserVoteMailInterval == '4weeks') {
                     $tstampToCompare = 1 * 60 * 60 * 672;
                 }
                 if (empty($lastTstampFor) or (time() - $tstampToCompare) > $lastTstampFor) {

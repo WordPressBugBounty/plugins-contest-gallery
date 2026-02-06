@@ -4,6 +4,8 @@ add_action('wp_ajax_post_cg_get_current_permalinks', 'post_cg_get_current_permal
 if (!function_exists('post_cg_get_current_permalinks')) {
     function post_cg_get_current_permalinks() {
 
+        cg_check_nonce();
+
         global $wpdb;
         $tablename = $wpdb->prefix . "contest_gal1ery";
         $realId = absint($_POST['cgRealId']);
@@ -54,6 +56,8 @@ if (!function_exists('post_cg_get_current_permalinks')) {
 add_action('wp_ajax_post_cg_create_pdf_preview_backend', 'post_cg_create_pdf_preview_backend');
 if (!function_exists('post_cg_create_pdf_preview_backend')) {
     function post_cg_create_pdf_preview_backend($WpUpload = 0, $realId = 0, $cg_base_64 = '', $isFromFrontendUpload = false) {
+
+        cg_check_nonce();
 
         global $wpdb;
         $tablename_posts = $wpdb->prefix . "posts";
@@ -124,7 +128,7 @@ if (!function_exists('post_cg_create_pdf_preview_backend')) {
                 $PdfPreviewImage = wp_get_attachment_image_src($realIdRow->PdfPreview, 'large');
                 echo 'cg_guid###'.$PdfPreviewImage[0].'###cg_guid_end';
             }
-        }else if(!empty($multipleFilesPdfPreview) && !empty(get_post($multipleFilesPdfPreview))){// set for multiple files then
+        }elseif(!empty($multipleFilesPdfPreview) && !empty(get_post($multipleFilesPdfPreview))){// set for multiple files then
             if(!$isFromFrontendUpload){
                 $multipleFilesPdfPreviewImage = wp_get_attachment_image_src($multipleFilesPdfPreview, 'large');
                 echo 'cg_guid###'.$multipleFilesPdfPreviewImage[0].'###cg_guid_end';
@@ -503,9 +507,7 @@ if (!function_exists('post_cg_move_to_another_gallery')) {
 // move to another gallery---- END
 
 // view control backend
-
 add_action('wp_ajax_post_cg_gallery_view_control_backend', 'post_cg_gallery_view_control_backend');
-
 if (!function_exists('post_cg_gallery_view_control_backend')) {
     function post_cg_gallery_view_control_backend()
     {
@@ -521,7 +523,7 @@ if (!function_exists('post_cg_gallery_view_control_backend')) {
                 exit();
             }
 
-        } else if (empty($_POST['cgVersionScripts']) && !empty($_POST['cgGalleryFormSubmit'])) { // IMPORTANT that data is not saved when wrong data is send when updateting 109900
+        } elseif (empty($_POST['cgVersionScripts']) && !empty($_POST['cgGalleryFormSubmit'])) { // IMPORTANT that data is not saved when wrong data is send when updateting 109900
 
             echo "<div id='cgStepsNavigationTop' ></div>";
             echo "<div id='cgSortable' style='width:100%;text-align:center;'><h4>New gallery version detected please reload this page manually one more time</h4></div>";
@@ -580,7 +582,6 @@ if (!function_exists('post_cg_gallery_view_control_backend')) {
         }
     }
 }
-
 // view control backend ---- END
 
 add_action('wp_ajax_post_cg_gallery_save_categories_changes', 'post_cg_gallery_save_categories_changes');
@@ -799,7 +800,7 @@ if (!function_exists('post_cg_social_platform_input')) {
 	                //$post_type = 'contest-galleries';
                 //}
 
-                $post_title = substr(cg_pre_process_name_for_url_name($post_title),0,100);
+	            $post_title = substr(cg_pre_process_name_for_url_name($post_title),0,100);
 
             $array = [
                     'post_title'=> $post_title,
@@ -1591,3 +1592,160 @@ if(!function_exists('post_cg_backend_image_upload')){
     }
 }
 // add contest gallery user profile image --- END
+
+add_action( 'wp_ajax_post_cg_get_current_nonce', 'post_cg_get_current_nonce' );
+if(!function_exists('post_cg_get_current_nonce')){
+    function post_cg_get_current_nonce() {
+        $nonce = wp_create_nonce('cg_nonce');
+        ?>
+        <script data-cg-processing="true">
+            cgJsClassAdmin.index.vars.cg_current_nonce = <?php echo json_encode($nonce); ?>;
+            cgJsClassAdmin.index.vars.cg_current_nonce_time = new Date().getTime();
+        </script>
+        <?php
+    }
+}
+
+add_action( 'wp_ajax_post_cg_get_wp_user_meta', 'post_cg_get_wp_user_meta' );
+if(!function_exists('post_cg_get_wp_user_meta')){
+    function post_cg_get_wp_user_meta() {
+
+        cg_check_nonce();
+
+        $WpUserId = absint($_POST['cg_wp_user_id']);
+        $firstName = get_user_meta( $WpUserId, 'first_name', true );
+        if(empty($firstName)){
+            $firstName = 'Not set';
+        }
+        $lastName = get_user_meta( $WpUserId, 'last_name', true );
+        if(empty($lastName)){
+            $lastName = 'Not set';
+        }
+        ?>
+        <script data-cg-processing="true">
+            var WpUserId = <?php echo json_encode($WpUserId); ?>;
+            cgJsClassAdmin.gallery.vars.WpUsersData[WpUserId] = {};
+            cgJsClassAdmin.gallery.vars.WpUsersData[WpUserId].firstName = <?php echo json_encode($firstName); ?>;
+            cgJsClassAdmin.gallery.vars.WpUsersData[WpUserId].lastName = <?php echo json_encode($lastName); ?>;
+        </script>
+        <?php
+    }
+}
+
+add_action( 'wp_ajax_post_cg1l_delete_unconfirmed_mail', 'post_cg1l_delete_unconfirmed_mail' );
+if(!function_exists('post_cg1l_delete_unconfirmed_mail')){
+    function post_cg1l_delete_unconfirmed_mail() {
+        cg_check_nonce();
+        cg1l_delete_unconfirmed_user(sanitize_text_field($_POST['cg_mail']));
+    }
+}
+
+add_action( 'wp_ajax_post_cg_list_unconfirmed_mails', 'post_cg_list_unconfirmed_mails' );
+if(!function_exists('post_cg_list_unconfirmed_mails')){
+    function post_cg_list_unconfirmed_mails() {
+
+        cg_check_nonce();
+
+        global $wpdb;
+        $tablename_mails = $wpdb->prefix . "contest_gal1ery_mails";
+
+        $mail = cg1l_sanitize_method($_POST['cg_mail']);
+
+        $mails = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT *
+         FROM $tablename_mails
+         WHERE ReceiverMail = %s AND WpUserId = 0 AND (MailType = 'registry-resend-frontend' OR MailType = 'registry-resend-backend' OR MailType = 'registry-frontend')
+         ORDER BY id DESC",
+                $mail
+            ),
+            ARRAY_A
+        );
+
+        if (!is_array($mails)) {
+            $mails = [];
+        }else{
+            $typeMap = [
+                'registry-resend-frontend' => 'Resent confirmation (Frontend)',
+                'registry-resend-backend'  => 'Resent confirmation (Backend)',
+                'registry-frontend'        => 'Registration confirmation (Frontend)',
+            ];
+
+            foreach ($mails as $index => $mail) {
+
+                // Add formatted date
+                $DateTime = cg_get_time_based_on_wp_timezone_conf($mail['Tstamp'], 'd-M-Y H:i:s');
+
+                // Add formatted body
+                $mails[$index]['Body'] = contest_gal1ery_convert_for_html_output_without_nl2br($mail['Body']);
+
+                // Add human-friendly MailType
+                if (isset($typeMap[$mail['MailType']])) {
+                    $mails[$index]['MailTypeLabel'] = $typeMap[$mail['MailType']];
+                } else {
+                    if(!empty($mail['MailType'])){
+                        $mails[$index]['MailTypeLabel'] = ucfirst(str_replace('-', ' ', $mail['MailType']));
+                    }else{
+                        $mails[$index]['MailTypeLabel'] = '';
+                    }
+                }
+
+                $mails[$index]['DateTime'] = $DateTime.' — '.$mails[$index]['MailTypeLabel'];
+
+            }
+
+        }
+
+        ?>
+        <script data-cg-processing="true">
+            cgJsClassAdmin.gallery.vars.cg_unconfirmed_mails = <?php echo json_encode($mails); ?>;
+        </script>
+        <?php
+    }
+}
+
+// post_cg_get_current_permalinks
+add_action('wp_ajax_post_cg1l_get_management_show_users', 'post_cg1l_get_management_show_users');
+if (!function_exists('post_cg1l_get_management_show_users')) {
+    function post_cg1l_get_management_show_users() {
+
+        cg_check_nonce();
+        /*echo "<pre>";
+            print_r($_POST);
+        echo "</pre>";die;*/
+        //  if(empty($_POST['cg_form_submit'])){
+        $_GET = array_merge($_GET, $_POST);
+        //}
+        $cgProVersion = contest_gal1ery_key_check();
+        if(!$cgProVersion){
+            $cgProFalse = 'cg-pro-false';
+        }else{
+            $cgProFalse = '';
+        }
+        include(__DIR__.'/../v10/v10-admin/users/admin/users/management.php');
+
+    }
+}
+
+// post_cg1l_get_unconfirmed_users
+add_action('wp_ajax_post_cg1l_get_unconfirmed_users', 'post_cg1l_get_unconfirmed_users');
+if (!function_exists('post_cg1l_get_unconfirmed_users')) {
+    function post_cg1l_get_unconfirmed_users() {
+
+        cg_check_nonce();
+        /*echo "<pre>";
+            print_r($_POST);
+        echo "</pre>";die;*/
+        //  if(empty($_POST['cg_form_submit'])){
+        $_GET = array_merge($_GET, $_POST);
+        //}
+        $cgProVersion = contest_gal1ery_key_check();
+        if(!$cgProVersion){
+            $cgProFalse = 'cg-pro-false';
+        }else{
+            $cgProFalse = '';
+        }
+        include(__DIR__.'/../v10/v10-admin/users/admin/users/unconfirmed-users.php');
+
+    }
+}

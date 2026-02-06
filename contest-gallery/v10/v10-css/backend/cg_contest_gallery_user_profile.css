@@ -18,14 +18,16 @@
     display: none;
 }
 
+.user-display-name-wrap{
+    display: none;
+}
+
 .avatar {
     display: none !important;
 }
 #wpadminbar #wp-admin-bar-my-account.with-avatar #wp-admin-bar-user-actions > li{
     margin-left: 0;
 }
-
-
 
 #contextual-help-link-wrap{
     display: none;
@@ -34,7 +36,7 @@
     display: none;
 }
 .user-admin-color-wrap,.show-admin-bar,.user-language-wrap,
-.user-display-name-wrap,.user-url-wrap,.user-description-wrap,
+.user-url-wrap,.user-description-wrap,
 .user-profile-picture, h2{
     display: none;
 }
@@ -57,6 +59,10 @@
 
 #profile-page > div{
     display: none;
+}
+
+#profile-page > div.notice.error{
+    display: block;
 }
 
 #profile-page > #message{

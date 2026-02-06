@@ -65,7 +65,7 @@ $mainCGdivShowUncollapsed = '';
 if(!$isOnlyContactEntry){
     if(!isset($fileUploadField['Field_Content']['mandatory']) || $fileUploadField['Field_Content']['mandatory']=='on'){
 	    if(floatval($options['general']['Version'])>=26.03){
-		    if($fileUploadField['Field_Content']['collapsed']=='on'){
+		    if(isset($fileUploadField['Field_Content']['collapsed']) && $fileUploadField['Field_Content']['collapsed']=='on'){
 			    $isShowCollapsed = true;
 		    }else{
 			    $isShowCollapsed = false;

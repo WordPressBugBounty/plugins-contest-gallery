@@ -116,11 +116,11 @@ include("header-2.php");
 
 if($isAjaxCall){
 
-
 // Set variables:
 	$heightOriginalImg = 1;
 	$widthOriginalImg = 1;
 
+    $uploadFolder = wp_upload_dir();
 
 // Bestimmen ob ABSTEIGEND oder AUFSTEIGEND
 
@@ -132,6 +132,18 @@ if($isAjaxCall){
 
 
 	echo "<ul id='cgSortable'>";
+    // get mail exception logs
+    $mailExceptions = '';
+    $fileName = md5(wp_salt( 'auth').'---cnglog---'.$GalleryID);
+    $fileMailExceptions = $uploadFolder['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/logs/errors/mail-'.$fileName.'.log';
+    if(file_exists($fileMailExceptions)){
+        $mailExceptions = file_get_contents($fileMailExceptions);
+    }
+    // get mail exception logs --- END
+    if(strpos($mailExceptions,'Custom e-mail for an entry') !== false){
+        echo "<div style=\"width:330px;margin: -8px auto 15px;\"><a href=\"?page=".cg_get_version()."/index.php&amp;corrections_and_improvements=true&amp;option_id=$galeryNR\" class='cg_load_backend_link'><input class=\"cg_backend_button cg_backend_button_back cg_backend_button_warning\" type=\"button\" value=\"There were mail exceptions when sending custom mail\" style=\"width: fit-content;padding: 7px 12px;\"></a>
+</div>";
+    }
 	?>
     <script  data-cg-processing="true">
         cg_embed_post_titles = {};
@@ -158,8 +170,6 @@ if($isAjaxCall){
 	//	echo "<li style='width:891px;border: thin solid black;padding-top:10px;padding-bottom:10px;display:table;' id='div' class='cgSortableDiv'>";
 // Wird gebraucht um die höchste RowID am Anfang zu ermitln
 	$r = 0;
-
-	$uploadFolder = wp_upload_dir();
 
 	$addedEcommerceImageForDownload = [];
 
@@ -262,7 +272,7 @@ if($isAjaxCall){
 		}
 
 		$getEntriesMail = '';
-		if(!empty($WpUserId) AND !empty($allWpUsersByIdArray[$WpUserId])){
+		if(!empty($WpUserId) AND !empty($allWpUsersByIdArray[$WpUserId]) AND !empty($allWpUsersByIdArray[$WpUserId]['user_email'])){
 			$getEntriesMail = $allWpUsersByIdArray[$WpUserId]['user_email'];
 		}
 
@@ -369,7 +379,7 @@ if($isAjaxCall){
 			foreach ($MultipleFiles as $MultipleFilesOrder => $MultipleFileArray){
 				if($MultipleFilesOrder == 1 && !empty($MultipleFileArray['isRealIdSource'])){
 					break;
-				}else if($MultipleFilesOrder == 1){
+				}elseif($MultipleFilesOrder == 1){
 					$anotherFirstMultipleFile = true;
                     if(!empty($MultipleFileArray['PdfPreviewImage'])){
                         $anotherFirstMultipleFilePdfPreviewImage = $MultipleFileArray['PdfPreviewImage'];
@@ -576,9 +586,9 @@ if($isAjaxCall){
 				$socialTypeName = 'YouTube';
 				if($ImgType=='twt'){
 					$socialTypeName = 'Twitter';
-				}else if($ImgType=='inst'){
+				}elseif($ImgType=='inst'){
 					$socialTypeName = 'Instagram';
-				}else if($ImgType=='tkt'){
+				}elseif($ImgType=='tkt'){
 					$socialTypeName = 'TikTok';
 				}
 			}
@@ -635,15 +645,15 @@ if($isAjaxCall){
 <div class="cg_image_checkbox_action">'.$WinnerText.'</div>
 <div class="cg_image_checkbox_icon" ></div>
 <input type="hidden" class="cg_status_winner_checkbox cg_input_vars_count" name="'.$WinnerName.'['.$id.']" disabled value="'.$id.'">
-</div><div style="padding-top:2px;position: relative;margin-bottom: 10px;text-align:center;"><span class="cg-info-icon" style="margin-left: -15px;">info</span>
-    <span class="cg-info-container cg-info-container-gallery-user" style="top: 34px; margin-left: -122px; display: none;">Use cg_gallery_winner shortcode to display only winners</span>
+</div><div style="padding-top:2px;position: relative;margin-bottom: 10px;text-align:left;padding-left:59px;"><div class="cg-info-icon" style="margin-left: -15px;">info</div>
+    <div class="cg-info-container cg-info-container-gallery-user" style="top: 32px; margin-left: -128px; display: none;">Use cg_gallery_winner shortcode to display only winners</div>
     </div></div>';
 
 		if((float)$optionsSQL->Version>=22 && $ImgTypeToShow!='con'){
 			echo "<div><div class=\"cg_sell\" >";
-			echo "<div class='cg_sell_button cg_sell_activate_button cg_sale_settings $ytbDisabled' data-cg-real-id='$id' >Sell settings$ytbHint</div>";
+			echo "<div class='cg_sell_button cg_sell_activate_button cg_sale_settings $ytbDisabled' data-cg-real-id='$id' >Sales settings$ytbHint</div>";
 			echo '<div style="padding-top:2px;position: relative;margin-bottom: 10px;text-align:center;" class="'.$ytbHintInfo.'"><span class="cg-info-icon" >info</span>
-    <span class="cg-info-container cg-info-container-gallery-user" style="top: 34px; margin-left: -132px; display: none;">cg_gallery_ecommerce and "Sell settings"<br>are not available for '.$ytbHintText.' entries</span>
+    <span class="cg-info-container cg-info-container-gallery-user" style="top: 34px; margin-left: -132px; display: none;">cg_gallery_ecommerce and "Sales settings"<br>are not available for '.$ytbHintText.' entries</span>
     </div>';
 			echo '</div></div>';
 		}
@@ -653,59 +663,147 @@ if($isAjaxCall){
 
 		echo "</div>";
 
-		$ifInformedCss = 'margin-top: -15px;';
-		if($Informed==1){
-			$ifInformedCss = 'margin-top: -5px;';
-			echo "<div style='width: 100%;padding-left: 20px;margin: -15px 0 10px;'><b>Informed about activated image</b></div>";
-		}
+        $hasEmail = false;
+        if(!empty($selectContentFieldArray)){
+            foreach($selectContentFieldArray as $key => $formvalue){
+                if(!isset($fieldtype)){
+                    $fieldtype = '';
+                }
+                if($formvalue=='email-f'){$fieldtype="ef";  $i=1; continue;}
+                if($fieldtype=="ef" AND $i==1){$formFieldId=$formvalue; $i=2; continue;}
+                if($fieldtype=="ef" AND $i==2){$fieldOrder=$formvalue; $i=3; continue;}
+                if ($fieldtype=='ef' AND $i==3) {
+                    if(!empty($WpUserId) AND !empty($allWpUsersByIdArray[$WpUserId])){
+                        $hasEmail = true;
+                    }
+                    else{
+                        $getEntriesMail = html_entity_decode(stripslashes($allEntriesByImageIdArrayWithContent[$id][$formFieldId]['Content']));
+                        $getEntriesConfMailId = html_entity_decode(stripslashes($allEntriesByImageIdArrayWithContent[$id][$formFieldId]['ConfMailId']));
+                        if(!empty($getEntriesMail)){
+                            $hasEmail = true;
+                        }
+                    }
+                }
+            }
+        }
 
-		if(!empty($selectContentFieldArray)){
-			foreach($selectContentFieldArray as $key => $formvalue){
-				// 1. Feld Typ
-				// 2. ID des Feldes in F_INPUT
-				// 3. Feld Reihenfolge
-				// 4. Feld Content
-				if(!isset($fieldtype)){
-					$fieldtype = '';
-				}
-				if($formvalue=='email-f'){$fieldtype="ef";  $i=1; continue;}
-				if($fieldtype=="ef" AND $i==1){$formFieldId=$formvalue; $i=2; continue;}
-				if($fieldtype=="ef" AND $i==2){$fieldOrder=$formvalue; $i=3; continue;}
-				if ($fieldtype=='ef' AND $i==3) {
+        if(!empty($selectContentFieldArray)){
+            foreach($selectContentFieldArray as $key => $formvalue){
+                // 1. Feld Typ
+                // 2. ID des Feldes in F_INPUT
+                // 3. Feld Reihenfolge
+                // 4. Feld Content
+                if(!isset($fieldtype)){
+                    $fieldtype = '';
+                }
+                if($formvalue=='email-f'){$fieldtype="ef";  $i=1; continue;}
+                if($fieldtype=="ef" AND $i==1){$formFieldId=$formvalue; $i=2; continue;}
+                if($fieldtype=="ef" AND $i==2){$fieldOrder=$formvalue; $i=3; continue;}
+                if ($fieldtype=='ef' AND $i==3) {
 
-					//$getEntries = $wpdb->get_var( "SELECT Short_Text FROM $tablenameentries WHERE pid='$id' AND f_input_id = '$formFieldId'");
+                    //$getEntries = $wpdb->get_var( "SELECT Short_Text FROM $tablenameentries WHERE pid='$id' AND f_input_id = '$formFieldId'");
+                    $emailStatus = true;
+                    $emailStatusText = 'Not confirmed';
 
-					$emailStatus = true;
-					$emailStatusText = 'Not confirmed';
+                    if(!empty($WpUserId) AND !empty($allWpUsersByIdArray[$WpUserId])){// check for sure both, because user might be deleted
+                        //$getEntries = $wpUser->user_email;
 
-					if(!empty($WpUserId) AND !empty($allWpUsersByIdArray[$WpUserId])){// check for sure both, because user might be deleted
-						//$getEntries = $wpUser->user_email;
+                        $emailStatusText = 'Confirmed (registered user)';
+                        $mailReadonly = "readonly";
+                        $registeredUserMail = "(registered user email)";
+                    }
+                    else{
 
-						$emailStatusText = 'Confirmed (registered user)';
-						$mailReadonly = "readonly";
-						$registeredUserMail = "(registered user email)";
-					}
-					else{
+                        $getEntriesMail = html_entity_decode(stripslashes($allEntriesByImageIdArrayWithContent[$id][$formFieldId]['Content']));
+                        $getEntriesConfMailId = html_entity_decode(stripslashes($allEntriesByImageIdArrayWithContent[$id][$formFieldId]['ConfMailId']));
 
-						$getEntriesMail = html_entity_decode(stripslashes($allEntriesByImageIdArrayWithContent[$id][$formFieldId]['Content']));
-						$getEntriesConfMailId = html_entity_decode(stripslashes($allEntriesByImageIdArrayWithContent[$id][$formFieldId]['ConfMailId']));
+                        $mailReadonly = "readonly";
+                        $registeredUserMail = "";
 
-						$mailReadonly = "readonly";
-						$registeredUserMail = "";
+                        if(!empty($getEntriesMail)){
+                            if($getEntriesConfMailId>0){
+                                $emailStatusText = 'Confirmed (not registered user)';
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-						if(!empty($getEntriesMail)){
-							if($getEntriesConfMailId>0){
-								$emailStatusText = 'Confirmed (not registered user)';
-							}
-						}
-					}
-				}
-			}
-		}
+        $informedAndEmailStatusString = '';
 
-		if($emailStatus==true){
-			echo "<div style='width:100%;padding-left: 20px;".$ifInformedCss."margin-bottom: 10px;'>E-Mail Status: <strong>$emailStatusText</strong></div>";
-		}
+        /*if(($Informed==1 || $emailStatus==true) && $hasEmail){// dumb old logic simply to display the confirmed text
+            $informedAndEmailStatusCss = 'width:100%;padding-left: 20px;margin-bottom: 9px;margin-top: -16px;';
+            if((!empty($WpUserId) AND !empty($allWpUsersByIdArray[$WpUserId])) || $hasEmail){
+                $informedAndEmailStatusCss = 'width:100%;padding-left: 20px;margin-bottom: 7px;margin-top: -14px;';
+            }
+            $informedAndEmailStatusString .= "<div style='$informedAndEmailStatusCss'>";
+            if(!empty($getEntriesMail)){
+               // $informedAndEmailStatusString .= "<input type='hidden' value='$getEntriesMail' class='cg_email_to_send' >";
+            }
+            if($Informed==1){
+                // since 28.0.2 not available anymore, because not required, a mail for an entry can be sent anytime
+                //$informedAndEmailStatusString .= "Informed about activated image";
+            }
+            if($emailStatus==true && $hasEmail){
+                if($Informed==1){
+                    $informedAndEmailStatusString .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                }
+                $informedAndEmailStatusString .= "E-Mail Status: <b>$emailStatusText</b>";
+            }
+            $informedAndEmailStatusString .= "</div>";
+        }*/
+
+        if(!empty($getEntriesMail)){
+		echo "<div class='cg_send_mail'>";
+            echo "<input type='hidden' value='$getEntriesMail' class='cg_email_to_send' >";
+            echo "<div  class='cg_send_mail_item' style='margin-right: 20px;'>";
+                echo "<div  class='cg_send_custom_mail $cgProFalse'>";
+                    echo "Send custom mail";
+                echo "</div>";
+                echo "<div  class='cg_info_container'>";
+                    echo "<div  class='cg-info-icon' style='text-align: center;display: block;text-align: center;margin-top:5px;'>";
+                        echo "Info";
+                    echo "</div>";
+                    echo "<div  class='cg-info-container' style='margin-left: -21px; margin-top: -11px; width: max-content;'>";
+                        echo "Send mail with available fields";
+                    echo "</div>";
+                echo "</div>";
+            echo "</div>";
+            if($Active==1){
+                echo "<div class='cg_send_mail_item'>";
+                    echo "<div  class='cg_deactivate_send_custom_mail $cgProFalse'>";
+                        echo "Deactivate and send custom mail";
+                    echo "</div>";
+                    echo "<div  class='cg_info_container'>";
+                        echo "<div  class='cg-info-icon' style='text-align: center;display: block;text-align: center;margin-top:5px;'>";
+                            echo "Info";
+                        echo "</div>";
+                        echo "<div  class='cg-info-container' style='margin-left: -34px; margin-top: -11px; width: max-content;'>";
+                            echo "Deactivate and send mail with available fields";
+                        echo "</div>";
+                    echo "</div>";
+                echo "</div>";
+            }else{
+                echo "<div  class='cg_send_mail_item'>";
+                    echo "<div  class='cg_activate_send_custom_mail $cgProFalse'>";
+                        echo "Activate and send custom mail";
+                    echo "</div>";
+                    echo "<div  class='cg_info_container'>";
+                        echo "<div  class='cg-info-icon' style='text-align: center;display: block;text-align: center;margin-top:5px;'>";
+                            echo "Info";
+                        echo "</div>";
+                        echo "<div  class='cg-info-container' style='margin-left: -34px; margin-top: -14px; width: max-content;'>";
+                            echo "Activate and send mail with custom fields";
+                        echo "</div>";
+                    echo "</div>";
+                echo "</div>";
+            }
+          //  echo $informedAndEmailStatusString;
+        echo "</div>";
+        }else{
+         //   echo $informedAndEmailStatusString;
+        }
 
 		// has to be done here so cgAddedEcommerceImageForDownload img tag appears
 		if(!empty($addedEcommerceImageForDownload[$realId])){
@@ -814,7 +912,7 @@ if($isAjaxCall){
 					$imgSrcLargeToShow=$imgSrcLargeToShow[0];
 				}
 			}
-		}else if(cg_is_is_image($ImgType) && !empty($anotherFirstMultipleFile)){
+		}elseif(cg_is_is_image($ImgType) && !empty($anotherFirstMultipleFile)){
 			if(!empty($EcommerceEntry)){
 				$imgSrcLarge = $image_url_to_show;
 				$imgSrcLargeToShow=$image_url_to_show;
@@ -883,6 +981,14 @@ if($isAjaxCall){
              data-cg-file-height='$fileHeight' data-cg-file-width='$fileWidth'  data-cg-exif='$exifDataStringForInput'  data-cg-pdf-preview='".$value->PdfPreview."' data-cg-pdf-original='".$image_url."'   data-cg-pdf-preview-image='$PdfPreviewImage' data-cg-pdf-preview-image-large='$PdfPreviewImageLarge' data-cg-wp-upload='$WpUpload' 
             >";
 
+        $cg_sent_mails_hide = 'cg_hide';
+        $cg_sent_mails_count = 0;
+        if(!empty($value->Mails)){
+            $cg_sent_mails_hide = '';
+            $cg_sent_mails_count = $value->Mails;
+        }
+        echo "<div class='cg_sent_mails $cg_sent_mails_hide'>Mails<br><b>".$cg_sent_mails_count."</b></div>";
+
 		if(!empty($OrderItem)){
 			$OrderId = $wpdb->get_var("SELECT ParentOrder FROM $tablename_ecommerce_orders_items WHERE id = $OrderItem");
 			$PayerEmail = $wpdb->get_var("SELECT PayerEmail FROM $tablename_ecommerce_orders WHERE id = $OrderId");
@@ -931,7 +1037,7 @@ if($isAjaxCall){
 			if($pro_options->RegUserUploadOnly=='2'){
 				$checkCookieIdOrIP = ", Cookie ID";
 				$checkCookieIdOrIPMarginLeft = 'margin-top: -81px !important;';
-			}else if($pro_options->RegUserUploadOnly=='3'){
+			}elseif($pro_options->RegUserUploadOnly=='3'){
 				$checkCookieIdOrIP = ", IP";
 			}
 
@@ -958,6 +1064,8 @@ if($isAjaxCall){
 				echo "<input type='hidden' class='cg_wp_user_nicename' value='".$allWpUsersByIdArray[$WpUserId]['user_nicename']."'>";
 				echo "<input type='hidden' class='cg_wp_user_email' value='".$allWpUsersByIdArray[$WpUserId]['user_email']."'>";
 				echo "<input type='hidden' class='cg_wp_user_display_name' value='".$allWpUsersByIdArray[$WpUserId]['display_name']."'>";
+				echo "<input type='hidden' class='cg_wp_user_display_name' value='".$allWpUsersByIdArray[$WpUserId]['display_name']."'>";
+				echo "<input type='hidden' class='cg_wp_user_id' value='$WpUserId'>";
 			}
 			echo "<input type='hidden' class='cg_image_id' value='$id'>";
 		}
@@ -1077,14 +1185,14 @@ if($isAjaxCall){
             }
             echo '<a href="'.$sourceOriginalImgShow.'?time='.time().'" target="_blank" title="'.$title.'" alt="'.$title.'">
                 <div class="cg0degree cg_backend_image" style="background: url('.($PdfPreviewImage.'?time='.time()).') no-repeat center" ></div></a>';
-        }else if(empty($allWpPostsByWpUploadIdArray[$WpUpload]) && $ImgTypeToShow!='con'){
+        }elseif(empty($allWpPostsByWpUploadIdArray[$WpUpload]) && $ImgTypeToShow!='con'){
 			echo '<div class="cg_backend_image_full_size_target_empty" >';
 			echo "</div>";
-		}else if(cg_is_alternative_file_type_file($ImgTypeToShow)){
+		}elseif(cg_is_alternative_file_type_file($ImgTypeToShow)){
 			echo '<a href="'.$sourceOriginalImgShow.'" target="_blank" title="Show file" alt="Show file">';
 			echo '<div class="cg_backend_image_full_size_target_'.$ImgTypeToShow.' cg_backend_image_full_size_target_alternative_file_type" data-cg-file-type="'.$ImgTypeToShow.'"><span class="cg_post_title">'.$post_title_to_show.'</span></div>';
 			echo '</a>';
-		}else if(cg_is_alternative_file_type_video($ImgTypeToShow)){
+		}elseif(cg_is_alternative_file_type_video($ImgTypeToShow)){
 			if($isFirstFileIsEcommerceDownload){
 				echo '<div class="cg_backend_image_full_size_target_'.$ImgTypeToShow.'  cg_backend_image_full_size_target_child_video " data-cg-file-type="'.$ImgTypeToShow.'"><span class="cg_post_title">'.$post_title_to_show.'</span></div>';
 			}else{
@@ -1095,13 +1203,13 @@ if($isAjaxCall){
 				echo '</video>';
 				echo '</a><span class="cg_post_title cg_video">'.$post_title_to_show.'</span>';
 			}
-		}else if($ImgTypeToShow=='con'){
+		}elseif($ImgTypeToShow=='con'){
 			echo '<div class="cg_backend_image cg_backend_image_con_entry"><span>Upload form entry<br>Entry ID: '.$id.'</span></div>';
-		}else if($ImgTypeToShow=='ytb'){
+		}elseif($ImgTypeToShow=='ytb'){
 			echo '<div class="cg_backend_image"><iframe  style="width: 100%;" height="221" src="'.$image_url_to_show.'"  ></iframe></div>';
-		}else if($ImgTypeToShow=='inst'){
+		}elseif($ImgTypeToShow=='inst'){
 			echo '<div class="cg_backend_image"><iframe  style="width: 100%;" height="221" src="'.$image_url_to_show.'"  ></iframe></div>';
-		}else if($ImgTypeToShow=='twt'){
+		}elseif($ImgTypeToShow=='twt'){
 			$blockquote = cg_get_blockquote_from_post_content($post_description_to_show);
 			//var_dump('$blockquote');
 			//var_dump($blockquote);
@@ -1118,7 +1226,7 @@ if($isAjaxCall){
                 }
             </script>
 			<?php
-		}else if($ImgTypeToShow=='tkt'){
+		}elseif($ImgTypeToShow=='tkt'){
 			$blockquote = cg_get_blockquote_from_post_content($post_description_to_show);
 			echo '<div class="cg_backend_image cg_backend_image_tkt"  id="cg_backend_image_tkt'.$id.'"></div>';
 			?>
@@ -1156,7 +1264,7 @@ if($isAjaxCall){
 		### cg_display_flex open ###
 		echo '<div class="cg_display_flex cg_entry_data">';
 		echo '<div class="cg_backend_info_upload_date_container">
-<span class="cg_backend_info_details_small"><b>Entry ID: '.$id.'</b><br>Added on<br>(WP Timezone: UTC'.$gmt_offset.')<br>'.$uploadTime.'</span>';
+<span class="cg_backend_info_details_small"><b class="cg_entry_id">Entry ID: '.$id.'</b><br>Added on<br>(WP Timezone: UTC'.$gmt_offset.')<br>'.$uploadTime.'</span>';
 
 		$cg_ecommerce_sale_download_original_source_container_cg_hide = ($EcommerceEntry>0) ? '' : 'cg_hide';
 
@@ -1167,13 +1275,13 @@ if($isAjaxCall){
 			if(!empty($value->MultipleFiles) && $value->MultipleFiles!='""' && count($EcommerceEntryAndWpUploadIds)){
 				echo '<a class="cg_image_action_href cg_download_multiple_files_zip" href="?page='.cg_get_version().'/index.php&option_id='.$GalleryID.'&cg_download_original_source_for_ecommerce_sale=true&cg_real_id='.$id.'&cg_download_cookie=cg_download_cookie_'.$id.'" data-cg-download-cookie="cg_download_cookie_'.$id.'" >';
 				echo '<div class="cg_image_action_span" style="width: fit-content; padding: 5px;margin: 5px auto;font-size: 12px;">';
-				echo 'Download<br>originals<br>for selling';
+				echo 'Download<br>originals';
 				echo "</div>";
 				echo "</a>";
 			}else{
 				echo '<a class="cg_image_action_href" href="?page='.cg_get_version().'/index.php&option_id='.$GalleryID.'&cg_download_original_source_for_ecommerce_sale=true&cg_real_id='.$id.'" >';
 				echo '<div class="cg_image_action_span" style="width: fit-content; padding: 5px;margin: 5px auto;font-size: 12px;">';
-				echo 'Download<br>original<br>for selling';
+				echo 'Download<br>original';
 				echo "</div>";
 				echo "</a>";
 			}
@@ -1506,7 +1614,7 @@ if($isAjaxCall){
 			echo '</div>';
 
 
-		}else if($AllowRating==2){
+		}elseif($AllowRating==2){
 
 			$countS = $wpdb->get_var( $wpdb->prepare(
 				"
@@ -1568,7 +1676,7 @@ if($isAjaxCall){
 			echo '</div>';
 
 		}
-		else if($FbLike==1){
+		elseif($FbLike==1){
 
 			echo '<div class="cg_backend_info_show_votes_fb_like">';
 
@@ -1592,7 +1700,7 @@ if($isAjaxCall){
 				$addCountS=0;
 			}
 
-			echo "<input type='number' max='9999999' min='-9999999' class='cg_manipulate_countS_input cg_manipulate_plus_value' value='$addCountS'>";
+			echo "<input type='number' max='9999999' min='-9999999' class='cg_manipulate_counts_input cg_manipulate_plus_value' value='$addCountS'>";
 			echo "</div></div>";
 
 			echo '</div>';
@@ -1698,7 +1806,63 @@ if($isAjaxCall){
 							else{$checked='';}
 						}
 
-						echo "<div class='cg_image_title_container' >";
+						echo "<div class='cg_image_title_container' data-cg-field-id='$formFieldId' >";
+						echo  cg1l_sanitize_method($formvalue).":<br/>";
+						echo "<input type='text' value='$getEntries1' name='content[$id][$formFieldId][short-text]'  maxlength='1000' class='cg_image_title cg_short_text cg_input_vars_count cg_disabled_send cg_input_by_search_sort_$formFieldId'>";
+						echo "<img src='$titleIcon' title='Insert original WordPress title' alt='Insert original WordPress file title' class='$hideWpFileInfoToInsert cg_title_icon' />";
+						echo "<input type='hidden' class='post_title' value='$post_title' >";
+
+						echo "</div>";
+
+						$fieldtype='';
+
+						$i=0;
+
+					}
+
+					if($formvalue=='radio-f'){$fieldtype="ra"; $i=1; continue;}
+					if($fieldtype=="ra" AND $i==1){$formFieldId=$formvalue; $i=2; continue;}
+					if($fieldtype=="ra" AND $i==2){$fieldOrder=$formvalue; $i=3; continue;}
+					if ($fieldtype=="ra" AND $i==3) {
+
+						$formvalue = contest_gal1ery_convert_for_html_output_without_nl2br($formvalue);
+						$getEntries1 = contest_gal1ery_convert_for_html_output_without_nl2br($allEntriesByImageIdArrayWithContent[$id][$formFieldId]['Content']);
+
+						// Prüfen ob das Feld im Slider angezeigt werden soll
+						if($AllowGalleryScript==1){
+							if(array_search($formFieldId, $ShowSliderInputID)){$checked='checked';}
+							else{$checked='';}
+						}
+
+						echo "<div class='cg_image_title_container' data-cg-field-id='$formFieldId'  >";
+						echo  cg1l_sanitize_method($formvalue).":<br/>";
+						echo "<input type='text' value='$getEntries1' name='content[$id][$formFieldId][short-text]'  maxlength='1000' class='cg_image_title cg_short_text cg_input_vars_count cg_disabled_send cg_input_by_search_sort_$formFieldId'>";
+						echo "<img src='$titleIcon' title='Insert original WordPress title' alt='Insert original WordPress file title' class='$hideWpFileInfoToInsert cg_title_icon' />";
+						echo "<input type='hidden' class='post_title' value='$post_title' >";
+
+						echo "</div>";
+
+						$fieldtype='';
+
+						$i=0;
+
+					}
+
+					if($formvalue=='chk-f'){$fieldtype="chk"; $i=1; continue;}
+					if($fieldtype=="chk" AND $i==1){$formFieldId=$formvalue; $i=2; continue;}
+					if($fieldtype=="chk" AND $i==2){$fieldOrder=$formvalue; $i=3; continue;}
+					if ($fieldtype=="chk" AND $i==3) {
+
+						$formvalue = contest_gal1ery_convert_for_html_output_without_nl2br($formvalue);
+						$getEntries1 = contest_gal1ery_convert_for_html_output_without_nl2br($allEntriesByImageIdArrayWithContent[$id][$formFieldId]['Content']);
+
+						// Prüfen ob das Feld im Slider angezeigt werden soll
+						if($AllowGalleryScript==1){
+							if(array_search($formFieldId, $ShowSliderInputID)){$checked='checked';}
+							else{$checked='';}
+						}
+
+						echo "<div class='cg_image_title_container'  data-cg-field-id='$formFieldId' >";
 						echo  cg1l_sanitize_method($formvalue).":<br/>";
 						echo "<input type='text' value='$getEntries1' name='content[$id][$formFieldId][short-text]'  maxlength='1000' class='cg_image_title cg_short_text cg_input_vars_count cg_disabled_send cg_input_by_search_sort_$formFieldId'>";
 						echo "<img src='$titleIcon' title='Insert original WordPress title' alt='Insert original WordPress file title' class='$hideWpFileInfoToInsert cg_title_icon' />";
@@ -1752,7 +1916,7 @@ if($isAjaxCall){
 							$dtFormatOriginal = 'YYYY-MM-DD';
 						}
 
-						echo "<div class='cg_image_title_container' >";
+						echo "<div class='cg_image_title_container'  data-cg-field-id='$formFieldId' >";
 						echo "$formvalue:<br/>";
 						echo "<input type='text' value='$newDateTimeString' autocomplete='off' name='content[$id][$formFieldId][date-field]'  maxlength='1000' class='cg_image_title cg_short_text cg_input_date_class cg_input_vars_count cg_input_by_search_sort_$formFieldId'>";
 						echo "<input type='hidden' value='$dtFormatOriginal' class='cg_date_format'>";
@@ -1786,7 +1950,7 @@ if($isAjaxCall){
 							else{$checked='';}
 						}
 
-						echo "<div class='cg_image_title_container' >";
+						echo "<div class='cg_image_title_container'  data-cg-field-id='$formFieldId' >";
 						echo "$formvalue:<br/>";
 						echo "<input type='text' value='$getEntries1' name='content[$id][$formFieldId][short-text]'  placeholder='https://www.example.com' maxlength='1000' class='cg_image_title cg_short_text cg_input_vars_count cg_input_by_search_sort_$formFieldId'>";
 
@@ -1812,7 +1976,7 @@ if($isAjaxCall){
 							else{$checked='';}
 						}
 
-						echo "<div class='cg_image_title_container'>";
+						echo "<div class='cg_image_title_container'  data-cg-field-id='$formFieldId' >";
 						echo cg1l_sanitize_method($formvalue).":<br/>";
 						echo "<input type='text' value='$getEntries1' name='content[$id][$formFieldId][short-text]' maxlength='1000' class='cg_image_title cg_short_text cg_input_vars_count cg_disabled_send cg_input_by_search_sort_$formFieldId'>";
 						echo "<img src='$titleIcon' title='Insert original WordPress file title if exists' alt='Insert original WordPress file title if exists' class='$hideWpFileInfoToInsert cg_title_icon' />";
@@ -1838,7 +2002,7 @@ if($isAjaxCall){
 
 							$formvalue = html_entity_decode(stripslashes($formvalue));
 
-							echo "<div >";
+							echo "<div class='cg_image_title_container' data-cg-field-id='$formFieldId' >";
 							echo cg1l_sanitize_method($formvalue).":<br/>";
 
 							echo "<select name='imageCategory[$id]' class='cg_category_select cg_input_vars_count cg_disabled_send cg_select_by_search_sort_$formFieldId'>";
@@ -1913,8 +2077,8 @@ if($isAjaxCall){
 						$formvalue = html_entity_decode(stripslashes($formvalue));
 
 						echo "<div>";
-						echo cg1l_sanitize_method($formvalue.$registeredUserMail).":<br/>";
-						echo "<input type='text' value='$getEntriesMail' class='email cg_short_text cg_input_by_search_sort_$formFieldId'  maxlength='1000' $mailReadonly >";
+						    echo cg1l_sanitize_method($formvalue.$registeredUserMail).":<br/>";
+						    echo "<input type='text' value='$getEntriesMail' class='email cg_short_text cg_input_by_search_sort_$formFieldId'  maxlength='1000' $mailReadonly >";
 						echo "</div>";
 
 						$fieldtype='';
@@ -1972,7 +2136,7 @@ if($isAjaxCall){
 							else{$checked='';}
 						}
 
-						echo "<div  class='cg_image_description_container cg_image_excerpt_container'>";
+						echo "<div  class='cg_image_description_container cg_image_excerpt_container'  data-cg-field-id='$formFieldId' >";
 						echo cg1l_sanitize_method($formvalue).":<br/>";
 						echo "<textarea name='content[$id][$formFieldId][long-text]' rows='4' maxlength='10000' class='cg_image_description cg_image_excerpt cg_long_text cg_input_vars_count cg_disabled_send cg_input_by_search_sort_$formFieldId'>$getEntries1</textarea>";
 						echo "<div class='cg_comment_icons_div'>";
@@ -2075,7 +2239,7 @@ if($isAjaxCall){
 				$MakeAndModel = '';
 				if(!empty($exifData['MakeAndModel'])){// Make And Model or only Model might be available
 					$MakeAndModel = $exifData['MakeAndModel'];
-				} else if(!empty($exifData['Model'])){// Make And Model or only Model might be available
+				} elseif(!empty($exifData['Model'])){// Make And Model or only Model might be available
 					$MakeAndModel = $exifData['Model'];
 				}
 
@@ -2201,7 +2365,7 @@ if($isAjaxCall){
 							echo "cg_gallery_ecommerce test";
 							echo "</a> <span class='td_gallery_info_shortcode_edit cg_tooltip'></span></span>";
 						}else{
-							echo "<span>cg_gallery_ecommerce and \"Sell settings\" are not available for $ytbHintText entries</span>";
+							echo "<span>cg_gallery_ecommerce and \"Sales settings\" are not available for $ytbHintText entries</span>";
 						}
 					}
 				}

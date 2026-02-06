@@ -311,26 +311,26 @@ echo "<div id='cgVotesImage'>";
                         echo "</div>";
                     echo "</div>";
                 echo '</a>';
-        }else if(cg_is_alternative_file_type_video($ImgType)){
+        }elseif(cg_is_alternative_file_type_video($ImgType)){
             echo '<a href="'.$sourceOriginalImgShow.'" target="_blank" title="Show file" alt="Show file">';
                 echo '<video width="300" height="200"  >';
                     echo '<source src="'.$sourceOriginalImgShow.'" type="video/mp4">';
                     echo '<source src="'.$sourceOriginalImgShow.'" type="video/'.$ImgType.'">';
                 echo '</video>';
             echo '</a>';
-        }else if(cg_is_is_image($ImgType)){
+        }elseif(cg_is_is_image($ImgType)){
             echo '<div id="cgVotesImageVisualContent">';
                 echo '<a href="'.$sourceOriginalImgShow.'" target="_blank" title="Show full size"><img class="cg'.$rThumb.'degree" src="'.$imageThumb.'" style="'.$padding.';position: absolute !important;max-width:none !important;" width="'.$WidthThumbPic.'"></a>';
             echo "</div>";
-        }else if($ImgType=='ytb'){
+        }elseif($ImgType=='ytb'){
 	        echo '<div id="cgVotesImageVisualContent">';
 	            echo '<iframe  width="300" height="200" src="'.$image_url.'"  ></iframe>';
 	        echo "</div>";
-        }else if($ImgType=='inst'){
+        }elseif($ImgType=='inst'){
 	        echo '<div id="cgVotesImageVisualContent">';
 	            echo '<iframe  width="300" height="200" src="'.$image_url.'"  ></iframe>';
 	        echo "</div>";
-        }else if($ImgType=='twt'){
+        }elseif($ImgType=='twt'){
 	        $blockquote = cg_get_blockquote_from_post_content($post_description);
 	        echo '<div id="cgVotesImageVisualContent">';
 	            echo '<div class="cg_backend_image cg_backend_image_twt"  id="cg_backend_image_twt'.$imageId.'"></div>';
@@ -342,7 +342,7 @@ echo "<div id='cgVotesImage'>";
                 cg_twitter_blockquotes[id] = <?php echo json_encode($blockquote); ?>;
 	        </script>
 	        <?php
-        }else if($ImgType=='tkt'){
+        }elseif($ImgType=='tkt'){
 	        $blockquote = cg_get_blockquote_from_post_content($post_description);
 	        echo '<div id="cgVotesImageVisualContent">';
 	            echo '<div class="cg_backend_image cg_backend_image_tkt"  id="cg_backend_image_tkt'.$imageId.'"></div>';

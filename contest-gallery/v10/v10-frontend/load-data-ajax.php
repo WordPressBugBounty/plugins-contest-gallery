@@ -236,7 +236,7 @@ $CookieId = '';
 if(!empty($options['pro']['RegUserUploadOnly'])){
     if($options['pro']['RegUserUploadOnly']==1 && !empty($options['pro']['RegUserMaxUpload']) && is_user_logged_in()==true){
         $UploadedUserFilesAmount = $wpdb->get_var("SELECT COUNT(*) FROM $tablename WHERE WpUserId = '$WpUserId' and GalleryID = '$galeryID'");
-    }else if($options['pro']['RegUserUploadOnly']==2 && !empty($options['pro']['RegUserMaxUpload'])){
+    }elseif($options['pro']['RegUserUploadOnly']==2 && !empty($options['pro']['RegUserMaxUpload'])){
         if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-upload'])) {
             $CookieId = $_COOKIE['contest-gal1ery-'.$galeryID.'-upload'];
             $UploadedUserFilesAmount = $wpdb->get_var("SELECT COUNT(*) FROM $tablename WHERE CookieId = '$CookieId' and GalleryID = '$galeryID'");
@@ -244,12 +244,12 @@ if(!empty($options['pro']['RegUserUploadOnly'])){
             $CookieId = "up".(md5(time().uniqid('cg',true)).time());
             $UploadedUserFilesAmount = 0;
         }
-    }else if($options['pro']['RegUserUploadOnly']==3 && !empty($options['pro']['RegUserMaxUpload'])){
+    }elseif($options['pro']['RegUserUploadOnly']==3 && !empty($options['pro']['RegUserMaxUpload'])){
         $UploadedUserFilesAmount = $wpdb->get_var("SELECT COUNT(*) FROM $tablename WHERE IP = '$userIP' and GalleryID = '$galeryID'");
     }
     if($options['pro']['RegUserUploadOnly']==1 && !empty($options['pro']['RegUserMaxUploadPerCategory']) && is_user_logged_in()==true){
         $UploadedUserFilesAmountPerCategories = $wpdb->get_results("SELECT Category FROM $tablename WHERE WpUserId = '$WpUserId' and GalleryID = '$galeryID'");
-    }else if($options['pro']['RegUserUploadOnly']==2 && !empty($options['pro']['RegUserMaxUploadPerCategory'])){
+    }elseif($options['pro']['RegUserUploadOnly']==2 && !empty($options['pro']['RegUserMaxUploadPerCategory'])){
         if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-upload'])) {
             $CookieId = $_COOKIE['contest-gal1ery-'.$galeryID.'-upload'];
             $UploadedUserFilesAmountPerCategories = $wpdb->get_results("SELECT Category FROM $tablename WHERE CookieId = '$CookieId' and GalleryID = '$galeryID'");
@@ -257,7 +257,7 @@ if(!empty($options['pro']['RegUserUploadOnly'])){
             $CookieId = "up".(md5(time().uniqid('cg',true)).time());
             $UploadedUserFilesAmountPerCategories = null;
         }
-    }else if($options['pro']['RegUserUploadOnly']==3 && !empty($options['pro']['RegUserMaxUploadPerCategory'])){
+    }elseif($options['pro']['RegUserUploadOnly']==3 && !empty($options['pro']['RegUserMaxUploadPerCategory'])){
         $UploadedUserFilesAmountPerCategories = $wpdb->get_results("SELECT Category FROM $tablename WHERE IP = '$userIP' and GalleryID = '$galeryID'");
 }
     if(!empty($UploadedUserFilesAmountPerCategories)){
@@ -272,9 +272,6 @@ if(!empty($options['pro']['RegUserUploadOnly'])){
     }
 }
 
-
-/*    var_dump('$UploadedUserFilesAmount');
-    var_dump($UploadedUserFilesAmount);*/
 
 $ShowFormAfterUploadOrContact = $wpdb->get_var( "SELECT ShowFormAfterUpload FROM $contest_gal1ery_options_input WHERE GalleryID='$galeryID'");
 
@@ -302,7 +299,6 @@ if(!empty($queryData)){
         }
     }
 }
-
 
 //if((!empty($collectForNicknames) AND $isShowNicknameForOneOfGalleries) OR ($isAllowCommentsForOneOfTheGalleries && !empty($fromCommentsWpUserIdsArray))){
 $nicknames = [];
@@ -412,19 +408,6 @@ include('data/check-language-javascript-general.php');
 $options = (!empty($options[$galeryIDuser])) ? $options[$galeryIDuser] : $options;
 $isModernOptions = (!empty($options[$galeryIDuser])) ? true : false;
 
-if($options['general']['AllowRating']>=12  && empty($isOnlyContactForm)) {
-    if(
-        empty($isOnlyGalleryNoVoting) ||
-        !empty($isOnlyGalleryNoVoting) && $RatingVisibleForGalleryNoVoting
-    )
-    {
-        if(!empty($isOnlyGalleryEcommerce) && empty($options['general']['RatingVisibleForGalleryEcommerce'])){
-            // do nothing
-        }else{
-	        include ('data/rating/configuration-five-star.php');
-        }
-    }
-}
 
 if(($options['general']['AllowRating']==1 OR $options['general']['AllowRating']>=12)  && empty($isOnlyContactForm)) {
     if(
@@ -438,9 +421,7 @@ if(($options['general']['AllowRating']==1 OR $options['general']['AllowRating']>
 		    include ('data/rating/configuration-five-star.php');
 	    }
     }
-}
-
-if($options['general']['AllowRating']==2 &&  empty($isOnlyContactForm)) {
+}elseif($options['general']['AllowRating']==2 &&  empty($isOnlyContactForm)) {
     if(
         empty($isOnlyGalleryNoVoting) ||
         !empty($isOnlyGalleryNoVoting)  && $RatingVisibleForGalleryNoVoting
@@ -575,7 +556,6 @@ $singleViewOrderFullData = json_decode(file_get_contents($wp_upload_dir['basedir
 <?php
 
 $formUploadFullData = json_decode(file_get_contents($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$realGid.'/json/'.$realGid.'-form-upload.json'),true);
-
 ?>
 <pre>
 <script data-cg-processing="true">
@@ -585,6 +565,7 @@ $formUploadFullData = json_decode(file_get_contents($wp_upload_dir['basedir'].'/
         cgJsData[gid] = {};
     }
     cgJsData[gid].formUploadFullData = <?php echo json_encode($formUploadFullData); ?>;
+    //debugger
 </script>
 </pre>
 <?php
@@ -638,29 +619,6 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
 	                //$imagesFullData[$imageID]['entryGuid'] = $pageLink.'?p='.$imageData[$WpPageShortCodeType];// not possible to get this way correctly, that doesn't work at all
                 }
             }
-        }
-    }
-
-// get Exif or MultipleFiles data in one query
-    if(!empty($options['pro']['ShowExif'])){
-        // default DEFAULT '' was added later at 21.08.2022 with update 18.0.0 to Exif field
-        $queryData = $wpdb->get_results( "SELECT id, Exif, MultipleFiles FROM $tablename WHERE (GalleryID = '$galeryID' AND Active = '1' AND Exif != '' AND Exif != '0' AND Exif IS NOT NULL) OR (GalleryID = '$galeryID' AND Active = '1' AND MultipleFiles != '')");
-    }else{
-        // default DEFAULT '' was added later at 21.08.2022 with update 18.0.0 to Exif field
-        $queryData = $wpdb->get_results( "SELECT id, MultipleFiles FROM $tablename WHERE GalleryID = '$galeryID' AND Active = '1' AND MultipleFiles != ''");
-    }
-    $queryDataArray = [];
-    if(!empty($queryData)){
-        foreach ($queryData as $rowObject){
-            $queryDataArray[$rowObject->id] = [];
-            if(!empty($rowObject->Exif)){
-	            if(strlen($rowObject->Exif)>10){
-		            $queryDataArray[$rowObject->id]['Exif'] = unserialize($rowObject->Exif);
-	            }else{// otherwise some sort of corrupt string
-		            $queryDataArray[$rowObject->id]['Exif'] = '';
-	            }
-            }
-            if(!empty($rowObject->MultipleFiles) && $rowObject->MultipleFiles!='""'){$queryDataArray[$rowObject->id]['MultipleFiles'] = unserialize($rowObject->MultipleFiles);}
         }
     }
 
@@ -757,7 +715,7 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
                     }
                     if (intval($a1['CountS'])+intval($a1['addCountS']) == intval($a2['CountS'])+intval($a2['addCountS'])) return $a1;// return previous always, which means higher id
                     return (intval($a1['CountS'])+intval($a1['addCountS']) > intval($a2['CountS'])+intval($a2['addCountS'])) ? $a1 : $a2;
-                }else if($AllowRating>='12'){
+                }elseif($AllowRating>='12'){
                     $array = [12,13,14,15,16,17,18,19,20];
                     $sumA1 = 0;
                     $sumA2 = 0;
@@ -822,11 +780,11 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
                             if(in_array($imageId,$wpUserImageIdsArray)!==false){
 	                            $imageIDs[] = $imageId;
                             }
-					    }else if($shortcode_name == 'cg_gallery_winner'){
+					    }elseif($shortcode_name == 'cg_gallery_winner'){
                             if(in_array($imageId,$WinnerIdsArray)!==false){
 	                            $imageIDs[] = $imageId;
                             }
-					    }else if($shortcode_name == 'cg_gallery_ecommerce'){
+					    }elseif($shortcode_name == 'cg_gallery_ecommerce'){
                             if(in_array($imageId,$EcommerceIdsArray)!==false){
 	                            $imageIDs[] = $imageId;
                             }
@@ -894,7 +852,7 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
 		                    }
 		                    $imageId = $jsonFileData['id'];
 	                    }
-                    }else if($galleriesOptions['PreviewHighestRated']==1 || $galleriesOptions['PreviewMostCommented']==1){
+                    }elseif($galleriesOptions['PreviewHighestRated']==1 || $galleriesOptions['PreviewMostCommented']==1){
                         $previousHighestFileData = [];
                         foreach ($imageIDs as $imageID){
 	                        $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdToCheck.'/json/image-data/image-data-'.$imageID.'.json';
@@ -909,7 +867,7 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
 	                                $jsonFileData['id'] = $imageID;// for sure because of previous versions
                                     if($galleriesOptions['PreviewHighestRated']==1 ){
 	                                    $jsonFileTemp = cgGetHighestRating($previousHighestFileData, $jsonFileData, $AllowRatingToCheck);
-                                    }else if($galleriesOptions['PreviewMostCommented']==1){
+                                    }elseif($galleriesOptions['PreviewMostCommented']==1){
 	                                    $jsonFileTemp = cgGetHighestComments($previousHighestFileData, $jsonFileData);
                                     }
 		                            $previousHighestFileData = $jsonFileTemp;
@@ -960,9 +918,9 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
                         $entryIdToDisplay = 0;
                         if(!empty($optionsToCheck['visual']['Field1IdGalleryView'])){
 	                        $entryIdToDisplay = $optionsToCheck['visual']['Field1IdGalleryView'];
-                        }else if(!empty($optionsToCheck['visual']['SubTitle'])){
+                        }elseif(!empty($optionsToCheck['visual']['SubTitle'])){
 	                        $entryIdToDisplay = $optionsToCheck['visual']['SubTitle'];
-                        }else if(!empty($optionsToCheck['visual']['ThirdTitle'])){
+                        }elseif(!empty($optionsToCheck['visual']['ThirdTitle'])){
 	                        $entryIdToDisplay = $optionsToCheck['visual']['ThirdTitle'];
                         }
                         if($entryIdToDisplay){
@@ -1011,7 +969,7 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
         cgJsData[gid].galleriesOptions = <?php echo json_encode($galleriesOptions); ?>;
         cgJsData[gid].isCGalleriesForwardToWpPageEntry = <?php echo json_encode($isCGalleriesForwardToWpPageEntry); ?>;
         cgJsData[gid].imagesFullData = <?php echo json_encode($imagesFullData); ?>;
-        debugger
+        //debugger
         cgJsData[gid].vars.queryDataArray = <?php echo json_encode($queryDataArray); ?>;// has to be set here after cg_galleries processing
 
     </script>

@@ -320,15 +320,8 @@ jQuery(document).ready(function ($) {
 
         if (confirm("Delete field? " + infoDeleteText + "")) {
             cgJsClassAdmin.createUpload.functions.fDeleteFieldAndDataModifyRowsAndColumns($,fieldContainerId, idToDelete, categoryField);
-            var $el = $('#cgRightSide').find('#right'+fieldContainerId);
-            var $row = $el.parent();
-            $el.replaceWith(cgJsClassAdmin.createUpload.functions.getAddElCol());
-            if(!$row.find('.cg_row_col.cg_el').length){
-               // $row.find('.cg_del_row').removeClass('cg_hide');
-            }
-            //$formField.addClass('cg_hide');
             $formField.remove();
-            cgJsClassAdmin.createUpload.functions.addRightFieldOrderAndAddRowsAndColumns($);
+            cgJsClassAdmin.createUpload.functions.removeFieldRightSide($,fieldContainerId);
             return true;
         } else {
             return false;
@@ -344,7 +337,7 @@ jQuery(document).ready(function ($) {
 
 // Delete field only --- ENDE
 
-    $(document).on('click', "#cgCreateUploadContainer .cg_view_options_row.cg_view_options_row_title.cg_view_options_row_collapse", function () {
+    $(document).on('click', ".cgCreateUploadContainer .cg_view_options_row.cg_view_options_row_title.cg_view_options_row_collapse", function () {
         return;// since 27.0.0
         var $formField = $(this).closest('.formField');
         $formField.find('.cg_view_options_row:not(.cg_view_options_row_title)').addClass('cg_hide');
@@ -352,7 +345,7 @@ jQuery(document).ready(function ($) {
         $formField.find('.cg_view_options_row_marker').removeClass('cg_hide').find('.cg_view_options_row_marker_content').text($formField.find('.cg_view_option_input_field_title').val());
     });
 
-    $(document).on('click', "#cgCreateUploadContainer .cg_view_options_row.cg_view_options_row_title.cg_view_options_row_uncollapse", function () {
+    $(document).on('click', ".cgCreateUploadContainer .cg_view_options_row.cg_view_options_row_title.cg_view_options_row_uncollapse", function () {
         var $formField = $(this).closest('.formField');
         $formField.find('.cg_view_options_row:not(.cg_view_options_row_title)').removeClass('cg_hide');
         $formField.find('.cg_view_options_row_title').removeClass('cg_border_bottom_thin_solid_default_color cg_view_options_row_uncollapse').addClass('cg_view_options_row_collapse').attr('title','Collapse');
@@ -411,7 +404,7 @@ jQuery(document).ready(function ($) {
             $("#ausgabe1.cg_create_upload .cg_sortable_area").append($newField);
         }
         if(fieldClass == 'htmlField' || fieldClass=='checkAgreementField'){
-            cgJsClassAdmin.index.functions.initializeEditor('new-html-'+newFieldCounter,true);
+            cgJsClassAdmin.index.functions.initializeEditor('new-html-'+newFieldCounter);
         }
 
 
@@ -448,17 +441,20 @@ jQuery(document).ready(function ($) {
     }
 
     $(document).on('click', "#cg_create_upload_add_field.cg_upload_dauswahl", function () {
-
+        debugger
         // User Fields here
         if ($('#dauswahl').val() == "cb") {// CHECK AGREEMENT!!!!!!!
 
             if ($('select[name="dauswahl"] :selected').hasClass('cg-pro-false')) {
                 alert('Only available in PRO version');
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
                 return;
             }
 
             if ($('#cgCreateUploadSortableArea .checkAgreementField').length == 10) {
                 alert("This field can be added maximum 10 times");
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                return;
             }else {
                 var newId = cloneAndAppendNewField('checkAgreementField');
                 cgJsClassAdmin.createUpload.functions.appendCloneRight($,'cb',newId);
@@ -471,6 +467,8 @@ jQuery(document).ready(function ($) {
             debugger
             if ($('#cgCreateUploadSortableArea .inputField').length == 20) {
                 alert("This field can be added maximum 20 times");
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                return;
             }
             else {
                 var newId = cloneAndAppendNewField('inputField');
@@ -484,11 +482,14 @@ jQuery(document).ready(function ($) {
             debugger
             if ($('select[name="dauswahl"] :selected').hasClass('cg-pro-false')) {
                 alert('Only available in PRO version');
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
                 return;
             }
 
             if ($('#cgCreateUploadSortableArea .dateTimeField').length == 10) {
                 alert("This field can be added maximum 10 times");
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                return;
             }else {
                 var newId = cloneAndAppendNewField('dateTimeField');
                 cgJsClassAdmin.createUpload.functions.appendCloneRight($,'dt',newId);
@@ -500,6 +501,8 @@ jQuery(document).ready(function ($) {
             debugger
             if ($('#cgCreateUploadSortableArea .urlField').length == 20) {
                 alert("This field can be added maximum 10 times");
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                return;
             }
             else {
                 var newId = cloneAndAppendNewField('urlField');
@@ -512,6 +515,8 @@ jQuery(document).ready(function ($) {
             debugger
             if ($('#cgCreateUploadSortableArea .textareaField').length == 10) {
                 alert("This field can be added maximum 10 times");
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                return;
             }else {
                 var newId = cloneAndAppendNewField('textareaField');
                 cgJsClassAdmin.createUpload.functions.appendCloneRight($,'kf',newId);
@@ -519,16 +524,57 @@ jQuery(document).ready(function ($) {
         }
         if ($('#dauswahl').val() == "se") {
             debugger
+            if ($('select[name="dauswahl"] :selected').hasClass('cg-pro-false')) {
+                alert('Only available in PRO version');
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                return;
+            }
             if ($('#cgCreateUploadSortableArea .selectField').length == 10) {
                 alert("This field can be added maximum 10 times");
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                return;
             }else {
                 var newId = cloneAndAppendNewField('selectField');
                 cgJsClassAdmin.createUpload.functions.appendCloneRight($,'se',newId);
             }
         }
+        if ($('#dauswahl').val() == "chk") {
+            debugger
+            if ($('select[name="dauswahl"] :selected').hasClass('cg-pro-false')) {
+                alert('Only available in PRO version');
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                return;
+            }
+            if ($('#cgCreateUploadSortableArea .checkField').length == 10) {
+                alert("This field can be added maximum 10 times");
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                return;
+            }else {
+                var newId = cloneAndAppendNewField('checkField');
+                cgJsClassAdmin.createUpload.functions.appendCloneRight($,'chk',newId);
+            }
+        }
+        if ($('#dauswahl').val() == "ra") {
+            debugger
+            if ($('select[name="dauswahl"] :selected').hasClass('cg-pro-false')) {
+                alert('Only available in PRO version');
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                return;
+            }
+            if ($('#cgCreateUploadSortableArea .radioField').length == 10) {
+                alert("This field can be added maximum 10 times");
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                return;
+            }else {
+                var newId = cloneAndAppendNewField('radioField');
+                cgJsClassAdmin.createUpload.functions.appendCloneRight($,'ra',newId);
+            }
+        }
         if ($('#dauswahl').val() == "sec") {
             if ($('#cgCreateUploadSortableArea .selectCategoriesField').length == 1) {
                 alert("This field can be added maximum 1 time");
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                return;
             }else {
                 var newId = cloneAndAppendNewField('selectCategoriesField');
                 cgJsClassAdmin.createUpload.functions.appendCloneRight($,'sec',newId);
@@ -538,10 +584,13 @@ jQuery(document).ready(function ($) {
         if ($('#dauswahl').val() == "ef") {
             if ($('select[name="dauswahl"] :selected').hasClass('cg-pro-false')) {
                 alert('Only available in PRO version');
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
                 return;
             }
             if ($('#cgCreateUploadSortableArea .emailField').length == 1) {
                 alert("This field can be added only 1 time");
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                return;
             }
             else {
                 var newId = cloneAndAppendNewField('emailField');
@@ -552,10 +601,13 @@ jQuery(document).ready(function ($) {
         if ($('#dauswahl').val() == "ht") {
             if ($('select[name="dauswahl"] :selected').hasClass('cg-pro-false')) {
                 alert('Only available in PRO version');
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
                 return;
             }
             if ($('#cgCreateUploadSortableArea .htmlField').length >= 10) {
                 alert("This field can be added maximum 10 times");
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                return;
             }
             else {
                 var newId = cloneAndAppendNewField('htmlField');
@@ -566,6 +618,8 @@ jQuery(document).ready(function ($) {
         if ($('#dauswahl').val() == "caRo") {
             if ($('#cgCreateUploadSortableArea .captchaRoField').length >= 1) {
                 alert("This field can be added maximum 1 time");
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                return;
             }
             else {
                 var newId = cloneAndAppendNewField('captchaRoField');
@@ -576,6 +630,8 @@ jQuery(document).ready(function ($) {
         if ($('#dauswahl').val() == "caRoRe") {
             if ($('#cgCreateUploadSortableArea .captchaRoReField').length >= 1) {
                 alert("This field can be added maximum 1 time");
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                return;
             }else {
                 var newId = cloneAndAppendNewField('captchaRoReField');
                 cgJsClassAdmin.createUpload.functions.appendCloneRight($,'caRoRe',newId);
@@ -661,15 +717,15 @@ jQuery(document).ready(function ($) {
     });
 
     // Wait until the editor is ready
-    jQuery(document).on('tinymce-editor-init', function(event, editor) {
+    $(document).on('tinymce-editor-init', function(event, editor) {
        // if (editor.id === id) {
             // TinyMCE input/change listener
             editor.on('keyup change input', function() {
-                if(cgJsClassAdmin.index.vars.isCreateUploadAreaLoaded){
+                if(cgJsClassAdmin.index.vars.isCreateUploadAreaLoaded || cgJsClassAdmin.index.vars.isCreateRegistryAreaLoaded){
                     console.log("TinyMCE changed:", editor.getContent());
                     console.log($(editor.container));
                     var $formField = $(editor.container).closest('.formField');
-                    if($formField.length && ($formField.hasClass('checkAgreementField') || $formField.hasClass('htmlField'))){
+                    if($formField.length && ($formField.hasClass('checkAgreementField') || $formField.hasClass('htmlField') || $formField.hasClass('regHtmlField') || $formField.hasClass('regCheckAgreementField'))){
                         var id = '#right'+$formField.attr('id');
                         //        console.log("id:", id);
                         var $el = cgJsClassAdmin.index.vars.$cgRightSide.find(id);
@@ -677,15 +733,14 @@ jQuery(document).ready(function ($) {
                         $el.find('.cg_upl_html').html(editor.getContent());
                     }
                 }
-
             });
    //     }
     });
 
-    jQuery(document).on('input','#cgCreateUploadSortableArea .cg-wp-editor-template', function( ) {
-        if(cgJsClassAdmin.index.vars.isCreateUploadAreaLoaded){
-            var $formField = $(editor.container).closest('.formField');
-            if($formField.length && ($formField.hasClass('checkAgreementField') || $formField.hasClass('htmlField'))){
+    $(document).on('input','#cgCreateUploadSortableArea .cg-wp-editor-template', function( ) {
+        if(cgJsClassAdmin.index.vars.isCreateUploadAreaLoaded || cgJsClassAdmin.index.vars.isCreateRegistryAreaLoaded){
+            var $formField = $(this).closest('.formField');
+            if($formField.length && ($formField.hasClass('checkAgreementField') || $formField.hasClass('htmlField') || $formField.hasClass('regHtmlField') || $formField.hasClass('regCheckAgreementField'))){
                 var id = '#right'+$formField.attr('id');
                 //    console.log("id:", id);
                 var $el = cgJsClassAdmin.index.vars.$cgRightSide.find(id);

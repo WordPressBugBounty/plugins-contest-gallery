@@ -33,116 +33,83 @@ if (!defined('ABSPATH')) {
 
     $cg_check = $_POST['cg_Fields'];
 
+    /*echo "<pre>";
+    print_r($cg_check);
+    echo "</pre>";*/
+
+    $activation_key = md5(time() . wp_generate_password( 32, true, true ));
+
     // Validierung und Erstellung von Activation Key
     foreach ($cg_check as $key => $value) {
 
         if ($value["Field_Type"] == "password") {
             $password = sanitize_text_field($value["Field_Content"]);
-            $activation_key = md5(time() . $password);
         }
 
         if ($value["Field_Type"] == "password-confirm") {
             $passwordConfirm = sanitize_text_field($value["Field_Content"]);
         }
 
-        if ($value["Field_Type"] == "main-mail") {
-            $cg_main_mail = sanitize_text_field($value["Field_Content"]);
-            $checkWpIdViaMail = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $tablenameWpUsers WHERE user_email = %s",[$cg_main_mail]));
-
-        }
-
-        if ($value["Field_Type"] == "main-user-name") {
-            $cg_main_user_name = sanitize_text_field($value["Field_Content"]);
-            $checkWpIdViaName = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $tablenameWpUsers WHERE user_login = %s OR 
-				user_nicename = %s OR display_name = %s",[$cg_main_user_name,$cg_main_user_name,$cg_main_user_name]));
-        }
-
-        if ($value["Field_Type"] == "main-nick-name") {
-            $cg_main_nick_name = sanitize_text_field($value["Field_Content"]);
-        }
-
     }
 
-    if ($password != $passwordConfirm) {
+    if (!empty($password) && !empty($passwordConfirm) && $password != $passwordConfirm) {
         ?>
         <script  data-cg-processing="true">
             var cg_error = "Please don't manipulate the registry Code:221";
-            var cg_registry_manipulation_error = document.getElementById('cg_registry_manipulation_error');
-            cg_registry_manipulation_error.innerHTML = cg_registry_manipulation_error.innerHTML + cg_error;
-            cg_registry_manipulation_error.classList.remove("cg_hide");
+            cgJsClass.gallery.vars.$regFormContainer.find('#cg_registry_manipulation_error').text(cg_error).removeClass("cg_hide");
             console.log(cg_error);
         </script>
         <?php
         die;
     }
 
-    if ($checkWpIdViaMail) {
-        ?>
-        <script  data-cg-processing="true">
-            var cg_error =  "Please don't manipulate the registry Code:222";
-            var cg_registry_manipulation_error = document.getElementById('cg_registry_manipulation_error');
-            cg_registry_manipulation_error.innerHTML = cg_registry_manipulation_error.innerHTML + cg_error;
-            cg_registry_manipulation_error.classList.remove("cg_hide");
-            console.log(cg_error);
-        </script>
-        <?php
-        die;
-    }
-    if ($checkWpIdViaName) {
-        ?>
-        <script  data-cg-processing="true">
-            var cg_error =  "Please don't manipulate the registry Code:223";
-            var cg_registry_manipulation_error = document.getElementById('cg_registry_manipulation_error');
-            cg_registry_manipulation_error.innerHTML = cg_registry_manipulation_error.innerHTML + cg_error;
-            cg_registry_manipulation_error.classList.remove("cg_hide");
-            console.log(cg_error);
-        </script>
-        <?php
-        die;
-    }
-    if ($cg_main_mail == false) {
-        ?>
-        <script  data-cg-processing="true">
-            var cg_error =  "Please don't manipulate the registry Code:224";
-            var cg_registry_manipulation_error = document.getElementById('cg_registry_manipulation_error');
-            cg_registry_manipulation_error.innerHTML = cg_registry_manipulation_error.innerHTML + cg_error;
-            cg_registry_manipulation_error.classList.remove("cg_hide");
-            console.log(cg_error);
-        </script>
-        <?php
-        die;
-    }
-    if (is_email($cg_main_mail) == false) {
-        ?>
-        <script  data-cg-processing="true">
-            var cg_error = <?php echo json_encode($language_EmailAddressHasToBeValid);?>;
-            var cg_registry_manipulation_error = document.getElementById('cg_registry_manipulation_error');
-            cg_registry_manipulation_error.innerHTML = cg_registry_manipulation_error.innerHTML + cg_error;
-            cg_registry_manipulation_error.classList.remove("cg_hide");
-            console.log(cg_error);
-        </script>
-        <?php
-        die;
-    }
+    $Subject = contest_gal1ery_convert_for_html_output_without_nl2br($proOptions->RegMailSubject);
 
-    $posUrl = '$regurl$';
-    $TextEmailConfirmation = contest_gal1ery_convert_for_html_output($proOptions->TextEmailConfirmation);
+    $posUrl = '';
+    $posPin = '';
+    $pin = '';
 
-    if (stripos($TextEmailConfirmation, $posUrl) === false) {
-        ?>
-        <script  data-cg-processing="true">
-            var cg_error = "Confirmation URL for e-mail can't be provided. Please contact Administrator";
-            var cg_registry_manipulation_error = document.getElementById('cg_registry_manipulation_error');
-            cg_registry_manipulation_error.innerHTML = cg_registry_manipulation_error.innerHTML + cg_error;
-            cg_registry_manipulation_error.classList.remove("cg_hide");
-            console.log(cg_error);
-        </script>
-        <?php
-        die;
+    if($cg_users_pin){
+        // test here
+        $posPin = '$pin$';
+        $TextEmailConfirmation = contest_gal1ery_convert_for_html_output_without_nl2br($proOptions->TextPinConfirmation);
+        if(empty($TextEmailConfirmation)){// because of update 28.1.0, mighty be empty
+            $TextEmailConfirmation = 'Complete your registration by using the PIN below: <br/><br/> $pin$';
+        }
+        if (stripos($TextEmailConfirmation, $posPin) === false) {
+            ?>
+            <script  data-cg-processing="true">
+                var cg_error = "Confirmation PIN for e-mail can't be provided. Please contact Administrator.";
+                var cg_registry_manipulation_error = cgJsClass.gallery.vars.$regFormContainer.find('#cg_registry_manipulation_error').text(cg_error).removeClass("cg_hide");
+                console.log(cg_error);
+            </script>
+            <?php
+            die;
+        }
+    }else{
+        $posUrl = '$regurl$';
+        $TextEmailConfirmation = contest_gal1ery_convert_for_html_output_without_nl2br($proOptions->TextEmailConfirmation);
+        if (stripos($TextEmailConfirmation, $posUrl) === false) {
+            ?>
+            <script  data-cg-processing="true">
+                var cg_error = "Confirmation URL for e-mail can't be provided. Please contact Administrator.";
+                var cg_registry_manipulation_error = cgJsClass.gallery.vars.$regFormContainer.find('#cg_registry_manipulation_error').text(cg_error).removeClass("cg_hide");
+            </script>
+            <?php
+            die;
+        }
     }
-
-    $passwordUnhashed = $password;
-    $password = wp_hash_password($password);
+    //var_dump('$password');
+    //var_dump($password);
+    if(!empty($password)){
+       $password = wp_hash_password($password);
+        //var_dump('$passwordHashed');
+        //var_dump($password);
+    }elseif(!empty($passwordConfirm)){
+       $password = wp_hash_password($passwordConfirm);
+    }else{
+       $password = wp_hash_password(wp_generate_password( 32, true, true ));
+    }
 
     // Validierung und Erstellung von Activation Key --- ENDE
 
@@ -151,13 +118,22 @@ if (!defined('ABSPATH')) {
     $Tstamp = time();
     $attach_id = 0;
 
+    $Version = cg_get_version_for_scripts();
+
+    $GeneralID = 0;
+
+    if(intval($galleryDbVersion)>=14){
+        $GalleryID = 0;
+        $GeneralID = 1;
+    }
+
     foreach ($cg_check as $key => $value) {
 
         $Form_Input_ID = sanitize_text_field($value["Form_Input_ID"]);
         $Field_Type = sanitize_text_field($value["Field_Type"]);
 
         $Field_Order = sanitize_text_field($value["Field_Order"]);
-        $Field_Content = sanitize_text_field((isset($value["Field_Content"]) ? $value["Field_Content"] : ''));
+        $Field_Content = cg1l_sanitize_method((isset($value["Field_Content"]) ? $value["Field_Content"] : ''));
 
         if ($value["Field_Type"] == "password") {
             $Field_Content = $password;
@@ -188,15 +164,6 @@ if (!defined('ABSPATH')) {
             $Field_Content = $Field_Content->Field_Name . ' --- required:' . $RequiredString . ' --- ' . $Field_Content->Field_Content;// get both in this case name and content for better documentation
         }
 
-        $Version = cg_get_version_for_scripts();
-
-        $GeneralID = 0;
-
-        if(intval($galleryDbVersion)>=14){
-            $GalleryID = 0;
-            $GeneralID = 1;
-        }
-
         $wpdb->query($wpdb->prepare(
             "
         INSERT INTO $tablenameCreateUserEntries
@@ -210,70 +177,30 @@ if (!defined('ABSPATH')) {
         ));
 
     }
-
-    // Einf�gen von Werten mit Kennzeichnung durch Activation Key zur sp�teren Wiederfindung --- ENDE
-
-    // Versand E-Mail mit confirmation Link
-
-    // Check if valid mail. Wenn nicht dann admin Mail nehmen.
-    if (is_email($proOptions->RegMailReply)) {
-        $cgReply = $proOptions->RegMailReply;
-    } else {
-        $cgReply = get_option('admin_email');
+    if($cg_users_pin){
+        $pin = random_int(1000, 9999);
+        $Subject = str_ireplace($posPin, $pin, contest_gal1ery_convert_for_html_output_without_nl2br($proOptions->RegPinSubject));
+        $pinHashed = password_hash($pin,PASSWORD_DEFAULT);
+        $wpdb->query($wpdb->prepare(
+            "
+        INSERT INTO $tablenameCreateUserEntries
+        (id, GalleryID, wp_user_id, f_input_id, Field_Type,
+        Field_Content, activation_key, Checked, Version,GeneralID,Tstamp)
+        VALUES (%s,%d,%d,%d,%s,
+        %s,%s,%d,%s,%d,%d)
+    ",
+            '', 0, 0, 0, 'activation-pin',
+            $pinHashed, $activation_key, 0, $Version,$GeneralID,$Tstamp
+        ));
     }
 
-    $RegMailCC = $proOptions->RegMailCC;
-    $RegMailBCC = $proOptions->RegMailBCC;
+    $wp_mail_result = cg1l_send_registration_mail($proOptions,$GalleryID,$cg_users_pin,$cg_main_mail,$Subject, $TextEmailConfirmation, $activation_key, $posPin, $pin, $posUrl, $currentPageUrl);
 
-    $headers = array();
-    $headers[] = "From: " . html_entity_decode(strip_tags($proOptions->RegMailAddressor)) . " <" . strip_tags($cgReply) . ">";
-    $headers[] = "Reply-To: " . strip_tags($cgReply) . "";
-
-    if(!empty($RegMailCC)){
-	    if(strpos($RegMailCC,';')){
-		    $RegMailCC = explode(';',$RegMailCC);
-		    foreach($RegMailCC as $ccValue){
-			    $ccValue = trim($ccValue);
-			    $headers[] = "CC: $ccValue\r\n";
-		    }
-	    }
-	    else{
-		    $headers[] = "CC: $RegMailCC\r\n";
-	    }
-    }
-
-    if(strpos($RegMailBCC,';')){
-	    $RegMailBCC = explode(';',$RegMailBCC);
-        foreach($RegMailBCC as $bccValue){
-            $bccValue = trim($bccValue);
-            $headers[] = "BCC: $bccValue\r\n";
-        }
-    }
-    else{
-        $headers[] = "BCC: $RegMailBCC\r\n";
-    }
-
-    $headers[] = "MIME-Version: 1.0";
-    $headers[] = "Content-Type: text/html; charset=utf-8";
-
-    $ForwardAfterRegText = nl2br(html_entity_decode(stripslashes($proOptions->ForwardAfterRegText)));
-
-    $currentPageUrlForEmail = (strpos($currentPageUrl, '?')) ? $currentPageUrl . '&' : $currentPageUrl . '?';
-    $TextEmailConfirmation = str_ireplace($posUrl, $currentPageUrlForEmail . "cgkey=$activation_key#cg_activation", $TextEmailConfirmation);
-
-    global $cgMailAction;
-    global $cgMailGalleryId;
-    $cgMailAction = "User registration e-mail";
-    $cgMailGalleryId = $GalleryID;
-    add_action('wp_mail_failed', 'cg_on_wp_mail_error', 10, 1);
-
-    if (!wp_mail($cg_main_mail, contest_gal1ery_convert_for_html_output($proOptions->RegMailSubject), $TextEmailConfirmation, $headers)) {
+    if (!$wp_mail_result) {
         ?>
         <script  data-cg-processing="true">
             var cg_error = "Failed sending mail, please contact administrator";
-            var cg_registry_manipulation_error = document.getElementById('cg_registry_manipulation_error');
-            cg_registry_manipulation_error.innerHTML = cg_registry_manipulation_error.innerHTML + cg_error;
-            cg_registry_manipulation_error.classList.remove("cg_hide");
+            var cg_registry_manipulation_error = cgJsClass.gallery.vars.$regFormContainer.find('#cg_registry_manipulation_error').text(cg_error).removeClass("cg_hide");
             console.log(cg_error);
         </script>
         <?php
@@ -281,8 +208,7 @@ if (!defined('ABSPATH')) {
     }
 
     // $activation_key has definetely to be set to run it here!!!
-    if($proOptions->RegMailOptional==1  && !empty($activation_key)){
-        $user_registered = date("Y-m-d H:i:s");
+    if($proOptions->RegMailOptional==1  && !empty($activation_key) && empty($cg_users_pin)){
 
         if(!empty($cg_main_nick_name)){
             $display_name=$cg_main_nick_name;
@@ -295,13 +221,16 @@ if (!defined('ABSPATH')) {
         $user_login=$cg_main_user_name;
         $user_email=$cg_main_mail;
 
-        $activation_key_for_wp_users_table = $activation_key.'-unconfirmed';
+        // this type of key not required anymore, logic improved
+        //$activation_key_for_wp_users_table = $activation_key.'-unconfirmed';
 
         if(intval($galleryDbVersion)>=14){
-            $activation_key_for_wp_users_table = 'cg-key---'.$activation_key.'-unconfirmed';
+            //$activation_key_for_wp_users_table = 'cg-key---'.$activation_key.'-unconfirmed';
         }
 
-        $wpdb->query( $wpdb->prepare(
+        $user_registered = current_time( 'mysql' );
+
+        /*$wpdb->query( $wpdb->prepare(
             "
 									INSERT INTO $tablenameWpUsers
 									( id, user_login, user_pass, user_nicename, user_email, user_url,
@@ -311,84 +240,129 @@ if (!defined('ABSPATH')) {
 								",
             '',$user_login,$password,$user_nicename,$user_email,'',
             $user_registered,$activation_key_for_wp_users_table,'',$display_name
-        ) );
+        ) );*/
 
-        $newWpId = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $tablenameWpUsers WHERE user_activation_key=%s",[$activation_key_for_wp_users_table]));
+        $newWpId = cg1l_wp_insert_user($user_login,$user_nicename,$user_email,$user_registered,$display_name);
 
-        if(!empty($newWpId)){
-            // set role here
-            wp_update_user( array( 'ID' => $newWpId, 'role' => $RegistryUserRole ) );
+        if (!is_wp_error($newWpId) && !empty($newWpId) && is_numeric($newWpId) && (int)$newWpId > 0) {// important to check, otherwise unpredicted handling
+
+            // set role and nickname here, then update with already hashed password
+            wp_update_user([
+                'ID' => $newWpId,
+                'role' => $RegistryUserRole,
+                'nickname' => $display_name
+            ]);
+
+            // has to be done here, because unhashed dummy password has to be set before, do not wp_update_user user after that
+            // wp_set_password expects plain password, but already not available here anymore
+            $wpdb->update(
+                $wpdb->users,
+                [
+                    'user_pass' => $password,
+                ],
+                [
+                    'ID' => $newWpId,
+                ],
+                [
+                    '%s',
+                ],
+                [
+                    '%d',
+                ]
+            );
+
+            // has to be done again, because deleted during wp_update_user
+            $wpdb->update(
+                $wpdb->users,
+                [
+                    'user_activation_key' => $activation_key,
+                ],
+                [
+                    'ID' => $newWpId,
+                ],
+                [
+                    '%s',
+                ],
+                [
+                    '%d',
+                ]
+            );
 
             if(intval($galleryDbVersion)>=14){
-                cg_update_user_meta_when_register( $newWpId, $activation_key ) ;
+                cg_update_user_meta_when_register_and_delete_user_entries( $newWpId, $activation_key, $user_email ) ;
             }
+
+            // for unconfirmed users to recognize in queries in unconfirmed-users.php
+            $wpdb->query($wpdb->prepare(
+                "
+        INSERT INTO $tablenameCreateUserEntries
+        (id, GalleryID, wp_user_id, f_input_id, Field_Type,
+        Field_Content, activation_key, Checked, Version,GeneralID,Tstamp)
+        VALUES (%s,%d,%d,%d,%s,
+        %s,%s,%d,%s,%d,%d)
+    ",
+                '', $GalleryID, 0, 0, 'unconfirmed-mail',
+                $user_email, $activation_key, 0, $Version, 1, $Tstamp
+            ));
 
             if(!empty($attach_id)){
                 cg_registry_add_profile_image('cg_input_image_upload_file',$newWpId,false,false,$attach_id);
             }
 
-        }
+            //wp_set_auth_cookie( $newWpId,true );// will be done ajax
 
-        // set user id here by activation key, because created!!!
-        $wpdb->update(
-            "$tablenameCreateUserEntries",
-            array('wp_user_id' => $newWpId),
-            array('activation_key' => $activation_key),
-            array('%d'),
-            array('%s')
-        );
+            $addOn = 'cg_gallery_id_registry='.$GalleryID.'&cg_login_user_after_registration=true&cg_activation_key='.$activation_key;
 
-        if(intval($galleryDbVersion)>=14){
-            // new logic, delete all fields not only passwords, because all user data are in wp_usermeta then
-            $wpdb->query($wpdb->prepare(
-                "
-                                    DELETE FROM $tablenameCreateUserEntries WHERE GeneralID = %d AND wp_user_id = %d
-                                ",
-                1,$newWpId
-            ));
+            $url = (strpos($currentPageUrl, '?')) ? $currentPageUrl . '&' .$addOn : $currentPageUrl . '?' .$addOn;
+            // if RegMailOptional and direct login after registration!!!
+            ?>
+            <script  data-cg-processing="true" data-cg-success="true">
+                var result = cgJsClass.gallery.registry.functions.loginUserByKey(jQuery,0,<?php echo json_encode($activation_key);?>);
+                if(result){
+                    cgJsClass.gallery.vars.$regFormContainer.find('#cg_check_mail_name_value').val(0);// then success and can be reloaded, val(1) will be set when form submit
+                    var url = <?php echo json_encode($url);?>;
+                    window._cgLocationUrl = url;
+                }else{
+                    var cg_error = "Login not possible. Please contact administrator.";
+                    cgJsClass.gallery.vars.$regFormContainer.find('#cg_registry_manipulation_error').text(cg_error).removeClass("cg_hide");
+                    console.log(cg_error);
+                }
+            </script>
+            <?php
+            die;
         }else{
-            // HASHED PASSWORDS CAN BE DELETED THEN!!!!
-            $wpdb->query( $wpdb->prepare(
-                "
-										DELETE FROM $tablenameCreateUserEntries WHERE GalleryID = %d AND (Field_Type = %s OR Field_Type = %s) AND wp_user_id = %s
-									",
-                $GalleryID, "password", "password-confirm",$newWpId
-            ));
+            ?>
+            <script  data-cg-processing="true">
+                var cg_error = "User could not be created when login instantly after registration.";
+                var cg_registry_manipulation_error = cgJsClass.gallery.vars.$regFormContainer.find('#cg_registry_manipulation_error').text(cg_error).removeClass("cg_hide");
+                console.log(cg_error);
+            </script>
+            <?php
+            die;
         }
-
-        wp_set_auth_cookie( $newWpId,true );
-
-        $addOn = 'cg_gallery_id_registry='.$GalleryID.'&cg_login_user_after_registration=true&cg_activation_key='.$activation_key;
-
-        $url = (strpos($currentPageUrl, '?')) ? $currentPageUrl . '&' .$addOn : $currentPageUrl . '?' .$addOn;
-
-        // if RegMailOptional and direct login after registration!!!
-        ?>
-        <script  data-cg-processing="true">
-
-            var url = <?php echo json_encode($url);?>;
-            window.location = url;
-
-        </script>
-        <?php
-        die;
 
     }else{
 
-        $addOn = 'cg_gallery_id_registry='.$GalleryID.'&cg_forward_user_after_reg=true';
-
-        $url = (strpos($currentPageUrl, '?')) ? $currentPageUrl . '&' .$addOn : $currentPageUrl . '?' .$addOn;
-
-        // show only ForwardAfterRegText, no login
-        ?>
-        <script  data-cg-processing="true" data-cg-success="true">
-
-            var url = <?php echo json_encode($url);?>;
-            window.location = url;
-
-        </script>
-        <?php
-        die;
+        if($cg_users_pin){
+            ?>
+            <script  data-cg-processing="true" data-cg-success="true">
+                cgJsClass.gallery.vars.activationKey = <?php echo json_encode($activation_key);?>;
+            </script>
+            <?php
+            die;
+        }else{
+            $addOn = 'cg_gallery_id_registry='.$GalleryID.'&cg_forward_user_after_reg=true';
+            $url = (strpos($currentPageUrl, '?')) ? $currentPageUrl . '&' .$addOn : $currentPageUrl . '?' .$addOn;
+            // show only ForwardAfterRegText, no login
+            ?>
+            <script  data-cg-processing="true" data-cg-success="true">
+                cgJsClass.gallery.vars.$regFormContainer.find('#cg_check_mail_name_value').val(0);// then success and can be reloaded, val(1) will be set when form submit
+                var url = <?php echo json_encode($url);?>;
+                window._cgLocationUrl = url;
+            </script>
+            <?php
+            die;
+        }
 
     }
 

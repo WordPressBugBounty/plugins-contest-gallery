@@ -2,6 +2,7 @@ jQuery(document).ready(function($){
 
     var $wpBodyContent = jQuery('#wpbody-content');
     var $cg_main_container = jQuery('#cg_main_container');
+    cgJsClassAdmin.index.vars.$cg_main_container = $cg_main_container;
     var $cgGoTopOptions = jQuery('#cgGoTopOptions');
 
     cgJsClassAdmin.index.functions.cgSetVersionForUrlJs($('#cgGetVersionForUrlJs').val());
@@ -95,6 +96,51 @@ jQuery(document).ready(function($){
     $(document).on('click','.cg_load_backend_link',function (e) {
         e.preventDefault();
         cgJsClassAdmin.index.functions.cgLoadBackend($(this));
+    });
+
+    tinymce.on('AddEditor', function(e) {
+        if (e.editor.id === 'cgMailBodyToSend') {
+            e.editor.on('init', function() {
+                var content = localStorage.getItem('cgMailBodyToSend');
+                if(content){
+                    e.editor.setContent(content);
+                }else{
+                    e.editor.setContent('Hello!');
+                }
+                e.editor.theme.resizeTo(null, 200);
+                $('#cgMailBodyToSendContainer').css('visibility', 'visible').css('min-height', 'unset');
+                $('#cgMailSendButtonContainer').css('visibility', 'visible');
+            });
+            // When user types or content changes
+            e.editor.on('input paste change SetContent Undo Redo', function () {
+                clearTimeout(e.editor._cgSaveTimeout);
+                e.editor._cgSaveTimeout = setTimeout(function () {
+                    var content = e.editor.getContent();
+                    localStorage.setItem('cgMailBodyToSend', content);
+                }, 300);
+            });
+        }
+        if (e.editor.id === 'cgMailBodyToSendUnconfirmed') {
+            e.editor.on('init', function() {
+                var content = localStorage.getItem('cgMailBodyToSendUnconfirmed');
+                if(content){
+                    e.editor.setContent(content);
+                }else{
+                    e.editor.setContent($('#cgMailBodyConfirmationText').val());
+                }
+                e.editor.theme.resizeTo(null, 200);
+                $('#cgMailBodyToSendContainer').css('visibility', 'visible').css('min-height', 'unset');
+                $('#cgMailSendButtonContainer').css('visibility', 'visible');
+            });
+            // When user types or content changes
+            e.editor.on('input paste change SetContent Undo Redo', function () {
+                clearTimeout(e.editor._cgSaveTimeout);
+                e.editor._cgSaveTimeout = setTimeout(function () {
+                    var content = e.editor.getContent();
+                    localStorage.setItem('cgMailBodyToSendUnconfirmed', content);
+                }, 300);
+            });
+        }
     });
 
 

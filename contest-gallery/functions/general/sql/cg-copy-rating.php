@@ -48,13 +48,25 @@ WHERE GalleryID IN (%d)",[$oldGalleryID]));
             //Have to look like this:UPDATE wp_contest_gal1ery_ip SET pid = CASE pid WHEN 22717 THEN 30000 WHEN 22716 THEN 30001 ELSE pid END WHERE GalleryID IN (341)
             $whenThenString = '';
             foreach($collectImageIdsArray as $oldImageId => $newImageId){
-                $whenThenString .= "WHEN $oldImageId THEN $newImageId ";
+                if (
+                    $oldImageId !== null && $oldImageId !== '' && is_numeric($oldImageId) &&
+                    $newImageId !== null && $newImageId !== '' && is_numeric($newImageId)
+                ) {
+                    // Avoid degenerate WHEN x THEN x entries
+                    if ((int)$oldImageId === (int)$newImageId) {
+                        continue;
+                    }
+                    $oldImageId           = (int)$oldImageId;
+                    $newImageId           = (int)$newImageId;
+                    $whenThenString .= "WHEN $oldImageId THEN $newImageId ";
+                }
             }
 
-            $whenThenString = substr_replace($whenThenString ,"", -1);
-
-            //Have to look like this:UPDATE wp_contest_gal1ery_ip SET pid = CASE pid WHEN 22717 THEN 30000 WHEN 22716 THEN 30001 ELSE pid END WHERE GalleryID IN (341)
-            $wpdb->query($wpdb->prepare("UPDATE $tablename_ip SET pid = CASE pid $whenThenString ELSE pid END WHERE GalleryID IN (%d)",[$nextGalleryID]));
+            if(!empty($whenThenString)){
+                $whenThenString = rtrim($whenThenString);
+                //Have to look like this:UPDATE wp_contest_gal1ery_ip SET pid = CASE pid WHEN 22717 THEN 30000 WHEN 22716 THEN 30001 ELSE pid END WHERE GalleryID IN (341)
+                $wpdb->query($wpdb->prepare("UPDATE $tablename_ip SET pid = CASE pid $whenThenString ELSE pid END WHERE GalleryID IN (%d)",[$nextGalleryID]));
+            }
 
             // Create categories
 

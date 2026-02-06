@@ -10,6 +10,7 @@ if(!function_exists('cg_ecommerce_export_orders')){
 
 		$tablename_ecommerce_orders_items = $wpdb->prefix . "contest_gal1ery_ecommerce_orders_items";
 
+        $start = 0;
 		if (isset($_POST["cg_start"])) {
 			$muster = "/^[0-9]+$/";
 			if (preg_match($muster, $_POST["cg_start"]) == 0) {
@@ -19,6 +20,7 @@ if(!function_exists('cg_ecommerce_export_orders')){
 			}
 		}
 
+        $step = 50;
 		if (isset($_POST["cg_step"])) {
 			$muster = "/^[0-9]+$/"; // reg. Ausdruck für Zahlen
 			if (preg_match($muster, $_POST["cg_start"]) == 0) {
@@ -381,6 +383,8 @@ if(!function_exists('cg_ecommerce_export_orders')){
 			$exportTime = cg_get_time_based_on_wp_timezone_conf(time(),'d-M-Y H:i:s');
 			$filename = "cg-orders-".$exportTime.".csv";
 		}
+
+        $csvData = cg_neutralize_csv_array($csvData);
 
 		header("Content-type: text/csv");
 		header("Content-Disposition: attachment; filename=$filename");

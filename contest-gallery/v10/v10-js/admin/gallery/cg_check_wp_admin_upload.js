@@ -613,6 +613,8 @@ return false;
                     cg_assign_fields['description']['Field_Type'] = file_frame.$el.find('#cgAssignDescriptionSelectDiv select option:selected').attr('data-cg-field-type');
                 }*/
 
+        var cg_nonce = CG1LBackendNonce.nonce;
+
         jQuery.ajax({
             url: cg_admin_url + "admin-ajax.php",
             type: 'post',
@@ -621,7 +623,8 @@ return false;
                 action1: attachmentIds,
                 action2: cg_gallery_id,
                 cg_assign_category: cg_assign_category,
-                cg_assign_fields: cg_assign_fields
+                cg_assign_fields: cg_assign_fields,
+                cg_nonce: cg_nonce
             },
         }).done(function (response) {
 
