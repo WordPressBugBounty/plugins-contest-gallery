@@ -24,7 +24,12 @@ if(true){
         return;
     }
 
-    $wpUserID = $wpdb->get_var("SELECT ID FROM $tablenameWpUsers WHERE user_email = '".$cgLostPasswordEmail."'");
+    $wpUserID = $wpdb->get_var(
+            $wpdb->prepare(
+                    "SELECT ID FROM $tablenameWpUsers WHERE user_email = %s",
+                    $cgLostPasswordEmail
+            )
+    );
 
     if(!empty($wpUserID)){
 

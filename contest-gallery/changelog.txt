@@ -1,5 +1,8 @@
 Contest Gallery
 
+= 28.1.4 =
+* FIXED: Security issue.
+
 = 28.1.3 =
 * FIXED: Security issue.
 
