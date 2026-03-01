@@ -10,20 +10,33 @@ $tablename_pro_options = $wpdb->prefix . "contest_gal1ery_pro_options";
 $table_posts = $wpdb->prefix."posts";
 $table_wp_users = $wpdb->base_prefix."users";
 
-$galeryNR=$_GET['option_id'];
+$galeryNR=absint($_GET['option_id']);
 $pid=0;
 
 if(!empty($_GET['id'])){
-    $pid=$_GET['id'];
+    $pid=absint($_GET['id']);
 }
 
 $GalleryID = $galeryNR;
 
-$cgOptions = $wpdb->get_row("SELECT GalleryName, Version FROM $tablenameOptions WHERE id = '$galeryNR'");
+// Get gallery options by ID
+$cgOptions = $wpdb->get_row($wpdb->prepare(
+        "SELECT GalleryName, Version 
+    FROM $tablenameOptions 
+    WHERE id = %d",
+        $galeryNR
+));
+
 $GalleryName = $cgOptions->GalleryName;
 $Version = $cgOptions->Version;
 
-$proOptions = $wpdb->get_row("SELECT * FROM $tablename_pro_options WHERE GalleryID = '$GalleryID'");
+// Fetch professional options by Gallery ID
+$proOptions = $wpdb->get_row($wpdb->prepare(
+        "SELECT * FROM $tablename_pro_options 
+    WHERE GalleryID = %d",
+        $GalleryID
+));
+
 $IsModernFiveStar = (!empty($proOptions->IsModernFiveStar)) ? true : false;
 
 if(empty($GalleryName)){

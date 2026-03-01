@@ -74,9 +74,19 @@ if(!defined('ABSPATH')){exit;}
 
 		//Check name or email
 			if(is_email($cg_login_name_mail)){
-                $cgWpData = $wpdb->get_row("SELECT ID, user_login, user_pass FROM $tablenameWpUsers WHERE user_email = '".$cg_login_name_mail."'");
+        $cgWpData = $wpdb->get_row($wpdb->prepare(
+                "SELECT ID, user_login, user_pass 
+        FROM $tablenameWpUsers 
+        WHERE user_email = %s",
+                $cg_login_name_mail
+        ));
 			}else{
-                $cgWpData = $wpdb->get_row("SELECT ID, user_email, user_pass FROM $tablenameWpUsers WHERE user_login = '".$cg_login_name_mail."'");
+        $cgWpData = $wpdb->get_row($wpdb->prepare(
+                "SELECT ID, user_email, user_pass 
+        FROM $tablenameWpUsers 
+        WHERE user_login = %s",
+                $cg_login_name_mail
+        ));
             }
 
 		if(empty($cgWpData)){

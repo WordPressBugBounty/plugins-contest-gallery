@@ -137,16 +137,19 @@ if(!function_exists('cg1l_resend_unconfirmed_mail')){
         $posUrl = '$regurl$';
 
         if(empty($old_activation_key)){
-            $row = $wpdb->get_row("SELECT Field_Content, activation_key 
+            $row = $wpdb->get_row($wpdb->prepare(
+                "SELECT Field_Content, activation_key 
 FROM $tablenameCreateUserEntries
 WHERE activation_key = (
     SELECT activation_key 
     FROM $tablenameCreateUserEntries 
     WHERE (Field_Type = 'main-mail' OR Field_Type = 'unconfirmed-mail') 
-      AND Field_Content = '$ReceiverMail' 
+          AND Field_Content = %s 
     LIMIT 1
   )
-LIMIT 1;");
+    LIMIT 1;",
+                $ReceiverMail
+            ));
             $old_activation_key = $row->activation_key;
         }
 

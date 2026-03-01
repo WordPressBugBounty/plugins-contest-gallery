@@ -1,5 +1,9 @@
 Contest Gallery
 
+= 28.1.5 =
+* FIXED: Security issue.
+* IMPROVED: Backend security and stability improvements.
+
 = 28.1.4 =
 * FIXED: Security issue.
 
