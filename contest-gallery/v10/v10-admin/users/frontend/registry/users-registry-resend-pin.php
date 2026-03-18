@@ -10,7 +10,11 @@ $tablenameWpUserMeta = $wpdb->base_prefix . "usermeta";
 $tablenameProOptions = $wpdb->prefix . "contest_gal1ery_pro_options";
 $tablenameCreateUserEntries = $wpdb->prefix . "contest_gal1ery_create_user_entries";
 
-$cglActivationKeyResend = sanitize_text_field(wp_unslash($_POST["cglActivationKeyResend"]));
+$cglPinRequestKeyResend = sanitize_text_field(wp_unslash($_POST["cglActivationKeyResend"]));
+$cglActivationKeyResend = get_transient('cg_pin_request_key_'.$cglPinRequestKeyResend);
+if(empty($cglActivationKeyResend)){
+    $cglActivationKeyResend = '';
+}
 
 $userAccountEntries = $wpdb->get_results( $wpdb->prepare("SELECT Field_Type, Field_Content, Tstamp FROM $tablenameCreateUserEntries WHERE activation_key=%s", $cglActivationKeyResend) );
 
@@ -59,9 +63,15 @@ if (count($userAccountEntries)) {
 
     $wp_mail_result = cg1l_send_registration_mail($proOptions,0,$cg_users_pin,$cg_main_mail,$Subject, $TextEmailConfirmation, $activation_key_new, $posPin, $pin);
 
+    $cgPinRequestKey = wp_generate_password(48, false, false);
+    set_transient('cg_pin_request_key_'.$cgPinRequestKey, $activation_key_new, DAY_IN_SECONDS);
+    if(!empty($cglPinRequestKeyResend)){
+        delete_transient('cg_pin_request_key_'.$cglPinRequestKeyResend);
+    }
+
     ?>
     <script  data-cg-processing="true" data-cg-success="true">
-        cgJsClass.gallery.vars.activationKey = <?php echo json_encode($activation_key_new);?>;
+        cgJsClass.gallery.vars.activationKey = <?php echo json_encode($cgPinRequestKey);?>;
     </script>
     <?php
     die;

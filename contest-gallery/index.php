@@ -2,7 +2,7 @@
 /*
 Plugin Name: Contest Gallery
 Description: Upload form, files, photos and videos upload contest gallery plugin for WordPress. Create upload forms for entries with or without file/image upload. Create user registration form. Create login form. Create responsive galleries and allow to vote for any kind of entries. Sell entries via PayPal or Stripe API. Create or edit images via OpenAI API.
-Version: 28.1.5
+Version: 28.1.6
 Author: Contest Gallery
 Plugin URI: https://www.contest-gallery.com
 Author URI: https://www.contest-gallery.com
@@ -808,8 +808,8 @@ if(!function_exists('cg_download_invoice')){
 
             global $wpdb;
             $tablename_ecommerce_orders = $wpdb->prefix . "contest_gal1ery_ecommerce_orders";
-            $OrderId = sanitize_text_field($_GET['cg_download_invoice_order_id_hash']);
-            $Order = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_orders WHERE OrderIdHash = '$OrderId' LIMIT 1");
+            $OrderId = sanitize_text_field(wp_unslash($_GET['cg_download_invoice_order_id_hash']));
+            $Order = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_ecommerce_orders WHERE OrderIdHash = %s LIMIT 1",$OrderId));
 
             if(empty($Order)){
                 echo "Order not found to download invoice";die;
@@ -856,8 +856,8 @@ if(!function_exists('cg_download_logs')){
 
             global $wpdb;
             $tablename_ecommerce_orders = $wpdb->prefix . "contest_gal1ery_ecommerce_orders";
-            $OrderId = sanitize_text_field($_GET['cg_download_logs_order_id_hash']);
-            $Order = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_orders WHERE OrderIdHash = '$OrderId' LIMIT 1");
+            $OrderId = sanitize_text_field(wp_unslash($_GET['cg_download_logs_order_id_hash']));
+            $Order = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_ecommerce_orders WHERE OrderIdHash = %s LIMIT 1",$OrderId));
 
             if(empty($Order)){
                 echo "Order not found to download logs";die;
@@ -901,9 +901,9 @@ if(!function_exists('cg_download_sale_item')){
             $tablename_ecommerce_orders = $wpdb->prefix . "contest_gal1ery_ecommerce_orders";
 			$tablename_ecommerce_orders_items = $wpdb->prefix . "contest_gal1ery_ecommerce_orders_items";
 			$tablePostMeta = $wpdb->prefix . "postmeta";
-            $OrderIdHash = sanitize_text_field($_GET['cg_download_file_order_id_hash']);
+			$OrderIdHash = sanitize_text_field(wp_unslash($_GET['cg_download_file_order_id_hash']));
             $WpUpload = absint($_GET['cg_wp_upload']);
-			$Order = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_orders WHERE OrderIdHash = '$OrderIdHash' LIMIT 1");
+			$Order = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_ecommerce_orders WHERE OrderIdHash = %s LIMIT 1",$OrderIdHash));
 
 			if((empty($_COOKIE['cg_order']) || $_COOKIE['cg_order']!=cg_hash_function('---cg_order---'.$OrderIdHash)) &&
 			!is_user_logged_in()){

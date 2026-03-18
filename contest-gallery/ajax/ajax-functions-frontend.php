@@ -186,10 +186,12 @@ if (!function_exists('post_cg1l_current_frontend_nonce')) {
             $WpUserId = absint($_POST['cgJustLoggedInWpUserId']);
             $cgGetLoggedInFrontendUserKey = sanitize_text_field($_POST['cgGetLoggedInFrontendUserKey']);
             $cgGetLoggedInFrontendUserKeyToCompare = get_user_meta( $WpUserId,'cgGetLoggedInFrontendUserKey',true);
-            if(!empty($cgGetLoggedInFrontendUserKeyToCompare) && $cgGetLoggedInFrontendUserKeyToCompare == $cgGetLoggedInFrontendUserKey){
+            if(!empty($cgGetLoggedInFrontendUserKeyToCompare) && hash_equals((string)$cgGetLoggedInFrontendUserKeyToCompare, (string)$cgGetLoggedInFrontendUserKey)){
         ?>
         <script data-cg-processing-current-nonce="true">
             cgJsClass.gallery.vars.currentCgNonce = <?php echo json_encode(wp_create_nonce('cg1l_action')); ?>;
+                    cgJsClass.gallery.vars.cgGetLoggedInFrontendUserKey = '';
+                    cgJsClass.gallery.vars.cgJustLoggedInWpUserId = '';
         </script>
         <?php
                 delete_user_meta( $WpUserId,'cgGetLoggedInFrontendUserKey');
@@ -210,22 +212,20 @@ if (!function_exists('post_cg1l_login_user_by_key')) {
             global $wpdb;
             $tablename = $wpdb->prefix . "contest_gal1ery";
             $gid = absint($_POST['cgl_gid']);
-            $activation_key = sanitize_text_field($_POST['cglKey']);
-            if(empty($activation_key)){
+            $WpUserId = absint($_POST['cgJustLoggedInWpUserId']);
+            $cgGetLoggedInFrontendUserKey = sanitize_text_field($_POST['cglKey']);
+            if(empty($WpUserId) || empty($cgGetLoggedInFrontendUserKey)){
                 exit();
             }
-            $userRow = $wpdb->get_row(
-                $wpdb->prepare(
-                    "SELECT * 
-             FROM {$wpdb->users} 
-             WHERE user_activation_key = %s",
-                    $activation_key
-                )
-            );
-            if ( !empty($userRow)) {
+            $cgGetLoggedInFrontendUserKeyToCompare = get_user_meta( $WpUserId,'cgGetLoggedInFrontendUserKey',true);
+            if(!empty($cgGetLoggedInFrontendUserKeyToCompare) && hash_equals((string)$cgGetLoggedInFrontendUserKeyToCompare, (string)$cgGetLoggedInFrontendUserKey)){
+                $userRow = get_userdata($WpUserId);
+                if(empty($userRow)){
+                exit();
+            }
                 $wpNickname = $userRow->display_name;
                 $WpUserEmail = $userRow->user_email;
-                $WpUserId = $userRow->ID;
+                wp_set_current_user($WpUserId);
                 wp_set_auth_cookie( $WpUserId,true );
                 $profileImage = '';
                 $wpUploadProfileImage = $wpdb->get_var( $wpdb->prepare(

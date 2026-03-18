@@ -1,5 +1,10 @@
 Contest Gallery
 
+= 28.1.6 =
+* FIXED: Potential security vulnerability.
+* IMPROVED: Security hardening and code sanitization.
+* FIXED: Small bugs.
+
 = 28.1.5 =
 * FIXED: Security issue.
 * IMPROVED: Backend security and stability improvements.

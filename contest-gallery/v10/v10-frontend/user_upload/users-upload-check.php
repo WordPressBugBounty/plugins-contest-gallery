@@ -1284,10 +1284,10 @@ if(!$isManipulated){
                                         $ConfMailId = 0;
 
                                         // Update des haupttables mit WpUserId weiter unten
-                                        $checkWpMail = $wpdb->get_row( "SELECT ID, user_email FROM $wpUsers WHERE user_email = '$sendUserMail'" );
+                                        $checkWpMail = $wpdb->get_row($wpdb->prepare("SELECT ID, user_email FROM $wpUsers WHERE user_email = %s",$sendUserMail));
 
                                         if(empty($checkWpMail)){
-                                            $checkCgMail = $wpdb->get_row( "SELECT * FROM $tablename_mails_collected WHERE Mail = '$sendUserMail'" );
+                                            $checkCgMail = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_mails_collected WHERE Mail = %s",$sendUserMail));
 
                                             if(!empty($checkCgMail)){
                                                 if($checkCgMail->Confirmed==1){

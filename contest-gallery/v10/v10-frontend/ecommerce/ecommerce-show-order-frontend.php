@@ -76,9 +76,9 @@ $tablename_ecommerce_options = $wpdb->prefix . "contest_gal1ery_ecommerce_option
 // please provide sales id should be visible if not provided
 // ales id sanitize $_GET und dann verarbeiten
 
-$OrderIdHash = cg1l_sanitize_method($_GET['cg_order']);
+$OrderIdHash = cg1l_sanitize_method(wp_unslash($_GET['cg_order']));
 //$optionsNormal = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_orders WHERE id='$OrderId'");
-$Order = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_orders WHERE OrderIdHash = '$OrderIdHash' LIMIT 1");
+$Order = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_ecommerce_orders WHERE OrderIdHash = %s LIMIT 1",$OrderIdHash));
 
 if(empty($Order)){
 	echo "<p style='text-align: center;'><b>Order not found</b></p>";

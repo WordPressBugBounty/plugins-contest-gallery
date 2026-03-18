@@ -8,8 +8,8 @@ if(!empty($_GET['confirmation_code'])){
     $tablenameentries = $wpdb->prefix . "contest_gal1ery_entries";
     $tablename_mail_confirmation = $wpdb->prefix . "contest_gal1ery_mail_confirmation";
 
-    $hash = $_GET['confirmation_code'];
-    $checkCgMail = $wpdb->get_row( "SELECT * FROM $tablename_mails_collected WHERE Hash = '$hash'" );
+    $hash = sanitize_text_field(wp_unslash($_GET['confirmation_code']));
+    $checkCgMail = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_mails_collected WHERE Hash = %s",$hash));
 
     if(!empty($checkCgMail)){
 

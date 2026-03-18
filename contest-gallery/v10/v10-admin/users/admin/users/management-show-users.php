@@ -63,7 +63,8 @@ $toSelect = "$wpUsers.ID, $wpUsers.user_login, $wpUsers.user_email";
 
 if(!empty($_GET['wp_user_id'])){
 
-    $selectWPusers = $wpdb->get_results("SELECT * FROM $wpUsers WHERE ID = '".$_GET['wp_user_id']."'");
+    $wpUserId = absint($_GET['wp_user_id']);
+    $selectWPusers = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpUsers WHERE ID = %d",$wpUserId));
 
     $rows = $wpdb->get_var(
         "
@@ -73,26 +74,27 @@ if(!empty($_GET['wp_user_id'])){
 
 }elseif(!empty($_POST['cg-search-user-name']) OR !empty($_GET['cg-search-user-name'])){
 
-        $cgUserName = (!empty($_POST['cg-search-user-name'])) ? sanitize_text_field(htmlentities(html_entity_decode($_POST['cg-search-user-name']))) : sanitize_text_field(htmlentities(html_entity_decode($_GET['cg-search-user-name'])));
+        $cgUserName = (!empty($_POST['cg-search-user-name'])) ? sanitize_text_field(htmlentities(html_entity_decode(wp_unslash($_POST['cg-search-user-name'])))) : sanitize_text_field(htmlentities(html_entity_decode(wp_unslash($_GET['cg-search-user-name']))));
+        $cgUserNameLike = '%' . $wpdb->esc_like($cgUserName) . '%';
         $cgUserNameGetParam = '&cg-search-user-name='.$cgUserName;
 
         if(!empty($cgSearchGalleryId)){
 
-            $selectWPusers = $wpdb->get_results("SELECT DISTINCT $toSelect FROM $wpUsers, $entriesShort WHERE ($wpUsers.user_login LIKE '%$cgUserName%' OR $wpUsers.user_email LIKE '%$cgUserName%') AND ($wpUsers.ID = $entriesShort.wp_user_id AND $entriesShort.GalleryID = '$cgSearchGalleryId') ORDER BY $wpUsers.ID ASC LIMIT $start, $step");
+            $selectWPusers = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT $toSelect FROM $wpUsers, $entriesShort WHERE ($wpUsers.user_login LIKE %s OR $wpUsers.user_email LIKE %s) AND ($wpUsers.ID = $entriesShort.wp_user_id AND $entriesShort.GalleryID = %d) ORDER BY $wpUsers.ID ASC LIMIT %d, %d",$cgUserNameLike,$cgUserNameLike,$cgSearchGalleryId,$start,$step));
 
-            $rows = count($wpdb->get_results(
+            $rows = count($wpdb->get_results($wpdb->prepare(
                 "
 		SELECT DISTINCT $wpUsers.ID  
-		FROM $wpUsers, $entriesShort WHERE ($wpUsers.user_login LIKE '%$cgUserName%' OR $wpUsers.user_email LIKE '%$cgUserName%') AND ($wpUsers.ID = $entriesShort.wp_user_id AND $entriesShort.GalleryID = '$cgSearchGalleryId')"
-            ));
+		FROM $wpUsers, $entriesShort WHERE ($wpUsers.user_login LIKE %s OR $wpUsers.user_email LIKE %s) AND ($wpUsers.ID = $entriesShort.wp_user_id AND $entriesShort.GalleryID = %d)",$cgUserNameLike,$cgUserNameLike,$cgSearchGalleryId
+            )));
 
         }else{
-            $selectWPusers = $wpdb->get_results("SELECT $toSelect FROM $wpUsers WHERE user_login LIKE '%$cgUserName%' OR user_email LIKE '%$cgUserName%' ORDER BY $wpUsers.ID ASC LIMIT $start, $step");
-            $rows = $wpdb->get_var(
+            $selectWPusers = $wpdb->get_results($wpdb->prepare("SELECT $toSelect FROM $wpUsers WHERE user_login LIKE %s OR user_email LIKE %s ORDER BY $wpUsers.ID ASC LIMIT %d, %d",$cgUserNameLike,$cgUserNameLike,$start,$step));
+            $rows = $wpdb->get_var($wpdb->prepare(
                 "
 		SELECT COUNT(*) AS NumberOfRows
-		FROM $wpUsers WHERE user_login LIKE '%$cgUserName%' OR user_email LIKE '%$cgUserName%'"
-            );
+		FROM $wpUsers WHERE user_login LIKE %s OR user_email LIKE %s",$cgUserNameLike,$cgUserNameLike
+            ));
         }
 
     }elseif(!empty($cgSearchGalleryId)){

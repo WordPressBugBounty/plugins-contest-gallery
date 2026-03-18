@@ -1256,27 +1256,30 @@ if(!function_exists('cg_create_tablename_mails_check')){
     }
 }
 
-function cg_format_options_version($Version) {
-    $parts = explode('.', $Version);
-    $main = $parts[0];
 
-    // If no dot is present, return the main part
-    if (count($parts) < 2) return $main;
+if(!function_exists('cg_format_options_version')){
+    function cg_format_options_version($Version) {
+        $parts = explode('.', $Version);
+        $main = $parts[0];
 
-    // Merge all decimals into one string
-    $decimalString = implode('', array_slice($parts, 1));
+        // If no dot is present, return the main part
+        if (count($parts) < 2) return $main;
 
-    // Special case: Only zeros (e.g., 23.0.0 -> 23)
-    if (ltrim($decimalString, '0') === '') {
-        return (float)$main;
+        // Merge all decimals into one string
+        $decimalString = implode('', array_slice($parts, 1));
+
+        // Special case: Only zeros (e.g., 23.0.0 -> 23)
+        if (ltrim($decimalString, '0') === '') {
+            return (float)$main;
+        }
+
+        // Combine and round to max 2 decimal places
+        $combined = $main . '.' . $decimalString;
+        $rounded = round((float)$combined, 2);
+
+        // Casting to float ensures that trailing zeros are removed (e.g., 23.10 -> 23.1)
+        return (float)$rounded;
     }
-
-    // Combine and round to max 2 decimal places
-    $combined = $main . '.' . $decimalString;
-    $rounded = round((float)$combined, 2);
-
-    // Casting to float ensures that trailing zeros are removed (e.g., 23.10 -> 23.1)
-    return (float)$rounded;
 }
 
 ?>

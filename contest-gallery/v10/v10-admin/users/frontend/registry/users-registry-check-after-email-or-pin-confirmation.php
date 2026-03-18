@@ -7,8 +7,13 @@ $tablenameWpUsers = $wpdb->base_prefix . "users";
 $tablenameWpUserMeta = $wpdb->base_prefix . "usermeta";
 $tablenameCreateUserEntries = $wpdb->prefix . "contest_gal1ery_create_user_entries";
 
+$cgPinRequestKey = '';
 if(!empty($cg_users_pin_from_email_check)){
-    $cgkey = sanitize_text_field(wp_unslash($_POST["cglActivationKey"]));
+    $cgPinRequestKey = sanitize_text_field(wp_unslash($_POST["cglActivationKey"]));
+    $cgkey = get_transient('cg_pin_request_key_'.$cgPinRequestKey);
+    if(empty($cgkey)){
+        $cgkey = '';
+    }
 }else{
     $cgkey = sanitize_text_field(wp_unslash($_GET["cgkey"]));
 }
@@ -148,12 +153,21 @@ if (count($userAccountEntries)) {
             $cgkeyForWpUserTable = 'cg-key---'.$cgkey;
         }
         // '-confirmed' was added in update 10.9.8.8.0
-        $wpdb->query($wpdb->prepare(
-            "
-            UPDATE $tablenameWpUsers SET user_activation_key = %s WHERE ID = %s
-        ",
-            $cgkeyForWpUserTable."-confirmed",$unconfirmedMail
-        ));
+        $wpdb->update(
+            $tablenameWpUsers,
+            [
+                'user_activation_key' => $cgkeyForWpUserTable.'-confirmed',
+            ],
+            [
+                'ID' => absint($newWpId),
+            ],
+            [
+                '%s',
+            ],
+            [
+                '%d',
+            ]
+        );
         cg1l_delete_unconfirmed_user($unconfirmedMail);
         include (__DIR__.'/users-registry-render-confirmation-or-signin.php');
         return;
@@ -347,11 +361,13 @@ if (count($userAccountEntries)) {
                 //wp_set_auth_cookie( $newWpId,true );// will be done ajax
                 $cgGetLoggedInFrontendUserKey = wp_hash_password(wp_generate_password( 32, true, true ));
                 update_user_meta( $newWpId, 'cgGetLoggedInFrontendUserKey', $cgGetLoggedInFrontendUserKey);
+                if(!empty($cgPinRequestKey)){
+                    delete_transient('cg_pin_request_key_'.$cgPinRequestKey);
+                }
                 ?>
                 <script  data-cg-processing="true" data-cg-success="true">
                     cgJsClass.gallery.vars.pinMessage = 'success';
                     cgJsClass.gallery.vars.pinVerified = true;
-                    cgJsClass.gallery.vars.activationKeyConfirmed = <?php echo json_encode($cgkeyForWpUserTable.'-confirmed');?>;
                     cgJsClass.gallery.vars.cgGetLoggedInFrontendUserKey = <?php echo json_encode($cgGetLoggedInFrontendUserKey);?>;
                     cgJsClass.gallery.vars.cgJustLoggedInWpUserId = <?php echo json_encode($newWpId);?>;
                 </script>

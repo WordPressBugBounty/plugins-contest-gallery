@@ -17,22 +17,27 @@ if(!function_exists('cg_user_data_registry_csv_export')){
 
 // Tabellennamen bestimmen
 
-        if(!empty($_GET['wp_uid'])){$selectWPusers = $wpdb->get_results("SELECT DISTINCT * FROM $wpUsers WHERE ID='".@$_GET['wp_uid']."' ORDER BY id ASC");}
-        elseif(empty($_POST['cg-user-name']) AND !empty($_POST['galleryIdToSelect'])){
+        $wpUid = !empty($_GET['wp_uid']) ? absint($_GET['wp_uid']) : 0;
+        $galleryIdToSelect = !empty($_POST['galleryIdToSelect']) ? absint($_POST['galleryIdToSelect']) : 0;
+        $cgUserName = !empty($_POST['cg-user-name']) ? wp_unslash($_POST['cg-user-name']) : '';
+        $cgUserNameLike = '%' . $wpdb->esc_like($cgUserName) . '%';
 
-            $selectWPusers = $wpdb->get_results("SELECT DISTINCT  $wpUsers.* FROM $wpUsers, $entriesShort WHERE $wpUsers.ID=$entriesShort.wp_user_id AND $entriesShort.GalleryID='".$_POST['galleryIdToSelect']."'");
+        if(!empty($wpUid)){$selectWPusers = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT * FROM $wpUsers WHERE ID=%d ORDER BY id ASC",$wpUid));}
+        elseif(empty($cgUserName) AND !empty($galleryIdToSelect)){
+
+            $selectWPusers = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT  $wpUsers.* FROM $wpUsers, $entriesShort WHERE $wpUsers.ID=$entriesShort.wp_user_id AND $entriesShort.GalleryID=%d",$galleryIdToSelect));
 
         }
-        elseif(!empty($_POST['cg-user-name']) AND empty($_POST['galleryIdToSelect'])){
+        elseif(!empty($cgUserName) AND empty($galleryIdToSelect)){
             // var_dump(1);
-            $selectWPusers = $wpdb->get_results("SELECT DISTINCT  $wpUsers.* FROM $wpUsers WHERE user_login LIKE '%".@$_POST['cg-user-name']."%' or user_email LIKE '%".@$_POST['cg-user-name']."%'");
+            $selectWPusers = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT  $wpUsers.* FROM $wpUsers WHERE user_login LIKE %s or user_email LIKE %s",$cgUserNameLike,$cgUserNameLike));
         }
-        elseif(!empty($_POST['cg-user-name']) AND !empty($_POST['galleryIdToSelect'])){
+        elseif(!empty($cgUserName) AND !empty($galleryIdToSelect)){
             //  var_dump(2);
-            $selectWPusers = $wpdb->get_results("SELECT DISTINCT  $wpUsers.* FROM $wpUsers, $entriesShort WHERE $wpUsers.id=$entriesShort.wp_user_id AND   
-        ($wpUsers.user_login LIKE '%".@$_POST['cg-user-name']."%' or $wpUsers.user_email LIKE '%".@$_POST['cg-user-name']."%')
-		 AND $entriesShort.GalleryID='".$_POST['galleryIdToSelect']."'
-		 ");
+            $selectWPusers = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT  $wpUsers.* FROM $wpUsers, $entriesShort WHERE $wpUsers.id=$entriesShort.wp_user_id AND   
+        ($wpUsers.user_login LIKE %s or $wpUsers.user_email LIKE %s)
+		 AND $entriesShort.GalleryID=%d
+		 ",$cgUserNameLike,$cgUserNameLike,$galleryIdToSelect));
         }
         else{
 
