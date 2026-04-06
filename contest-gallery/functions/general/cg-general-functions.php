@@ -884,6 +884,55 @@ if(!function_exists('cg_set_cookie')){
 	}
 }
 
+if(!function_exists('cg_is_valid_frontend_cookie_value')){
+	function cg_is_valid_frontend_cookie_value($cookieValue){
+		if(!is_string($cookieValue) || $cookieValue === ''){
+			return false;
+		}
+
+		$cookieValue = wp_unslash($cookieValue);
+
+		return (bool) preg_match('/^[a-f0-9]{32}[0-9]{10,}$/', $cookieValue);
+	}
+}
+
+if(!function_exists('cg_get_valid_frontend_cookie')){
+	function cg_get_valid_frontend_cookie($galeryID,$type,$setIfMissing = false){
+		$galeryID = absint($galeryID);
+
+		if(
+			empty($galeryID) ||
+			!in_array($type,array('upload','voting'),true)
+		){
+			return '';
+		}
+
+		$cookieName = 'contest-gal1ery-'.$galeryID.'-'.$type;
+
+		if(!empty($_COOKIE[$cookieName])){
+			$cookieValue = wp_unslash($_COOKIE[$cookieName]);
+
+			if(cg_is_valid_frontend_cookie_value($cookieValue)){
+				return $cookieValue;
+			}
+
+			$cookieValue = cg_set_cookie($galeryID,$type);
+			$_COOKIE[$cookieName] = $cookieValue;
+
+			return $cookieValue;
+		}
+
+		if($setIfMissing){
+			$cookieValue = cg_set_cookie($galeryID,$type);
+			$_COOKIE[$cookieName] = $cookieValue;
+
+			return $cookieValue;
+		}
+
+		return '';
+	}
+}
+
 if(!function_exists('cg_create_contest_gallery_plugin_tag')){
 	function cg_create_contest_gallery_plugin_tag(){
 

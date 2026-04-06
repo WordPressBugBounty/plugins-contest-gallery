@@ -2,7 +2,7 @@
 /*
 Plugin Name: Contest Gallery
 Description: Upload form, files, photos and videos upload contest gallery plugin for WordPress. Create upload forms for entries with or without file/image upload. Create user registration form. Create login form. Create responsive galleries and allow to vote for any kind of entries. Sell entries via PayPal or Stripe API. Create or edit images via OpenAI API.
-Version: 28.1.6
+Version: 28.1.7
 Author: Contest Gallery
 Plugin URI: https://www.contest-gallery.com
 Author URI: https://www.contest-gallery.com
@@ -800,6 +800,54 @@ $wp_upload_dir = wp_upload_dir();
 $rewriteRulesChangedFilePath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/rewrite-rules-changed-do-not-edit-or-remove.txt';
 //file_put_contents($rewriteRulesChangedFilePath,'changed');
 
+if(!function_exists('cg_is_registered_only_ecommerce_download_privileged_user')){
+    function cg_is_registered_only_ecommerce_download_privileged_user() {
+        if(!is_user_logged_in()){
+            return false;
+        }
+
+        $user = wp_get_current_user();
+
+        return (
+            is_super_admin($user->ID) ||
+            in_array('administrator', (array) $user->roles, true)
+        );
+    }
+}
+
+if(!function_exists('cg_check_registered_only_ecommerce_download_access')){
+    function cg_check_registered_only_ecommerce_download_access($Order, $notAllowedMessage) {
+        global $wpdb;
+
+        if(empty($Order)){
+            return;
+        }
+
+        $tablename_ecommerce_options = $wpdb->prefix . "contest_gal1ery_ecommerce_options";
+        $ecommerceOptions = $wpdb->get_row("SELECT RegUserOrderSummaryOnly FROM $tablename_ecommerce_options WHERE GeneralID = 1");
+
+        if(empty($ecommerceOptions) || empty($ecommerceOptions->RegUserOrderSummaryOnly)){
+            return;
+        }
+
+        if(cg_is_registered_only_ecommerce_download_privileged_user()){
+            return;
+        }
+
+        $WpUserIdOrder = absint($Order->WpUserId);
+        $WpUserIdLoggedIn = get_current_user_id();
+
+        if(
+            !is_user_logged_in() ||
+            empty($WpUserIdOrder) ||
+            empty($WpUserIdLoggedIn) ||
+            $WpUserIdOrder !== $WpUserIdLoggedIn
+        ){
+            echo $notAllowedMessage;die;
+        }
+    }
+}
+
 
 if(!function_exists('cg_download_invoice')){
     add_action('template_redirect','cg_download_invoice');
@@ -814,6 +862,11 @@ if(!function_exists('cg_download_invoice')){
             if(empty($Order)){
                 echo "Order not found to download invoice";die;
             }else{
+                cg_check_registered_only_ecommerce_download_access(
+                    $Order,
+                    'Invoice download not possible. Please log in with the account used for this order.'
+                );
+
                 $wp_upload_dir = wp_upload_dir();
                 $InvoiceFilePath = $Order->InvoiceFilePath;
                 $fileUrl = str_replace('WP_UPLOAD_DIR',$wp_upload_dir['basedir'],$InvoiceFilePath);
@@ -910,11 +963,16 @@ if(!function_exists('cg_download_sale_item')){
 				echo 'Download not possible';die;
 			}
 
-			$id = $Order->id;
-			$downloadNotFound = true;
 			if(empty($Order)){
                 echo "Order not found";die;
             }else{
+                cg_check_registered_only_ecommerce_download_access(
+                    $Order,
+                    'Download not possible. Please log in with the account used for this order.'
+                );
+
+				$id = $Order->id;
+				$downloadNotFound = true;
                 $wp_upload_dir = wp_upload_dir();
 
 				$orderItems = $wpdb->get_results("SELECT * FROM $tablename_ecommerce_orders_items WHERE ParentOrder = '$id' ");
@@ -1022,5 +1080,4 @@ function cg_filter_wp_get_attachment_metadata( $data, $attachment_id ){
     }
     return $data;
 }*/
-
 

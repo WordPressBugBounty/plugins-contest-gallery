@@ -237,11 +237,14 @@ if(!empty($options['pro']['RegUserUploadOnly'])){
     if($options['pro']['RegUserUploadOnly']==1 && !empty($options['pro']['RegUserMaxUpload']) && is_user_logged_in()==true){
         $UploadedUserFilesAmount = $wpdb->get_var("SELECT COUNT(*) FROM $tablename WHERE WpUserId = '$WpUserId' and GalleryID = '$galeryID'");
     }elseif($options['pro']['RegUserUploadOnly']==2 && !empty($options['pro']['RegUserMaxUpload'])){
-        if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-upload'])) {
-            $CookieId = $_COOKIE['contest-gal1ery-'.$galeryID.'-upload'];
-            $UploadedUserFilesAmount = $wpdb->get_var("SELECT COUNT(*) FROM $tablename WHERE CookieId = '$CookieId' and GalleryID = '$galeryID'");
+        $CookieId = cg_get_valid_frontend_cookie($galeryID,'upload',true);
+        if(!empty($CookieId)){
+            $UploadedUserFilesAmount = $wpdb->get_var($wpdb->prepare(
+                "SELECT COUNT(*) FROM $tablename WHERE CookieId = %s and GalleryID = %d",
+                $CookieId,
+                $galeryID
+            ));
         }else{
-            $CookieId = "up".(md5(time().uniqid('cg',true)).time());
             $UploadedUserFilesAmount = 0;
         }
     }elseif($options['pro']['RegUserUploadOnly']==3 && !empty($options['pro']['RegUserMaxUpload'])){
@@ -250,11 +253,14 @@ if(!empty($options['pro']['RegUserUploadOnly'])){
     if($options['pro']['RegUserUploadOnly']==1 && !empty($options['pro']['RegUserMaxUploadPerCategory']) && is_user_logged_in()==true){
         $UploadedUserFilesAmountPerCategories = $wpdb->get_results("SELECT Category FROM $tablename WHERE WpUserId = '$WpUserId' and GalleryID = '$galeryID'");
     }elseif($options['pro']['RegUserUploadOnly']==2 && !empty($options['pro']['RegUserMaxUploadPerCategory'])){
-        if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-upload'])) {
-            $CookieId = $_COOKIE['contest-gal1ery-'.$galeryID.'-upload'];
-            $UploadedUserFilesAmountPerCategories = $wpdb->get_results("SELECT Category FROM $tablename WHERE CookieId = '$CookieId' and GalleryID = '$galeryID'");
+        $CookieId = cg_get_valid_frontend_cookie($galeryID,'upload',true);
+        if(!empty($CookieId)){
+            $UploadedUserFilesAmountPerCategories = $wpdb->get_results($wpdb->prepare(
+                "SELECT Category FROM $tablename WHERE CookieId = %s and GalleryID = %d",
+                $CookieId,
+                $galeryID
+            ));
         }else{
-            $CookieId = "up".(md5(time().uniqid('cg',true)).time());
             $UploadedUserFilesAmountPerCategories = null;
         }
     }elseif($options['pro']['RegUserUploadOnly']==3 && !empty($options['pro']['RegUserMaxUploadPerCategory'])){
@@ -1091,5 +1097,4 @@ if(!$validGalleryIdLoaded){
 }
 
 ?>
-
 

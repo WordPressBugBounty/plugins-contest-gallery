@@ -455,10 +455,10 @@ else {
         }
 
     }
-
-
+    $CookieId = '';
     if($CheckCookie==1) {
-        if(!isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {
+        $CookieId = cg_get_valid_frontend_cookie($galeryID,'voting');
+        if(empty($CookieId)) {
             $cookieValue = cg_set_cookie($galeryID,'voting');
             ?>
             <script data-cg-processing="true">
@@ -490,10 +490,6 @@ else {
 
     $getRatingPicture = 0;
     $countVotesOfUserPerGallery = 0;
-    $CookieId = '';
-    if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting']) && $options['general']['CheckCookie'] == 1) {
-        $CookieId = $_COOKIE['contest-gal1ery-'.$galeryID.'-voting'];
-    }
 
     // Sowohl Rating mit 5 Sternen wie auch Rating mit 1 Stern sollen von einander getrennt behandelt werden.
     // Deswegen die Abfragen mit if AllowRating ....
@@ -512,7 +508,7 @@ else {
     }
     elseif ($CheckCookie == 1 && $CheckIp!=1)
     {
-        if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {
+        if(!empty($CookieId)) {
 
             $getRatingPicture = $wpdb->get_var( $wpdb->prepare(
                 "
@@ -536,7 +532,7 @@ else {
         ) );
     } elseif ($CheckIp == 1 && $CheckCookie == 1){
 
-        if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {
+        if(!empty($CookieId)) {
 
             $getRatingPicture = $wpdb->get_var( $wpdb->prepare(
                 "
@@ -578,7 +574,7 @@ else {
         }
         elseif ($CheckCookie == 1 && $CheckIp!=1)
         {
-            if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {
+            if(!empty($CookieId)) {
                 $countVotesOfUserPerGallery = $wpdb->get_var( $wpdb->prepare(
                     "
 						SELECT COUNT(*) AS NumberOfRows
@@ -602,7 +598,7 @@ else {
 
         }
         elseif ($CheckIp == 1 && $CheckCookie==1) {
-            if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {
+            if(!empty($CookieId)) {
                 $countVotesOfUserPerGallery = $wpdb->get_var( $wpdb->prepare(
                     "
 						SELECT COUNT(*) AS NumberOfRows
@@ -643,7 +639,7 @@ else {
         }
         elseif ($CheckCookie == 1 && $CheckIp!=1)
         {
-            if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {
+            if(!empty($CookieId)) {
                 $countVotesOfUserPerCategory = $wpdb->get_var( $wpdb->prepare(
                     "
 						SELECT COUNT(*) AS NumberOfRows
@@ -665,7 +661,7 @@ else {
             ) );
         }
         elseif ($CheckIp == 1 && $CheckCookie==1) {
-            if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {
+            if(!empty($CookieId)) {
                 $countVotesOfUserPerCategory = $wpdb->get_var( $wpdb->prepare(
                     "
 						SELECT COUNT(*) AS NumberOfRows
@@ -715,17 +711,49 @@ else {
             $countUserVotesForImage = $wpdb->get_var( "SELECT COUNT(*) AS NumberOfRows FROM $tablenameIP WHERE Rating >= '1' && WpUserId = '$wpUserId' && GalleryID = '$galeryID' && pid = '$pictureID'" );
         }
      }elseif ($CheckCookie == 1 && $CheckIp != 1){
-        if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {
-            $lastVotedIpRow = $wpdb->get_row( "SELECT id, Rating FROM $tablenameIP WHERE Rating >= '1' && CookieId = '$CookieId' && GalleryID = '$galeryID' && pid = '$pictureID' ORDER BY id DESC LIMIT 1" );
-            $countUserVotesForImage = $wpdb->get_var( "SELECT COUNT(*) AS NumberOfRows FROM $tablenameIP WHERE Rating >= '1' && CookieId = '$CookieId' && GalleryID = '$galeryID' && pid = '$pictureID'" );
+        if(!empty($CookieId)) {
+            $lastVotedIpRow = $wpdb->get_row($wpdb->prepare(
+                "SELECT id, Rating FROM $tablenameIP WHERE Rating >= %d AND CookieId = %s AND GalleryID = %d AND pid = %d ORDER BY id DESC LIMIT 1",
+                1,
+                $CookieId,
+                $galeryID,
+                $pictureID
+            ));
+            $countUserVotesForImage = $wpdb->get_var($wpdb->prepare(
+                "SELECT COUNT(*) AS NumberOfRows FROM $tablenameIP WHERE Rating >= %d AND CookieId = %s AND GalleryID = %d AND pid = %d",
+                1,
+                $CookieId,
+                $galeryID,
+                $pictureID
+            ));
         }
      } elseif ($CheckIp == 1 && $CheckCookie!=1) {
         $lastVotedIpRow = $wpdb->get_row("SELECT id, Rating FROM $tablenameIP WHERE Rating >= '1' && IP = '$userIP' && GalleryID = '$galeryID' && pid = '$pictureID' ORDER BY id DESC LIMIT 1");
         $countUserVotesForImage = $wpdb->get_var("SELECT COUNT(*) AS NumberOfRows FROM $tablenameIP WHERE Rating >= '1' && IP = '$userIP' && GalleryID = '$galeryID' && pid = '$pictureID'");
     }elseif ($CheckIp == 1 && $CheckCookie==1) {
-        if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {
-            $lastVotedIpRow = $wpdb->get_row( "SELECT id, Rating FROM $tablenameIP WHERE (Rating >= '1' && IP = '$userIP' && GalleryID = '$galeryID' && pid = '$pictureID') OR (Rating >= '1' && CookieId = '$CookieId' && GalleryID = '$galeryID' && pid = '$pictureID') ORDER BY id DESC LIMIT 1" );
-            $countUserVotesForImage = $wpdb->get_var( "SELECT COUNT(*) AS NumberOfRows FROM $tablenameIP WHERE  (Rating >= '1' && IP = '$userIP' && GalleryID = '$galeryID' && pid = '$pictureID') OR (Rating >= '1' && CookieId = '$CookieId' && GalleryID = '$galeryID' && pid = '$pictureID')" );
+        if(!empty($CookieId)) {
+            $lastVotedIpRow = $wpdb->get_row($wpdb->prepare(
+                "SELECT id, Rating FROM $tablenameIP WHERE (Rating >= %d AND IP = %s AND GalleryID = %d AND pid = %d) OR (Rating >= %d AND CookieId = %s AND GalleryID = %d AND pid = %d) ORDER BY id DESC LIMIT 1",
+                1,
+                $userIP,
+                $galeryID,
+                $pictureID,
+                1,
+                $CookieId,
+                $galeryID,
+                $pictureID
+            ));
+            $countUserVotesForImage = $wpdb->get_var($wpdb->prepare(
+                "SELECT COUNT(*) AS NumberOfRows FROM $tablenameIP WHERE (Rating >= %d AND IP = %s AND GalleryID = %d AND pid = %d) OR (Rating >= %d AND CookieId = %s AND GalleryID = %d AND pid = %d)",
+                1,
+                $userIP,
+                $galeryID,
+                $pictureID,
+                1,
+                $CookieId,
+                $galeryID,
+                $pictureID
+            ));
         } else {
             $lastVotedIpRow = $wpdb->get_row("SELECT id, Rating FROM $tablenameIP WHERE Rating >= '1' && IP = '$userIP' && GalleryID = '$galeryID' && pid = '$pictureID' ORDER BY id DESC LIMIT 1");
             $countUserVotesForImage = $wpdb->get_var("SELECT COUNT(*) AS NumberOfRows FROM $tablenameIP WHERE Rating >= '1' && IP = '$userIP' && GalleryID = '$galeryID' && pid = '$pictureID'");
@@ -843,8 +871,14 @@ else {
             }
 
         }elseif($CheckCookie){
-            if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {
-                $VotesUserInTstamp = $wpdb->get_var( "SELECT COUNT(*) FROM $tablenameIP WHERE Tstamp > '$TstampToCompare' && CookieId='$CookieId' && GalleryID = '$galeryID' && Rating>='1'");
+            if(!empty($CookieId)) {
+                $VotesUserInTstamp = $wpdb->get_var($wpdb->prepare(
+                    "SELECT COUNT(*) FROM $tablenameIP WHERE Tstamp > %d AND CookieId = %s AND GalleryID = %d AND Rating >= %d",
+                    $TstampToCompare,
+                    $CookieId,
+                    $galeryID,
+                    1
+                ));
             }
         }else{
             $VotesUserInTstamp = $wpdb->get_var( "SELECT COUNT(*) FROM $tablenameIP WHERE Tstamp > '$TstampToCompare' && IP='$userIP' && GalleryID = '$galeryID' && Rating>='1'");

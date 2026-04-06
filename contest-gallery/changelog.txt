@@ -1,5 +1,11 @@
 Contest Gallery
 
+= 28.1.7 =
+* FIXED: Potential security vulnerability.
+* IMPROVED: Security hardening and code sanitization.
+* IMPROVED: Reduced cg_gallery.min.js size for better frontend loading performance.
+* FIXED: Small bugs.
+
 = 28.1.6 =
 * FIXED: Potential security vulnerability.
 * IMPROVED: Security hardening and code sanitization.

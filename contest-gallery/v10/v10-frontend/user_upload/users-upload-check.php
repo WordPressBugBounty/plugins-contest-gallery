@@ -187,8 +187,9 @@ if(empty($_POST["cg_upload_action"]) OR empty($_FILES["data"])){
         }elseif($RegUserUploadOnly==2 && !empty($RegUserMaxUpload)){
 
             if($RegUserUploadOnly==2){
+                $CookieId = cg_get_valid_frontend_cookie($galeryID,'upload');
 
-                if(!isset($_COOKIE['contest-gal1ery-'.$galeryID.'-upload'])) {
+                if(empty($CookieId)) {
 
                     echo $UploadRequiresCookieMessage;
 
@@ -205,16 +206,17 @@ if(empty($_POST["cg_upload_action"]) OR empty($_FILES["data"])){
 
                     <?php
                     die;
-
-                }else{
-                    $CookieId = $_COOKIE['contest-gal1ery-'.$galeryID.'-upload'];
                 }
 
             }
 
             $isCountCheckHasToBeDone = true;
             if(!empty($CookieId)){
-                $regUserUploadsCount = $wpdb->get_var("SELECT COUNT(*) FROM $tablename1 WHERE CookieId = '$CookieId' and GalleryID = '$galeryID'");
+                $regUserUploadsCount = $wpdb->get_var($wpdb->prepare(
+                    "SELECT COUNT(*) FROM $tablename1 WHERE CookieId = %s and GalleryID = %d",
+                    $CookieId,
+                    $galeryID
+                ));
             }else{
                 $regUserUploadsCount = 0;
             }
@@ -420,7 +422,27 @@ if(!$isManipulated){
 
         if($i == 2){
 
-            $inputId = $value;
+            $inputId = absint($value);
+
+            if(empty($inputId) || !isset($inputFieldContentArray[$inputId])){
+
+                ?>
+
+                <script data-cg-processing="true">
+
+
+                    var gid = <?php echo json_encode($galeryIDuser);?>;
+                    cgJsData[gid].vars.upload.doneUploadFailed = true;
+                    cgJsData[gid].vars.upload.failMessage = <?php echo json_encode("Please don't manipulate the form. Field_Type: $fieldType , field id manipulated");?>;
+
+
+                </script>
+
+                <?php
+
+                echo "Please don't manipulate the form. Field_Type: $fieldType , field id manipulated";die;
+
+            }
 
         }
 
@@ -1022,7 +1044,13 @@ if(!$isManipulated){
 
                             if ($i==1 AND ($ft!='kf' or $ft!='fbd')){$ft = $value; continue;}
 
-                            if ($i==2 AND ($ft=='nf' or $ft=='ef' or $ft=='se' or $ft=='ra' or $ft=='chk' or $ft=='url' or $ft=='sec' or $ft=='cb' or $ft=='fbt' or $ft=='dt')){$f_input_id = $value; continue;}
+                            if ($i==2 AND ($ft=='nf' or $ft=='ef' or $ft=='se' or $ft=='ra' or $ft=='chk' or $ft=='url' or $ft=='sec' or $ft=='cb' or $ft=='fbt' or $ft=='dt')){
+                                $f_input_id = absint($value);
+                                if(empty($f_input_id) || !isset($inputFieldContentArray[$f_input_id])){
+                                    echo "Please don't manipulate the form. Field_Type: $ft , field id manipulated";die;
+                                }
+                                continue;
+                            }
 
                             if ($i==3 AND ($ft=='nf' or $ft=='ef' or $ft=='se' or $ft=='ra' or $ft=='chk' or $ft=='url' or $ft=='sec' or $ft=='cb' or $ft=='fbt' or $ft=='dt')){
                                 $field_order = $value;
@@ -1127,7 +1155,12 @@ if(!$isManipulated){
 
                                     // because then is not simple entry
                                     if(!$isOnlyContactEntry && !empty($attach_id)){// added 21.2.1
-                                        $WpAttachmentDetailsType = $wpdb->get_var( "SELECT WpAttachmentDetailsType FROM $tablename_form_input WHERE id = '$f_input_id'" );
+                                        $WpAttachmentDetailsType = $wpdb->get_var(
+                                            $wpdb->prepare(
+                                                "SELECT WpAttachmentDetailsType FROM $tablename_form_input WHERE id = %d",
+                                                $f_input_id
+                                            )
+                                        );
                                         if(!empty($WpAttachmentDetailsType)){// added 21.2.1
                                             if($WpAttachmentDetailsType=='alt'){
                                                 add_post_meta( $attach_id, '_wp_attachment_image_alt', $content);
@@ -1179,7 +1212,12 @@ if(!$isManipulated){
                                     //$wpdb->insert( $tablenameentries, array( 'id' => '', 'pid' => $nextId, 'f_input_id' => $f_input_id, 'GalleryID' => $galeryID, "Field_Type" => 'text-f', 'Field_Order' => $field_order, 'Short_Text' => $content, 'Long_Text' => '') );
 
                                     // insert original checked field_content to show later!
-                                    $content = $wpdb->get_var("SELECT Field_Content FROM $tablename_f_input WHERE id = $f_input_id");
+                                    $content = $wpdb->get_var(
+                                        $wpdb->prepare(
+                                            "SELECT Field_Content FROM $tablename_f_input WHERE id = %d",
+                                            $f_input_id
+                                        )
+                                    );
 
                                     $wpdb->query( $wpdb->prepare(
                                         "
@@ -1338,7 +1376,13 @@ if(!$isManipulated){
 
                             if ($i==1 AND ($ft!='nf' or $ft!='ef' or $ft!='se' or $ft!='ra' or $ft=='chk' or $ft!='url' or $ft!='sec' or $ft!='cb' or $ft!='fbt' or $ft!='dt')){$ft = $value; continue;}
 
-                            if ($i==2 AND ($ft=='kf' OR $ft == 'fbd')){$f_input_id = $value; continue;}
+                            if ($i==2 AND ($ft=='kf' OR $ft == 'fbd')){
+                                $f_input_id = absint($value);
+                                if(empty($f_input_id) || !isset($inputFieldContentArray[$f_input_id])){
+                                    echo "Please don't manipulate the form. Field_Type: $ft , field id manipulated";die;
+                                }
+                                continue;
+                            }
 
                             if ($i==3 AND ($ft=='kf' OR $ft == 'fbd')){$field_order = $value; continue;}
 
@@ -1383,7 +1427,12 @@ if(!$isManipulated){
                                 // Long Entries werden eingef�gt ---- ENDE
                                 // because then is not simple entry
                                 if(!$isOnlyContactEntry && !empty($attach_id)){// added 21.2.1
-                                    $WpAttachmentDetailsType = $wpdb->get_var( "SELECT WpAttachmentDetailsType FROM $tablename_form_input WHERE id = '$f_input_id'" );
+                                    $WpAttachmentDetailsType = $wpdb->get_var(
+                                        $wpdb->prepare(
+                                            "SELECT WpAttachmentDetailsType FROM $tablename_form_input WHERE id = %d",
+                                            $f_input_id
+                                        )
+                                    );
                                     if(!empty($WpAttachmentDetailsType)){// added 21.2.1
                                         if($WpAttachmentDetailsType=='alt'){
                                             add_post_meta( $attach_id, '_wp_attachment_image_alt', $content);
