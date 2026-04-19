@@ -13,10 +13,17 @@ if(!function_exists('cg_actualize_all_images_data_deleted_images')){
             $fp = fopen($jsonFileDeleteImageIds, 'r');
             $imageIds = json_decode(fread($fp, filesize($jsonFileDeleteImageIds)),true);
             fclose($fp);
+            $hasDeletedImagesActualized = false;
 
             if(!empty($imageIds)){
 
                 foreach ($imageIds as $imageId){
+
+                    $imageId = absint($imageId);
+
+                    if(empty($imageId)){
+                        continue;
+                    }
 
                     $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/image-comments/image-comments-'.$imageId.'.json';
                     if(file_exists($jsonFile)){
@@ -26,7 +33,11 @@ if(!function_exists('cg_actualize_all_images_data_deleted_images')){
                     if(file_exists($jsonFile)){
                         unlink($jsonFile);
                     }
-                    $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/image-data/image-info-'.$imageId.'.json';
+                    $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/image-stats/image-stats-'.$imageId.'.json';
+                    if(file_exists($jsonFile)){
+                        unlink($jsonFile);
+                    }
+                    $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/image-info/image-info-'.$imageId.'.json';
                     if(file_exists($jsonFile)){
                         unlink($jsonFile);
                     }
@@ -43,8 +54,15 @@ if(!function_exists('cg_actualize_all_images_data_deleted_images')){
                         }
                     }
 
+                    cg1l_push_recent_id_file_all_types($GalleryID,$imageId,true);
+                    $hasDeletedImagesActualized = true;
+
                 }
 
+            }
+
+            if($hasDeletedImagesActualized){
+                cg1l_create_last_updated_time_file_all($GalleryID);
             }
 
             unlink($jsonFileDeleteImageIds);
@@ -53,4 +71,3 @@ if(!function_exists('cg_actualize_all_images_data_deleted_images')){
 
     }
 }
-

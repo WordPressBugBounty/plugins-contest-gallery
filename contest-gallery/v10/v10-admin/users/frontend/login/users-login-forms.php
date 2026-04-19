@@ -31,7 +31,9 @@ if(!$isProVersion && isset($optionsSource['interval'])){
 //$optionsPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/'.$GalleryID.'-options.json';
 //$optionsSource =json_decode(file_get_contents($optionsPath),true);
 $intervalConf = cg_shortcode_interval_check($GalleryID,[],'cg_users_login');
-if(!$isProVersion || intval($galleryDbVersion)<14){
+$isLegacyGallerySpecificForm = intval($GalleryID) > 0 && intval($galleryDbVersion)<14;
+// GalleryID 0 is the global shortcode mode and must respect the shared interval config on initial render.
+if(!$isProVersion || $isLegacyGallerySpecificForm){
 	$intervalConf['shortcodeIsActive'] = true;
 }
 if(!$intervalConf['shortcodeIsActive']){

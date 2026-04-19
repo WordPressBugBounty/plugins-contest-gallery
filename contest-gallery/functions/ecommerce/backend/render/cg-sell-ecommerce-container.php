@@ -72,12 +72,13 @@ if(!function_exists('cg_sell_ecommerce_container')){
    <div class="cg_shortcode_conf_title_container cg_hide" style="margin-top: 25px;margin-bottom: 15px;"><div class="cg_shortcode_conf_title_main">Voting gallery</div><div class="cg_shortcode_conf_title_sub">[cg_gallery id="56"]</div></div>
 HEREDOC;
 
-        // form start has to be done after get data!!!
-        echo "<form id='cgSellForm' action='?page=".cg_get_version()."/index.php' method='POST'>";
-        echo "<input type='hidden' name='cgSellContainer[GalleryID]' value='$GalleryID'>";
-// !IMPORTANT Has to be here for action call!!!!
-        echo "<input type='hidden' name='action' value='post_cg_set_for_paypal_sell'>";
-        echo "<input type='hidden' id='TaxDefault'  value='$Tax'>";
+	        // form start has to be done after get data!!!
+	        echo "<form id='cgSellForm' action='?page=".cg_get_version()."/index.php' method='POST'>";
+	        echo "<input type='hidden' name='cgSellContainer[GalleryID]' value='$GalleryID'>";
+	        echo "<input type='hidden' name='cgGalleryHash' value='".md5(wp_salt( 'auth').'---cngl1---'.$GalleryID)."'>";
+	// !IMPORTANT Has to be here for action call!!!!
+	        echo "<input type='hidden' name='action' value='post_cg_set_for_paypal_sell'>";
+	        echo "<input type='hidden' id='TaxDefault'  value='$Tax'>";
 
         echo '<div id="cgProEcomFalseContainer"  style="border-radius:8px;" >';
 
@@ -534,8 +535,8 @@ HEREDOC;
         //echo "<textarea id='cgSaleDescription' name='SaleDescription' rows='10' style='width: 75% !important;font-size:20px;'  ></textarea>";
         //echo "</div>";
 
-        echo "<input type='hidden' name='cgSellContainer[realId]' id='cgRealId' value='' >";
-        echo "<input type='hidden' name='isDeactivateSale' id='cgIsDeactivateSale' value='0' >";
+	        echo "<input type='hidden' name='cgSellContainer[realId]' id='cgRealId' value='' >";
+	        echo "<input type='hidden' name='cgSellContainer[saleAction]' id='cgSellAction' value='' >";
 
         //echo "<hr>";
 

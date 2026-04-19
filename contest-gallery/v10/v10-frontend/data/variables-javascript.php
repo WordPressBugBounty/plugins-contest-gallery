@@ -1,139 +1,129 @@
 <?php
-
-?>
-<pre>
-    <script data-cg-processing="true">
-
-           if(typeof cgJsClass == 'undefined' ){ // required in JavaScript for first initialisation cgJsClass = cgJsClass || {}; would not work;
-               cgJsClass = {};
-           }
-
-            cgJsClass.gallery = cgJsClass.gallery || {};
-            cgJsClass.gallery.vars = cgJsClass.gallery.vars || {};
-           cgJsClass.gallery.vars.ecommerce = cgJsClass.gallery.vars.ecommerce || {};
-
-           if(typeof cgJsData == 'undefined' ){ // required in JavaScript for first initialisation cgJsData = cgJsData || {}; would not work;
-               cgJsData = {};
-           }
-
-            // general stuff
-           // var index = Object.keys(cgJsData).length;
-            var index = <?php echo json_encode($galeryIDuserForJs); ?>;
-            var shortcode_name = <?php echo json_encode($shortcode_name); ?>;
-            var hasUploadSell = <?php echo json_encode($hasUploadSell); ?>;
-
-            // data gallery stuff
-           if(cgJsData[index]){
-               if(!hasUploadSell){
-                   alert('This shortcode is inserted multiple times, which is not allowed: ['+shortcode_name+'  id="'+index+'"]');
-               }
-           }else{
-               cgJsData[index] = {};
-               cgJsData[index].vars = {};
-               cgJsData[index].vars.gidReal = <?php echo json_encode($galeryID); ?>;
-               cgJsData[index].vars.versionDatabaseGallery = <?php echo json_encode($options['general']['Version']); ?>;
-               cgJsData[index].vars.versionDatabaseGeneral = <?php echo json_encode($p_cgal1ery_db_version); ?>;
-               cgJsData[index].vars.uploadFolderUrl = <?php echo json_encode($upload_folder_url); ?>;
-               cgJsData[index].vars.cg_check_login = <?php echo json_encode($options['general']['CheckLogin']); ?>;
-               cgJsData[index].vars.cg_user_login_check = <?php echo json_encode($UserLoginCheck); ?>;
-               cgJsData[index].vars.cg_ContestEndTime = <?php echo json_encode($options['general']['ContestEndTime']); ?>;
-               cgJsData[index].vars.cg_ContestEnd = <?php echo json_encode($options['general']['ContestEnd']); ?>;
-               cgJsData[index].vars.formHasUrlField = 0;
-               cgJsData[index].vars.cg_hide_hide_width = 0;
-               cgJsData[index].vars.openedGalleryImageOrder = null;
-               cgJsData[index].vars.categories = {};
-               cgJsData[index].vars.categoriesUploadFormId = null;
-               cgJsData[index].vars.categoriesUploadFormTitle = null;
-               cgJsData[index].vars.showCategories = false;
-               cgJsData[index].vars.info = {};
-               cgJsData[index].vars.thumbViewWidth = null;
-               cgJsData[index].vars.openedRealId = 0;
-               cgJsData[index].vars.galleryLoaded = false;
-               cgJsData[index].vars.getJson = [];
-               cgJsData[index].vars.jsonGetInfo = [];
-               cgJsData[index].vars.jsonGetComment = [];
-               cgJsData[index].vars.jsonGetImageCheck = [];
-               cgJsData[index].vars.searchInput = null;
-               cgJsData[index].vars.categoriesLength = 0;
-               cgJsData[index].vars.galleryAlreadyFullWindow = false;
-               cgJsData[index].vars.lastRealIdInFullImageDataObject = 0;
-               cgJsData[index].vars.thumbViewWidthFromLastImageInRow = false;
-               cgJsData[index].vars.allVotesUsed = 0;
-               cgJsData[index].vars.sorting = 0;
-               cgJsData[index].vars.widthmain = 0;
-               cgJsData[index].vars.translateX = <?php echo json_encode($options['pro']['SlideTransition']); ?>;
-               cgJsData[index].vars.AllowRating = <?php echo json_encode($options['general']['AllowRating']); ?>;
-               cgJsData[index].vars.maximumVisibleImagesInSlider = 0;
-               cgJsData[index].vars.currentStep = 1;
-               cgJsData[index].vars.sortedRandomFullData = null;
-               cgJsData[index].vars.rowLogicCount = 0;
-               cgJsData[index].vars.sortedDateDescFullData = null;
-               cgJsData[index].vars.sortedDateAscFullData = null;
-               cgJsData[index].vars.sortedRatingDescFullData = null;
-               cgJsData[index].vars.sortedRatingAscFullData = null;
-               cgJsData[index].vars.sortedCommentsDescFullData = null;
-               cgJsData[index].vars.sortedCommentsAscFullData = null;
-               cgJsData[index].vars.sortedSearchFullData = null;
-               cgJsData[index].vars.isProVersion = <?php echo json_encode($isProVersion); ?>;
-               cgJsData[index].vars.ShowFormAfterUploadOrContact = <?php echo json_encode($ShowFormAfterUploadOrContact); ?>;
-               cgJsData[index].vars.imageDataLength = <?php echo json_encode($jsonImagesCount); ?>;
-               cgJsData[index].vars.shortcode_name = <?php echo json_encode($shortcode_name); ?>;
-               cgJsData[index].vars.isUserGallery = <?php echo json_encode($isUserGallery); ?>;
-               cgJsData[index].vars.isOnlyGalleryEcommerce = <?php echo json_encode($isOnlyGalleryEcommerce); ?>;
-               cgJsData[index].vars.isEcommerceTest = <?php echo json_encode($isEcommerceTest); ?>;
-               cgJsData[index].vars.isOnlyGalleryNoVoting = <?php echo json_encode($isOnlyGalleryNoVoting); ?>;
-               cgJsData[index].vars.isOnlyGalleryWinner = <?php echo json_encode($isOnlyGalleryWinner); ?>;
-               cgJsData[index].vars.isOnlyUploadForm = <?php echo json_encode($isOnlyUploadForm); ?>;
-               cgJsData[index].vars.isOnlyContactForm = <?php echo json_encode($isOnlyContactForm); ?>;
-               cgJsData[index].vars.galleryHash = <?php echo json_encode(cg_hash_function('---cngl1---'.$galeryIDuserForJs)); ?>;
-               cgJsData[index].vars.galleryHash = <?php echo json_encode(cg_hash_function('---cngl1---'.$galeryIDuserForJs)); ?>;
-               cgJsData[index].vars.RatingVisibleForGalleryNoVoting = <?php echo json_encode($RatingVisibleForGalleryNoVoting); ?>;
-               cgJsData[index].vars.isFbLikeOnlyShareOn = <?php echo json_encode($isFbLikeOnlyShareOn); ?>;
-               cgJsData[index].vars.upload = {};
-               cgJsData[index].vars.upload.cg_upload_form_e_prevent_default = '';
-               cgJsData[index].vars.upload.cg_upload_form_e_prevent_default_file_resolution = 0;
-               cgJsData[index].vars.upload.cg_upload_form_e_prevent_default_file_not_loaded = 0;
-               cgJsData[index].vars.upload.UploadedUserFilesAmount = <?php echo json_encode($UploadedUserFilesAmount); ?>;
-               cgJsData[index].vars.upload.UploadedUserFilesAmountPerCategoryArray = <?php echo json_encode($UploadedUserFilesAmountPerCategoryArray); ?>;
-               cgJsData[index].vars.upload.CookieId = <?php echo json_encode($CookieId); ?>;
-               cgJsData[index].vars.centerWhite = <?php echo json_encode($cgCenterWhite); ?>;
-               cgJsData[index].vars.blogViewImagesLoadedCount = <?php echo json_encode(0); ?>;
-               cgJsData[index].fullImageInfoData = {};
-               cgJsData[index].vars.language = {};
-               cgJsData[index].vars.language.pro = {};
-               cgJsData[index].vars.language.pro.VotesPerUserAllVotesUsedHtmlMessage = <?php echo json_encode($language_VotesPerUserAllVotesUsedHtmlMessage); ?>;
-               cgJsData[index].vars.queryDataArray = <?php echo json_encode($queryDataArray); ?>;
-               cgJsData[index].vars.hasWpPageParent = <?php echo json_encode($hasWpPageParent); ?>;
-               cgJsData[index].vars.isCgWpPageEntryLandingPage = <?php echo json_encode($isCgWpPageEntryLandingPage); ?>;
-               cgJsData[index].vars.galleryShortCodeEntryId = <?php echo json_encode($entryId); ?>;
-               cgJsData[index].vars.nicknames = <?php echo json_encode($nicknamesArray); ?>;
-               cgJsData[index].vars.profileImages = <?php echo json_encode($profileImagesArray); ?>;
-               cgJsData[index].vars.ecommerceFilesData = <?php echo json_encode($ecommerceFilesData); ?>;
-               cgJsData[index].vars.isEcommerceTest = <?php echo json_encode($isEcommerceTest); ?>;
-               cgJsData[index].vars.isCGalleries = <?php echo json_encode($isCGalleries); ?>;
-               cgJsData[index].vars.galleriesIds = <?php echo json_encode($galleriesIds); ?>;
-               cgJsData[index].vars.hasGalleriesIds = <?php echo json_encode($hasGalleriesIds); ?>;
-               cgJsData[index].vars.isGalleriesMainPage = <?php echo json_encode($isGalleriesMainPage); ?>;
-           }
-
-    </script>
-</pre>
-
-<?php
-
-if($options['general']['CheckCookie'] == 1 && !isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])){
-?>
-    <pre>
-    <script data-cg-processing="true">
-
-        var index = <?php echo json_encode($galeryIDuserForJs); ?>;
-        cgJsData[index].vars.cookieVotingId = <?php echo json_encode(md5(uniqid('cg',true)).time()); ?>;
-
-    </script>
-</pre>
-    <?php
-
-}
-
-
+    /*
+     * @ai_scan_directive
+     * DATA TRANSFER ARCHITECTURE: PHP to JavaScript
+     * The variables populated in this file ($variablesGallery) are NOT echoed as inline JavaScript.
+     * Instead, they are json_encoded, base64_encoded, and rendered inside hidden <textarea> elements 
+     * in `v10-get-data.php` (e.g., `<textarea class="cg1l-data-variables-gallery">...`).
+     * The JS frontend (in `wp-content/plugins/contest-gallery-js-and-css/v10/v10-js-for-min/gallery/*.js`)
+     * reads these textareas, decodes the base64 string, and parses the JSON.
+     * See CODE_STRUCTURE_PHP_JS_RELATION.md for more details.
+     */
+    $variablesGallery['gidReal'] = $galeryID;
+    $variablesGallery['currentLook'] = $currentLook;
+    $variablesGallery['versionDatabaseGallery'] = $options['general']['Version'];
+    $variablesGallery['versionDatabaseGeneral'] = $p_cgal1ery_db_version;
+    $variablesGallery['uploadFolderUrl'] = $upload_folder_url;
+    $variablesGallery['cg_check_login'] = $options['general']['CheckLogin'];
+    $variablesGallery['cg_user_login_check'] = $UserLoginCheck;
+    $variablesGallery['cg_ContestEndTime'] = $options['general']['ContestEndTime'];
+    $variablesGallery['cg_ContestEnd'] = $options['general']['ContestEnd'];
+    $variablesGallery['formHasUrlField'] = 0;
+    $variablesGallery['cg_hide_hide_width'] = 0;
+    $variablesGallery['openedGalleryImageOrder'] = null;
+    $variablesGallery['categories'] = [];
+    $variablesGallery['categoriesUploadFormId'] = null;
+    $variablesGallery['categoriesUploadFormTitle'] = null;
+    $variablesGallery['showCategories'] = false;
+    $variablesGallery['info']  = [];
+    $variablesGallery['thumbViewWidth'] = null;
+    $variablesGallery['galleryLoaded'] = false;
+    $variablesGallery['getJson'] = [];
+    $variablesGallery['jsonGetComment'] = [];
+    $variablesGallery['jsonGetImageCheck'] = [];
+    $variablesGallery['searchInput'] = null;
+    $variablesGallery['categoriesLength'] = 0;
+    $variablesGallery['galleryAlreadyFullWindow'] = false;
+    $variablesGallery['lastRealIdInFullImageDataObject'] = 0;
+    $variablesGallery['thumbViewWidthFromLastImageInRow'] = false;
+    $variablesGallery['allVotesUsed'] = 0;
+    $variablesGallery['sorting'] = 0;
+    $variablesGallery['widthmain'] = 0;
+    $variablesGallery['translateX'] = $options['pro']['SlideTransition'];
+    $variablesGallery['AllowRating'] = $options['general']['AllowRating'];
+    $variablesGallery['maximumVisibleImagesInSlider'] = 0;
+    $variablesGallery['currentStep'] = $currentPageNumber;
+    $variablesGallery['backToGalleriesFromPageNumber'] = $backToGalleriesFromPageNumber;
+    $variablesGallery['hasExplicitFromGalleriesPage'] = (!empty($cglHasExplicitFromGalleriesPage)) ? true : false;
+    $variablesGallery['currentUrl'] = $currentUrl;
+    $variablesGallery['isMultiGalleryContext'] = (!empty($isMultiGalleryContext)) ? true : false;
+    $variablesGallery['multiGalleryOriginPageId'] = (!empty($cglOriginPageId)) ? absint($cglOriginPageId) : 0;
+    $variablesGallery['multiGalleryOriginUrl'] = (!empty($cglOriginPageUrl)) ? $cglOriginPageUrl : '';
+    $variablesGallery['isFromGalleriesSelect'] = (!empty($isFromGalleriesSelect)) ? true : false;
+    $variablesGallery['isFromSingleViewForCGalleries'] = (!empty($is_from_single_view_for_cg_galleries)) ? true : false;
+    $variablesGallery['sortedRandomFullData'] = null;
+    $variablesGallery['rowLogicCount'] = 0;
+    $variablesGallery['sortedDateDescFullData'] = null;
+    $variablesGallery['sortedDateAscFullData'] = null;
+    $variablesGallery['sortedRatingDescFullData'] = null;
+    $variablesGallery['sortedRatingAscFullData'] = null;
+    $variablesGallery['sortedCommentsDescFullData'] = null;
+    $variablesGallery['sortedCommentsAscFullData'] = null;
+    $variablesGallery['sortedSearchFullData'] = null;
+    $variablesGallery['isProVersion'] = $isProVersion;
+    $variablesGallery['ShowFormAfterUploadOrContact'] = $ShowFormAfterUploadOrContact;
+    $variablesGallery['imageDataLength'] = $jsonImagesCount;
+    $variablesGallery['shortcode_name'] = $shortcode_name;
+    $variablesGallery['isUserGallery'] = $isUserGallery;
+    $variablesGallery['isOnlyGalleryEcommerce'] = $isOnlyGalleryEcommerce;
+    $variablesGallery['isEcommerceTest'] = $isEcommerceTest;
+    $variablesGallery['isOnlyGalleryNoVoting'] = $isOnlyGalleryNoVoting;
+    $variablesGallery['isOnlyGalleryWinner'] = $isOnlyGalleryWinner;
+    $variablesGallery['isOnlyUploadForm'] = $isOnlyUploadForm;
+    $variablesGallery['isOnlyContactForm'] = $isOnlyContactForm;
+    if(!empty($isOnlyGalleryUser)){
+        $variablesGallery['onlyLoggedInUserImages'] = true;
+        $variablesGallery['wpUserImageIds'] = $wpUserImageIdsArray;
+    }
+    $variablesGallery['galleryHash'] = cg_hash_function('---cngl1---'.$galeryIDuserForJs);
+    $variablesGallery['galleryDataUseAllowedRealIds'] = (!empty($shouldUseAllowedRealIds)) ? 1 : 0;
+    $variablesGallery['galleryDataAccessHash'] = cg1l_get_gallery_data_access_hash(
+        $galeryID,
+        $shortcode_name,
+        (!empty($WpUserId)) ? intval($WpUserId) : 0,
+        $variablesGallery['galleryDataUseAllowedRealIds']
+    );
+    $variablesGallery['RatingVisibleForGalleryNoVoting'] = $RatingVisibleForGalleryNoVoting;
+    $variablesGallery['isFbLikeOnlyShareOn'] = $isFbLikeOnlyShareOn;
+    $variablesGallery['upload'] = [];
+    $variablesGallery['upload']['cg_upload_form_e_prevent_default'] = '';
+    $variablesGallery['upload']['cg_upload_form_e_prevent_default_file_resolution'] = 0;
+    $variablesGallery['upload']['cg_upload_form_e_prevent_default_file_not_loaded'] = 0;
+    $variablesGallery['upload']['UploadedUserFilesAmount'] = $UploadedUserFilesAmount;
+    $variablesGallery['upload']['UploadedUserFilesAmountPerCategoryArray'] = $UploadedUserFilesAmountPerCategoryArray;
+    $variablesGallery['upload']['CookieId'] = $CookieId;
+    $variablesGallery['centerWhite'] = $cgCenterWhite;
+    $variablesGallery['blogViewImagesLoadedCount'] = 0;
+    $variablesGallery['fullImageInfoData'] = [];
+    $variablesGallery['language'] = [];
+    $variablesGallery['language']['pro'] = [];
+    $variablesGallery['language']['pro']['VotesPerUserAllVotesUsedHtmlMessage'] = $language_VotesPerUserAllVotesUsedHtmlMessage;
+    //$variablesGallery['queryDataArray'] = $queryDataArray;
+    $variablesGallery['hasWpPageParent'] = $hasWpPageParent;
+    $variablesGallery['isCgWpPageEntryLandingPage'] = $isCgWpPageEntryLandingPage;
+    $variablesGallery['galleryShortCodeEntryId'] = $entryId;
+    $variablesGallery['openedRealId'] = $entryId;
+    $variablesGallery['entryId'] = $entryId;
+    $variablesGallery['allowedRealIds'] = $allowedRealIds;
+    $variablesGallery['ecommerceFilesData'] = $ecommerceFilesData;
+    $variablesGallery['isCGalleries'] = $isCGalleries;
+    $variablesGallery['galleriesIds'] = $galleriesIds;
+    $variablesGallery['hasGalleriesIds'] = $hasGalleriesIds;
+    $variablesGallery['isGalleriesMainPage'] = $isGalleriesMainPage;
+    $variablesGallery['galleriesDataAccessHash'] = cg1l_get_galleries_data_access_hash(
+        $shortcode_name,
+        (!empty($WpUserId)) ? intval($WpUserId) : 0,
+        $isGalleriesMainPage,
+        $galleriesIds,
+        $hasGalleriesIds
+    );
+    $variablesGallery['hasUploadSell'] = $hasUploadSell;
+    $variablesGallery['isCGalleriesForwardToWpPageEntry'] = $isCGalleriesForwardToWpPageEntry;
+    $variablesGallery['timestampBasePath'] = $wp_upload_dir['baseurl'].'/contest-gallery/gallery-id-'.$galeryID.'/json/segments/';
+    $variablesGallery['imagesFullDataLength'] = count($imagesFullData);
+    $variablesGallery['orderGalleries'] = $orderGalleries;
+    $variablesGallery['singleViewOrderFullData'] = $singleViewOrderFullData;
+    $variablesGallery['formUploadFullData'] = $formUploadFullData;
+    $variablesGallery['categoriesFullData'] = $categoriesFullData;
+    $variablesGallery['lengthData'] = count($imagesFullData);
 ?>

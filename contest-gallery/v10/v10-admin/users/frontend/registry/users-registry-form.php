@@ -28,7 +28,9 @@ if(is_dir ($plugin_dir_path.'/../../../../../../contest-gallery-pro') && strpos(
 $wp_upload_dir = wp_upload_dir();
 $intervalConf = cg_shortcode_interval_check($GalleryID,[],'cg_users_reg');
 
-if(!$isProVersion || intval($galleryDbVersion)<14){
+$isLegacyGallerySpecificForm = intval($GalleryID) > 0 && intval($galleryDbVersion)<14;
+// GalleryID 0 is the global shortcode mode and must respect the shared interval config on initial render.
+if(!$isProVersion || $isLegacyGallerySpecificForm){
 	$intervalConf['shortcodeIsActive'] = true;
 }
 if(!$intervalConf['shortcodeIsActive']){

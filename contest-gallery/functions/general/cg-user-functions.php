@@ -139,8 +139,8 @@ if(!function_exists('cg1l_resend_unconfirmed_mail')){
         if(empty($old_activation_key)){
             $row = $wpdb->get_row($wpdb->prepare(
                 "SELECT Field_Content, activation_key 
-FROM $tablenameCreateUserEntries
-WHERE activation_key = (
+	FROM $tablenameCreateUserEntries
+	WHERE activation_key = (
     SELECT activation_key 
     FROM $tablenameCreateUserEntries 
     WHERE (Field_Type = 'main-mail' OR Field_Type = 'unconfirmed-mail') 
@@ -148,8 +148,11 @@ WHERE activation_key = (
     LIMIT 1
   )
     LIMIT 1;",
-                $ReceiverMail
-            ));
+	                $ReceiverMail
+	            ));
+            if(empty($row) || empty($row->activation_key)){
+                return false;
+            }
             $old_activation_key = $row->activation_key;
         }
 
@@ -159,7 +162,7 @@ WHERE activation_key = (
 
         $new_activation_key = md5($time . $password);
 
-        $wpdb->query(
+        $insertedRows = $wpdb->query(
             $wpdb->prepare("
         INSERT INTO {$tablenameCreateUserEntries}
             (GalleryID, wp_user_id, f_input_id, Field_Type, Field_Content, 
@@ -171,6 +174,10 @@ WHERE activation_key = (
         WHERE activation_key = %s 
     ", $new_activation_key, $old_activation_key)
         );
+
+        if(empty($insertedRows)){
+            return false;
+        }
 
         $TextEmailConfirmation = str_ireplace($posUrl, $pageUrlForEmail . "cgkey=$new_activation_key#cg_activation", $resolved_body);
 
@@ -226,6 +233,12 @@ WHERE activation_key = (
             $sent = true;
             $WpUserId = 0;
             cg_save_sent_mail($gid,$pid,$WpUserId,$ReceiverMail,$ReplyName,$ReplyMail,$FromName,$FromMail,$cc,$bcc,$subject,$TextEmailConfirmation, 'registry-resend-'.$suffixSource);
+        }else{
+            $wpdb->delete(
+                $tablenameCreateUserEntries,
+                ['activation_key' => $new_activation_key],
+                ['%s']
+            );
         }
 
         return $sent;

@@ -250,20 +250,20 @@ echo <<<HEREDOC
       <div class='cg_view_options_row' >
             <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                 <div class='cg_view_option_title'>
-                    <p>$language_AddressLIneOne$cgShortcodeCopy</p>
+                    <p>$language_AddressLineOne$cgShortcodeCopy</p>
                 </div>
                 <div class='cg_view_option_input'>
-                    <input type="text" name="translations[ecommerce][$l_AddressLIneOne]" maxlength="100" value="$translations[$l_AddressLIneOne]">
+                    <input type="text" name="translations[ecommerce][$l_AddressLineOne]" maxlength="100" value="$translations[$l_AddressLineOne]">
                     </div>
                 </div>
       </div>
       <div class='cg_view_options_row' >
             <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                 <div class='cg_view_option_title'>
-                    <p>$language_AddressLIneTwo$cgShortcodeCopy</p>
+                    <p>$language_AddressLineTwo$cgShortcodeCopy</p>
                 </div>
                 <div class='cg_view_option_input'>
-                    <input type="text" name="translations[ecommerce][$l_AddressLIneTwo]" maxlength="100" value="$translations[$l_AddressLIneTwo]">
+                    <input type="text" name="translations[ecommerce][$l_AddressLineTwo]" maxlength="100" value="$translations[$l_AddressLineTwo]">
                     </div>
                 </div>
       </div>

@@ -1,4 +1,4 @@
-<?php
+x<?php
 
 echo <<<HEREDOC
 <div class='cg_view_container'>

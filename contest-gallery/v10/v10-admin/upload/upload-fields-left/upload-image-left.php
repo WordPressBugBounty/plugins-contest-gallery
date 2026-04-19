@@ -306,7 +306,7 @@ HEREDOC;
         if($cgProFalse){
             echo "<div style='margin-top: 5px;'>
                                          <span style='font-weight: bold;'>
-                                             Only JPG allowed for frontend<br>\"Image upload\" in normal version.<br><a style='font-size: 16px !important;text-decoration: underline !important;' href=\"https://www.contest-gallery.com/pro-version/\" class=\"cg-get-pro-link\" target=\"_blank\">Get PRO</a>
+                                             Only JPG allowed for frontend<br>\"Image upload\" in normal version.<br><a href=\"https://www.contest-gallery.com/pro-version/\" class=\"cg-get-pro-link\" target=\"_blank\">Get PRO</a>
                                                     </span>
 </div>";
         }
@@ -426,4 +426,3 @@ HEREDOC;
 
 echo "</div>";
 echo "</div>";
-

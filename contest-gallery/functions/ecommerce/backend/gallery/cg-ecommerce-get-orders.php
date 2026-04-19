@@ -1,4 +1,56 @@
 <?php
+if(!function_exists('cg_ecommerce_get_orders_prepare_query')){
+    function cg_ecommerce_get_orders_prepare_query($wpdb, $query, $args = array()){
+        if(empty($args)){
+            return $query;
+        }
+
+        return call_user_func_array(array($wpdb, 'prepare'), array_merge(array($query), $args));
+    }
+}
+
+if(!function_exists('cg_ecommerce_get_orders_get_post_text')){
+    function cg_ecommerce_get_orders_get_post_text($key){
+        if(!isset($_POST[$key]) || is_array($_POST[$key])){
+            return '';
+        }
+
+        return trim(sanitize_text_field(wp_unslash($_POST[$key])));
+    }
+}
+
+if(!function_exists('cg_ecommerce_get_orders_get_post_ids')){
+    function cg_ecommerce_get_orders_get_post_ids($key){
+        $ids = array();
+
+        if(!isset($_POST[$key]) || is_array($_POST[$key])){
+            return $ids;
+        }
+
+        $searchValue = trim(sanitize_text_field(wp_unslash($_POST[$key])));
+
+        if($searchValue === ''){
+            return $ids;
+        }
+
+        $searchValuesExploded = preg_split('/[^0-9]+/', $searchValue);
+
+        if(empty($searchValuesExploded)){
+            return $ids;
+        }
+
+        foreach($searchValuesExploded as $searchValueExploded){
+            $searchValueExploded = absint($searchValueExploded);
+
+            if(!empty($searchValueExploded)){
+                $ids[$searchValueExploded] = $searchValueExploded;
+            }
+        }
+
+        return array_values($ids);
+    }
+}
+
 if(!function_exists('cg_ecommerce_get_orders')){
     function cg_ecommerce_get_orders($start,$step,$isFindAll = false){
 
@@ -8,6 +60,13 @@ if(!function_exists('cg_ecommerce_get_orders')){
 			$step = 9000000;
 		}
 
+        $start = absint($start);
+        $step = absint($step);
+
+        if(empty($step)){
+            $step = 50;
+        }
+
         global $wpdb;
 
         $tablename_ecommerce_orders = $wpdb->prefix . "contest_gal1ery_ecommerce_orders";
@@ -15,7 +74,12 @@ if(!function_exists('cg_ecommerce_get_orders')){
 
         if(!empty($_GET['cg_order_id'])){
 
-            $saleOrders = $wpdb->get_results("SELECT * FROM $tablename_ecommerce_orders WHERE id = '".absint($_GET['cg_order_id'])."'");
+            $saleOrders = $wpdb->get_results(
+                $wpdb->prepare(
+                    "SELECT * FROM $tablename_ecommerce_orders WHERE id = %d",
+                    absint($_GET['cg_order_id'])
+                )
+            );
 
             $rows = $wpdb->get_var(
                 "
@@ -27,88 +91,94 @@ if(!function_exists('cg_ecommerce_get_orders')){
 
         }else{
 
-            if(!empty($_POST['cg_paypal_transaction_id']) || !empty($_POST['cg_item_ids'])
-               || !empty($_POST['cg_payer_email']) || !empty($_POST['cg_order_number']) || !empty($_POST['cg_gallery_ids'])
+            $PayPalTransactionId = cg_ecommerce_get_orders_get_post_text('cg_paypal_transaction_id');
+            $PayerEmail = cg_ecommerce_get_orders_get_post_text('cg_payer_email');
+            $OrderNumber = cg_ecommerce_get_orders_get_post_text('cg_order_number');
+            $ItemIdsSearchValue = cg_ecommerce_get_orders_get_post_text('cg_item_ids');
+            $GalleryIdsSearchValue = cg_ecommerce_get_orders_get_post_text('cg_gallery_ids');
+            $ItemIds = cg_ecommerce_get_orders_get_post_ids('cg_item_ids');
+            $GalleryIds = cg_ecommerce_get_orders_get_post_ids('cg_gallery_ids');
+
+            if($PayPalTransactionId !== '' || $ItemIdsSearchValue !== ''
+               || $PayerEmail !== '' || $OrderNumber !== '' || $GalleryIdsSearchValue !== ''
             ){
-                $PayPalTransactionIdWhereQuery = '';
-                $PayerEmailWhereQuery = '';
-                $OrderNumberWhereQuery = '';
-                $ItemIdsWhereQuery = '';
-                $GalleryIdsWhereQuery = '';
-                $OpenBracket = '';
-                $CloseBracket = '';
-                if(!empty($_POST['cg_paypal_transaction_id'])){
-                    $OpenBracket = '&& (';
-                    $CloseBracket = ')';
-                    $PayPalTransactionId = cg1l_sanitize_method($_POST['cg_paypal_transaction_id']);
-                    $PayPalTransactionIdWhereQuery = "$tablename_ecommerce_orders.PayPalTransactionId LIKE '%$PayPalTransactionId%' OR $tablename_ecommerce_orders.StripePiId LIKE '%$PayPalTransactionId%'";
+                $WhereClauses = array();
+                $WhereValues = array();
+                $JoinOrdersItems = false;
+
+                if($PayPalTransactionId !== ''){
+                    $PayPalTransactionIdLike = '%' . $wpdb->esc_like($PayPalTransactionId) . '%';
+                    $WhereClauses[] = "($tablename_ecommerce_orders.PayPalTransactionId LIKE %s OR $tablename_ecommerce_orders.StripePiId LIKE %s)";
+                    $WhereValues[] = $PayPalTransactionIdLike;
+                    $WhereValues[] = $PayPalTransactionIdLike;
                 }
-                if(!empty($_POST['cg_payer_email'])){
-                    $OpenBracket = '&& (';
-                    $CloseBracket = ')';
-                    $PayerEmail = sanitize_text_field($_POST['cg_payer_email']);
-                    if(!empty($_POST['cg_paypal_transaction_id'])){
-                        $PayerEmailWhereQuery .= "OR  ";
-                    }
-                    $PayerEmailWhereQuery .= "$tablename_ecommerce_orders.PayerEmail LIKE '%$PayerEmail%'";
+
+                if($PayerEmail !== ''){
+                    $PayerEmailLike = '%' . $wpdb->esc_like($PayerEmail) . '%';
+                    $WhereClauses[] = "$tablename_ecommerce_orders.PayerEmail LIKE %s";
+                    $WhereValues[] = $PayerEmailLike;
                 }
-                if(!empty($_POST['cg_item_ids'])){
-                    $OpenBracket = '&& (';
-                    $CloseBracket = ')';
-                    $cg_item_ids_query = '';
-                    $cg_item_ids_exploded = explode(' ',sanitize_text_field($_POST['cg_item_ids']));
-                    foreach ($cg_item_ids_exploded as $cg_item_id){
-	                    $cg_item_id = absint($cg_item_id);
-                        if(!empty($cg_item_id)){
-                            if(!$cg_item_ids_query){
-                                $cg_item_ids_query .= "$tablename_ecommerce_orders_items.pid = $cg_item_id";
-                            }else{
-                                $cg_item_ids_query .= " or $tablename_ecommerce_orders_items.pid = $cg_item_id";
-                            }
+
+                if($ItemIdsSearchValue !== ''){
+                    if(!empty($ItemIds)){
+                        $JoinOrdersItems = true;
+                        $Placeholders = implode(',', array_fill(0, count($ItemIds), '%d'));
+                        $WhereClauses[] = "$tablename_ecommerce_orders_items.pid IN ($Placeholders)";
+
+                        foreach($ItemIds as $ItemId){
+                            $WhereValues[] = $ItemId;
                         }
+                    }else{
+                        $WhereClauses[] = '1 = 0';
                     }
-                    if(!empty($_POST['cg_paypal_transaction_id']) || !empty($_POST['cg_payer_email'])){
-                        $ItemIdsWhereQuery .= "OR ";
-                    }
-                    $ItemIdsWhereQuery .= "($cg_item_ids_query)";
                 }
-				if(!empty($_POST['cg_order_number'])){
-		            $OpenBracket = '&& (';
-		            $CloseBracket = ')';
-		            $OrderNumber = cg1l_sanitize_method($_POST['cg_order_number']);
-					if(!empty($_POST['cg_paypal_transaction_id']) || !empty($_POST['cg_payer_email']) || !empty($_POST['cg_item_ids'])){
-			            $OrderNumberWhereQuery .= "OR  ";
-		            }
-					$OrderNumberWhereQuery .= "$tablename_ecommerce_orders.OrderNumber LIKE '%$OrderNumber%'";
-	            }
-	            if(!empty($_POST['cg_gallery_ids'])){
-		            $OpenBracket = '&& (';
-		            $CloseBracket = ')';
-		            $cg_gallery_ids_query = '';
-		            $cg_gallery_ids_exploded = explode(' ',sanitize_text_field($_POST['cg_gallery_ids']));
-		            foreach ($cg_gallery_ids_exploded as $cg_gallery_id){
-			            $cg_gallery_id = absint($cg_gallery_id);
-			            if(!empty($cg_gallery_id)){
-				            if(!$cg_gallery_ids_query){
-					            $cg_gallery_ids_query .= "$tablename_ecommerce_orders_items.GalleryID = $cg_gallery_id";
-				            }else{
-					            $cg_gallery_ids_query .= " or $tablename_ecommerce_orders_items.GalleryID = $cg_gallery_id";
-				            }
-			            }
-		            }
-		            if(!empty($_POST['cg_paypal_transaction_id']) || !empty($_POST['cg_payer_email']) || !empty($_POST['cg_item_ids']) || !empty($_POST['cg_order_number'])){
-			            $GalleryIdsWhereQuery .= "OR ";
-		            }
-		            $GalleryIdsWhereQuery .= "($cg_gallery_ids_query)";
+
+				if($OrderNumber !== ''){
+                    $OrderNumberLike = '%' . $wpdb->esc_like($OrderNumber) . '%';
+					$WhereClauses[] = "$tablename_ecommerce_orders.OrderNumber LIKE %s";
+                    $WhereValues[] = $OrderNumberLike;
 	            }
 
-                $saleOrders = $wpdb->get_results("SELECT $tablename_ecommerce_orders.* FROM $tablename_ecommerce_orders, $tablename_ecommerce_orders_items WHERE ($tablename_ecommerce_orders.id = $tablename_ecommerce_orders_items.ParentOrder)  $OpenBracket $PayPalTransactionIdWhereQuery $PayerEmailWhereQuery  $ItemIdsWhereQuery $OrderNumberWhereQuery $GalleryIdsWhereQuery $CloseBracket GROUP BY $tablename_ecommerce_orders.id ORDER BY $tablename_ecommerce_orders.id DESC LIMIT $start, $step");
+	            if($GalleryIdsSearchValue !== ''){
+                    if(!empty($GalleryIds)){
+                        $JoinOrdersItems = true;
+                        $Placeholders = implode(',', array_fill(0, count($GalleryIds), '%d'));
+                        $WhereClauses[] = "$tablename_ecommerce_orders_items.GalleryID IN ($Placeholders)";
 
-                $rows = $wpdb->get_var("SELECT COUNT(*) AS NumberOfRows FROM $tablename_ecommerce_orders, $tablename_ecommerce_orders_items WHERE ($tablename_ecommerce_orders.id = $tablename_ecommerce_orders_items.ParentOrder)  $OpenBracket $PayPalTransactionIdWhereQuery $PayerEmailWhereQuery  $ItemIdsWhereQuery $OrderNumberWhereQuery $GalleryIdsWhereQuery  $CloseBracket GROUP BY $tablename_ecommerce_orders.id ORDER BY $tablename_ecommerce_orders.id DESC");
+                        foreach($GalleryIds as $GalleryId){
+                            $WhereValues[] = $GalleryId;
+                        }
+                    }else{
+                        $WhereClauses[] = '1 = 0';
+                    }
+	            }
+
+                $OrdersFromQuery = $tablename_ecommerce_orders;
+                if($JoinOrdersItems){
+                    $OrdersFromQuery .= " INNER JOIN $tablename_ecommerce_orders_items ON ($tablename_ecommerce_orders.id = $tablename_ecommerce_orders_items.ParentOrder)";
+                }
+
+                $OrdersWhereQuery = '';
+                if(!empty($WhereClauses)){
+                    $OrdersWhereQuery = ' WHERE (' . implode(' OR ', $WhereClauses) . ')';
+                }
+
+                $saleOrdersQuery = "SELECT DISTINCT $tablename_ecommerce_orders.* FROM $OrdersFromQuery $OrdersWhereQuery ORDER BY $tablename_ecommerce_orders.id DESC LIMIT %d, %d";
+                $saleOrdersValues = array_merge($WhereValues, array($start, $step));
+                $saleOrders = $wpdb->get_results(cg_ecommerce_get_orders_prepare_query($wpdb, $saleOrdersQuery, $saleOrdersValues));
+
+                $rowsQuery = "SELECT COUNT(DISTINCT $tablename_ecommerce_orders.id) AS NumberOfRows FROM $OrdersFromQuery $OrdersWhereQuery";
+                $rows = $wpdb->get_var(cg_ecommerce_get_orders_prepare_query($wpdb, $rowsQuery, $WhereValues));
 
             }else{
 
-                $saleOrders = $wpdb->get_results("SELECT * FROM $tablename_ecommerce_orders WHERE id > 0  ORDER BY id DESC LIMIT $start, $step");
+                $saleOrders = $wpdb->get_results(
+                    $wpdb->prepare(
+                        "SELECT * FROM $tablename_ecommerce_orders WHERE id > 0 ORDER BY id DESC LIMIT %d, %d",
+                        $start,
+                        $step
+                    )
+                );
 
                 $rows = $wpdb->get_var(
                     "
@@ -126,4 +196,3 @@ if(!function_exists('cg_ecommerce_get_orders')){
 
    }
 }
-

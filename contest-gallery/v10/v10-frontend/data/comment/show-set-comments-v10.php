@@ -45,7 +45,9 @@ $intervalConf = cg_shortcode_interval_check($galeryID,$optionsSource,'cg_gallery
 if(!$intervalConf['shortcodeIsActive']){
     ?>
     <script data-cg-processing="true">
-        cgJsClass.gallery.comment.removeLastComment();
+        if(cgJsData[<?php echo json_encode($galeryIDuser);?>] && cgJsData[<?php echo json_encode($galeryIDuser);?>].vars){
+            cgJsData[<?php echo json_encode($galeryIDuser);?>].vars.commentSubmitResponse = {status: 'blocked'};
+        }
     </script>
     <?php
     cg_shortcode_interval_check_show_ajax_message($intervalConf,$galeryIDuser);
@@ -62,71 +64,63 @@ if($options['general']['AllowComments']!=1){
     return;
 }
 
-// check script execution to avoid flooding via reload by developer tools
-$scriptCheckFolderDay = __DIR__.'/script-exec-check/'.date('d');
-$scriptCheckFolderDay = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/image-comments/script-exec-check/'.date('d');
-
-if(!is_dir($scriptCheckFolderDay)){
-    mkdir($scriptCheckFolderDay, 0755, true);
-}
-
-$scriptCheckFolder = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/image-comments/script-exec-check';
-
-$userIP = cg1l_sanitize_method(cg_get_user_ip());
-$userIPforFile = str_replace(':','_',$userIP);
-$isFlooding = false;
-
-$userIpFileWithTime = $scriptCheckFolderDay.'/'.$userIPforFile;
-
-if(is_file($userIpFileWithTime)){
-    $fileTime = intval(file_get_contents($userIpFileWithTime));
-    if((time()-9)<$fileTime){
-	    $isFlooding = true;
-    }
-	//file_put_contents($userIpFileWithTime,time()); no put in file anymore since 23.1.3
-}else{
-	$timestampToCompare = $wpdb->get_var( "SELECT Timestamp FROM $tablenameComments WHERE IP='$userIP'");
-	if(!empty($timestampToCompare) && (time()-9)<$timestampToCompare){
-		$isFlooding = true;
-	}
-	//file_put_contents($userIpFileWithTime,time()); no put in file anymore since 23.1.3
-}
-
-if($isFlooding){
-        ?>
-        <script data-cg-processing="true">// if this exists then everything is fine. Will check if this exits or not
-            var gid = <?php echo json_encode($galeryIDuser); ?>;
-            cgJsClass.gallery.function.message.show(gid,'Stop flooding');
-        </script>
-        <?php
-        echo "code 617 - stop flodding";
-        return;
-    }
-
-// remove folders of not current day if exists
-foreach(glob($scriptCheckFolder.'/*') as $dayFolder){
-    if(is_dir($dayFolder) AND $dayFolder!=$scriptCheckFolderDay){
-        cg_remove_folder_recursively($dayFolder);
-    }
-}
-// check script execution to avoid flooding via reload by developer tools --- END
-
-// set already here maybe required for not logged in message
+// set already here maybe required for blocked submit messages
 $pictureID = absint($_POST['pid']);
+$WpUserId = 0;
+$IsWpUser = 0;
 
-if(isset($options['pro']['CheckLoginComment']) && $options['pro']['CheckLoginComment']==1 AND !is_user_logged_in()){
+if(is_user_logged_in()){
+    $WpUserId = get_current_user_id();
+	$IsWpUser = 1;
+}
+
+if(isset($options['pro']['CheckLoginComment']) && $options['pro']['CheckLoginComment']==1 AND !$WpUserId){
     ?>
     <script data-cg-processing="true">// if this exists then everything is fine. Will check if this exits or not
 
         var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
-        var pictureID = <?php echo json_encode($pictureID);?>;
-        jQuery(".cg-center-image-comments-div-recently-added").remove();
-
-        cgJsClass.gallery.comment.setComment(pictureID,-1,galeryIDuser);
+        if(cgJsData[galeryIDuser] && cgJsData[galeryIDuser].vars){
+            cgJsData[galeryIDuser].vars.commentSubmitResponse = {status: 'blocked'};
+        }
         cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].YouHaveToBeLoggedInToComment);
 
     </script>
     <?php
+    return;
+}
+
+// check latest server-side comment submit to avoid flooding
+$userIP = cg1l_sanitize_method(cg_get_user_ip());
+$isFlooding = false;
+$rateLimitWindowInSeconds = 10;
+$timestampToCompare = 0;
+
+if($WpUserId){
+    $timestampToCompare = intval($wpdb->get_var($wpdb->prepare(
+        "SELECT MAX(Timestamp) FROM $tablenameComments WHERE WpUserId = %d",
+        $WpUserId
+    )));
+}else{
+	$timestampToCompare = intval($wpdb->get_var($wpdb->prepare(
+        "SELECT MAX(Timestamp) FROM $tablenameComments WHERE IP = %s",
+        $userIP
+    )));
+}
+
+if(!empty($timestampToCompare) && (time()-$rateLimitWindowInSeconds)<$timestampToCompare){
+    $isFlooding = true;
+}
+
+if($isFlooding){
+	?>
+    <script data-cg-processing="true">// if this exists then everything is fine. Will check if this exits or not
+        var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
+        if(cgJsData[galeryIDuser] && cgJsData[galeryIDuser].vars){
+            cgJsData[galeryIDuser].vars.commentSubmitResponse = {status: 'rate_limited'};
+        }
+    </script>
+	<?php
+	echo "code 617 - stop flooding";
     return;
 }
 
@@ -147,13 +141,6 @@ $Comment = substr($Comment,0,3000);// 1000 is max as message in frontend but bec
 
 $unix = time();
 $date = date("Y-m-d H:i",$unix);
-
-$WpUserId=0;
-$IsWpUser=0;
-if(is_user_logged_in()){
-    $WpUserId = get_current_user_id();
-	$IsWpUser = 1;
-}
 
 $Active = 0;
 if(!empty($options['pro']['ReviewComm'])){
@@ -221,11 +208,10 @@ $commentsFileData[$lastCommentId]['WpUserId'] = $WpUserId;
 
 // process comments File --- ENDE
 
-// process rating comments data file
-$dataFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/image-data/image-data-'.$pictureID.'.json';
-$fp = fopen($dataFile, 'r');
-$ratingCommentsData =json_decode(fread($fp,filesize($dataFile)),true);
-fclose($fp);
+cg1l_migrate_image_stats_to_folder($galeryID, true);// correct first if needs to correct
+
+$lockFp = false;
+$ratingCommentsData = cg1l_get_stats_for_update($galeryID, $pictureID, $lockFp);
 
 // count active comments correctly
 $countActiveComments = 0;
@@ -238,14 +224,14 @@ $countCommentsSQL = 0;
 if(floatval($options['general']['Version'])<16){// this condition added later in version 28.1.2.2,
     // the only way it will be repaired in database, 'CountC' => $countCommentsTotal below and since  28.1.2.2
     // comments will be inserted since 23.1.3, because of allocation correction, but also in dir, so what in dir counts in generally
-$countCommentsSQL = $wpdb->get_var( $wpdb->prepare(
-    "
+    $countCommentsSQL = $wpdb->get_var( $wpdb->prepare(
+        "
                 SELECT COUNT(1)
                 FROM $tablenameComments 
                 WHERE pid = %d
             ",
-    $pictureID
-) );
+        $pictureID
+    ) );
 }
 
 
@@ -267,6 +253,7 @@ foreach ($dirImageCommentsFiles as $dirImageCommentsFile){
     }
 }
 
+// $countCommentsSQL check if there were some database entries of before version 16
 $countCommentsTotal = $countCommentsSQL + $fileImageCommentsDirCount;
 
 $ratingCommentsData['CountC'] = $countCommentsTotal;
@@ -283,9 +270,17 @@ $wpdb->update(
 
 //$ratingCommentsData = cg_check_and_repair_image_file_data($galeryID,$pictureID,$ratingCommentsData,false);
 
-$fp = fopen($dataFile, 'w');
-fwrite($fp,json_encode($ratingCommentsData));
-fclose($fp);
+/*echo "<pre>";
+    print_r($ratingCommentsData);
+echo "</pre>";*/
+
+cg1l_set_stats_with_lock($galeryID, $pictureID, $ratingCommentsData, $lockFp);
+cg1l_release_stats_lock($lockFp);
+
+cg1l_push_recent_id_file($galeryID,$pictureID,'image-comments-data-last-update');
+cg1l_create_last_updated_time_file($galeryID,'image-comments-data-last-update');
+cg1l_push_recent_id_file($galeryID,$pictureID,'image-stats-data-last-update');
+cg1l_create_last_updated_time_file($galeryID,'image-stats-data-last-update');
 
 $commentsDataJsonFiles = glob($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/image-comments/*.json');
 $jsonCommentsData = [];
@@ -312,6 +307,14 @@ foreach ($commentsDataJsonFiles as $jsonFile) {
         var Active = <?php echo json_encode($Active);?>;
         var ratingCommentsDataFromJustCommented = <?php echo json_encode($ratingCommentsData);?>;
 
+        if(cgJsData[galeryIDuser] && cgJsData[galeryIDuser].vars){
+            cgJsData[galeryIDuser].vars.commentSubmitResponse = {
+                status: 'success',
+                ratingCommentsDataFromJustCommented: ratingCommentsDataFromJustCommented,
+                Active: Active
+            };
+        }
+
         if(cgJsData[galeryIDuser].jsonCommentsData[pictureID]){
             cgJsData[galeryIDuser].jsonCommentsData[pictureID][lastCommentId] = <?php echo json_encode($commentsFileData[$lastCommentId]); ?>;
         }else{
@@ -320,9 +323,6 @@ foreach ($commentsDataJsonFiles as $jsonFile) {
 
         cgJsData[galeryIDuser].vars.commentUnix = <?php echo json_encode($unix); ?>;
         cgJsClass.gallery.comment.setComments(galeryIDuser);
-        if(Active!=2){
-            cgJsClass.gallery.comment.setComment(pictureID,0,galeryIDuser,false,false,false,ratingCommentsDataFromJustCommented);
-        }
 
     </script>
 
@@ -376,8 +376,8 @@ if(!empty($options['pro']['CommNoteActive'])){
         $WpPagePermalink = get_permalink($WpPage);
         $urlFrontend = '<a href="'.$WpPagePermalink.'" >'.$WpPagePermalink.'</a>';
     }else{
-    $urlFrontend = $cgPageUrl."#!gallery/$galeryIDuser/image/$pictureID/$post_title";
-    $urlFrontend = '<a href="'.$urlFrontend.'" >'.$urlFrontend.'</a>';
+        $urlFrontend = $cgPageUrl."#!gallery/$galeryIDuser/image/$pictureID/$post_title";
+        $urlFrontend = '<a href="'.$urlFrontend.'" >'.$urlFrontend.'</a>';
     }
 
     $cg_comm_note_check =  cg_hash_function('---cgCommNoteActive---'.$galeryID);

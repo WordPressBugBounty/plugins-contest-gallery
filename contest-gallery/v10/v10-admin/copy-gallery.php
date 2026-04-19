@@ -92,14 +92,14 @@ if(empty($_POST['option_id_next_gallery'])){
 $galleryCopiedText = '';
 
 if($cgCopyType=='cg_copy_type_options'){
-    $galleryCopiedText = 'Only options and forms were copied.';
+    $galleryCopiedText = 'Only options and upload form were copied.';
 }
 if($cgCopyType=='cg_copy_type_options_and_images'){
-    $galleryCopiedText = 'Options, forms and files were copied.';
+    $galleryCopiedText = 'Options, upload form and files were copied.';
 }
 
 if($cgCopyType=='cg_copy_type_all'){
-    $galleryCopiedText = 'Options, forms, files, votes and comments were copied.';
+    $galleryCopiedText = 'Options, upload form, files, votes and comments were copied.';
 }
 
 echo "<input type='hidden' id='cgNextIdGallery' value='$nextIDgallery' />";

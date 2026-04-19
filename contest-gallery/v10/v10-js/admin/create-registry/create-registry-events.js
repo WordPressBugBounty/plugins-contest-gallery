@@ -226,7 +226,7 @@ jQuery(document).ready(function ($) {
             $newField.removeClass('cg_blink');
         },2000);
 
-        $newField.get(0).scrollIntoView({behavior: 'auto', block: 'start', inline: 'start'});
+        $newField.get(0).scrollIntoView();
 
         return newId;
 

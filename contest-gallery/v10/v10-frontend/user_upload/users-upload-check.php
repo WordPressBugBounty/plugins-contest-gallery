@@ -4,15 +4,14 @@ if(!defined('ABSPATH')){exit;}
 // Aurufen von WP-Config hier notwendig
 //include("../../../../wp-config.php");
 
-// User ID �berpr�fung ob es die selbe ist
-$CheckCheck = wp_create_nonce("check");
-
-$check = (!empty($_POST['check'])) ? $_POST['check'] : '';
+// User ID check if it is the same
 $sendUserMail = '';
 $userMail = '';
 $checkWpMail = '';
 $inputsTime = time();
 $inputContents = [];
+$dataSlider = [];
+$dataSliderSortedPids = [];
 
 $isManipulated = false;
 
@@ -21,7 +20,6 @@ $Version = cg_get_version_for_scripts();
 $CookieId='';
 
 $OrderItem = 0;
-
 
 /*
 echo "<pre>";
@@ -102,6 +100,11 @@ if(empty($_POST["cg_upload_action"]) OR empty($_FILES["data"])){
         <?php
         cg_shortcode_interval_check_show_ajax_message($intervalConf,$galeryIDuser);
         return;
+    }
+
+    $options = json_decode(file_get_contents($optionsPath),true);
+    if(!empty($options[$galeryIDuser])){
+        $options = $options[$galeryIDuser];
     }
 
     global $wpdb;
@@ -283,7 +286,7 @@ if(!$isManipulated){
     $table_posts = $wpdb->prefix."posts";
     $wpUsers = $wpdb->base_prefix . "users";
 
-    // neue image Ids für Abfrage sammeln
+    // collect new image Ids for query
     $collect = '';
 
     $formInputForFieldTitles = $wpdb->get_results( "SELECT id, Field_Content, Show_Slider, IsForWpPageDescription, IsForWpPageTitle FROM $tablename_f_input WHERE GalleryID = '$galeryID' ORDER BY Field_Order ASC" );
@@ -422,27 +425,7 @@ if(!$isManipulated){
 
         if($i == 2){
 
-            $inputId = absint($value);
-
-            if(empty($inputId) || !isset($inputFieldContentArray[$inputId])){
-
-                ?>
-
-                <script data-cg-processing="true">
-
-
-                    var gid = <?php echo json_encode($galeryIDuser);?>;
-                    cgJsData[gid].vars.upload.doneUploadFailed = true;
-                    cgJsData[gid].vars.upload.failMessage = <?php echo json_encode("Please don't manipulate the form. Field_Type: $fieldType , field id manipulated");?>;
-
-
-                </script>
-
-                <?php
-
-                echo "Please don't manipulate the form. Field_Type: $fieldType , field id manipulated";die;
-
-            }
+            $inputId = $value;
 
         }
 
@@ -625,7 +608,7 @@ if(!$isManipulated){
 
                     if(empty($dateityp) || ($dateityp[2] != 1 && $dateityp[2] != 2 && $dateityp[2] != 3 && $dateityp[2] != 17)) {
 
-                        // File size wird als 0 ausgegeben wenn die hoch zu ladende Datei gr��er ist als Server erlaubt. File type und andere Infos dann auch nicht vorhanden.
+                        // File size is output as 0 if the uploaded file is larger than the server allows. File type and other infos are then also missing.
                         //   echo "Don't manipulate the upload: wrong file type or file size"; die;
 
                         ?>
@@ -763,7 +746,7 @@ if(!$isManipulated){
                     $wp_image_id = $wp_image_info->ID;
                 }
 
-                // Notwendig: wird in convert-several-pics so verabeitet. Darf keine Sonderzeichen enthalten!
+                // Necessary: is processed like this in convert-several-pics. Must not contain special characters!
                 //$search = array(" ", "!", '"', "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "/", ":", ";", "=", "?", "@", "[","]","�"); // old code, only special signs example
                 //$post_title = str_replace($search,"_",$post_title);
                 // var_dump($post_title); die;
@@ -992,7 +975,7 @@ if(!$isManipulated){
                     array('%d')
                 );
 
-                // Sp�ter f�r Inform Image wichtig
+                // Important later for Inform Image
                 $collectImageIDs[] = intval($nextId); // intval so later index of javascript goes right for sure
 
                 try{
@@ -1028,15 +1011,15 @@ if(!$isManipulated){
 
                         $sendUserMail = '';
 
-                        // 1. Feldtyp <<< Zur Bestimmung der Feldart f�r weitere Verarbeitung in der Datenbank, Admin etc.
-                        // 2. Feldnummer <<<  Zur Bestimmung der Feldreihenfolge in Frontend und Admin.
-                        // 3. Feldreihenfolge
-                        // 4. Feldinhalt
+                        // 1. Field type <<< To determine the field type for further processing in database, Admin etc.
+                        // 2. Field number <<<  To determine the field order in Frontend and Admin.
+                        // 3. Field order
+                        // 4. Field content
                         foreach ($form_input as $key => $value) {
 
                             $i++;
 
-                            // Short_Text Entries werden eingef�gt (Name, E-Mail)
+                            // Short_Text Entries are inserted (Name, E-Mail)
 
                             if(!isset($ft)){
                                 $ft = '';
@@ -1044,13 +1027,7 @@ if(!$isManipulated){
 
                             if ($i==1 AND ($ft!='kf' or $ft!='fbd')){$ft = $value; continue;}
 
-                            if ($i==2 AND ($ft=='nf' or $ft=='ef' or $ft=='se' or $ft=='ra' or $ft=='chk' or $ft=='url' or $ft=='sec' or $ft=='cb' or $ft=='fbt' or $ft=='dt')){
-                                $f_input_id = absint($value);
-                                if(empty($f_input_id) || !isset($inputFieldContentArray[$f_input_id])){
-                                    echo "Please don't manipulate the form. Field_Type: $ft , field id manipulated";die;
-                                }
-                                continue;
-                            }
+                            if ($i==2 AND ($ft=='nf' or $ft=='ef' or $ft=='se' or $ft=='ra' or $ft=='chk' or $ft=='url' or $ft=='sec' or $ft=='cb' or $ft=='fbt' or $ft=='dt')){$f_input_id = absint($value); continue;}
 
                             if ($i==3 AND ($ft=='nf' or $ft=='ef' or $ft=='se' or $ft=='ra' or $ft=='chk' or $ft=='url' or $ft=='sec' or $ft=='cb' or $ft=='fbt' or $ft=='dt')){
                                 $field_order = $value;
@@ -1155,12 +1132,7 @@ if(!$isManipulated){
 
                                     // because then is not simple entry
                                     if(!$isOnlyContactEntry && !empty($attach_id)){// added 21.2.1
-                                        $WpAttachmentDetailsType = $wpdb->get_var(
-                                            $wpdb->prepare(
-                                                "SELECT WpAttachmentDetailsType FROM $tablename_form_input WHERE id = %d",
-                                                $f_input_id
-                                            )
-                                        );
+                                        $WpAttachmentDetailsType = $wpdb->get_var( "SELECT WpAttachmentDetailsType FROM $tablename_form_input WHERE id = '$f_input_id'" );
                                         if(!empty($WpAttachmentDetailsType)){// added 21.2.1
                                             if($WpAttachmentDetailsType=='alt'){
                                                 add_post_meta( $attach_id, '_wp_attachment_image_alt', $content);
@@ -1212,12 +1184,7 @@ if(!$isManipulated){
                                     //$wpdb->insert( $tablenameentries, array( 'id' => '', 'pid' => $nextId, 'f_input_id' => $f_input_id, 'GalleryID' => $galeryID, "Field_Type" => 'text-f', 'Field_Order' => $field_order, 'Short_Text' => $content, 'Long_Text' => '') );
 
                                     // insert original checked field_content to show later!
-                                    $content = $wpdb->get_var(
-                                        $wpdb->prepare(
-                                            "SELECT Field_Content FROM $tablename_f_input WHERE id = %d",
-                                            $f_input_id
-                                        )
-                                    );
+                                    $content = $wpdb->get_var("SELECT Field_Content FROM $tablename_f_input WHERE id = $f_input_id");
 
                                     $wpdb->query( $wpdb->prepare(
                                         "
@@ -1321,7 +1288,7 @@ if(!$isManipulated){
                                     if($cgMailChecked==false){
                                         $ConfMailId = 0;
 
-                                        // Update des haupttables mit WpUserId weiter unten
+                                        // Update of the main table with WpUserId further down
                                         $checkWpMail = $wpdb->get_row($wpdb->prepare("SELECT ID, user_email FROM $wpUsers WHERE user_email = %s",$sendUserMail));
 
                                         if(empty($checkWpMail)){
@@ -1370,19 +1337,13 @@ if(!$isManipulated){
                             }
 
 
-                            // Short_Text Entries werden eingef�gt ---- ENDE
+                            // Short_Text Entries are inserted ---- END
 
-                            // Long Entries werden eingef�gt
+                            // Long Entries are inserted
 
                             if ($i==1 AND ($ft!='nf' or $ft!='ef' or $ft!='se' or $ft!='ra' or $ft=='chk' or $ft!='url' or $ft!='sec' or $ft!='cb' or $ft!='fbt' or $ft!='dt')){$ft = $value; continue;}
 
-                            if ($i==2 AND ($ft=='kf' OR $ft == 'fbd')){
-                                $f_input_id = absint($value);
-                                if(empty($f_input_id) || !isset($inputFieldContentArray[$f_input_id])){
-                                    echo "Please don't manipulate the form. Field_Type: $ft , field id manipulated";die;
-                                }
-                                continue;
-                            }
+                            if ($i==2 AND ($ft=='kf' OR $ft == 'fbd')){$f_input_id = absint($value); continue;}
 
                             if ($i==3 AND ($ft=='kf' OR $ft == 'fbd')){$field_order = $value; continue;}
 
@@ -1424,15 +1385,10 @@ if(!$isManipulated){
                                     $fbContentArray[$nextId]['description'] = $content;
                                 }
 
-                                // Long Entries werden eingef�gt ---- ENDE
+                                // Long Entries are inserted ---- END
                                 // because then is not simple entry
                                 if(!$isOnlyContactEntry && !empty($attach_id)){// added 21.2.1
-                                    $WpAttachmentDetailsType = $wpdb->get_var(
-                                        $wpdb->prepare(
-                                            "SELECT WpAttachmentDetailsType FROM $tablename_form_input WHERE id = %d",
-                                            $f_input_id
-                                        )
-                                    );
+                                    $WpAttachmentDetailsType = $wpdb->get_var( "SELECT WpAttachmentDetailsType FROM $tablename_form_input WHERE id = '$f_input_id'" );
                                     if(!empty($WpAttachmentDetailsType)){// added 21.2.1
                                         if($WpAttachmentDetailsType=='alt'){
                                             add_post_meta( $attach_id, '_wp_attachment_image_alt', $content);
@@ -1556,8 +1512,9 @@ if(!$isManipulated){
 
                 $imageInfoEntriesData = $wpdb->get_results("SELECT id, f_input_id, Field_Type, Short_Text, Long_Text, InputDate, Tstamp FROM $tablenameentries WHERE pid = $nextId ORDER BY f_input_id ASC");
 
-                $Field1IdGalleryView = $optionsVisual->Field1IdGalleryView;
-                $Field2IdGalleryView = $optionsVisual->Field2IdGalleryView;
+                $Field1IdGalleryView = (!empty($optionsVisual) && isset($optionsVisual->Field1IdGalleryView)) ? absint($optionsVisual->Field1IdGalleryView) : 0;
+                $Field1IdFullWindowBlogView = (!empty($optionsVisual) && isset($optionsVisual->Field1IdFullWindowBlogView)) ? absint($optionsVisual->Field1IdFullWindowBlogView) : 0;
+                $Field2IdGalleryView = (!empty($optionsVisual) && isset($optionsVisual->Field2IdGalleryView)) ? absint($optionsVisual->Field2IdGalleryView) : 0;
 
                 $watermarkPositionId = $wpdb->get_var("SELECT id FROM $tablename_f_input WHERE GalleryID = $GalleryID AND WatermarkPosition != '' AND Active = 1");
 
@@ -1571,7 +1528,7 @@ if(!$isManipulated){
                         }
 
                         // then nothing to display in forontend!!!!
-                        if($row->f_input_id != $Field1IdGalleryView && $row->f_input_id != $Field2IdGalleryView && $inputFieldsShowSlider[$row->f_input_id] != 1 && $row->f_input_id != $watermarkPositionId){
+                        if($row->f_input_id != $Field1IdGalleryView && $row->f_input_id != $Field1IdFullWindowBlogView && $row->f_input_id != $Field2IdGalleryView && $inputFieldsShowSlider[$row->f_input_id] != 1 && $row->f_input_id != $watermarkPositionId){
                             continue;
                         }
 
@@ -1624,6 +1581,16 @@ if(!$isManipulated){
                     $fp = fopen($jsonFile, 'w');
                     fwrite($fp, json_encode($arrayInfoDataForImage));
                     fclose($fp);
+
+
+                    cg1l_push_recent_id_file($galeryID,$nextId,'image-info-data-last-update');
+
+                    static $cg1l_last_updated_done = false;
+
+                    if (!$cg1l_last_updated_done || time() > $cg1l_last_updated_done) {
+                        $cg1l_last_updated_done = time();
+                        cg1l_create_last_updated_time_file($galeryID,'image-info-data-last-update');
+                    }
 
                 }
 
@@ -1741,7 +1708,7 @@ if(!$isManipulated){
                 // echo "<br>";
                 // var_dump('$PdfPreviewArray[PdfPreview][$index]');
                 // var_dump($PdfPreviewArray['PdfPreview'][$index]);
-                post_cg_create_pdf_preview_backend($WpUpload, $realId, $PdfPreviewArray['PdfPreview'][$index],true);
+                cg_create_pdf_preview_internal($WpUpload, $realId, $PdfPreviewArray['PdfPreview'][$index], true);
             }
         }
 
@@ -1750,7 +1717,7 @@ if(!$isManipulated){
         }
 
         if($ActivateUpload==1){
-            // json File kreieren wenn instant upload activation an ist!!!
+            // create json File if instant upload activation is on!!!
             $picsSQL = $wpdb->get_results( "SELECT DISTINCT $table_posts.*, $tablename1.* FROM $table_posts, $tablename1 WHERE 
                                               (($collect) AND $tablename1.GalleryID='$galeryID' AND $tablename1.Active='1' and $table_posts.ID = $tablename1.WpUpload) 
                                              OR (($collect) AND $tablename1.GalleryID='$GalleryID' AND $tablename1.Active='1' AND $tablename1.WpUpload = 0) 
@@ -1766,6 +1733,20 @@ if(!$isManipulated){
                     }
                 }
 	            cg_json_upload_form_info_data_files_new($galeryID,$pidsArray,true);
+
+                foreach ($picsSQL as $rowObject){
+                    $dataSliderSortedPids[] = intval($rowObject->id);
+                    $fullData = json_decode(json_encode($rowObject), true);
+                    if(cg_is_is_image($fullData['ImgType'])){
+                        $imgSrcMedium=wp_get_attachment_image_src($fullData['WpUpload'], 'medium');
+                        $imgSrcMedium=(isset($imgSrcMedium[0])) ? $imgSrcMedium[0] : '';
+                        $fullData['medium'] = $imgSrcMedium;
+                    }
+                    $imgSrcThumb=(isset($imgSrcThumb[0])) ? $imgSrcThumb[0] : '';
+                    $imgSrcMedium=wp_get_attachment_image_src($rowObject->WpUpload, 'medium');
+                    cg1l_set_slider_data($fullData,$dataSlider,$options,0);
+                }
+               //e $imagesFullData = cg1l_build_images_main_data_gzip($galeryID);
             }
 
             foreach ($newImagesPermalinksArray as $nextEntryId => $entryPermalink){
@@ -1872,44 +1853,27 @@ if(!$isManipulated){
                 var ExifDataByRealIds = <?php echo json_encode($ExifDataByRealIds);?>;
                 var AdditionalFilesArray = <?php echo json_encode($AdditionalFilesArray);?>;
                 var arrayInfoDataForImageAddedEntries = <?php echo json_encode($arrayInfoDataForImageAddedEntries);?>;
+                var dataSlider = <?php echo json_encode($dataSlider);?>;
+                var dataSliderSortedPids = <?php echo json_encode($dataSliderSortedPids);?>;
 
-                if(isOnlyContactForm && !isFromUploadSale){
-                    cgJsClass.gallery.vars.$cgLoadedIds.each(function () {
-                        var oneOfGalleryIdsOnPage = jQuery(this).val();
-                        var gidAsStringForSure = ''+oneOfGalleryIdsOnPage;
-                        if(gidAsStringForSure.indexOf(''+gidReal)==0 && gid!=oneOfGalleryIdsOnPage && oneOfGalleryIdsOnPage.indexOf('-cf')==-1  && oneOfGalleryIdsOnPage.indexOf('-uf')==-1){
-                            // works also for multiple bulk upload
-                            for(var realId in ExifDataByRealIds){if(!ExifDataByRealIds.hasOwnProperty(realId)){break;}
-                                data[realId].Exif = ExifDataByRealIds[realId];
-                            }
-                            // works only for additional files without multiple bulk upload
-                            if(isAdditionalFilesUpload && !isBulkUpload && Object.keys(AdditionalFilesArray).length > 1){
-                                data[realIdBefore].MultipleFilesParsed = AdditionalFilesArray;
-                            }
-
-                            if(cgJsData[oneOfGalleryIdsOnPage].vars.mainCGallery){
-                                cgJsData[oneOfGalleryIdsOnPage].vars.mainCGallery.addClass('cgShowNormalFormConfirmationTextInFullWindow');
-                            }
-                            cgJsClass.gallery.getJson.imageDataPreProcess(oneOfGalleryIdsOnPage,data,false,processedFilesCounter,true,newImageIdsArray);
-                            return false;// do imageDataPreProcess the rest will be done in the imageDataPreProcess if more gallery ids are available
-                        }
+                if(!isFromUploadSale){
+                    cgJsClass.gallery.upload.functions.handleSuccessfulUpload({
+                        sourceFormGid: gid,
+                        gidReal: gidReal,
+                        realIdBefore: realIdBefore,
+                        data: data,
+                        newImageIdsArray: newImageIdsArray,
+                        processedFilesCounter: processedFilesCounter,
+                        isOnlyContactForm: isOnlyContactForm,
+                        isOnlyContactEntry: isOnlyContactEntry,
+                        isAdditionalFilesUpload: isAdditionalFilesUpload,
+                        isBulkUpload: isBulkUpload,
+                        ExifDataByRealIds: ExifDataByRealIds,
+                        AdditionalFilesArray: AdditionalFilesArray,
+                        arrayInfoDataForImageAddedEntries: arrayInfoDataForImageAddedEntries,
+                        dataSlider: dataSlider,
+                        dataSliderSortedPids: dataSliderSortedPids
                     });
-                }else{
-                    if(!isFromUploadSale){
-                        // works also for multiple bulk upload
-                        for(var realId in ExifDataByRealIds){if(!ExifDataByRealIds.hasOwnProperty(realId)){break;}
-                            data[realId].Exif = ExifDataByRealIds[realId];
-                        }
-                        // works only for additional files without multiple bulk upload
-                        if(isAdditionalFilesUpload && !isBulkUpload && Object.keys(AdditionalFilesArray).length > 1){
-                            data[realIdBefore].MultipleFilesParsed = AdditionalFilesArray;
-                        }
-                        cgJsClass.gallery.views.close(gid,true);
-                        for(var realId in arrayInfoDataForImageAddedEntries){if(!arrayInfoDataForImageAddedEntries.hasOwnProperty(realId)){break;}
-                            cgJsData[gid].jsonInfoData[realId] = arrayInfoDataForImageAddedEntries[realId];
-                        }
-                        cgJsClass.gallery.getJson.imageDataPreProcess(gid,data,false,processedFilesCounter,true,newImageIdsArray);
-                    }
                 }
 
             </script>
@@ -1935,8 +1899,6 @@ else{
     echo "Plz don't manipulate the upload.";
 
     ?>
-
-
     <script data-cg-processing="true">
 
         var gid = <?php echo json_encode($galeryIDuser);?>;
@@ -1944,7 +1906,6 @@ else{
         cgJsData[gid].vars.upload.failMessage = <?php echo json_encode("Plz don't manipulate the upload count.");?>;
 
     </script>
-
     <?php
     die;
 

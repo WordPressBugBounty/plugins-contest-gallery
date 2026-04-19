@@ -8,10 +8,8 @@
     include(__DIR__.'/../ecommerce/backend/gallery/cg-move-file-ecommerce-sell-folder.php');
     include(__DIR__.'/../ecommerce/backend/gallery/cg-move-file-from-ecommerce-sell-folder.php');
 
-    include(__DIR__.'/../ecommerce/backend/render/cg-deactivate-ecommerce-question.php');
     include(__DIR__.'/../ecommerce/backend/render/cg-sell-ecommerce-container.php');
     include(__DIR__.'/../ecommerce/backend/render/cg-download-ecommerce-form.php');
-    include(__DIR__.'/../ecommerce/backend/render/cg-deactivate-ecommerce-form.php');
 
     include(__DIR__.'/../ecommerce/backend/options/cg-create-get-ecommerce-options.php');
     include(__DIR__.'/../ecommerce/backend/options/cg-create-ecommerce-tables.php');

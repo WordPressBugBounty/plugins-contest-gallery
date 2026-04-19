@@ -42,6 +42,9 @@ if(!$isOnlyPlaceHolder){
     if($id==$Field1IdGalleryView){$checked='checked';}
     else{$checked='';}
 
+    if($id==$Field1IdFullWindowBlogView){$checkedShowFullWindowBlogView='checked';}
+    else{$checkedShowFullWindowBlogView='';}
+
     $inputRow = $wpdb->get_row("SELECT * FROM $tablename_form_input WHERE id = '$id'");
 
     $Show_Slider = $inputRow->Show_Slider;
@@ -254,10 +257,23 @@ echo <<<HEREDOC
 <div class='cg_view_options_row'>
      <div  class='cg_view_option cg_view_option_100_percent cg_border_bottom_none cg_tag_in_gallery  '>
         <div class='cg_view_option_title cg_view_option_title_full_width'>
-            <p>Show as HTML title attribute in gallery<br>(only 1 allowed)<br><span class="cg_view_option_title_note"><b>NOTE:</b> appears when on hover with mouse</span></p>
+            <p>Use as media description (SEO)<br>(only 1 allowed)<br><span class="cg_view_option_title_note"><b>NOTE:</b> used as image ALT text and for video/audio accessibility</span></p>
         </div>
         <div class="cg_view_option_checkbox">
               <input type="checkbox" name="upload[$id][tagInGallery]" $checkedShowTag>
+        </div>
+    </div>
+</div>
+HEREDOC;
+
+echo <<<HEREDOC
+<div class='cg_view_options_row'>
+  <div  class='cg_view_option cg_view_option_100_percent cg_border_bottom_none cg_info_show_full_window_blog_view'>
+        <div class='cg_view_option_title cg_view_option_title_full_width '>
+            <p>Show as main title in full window blog view<br>(only 1 allowed)</p>
+        </div>
+        <div class="cg_view_option_checkbox">
+              <input type="checkbox" name="upload[$id][infoInFullWindowBlogView]" $checkedShowFullWindowBlogView>
         </div>
     </div>
 </div>
@@ -312,4 +328,3 @@ HEREDOC;
 
 echo "</div>";
 echo "</div>";
-

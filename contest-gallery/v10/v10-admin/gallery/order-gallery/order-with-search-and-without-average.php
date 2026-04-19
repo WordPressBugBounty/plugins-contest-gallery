@@ -208,6 +208,25 @@ $countSearchSQL = $wpdb->get_var($wpdb->prepare($countSearchSQLQuery,[
 
 
 // partial connect with max two tables at same time, otherwise load to long!!!
+$orderByQueryPart = "group by id order by %s $direction LIMIT %d, %d";
+$selectSQLqueryPreparedArguments = [
+	$GalleryID,$GalleryID,'%'.$search.'%','%'.$search.'%',$searchIntval,
+	$GalleryID,'%'.$search.'%',
+	$GalleryID,$GalleryID,$GalleryID,'%'.$search.'%',
+	$GalleryID,'%'.$search.'%','%'.$search.'%','%'.$search.'%',
+	$GalleryID,'%'.$search.'%','%'.$search.'%','%'.$search.'%','%'.$search.'%',
+	$GalleryID,$searchIntval
+];
+
+if($order === 'custom'){
+	$orderByQueryPart = "group by id order by PositionNumber ASC, id DESC LIMIT %d, %d";
+}else{
+	$selectSQLqueryPreparedArguments[] = $orderBy;
+}
+
+$selectSQLqueryPreparedArguments[] = $start;
+$selectSQLqueryPreparedArguments[] = $step;
+
 $selectSQLquery = "SELECT * FROM (
                                                 $checkCookieIdOrIP
                                                 SELECT 
@@ -274,18 +293,10 @@ $selectSQLquery = "SELECT * FROM (
                                                   $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
                                                   $tablename.id = %d
                                                   ) A
-                                                 group by id order by %s $direction LIMIT %d, %d
+                                                 $orderByQueryPart
                                             ";
 
-$selectSQL = $wpdb->get_results($wpdb->prepare($selectSQLquery,[
-	$GalleryID,$GalleryID,'%'.$search.'%','%'.$search.'%',$searchIntval,
-	$GalleryID,'%'.$search.'%',
-	$GalleryID,$GalleryID,$GalleryID,'%'.$search.'%',
-	$GalleryID,'%'.$search.'%','%'.$search.'%','%'.$search.'%',
-	$GalleryID,'%'.$search.'%','%'.$search.'%','%'.$search.'%','%'.$search.'%',
-	$GalleryID,$searchIntval,
-	$orderBy,$start,$step
-]));
+$selectSQL = $wpdb->get_results($wpdb->prepare($selectSQLquery,$selectSQLqueryPreparedArguments));
 
 
 //echo "<br>";

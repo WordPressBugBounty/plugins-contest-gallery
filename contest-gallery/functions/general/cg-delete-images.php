@@ -6,7 +6,8 @@ if(!function_exists('cg_delete_images')){
 
         global $wpdb;
 
-// Set table names
+        // Resolve all related tables once so the delete flow can remove the
+        // gallery row and every dependent record in a predictable order.
 	    $tablename = $wpdb->prefix . "contest_gal1ery";
 	    $tablename_posts = $wpdb->prefix . "posts";
 	    $tablenameEntries = $wpdb->prefix . "contest_gal1ery_entries";
@@ -14,8 +15,6 @@ if(!function_exists('cg_delete_images')){
         $tablenameIp = $wpdb->prefix . "contest_gal1ery_ip";
         $tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
         $tablename_wp_pdf_previews = $wpdb->base_prefix . "contest_gal1ery_pdf_previews";
-
-// Set table names --- END
 
         /*	$imageUnlinkOrigin = @$_POST['imageUnlinkOrigin'];
             $imageUnlink300 = @$_POST['imageUnlink300'];
@@ -25,12 +24,14 @@ if(!function_exists('cg_delete_images')){
             $imageUnlink1920 = @$_POST['imageUnlink1920'];
             $imageFbHTMLUnlink = @$_POST['imageFbHTMLUnlink'];*/
 
-// Pics vom Server l�schen
-
-// Wordpress Uploadordner bestimmen. Array wird zur�ck gegeben.
+        // Resolve the gallery upload directory once because this helper removes
+        // both physical files and the generated JSON/cache artefacts around them.
         $upload_dir = wp_upload_dir();
 	    $imageArray = [];
+        $shouldDeleteOriginalImageSource = ((!empty($_POST['cgDeleteOriginalImageSourceAlso']) || $DeleteFromStorageIfDeletedInFrontend) && !$isConsecutiveDeletionOfDeletedWpUploads);
 
+        // Frontend polling watches these marker files to detect added or removed
+        // entries without rebuilding the complete gallery immediately.
         if(!is_dir($upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/frontend-added-or-removed-images')){
             mkdir($upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/frontend-added-or-removed-images',0755,true);
         }
@@ -47,36 +48,44 @@ if(!function_exists('cg_delete_images')){
             echo '<input type="hidden" disabled name="imageUnlink1920[]" value="/contest-gallery/gallery-id-'.$GalleryID.'/'.$value->Timestamp.'_'.$value->NamePic.'-1920width.'.$value->ImgType.'" class="image-delete">';
             echo '<input type="hidden" disabled name="imageFbHTMLUnlink[]" value="/contest-gallery/gallery-id-'.$GalleryID.'/'.$value->Timestamp.'_'.$value->NamePic.'.html" class="image-delete">';*/
 
-            // simply create empty file for later check
+            // Touch the per-entry marker file so lightweight frontend refresh
+            // checks can see that this ID changed.
             $jsonFile = $upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/frontend-added-or-removed-images/'.$value.'.txt';
             $fp = fopen($jsonFile, 'w');
             fwrite($fp, '');
             fclose($fp);
 
-            $imageData = $wpdb->get_row( "SELECT * FROM $tablename WHERE id = '$value' ");
+            // Reload the row so file paths, attachment IDs and generated page IDs
+            // come from the current persisted entry state.
+            $imageData = $wpdb->get_row($wpdb->prepare(
+                "SELECT * FROM $tablename WHERE id = %d",
+                $value
+            ));
 
+            // Remove the original file and all generated size variants from the
+            // gallery-specific uploads folder.
             if(file_exists($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic.".".$imageData->ImgType."")){
-                @unlink($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic.".".$imageData->ImgType."");
+                unlink($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic.".".$imageData->ImgType."");
             }
 
             if(file_exists($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic."-300width.".$imageData->ImgType."")){
-                @unlink($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic."-300width.".$imageData->ImgType."");
+                unlink($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic."-300width.".$imageData->ImgType."");
             }
 
             if(file_exists($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic."-624width.".$imageData->ImgType."")){
-                @unlink($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic."-624width.".$imageData->ImgType."");
+                unlink($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic."-624width.".$imageData->ImgType."");
             }
 
             if(file_exists($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic."-1024width.".$imageData->ImgType."")){
-                @unlink($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic."-1024width.".$imageData->ImgType."");
+                unlink($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic."-1024width.".$imageData->ImgType."");
             }
 
             if(file_exists($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic."-1600width.".$imageData->ImgType."")){
-                @unlink($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic."-1600width.".$imageData->ImgType."");
+                unlink($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic."-1600width.".$imageData->ImgType."");
             }
 
             if(file_exists($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic."-1920width.".$imageData->ImgType."")){
-                @unlink($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic."-1920width.".$imageData->ImgType."");
+                unlink($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic."-1920width.".$imageData->ImgType."");
             }
 
             /*			if(file_exists($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic.".html")){
@@ -84,20 +93,28 @@ if(!function_exists('cg_delete_images')){
                         }*/
 
             if(file_exists($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic."413.html")){
-                @unlink($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic."413.html");
+                unlink($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/".$imageData->Timestamp."_".$imageData->NamePic."413.html");
             }
 
+            // Remove the per-entry JSON payloads and any comment folder that was
+            // generated for frontend rendering.
             if(file_exists($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/image-data/image-data-".$value.".json")){
                 unlink($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/image-data/image-data-".$value.".json");
             }
+
+            if(file_exists($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/image-stats/image-stats-".$value.".json")){
+                unlink($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/image-stats/image-stats-".$value.".json");
+            }
+
             if(file_exists($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/image-comments/image-comments-".$value.".json")){
                 unlink($upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/image-comments/image-comments-".$value.".json");
             }
 
-            // remove possible comment files and comment folder
+            // Remove the per-entry comment folder because older flows can store
+            // additional files there besides the flat JSON aggregate.
             $commentsFolder = $upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/image-comments/ids/".$value;
             if(is_dir($commentsFolder)){
-                $commentsFiles = glob($commentsFolder.'/*');//  get all files for sure, als might not json files be there
+                $commentsFiles = glob($commentsFolder.'/*');// get all files because legacy cleanup is not limited to JSON files
                 if(count($commentsFiles)){
                     foreach ($commentsFiles as $commentsFile) {
                         unlink($commentsFile);
@@ -114,6 +131,7 @@ if(!function_exists('cg_delete_images')){
                 unset($imageArray[$value]);
             }
 
+            // Remove generated WordPress pages that were bound to this image.
             if(!empty($imageData->WpPage)){
                 wp_delete_post($imageData->WpPage,true);
             }
@@ -148,6 +166,8 @@ if(!function_exists('cg_delete_images')){
             $deleteParameters = '';
             $deleteParameters .= $value;
 
+            // Delete the gallery row and every direct child-table record that
+            // uses the picture ID as its foreign key.
             $wpdb->query( $wpdb->prepare(
                 "
                     $deleteQuery
@@ -183,7 +203,9 @@ if(!function_exists('cg_delete_images')){
                 $deleteParameters
             ));
 
-            if(((!empty($_POST['cgDeleteOriginalImageSourceAlso']) OR $DeleteFromStorageIfDeletedInFrontend) AND !$isConsecutiveDeletionOfDeletedWpUploads) && !empty($imageData->WpUpload)){
+            // Optionally delete the original WordPress attachment as well. The
+            // collected WpUpload IDs drive the later cross-gallery cleanup pass.
+            if($shouldDeleteOriginalImageSource && !empty($imageData->WpUpload)){
 				if($imageData->ImgType==='ytb' || $imageData->ImgType==='twt' || $imageData->ImgType==='inst' || $imageData->ImgType==='tkt'){
 					$wpdb->query($wpdb->prepare(
 						"
@@ -218,9 +240,15 @@ if(!function_exists('cg_delete_images')){
 
             }
 
+            // Mark the entry as removed in all recent-ID trackers so segmented
+            // frontend sync can invalidate stale cached data.
+            cg1l_push_recent_id_file_all_types($GalleryID,$value,true);
+
         }
 
-	    if((!empty($MultipleFilesToDelete)) && ((!empty($_POST['cgDeleteOriginalImageSourceAlso']) OR $DeleteFromStorageIfDeletedInFrontend) AND !$isConsecutiveDeletionOfDeletedWpUploads)){
+        // Multi-file entries can point to additional WordPress attachments that
+        // are not deleted by the primary row cleanup above.
+	    if((!empty($MultipleFilesToDelete)) && $shouldDeleteOriginalImageSource){
             foreach ($MultipleFilesToDelete as $id => $fileDataForPost){
                 foreach ($fileDataForPost as $order => $fileData){
                     if(in_array($fileData['WpUpload'],$deletedWpUploads)===false){
@@ -231,14 +259,24 @@ if(!function_exists('cg_delete_images')){
             }
         }
 
-        // korrekturskript wegen update 10.9.5.0.0 wo galery id nicht mitgechickt wurde und deswegen images nicht gelöscht worden sind
+        // Legacy compatibility note: this area stayed in place after an older
+        // fix for missing gallery IDs during delete requests.
 
-        // korrekturskript ENDE
-
-	    // images.json was used in older versions before 22.0.0, irrelevant now, but still will checked in many paces, has to be removed in the fture
-        if(empty($imageArray) || !is_array($imageArray)){// then data was corrected without having activated images
+	    // Legacy note: older runtime paths still watch these JSON side effects even
+        // though the former images.json bundle is obsolete since 22.0.0.
+        if(empty($imageArray) || !is_array($imageArray)){// data might already be corrected without active images in memory
             $imageArray = [];
         }
+
+        static $cg1l_last_updated_done = false;
+
+        // Touch the gallery-wide update markers once per request so frontend
+        // timestamp polling notices the delete without excessive file churn.
+        if (!$cg1l_last_updated_done || time() > $cg1l_last_updated_done) {
+            $cg1l_last_updated_done = time();
+            cg1l_create_last_updated_time_file_all($GalleryID);
+        }
+
 
         return $deletedWpUploads;
 

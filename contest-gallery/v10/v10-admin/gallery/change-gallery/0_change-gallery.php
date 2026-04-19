@@ -458,6 +458,8 @@ if(!empty($_POST['cg_multiple_files_for_post'])){
 	$realIdWhereSourceChanged = 0;
 	$newWpUploadWhenSourceChanged = 0;
 	$newPostTitleWhenSourceChanged = '';
+	$mainDataRecentIdsToUpdate = [];
+	$sourceChangedEntriesForExifRefresh = [];
 	$queryHasRealIdDeleted = 'INSERT INTO '.$tablename.' (id, NamePic, ImgType, WpUpload, Width, Height, rThumb, Exif, PdfPreview) VALUES ';
 	$queryArgsArray = [];
 	$queryAddArgsArray = [];
@@ -625,6 +627,10 @@ if(!empty($_POST['cg_multiple_files_for_post'])){
                 // for replace always cg_multiple_files_for_post will be sent with 1 item
 				$newPostTitleWhenSourceChanged = $fileDataForPostArray[1]['NamePic'];
 				$newWpUploadWhenSourceChanged = $fileDataForPostArray[1]['WpUpload'];
+				$sourceChangedEntriesForExifRefresh[$id] = [
+					'id' => $id,
+					'WpUpload' => absint($fileDataForPostArray[1]['WpUpload'])
+				];
 				// var_dump('$fileDataForPostArray');
 
 				// echo "<pre>";
@@ -640,7 +646,8 @@ if(!empty($_POST['cg_multiple_files_for_post'])){
 				$queryArgsArray1[] = absint($fileDataForPostArray[1]['Width']);
 				$queryArgsArray1[] = absint($fileDataForPostArray[1]['Height']);
 				$queryArgsArray1[] = absint($fileDataForPostArray[1]['rThumb']);
-				$queryArgsArray1[] = absint($fileDataForPostArray[1]['Exif']);
+				// Exif must be recreated server-side from the new source file after the source switch.
+				$queryArgsArray1[] = 0;
                 if(!empty($PdfPreviewIfWpUploadReplace)){
                     $queryArgsArray1[] = $PdfPreviewIfWpUploadReplace;
                 }elseif(!empty($fileDataForPostArray[1]['PdfPreview'])){
@@ -713,6 +720,13 @@ if(!empty($_POST['cg_multiple_files_for_post'])){
 		$queryHasRealIdDeleted = substr($queryHasRealIdDeleted, 0, -1);
 		$queryHasRealIdDeleted .= " ON DUPLICATE KEY UPDATE NamePic = VALUES(NamePic), ImgType = VALUES(ImgType), WpUpload = VALUES(WpUpload), Width = VALUES(Width), Height = VALUES(Height),  rThumb = VALUES(rThumb), Exif = VALUES(Exif), PdfPreview = VALUES(PdfPreview)";
 		$wpdb->query($wpdb->prepare($queryHasRealIdDeleted,$queryArgsArray1));
+		foreach($sourceChangedEntriesForExifRefresh as $sourceChangedEntry){
+			if(empty($sourceChangedEntry['WpUpload'])){
+				continue;
+			}
+			cg_create_exif_data_and_add_to_database($sourceChangedEntry['id'],$sourceChangedEntry['WpUpload']);
+			$mainDataRecentIdsToUpdate[$sourceChangedEntry['id']] = $sourceChangedEntry['id'];
+		}
 		if(intval($galeryrow->Version)>=22){
 			$IsForWpPageTitleInputId = $wpdb->get_var("SELECT id FROM $tablename_form_input WHERE GalleryID = '$GalleryID' AND IsForWpPageTitle = '1'");
 			$hasWpPageTitleInputIfSourceChanged = false;
@@ -916,12 +930,19 @@ include('2_deactivate.php');
 // 	Bilder aktivieren
 include('4_activate.php');
 
+if(!empty($mainDataRecentIdsToUpdate)){
+	cg1l_create_last_updated_time_file($GalleryID,'image-main-data-last-update');
+	foreach($mainDataRecentIdsToUpdate as $mainDataRecentId){
+		cg1l_push_recent_id_file($GalleryID,$mainDataRecentId,'image-main-data-last-update');
+	}
+}
+
 // !IMPORTANT: have to be done before 5_create-no-script-html
 //include('5_set-image-array.php');
 
 //do_action('cg_json_upload_form_info_data_files',$GalleryID,null);
 
-include('5_create-no-script-html.php');
+//include('5_create-no-script-html.php');
 
 // Reset informierte Felder
 

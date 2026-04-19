@@ -228,7 +228,7 @@ if(!function_exists('cg_ecommerce_price_to_show')){
 
 		$priceStringToShow = $currencyChar.$Price;
 		if($CurrencyPosition=='right'){
-			$priceStringToShow = $Price.$currencyChar;
+			$priceStringToShow = $Price.html_entity_decode('&nbsp;', ENT_QUOTES, 'UTF-8').$currencyChar;
 		}
 
 		return $priceStringToShow;

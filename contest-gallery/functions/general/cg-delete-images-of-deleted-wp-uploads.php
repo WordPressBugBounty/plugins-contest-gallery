@@ -7,10 +7,9 @@ if(!function_exists('cg_delete_images_of_deleted_wp_uploads')){
 
         $tablename = $wpdb->prefix . "contest_gal1ery";
 
-        // first delete multiple files and there if exists!!!!
-        // if is realIdSource then will be not completly deleted!
-        // replace query will be done additionally
-        // since v18.0.0 has to be done
+        // After original attachments are deleted from WordPress storage, repair
+        // every gallery row whose serialized MultipleFiles payload still points
+        // to one of those WpUpload IDs.
         $collect = "";
 
         /*        var_dump('$deletedWpUploads 1');
@@ -19,7 +18,8 @@ if(!function_exists('cg_delete_images_of_deleted_wp_uploads')){
                 print_r($deletedWpUploads);
                 echo "</pre>";*/
 
-        // realIdSource can not be anymore, because must be deleted before
+        // Build one SQL filter that finds any row whose MultipleFiles payload
+        // still references a deleted WpUpload attachment.
         foreach ($deletedWpUploads as $value){
             if(empty($collect)){
                 $collect .= "$tablename.MultipleFiles LIKE '%WpUpload\";i:$value;%'";
@@ -39,6 +39,9 @@ if(!function_exists('cg_delete_images_of_deleted_wp_uploads')){
 
         if(count($filesWithDeletedWpUploadsInMultipleFiles)){
 
+            // Update the serialized MultipleFiles payload in place and, if the
+            // removed upload used to be the real source, promote the next file
+            // as the canonical row representation.
             $queryInsertNewMultipleFiles = 'INSERT INTO  '.$tablename.' (id, MultipleFiles) VALUES ';
             $queryHasRealIdDeleted = 'INSERT INTO '.$tablename.' (id, NamePic, ImgType, WpUpload, Width, Height, rThumb, Exif) VALUES ';
             $queryHasRealIdDeletedCenterStringPart = '';
@@ -51,8 +54,10 @@ if(!function_exists('cg_delete_images_of_deleted_wp_uploads')){
                 $MultipleFilesArray = unserialize($rowObject->MultipleFiles);
                 $newOrder = 1;
 
-                if(!empty($MultipleFilesArray)){//check for sure if really exists and unserialize went right, because might happen that "" was in database from earlier versions
-                    foreach ($MultipleFilesArray as $order => $array){// als with realIdSource must be already deleted before
+                // Filter the removed uploads out of the serialized attachment set
+                // while preserving the original order of the remaining files.
+                if(!empty($MultipleFilesArray)){// check for older rows where the column might still contain ""
+                    foreach ($MultipleFilesArray as $order => $array){// rows with a realIdSource should already have been deleted earlier
                         if(!empty($array['isRealIdSource']) && in_array($array['WpUpload'],$deletedWpUploads)){
                             $hasRealIdDeleted = true;
                         }
@@ -70,6 +75,8 @@ if(!function_exists('cg_delete_images_of_deleted_wp_uploads')){
 
                 if(!empty($MultipleFilesNewArray)){
                     if($hasRealIdDeleted){
+                        // The main file was removed, so promote the first
+                        // surviving attachment into the row's primary fields.
                         $rowObject->NamePic = $MultipleFilesNewArray[1]['NamePic'];
                         $rowObject->ImgType = $MultipleFilesNewArray[1]['ImgType'];
                         $rowObject->WpUpload = $MultipleFilesNewArray[1]['WpUpload'];
@@ -96,6 +103,8 @@ if(!function_exists('cg_delete_images_of_deleted_wp_uploads')){
                         $queryInsertNewMultipleFiles .= "('$rowObject->id', ''),";
                     }
                 }else{// then must be completely deleted, realIdSource and all additional files
+                    // Keep the row in the follow-up cleanup set when no file
+                    // references remain after the MultipleFiles repair pass.
                     $deletedWpUploads[] = $rowObject->id;
                 }
 
@@ -126,10 +135,13 @@ if(!function_exists('cg_delete_images_of_deleted_wp_uploads')){
                 print_r($deletedWpUploads);
                 echo "</pre>";*/
 
-        // then delete rest wp uploads
+        // Run the follow-up lookup for rows whose primary WpUpload reference is
+        // still one of the deleted attachment IDs.
 
         $collect = '';
 
+        // Remove any gallery entries in any gallery that still use one of the
+        // deleted WordPress attachments as their primary WpUpload reference.
         foreach ($deletedWpUploads as $value){
             if(empty($collect)){
                 $collect .= 'WpUpload='.$value;
@@ -138,8 +150,9 @@ if(!function_exists('cg_delete_images_of_deleted_wp_uploads')){
             }
         }
 
-        // in case $_POST['cgDeleteOriginalImageSourceAlso'] is sent or $DeleteFromStorageIfDeletedInFrontend and frontend delete will be done, deleted wpuploads be returned,
-        // so all entries in all galleries will be deleted from the image, after wp uploads were deleted from space
+        // Frontend deletes can return deleted WpUpload IDs when the original
+        // source file was removed from storage, so this pass removes matching
+        // gallery rows across all galleries after attachment deletion.
         $deletedImages = $wpdb->get_results( "SELECT id, GalleryID FROM $tablename WHERE ($collect) ORDER BY GalleryID DESC, id DESC");
 
         $deletedImagesSortedByGalleryIdArrayWithObjects = array();
@@ -155,7 +168,7 @@ if(!function_exists('cg_delete_images_of_deleted_wp_uploads')){
                 if(empty($deletedImagesSortedByGalleryIdArrayWithObjects[$rowObject->GalleryID])){
                     $deletedImagesSortedByGalleryIdArrayWithObjects[$rowObject->GalleryID] = array();
                 }
-                $deletedImagesSortedByGalleryIdArrayWithObjects[$rowObject->GalleryID][$rowObject->id] = $rowObject->id;// $rowObject->id as key because same system as always
+                $deletedImagesSortedByGalleryIdArrayWithObjects[$rowObject->GalleryID][$rowObject->id] = $rowObject->id;// keep the image ID as the array key because cg_delete_images expects that shape
             }
 
             /*            var_dump('$deletedImagesSortedByGalleryIdArrayWithObjects');
@@ -164,12 +177,16 @@ if(!function_exists('cg_delete_images_of_deleted_wp_uploads')){
                         echo "<pre>";*/
 
             foreach ($deletedImagesSortedByGalleryIdArrayWithObjects as $GalleryID => $deleteValuesArray){
+                // Reuse the standard delete helper, but flag the call as a
+                // consecutive cleanup so attachments are not deleted twice.
                 cg_delete_images($GalleryID,$deleteValuesArray,array(),false,true);
             }
 
         }
 
         if(count($correctedRowObjects)){
+            // Rebuild the JSON payloads for rows that stayed alive but had their
+            // primary file metadata promoted to another remaining attachment.
             /*            var_dump('$correctedRowObjects');
                         echo "<pre>";
                         print_r($correctedRowObjects);
@@ -178,7 +195,7 @@ if(!function_exists('cg_delete_images_of_deleted_wp_uploads')){
             $correctedRowObjectsSortedByGalleryID = [];
             $ExifDataByRealIds = [];
             foreach ($correctedRowObjects as $rowObject){
-                if(empty($rowObject->Active)){continue;}// get only active to set array in json files
+                if(empty($rowObject->Active)){continue;}// only active rows need regenerated frontend JSON data
                 $ExifDataByRealIds[$rowObject->id] = $rowObject->Exif;
                 if(empty($correctedRowObjectsSortedByGalleryID[$rowObject->GalleryID])){
                     $correctedRowObjectsSortedByGalleryID[$rowObject->GalleryID] = [];

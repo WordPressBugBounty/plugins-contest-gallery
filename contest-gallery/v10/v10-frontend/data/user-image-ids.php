@@ -32,13 +32,13 @@ if(empty($wpUserImageIds)){
 ?>
 <pre>
     <script data-cg-processing="true">
-
+(function () {
         var index = <?php echo json_encode($galeryIDuserForJs) ?>;
         cgJsData[index].onlyLoggedInUserImages = true;
         cgJsData[index].wpUserImageIds = [];
-
+})();
     </script>
-    </pre>
+</pre>
 <?php
 
 if(!empty($wpUserImageIds)){

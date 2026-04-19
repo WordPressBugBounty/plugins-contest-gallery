@@ -12,6 +12,7 @@ include('functions/general/option/cg-update-blog-option.php');
 include('functions/general/option/cg-get-blog-option.php');
 include('functions/general/option/cg-delete-blog-option.php');
 include('functions/general/cg-remove-folder-recursively.php');
+include('functions/general/cg-general-functions.php');
 include('functions/ecommerce/backend/gallery/cg-move-file-from-ecommerce-sell-folder.php');
 
 if(include('uninstall-check.php')){return;}
@@ -19,17 +20,24 @@ if(include('uninstall-check.php')){return;}
 if(!function_exists('contest_gal1ery_rm_uploads_content')){
     function contest_gal1ery_rm_uploads_content($dir){
 
+        if(!is_dir($dir)){
+            return;
+        }
+
         // .htaccess requires extra glob!
         $dirContentLikeHtaccess = glob($dir.'/.*');
 
+        if(!empty($dirContentLikeHtaccess)){
         foreach($dirContentLikeHtaccess as $item){
             if(is_file($item)){
                 unlink($item);
             }
         }
+        }
 
         $dirContent = glob($dir.'/*');
 
+        if(!empty($dirContent)){
         foreach($dirContent as $item){
             // 1. Ebene
             if(is_dir($item)){
@@ -43,6 +51,8 @@ if(!function_exists('contest_gal1ery_rm_uploads_content')){
 
         }
 
+        }
+
         // is_dir check important here!
         if(is_dir($dir)){
             rmdir($dir);
@@ -51,85 +61,106 @@ if(!function_exists('contest_gal1ery_rm_uploads_content')){
     }
 }
 
-if(!function_exists('cgRemoveFiles')){
-    // Achtung! Löschen eines Plugins wird bei Multisite immer der Hauptinstanz 'network/admin' ausgeführt.
-    function cgRemoveFiles($r){
+if(!function_exists('cgUninstallTableExists')){
+    function cgUninstallTableExists($tablename){
 
-        // Multisite Pfad Beispiel:
-        // /var/www.../.../htdocs/wp-content/uploads/sites/5/contest-gallery/
+        global $wpdb;
+
+        return ($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s",$wpdb->esc_like($tablename))) == $tablename);
+
+    }
+}
+
+if(!function_exists('cgRestoreEcommerceDownloadFilesBeforeUninstall')){
+    function cgRestoreEcommerceDownloadFilesBeforeUninstall(){
+
+        global $wpdb;
+
+        $tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
+
+        if(!cgUninstallTableExists($tablename_ecommerce_entries)){
+            return;
+        }
+
+        $EcommerceDownloadEntries = $wpdb->get_results("SELECT * FROM $tablename_ecommerce_entries WHERE IsDownload='1' ORDER BY GalleryID DESC");
+
+        foreach($EcommerceDownloadEntries as $EcommerceEntry){
+            $isAllWpUploadsSuccessfulMoved = cg_move_file_from_ecommerce_sale_folder($EcommerceEntry->pid, $EcommerceEntry->GalleryID,$EcommerceEntry->id,false,true);
+        }
+
+    }
+}
+
+if(!function_exists('cgRemoveBlogFiles')){
+    // Achtung! Löschen eines Plugins wird bei Multisite immer der Hauptinstanz 'network/admin' ausgeführt.
+    function cgRemoveBlogFiles(){
 
         $upload_dir = wp_upload_dir();
-
-        // '' entspricht 1
-        if($r==1){
             $dir = $upload_dir['basedir']."/contest-gallery";
-        }
-        else{
-            $dir = $upload_dir['basedir']."/sites/$r/contest-gallery";
-        }
 
         contest_gal1ery_rm_uploads_content($dir);
 
-        ###PRO###
-        $dir = plugin_dir_path( __FILE__ );
-        if(is_dir($dir.'../contest-gallery-google-sign-in-library')){
-            cg_remove_folder_recursively($dir.'../contest-gallery-google-sign-in-library');
-        }
-        ###PRO---END###
+    }
+}
+
+if(!function_exists('cgRemoveGlobalPluginFiles')){
+    function cgRemoveGlobalPluginFiles(){
+
+		/**###SOME-PRO-CODE-HERE-IN-THE-MOMENT###**/
 
     }
 }
 
 
 if(!function_exists('cgDropTables')){
-    function cgDropTables($i){
+    function cgDropTables(){
 
         global $wpdb;
 
-        $tablename = $wpdb->prefix . "$i"."contest_gal1ery";
-        $tablename_ip = $wpdb->prefix . "$i"."contest_gal1ery_ip";
-        $tablename_comments = $wpdb->prefix . "$i"."contest_gal1ery_comments";
-        $tablename_options = $wpdb->prefix . "$i"."contest_gal1ery_options";
-        $tablename_options_input = $wpdb->prefix . "$i"."contest_gal1ery_options_input";
-        $tablename_email = $wpdb->prefix . "$i"."contest_gal1ery_mail";
-        $tablename_entries = $wpdb->prefix . "$i"."contest_gal1ery_entries";
-        $tablename_form_input = $wpdb->prefix . "$i"."contest_gal1ery_f_input";
-        $tablename_form_output = $wpdb->prefix . "$i"."contest_gal1ery_f_output";
-        $tablename_options_visual = $wpdb->prefix . "$i"."contest_gal1ery_options_visual";
-        $tablename_email_admin = $wpdb->prefix . "$i"."contest_gal1ery_mail_admin";
-        $wpOptions = $wpdb->prefix . "$i"."options";
-        $tablename_contest_gal1ery_create_user_entries = $wpdb->prefix . "$i"."contest_gal1ery_create_user_entries";
-        $tablename_contest_gal1ery_create_user_form = $wpdb->prefix . "$i"."contest_gal1ery_create_user_form";
-        $tablename_contest_gal1ery_pro_options = $wpdb->prefix . "$i"."contest_gal1ery_pro_options";
-        $tablename_mail_gallery = $wpdb->prefix . "$i"."contest_gal1ery_mail_gallery";
-        $tablename_mail_confirmation = $wpdb->prefix . "$i"."contest_gal1ery_mail_confirmation";
-        $tablename_mails_collected = $wpdb->prefix . "$i"."contest_gal1ery_mails_collected";
-        $tablename_categories = $wpdb->prefix . "$i"."contest_gal1ery_categories";
-        $tablename_comments_notification_options = $wpdb->base_prefix . "$i"."contest_gal1ery_comments_notification_options";
-        $tablename_registry_and_login_options = $wpdb->base_prefix . "$i"."contest_gal1ery_registry_and_login_options";
-        $tablename_google_options = $wpdb->base_prefix . "$i"."contest_gal1ery_google_options";
-        $tablename_google_users = $wpdb->base_prefix . "$i"."contest_gal1ery_google_users";
-        $tablename_wp_pages = $wpdb->base_prefix . "$i"."contest_gal1ery_wp_pages";
-        $posts = $wpdb->base_prefix . "$i"."posts";
-        $tablename_mail_user_comment = $wpdb->base_prefix . "$i"."contest_gal1ery_mail_user_comment";
-        $tablename_mail_user_upload = $wpdb->base_prefix . "$i"."contest_gal1ery_mail_user_upload";
-        $tablename_mail_user_vote = $wpdb->base_prefix . "$i"."contest_gal1ery_mail_user_vote";
-        $tablename_user_comment_mails = $wpdb->base_prefix . "$i"."contest_gal1ery_user_comment_mails";
-        $tablename_user_vote_mails = $wpdb->base_prefix . "$i"."contest_gal1ery_user_vote_mails";
+        $tablename = $wpdb->prefix . "contest_gal1ery";
+        $tablename_ip = $wpdb->prefix . "contest_gal1ery_ip";
+        $tablename_comments = $wpdb->prefix . "contest_gal1ery_comments";
+        $tablename_options = $wpdb->prefix . "contest_gal1ery_options";
+        $tablename_options_input = $wpdb->prefix . "contest_gal1ery_options_input";
+        $tablename_email = $wpdb->prefix . "contest_gal1ery_mail";
+        $tablename_entries = $wpdb->prefix . "contest_gal1ery_entries";
+        $tablename_form_input = $wpdb->prefix . "contest_gal1ery_f_input";
+        $tablename_form_output = $wpdb->prefix . "contest_gal1ery_f_output";
+        $tablename_options_visual = $wpdb->prefix . "contest_gal1ery_options_visual";
+        $tablename_email_admin = $wpdb->prefix . "contest_gal1ery_mail_admin";
+        $wpOptions = $wpdb->options;
+        $tablename_contest_gal1ery_create_user_entries = $wpdb->prefix . "contest_gal1ery_create_user_entries";
+        $tablename_contest_gal1ery_create_user_form = $wpdb->prefix . "contest_gal1ery_create_user_form";
+        $tablename_contest_gal1ery_pro_options = $wpdb->prefix . "contest_gal1ery_pro_options";
+        $tablename_mail_gallery = $wpdb->prefix . "contest_gal1ery_mail_gallery";
+        $tablename_mail_confirmation = $wpdb->prefix . "contest_gal1ery_mail_confirmation";
+        $tablename_mails_collected = $wpdb->prefix . "contest_gal1ery_mails_collected";
+        $tablename_categories = $wpdb->prefix . "contest_gal1ery_categories";
+        $tablename_comments_notification_options = $wpdb->prefix . "contest_gal1ery_comments_notification_options";
+        $tablename_registry_and_login_options = $wpdb->prefix . "contest_gal1ery_registry_and_login_options";
+        $tablename_google_options = $wpdb->prefix . "contest_gal1ery_google_options";
+        $tablename_google_users = $wpdb->prefix . "contest_gal1ery_google_users";
+        $tablename_wp_pages = $wpdb->prefix . "contest_gal1ery_wp_pages";
+        $posts = $wpdb->posts;
+        $tablename_mail_user_comment = $wpdb->prefix . "contest_gal1ery_mail_user_comment";
+        $tablename_mail_user_upload = $wpdb->prefix . "contest_gal1ery_mail_user_upload";
+        $tablename_mail_user_vote = $wpdb->prefix . "contest_gal1ery_mail_user_vote";
+        $tablename_user_comment_mails = $wpdb->prefix . "contest_gal1ery_user_comment_mails";
+        $tablename_user_vote_mails = $wpdb->prefix . "contest_gal1ery_user_vote_mails";
 
-	    $tablename_ecommerce_entries = $wpdb->base_prefix . "$i"."contest_gal1ery_ecommerce_entries";
-	    $tablename_ecommerce_options = $wpdb->base_prefix . "$i"."contest_gal1ery_ecommerce_options";
-	    $tablename_ecommerce_invoice_options = $wpdb->base_prefix . "$i"."contest_gal1ery_ecommerce_invoice_options";
-	    $tablename_ecommerce_orders = $wpdb->base_prefix . "$i"."contest_gal1ery_ecommerce_orders";
-	    $tablename_ecommerce_orders_items = $wpdb->base_prefix . "$i"."contest_gal1ery_ecommerce_orders_items";
+	    $tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
+	    $tablename_ecommerce_options = $wpdb->prefix . "contest_gal1ery_ecommerce_options";
+	    $tablename_ecommerce_invoice_options = $wpdb->prefix . "contest_gal1ery_ecommerce_invoice_options";
+	    $tablename_ecommerce_orders = $wpdb->prefix . "contest_gal1ery_ecommerce_orders";
+	    $tablename_ecommerce_orders_items = $wpdb->prefix . "contest_gal1ery_ecommerce_orders_items";
 
-	    $tablename_contest_gal1ery_pdf_previews = $wpdb->base_prefix . "$i"."contest_gal1ery_pdf_previews";
+	    $tablename_contest_gal1ery_pdf_previews = $wpdb->prefix . "contest_gal1ery_pdf_previews";
 
-	    $tablename_contest_gal1ery_ai_prompts = $wpdb->base_prefix . "$i"."contest_gal1ery_ai_prompts";
+	    $tablename_contest_gal1ery_ai_prompts = $wpdb->prefix . "contest_gal1ery_ai_prompts";
 
-	    $tablename_contest_gal1ery_mails = $wpdb->base_prefix . "$i"."contest_gal1ery_mails";
+	    $tablename_contest_gal1ery_mails = $wpdb->prefix . "contest_gal1ery_mails";
 
-	    $tablename_contest_gal1ery_mail_templates = $wpdb->base_prefix . "$i"."contest_gal1ery_mail_templates";
+	    $tablename_contest_gal1ery_mail_templates = $wpdb->prefix . "contest_gal1ery_mail_templates";
 
         $sqlWpOptionsDelete = 'DELETE FROM ' . $wpOptions . ' WHERE';
         $sqlWpOptionsDelete .= ' option_name = %s';
@@ -194,7 +225,7 @@ if(!function_exists('cgDropTables')){
         $wpdb->query($sql12);
         $wpdb->query($sql13);
         $wpdb->query($sql14);
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_mail_gallery'") == $tablename_mail_gallery){// extra condition for this old table otherwise an error might be shown when deleting this
+        if(cgUninstallTableExists($tablename_mail_gallery)){// extra condition for this old table otherwise an error might be shown when deleting this
             $wpdb->query($sql15);
         }
         $wpdb->query($sql16);
@@ -206,16 +237,23 @@ if(!function_exists('cgDropTables')){
         $wpdb->query($sql22);
 
         // delete all sub pages of contest-gallery parent custom types before
+        $WpPages = array();
+        if(cgUninstallTableExists($tablename_wp_pages)){
         $WpPages = $wpdb->get_results( "SELECT WpPage FROM $tablename_wp_pages" );
+        }
         $collect = '';
         $hasCgWpCustomPostTypesToDelete = false;
         foreach ($WpPages as $WpPageRow){
+            $WpPage = absint($WpPageRow->WpPage);
+            if(empty($WpPage)){
+                continue;
+            }
             if(!$collect){
                 $hasCgWpCustomPostTypesToDelete = true;
-                $collect .= '((ID='.$WpPageRow->WpPage.' AND post_mime_type="contest-gallery-plugin-page" && post_type="contest-gallery") OR (post_parent='.$WpPageRow->WpPage.' AND post_mime_type="contest-gallery-plugin-page" && post_type="contest-gallery"))';
+                $collect .= '((ID='.$WpPage.' AND post_mime_type="contest-gallery-plugin-page" && post_type="contest-gallery") OR (post_parent='.$WpPage.' AND post_mime_type="contest-gallery-plugin-page" && post_type="contest-gallery"))';
             }else{
                 $hasCgWpCustomPostTypesToDelete = true;
-                $collect .= ' OR ((ID='.$WpPageRow->WpPage.' AND post_mime_type="contest-gallery-plugin-page" && post_type="contest-gallery") OR (post_parent='.$WpPageRow->WpPage.' AND post_mime_type="contest-gallery-plugin-page" && post_type="contest-gallery"))';
+                $collect .= ' OR ((ID='.$WpPage.' AND post_mime_type="contest-gallery-plugin-page" && post_type="contest-gallery") OR (post_parent='.$WpPage.' AND post_mime_type="contest-gallery-plugin-page" && post_type="contest-gallery"))';
             }
         }
 
@@ -249,35 +287,35 @@ if(!function_exists('cgDropTables')){
         $wpdb->query($sql37);
 
 
-        cg_delete_blog_option($i,"p_cgal1ery_reg_code");
-        cg_delete_blog_option($i,"p_c1_k_g_r_9");
-        cg_delete_blog_option( $i,"p_cgal1ery_db_version");
-        cg_delete_blog_option($i,"p_cgal1ery_install_date");
-        cg_delete_blog_option( $i,"p_cgal1ery_count_users");
-        cg_delete_blog_option( $i,"p_cgal1ery_uploadscounter_reminder");
-        cg_delete_blog_option( $i,"p_cgal1ery_count_uploads");
-        cg_delete_blog_option( $i,"p_cgal1ery_uploadscounter_reminder");
-        cg_delete_blog_option( $i,"p_cgal1ery_count_users");
-        cg_delete_blog_option( $i,"p_cgal1ery_reminder_time");
-        cg_delete_blog_option( $i,"p_cgal1ery_count_users");
-        cg_delete_blog_option( $i,"p_cgal1ery_reg_code");
+        delete_option("p_cgal1ery_reg_code");
+        delete_option("p_c1_k_g_r_9");
+        delete_option("p_cgal1ery_db_version");
+        delete_option("p_cgal1ery_install_date");
+        delete_option("p_cgal1ery_count_users");
+        delete_option("p_cgal1ery_uploadscounter_reminder");
+        delete_option("p_cgal1ery_count_uploads");
+        delete_option("p_cgal1ery_uploadscounter_reminder");
+        delete_option("p_cgal1ery_count_users");
+        delete_option("p_cgal1ery_reminder_time");
+        delete_option("p_cgal1ery_count_users");
+        delete_option("p_cgal1ery_reg_code");
 
         // just to go sure all this old database entries are getting deleted
-        cg_delete_blog_option($i,"p_cgal1ery_pro_version_fail_status");
-        cg_delete_blog_option($i,"p_cgal1ery_pro_version_main_key");
-        cg_delete_blog_option($i,"p_cgal1ery_pro_version_main_key_is_old");
-        cg_delete_blog_option($i,"p_cgal1ery_pro_version_success_status");
-        cg_delete_blog_option($i,"p_cgal1ery_pro_version_key_new_version_string");
-        cg_delete_blog_option($i,"p_cgal1ery_pro_version_key_information");
-        cg_delete_blog_option($i,"p_cgal1ery_pro_version_fail_content_plugins_area");
-        cg_delete_blog_option($i,"p_cgal1ery_pro_version_fail_content_main_menu_area");
-        cg_delete_blog_option($i,"p_cgal1ery_pro_version_fail_registered_sites_limit_key");
-        cg_delete_blog_option($i,"p_cgal1ery_pro_version_fail_registered_sites_limit_reached_already_registered_websites");
-        cg_delete_blog_option($i,"p_cgal1ery_pro_version_fail_registered_sites_limit_reached");
-        cg_delete_blog_option($i,"p_cgal1ery_pro_version_fail_domain_switched");
-        cg_delete_blog_option($i,"p_cgal1ery_pro_version_key_activation_time");
-        cg_delete_blog_option($i,"p_cgal1ery_pro_version_key_expiration_time");
-        cg_delete_blog_option($i,"CgEntriesOwnSlugName");
+        delete_option("p_cgal1ery_pro_version_fail_status");
+        delete_option("p_cgal1ery_pro_version_main_key");
+        delete_option("p_cgal1ery_pro_version_main_key_is_old");
+        delete_option("p_cgal1ery_pro_version_success_status");
+        delete_option("p_cgal1ery_pro_version_key_new_version_string");
+        delete_option("p_cgal1ery_pro_version_key_information");
+        delete_option("p_cgal1ery_pro_version_fail_content_plugins_area");
+        delete_option("p_cgal1ery_pro_version_fail_content_main_menu_area");
+        delete_option("p_cgal1ery_pro_version_fail_registered_sites_limit_key");
+        delete_option("p_cgal1ery_pro_version_fail_registered_sites_limit_reached_already_registered_websites");
+        delete_option("p_cgal1ery_pro_version_fail_registered_sites_limit_reached");
+        delete_option("p_cgal1ery_pro_version_fail_domain_switched");
+        delete_option("p_cgal1ery_pro_version_key_activation_time");
+        delete_option("p_cgal1ery_pro_version_key_expiration_time");
+        delete_option("CgEntriesOwnSlugName");
 
     }
 }
@@ -291,52 +329,35 @@ if (is_multisite()) {
 
     global $wpdb;
 
-    $wpBlogs = $wpdb->prefix . "blogs";
+	    $wpBlogs = $wpdb->base_prefix . "blogs";
 
-	$getBlogIDs = $wpdb->get_results( "SELECT blog_id FROM $wpBlogs ORDER BY blog_id ASC" );
-    foreach($getBlogIDs as $key => $value){
-        foreach($value as $key1 => $value1){
-            if($value1==1){
-                $i='';
-                $r=1;
-            }
-            else{
-                $i=$value1."_";
-                $r=$value1;
+		$getBlogIDs = $wpdb->get_col( "SELECT blog_id FROM $wpBlogs ORDER BY blog_id ASC" );
+	    foreach($getBlogIDs as $blogId){
+	        $blogId = absint($blogId);
+	        if(empty($blogId)){
+	            continue;
             }
 
-	        $tablename_ecommerce_entries = $wpdb->prefix . "$i"."contest_gal1ery_ecommerce_entries";
+            switch_to_blog($blogId);
 
-	        $EcommerceDownloadEntries = $wpdb->get_results("SELECT * FROM $tablename_ecommerce_entries WHERE IsDownload='1' ORDER BY GalleryID DESC");
+            cgRestoreEcommerceDownloadFilesBeforeUninstall();
+            cgDropTables();
+            cgRemoveBlogFiles();
 
-	        foreach($EcommerceDownloadEntries as $EcommerceEntry){
-		        $isAllWpUploadsSuccessfulMoved = cg_move_file_from_ecommerce_sale_folder($EcommerceEntry->pid, $EcommerceEntry->GalleryID,$EcommerceEntry->id,false,true);
-	        }
-
-	        cgDropTables($i);
-            cgRemoveFiles($r);
-
-        }
+            restore_current_blog();
     }
+
+        cgRemoveGlobalPluginFiles();
 }
 else{
 
     if(include('uninstall-check.php')){return;}
 
-	global $wpdb;
-	$tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
-
-	$EcommerceDownloadEntries = $wpdb->get_results("SELECT * FROM $tablename_ecommerce_entries WHERE IsDownload='1' ORDER BY GalleryID DESC");
-
-	foreach($EcommerceDownloadEntries as $EcommerceEntry){
-		$isAllWpUploadsSuccessfulMoved = cg_move_file_from_ecommerce_sale_folder($EcommerceEntry->pid, $EcommerceEntry->GalleryID,$EcommerceEntry->id,false,true);
-	}
-
-    $i='';
-    $r=1;
 	// move entry files to original folder
-    cgDropTables($i);
-    cgRemoveFiles($r);
+    cgRestoreEcommerceDownloadFilesBeforeUninstall();
+    cgDropTables();
+    cgRemoveBlogFiles();
+    cgRemoveGlobalPluginFiles();
 
 }
 // Löschen von Tabellen und Files von Contest Gallery --- ENDE

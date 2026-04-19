@@ -43,7 +43,7 @@ if($CountGallery==0){
         <strong>NOTE:</strong> If your gallery contains many images (100+), then some extra configuration might be required. <br>Check out this tutorial <a href='https://www.contest-gallery.com/copy-galleries-created-before-version-7-with-images-new/' target='_blank'>How to copy galleries created before update version 7 with images</a>.</p></div>";
     }elseif($cgVersion>=7){
         echo "<div style='width:937px;font-size: 14px;text-align: center;' id='cgVersionExplanation'>";
-        echo "<p style='line-height: 18px;'>You are using gallery created before version 10<br> This gallery version will be not supported anymore. <br> Copy this gallery (you can copy everything, forms, entries and images) or create a new one to use:
+        echo "<p style='line-height: 18px;'>You are using gallery created before version 10<br> This gallery version will be not supported anymore. <br> Copy this gallery (you can copy everything, upload form, entries and images) or create a new one to use:
     <ul>
     <li style='line-height: 16px; height: 16px;font-weight: bold;margin-bottom: 0;'>new faster frontend engine</li>
     <li style='line-height: 16px; height: 16px;font-weight: bold;margin-bottom: 0;'>modern slide out view</li>

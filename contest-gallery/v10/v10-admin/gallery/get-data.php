@@ -147,7 +147,7 @@ $OpenAiKey = $wpdb->get_var("SELECT OpenAiKey FROM $tablename_pro_options WHERE 
 $CatWidgetColor = ($pro_options->CatWidget==1) ? "background-color:#ffffff" : 'background-color:#ffffff';
 $CatWidgetChecked = ($pro_options->CatWidget==1) ? "checked='checked'" : '';
 $ShowCatsUnchecked = ($pro_options->ShowCatsUnchecked==1) ? "checked='checked'" : '';
-$ShowCatsUnfolded = ($pro_options->ShowCatsUnfolded==1) ? "checked='checked'" : '';
+$ShowCatsUnfolded = "checked='checked'";
 
 //$rowType = $wpdb->get_var("SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '$tablename' AND column_name = 'Rating'");
 //var_dump($rowType);

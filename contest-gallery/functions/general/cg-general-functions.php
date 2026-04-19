@@ -19,65 +19,33 @@ die;*/
 
 		//'post_mime_type'=>'contest-gallery-plugin-page-galleries-'.$mimeType.'slug',
 
-		$pagesArray = [];
+		$pagesArray = array();
+		$galleriesPages = array(
+			'contest-gallery-plugin-page-galleries-slug' => array('key' => 'contest-galleries','type' => ''),
+			'contest-gallery-plugin-page-galleries-user-slug' => array('key' => 'contest-galleries-user','type' => 'user'),
+			'contest-gallery-plugin-page-galleries-no-voting-slug' => array('key' => 'contest-galleries-no-voting','type' => 'no-voting'),
+			'contest-gallery-plugin-page-galleries-winner-slug' => array('key' => 'contest-galleries-winner','type' => 'winner'),
+			'contest-gallery-plugin-page-galleries-ecommerce-slug' => array('key' => 'contest-galleries-ecommerce','type' => 'ecommerce')
+		);
+		$mimeTypes = array_keys($galleriesPages);
+		$mimeTypePlaceholders = implode(',', array_fill(0,count($mimeTypes),'%s'));
+		$wpPagesByMimeType = array();
+		$wpPages = $wpdb->get_results($wpdb->prepare("SELECT ID, post_mime_type FROM $tablename_posts WHERE post_mime_type IN ($mimeTypePlaceholders) ORDER BY ID ASC",$mimeTypes));// seems to be more reliable method to check as get_page_by_path
 
-		$WpID = $wpdb->get_var( "SELECT ID FROM $tablename_posts WHERE post_mime_type='contest-gallery-plugin-page-galleries-slug'" );// seems to be more reliable method to check as get_page_by_path
-		//$page = get_page_by_path( 'contest-galleries', OBJECT, 'page');
+		foreach($wpPages as $wpPage){
+			if(!isset($wpPagesByMimeType[$wpPage->post_mime_type])){
+				$wpPagesByMimeType[$wpPage->post_mime_type] = intval($wpPage->ID);
+			}
+		}
 
-        if(empty($WpID)){
-	        $array = cg_post_type_page_galleries_slug_array();
-	        $WpID = wp_insert_post($array);
-        }
-
-		$pagesArray['contest-galleries'] = intval($WpID);
-
-		/*$CgEntriesOwnSlugNameGalleriesUser = get_option('CgEntriesOwnSlugNameGalleriesUser');
-		$CgEntriesOwnSlugNameGalleriesUser = (!empty($CgEntriesOwnSlugNameGalleriesUser)) ? $CgEntriesOwnSlugNameGalleriesUser : 'contest-galleries-user';
-		$page = get_page_by_path( $CgEntriesOwnSlugNameGalleriesUser, OBJECT, 'page');*/
-
-		$WpID = $wpdb->get_var( "SELECT ID FROM $tablename_posts WHERE post_mime_type='contest-gallery-plugin-page-galleries-user-slug'" );
-        if(empty($WpID)){
-	        $array = cg_post_type_page_galleries_slug_array('user');
-	        $WpID = wp_insert_post($array);
-        }
-
-		$pagesArray['contest-galleries-user'] = intval($WpID);
-
-		/*$CgEntriesOwnSlugNameGalleriesNoVoting = get_option('CgEntriesOwnSlugNameGalleriesNoVoting');
-		$CgEntriesOwnSlugNameGalleriesNoVoting = (!empty($CgEntriesOwnSlugNameGalleriesNoVoting)) ? $CgEntriesOwnSlugNameGalleriesNoVoting : 'contest-galleries-no-voting';
-		$page = get_page_by_path( $CgEntriesOwnSlugNameGalleriesNoVoting, OBJECT, 'page');*/
-
-		$WpID = $wpdb->get_var( "SELECT ID FROM $tablename_posts WHERE post_mime_type='contest-gallery-plugin-page-galleries-no-voting-slug'" );
-		if(empty($WpID)){
-	        $array = cg_post_type_page_galleries_slug_array('no-voting');
-			$WpID = wp_insert_post($array);
-        }
-
-		$pagesArray['contest-galleries-no-voting'] = intval($WpID);
-
-		/*$CgEntriesOwnSlugNameGalleriesWinner = get_option('CgEntriesOwnSlugNameGalleriesWinner');
-		$CgEntriesOwnSlugNameGalleriesWinner = (!empty($CgEntriesOwnSlugNameGalleriesWinner)) ? $CgEntriesOwnSlugNameGalleriesWinner : 'contest-galleries-winner';
-		$page = get_page_by_path( $CgEntriesOwnSlugNameGalleriesWinner, OBJECT, 'page');*/
-
-		$WpID = $wpdb->get_var( "SELECT ID FROM $tablename_posts WHERE post_mime_type='contest-gallery-plugin-page-galleries-winner-slug'" );
-		if(empty($WpID)){
-	        $array = cg_post_type_page_galleries_slug_array('winner');
-			$WpID = wp_insert_post($array);
-        }
-
-		$pagesArray['contest-galleries-winner'] = intval($WpID);
-
-		/*$CgEntriesOwnSlugNameGalleriesEcommerce = get_option('CgEntriesOwnSlugNameGalleriesEcommerce');
-		$CgEntriesOwnSlugNameGalleriesEcommerce = (!empty($CgEntriesOwnSlugNameGalleriesEcommerce)) ? $CgEntriesOwnSlugNameGalleriesEcommerce : 'contest-galleries-ecommerce';
-		$page = get_page_by_path( $CgEntriesOwnSlugNameGalleriesEcommerce, OBJECT, 'page');*/
-
-		$WpID = $wpdb->get_var( "SELECT ID FROM $tablename_posts WHERE post_mime_type='contest-gallery-plugin-page-galleries-ecommerce-slug'" );
-		if(empty($WpID)){
-	        $array = cg_post_type_page_galleries_slug_array('ecommerce');
-			$WpID = wp_insert_post($array);
-        }
-
-		$pagesArray['contest-galleries-ecommerce'] = intval($WpID);
+		foreach($galleriesPages as $mimeType => $galleriesPage){
+			$WpID = (isset($wpPagesByMimeType[$mimeType])) ? $wpPagesByMimeType[$mimeType] : 0;
+			if(empty($WpID)){
+				$array = cg_post_type_page_galleries_slug_array($galleriesPage['type']);
+				$WpID = wp_insert_post($array);
+			}
+			$pagesArray[$galleriesPage['key']] = intval($WpID);
+		}
 
 		$jsonDir = $wp_upload_dir['basedir'] . '/contest-gallery/gallery-general/json';
         if(!is_dir($jsonDir)){
@@ -546,6 +514,64 @@ if(!function_exists('cg_check_nonce')){
 	}
 }
 
+if(!function_exists('cg_user_has_backend_access')){
+	function cg_user_has_backend_access($user = null){
+		if($user === null){
+			$user = wp_get_current_user();
+		}
+		if(empty($user) || empty($user->ID)){
+			return false;
+		}
+		return (
+			is_super_admin($user->ID) ||
+			in_array('administrator', (array)$user->roles, true) ||
+			in_array('editor', (array)$user->roles, true) ||
+			in_array('author', (array)$user->roles, true)
+		);
+	}
+}
+
+if(!function_exists('cg_die_missing_backend_access')){
+	function cg_die_missing_backend_access(){
+		status_header(403);
+		echo "<h2>MISSINGRIGHTS<br>This area can be edited only as administrator, editor or author.</h2>";
+		die;
+	}
+}
+
+if(!function_exists('cg_require_backend_access')){
+	function cg_require_backend_access($require_nonce = true){
+		if(!is_user_logged_in() || !cg_user_has_backend_access()){
+			cg_die_missing_backend_access();
+		}
+		if($require_nonce){
+			cg_check_nonce();
+		}
+	}
+}
+
+if(!function_exists('cg_ecommerce_order_has_owner')){
+	function cg_ecommerce_order_has_owner($Order){
+		return (!empty($Order) && !empty($Order->WpUserId) && absint($Order->WpUserId) > 0);
+	}
+}
+
+if(!function_exists('cg_current_user_can_access_ecommerce_order')){
+	function cg_current_user_can_access_ecommerce_order($Order){
+		if(empty($Order)){
+			return false;
+		}
+		if(cg_user_has_backend_access()){
+			return true;
+		}
+		$orderWpUserId = (!empty($Order->WpUserId)) ? absint($Order->WpUserId) : 0;
+		if($orderWpUserId > 0){
+			return (is_user_logged_in() && get_current_user_id() === $orderWpUserId);
+		}
+		return true;
+	}
+}
+
 if(!function_exists('cg_create_nonce')){
 	function cg_create_nonce(){
 		$nonce = wp_create_nonce('cg_nonce');
@@ -879,7 +905,9 @@ if(!function_exists('cg_set_json_data_of_row_objects')){
 if(!function_exists('cg_set_cookie')){
 	function cg_set_cookie($galeryID,$type){
 		$cookieValue = md5(uniqid('cg',true)).time();
-		setcookie('contest-gal1ery-'.$galeryID.'-'.$type, $cookieValue, time() + (20 * 365 * 24 * 60 * 60), "/");
+		if(!headers_sent()){
+			setcookie('contest-gal1ery-'.$galeryID.'-'.$type, $cookieValue, time() + (20 * 365 * 24 * 60 * 60), "/");
+		}
 		return $cookieValue;
 	}
 }
@@ -971,6 +999,14 @@ if(!function_exists('cg_get_blockquote_from_post_content')){
 	}
 }
 
+if(!function_exists('cg_get_blockquote_post_content_php_rendering')){
+	function cg_get_blockquote_post_content_php_rendering($post_content){
+        $blockquote = substr($post_content,(strpos($post_content,'blockquote:')+strlen('blockquote:')),strlen($post_content));
+        $blockquote = substr($blockquote,0, -1);
+        return html_entity_decode($blockquote, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+	}
+}
+
 if(!function_exists('cg_get_gallery_slug_name')){
 	function cg_get_gallery_slug_name(){
 		if (is_multisite()) {
@@ -1019,7 +1055,7 @@ if(!function_exists('cg_get_galleries_slug_name')){
 }
 
 if(!function_exists('cg_galleries_options')){
-	function cg_galleries_options($wp_upload_dir,$shortcode_name = '',$post_mime_type = ''){
+	function cg_galleries_options($shortcode_name = '',$post_mime_type = ''){
 		$gType = 'g';
 		if($shortcode_name=='cg_gallery_user' || $post_mime_type == 'contest-gallery-plugin-page-galleries-user-slug'){
 			$gType = 'u';
@@ -1068,31 +1104,12 @@ if(!function_exists('cg_get_galleries_options_all')){
 			if(!isset($galleriesOptions['ec']['PreviewLastAdded'])){
 				$galleriesOptions['ec']['PreviewLastAdded'] = $galleriesOptionsForEcommerce['ec']['PreviewLastAdded'];
 			}
-			if(!isset($galleriesOptions['ec']['BorderRadius'])){
-				$galleriesOptions['ec']['BorderRadius'] = $galleriesOptionsForEcommerce['ec']['BorderRadius'];
-			}
 			if(!isset($galleriesOptions['ec']['FeControlsStyle'])){
 				$galleriesOptions['ec']['FeControlsStyle'] = $galleriesOptionsForEcommerce['ec']['FeControlsStyle'];
 			}
             if($galleriesOptions['ec']['PreviewLastAdded']=='0' && $galleriesOptions['ec']['PreviewHighestRated']=='0' && $galleriesOptions['ec']['PreviewMostCommented']=='0'){// do not remove this condition, this case might happen using saving in galleries created before 22 (cg_galleries_ecommerce) shortcode
 	            $galleriesOptions['ec']['PreviewLastAdded']=1;
             }
-            /*
-            if(!isset($galleriesOptions['g']['GalleryPageRedirectURL'])){
-                $galleriesOptions['g']['GalleryPageRedirectURL'] = '';
-            }
-            if(!isset($galleriesOptions['u']['GalleryPageRedirectURL'])){
-                $galleriesOptions['u']['GalleryPageRedirectURL'] = '';
-            }
-            if(!isset($galleriesOptions['nv']['GalleryPageRedirectURL'])){
-                $galleriesOptions['nv']['GalleryPageRedirectURL'] = '';
-            }
-            if(!isset($galleriesOptions['w']['GalleryPageRedirectURL'])){
-                $galleriesOptions['w']['GalleryPageRedirectURL'] = '';
-            }
-            if(!isset($galleriesOptions['ec']['GalleryPageRedirectURL'])){
-                $galleriesOptions['ec']['GalleryPageRedirectURL'] = '';
-            }*/
 		}else{
 			$galleriesOptions = cg_get_24_version_values();
 		}
@@ -1102,12 +1119,21 @@ if(!function_exists('cg_get_galleries_options_all')){
 	}
 }
 
+if(!function_exists('cg_set_option_from_galleries_options')){
+    function cg_set_option_from_galleries_options($options,$galleriesOptions){
+        if(empty($galleriesOptions['PicsPerSite']) || empty($galleriesOptions['FeControlsStyle'])){
+            return $options;
+        }
+        $options['general']['PicsPerSite'] = $galleriesOptions['PicsPerSite'];
+        $options['visual']['FeControlsStyle'] = $galleriesOptions['FeControlsStyle'];
+
+        return $options;
+    }
+}
+
 if(!function_exists('cg_sort_form_input')){
 	function cg_sort_form_input($selectFormInput){
-        /*var_dump('$selectFormInput');
-        echo "<pre>";
-        print_r($selectFormInput);
-        echo "</pre>";*/
+
         // remove image first
         foreach ($selectFormInput as $key => $value) {
             if($value->Field_Type=='image-f'){
@@ -1289,22 +1315,6 @@ if(!function_exists('cg_create_tablename_mails_check')){
         return $cg_create_tablename_mails;
     }
 }
-
-if(!function_exists('cg_create_tablename_mails_check')){
-	function cg_create_tablename_mails_check(){
-        global $cg_create_tablename_mails_checked;
-        global $cg_create_tablename_mails;
-        $cg_create_tablename_mails = true;
-        if(empty($cg_create_tablename_mails_checked)){
-            $cg_check_create_tablename_mails_checked = true;
-            $cg_create_tablename_mails = true;
-        }elseif(!empty($cg_create_tablename_mails_checked)){
-            $cg_create_tablename_mails = false;
-        }
-        return $cg_create_tablename_mails;
-    }
-}
-
 
 if(!function_exists('cg_format_options_version')){
     function cg_format_options_version($Version) {

@@ -1,7 +1,8 @@
 <?php
 
 // Field1IdGalleryView => Show as main title in gallery view
-// Field2IdGalleryView => Show HTML Attribute
+// Field1IdFullWindowBlogView => Show as main title in full window blog view
+// Field2IdGalleryView => Media Description (SEO)
 
 // 1. Delete Felder in Entries, F_Input, F_Output
 // 2. Swap Field_Order in Entries, F_Input, F_Output (bei post "done-upload" wird alles mitgegeben
@@ -82,7 +83,8 @@ if (!empty($_POST['upload'])) {
 
     $rowVisualOptions = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_options_visual WHERE GalleryID = %d", [$GalleryID]));
 
-    $Field1IdGalleryView = $rowVisualOptions->Field1IdGalleryView;
+    $Field1IdGalleryView = (!empty($rowVisualOptions) && isset($rowVisualOptions->Field1IdGalleryView)) ? absint($rowVisualOptions->Field1IdGalleryView) : 0;
+    $Field1IdFullWindowBlogView = (!empty($rowVisualOptions) && isset($rowVisualOptions->Field1IdFullWindowBlogView)) ? absint($rowVisualOptions->Field1IdFullWindowBlogView) : 0;
 
     // make json file
     $optionsFile = $wp_upload_dir['basedir'] . '/contest-gallery/gallery-id-' . $GalleryID . '/json/' . $GalleryID . '-options.json';
@@ -93,6 +95,7 @@ if (!empty($_POST['upload'])) {
 
     $infoInSliderId = null;
     $infoInGalleryId = null;
+    $infoInFullWindowBlogViewId = null;
     $alternativeFileTypeNameId = null;
     $tagInGalleryId = null;
     $tagInGalleryIdIsForCategories = false;
@@ -489,6 +492,9 @@ if (!empty($_POST['upload'])) {
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $id;
                     }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $id;
+                    }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryId = $id;
                     }
@@ -505,6 +511,9 @@ if (!empty($_POST['upload'])) {
 
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                    }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
                     }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
@@ -662,6 +671,9 @@ if (!empty($_POST['upload'])) {
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $id;
                     }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $id;
+                    }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryId = $id;
                     }
@@ -698,6 +710,9 @@ if (!empty($_POST['upload'])) {
                     }
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                    }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
                     }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
@@ -787,6 +802,9 @@ if (!empty($_POST['upload'])) {
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $id;
                     }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $id;
+                    }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryId = $id;
                     }
@@ -810,6 +828,9 @@ if (!empty($_POST['upload'])) {
                     }
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                    }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
                     }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
@@ -892,6 +913,9 @@ if (!empty($_POST['upload'])) {
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $id;
                     }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $id;
+                    }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryId = $id;
                     }
@@ -912,6 +936,9 @@ if (!empty($_POST['upload'])) {
 
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                    }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
                     }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
@@ -1089,6 +1116,9 @@ if (!empty($_POST['upload'])) {
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $id;
                     }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $id;
+                    }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryId = $id;
                     }
@@ -1116,6 +1146,9 @@ if (!empty($_POST['upload'])) {
                     }
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                    }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
                     }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
@@ -1168,6 +1201,9 @@ if (!empty($_POST['upload'])) {
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $id;
                     }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $id;
+                    }
                     if (!empty($field['tagInGallerytagInGallery'])) {
                         $tagInGalleryId = $id;
                     }
@@ -1185,6 +1221,9 @@ if (!empty($_POST['upload'])) {
 
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                    }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
                     }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
@@ -1232,6 +1271,9 @@ if (!empty($_POST['upload'])) {
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $id;
                     }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $id;
+                    }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryId = $id;
                     }
@@ -1249,6 +1291,9 @@ if (!empty($_POST['upload'])) {
 
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                    }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
                     }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
@@ -1302,6 +1347,9 @@ if (!empty($_POST['upload'])) {
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $id;
                     }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $id;
+                    }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryId = $id;
                     }
@@ -1319,6 +1367,9 @@ if (!empty($_POST['upload'])) {
 
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                    }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
                     }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
@@ -1407,6 +1458,9 @@ if (!empty($_POST['upload'])) {
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $id;
                     }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $id;
+                    }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryId = $id;
                     }
@@ -1430,6 +1484,9 @@ if (!empty($_POST['upload'])) {
                     }
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                    }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
                     }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
@@ -1510,6 +1567,9 @@ if (!empty($_POST['upload'])) {
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $id;
                     }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $id;
+                    }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryId = $id;
                     }
@@ -1533,6 +1593,9 @@ if (!empty($_POST['upload'])) {
                     }
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                    }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
                     }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
@@ -1732,6 +1795,9 @@ if (!empty($_POST['upload'])) {
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $id;
                     }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $id;
+                    }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryIdIsForCategories = true;
                         $tagInGalleryId = $id;
@@ -1764,6 +1830,9 @@ if (!empty($_POST['upload'])) {
 
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                    }
+                    if (!empty($field['infoInFullWindowBlogView'])) {
+                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
                     }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryIdIsForCategories = true;
@@ -1843,12 +1912,18 @@ if (!empty($_POST['upload'])) {
 
     if (!empty($optionsFileData[$GalleryID])) {
         $optionsFileData[$GalleryID]['visual']['Field1IdGalleryView'] = 0;
+        $optionsFileData[$GalleryID]['visual']['Field1IdFullWindowBlogView'] = 0;
         $optionsFileData[$GalleryID . '-u']['visual']['Field1IdGalleryView'] = 0;
+        $optionsFileData[$GalleryID . '-u']['visual']['Field1IdFullWindowBlogView'] = 0;
         $optionsFileData[$GalleryID . '-nv']['visual']['Field1IdGalleryView'] = 0;
+        $optionsFileData[$GalleryID . '-nv']['visual']['Field1IdFullWindowBlogView'] = 0;
         $optionsFileData[$GalleryID . '-w']['visual']['Field1IdGalleryView'] = 0;
+        $optionsFileData[$GalleryID . '-w']['visual']['Field1IdFullWindowBlogView'] = 0;
         $optionsFileData[$GalleryID . '-ec']['visual']['Field1IdGalleryView'] = 0;
+        $optionsFileData[$GalleryID . '-ec']['visual']['Field1IdFullWindowBlogView'] = 0;
     } else {
         $optionsFileData['visual']['Field1IdGalleryView'] = 0;
+        $optionsFileData['visual']['Field1IdFullWindowBlogView'] = 0;
     }
 
     if (!empty($optionsFileData[$GalleryID])) {
@@ -1996,6 +2071,36 @@ if (!empty($_POST['upload'])) {
         );
     }
 
+    if (!empty($infoInFullWindowBlogViewId)) {
+
+        $wpdb->update(
+            "$tablename_options_visual",
+            array('Field1IdFullWindowBlogView' => $infoInFullWindowBlogViewId),
+            array('GalleryID' => $GalleryID),
+            array('%d'),
+            array('%d')
+        );
+
+        if (!empty($optionsFileData[$GalleryID])) {
+            $optionsFileData[$GalleryID]['visual']['Field1IdFullWindowBlogView'] = $infoInFullWindowBlogViewId;
+            $optionsFileData[$GalleryID . '-u']['visual']['Field1IdFullWindowBlogView'] = $infoInFullWindowBlogViewId;
+            $optionsFileData[$GalleryID . '-nv']['visual']['Field1IdFullWindowBlogView'] = $infoInFullWindowBlogViewId;
+            $optionsFileData[$GalleryID . '-w']['visual']['Field1IdFullWindowBlogView'] = $infoInFullWindowBlogViewId;
+            $optionsFileData[$GalleryID . '-ec']['visual']['Field1IdFullWindowBlogView'] = $infoInFullWindowBlogViewId;
+        } else {
+            $optionsFileData['visual']['Field1IdFullWindowBlogView'] = $infoInFullWindowBlogViewId;
+        }
+
+    } else {
+        $wpdb->update(
+            "$tablename_options_visual",
+            array('Field1IdFullWindowBlogView' => 0),
+            array('GalleryID' => $GalleryID),
+            array('%d'),
+            array('%d')
+        );
+    }
+
     // falls Show info in gallery gesetzt wurde dann inserten
     if (!empty($tagInGalleryId)) {
 
@@ -2112,11 +2217,6 @@ if (!empty($_POST['upload'])) {
 
     do_action('cg_json_single_view_order', $GalleryID);
 
-    $tstampFile = $wp_upload_dir["basedir"] . "/contest-gallery/gallery-id-$GalleryID/json/$GalleryID-gallery-tstamp.json";
-    $fp = fopen($tstampFile, 'w');
-    fwrite($fp, json_encode(time()));
-    fclose($fp);
-
 }
 
 // input felder holen zur ausgabe
@@ -2124,9 +2224,10 @@ $selectFormInput = $wpdb->get_results($wpdb->prepare("SELECT * FROM $tablename_f
 
 $rowVisualOptions = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_options_visual WHERE GalleryID = %d", [$GalleryID]));
 
-$Field1IdGalleryView = $rowVisualOptions->Field1IdGalleryView;
-$Field2IdGalleryView = $rowVisualOptions->Field2IdGalleryView;
-$Field3IdGalleryView = $rowVisualOptions->Field3IdGalleryView;
+$Field1IdGalleryView = (!empty($rowVisualOptions) && isset($rowVisualOptions->Field1IdGalleryView)) ? absint($rowVisualOptions->Field1IdGalleryView) : 0;
+$Field1IdFullWindowBlogView = (!empty($rowVisualOptions) && isset($rowVisualOptions->Field1IdFullWindowBlogView)) ? absint($rowVisualOptions->Field1IdFullWindowBlogView) : 0;
+$Field2IdGalleryView = (!empty($rowVisualOptions) && isset($rowVisualOptions->Field2IdGalleryView)) ? absint($rowVisualOptions->Field2IdGalleryView) : 0;
+$Field3IdGalleryView = (!empty($rowVisualOptions) && isset($rowVisualOptions->Field3IdGalleryView)) ? absint($rowVisualOptions->Field3IdGalleryView) : 0;
 
 
 ?>

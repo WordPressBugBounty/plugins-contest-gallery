@@ -370,16 +370,17 @@ jQuery(document).ready(function ($) {
         var shortcode = $cgShortcodeIntervalConfigurationContainer.attr('data-cg-shortcode');
         var $cgShortcodeIntervalConfiguration = $('#cgShortcodeIntervalConfiguration'+year);
         $cgShortcodeIntervalConfiguration.removeClass('cg_hide');
-        var $cg_main_options_interval_type = $cgShortcodeIntervalConfiguration.find('cg_main_options_interval_type');
+        var $cg_main_options_interval_type = $cgShortcodeIntervalConfiguration.find('.cg_main_options_interval_type');
 
         var jsonOptions = cgJsClassAdmin.index.vars.cgOptionsJson.interval;
         //var jsonOptions = {};
 
-        var option = getOptionValue(shortcode,jsonOptions,undefined,$cgShortcodeIntervalConfiguration,undefined,true);
-        $cg_main_options_interval_type.find('.cg_view_option_radio_multiple_input_field').attr('name',shortcode+'['+$cg_main_options_interval_type.attr('data-cg-year')+'][selectedIntervalType]');
-        $cg_main_options_interval_type.find('.cg_view_option_radio_multiple_input_field[value="'+option+'"]').attr('checked','checked').closest('.cg_view_option_radio_multiple_input').addClass('cg_view_option_checked');
-        $cg_main_options_interval_type.find('.cg_main_options_shortcode_interval').addClass('cg_hide');
-        $cg_main_options_interval_type.find('.cg_main_options_'+option).removeClass('cg_hide');
+        var option = getOptionValue(shortcode,jsonOptions,undefined,$cg_main_options_interval_type,undefined,true);
+        $cg_main_options_interval_type.find('.cg_view_option_radio_multiple_input_field').attr('name',shortcode+'['+$cg_main_options_interval_type.attr('data-cg-year')+'][selectedIntervalType]').prop('checked',false).removeAttr('checked');
+        $cg_main_options_interval_type.find('.cg_view_option_radio_multiple_input').removeClass('cg_view_option_checked').addClass('cg_view_option_unchecked');
+        $cg_main_options_interval_type.find('.cg_view_option_radio_multiple_input_field[value="'+option+'"]').attr('checked','checked').prop('checked',true).closest('.cg_view_option_radio_multiple_input').removeClass('cg_view_option_unchecked').addClass('cg_view_option_checked');
+        $cgShortcodeIntervalConfiguration.find('.cg_main_options_shortcode_interval').addClass('cg_hide');
+        $cgShortcodeIntervalConfiguration.find('.cg_main_options_'+option).removeClass('cg_hide');
 
     });
 
@@ -421,8 +422,20 @@ jQuery(document).ready(function ($) {
 
                 var parser = new DOMParser();
                 var parsedHtml = parser.parseFromString(response, 'text/html');
+                var $processingScripts = jQuery(parsedHtml).find('script[data-cg-processing="true"]');
+                var responseText = jQuery(parsedHtml).text().trim();
 
-                jQuery(parsedHtml).find('script[data-cg-processing="true"]').each(function () {
+                if(!$processingScripts.length){
+                    $cgShortcodeIntervalConfigurationContainer.find('.cg-lds-dual-ring-gallery-hide').addClass('cg_hide');
+                    $cgShortcodeIntervalConfigurationForm.removeClass('cg_hide');
+                    if(!responseText){
+                        responseText = 'Error: shortcode interval configuration could not be saved';
+                    }
+                    cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage(responseText);
+                    return;
+                }
+
+                $processingScripts.each(function () {
                     var script = jQuery(this).html();
                     eval(script);
                 });
@@ -432,6 +445,9 @@ jQuery(document).ready(function ($) {
                 cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Changes saved',true);
 
             }).fail(function (xhr, status, error) {
+                $cgShortcodeIntervalConfigurationContainer.find('.cg-lds-dual-ring-gallery-hide').addClass('cg_hide');
+                $cgShortcodeIntervalConfigurationForm.removeClass('cg_hide');
+                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Error: shortcode interval configuration could not be saved');
                 console.log('response error');
                 console.log(error);
             }).always(function () {

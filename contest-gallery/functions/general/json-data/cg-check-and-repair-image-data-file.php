@@ -2,7 +2,7 @@
 
 add_action('cg_check_and_repair_image_file_data','cg_check_and_repair_image_file_data');
 
-if(!function_exists('cg_check_and_repair_image_file_data')){
+if(!function_exists('cg_check_and_repair_image_file_data')){// old function not used anymore
     function cg_check_and_repair_image_file_data($GalleryID,$imageId,$ratingFileData,$IsModernFiveStar,$isFromPageLoad = false,$jsonImagesDataReserve=[]){
         $wp_upload_dir = wp_upload_dir();
 
@@ -215,6 +215,7 @@ if(!function_exists('cg_check_and_repair_image_file_data')){
                         }
                     }
                 }
+                // old function not used anymore
                 $jsonFile = $wp_upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/image-data/image-data-$imageId.json";
                 file_put_contents($jsonFile,json_encode($ratingFileData));
             }

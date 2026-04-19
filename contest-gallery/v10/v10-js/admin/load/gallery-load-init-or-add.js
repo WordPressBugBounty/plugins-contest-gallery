@@ -60,6 +60,13 @@ cgJsClassAdmin.gallery.load = {
         if($formLinkObject){
 
             if($formLinkObject.hasClass('cg_load_backend_create_gallery')){
+                var gidNewGallery = $('#cgBackendGalleryId').val();
+                var $cgOrderSelect = $('#cgGalleryBackendContainer #cgOrderSelect');
+                if(gidNewGallery){
+                    localStorage.setItem('cgOrder_BG_'+gidNewGallery, 'date_desc');
+                }
+                $cgOrderSelect.val('date_desc');
+                $('#cgGalleryForm #cgOrderValue').val('date_desc');
 
                 $('#cgGalleryLoader').addClass('cg_hide');
                 $('#cgSortable').addClass('cg_hide');
@@ -90,29 +97,33 @@ cgJsClassAdmin.gallery.load = {
         if(cgStart_BG || cgStart_BG===0 || cgStart_BG==='0'){$('#cgStartValue').val(cgStart_BG)}
         var cgStep_BG = localStorage.getItem('cgStep_BG_'+gid);
         if(cgStep_BG){$('#cgStepValue').val(cgStep_BG)}
+        var $cgOrderSelect = $('#cgGalleryBackendContainer #cgOrderSelect');
         var cgOrder_BG = localStorage.getItem('cgOrder_BG_'+gid);
+        var isNewGalleryCreated = !!document.getElementById('cgIsNewGalleryCreated');
+        var cgOrderFallback = isNewGalleryCreated ? 'date_desc' : 'custom';
 
         // fallback to go sure if empty or old order options are activated
         if(!cgOrder_BG){
-            cgOrder_BG = 'custom';
+            cgOrder_BG = cgOrderFallback;
         }else if(cgOrder_BG=='rating_desc_average' || cgOrder_BG=='rating_asc_average' || cgOrder_BG=='rating_desc_average_with_manip' || cgOrder_BG=='rating_asc_average_with_manip'){
-            cgOrder_BG = 'custom';
+            cgOrder_BG = cgOrderFallback;
         }
 
         // check if generally available as option. If not date desc as fallback.
         // switching from one to multiple stars and the other way round might cause not existing order if order other kind of rating was selected
-        if(!$('#cgOrderSelect option[value='+cgOrder_BG+']').length){
-            cgOrder_BG = 'custom';
+        if(!$cgOrderSelect.find('option[value='+cgOrder_BG+']').length){
+            cgOrder_BG = cgOrderFallback;
         }
 
         if(cgOrder_BG){
+            $cgOrderSelect.val(cgOrder_BG);
             if(cgOrder_BG.indexOf('_average')>-1 && $('#cgAllowRating').val()!=1){
-                if(cgOrder_BG){$('#cgOrderValue').val('custom');}
+                if(cgOrder_BG){$('#cgGalleryForm #cgOrderValue').val(cgOrderFallback);}
             }else{
-                if(cgOrder_BG){$('#cgOrderValue').val(cgOrder_BG);}
+                if(cgOrder_BG){$('#cgGalleryForm #cgOrderValue').val(cgOrder_BG);}
             }
         }else{
-            if(cgOrder_BG){$('#cgOrderValue').val(cgOrder_BG);}
+            if(cgOrder_BG){$('#cgGalleryForm #cgOrderValue').val(cgOrder_BG);}
         }
 
         var cgSearch_BG = localStorage.getItem('cgSearch_BG_'+gid);

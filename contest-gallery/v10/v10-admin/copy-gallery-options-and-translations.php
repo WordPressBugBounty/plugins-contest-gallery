@@ -1,5 +1,61 @@
 <?php
 
+if (!function_exists('cg_get_copied_gallery_name')) {
+	function cg_get_copied_gallery_name($galleryName, $tablenameOptions, $wpdb) {
+		$galleryName = trim((string)$galleryName);
+		if ($galleryName === '') {
+			return '';
+		}
+
+		$copyBaseName = preg_replace('/\s*-\s*copy(?:\s+[0-9]+)?\s*$/i', '', $galleryName);
+		$copyBaseName = trim($copyBaseName);
+		if ($copyBaseName === '') {
+			$copyBaseName = $galleryName;
+		}
+
+		$existingGalleryNames = $wpdb->get_col($wpdb->prepare(
+			"SELECT GalleryName FROM $tablenameOptions WHERE GalleryName = %s OR GalleryName LIKE %s",
+			$copyBaseName,
+			$wpdb->esc_like($copyBaseName . ' - copy') . '%'
+		));
+
+		$copyNamePattern = '/^' . preg_quote($copyBaseName, '/') . '\s*-\s*copy(?:\s+([0-9]+))?\s*$/i';
+		$usedCopyNumbers = array();
+
+		foreach ($existingGalleryNames as $existingGalleryName) {
+			$existingGalleryName = trim((string)$existingGalleryName);
+			if ($existingGalleryName === '') {
+				continue;
+			}
+			if (strcasecmp($existingGalleryName, $copyBaseName) === 0) {
+				continue;
+			}
+			if (preg_match($copyNamePattern, $existingGalleryName, $matches)) {
+				$copyNumber = 1;
+				if (!empty($matches[1])) {
+					$copyNumber = absint($matches[1]);
+					if (empty($copyNumber)) {
+						$copyNumber = 1;
+					}
+				}
+				$usedCopyNumbers[$copyNumber] = true;
+			}
+		}
+
+		$nextCopyNumber = 1;
+		while (!empty($usedCopyNumbers[$nextCopyNumber])) {
+			$nextCopyNumber++;
+		}
+
+		$copiedGalleryName = $copyBaseName . ' - copy';
+		if ($nextCopyNumber > 1) {
+			$copiedGalleryName .= ' ' . $nextCopyNumber;
+		}
+
+		return $copiedGalleryName;
+	}
+}
+
 $thumbnail_size_w = get_option("thumbnail_size_w");
 $medium_size_w = get_option("medium_size_w");
 $large_size_w = get_option("large_size_w");
@@ -28,7 +84,8 @@ foreach ($galleryToCopy as $key => $value) {
 }
 
 if (!empty($valueCollect['GalleryName'])) {
-    $valueCollect['GalleryName'] = $valueCollect['GalleryName'] . ' - COPY';
+	$valueCollect['GalleryName'] = cg_get_copied_gallery_name($valueCollect['GalleryName'], $tablenameOptions, $wpdb);
+	$jsonOptions['general']['GalleryName'] = $valueCollect['GalleryName'];
 }
 if (!empty($valueCollect['FbLikeGoToGalleryLink'])) {
     $FbLikeGoToGalleryLink = $valueCollect['FbLikeGoToGalleryLink'];
@@ -154,7 +211,7 @@ $WpPageParentUser = wp_insert_post($array);
 $jsonOptions['general']['WpPageParentUser'] = $WpPageParentUser ;
 
 // cg_gallery_no_voting shortcode
-$array = cg_post_type_parent_galleries_array($nextIDgallery,'no_voting');
+$array = cg_post_type_parent_galleries_array($nextIDgallery,'no-voting');
 $WpPageParentNoVoting = wp_insert_post($array);
 $jsonOptions['general']['WpPageParentNoVoting'] = $WpPageParentNoVoting ;
 
@@ -318,6 +375,7 @@ $galleryToCopy = $wpdb->get_row("SELECT * FROM $tablename_options_visual WHERE G
 $valueCollect = array();
 
 $Field1IdGalleryView = 0;
+$Field1IdFullWindowBlogView = 0;
 $Field2IdGalleryView = 0;
 $Field3IdGalleryView = 0;
 
@@ -333,6 +391,14 @@ foreach ($galleryToCopy as $key => $value) {
         if(!empty($collectInputIdsArray[$value])){
             $value = $collectInputIdsArray[$value];
             $Field1IdGalleryView = $value;
+        }else{
+            $value = 0;
+        }
+    }
+    if ($key == 'Field1IdFullWindowBlogView') {
+        if(!empty($collectInputIdsArray[$value])){
+            $value = $collectInputIdsArray[$value];
+            $Field1IdFullWindowBlogView = $value;
         }else{
             $value = 0;
         }
@@ -392,7 +458,6 @@ if ($cgVersion < 10) {
     $valueCollect['ImageViewFullWindow'] = 1;
     $valueCollect['ImageViewFullScreen'] = 1;
     $valueCollect['SliderThumbNav'] = 1;
-    $valueCollect['BorderRadius'] = 1;
     $valueCollect['CopyImageLink'] = 1;
     $valueCollect['CommentsDateFormat'] = 'YYYY-MM-DD';
     $valueCollect['FeControlsStyleUpload'] = 'white';
@@ -418,7 +483,6 @@ if ($cgVersion < 10) {
     $jsonOptions['visual']['ImageViewFullWindow'] = $valueCollect['ImageViewFullWindow'];
     $jsonOptions['visual']['ImageViewFullScreen'] = $valueCollect['ImageViewFullScreen'];
     $jsonOptions['visual']['SliderThumbNav'] = $valueCollect['SliderThumbNav'];
-    $jsonOptions['visual']['BorderRadius'] = $valueCollect['BorderRadius'];
     $jsonOptions['visual']['CopyImageLink'] = $valueCollect['CopyImageLink'];
     $jsonOptions['visual']['CommentsDateFormat'] = $valueCollect['CommentsDateFormat'];
     $jsonOptions['visual']['FeControlsStyleUpload'] = $valueCollect['FeControlsStyleUpload'];
@@ -544,6 +608,16 @@ if(!empty($Field1IdGalleryView)){
     $wpdb->update(
         "$tablename_options_visual",
         array('Field1IdGalleryView' => $Field1IdGalleryView),
+        array('id' => $newOptionsVisual->id),
+        array('%d'),
+        array('%d')
+    );
+}
+
+if(!empty($Field1IdFullWindowBlogView)){
+    $wpdb->update(
+        "$tablename_options_visual",
+        array('Field1IdFullWindowBlogView' => $Field1IdFullWindowBlogView),
         array('id' => $newOptionsVisual->id),
         array('%d'),
         array('%d')
@@ -1150,6 +1224,13 @@ if(file_exists($jsonOptionsGalleryPrev)){
             $jsonOptions[$nextIDgallery.'-w']['visual']['Field1IdGalleryView'] = $Field1IdGalleryView;
             $jsonOptions[$nextIDgallery.'-ec']['visual']['Field1IdGalleryView'] = $Field1IdGalleryView;
         }
+        if(!empty($Field1IdFullWindowBlogView)){
+            $jsonOptions[$nextIDgallery]['visual']['Field1IdFullWindowBlogView'] = $Field1IdFullWindowBlogView;
+            $jsonOptions[$nextIDgallery.'-u']['visual']['Field1IdFullWindowBlogView'] = $Field1IdFullWindowBlogView;
+            $jsonOptions[$nextIDgallery.'-nv']['visual']['Field1IdFullWindowBlogView'] = $Field1IdFullWindowBlogView;
+            $jsonOptions[$nextIDgallery.'-w']['visual']['Field1IdFullWindowBlogView'] = $Field1IdFullWindowBlogView;
+            $jsonOptions[$nextIDgallery.'-ec']['visual']['Field1IdFullWindowBlogView'] = $Field1IdFullWindowBlogView;
+        }
         if(!empty($Field2IdGalleryView)){
             $jsonOptions[$nextIDgallery]['visual']['Field2IdGalleryView'] = $Field2IdGalleryView;
             $jsonOptions[$nextIDgallery.'-u']['visual']['Field2IdGalleryView'] = $Field2IdGalleryView;
@@ -1341,6 +1422,7 @@ if(file_exists($jsonOptionsGalleryPrev)){
 
         // if previous gallery options were never saved before required values will be copied
         $jsonOptions['visual']['Field1IdGalleryView'] = $Field1IdGalleryView;
+        $jsonOptions['visual']['Field1IdFullWindowBlogView'] = $Field1IdFullWindowBlogView;
         $jsonOptions['visual']['Field2IdGalleryView'] = $Field2IdGalleryView;
         $jsonOptions['visual']['Field3IdGalleryView'] = $Field3IdGalleryView;
         $jsonOptions['visual']['SubTitle'] = $newSubTitleFieldId;
@@ -1378,6 +1460,13 @@ foreach ($galleryToCopy as $key => $rowObject) {
         }
         if ($key1 == 'GalleryID') {
             $value1 = $nextIDgallery;
+        }
+        if ($key1 == 'f_input_id') {
+            if(empty($collectInputIdsArray[$value1])){
+                $valueCollect = array();
+                continue 2;
+            }
+            $value1 = $collectInputIdsArray[$value1];
         }
         $valueCollect[$key1] = $value1;
 
@@ -1459,11 +1548,6 @@ if(empty($collectCatIdsArray)){
 // write $collectCatIdsArray json for getting it later when processing images
 $fp = fopen($galleryUpload . '/json/' . $nextIDgallery . '-collect-cat-ids-array.json', 'w');
 fwrite($fp, json_encode($collectCatIdsArray));
-fclose($fp);
-
-$tstampJson = array();
-$fp = fopen($galleryUpload.'/json/'.$nextIDgallery.'-gallery-tstamp.json', 'w');
-fwrite($fp, json_encode(time()));
 fclose($fp);
 
 // copy translations

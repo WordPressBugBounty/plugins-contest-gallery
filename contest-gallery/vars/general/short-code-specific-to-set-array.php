@@ -4,7 +4,7 @@ return ['AllowSortOptions','PicsPerSite','FullSizeGallery','FullSize','Search','
     'RowLook','PicsInRow','RowViewSpaceWidth','RowViewSpaceHeight','SliderLook','AllowGalleryScript','SliderFullWindow','ShowExif','SlideTransition',
     'FullSizeSlideOutStart','OriginalSourceLinkInSlider','ShowNickname','ShowProfileImage','FullSizeImageOutGallery','OnlyGalleryView',
     'SliderLookOrder','ThumbLookOrder','HeightLookOrder','RowLookOrder','GalleryStyle','BlogLook','BlogLookOrder','BlogLookFullWindow',
-    'ImageViewFullWindow','ImageViewFullScreen','SliderThumbNav','BorderRadius','CopyImageLink','AllowComments','CommentsDateFormat',
+    'ImageViewFullWindow','ImageViewFullScreen','SliderThumbNav','CopyImageLink','AllowComments','CommentsDateFormat',
     'ShowExifModel','ShowExifApertureFNumber','ShowExifExposureTime','ShowExifISOSpeedRatings','ShowExifFocalLength','ShowExifDateTimeOriginal','ShowExifDateTimeOriginalFormat',
     'VoteMessageSuccessActive','VoteMessageWarningActive','VoteMessageSuccessText','VoteMessageWarningText','ShowTextUntilAnImageAdded','HideCommentNameField','RatingVisibleForGalleryNoVoting','RatingVisibleForGalleryEcommerce','AllowRatingForGalleryEcommerce','CommNoteActive',
     'EnableSwitchStyleGalleryButton','SwitchStyleGalleryButtonOnlyTopControls','EnableSwitchStyleImageViewButton',

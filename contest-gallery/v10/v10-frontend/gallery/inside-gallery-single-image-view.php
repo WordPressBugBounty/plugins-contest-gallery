@@ -1,19 +1,11 @@
 <?php
 
-include(__DIR__.'/../../../vars/general/emojis.php');
+include_once(__DIR__.'/../../../vars/general/emojis.php');
 
-$emojisDiv = '<div class="cg-emojis-div cg_hide">';
-
-foreach($emojis as $emoji){
-    $emojiSplitted = str_split($emoji);
-    $emojiSplitted = implode('.',$emojiSplitted);
-
-    $emojiSpan = "<span data-emoji='&#$emoji;' data-emoji-splitted='&.#.$emojiSplitted;' class='cg-emoji-select'>&#$emoji;</span>";
-    $emojisDiv .= $emojiSpan;
-}
-$emojisDiv .= '</div>';
+$emojisDiv = cg1l_render_emojis_div();
 
 $switchStyleGalleryButton = '';
+$addCommentTooltipAttribute = '';
 
 if(!empty($options['visual']['EnableSwitchStyleImageViewButton'])){
     $switchColorsTooltipStyleText = $language_BrightStyle;
@@ -23,8 +15,19 @@ if(!empty($options['visual']['EnableSwitchStyleImageViewButton'])){
     $switchStyleGalleryButton = '<div class="cg_switch_colors" data-cg-gid="'.$galeryIDuser.'" data-cg-tooltip="'.$switchColorsTooltipStyleText.'"></div>';
 }
 
+if(
+    !empty($options['general']['AllowComments']) &&
+    intval($options['general']['AllowComments']) === 1 &&
+    (
+        empty($options['pro']['CheckLoginComment']) ||
+        is_user_logged_in()
+    )
+){
+    $addCommentTooltipAttribute = ' data-cg-tooltip="' . esc_attr($language_AddComment) . '"';
+}
+
 echo <<<HEREDOC
-<div id="cgCenterDiv$galeryIDuserForJs" class="cgCenterDiv" data-cg-gid="$galeryIDuserForJs">
+<div id="cgCenterDiv$galeryIDuserForJs" class="cgCenterDiv cgCenterDivToClone cg_hide" data-cg-gid="$galeryIDuserForJs">
     <div id="cgCenterDivChild$galeryIDuserForJs" class="cgCenterDivChild" data-cg-gid="$galeryIDuserForJs">
             <div id="cgCenterOrientation$galeryIDuserForJs" class="cg-center-orientation cg_hide"></div>
          <div id="cgCenterDivHelper$galeryIDuserForJs" class="cg-center-div-helper" data-cg-gid="$galeryIDuserForJs">
@@ -43,7 +46,7 @@ echo <<<HEREDOC
                    <div class="cg-center-image-div-buttons-second-controls">
                    <div class="cg_delete_user_image cg_hide" data-cg-gid="$galeryIDuserForJs" ></div>
                    $switchStyleGalleryButton
-                          <div class="cg-image-image-href-to-copy cg_gallery_control_element" data-cg-gid="$galeryIDuserForJs" data-cg-tooltip="$language_CopyGalleryEntryLink"></div>
+                          <div class="cg-image-image-href-to-copy cg_gallery_control_element cg_hide" data-cg-gid="$galeryIDuserForJs" data-cg-tooltip="$language_CopyGalleryEntryLink"></div>
                          <div class="cg-center-image-download cg_hide"  data-cg-tooltip="$language_Download"></div>
                          <div class="cg-gallery-upload cg_gallery_control_element" data-cg-gid="$galeryIDuserForJs" data-cg-tooltip="$language_ImageUpload"></div>
                         <div class="cg-fullscreen-button cg-header-controls-show-only-full-window cg_hide" id="cgCenterImageFullScreenButton$galeryIDuser" data-cg-gid="$galeryIDuserForJs" data-cg-tooltip="$language_FullScreen"></div>
@@ -59,14 +62,6 @@ echo <<<HEREDOC
                 <div id="cgCenterDivHelperHelperHelper$galeryIDuserForJs" class="cg-center-div-helper-helper-helper" data-cg-gid="$galeryIDuserForJs">
                 
                         <div id="cgCenterImageDiv$galeryIDuserForJs" class="cg-center-image-div">
-            
-                            <div id="cgCenterShowNicknameParent$galeryIDuserForJs" class="cg-center-show-nickname-parent cg_hide" >
-                                <div id="cgCenterShowNickname$galeryIDuserForJs" class="cg-center-show-nickname" >
-                                        <span id="cgCenterShowProfileImage$galeryIDuserForJs" class="cg-center-show-profile-image cg_hide" ></span>
-                                        <span id="cgCenterShowNicknameAvatar$galeryIDuserForJs" class="cg-center-show-nickname-avatar"></span>
-                                        <span id="cgCenterShowNicknameText$galeryIDuserForJs" class="cg-center-show-nickname-text"></span>
-                                </div>
-                            </div>
                             <div id="cgCenterShowSocialShareMobileButton$galeryIDuserForJs" class="cg_center_show_social_share_mobile_button cg_hide" data-cg-tooltip="$language_ShareTo...">
                             </div>
                             <div id="cgCenterShowSocialShareParent$galeryIDuserForJs" class="cg_center_show_social_share_parent cg_hide" >
@@ -98,16 +93,16 @@ echo <<<HEREDOC
                              <div id="cgCenterImageDivButtonsLeft$galeryIDuserForJs" class="cg-center-image-div-buttons-left">
                                    <div class="cg-center-image-div-buttons-second-controls">
                                         <div class="cg_delete_user_image cg_hide" data-cg-gid="$galeryIDuserForJs" ></div>
-                                         <div class="cg-copy-original-file-link cg_hide" data-cg-tooltip="$language_CopyOriginalFileSourceLink"></div>
-                                         <div class="cg-forward-original-file cg_hide" data-cg-tooltip="$language_OpenOriginalFileInNewTab"></div>
+                                         <div class="cg-copy-original-file-link cg_hide" data-cg-tooltip="$language_CopyOriginalFileSourceLink" title="$language_CopyOriginalFileSourceLink"></div>
+                                         <div class="cg-forward-original-file cg_hide" data-cg-tooltip="$language_OpenOriginalFileInNewTab" title="$language_OpenOriginalFileInNewTab"></div>
                                     </div>
                                 </div>
                                 <div id="cgCenterImageRatingDiv$galeryIDuserForJs" class="cg-center-image-rating-div">
                                 </div>
                                 <div id="cgCenterImageDivButtons$galeryIDuserForJs" class="cg-center-image-div-buttons">
                                    <div class="cg-center-image-div-buttons-second-controls">
-                                         <div class="cg-center-image-download cg_hide" data-cg-tooltip="$language_DownloadOriginalFile"></div>
-                                          <div class="cg-image-image-href-to-copy cg_gallery_control_element" data-cg-gid="$galeryIDuserForJs" data-cg-tooltip="$language_CopyGalleryEntryLink"></div>
+                                         <div class="cg-center-image-download cg_hide" data-cg-tooltip="$language_DownloadOriginalFile" title="$language_DownloadOriginalFile"></div>
+                                          <div class="cg-image-image-href-to-copy cg_gallery_control_element cg_hide" data-cg-gid="$galeryIDuserForJs" data-cg-tooltip="$language_CopyGalleryEntryLink" title="$language_CopyGalleryEntryLink"></div>
                                     </div>
                                 </div>
                             </div>                 
@@ -115,13 +110,7 @@ echo <<<HEREDOC
                             <div id="cgCenterSale$galeryIDuser" class="cg-center-sale cg_hide" data-cg-gid="$galeryIDuser">
                                     <div class="cg-center-sale-price-container">
                                         <div class="cg-center-sale-price">
-                                            <div class="cg-center-sale-price-left-symbol">
-                                            </div>
-                                            <div class="cg-center-sale-price-left">
-                                            </div>
-                                            <div class="cg-center-sale-price-right">
-                                            </div>
-                                            <div class="cg-center-sale-price-right-symbol">
+                                            <div class="cg-center-sale-price-value">
                                             </div>
                                             <div class="cg-center-sale-price-type">
                                             </div>
@@ -231,7 +220,7 @@ echo <<<HEREDOC
                              </div>
                                             
                                 <span class="cg-center-image-info-div-title cg-center-image-info-comments-separator cg_hide"></span>
-                                                                                <div class="cg-center-image-comments-div-add-comment cg_hide" data-cg-tooltip="$language_AddComment"></div>
+                                                                                <div class="cg-center-image-comments-div-add-comment cg_hide"$addCommentTooltipAttribute></div>
 
                                 <div id="cgCenterImageCommentsDivEnter$galeryIDuserForJs" class="cg-scroll-info-single-image-view cg-center-image-comments-div-enter cg_hide" >
                                     <div class="cg-center-image-comments-user-data cg_hide">

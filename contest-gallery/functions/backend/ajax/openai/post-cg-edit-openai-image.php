@@ -5,7 +5,7 @@ add_action('wp_ajax_post_cg_edit_openai_image', 'post_cg_edit_openai_image');
 if (!function_exists('post_cg_edit_openai_image')) {
     function post_cg_edit_openai_image() {
 
-        cg_check_nonce();
+        cg_require_backend_access();
 
         if (defined('DOING_AJAX') && DOING_AJAX) {
 

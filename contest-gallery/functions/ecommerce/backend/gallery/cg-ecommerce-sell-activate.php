@@ -101,7 +101,7 @@ if(!function_exists('cg_ecommerce_sale_activate')){
 </Files>
 HEREDOC;
 
-        $DownloadKeysCsvName = ($sqlObjectFileEcommerceEntry->DownloadKeysCsvName) ?? '';
+        $DownloadKeysCsvName = isset($sqlObjectFileEcommerceEntry->DownloadKeysCsvName) ? $sqlObjectFileEcommerceEntry->DownloadKeysCsvName : '';
         if(!empty($_POST['cgSellContainer']['RemoveDownloadKeysFile']) && $_POST['cgSellContainer']['RemoveDownloadKeysFile']==1){
             $DownloadKeysCsvName = $wpdb->get_var("SELECT DownloadKeysCsvName FROM $tablename_ecommerce_entries WHERE id = '$EcommerceEntry'");
             $ecommerceFileFolder = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/ecommerce/real-id-'.$sqlObjectFile->id.'/download-keys/';
@@ -122,7 +122,7 @@ HEREDOC;
             file_put_contents($downloadKeyFile,file_get_contents($_FILES['cgSellContainer']['tmp_name']['DownloadKey']));
         }
 
-        $ServiceKeysCsvName = ($sqlObjectFileEcommerceEntry->ServiceKeysCsvName) ?? '';
+        $ServiceKeysCsvName = isset($sqlObjectFileEcommerceEntry->ServiceKeysCsvName) ? $sqlObjectFileEcommerceEntry->ServiceKeysCsvName : '';
         if(!empty($_POST['cgSellContainer']['RemoveServiceKeysFile']) && $_POST['cgSellContainer']['RemoveServiceKeysFile']==1){
             $ServiceKeysCsvName = $wpdb->get_var("SELECT ServiceKeysCsvName FROM $tablename_ecommerce_entries WHERE id = '$EcommerceEntry'");
             //var_dump('$ServiceKeysCsvName');
@@ -284,11 +284,15 @@ HEREDOC;
         if(file_exists($imageJsonPath)){
             $imageJson = json_decode(file_get_contents($imageJsonPath),true);
             if(!empty($imageJson)){
-                $imageJson['EcommerceEntry'] = $sqlObjectFile->id;
+                $imageJson['EcommerceEntry'] = intval($sqlObjectFile->EcommerceEntry);
                 file_put_contents($imageJsonPath,json_encode($imageJson));
             }
         }
 
+        cg1l_push_recent_id_file($GalleryID,$sqlObjectFile->id,'image-main-data-last-update');
+        cg1l_push_recent_id_file($GalleryID,$sqlObjectFile->id,'image-query-data-last-update');
+        cg1l_push_recent_id_file($GalleryID,$sqlObjectFile->id,'image-urls-data-last-update');
+        cg1l_create_last_updated_time_file_image_data($GalleryID);
+
    }
 }
-

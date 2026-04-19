@@ -1,3 +1,28 @@
+cgJsClassAdmin.gallery.functions.getSetForSellSaleAction = function($form){
+    var wasActiveForSale = ($form.attr('data-cg-was-active-for-sale') == '1');
+    if($form.find('#cgActivateSale').prop('checked')){
+        return 'activate';
+    }
+    if(wasActiveForSale){
+        return 'deactivate';
+    }
+    return '';
+}
+cgJsClassAdmin.gallery.functions.setForSellButtonLabel = function($cgSellContainer){
+    $cgSellContainer = $cgSellContainer || jQuery('#cgSellContainer');
+    var $form = $cgSellContainer.find('#cgSellForm');
+    var wasActiveForSale = ($form.attr('data-cg-was-active-for-sale') == '1');
+    var isChecked = $form.find('#cgActivateSale').prop('checked');
+    var label = 'Activate sale';
+
+    if(wasActiveForSale && isChecked){
+        label = 'Change settings';
+    }else if(wasActiveForSale && !isChecked){
+        label = 'Deactivate sale';
+    }
+
+    $cgSellContainer.find('#cgSetForSell').val(label);
+}
 cgJsClassAdmin.gallery.functions.addRemoveCgProFalse = function($cgSellContainer,isShipping){
     if($cgSellContainer.hasClass('cg-pro-false-sell-container') && !isShipping){
         $cgSellContainer.find('#TaxRadioContainerRow .cg_view_option').addClass('cg-pro-false');
@@ -150,7 +175,7 @@ cgJsClassAdmin.gallery.functions.setSymbolByPosition = function (value,Symbol) {
     if(CurrencyPosition=='left'){
         value = Symbol+value;
     }else if(CurrencyPosition=='right'){
-        value = value+Symbol;
+        value = value+'\u00A0'+Symbol;
     }
     return value;
 }
@@ -302,11 +327,20 @@ cgJsClassAdmin.gallery.functions.prepareDownloadDataToShow = function ($cgSellCo
 cgJsClassAdmin.gallery.functions.insertLoaderBeforeSortableDiv = function (){
     // cgReloadEntryLoaderClone might already exist through save new download ecommerce files from multiple files view
     if(!jQuery('#cgReloadEntryLoaderClone').length){
+        var $sortableDiv = cgJsClassAdmin.gallery.vars.$sortableDiv;
+        var sortableDivHeight = $sortableDiv.outerHeight();
+        var sortableDivMarginBottom = parseInt($sortableDiv.css('margin-bottom'),10) || 0;
         var $cgReloadEntryLoaderClone = jQuery('#cgReloadEntryLoader').clone().removeClass('cg_hide').removeAttr('id');
         $cgReloadEntryLoaderClone.attr('id','cgReloadEntryLoaderClone');
-        cgJsClassAdmin.gallery.vars.$sortableDiv.addClass('cg_hide');
+        $cgReloadEntryLoaderClone.css({
+            width: '100%',
+            'box-sizing': 'border-box',
+            'min-height': sortableDivHeight + 'px',
+            'margin-bottom': sortableDivMarginBottom + 'px'
+        });
+        $sortableDiv.addClass('cg_hide');
         cgJsClassAdmin.gallery.vars.$cgReloadEntryLoaderClone = $cgReloadEntryLoaderClone;
-        $cgReloadEntryLoaderClone.insertBefore(cgJsClassAdmin.gallery.vars.$sortableDiv);
+        $cgReloadEntryLoaderClone.insertBefore($sortableDiv);
     }
 }
 cgJsClassAdmin.gallery.functions.setForSellAjaxProcessing = function (formPostData){
@@ -329,18 +363,52 @@ cgJsClassAdmin.gallery.functions.setForSellAjaxProcessing = function (formPostDa
         contentType: false,
         processData: false
     }).done(function (response) {
+        if(typeof response == 'string' && cgJsClassAdmin.index.functions.isInvalidNonce($,response)){
+            return;
+        }
         cgJsClassAdmin.gallery.reload.entry(id);
     }).fail(function (xhr, status, error) {
 
-        debugger
+        var data = {};
+        if(xhr && xhr.responseJSON && xhr.responseJSON.data){
+            data = xhr.responseJSON.data;
+        }
 
-        var test = 1;
+        if(data.code && data.code == 'cg_nonce_invalid'){
+            var version = data.version ? data.version : cgJsClassAdmin.index.functions.cgGetVersionForUrlJs();
+            cgJsClassAdmin.index.functions.isInvalidNonce($,'###cg_version###'+version+'###cg_version######cg_nonce_invalid###');
+            return;
+        }
+
+        if(xhr && xhr.responseText && cgJsClassAdmin.index.functions.isInvalidNonce($,xhr.responseText)){
+            return;
+        }
 
         cgJsClassAdmin.gallery.vars.newPreviewForEcommerceSale = '';
 
-    }).always(function () {
+        $('body').removeClass('cg_pointer_events_none cg_overflow_y_hidden');
 
-        var test = 1;
+        if(cgJsClassAdmin.gallery.vars.$cgReloadEntryLoaderClone){
+            cgJsClassAdmin.gallery.vars.$cgReloadEntryLoaderClone.remove();
+        }
+
+        if(cgJsClassAdmin.gallery.vars.$sortableDiv){
+            cgJsClassAdmin.gallery.vars.$sortableDiv.removeClass('cg_hide');
+            cgJsClassAdmin.gallery.vars.$sortableDiv.find('.cg_delete').prop('disabled',false);
+        }
+
+        jQuery('#cgSellFormLoaderContainer').addClass('cg_hide');
+        jQuery('#cgSellForm').removeClass('cg_hide');
+
+        var message = data.message ? data.message : '';
+        if(!message && xhr && xhr.responseText){
+            message = xhr.responseText;
+        }
+        if(!message){
+            message = error ? error : 'Sale settings could not be saved';
+        }
+
+        cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage(message);
 
     });
 }

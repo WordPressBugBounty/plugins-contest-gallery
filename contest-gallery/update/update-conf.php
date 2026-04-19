@@ -45,7 +45,7 @@ return array(
         'addCountR10' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update 05.02.2022
         'Category' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update 22.07.2018
         'Exif' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 15.07.2019
-        'IP' => array('COLUMN_TYPE' => 'VARCHAR(99)','DEFAULT' => '""'),// Update 08.01.2020
+        'IP' => array('COLUMN_TYPE' => 'VARCHAR(256)','DEFAULT' => '""'),// Update 08.01.2020, aligned with create-table schema
         'CountR1' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update 24.02.2020
         'CountR2' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update 24.02.2020
         'CountR3' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update 24.02.2020
@@ -214,6 +214,7 @@ return array(
         'ShowPinFormUploading' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 25.11.2025
         'AllowedUsersToVote' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 25.11.2025
         'FeVotingIconType' => array('COLUMN_TYPE' => 'VARCHAR(20)','DEFAULT' => '""'),// Update ab 21.12.2025
+        'Field1IdFullWindowBlogView' => array('COLUMN_TYPE' => 'INT(20)','DEFAULT' => 0),// Update ab 05.04.2026
     ),
     $tablename_form_input => array(
         'Show_Slider' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 01.01.2016
@@ -249,6 +250,7 @@ return array(
         'GalleryUploadTextBefore' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019
         'GalleryUploadTextAfter' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019
         'GalleryUploadConfirmationText' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 20.01.2019
+        'ShowRefreshButtonAfterUpload' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 1),// Update ab 05.04.2026
         'ShowNickname' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 15.02.2019
         'ForwardAfterRegText' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019
         'ForwardAfterLoginText' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019

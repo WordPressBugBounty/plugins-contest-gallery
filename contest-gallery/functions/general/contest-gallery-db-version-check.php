@@ -1,4 +1,36 @@
 <?php
+if(!function_exists('cg_is_fresh_install_before_create_table')){
+    function cg_is_fresh_install_before_create_table($i,$p_cgal1ery_db_installed_ver){
+
+        if($p_cgal1ery_db_installed_ver){
+            return false;
+        }
+
+        global $wpdb;
+
+        $tablename_prefix = $wpdb->base_prefix . "$i"."contest_gal1ery";
+        $table_like = $wpdb->esc_like($tablename_prefix).'%';
+        $existing = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table_like));
+
+        return empty($existing);
+
+    }
+}
+
+if(!function_exists('cg_run_update_check_after_create_table')){
+    function cg_run_update_check_after_create_table($i,$p_cgal1ery_db_installed_ver){
+
+        $isFreshInstall = cg_is_fresh_install_before_create_table($i,$p_cgal1ery_db_installed_ver);
+
+        contest_gal1ery_create_table($i);
+
+        if(!$isFreshInstall){
+            include(__DIR__."/../../update/update-check-new.php");
+        }
+
+    }
+}
+
 if(!function_exists('contest_gal1ery_db_check')){
     function contest_gal1ery_db_check(){
 
@@ -33,9 +65,8 @@ if(!function_exists('contest_gal1ery_db_check')){
                                 else{
                                     $i=$value1."_";
                                 }
-                                contest_gal1ery_create_table($i);
-                                // do update check then for each site
-                                include(__DIR__."/../../update/update-check-new.php");
+                                // create tables and run update check then for each site when required
+                                cg_run_update_check_after_create_table($i,$p_cgal1ery_db_installed_ver);
                             }
                         }
                     }
@@ -43,22 +74,19 @@ if(!function_exists('contest_gal1ery_db_check')){
                         $i=get_current_blog_id();
                         if($i==1){
                             $i="";
-                            contest_gal1ery_create_table($i);
                         }else {
                             $i=$i."_";
-                            contest_gal1ery_create_table($i);
                         }
 
-                        // do update check!
-                        include(__DIR__."/../../update/update-check-new.php");
+                        // create tables and run update check when required
+                        cg_run_update_check_after_create_table($i,$p_cgal1ery_db_installed_ver);
                     }
 
                 }
                 else{
                     $i='';
-                    contest_gal1ery_create_table($i);
-                    // do update check!
-                    include(__DIR__."/../../update/update-check-new.php");
+                    // create tables and run update check when required
+                    cg_run_update_check_after_create_table($i,$p_cgal1ery_db_installed_ver);
                 }
 
 

@@ -1,14 +1,14 @@
 <?php
 if(!defined('ABSPATH')){exit;}
 
-$siteURL = get_site_url()."/wp-admin/admin.php";
+$siteURL = get_site_url() . "/wp-admin/admin.php";
 $uploadFolder = wp_upload_dir();
 
-if(file_exists($uploadFolder['basedir'] . '/contest-gallery/cg-copying-gallery.txt')){
-    unlink($uploadFolder['basedir'] . '/contest-gallery/cg-copying-gallery.txt');
+if ( file_exists( $uploadFolder['basedir'] . '/contest-gallery/cg-copying-gallery.txt' ) ) {
+	unlink( $uploadFolder['basedir'] . '/contest-gallery/cg-copying-gallery.txt' );
 }
 
-$permalinkURL = get_site_url()."/wp-admin/admin.php";
+$permalinkURL = get_site_url() . "/wp-admin/admin.php";
 
 global $wpdb;
 
@@ -17,37 +17,37 @@ $tablename_options = $wpdb->prefix . "contest_gal1ery_options";
 $tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
 
 $cg_order = 'DESC';
-if(!empty($_GET['cg_order']) && $_GET['cg_order']=='asc'){
-    $cg_order = 'ASC';
+if ( ! empty( $_GET['cg_order'] ) && $_GET['cg_order'] == 'asc' ) {
+	$cg_order = 'ASC';
 }
 
 $selectSQL = $wpdb->get_results( "SELECT * FROM $tablename_options ORDER BY id $cg_order" );
 
 $imagesTotal = $wpdb->get_results(
-    "SELECT GalleryID,COUNT(*) as count FROM $tablename GROUP BY GalleryID ORDER BY count DESC;"
+	"SELECT GalleryID,COUNT(*) as count FROM $tablename GROUP BY GalleryID ORDER BY count DESC;"
 );
 
 $imagesActive = $wpdb->get_results(
-    "SELECT GalleryID,COUNT(*) as count FROM $tablename WHERE Active = 1 GROUP BY GalleryID ORDER BY count DESC;"
+	"SELECT GalleryID,COUNT(*) as count FROM $tablename WHERE Active = 1 GROUP BY GalleryID ORDER BY count DESC;"
 );
 
 $imagesActiveAndTotalSortedByGallery = array();
 
-foreach ($imagesTotal as $image){
+foreach ( $imagesTotal as $image ) {
 
-    if(empty($imagesActiveAndTotalSortedByGallery[$image->GalleryID])){
-        $imagesActiveAndTotalSortedByGallery[$image->GalleryID] = array();
-    }
-    $imagesActiveAndTotalSortedByGallery[$image->GalleryID]['total'] = $image->count;
+	if ( empty( $imagesActiveAndTotalSortedByGallery[ $image->GalleryID ] ) ) {
+		$imagesActiveAndTotalSortedByGallery[ $image->GalleryID ] = array();
+	}
+	$imagesActiveAndTotalSortedByGallery[ $image->GalleryID ]['total'] = $image->count;
 
 }
 
-foreach ($imagesActive as $image){
+foreach ( $imagesActive as $image ) {
 
-    if(empty($imagesActiveAndTotalSortedByGallery[$image->GalleryID])){
-        $imagesActiveAndTotalSortedByGallery[$image->GalleryID] = array();
-    }
-    $imagesActiveAndTotalSortedByGallery[$image->GalleryID]['active'] = $image->count;
+	if ( empty( $imagesActiveAndTotalSortedByGallery[ $image->GalleryID ] ) ) {
+		$imagesActiveAndTotalSortedByGallery[ $image->GalleryID ] = array();
+	}
+	$imagesActiveAndTotalSortedByGallery[ $image->GalleryID ]['active'] = $image->count;
 
 }
 
@@ -89,20 +89,20 @@ echo "<a href='https://www.contest-gallery.com/documentation/' target='_blank'><
 echo "Contest Gallery documentation";
 echo "</span></a>";
 echo "</div>";
-echo "<table style='box-shadow: 2px 4px 12px rgba(0,0,0,.08);border-radius:8px;background-color:#ffffff;width:100%;margin-bottom: 8px;' >";
+echo "<table class='cg-free-version-key-card'>";
 echo "<tr>";
 $cgLink = '';
 if($cgPro){
     $cgPro = '<br><a href="https://www.contest-gallery.com" target="_blank">www.contest-gallery.com</a>';
 }
-echo "<td style='padding:5px 0 5px 20px;overflow:hidden;$cgProStyle'><p style='display:inline;font-size: 13px;font-weight: bold;'>Contest Gallery$cgPro</p></td>";
+echo "<td class='cg-free-version-key-card-status-cell'><p class='cg-free-version-title'><span class='cg-free-version-badge'>FREE</span><span>Contest Gallery FREE version</span></p></td>";
 
 
 if($cgPro){
     // echo "<td style='padding-left:23px;overflow:hidden;'><p style='display:inline;font-size: 13px;font-weight: bold;'>You are using PRO version. For any issues on PRO version please contact <a href='mailto:support-pro@contest-gallery.com' target='_blank'>support-pro@contest-gallery.com</a></p></td>";
 }
 else{
-    echo "<td style='padding-left:80px;overflow:hidden;text-align: right; padding-right: 33px;'><p style='display:inline;font-size: 13px;font-weight: bold;'>PRO version key enter: <a href='https://www.contest-gallery.com/pro-version-area/' target='_blank'>www.contest-gallery.com/pro-version-area</a></p></td>";
+    echo "<td class='cg-free-version-key-card-action-cell'><p class='cg-free-version-key-copy'><span class='cg-free-version-key-label'>PRO version key enter</span><a class='cg-free-version-key-link' href='https://www.contest-gallery.com/pro-version-area/' target='_blank'>www.contest-gallery.com/pro-version-area</a></p></td>";
 }
 echo "</tr>";
 
@@ -151,42 +151,56 @@ echo "</table>";
 
 if (!empty($_GET['option_id']) AND !empty($_POST['cg_delete_gallery'])) {
 
-    echo "<p id='cg_changes_saved' style='font-size:18px;'><strong>Gallery deleted</strong></p>";
+	echo "<p id='cg_changes_saved' style='font-size:18px;'><strong>Gallery deleted</strong></p>";
 
 }
 
 // Die nexte ID des Option Tables ermitteln
-$last = $wpdb->get_row("SHOW TABLE STATUS LIKE '$tablename_options'");
+$last   = $wpdb->get_row( "SHOW TABLE STATUS LIKE '$tablename_options'" );
 $nextID = $last->Auto_increment;
 
 $cg_order_desc_selected = '';
-$cg_order_asc_selected = '';
+$cg_order_asc_selected  = '';
 
-if($cg_order=='DESC'){
-    $cg_order_desc_selected = 'selected';
+if ( $cg_order == 'DESC' ) {
+	$cg_order_desc_selected = 'selected';
 }
 
-if($cg_order=='ASC'){
-    $cg_order_asc_selected = 'selected';
+if ( $cg_order == 'ASC' ) {
+	$cg_order_asc_selected = 'selected';
 }
 
-$cgGalleriesShortcodesDisabled = (!count($selectSQL)) ? 'cg_disabled_background_color_e0e0e0' : '';
+	$cgGalleriesShortcodesDisabled = (!count($selectSQL)) ? 'cg_disabled_background_color_e0e0e0' : '';
 
-$cgGalleriesShortcodes  = <<<HEREDOC
-<div id='cgGalleriesShortcodes' style="flex-flow: row;" class="$cgGalleriesShortcodesDisabled" >
-    <div class="td_gallery_info_shortcode" style="margin-right: -20px;"><p class="cg_shortcode_title">Voting galleries<br><strong><span class="td_gallery_info_name_span cg_shortcode_copy cg_tooltip">[cg_galleries]</span></strong></p><div class="cg_shortcode_copy"><div class="td_gallery_info_shortcode_edit  cg_shortcode_copy_gallery cg_tooltip" style="margin-left: -18px;"></div></div>
-    <span class="cg-info-icon">info</span><span class="cg-info-container">Displays galleries of the <b>cg_gallery</b> shortcode type.<br><br>
-
+	$cgGalleriesShortcodes  = <<<HEREDOC
+<div id='cgGalleriesShortcodes' class="$cgGalleriesShortcodesDisabled">
+    <div class='td_gallery_info_content_row td_gallery_info_content_row_grid'>
+        <div class='td_gallery_info_content'>
+            <div class='td_gallery_info_shortcode'>
+                <div>
+                    <div class='td_gallery_info_name_title'>Voting galleries</div>
+                    <div class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip'>[cg_galleries]</div>
+                    <div class='cg-info-icon-parent'>
+                        <div class='cg-info-icon'>read info</div>
+                        <span class='cg-info-container'>Displays galleries of the <b>cg_gallery</b> shortcode type.<br><br>
 Shows <b>all activated entries</b> in the gallery.<br>
 Visitors <b>can vote</b> on entries.<br><br>
-
 You can also add <b>ids</b> to display specific galleries.<br>
 Example: <b>[cg_galleries ids="1,2,3"]</b><br><br>
-
 The <b>cg_galleries</b> shortcode type <b>can be used only once per page.</b></span>
-    </div>
-    <div class="td_gallery_info_shortcode"><p  class="cg_shortcode_title">User galleries<br><strong><span class="td_gallery_info_name_span cg_shortcode_copy cg_tooltip">[cg_galleries_user]</span></strong></p><div class="cg_shortcode_copy"><div class="td_gallery_info_shortcode_edit  cg_shortcode_copy_gallery cg_tooltip" style="margin-left: -10px;"></div></div>
-        <span class="cg-info-icon">info</span><span class="cg-info-container">Displays galleries of the <b>cg_gallery_user</b> shortcode type.<br><br>Shows only the entries<br> uploaded by the logged-in user.<br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='td_gallery_info_content'>
+            <div class='td_gallery_info_shortcode'>
+                <div>
+                    <div class='td_gallery_info_name_title'>User galleries</div>
+                    <div class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip'>[cg_galleries_user]</div>
+                    <div class='cg-info-icon-parent'>
+                        <div class='cg-info-icon'>read info</div>
+                        <span class='cg-info-container'>Displays galleries of the <b>cg_gallery_user</b> shortcode type.<br><br>
+Shows only the entries uploaded by the logged-in user.<br>
 Voting is <b>not available</b>.<br>
 All votes are always displayed.<br>
 The options <b>"Hide until vote"</b> and <b>"Show only user votes"</b> are disabled.<br>
@@ -195,40 +209,76 @@ Deleting votes is <b>not possible</b>.<br><br>
 You can also add <b>ids</b> to display specific galleries.<br>
 Example: <b>[cg_galleries_user ids="1,2,3"]</b><br><br>
 The <b>cg_galleries_user</b> shortcode type <b>can be used only once per page.</b></span>
-    </div>
-    <div class="td_gallery_info_shortcode"><p  class="cg_shortcode_title">No voting galleries<br><strong><span class="td_gallery_info_name_span cg_shortcode_copy cg_tooltip">[cg_galleries_no_voting]</span></strong></p><div class="td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip"></div>
-        <span class="cg-info-icon">info</span><span class="cg-info-container">Displays galleries of the <b>cg_gallery_no_voting</b> shortcode type.<br><br>All <b>activated entries</b> are <b>visible</b>.<br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='td_gallery_info_content'>
+            <div class='td_gallery_info_shortcode'>
+                <div>
+                    <div class='td_gallery_info_name_title'>No voting galleries</div>
+                    <div class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip'>[cg_galleries_no_voting]</div>
+                    <div class='cg-info-icon-parent'>
+                        <div class='cg-info-icon'>read info</div>
+                        <span class='cg-info-container'>Displays galleries of the <b>cg_gallery_no_voting</b> shortcode type.<br><br>
+All <b>activated entries</b> are <b>visible</b>.<br>
 <b>Voting, sorting by votes</b>, and <b>preselecting by votes</b> options are <b>not available</b> and not displayed.<br>
 Can be used as a <b>normal gallery without voting</b>.<br><br>
 You can also add <b>ids</b> to display specific galleries.<br>
 Example: <b>[cg_galleries_no_voting ids="1,2,3"]</b><br><br>
 The <b>cg_galleries_no_voting</b> shortcode type <b>can be used only once per page.</b></span>
-    </div>
-    <div class="td_gallery_info_shortcode"><p  class="cg_shortcode_title">Winner galleries<br><strong><span class="td_gallery_info_name_span cg_shortcode_copy cg_tooltip">[cg_galleries_winner]</span></strong></p><div class="cg_shortcode_copy"><div class="td_gallery_info_shortcode_edit  cg_shortcode_copy_gallery cg_tooltip" style="margin-left: -5px;"></div></div>
-        <span class="cg-info-icon">info</span><span class="cg-info-container">Displays galleries of the <b>cg_gallery_winner</b> shortcode type.<br><br>Total <b>voting is visible</b> but <b>can’t be voted</b>.<br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='td_gallery_info_content'>
+            <div class='td_gallery_info_shortcode'>
+                <div>
+                    <div class='td_gallery_info_name_title'>Winner galleries</div>
+                    <div class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip'>[cg_galleries_winner]</div>
+                    <div class='cg-info-icon-parent'>
+                        <div class='cg-info-icon'>read info</div>
+                        <span class='cg-info-container'>Displays galleries of the <b>cg_gallery_winner</b> shortcode type.<br><br>
+Total <b>voting is visible</b> but <b>can’t be voted</b>.<br>
 The options <b>"Hide until vote"</b> and <b>"Show only user votes"</b> are disabled.<br>
 Deleting votes is <b>not possible</b>.<br>
 The <b>"In gallery upload form" button</b> is not available.<br><br>
 You can also add <b>ids</b> to display specific galleries.<br>
 Example: <b>[cg_galleries_winner ids="1,2,3"]</b><br><br>
 The <b>cg_galleries_winner</b> shortcode type <b>can be used only once per page.</b></span>
-    </div>
-    <div class="td_gallery_info_shortcode"><p  class="cg_shortcode_title">Ecommerce galleries<br><strong><span class="td_gallery_info_name_span cg_shortcode_copy cg_tooltip">[cg_galleries_ecommerce]</span></strong></p><div class="td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip"></div>
-        <span class="cg-info-icon">info</span><span class="cg-info-container"  style="left:-5%;">Displays galleries of the <b>cg_gallery_ecommerce</b> shortcode type.<br><br>isplays only entries that are activated for selling.<br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='td_gallery_info_content'>
+            <div class='td_gallery_info_shortcode'>
+                <div>
+                    <div class='td_gallery_info_name_title'>Ecommerce galleries</div>
+                    <div class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip'>[cg_galleries_ecommerce]</div>
+                    <div class='cg-info-icon-parent'>
+                        <div class='cg-info-icon'>read info</div>
+                        <span class='cg-info-container'>Displays galleries of the <b>cg_gallery_ecommerce</b> shortcode type.<br><br>
+Displays only entries that are activated for selling.<br>
 Every entry can be activated for selling.<br>
 Use the <b>"Sales settings"</b> button to activate an entry for selling.<br>
 The <b>"In gallery upload form" button</b> is not available.<br>
-Voting can be enabled or disabled.<br><br>Add <b>test="true"</b> to shortcode to activate test environment<br>Example: <b>[cg_galleries_ecommerce  test="true"]</b><br><br>
+Voting can be enabled or disabled.<br><br>
+Add <b>test="true"</b> to shortcode to activate test environment.<br>
+Example: <b>[cg_galleries_ecommerce test="true"]</b><br><br>
 You can also add <b>ids</b> to display specific galleries.<br>
 Example: <b>[cg_galleries_ecommerce ids="1,2,3"]</b><br><br>
 The <b>cg_galleries_ecommerce</b> shortcode type <b>can be used only once per page.</b></span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 HEREDOC;
 
-if(count($selectSQL)){
-    echo $cgGalleriesShortcodes;
-    echo "<div id='cgViewControl' class='cg-main-menu'>
+	if(count($selectSQL)){
+		echo $cgGalleriesShortcodes;
+		echo "<div id='cgViewControl' class='cg-main-menu'>
 <div class='cg_order'><select id='cgOrderSelect'>
 <option value='desc' $cg_order_desc_selected>id descend (order)</option>
 <option value='asc' $cg_order_asc_selected>id ascend (order)</option>
@@ -236,193 +286,191 @@ if(count($selectSQL)){
 <a href='?page=".cg_get_version()."/index.php&cg_order=desc'  class='cg_load_backend_link cg_hide cg_load_main_menu_desc'></a>
 <a href='?page=".cg_get_version()."/index.php&cg_order=asc'  class='cg_load_backend_link cg_hide cg_load_main_menu_asc'></a>
 </div>";
-    echo "<div style='margin-left: auto;padding-right: 20px;'>";
-    echo '<form action="?page='.cg_get_version().'/index.php&option_id='.$nextID.'&edit_gallery=true" method="POST" class="cg_load_backend_submit cg_load_backend_create_gallery" >';
-    echo '<input type="hidden" name="cg_create" value="true">';
-    echo '<input type="hidden" name="option_id" value="'.$nextID.'">';
-    echo '<input type="hidden" name="create" value="true">
+		echo "<div style='margin-left: auto;padding-right: 20px;'>";
+		echo '<form action="?page='.cg_get_version().'/index.php&option_id='.$nextID.'&edit_gallery=true" method="POST" class="cg_load_backend_submit cg_load_backend_create_gallery" >';
+		echo '<input type="hidden" name="cg_create" value="true">';
+		echo '<input type="hidden" name="option_id" value="'.$nextID.'">';
+		echo '<input type="hidden" name="create" value="true">
 <input type="hidden" name="page" value="'.cg_get_version().'/index.php">
     <input class=\'cg_backend_button cg_button_new_gallery\' name="" value="New gallery" type="Submit"></form>';
-    echo "</div>";
-    echo "</div>";
-}else{
-    echo $cgGalleriesShortcodes;
-    echo '<form action="?page='.cg_get_version().'/index.php&option_id='.$nextID.'&edit_gallery=true" method="POST" class="cg_load_backend_submit cg_load_backend_create_gallery" >';
-    echo '<input type="hidden" name="cg_create" value="true">';
-    echo '<input type="hidden" name="option_id" value="'.$nextID.'">';
-    echo '<input type="hidden" name="create" value="true">
+		echo "</div>";
+		echo "</div>";
+	}else{
+		echo '<form action="?page='.cg_get_version().'/index.php&option_id='.$nextID.'&edit_gallery=true" method="POST" class="cg_load_backend_submit cg_load_backend_create_gallery" >';
+		echo '<input type="hidden" name="cg_create" value="true">';
+		echo '<input type="hidden" name="option_id" value="'.$nextID.'">';
+		echo '<input type="hidden" name="create" value="true">
 <input type="hidden" name="page" value="'.cg_get_version().'/index.php">';
-    echo "<button type='submit'  id='cgCreateFirstGalleryButton'>
-                <div class='cg_sub_2'>Add entries, edit upload form, see more available shortcodes</div>
+		echo "<button type='submit'  id='cgCreateFirstGalleryButton'>
+                <div class='cg_sub_2'>Add entries, edit upload and registration forms, and view available shortcodes</div>
                 <div class='cg_sub_1'>Create new gallery</div>
                 <div class='cg_sub_3'></div>
             </button>";
-    echo '</form>';
-}
+		echo '</form>';
+	}
 
 $unix = time();
 
-foreach($selectSQL as $value){
+	foreach ( $selectSQL as $value ) {
 
-    $option_id = $value -> id;
-        $galleryDbVersion = $value->Version;
-    $GalleryName = $value -> GalleryName;
-    $ContestEnd = $value->ContestEnd;
-        if(floatval($galleryDbVersion)>=21.1){
-            $ContestEnd = 0;
-        }
-    $ContestEndTime = $value->ContestEndTime;
-    $Version = $value->Version;
-    $FbLike = $value->FbLike;
-    $AllowRating = $value->AllowRating;
+		$option_id        = $value->id;
+		$galleryDbVersion = $value->Version;
+		$GalleryName      = $value->GalleryName;
+		$ContestEnd       = $value->ContestEnd;
+		if ( floatval( $galleryDbVersion ) >= 21.1 ) {
+			$ContestEnd = 0;
+		}
+		$ContestEndTime = $value->ContestEndTime;
+		$Version        = $value->Version;
+		$FbLike         = $value->FbLike;
+		$AllowRating    = $value->AllowRating;
 
-    $cgCopyForV14ExplanationRequired = 0;
-    if(intval($galleryDbVersion)<14){
-        $cgCopyForV14ExplanationRequired = 1;
-    }
+		$cgCopyForV14ExplanationRequired = 0;
+		if ( intval( $galleryDbVersion ) < 14 ) {
+			$cgCopyForV14ExplanationRequired = 1;
+		}
 
-        if(intval($galleryDbVersion)>=21){
-            $Version = $value->VersionDecimal;
-        }else{
-            $Version = intval($value->Version);
-        }
+		if ( intval( $galleryDbVersion ) >= 21 ) {
+			$Version = $value->VersionDecimal;
+		} else {
+			$Version = intval( $value->Version );
+		}
 
-    if ($option_id % 2 != 0) {
-        $backgroundColor = "#DFDFDF";
-    } else {
-        $backgroundColor = "#ECECEC";
-    }
+		if ( $option_id % 2 != 0 ) {
+			$backgroundColor = "#DFDFDF";
+		} else {
+			$backgroundColor = "#ECECEC";
+		}
 
-    echo "<div class='table_gallery_info'>";
+		echo "<div class='table_gallery_info'>";
 
-    $phpDateOffset = date('Z');
-    echo "<input type='hidden' id='cgPhpDateOffset' value='$phpDateOffset'>";
+		$phpDateOffset = date( 'Z' );
+		echo "<input type='hidden' id='cgPhpDateOffset' value='$phpDateOffset'>";
 
     if($GalleryName){$GalleryName="<strong>$GalleryName</strong>";}
     else {$GalleryName="";}
 
 
-    echo "<div class='td_gallery_info_content'>";
+		echo "<div class='td_gallery_info_content'>";
 
-        echo "<div class='td_gallery_info_name'><p>Gallery name<br>$GalleryName</p><a class='cg_load_backend_link' href=\"?page=".cg_get_version()."/index.php&edit_options=true&option_id=".$option_id."&cg_go_to=cgEditGalleryNameRow\" ><div class='td_gallery_info_name_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div></a></div>";
-    echo "<div class='td_gallery_info_shortcode'><p>Gallery shortcode<br><strong><span class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip'>[cg_gallery id=\"".$option_id."\"]</span></strong></p><div class='td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div></div>";
-    // echo "<div class='cg_shortcode_parent tg_gallery_info_shortcode'>Shortcode: <span class='cg_main_menu_shortcode cg_shortcode_copy_text'>[cg_gallery id=\"".$option_id."\"]</span><div class=\"cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip\"></div></div>";
+		echo "<div class='td_gallery_info_name'><p>Gallery name<br>$GalleryName</p><a class='cg_load_backend_link' href=\"?page=" . cg_get_version() . "/index.php&edit_options=true&option_id=" . $option_id . "&cg_go_to=cgEditGalleryNameRow\" ><div class='td_gallery_info_name_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div></a></div>";
+		echo "<div class='td_gallery_info_shortcode'><p>Gallery shortcode<br><strong><span class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip'>[cg_gallery id=\"" . $option_id . "\"]</span></strong></p><div class='td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div></div>";
+		// echo "<div class='cg_shortcode_parent tg_gallery_info_shortcode'>Shortcode: <span class='cg_main_menu_shortcode cg_shortcode_copy_text'>[cg_gallery id=\"".$option_id."\"]</span><div class=\"cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip\"></div></div>";
 
-    echo "</div>";
+		echo "</div>";
 
-    $imagesTotal = 0;
-    $imagesActive = 0;
+		$imagesTotal  = 0;
+		$imagesActive = 0;
 
-    if(!empty($imagesActiveAndTotalSortedByGallery[$option_id])){
-        $imagesTotal = $imagesActiveAndTotalSortedByGallery[$option_id]['total'];
-        if(!empty($imagesActiveAndTotalSortedByGallery[$option_id]['active'])){
-            $imagesActive = $imagesActiveAndTotalSortedByGallery[$option_id]['active'];
-        }
-    }
+		if ( ! empty( $imagesActiveAndTotalSortedByGallery[ $option_id ] ) ) {
+			$imagesTotal = $imagesActiveAndTotalSortedByGallery[ $option_id ]['total'];
+			if ( ! empty( $imagesActiveAndTotalSortedByGallery[ $option_id ]['active'] ) ) {
+				$imagesActive = $imagesActiveAndTotalSortedByGallery[ $option_id ]['active'];
+			}
+		}
 
-    echo "<div class='td_gallery_info_buttons'>";
+		echo "<div class='td_gallery_info_buttons'>";
 
-    echo "<div class='td_gallery_info'>";
+		echo "<div class='td_gallery_info'>";
 
-    echo "<div class='td_gallery_info_label'>Total files <strong>".$imagesTotal."</strong></div>";
-    echo "<div class='td_gallery_info_label'>Activated files <strong>".$imagesActive."</strong></div>";
+		echo "<div class='td_gallery_info_label'>Total files <strong>" . $imagesTotal . "</strong></div>";
+		echo "<div class='td_gallery_info_label'>Activated files <strong>" . $imagesActive . "</strong></div>";
 
     if(($AllowRating==1 OR ($AllowRating>=12 && $AllowRating<=20)) OR $AllowRating==2 OR $FbLike==1){
 
-        $VotingConfigurationString = '';
+			$VotingConfigurationString = '';
 
-        if($AllowRating==2){
-            $VotingConfigurationString = 'via 1 star';
-        }
+			if ( $AllowRating == 2 ) {
+				$VotingConfigurationString = 'via 1 star';
+			}
 
         if($AllowRating==1 OR ($AllowRating>=12 && $AllowRating<=20)){
-            $VotingConfigurationString = 'via multiple stars';
-        }
+				$VotingConfigurationString = 'via multiple stars';
+			}
 
-        if($FbLike==1){
-            if(!empty($VotingConfigurationString)){
-                $VotingConfigurationString .= ', via FbLike button';
-            }else{
-                $VotingConfigurationString = 'via FbLike button';
-            }
-        }
+			if ( $FbLike == 1 ) {
+				if ( ! empty( $VotingConfigurationString ) ) {
+					$VotingConfigurationString .= ', via FbLike button';
+				} else {
+					$VotingConfigurationString = 'via FbLike button';
+				}
+			}
 
-        echo "<div class='td_gallery_info_label'>Voting <strong>$VotingConfigurationString</strong></div>";
+			echo "<div class='td_gallery_info_label'>Voting <strong>$VotingConfigurationString</strong></div>";
 
-    }
+		}
 
-    if((($unix > $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) && intval($Version)<10){
-        echo "<div class='td_gallery_info_label'><strong>contest ended</strong></div>";
-    }
+		if ( ( ( $unix > $ContestEndTime && $ContestEnd == 1 ) or $ContestEnd == 2 ) && intval( $Version ) < 10 ) {
+			echo "<div class='td_gallery_info_label'><strong>contest ended</strong></div>";
+		}
 
     if((($unix>=$ContestEndTime && $ContestEnd==1) OR $ContestEnd==2) && intval($Version)>=10){
-        echo "<div  id='cgContestEnded$option_id' class='td_gallery_info_label cg-contest-ended'><input type='hidden' class='cg-contest-end-time' value='$ContestEndTime'><strong>contest ended</strong></div>";
-    }
+			echo "<div  id='cgContestEnded$option_id' class='td_gallery_info_label cg-contest-ended'><input type='hidden' class='cg-contest-end-time' value='$ContestEndTime'><strong>contest ended</strong></div>";
+		}
 
-    echo "</div>";
-
-
-    echo "<div class='td_gallery_buttons'>";
-
-    // EDIT GALLERY
-
-    echo '<div class="cg_button_edit"><p><a href="?page='.cg_get_version().'/index.php&option_id='.$option_id.'&edit_gallery=true" class="cg_load_backend_link" ><input class=\'cg_backend_button\' name="" value="Edit gallery" type="button" ></a></p></div>';
+		echo "</div>";
 
 
-    // COPY GALLERY
-	    $ecommerceEntriesCount = $wpdb->get_var(
-		    "
+		echo "<div class='td_gallery_buttons'>";
+
+		// EDIT GALLERY
+
+		echo '<div class="cg_button_edit"><p><a href="?page=' . cg_get_version() . '/index.php&option_id=' . $option_id . '&edit_gallery=true" class="cg_load_backend_link" ><input class=\'cg_backend_button\' name="" value="Edit gallery" type="button" ></a></p></div>';
+
+
+		// COPY GALLERY
+		$ecommerceEntriesCount = $wpdb->get_var(
+			"
 		SELECT COUNT(*) AS NumberOfRows FROM $tablename  WHERE GalleryID = $option_id AND EcommerceEntry > 0 
 		 LIMIT 1"
-	    );
+		);
 
-    // NO cg_load_backend_submit class here for form!!!!
-    echo '<div class="cg_button_copy"><p><form action="?page='.cg_get_version().'/index.php&edit_gallery=true" method="POST" class="cg_load_backend_copy_gallery" >';
-    echo '<input type="hidden" name="cg_copy" value="true" >';
-    echo '<input type="hidden" name="cg_copy_id" value="'.$option_id.'" >';
-        echo '<input type="hidden" class="cg_ecommerce_entries_count" value="'.$ecommerceEntriesCount.'" >';
-    echo '<input type="hidden" name="cg_copy_start" class="cg_copy_start" value="0" >';
-    echo '<input type="hidden" name="option_id_next_gallery" class="option_id_next_gallery" value="0" >';
-    echo '<input type="hidden" name="id_to_copy" value="'.$option_id.'" >';
-    echo '<input type="hidden" name="edit_gallery_hidden_post" >';
+		// NO cg_load_backend_submit class here for form!!!!
+		echo '<div class="cg_button_copy"><p><form action="?page=' . cg_get_version() . '/index.php&edit_gallery=true" method="POST" class="cg_load_backend_copy_gallery" >';
+		echo '<input type="hidden" name="cg_copy" value="true" >';
+		echo '<input type="hidden" name="cg_copy_id" value="' . $option_id . '" >';
+		echo '<input type="hidden" class="cg_ecommerce_entries_count" value="' . $ecommerceEntriesCount . '" >';
+		echo '<input type="hidden" name="cg_copy_start" class="cg_copy_start" value="0" >';
+		echo '<input type="hidden" name="option_id_next_gallery" class="option_id_next_gallery" value="0" >';
+		echo '<input type="hidden" name="id_to_copy" value="' . $option_id . '" >';
+		echo '<input type="hidden" name="edit_gallery_hidden_post" >';
 
-    if(intval($Version)<7){
-        echo '<input type="hidden" name="copy_v7" value="true" >';
-        $cgCheckCopy = 'cgCheckCopyPrevV7';
-        $cg_copy_submit = 'cg_backend_button cg_copy_submit';
-    }else{
-        $cgCheckCopy = 'cgCheckCopy';
-        $cg_copy_submit = 'cg_backend_button cg_copy_submit';
-    }
+		if ( intval( $Version ) < 7 ) {
+			echo '<input type="hidden" name="copy_v7" value="true" >';
+			$cgCheckCopy    = 'cgCheckCopyPrevV7';
+			$cg_copy_submit = 'cg_backend_button cg_copy_submit';
+		} else {
+			$cgCheckCopy    = 'cgCheckCopy';
+			$cg_copy_submit = 'cg_backend_button cg_copy_submit';
+		}
 
-    $prevV7text = '';
+		$prevV7text = '';
 
-    if(intval($Version)<7){
-        $prevV7text = '<div class="cg-copy-prev-7-text cg_hide"><br><a href="https://www.contest-gallery.com/copy-galleries-created-before-version-7-with-images-new/" target="_blank">Copying galleries created before version 7 might need some server configuration</a><br><br></div>';
-    }
+		if ( intval( $Version ) < 7 ) {
+			$prevV7text = '<div class="cg-copy-prev-7-text cg_hide"><br><a href="https://www.contest-gallery.com/copy-galleries-created-before-version-7-with-images-new/" target="_blank">Copying galleries created before version 7 might need some server configuration</a><br><br></div>';
+		}
 
-    echo $prevV7text;
+		echo $prevV7text;
 
-    echo '<input type="hidden" name="page" value="'.cg_get_version().'/index.php"><input name="" value="Copy gallery" type="Submit" id="cgCopySubmit'.$option_id.'" class="'.$cg_copy_submit.'" data-cg-version-to-copy="'.(intval($Version)).'"
-        data-cg-copy-fb-on="'.$FbLike.'" data-cg-copy-for-v14-explanation="'.$cgCopyForV14ExplanationRequired.'" data-cg-copy-id="'.$option_id.'"></form></p></div>';
+		echo '<input type="hidden" name="page" value="' . cg_get_version() . '/index.php"><input name="" value="Copy gallery" type="Submit" id="cgCopySubmit' . $option_id . '" class="' . $cg_copy_submit . '" data-cg-version-to-copy="' . ( intval( $Version ) ) . '"
+        data-cg-copy-fb-on="' . $FbLike . '" data-cg-copy-for-v14-explanation="' . $cgCopyForV14ExplanationRequired . '" data-cg-copy-id="' . $option_id . '"></form></p></div>';
 
-    // DELETE GALLERY
-	    $EcommerceDownloadEntries = $wpdb->get_var("SELECT COUNT(*) AS NumberOfRows FROM $tablename_ecommerce_entries WHERE GalleryID = '$option_id' AND IsDownload='1' ");
+		// DELETE GALLERY
+		$EcommerceDownloadEntries = $wpdb->get_var( "SELECT COUNT(*) AS NumberOfRows FROM $tablename_ecommerce_entries WHERE GalleryID = '$option_id' AND IsDownload='1' " );
 
-    echo '<div class="cg_button_delete"><p><form action="?page='.cg_get_version().'/index.php" method="GET"  class="cg_load_backend_submit" >
-            <input type="hidden" name="option_id" value="'.$option_id.'">';
-        echo '<input  type="hidden" name="cg_delete_gallery" value="true"><input class=\'cg_backend_button\' type="button" value="Delete gallery" onClick="return cgJsClassAdmin.mainMenu.functions.cgCheckDelete('.$option_id.','.(intval($Version)).',this,'.$EcommerceDownloadEntries.')"></form></p></div>';
+		echo '<div class="cg_button_delete"><p><form action="?page=' . cg_get_version() . '/index.php" method="GET"  class="cg_load_backend_submit" >
+                <input type="hidden" name="option_id" value="' . $option_id . '">';
+		echo '<input  type="hidden" name="cg_delete_gallery" value="true"><input class=\'cg_backend_button\' type="button" value="Delete gallery" onClick="return cgJsClassAdmin.mainMenu.functions.cgCheckDelete(' . $option_id . ',' . ( intval( $Version ) ) . ',this,' . $EcommerceDownloadEntries . ')"></form></p></div>';
 
-    echo "</div>";
-    echo "</div>";
+		echo "</div>";
+		echo "</div>";
 
-    echo "</div>";
+		echo "</div>";
 
-    $option_id++;
+		$option_id ++;
 }
 
 echo "<br/>";
-
 
 echo '</div>';
 
@@ -434,7 +482,6 @@ echo "<div id='cgCopyMessageClose'>";
 
 
 echo "</div>";
-
 
 
 echo "<div id='cgCopyMessageContent'>";
@@ -452,7 +499,7 @@ echo "<label for='cg_copy_type_options_and_images'>Copy files, options and forms
 echo "</p>";
 echo "<p class='cg_copy_type_all_container'>";
 echo "<input type='radio' class='cg_copy_type' id='cg_copy_type_all' name='cg_copy_type' value='cg_copy_type_all' />";
-echo "<label for='cg_copy_type_all' class='cg_copy_type_all_label'>Copy everything (options, forms, files, votes and comments)
+echo "<label for='cg_copy_type_all' class='cg_copy_type_all_label'>Copy everything (options, upload form, files, votes and comments)
 <span id='cg_copy_without_ecom_entries' class='cg_hide'><br><br><strong><span class='cg_color_red'>NOTE:</span> Entries which are set for selling will be not copied.</strong><br></span>
 <span id='cg_copy_for_v14_explanation' class='cg_hide'><br><br><strong><span class='cg_color_red'>NOTE:</span> \"Registration options\", \"Login options\" and \"Registration form\"  will be not copied. For new galleries created or copied since plugin version 14 \"Registration options\", \"Login options\" and \"Registration form\" are general for all galleries.</strong><br></span>
 <span id='cg_copy_type_all_fb_hint' class='cg_hide'><br><strong> Facebook likes and shares will be not copied</strong></span>
@@ -461,6 +508,7 @@ echo "</p>";
 echo "<p  id=\"cgCopyMessageSubmitContainer\" >";
 echo '<input class=\'cg_backend_button cg_backend_button_gallery_action\' value="Copy" type="button" id="cgCopyMessageSubmit" data-cg-copy-id="" style="text-align:center;width:70px;background:#f1f1f1;margin-left:auto;">';
 echo "</p>";
+
 
 echo "</div>";
 
@@ -472,7 +520,6 @@ echo "<div id='cgCopyInProgressOnSubmit' class='cg_hide'>";
 echo "<h2>In progress ...</h2>";
 echo "<p><strong>Do not cancel</strong></p>";
 echo "</div>";
-
 
 
 ?>

@@ -21,7 +21,55 @@ if($cgVersion<7){
         <strong>Please create a new gallery</strong><br> Galleries created before update to version 7 have old logic and will not supported anymore.<br> You can also copy an old gallery.</p></div>";
 }
 
+$admin_url = admin_url();
+$plugins_url = plugins_url();
+
+echo "<div id='cgGalleryBackendMetaCard' class='cg_gallery_backend_meta_card".(!empty($categories) ? " cg_gallery_backend_meta_card_has_categories" : " cg_gallery_backend_meta_card_upload_only")."'>";
+echo "<div class='cg_gallery_backend_meta_layout'>";
+echo "<div class='cg_gallery_backend_meta_upload_column'>";
+
+echo '<input type="hidden" id="cg_gallery_id" value="'. $GalleryID .'">';
+echo '<input type="hidden" id="cg_admin_url" value="'. $admin_url .'">';
+
+?>
+<div class="cg_gallery_backend_upload_area">
+    <!--<input type="number" value="" class="regular-text process_custom_images" id="process_custom_images" name="" max="10" min="1" step="10">-->
+    <div class="cg_gallery_backend_upload_intro">
+        <div class="cg_gallery_backend_upload_intro_title">Upload files and media</div>
+        <div class="cg_gallery_backend_upload_intro_text">Add files, social embeds, or create images with OpenAI.</div>
+    </div>
+    <div id="cgAddImagesWpUploader">
+        <button data-cg-gid="<?php echo $GalleryID; ?>" class="cg_upload_wp_images_button button cg_backend_button_gallery_action">Add files / Social embed / OpenAI</button>
+        <span>Social embed: YouTube, Twitter, Instagram, TikTok</span>
+    </div>
+<?php
+
+echo "<img src='".$plugins_url."/".cg_get_version()."/v10/v10-css/loading.gif' width='25px' class='cg_gallery_backend_uploading_gif' id='cg_uploading_gif'/>
+      <div class='cg_gallery_backend_uploading_div' id='cg_uploading_div'>
+      (adding files please wait)</div>";
+
+echo "</div>";
+
+if($cgVersion<7){
+    echo "<div class='cg_gallery_backend_upload_legacy_note'>What happens when adding images?&nbsp;<a id='cg_adding_images_info'><u>Read here...</u></a></div>";
+    ?>
+    <div id="cg_adding_images_answer" style="position: absolute; margin-left: 40px; margin-top: 10px;width: 510px; background-color: white; border: 1px solid; padding: 5px; display: none;z-index:500;">
+        Every image will be converted to five different resolutions. From 300pixel to 1920pixel width.
+        <br>Depending on screen width a suitable image will be selected by algorithm.
+        <br>It brings faster loading performance for frontend users viewing your gallery.
+        <br><br>Converting images can take some time, especially for images higher then 3MB.
+        <br>In general it is recommended not to add more then 10 images at one go. </div>
+
+    <?php
+}
+
+echo "<div style='display:none;' id='cg_wp_upload_ids'></div>";
+echo "<div id='cg_wp_upload_div'></div>";
+echo "</div>";
+
 if(!empty($categories)){
+
+    echo "<div class='cg_gallery_backend_meta_categories_column'>";
 
 // form start has to be done after get data!!!
     echo "<form id='cgCategoriesForm' action='?page=".cg_get_version()."/index.php' method='POST'>";
@@ -36,7 +84,7 @@ if(!empty($categories)){
     // !IMPORTANT Has to be here for action call!!!!
     echo "<input type='hidden' name='action' value='post_cg_gallery_save_categories_changes'>";
 
-    echo "<td style='padding-left:20px;padding-right:10px;padding-top: 8px; padding-bottom: 15px;'>";
+    echo "<td class='cg_gallery_backend_categories_table_cell'>";
 
     echo '<div id="cgSaveCategoriesLoader" class="cg-lds-dual-ring-div-gallery-hide cg-lds-dual-ring-div-gallery-hide-mainCGallery cg_hide">
     <div class="cg-lds-dual-ring-gallery-hide cg-lds-dual-ring-gallery-hide-mainCGallery">
@@ -46,20 +94,20 @@ if(!empty($categories)){
     //echo "<p id='cg_changes_saved_categories' style='font-size:18px;display:none;'><strong>Changes saved</strong></p>";
 $editCategoriesLink = '<a id="cgEditGalleriesButton" href="?page='.cg_get_version().'/index.php&define_upload=true&option_id='.$GalleryID.'&cg_go_to=cgSelectCategoriesField">
 <span>Edit categories</span></a>';
-    echo "<div style='float:left;display:inline-block;'>
+    echo "<div class='cg_gallery_backend_categories_header'>
+<div class='cg_gallery_backend_categories_header_primary'>
 $editCategoriesLink
-</div>";
-    echo "<div style='float:right;display:inline;width:50%;height:30px;text-align:right;line-height: 24px;'>
-<strong style='margin-right:10px;'>Show categories widget in frontend</strong><input type='checkbox' name='CatWidget' id='CatWidget' value='on' $CatWidgetChecked /><br>
-Show categories unchecked on page load<span style='margin-right:10px;'></span><input type='checkbox' name='ShowCatsUnchecked' id='ShowCatsUnchecked' value='on' $ShowCatsUnchecked /><br>
-Show categories unfolded<span style='margin-right:10px;'></span><input type='checkbox' name='ShowCatsUnfolded' id='ShowCatsUnfolded' value='on' $ShowCatsUnfolded />
+</div>
+<div class='cg_gallery_backend_categories_header_toggles'>
+<label class='cg_gallery_backend_categories_toggle'><span>Show categories widget in frontend</span><input type='checkbox' name='CatWidget' id='CatWidget' value='on' $CatWidgetChecked /></label>
+<label class='cg_gallery_backend_categories_toggle'><span>Show categories unchecked on page load</span><input type='checkbox' name='ShowCatsUnchecked' id='ShowCatsUnchecked' value='on' $ShowCatsUnchecked /></label>
+<label class='cg_gallery_backend_categories_toggle cg_gallery_backend_show_cats_unfolded_toggle' style='display:none;'><span>Show categories unfolded</span><input type='checkbox' name='ShowCatsUnfolded' id='ShowCatsUnfolded' value='on' $ShowCatsUnfolded /></label>
+</div>
 </div>";
     echo "<input type='hidden' name='Category[Continue]'/>";
 
-    echo "<div style='clear:left;width: 100%;' >";
-        echo "<br><strong>NOTE:</strong> files of unchecked categories will be not displayed in frontend";
-    echo "</div>";
-    echo "<div style='clear:left;display:flex;flex-wrap: wrap;width: 100%;' id='cgCategoriesCheckContainer'>";
+    echo "<div class='cg_gallery_backend_categories_note'><strong>NOTE:</strong> files of unchecked categories will be not displayed in frontend</div>";
+    echo "<div id='cgCategoriesCheckContainer'>";
 
     $countCategories = count($categories);
     $counterCategories = 1;
@@ -163,26 +211,30 @@ Show categories unfolded<span style='margin-right:10px;'></span><input type='che
                 
     echo "<input type='hidden' id='cgActivatedImagesCount' value='$activatedImagesCount' />";
 
-    echo '<div class="cg_category_checkbox_images_area" style="width: 100%;padding-top:5px;display:flex;margin-right: 0;">
-<div style="width: 50%;display:flex;">
-<div style="margin-right:5px;font-weight:bold;">Total activated files shown in frontend:</div>
-<div id="cgCategoryTotalActiveImagesValue" style="font-weight:bold;padding-right: 10px;font-size: 16px;color:'.$totalCountActiveImagesStyleColor.';">'.$totalCountActiveImages.'</div>
+    echo '<div class="cg_category_checkbox_images_area cg_gallery_backend_categories_footer">
+<div class="cg_gallery_backend_categories_total">
+<div>Total activated files shown in frontend:</div>
+<div id="cgCategoryTotalActiveImagesValue" style="color:'.$totalCountActiveImagesStyleColor.';">'.$totalCountActiveImages.'</div>
 </div>
-<div style="width: 50%;display:flex;justify-content: flex-end;">
-<span class="cg_save_categories_form cg_image_action_href"><span class="cg_backend_button_gallery_action" style="min-width: 220px;font-weight: bold;">Save categories changes</span></span>
+<div class="cg_gallery_backend_categories_save">
+<span class="cg_save_categories_form cg_image_action_href"><span class="cg_backend_button_gallery_action">Save categories changes</span></span>
 </div>
                 </div>';
     echo "</div>";
 
 cg_total_images_shown_in_frontend_zero();
 
-    echo "<td>";
+    echo "</td>";
 
     echo "</tr>";
 
     echo "</table>";
     echo "</form>";
+    echo "</div>";
 }
+
+echo "</div>";
+echo "</div>";
 
 if(!$cgProFalse){
 	cg_move_to_another_gallery_container($GalleryID);
@@ -222,7 +274,6 @@ cg_sell_ecommerce_container($GalleryID, $ecommerceOptions,$cgProFalse);
 
 cg_download_ecommerce_form($GalleryID, $ecommerceOptions);
 
-cg_deactivate_ecommerce_form($GalleryID);
 
 cg1l_email_backend_template();
 
@@ -474,7 +525,6 @@ if($AllowRating==2){
     echo <<<HEREDOC
 	<select id="cgOrderSelect">
 		<optgroup label="General" id="cgOrderSelectGeneral">
-		    <option value="custom" id="cg_custom">Custom</option>
             <option value="date_desc" id="cg_date_desc">Date descend</option>
             <option value="date_asc" id="cg_date_asc">Date ascend</option>
             <option value="rating_desc" id="cg_rating_desc">Rating descend without manipulation</option>
@@ -482,6 +532,7 @@ if($AllowRating==2){
             $orderByRatingOneStarWithManip
             <option value="comments_desc" id="cg_comments_desc">Comments descend</option>
             <option value="comments_asc" id="cg_comments_asc">Comments ascend</option>
+		    <option value="custom" id="cg_custom">Custom</option>
         </optgroup>
             $selectFormInputOptGroup
             $selectFurtherFieldsOptGroup
@@ -491,7 +542,6 @@ HEREDOC;
     echo <<<HEREDOC
 	<select id="cgOrderSelect">
 		<optgroup label="General" id="cgOrderSelectGeneral">
-            <option value="custom" id="cg_custom">Custom</option>
             <option value="date_desc" id="cg_date_desc">Date descend</option>
             <option value="date_asc" id="cg_date_asc">Date ascend</option>
             $orderBySum
@@ -501,6 +551,7 @@ HEREDOC;
             $orderByRatingMultipleStarsWithManip
             <option value="comments_desc" id="cg_comments_desc">Comments descend</option>
             <option value="comments_asc" id="cg_comments_asc">Comments ascend</option>
+            <option value="custom" id="cg_custom">Custom</option>
         </optgroup>
             $selectFormInputOptGroup
             $selectFurtherFieldsOptGroup
@@ -513,12 +564,12 @@ HEREDOC;
     echo <<<HEREDOC
 	<select id="cgOrderSelect">
 		<optgroup label="General" id="cgOrderSelectGeneral">
-            <option value="custom" id="cg_custom">Custom</option>
             <option value="date_desc" id="cg_date_desc">Date descend</option>
             <option value="date_asc" id="cg_date_asc">Date ascend</option>
             $orderByRatingMultipleStarsWithManip
             <option value="comments_desc" id="cg_comments_desc">Comments descend</option>
             <option value="comments_asc" id="cg_comments_asc">Comments ascend</option>
+            <option value="custom" id="cg_custom">Custom</option>
         </optgroup>
             $selectFormInputOptGroup
             $selectFurtherFieldsOptGroup
@@ -539,16 +590,25 @@ echo $heredoc;
 
         var gid = <?php echo json_encode($GalleryID);?>;
         var cgOrder_BG = localStorage.getItem('cgOrder_BG_'+gid);
+        var cgOrderSelect = document.querySelector('#cgGalleryBackendContainer #cgOrderSelect');
+        var cgOrderValue = document.querySelector('#cgGalleryForm #cgOrderValue');
+        var isNewGalleryCreated = !!document.getElementById('cgIsNewGalleryCreated');
+
+        if(isNewGalleryCreated){
+            cgOrder_BG = 'date_desc';
+            localStorage.setItem('cgOrder_BG_'+gid, cgOrder_BG);
+        }
 
         if(cgOrder_BG){
             // fallback to go sure if old order options are activated
             if(cgOrder_BG=='rating_desc_average' || cgOrder_BG=='rating_asc_average' || cgOrder_BG=='rating_desc_average_with_manip' || cgOrder_BG=='rating_asc_average_with_manip'){
                 cgOrder_BG = 'date_desc';
             }
-            var id = 'cg_'+cgOrder_BG;
-            var el = document.getElementById(id);
-            if(el){
-                el.setAttribute("selected", "selected");
+            if(cgOrderSelect){
+                cgOrderSelect.value = cgOrder_BG;
+            }
+            if(cgOrderValue){
+                cgOrderValue.value = cgOrder_BG;
             }
         }
 
@@ -599,7 +659,7 @@ echo "</div>";
 echo "</div>";
 
 
-echo "<div style='margin-top: 10px;' class='cg_search'>";
+echo "<div style='margin-top: 18px;' class='cg_search'>";
 
 echo "<span id='cgSearchInputSpan'><input id='cgSearchInput' placeholder='search' name='cg_search' value='$search'>
 <span id='cgSearchInputButton' class='cg_hide'>Search</span>
@@ -666,15 +726,15 @@ echo "</div>";
 
 
 echo "<div id='cgShowOnlyWinners' class='cg_show_only'>";
-echo "<div>Show winners only:</div><div><input type='checkbox' id='cgShowOnlyWinnersCheckbox' name='cg_show_only_winners' value='true' /></div>";
+echo "<label class='cg_show_only_label' for='cgShowOnlyWinnersCheckbox'><span class='cg_show_only_text'>Show winners only:</span><input type='checkbox' id='cgShowOnlyWinnersCheckbox' name='cg_show_only_winners' value='true' /></label>";
 echo "</div>";
 
 echo "<div id='cgShowOnlyActive' class='cg_show_only'>";
-echo "<div>Show active only:</div><div><input type='checkbox' id='cgShowOnlyActiveCheckbox' name='cg_show_only_active' value='true' /></div>";
+echo "<label class='cg_show_only_label' for='cgShowOnlyActiveCheckbox'><span class='cg_show_only_text'>Show active only:</span><input type='checkbox' id='cgShowOnlyActiveCheckbox' name='cg_show_only_active' value='true' /></label>";
 echo "</div>";
 
 echo "<div id='cgShowOnlyInactive' class='cg_show_only'>";
-echo "<div>Show inactive only:</div><div><input type='checkbox' id='cgShowOnlyInactiveCheckbox' name='cg_show_only_inactive' value='true' /></div>";
+echo "<label class='cg_show_only_label' for='cgShowOnlyInactiveCheckbox'><span class='cg_show_only_text'>Show inactive only:</span><input type='checkbox' id='cgShowOnlyInactiveCheckbox' name='cg_show_only_inactive' value='true' /></label>";
 echo "</div>";
 
 echo "<div class='cg_image_checkbox_container_view_control '>

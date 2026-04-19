@@ -21,7 +21,6 @@ if(!function_exists('cg_options_tabcontent_v10')){
         wp_enqueue_style( 'cg_options_style_v10', plugins_url('/v10-css/cg_options_style.css', __FILE__), false , cg_get_version_for_scripts() );
 
         wp_enqueue_style( 'cg_backend_gallery', plugins_url('/v10-css/backend/cg_backend_gallery.css', __FILE__), false, cg_get_version_for_scripts() );
-
         wp_enqueue_style( 'cg_main_menu_css', plugins_url('/v10-css/backend/cg_main_menu.css', __FILE__), false, cg_get_version_for_scripts() );
 
         if (!empty($_GET['users_management'])) {
@@ -40,12 +39,11 @@ add_action('admin_enqueue_scripts', 'cg_options_tabcontent_v10' );
 // Achtung! Für Backend AJAX Calls ist der FrontEnd Aufbau nicht erforderlich, nur die Action muss registriert werden
 
 add_action( 'wp_ajax_cg_check_wp_admin_upload_v10', 'cg_check_wp_admin_upload_v10' );
-
 if(!function_exists('cg_check_wp_admin_upload_v10')){
 
     function cg_check_wp_admin_upload_v10(){
 
-        cg_check_nonce();
+        cg_require_backend_access();
 
         contest_gal1ery_db_check();
 
@@ -100,5 +98,3 @@ if(!function_exists('post_cg_registry')){
 
     }
 }
-
-

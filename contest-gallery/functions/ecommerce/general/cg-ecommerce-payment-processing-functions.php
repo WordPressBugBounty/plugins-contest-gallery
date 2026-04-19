@@ -62,6 +62,342 @@ if(!function_exists('cg_ecommerce_check_item_has_default_shipping')) {
     }
 }
 
+if(!function_exists('cg_ecommerce_format_money_value')) {
+	function cg_ecommerce_format_money_value($value){
+		return number_format(round(floatval($value),2),2,'.','');
+	}
+}
+
+if(!function_exists('cg_ecommerce_get_reload_checkout_error')) {
+	function cg_ecommerce_get_reload_checkout_error(){
+		return 'The checkout data changed. Please reload the checkout and try again.';
+	}
+}
+
+if(!function_exists('cg_ecommerce_get_stripe_reload_checkout_error')) {
+	function cg_ecommerce_get_stripe_reload_checkout_error(){
+		return cg_ecommerce_get_reload_checkout_error();
+	}
+}
+
+if(!function_exists('cg_ecommerce_get_authoritative_ecommerce_entry_data')) {
+	function cg_ecommerce_get_authoritative_ecommerce_entry_data($ecommerceEntryRow){
+
+		$ecommerceEntryData = json_decode(json_encode($ecommerceEntryRow),true);
+
+		$ecommerceEntryData['WpUploadFilesPosts'] = !empty($ecommerceEntryData['WpUploadFilesPosts']) ? unserialize($ecommerceEntryData['WpUploadFilesPosts']) : '';
+		$ecommerceEntryData['WpUploadFilesPostMeta'] = !empty($ecommerceEntryData['WpUploadFilesPostMeta']) ? unserialize($ecommerceEntryData['WpUploadFilesPostMeta']) : '';
+		$ecommerceEntryData['WpUploadFilesForSale'] = !empty($ecommerceEntryData['WpUploadFilesForSale']) ? unserialize($ecommerceEntryData['WpUploadFilesForSale']) : '';
+		$ecommerceEntryData['WatermarkSettings'] = !empty($ecommerceEntryData['WatermarkSettings']) ? unserialize($ecommerceEntryData['WatermarkSettings']) : '';
+		$ecommerceEntryData['AllUploadsUsedText'] = contest_gal1ery_convert_for_html_output_without_nl2br($ecommerceEntryData['AllUploadsUsedText']);
+
+		return $ecommerceEntryData;
+
+	}
+}
+
+if(!function_exists('cg_ecommerce_build_authoritative_checkout_cart')) {
+	function cg_ecommerce_build_authoritative_checkout_cart($purchaseUnits, $ecommerceOptions){
+
+		global $wpdb;
+		$tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
+
+		$return = [
+			'success' => false,
+			'message' => cg_ecommerce_get_reload_checkout_error()
+		];
+
+		if(empty($purchaseUnits[0]['items']) || !is_array($purchaseUnits[0]['items'])){
+			return $return;
+		}
+
+		$currencyShort = !empty($ecommerceOptions->CurrencyShort) ? sanitize_text_field($ecommerceOptions->CurrencyShort) : '';
+		if(empty($currencyShort)){
+			return $return;
+		}
+
+		$defaultShippingGross = round(floatval($ecommerceOptions->ShippingGross),2);
+		$defaultTax = round(floatval($ecommerceOptions->TaxPercentageDefault),2);
+
+		$entryIds = [];
+		foreach ($purchaseUnits[0]['items'] as $item){
+			if(empty($item['EcommerceEntryID'])){
+				return $return;
+			}
+			$entryIds[] = absint($item['EcommerceEntryID']);
+		}
+
+		$entryIds = array_values(array_filter(array_unique($entryIds)));
+		if(empty($entryIds)){
+			return $return;
+		}
+
+		$collectedIds = implode(',', $entryIds);
+		$ecommerceEntryRows = $wpdb->get_results("SELECT * FROM $tablename_ecommerce_entries WHERE id IN ($collectedIds)");
+
+		if(count($ecommerceEntryRows) !== count($entryIds)){
+			return $return;
+		}
+
+		$ecommerceEntryRowsById = [];
+		foreach ($ecommerceEntryRows as $ecommerceEntryRow){
+			$ecommerceEntryRowsById[intval($ecommerceEntryRow->id)] = $ecommerceEntryRow;
+		}
+
+		$itemHasDefaultShipping = false;
+		$priceTotalGrossItems = 0;
+		$taxValueTotalItems = 0;
+		$alternativeShippingTotal = 0;
+		$alternativeShippingTotalTaxValue = 0;
+		$normalizedItems = [];
+		$cartSignatureItems = [];
+
+		foreach ($purchaseUnits[0]['items'] as $key => $item){
+
+			if(
+				!isset($item['EcommerceEntryID']) ||
+				!isset($item['realGid']) ||
+				!isset($item['realId']) ||
+				!isset($item['quantity'])
+			){
+				return $return;
+			}
+
+			$ecommerceEntryId = absint($item['EcommerceEntryID']);
+			$realGid = absint($item['realGid']);
+			$realId = absint($item['realId']);
+			$quantity = absint($item['quantity']);
+
+			if(empty($quantity) || empty($ecommerceEntryRowsById[$ecommerceEntryId])){
+				return $return;
+			}
+
+			$ecommerceEntryRow = $ecommerceEntryRowsById[$ecommerceEntryId];
+			$authoritativeGalleryId = intval($ecommerceEntryRow->GalleryID);
+			$authoritativeRealId = intval($ecommerceEntryRow->pid);
+
+			if($authoritativeGalleryId !== $realGid || $authoritativeRealId !== $realId){
+				return $return;
+			}
+
+			$saleAmountMin = max(1, absint($ecommerceEntryRow->SaleAmountMin));
+			$saleAmountMax = absint($ecommerceEntryRow->SaleAmountMax);
+			if($saleAmountMax < $saleAmountMin){
+				$saleAmountMax = $saleAmountMin;
+			}
+
+			if((!empty($ecommerceEntryRow->IsDownload) || !empty($ecommerceEntryRow->IsService)) && $quantity !== 1){
+				return $return;
+			}
+
+			if($quantity < $saleAmountMin || $quantity > $saleAmountMax){
+				return $return;
+			}
+
+			$priceGross = round(floatval($ecommerceEntryRow->Price),2);
+			$taxPercentage = round(floatval($ecommerceEntryRow->TaxPercentage),2);
+			$taxValueUnit = 0;
+			if($taxPercentage){
+				$taxValueUnit = round($priceGross / 100 * $taxPercentage,2);
+			}
+			$priceUnitNet = round($priceGross - $taxValueUnit,2);
+
+			$isDownload = !empty($ecommerceEntryRow->IsDownload) ? 1 : 0;
+			$isShipping = !empty($ecommerceEntryRow->IsShipping) ? 1 : 0;
+			$isService = !empty($ecommerceEntryRow->IsService) ? 1 : 0;
+			$isUpload = !empty($ecommerceEntryRow->IsUpload) ? 1 : 0;
+			$isAlternativeShipping = (!empty($ecommerceEntryRow->IsAlternativeShipping) && $isShipping) ? 1 : 0;
+
+			$alternativeShippingGross = 0;
+			$alternativeShippingNet = 0;
+			if($isAlternativeShipping){
+				$alternativeShippingGross = round(floatval($ecommerceEntryRow->AlternativeShipping),2);
+				$alternativeShippingNet = $alternativeShippingGross;
+				if($defaultTax){
+					$alternativeShippingNet = round($alternativeShippingGross - ($alternativeShippingGross / 100 * $defaultTax),2);
+				}
+				$alternativeShippingTotal = round($alternativeShippingTotal + $alternativeShippingGross,2);
+				$alternativeShippingTotalTaxValue = round($alternativeShippingTotalTaxValue + ($alternativeShippingGross - $alternativeShippingNet),2);
+			}elseif($isShipping){
+				$itemHasDefaultShipping = true;
+			}
+
+			$priceTotalGrossItems = round($priceTotalGrossItems + ($priceGross * $quantity),2);
+			$taxValueTotalItems = round($taxValueTotalItems + ($taxValueUnit * $quantity),2);
+
+			$normalizedItem = $item;
+			$normalizedItem['EcommerceEntryID'] = $ecommerceEntryId;
+			$normalizedItem['realGid'] = $authoritativeGalleryId;
+			$normalizedItem['realId'] = $authoritativeRealId;
+			$normalizedItem['quantity'] = $quantity;
+			$normalizedItem['priceGross'] = cg_ecommerce_format_money_value($priceGross);
+			$normalizedItem['unit_amount'] = [
+				'currency_code' => $currencyShort,
+				'value' => cg_ecommerce_format_money_value($priceUnitNet)
+			];
+			if($taxPercentage){
+				$normalizedItem['tax'] = [
+					'currency_code' => $currencyShort,
+					'value' => cg_ecommerce_format_money_value($taxValueUnit)
+				];
+			}else{
+				unset($normalizedItem['tax']);
+			}
+			$normalizedItem['tax_percentage'] = cg_ecommerce_format_money_value($taxPercentage);
+			$normalizedItem['IsDownload'] = $isDownload;
+			$normalizedItem['IsShipping'] = $isShipping;
+			$normalizedItem['IsService'] = $isService;
+			$normalizedItem['IsUpload'] = $isUpload;
+			$normalizedItem['IsAlternativeShipping'] = $isAlternativeShipping;
+			$normalizedItem['alternative_shipping_amount_value_gross'] = cg_ecommerce_format_money_value($alternativeShippingGross);
+			$normalizedItem['alternative_shipping_amount_value_net'] = cg_ecommerce_format_money_value($alternativeShippingNet);
+			$normalizedItem['DownloadKeysCsvName'] = $ecommerceEntryRow->DownloadKeysCsvName;
+			$normalizedItem['ServiceKeysCsvName'] = $ecommerceEntryRow->ServiceKeysCsvName;
+			$normalizedItem['SaleType'] = $ecommerceEntryRow->SaleType;
+			if(empty($normalizedItem['name'])){
+				$normalizedItem['name'] = !empty($ecommerceEntryRow->SaleTitle) ? $ecommerceEntryRow->SaleTitle : 'product-title-'.$authoritativeRealId;
+			}
+			if(!isset($normalizedItem['description']) || $normalizedItem['description'] === ''){
+				$normalizedItem['description'] = !empty($ecommerceEntryRow->SaleDescription) ? $ecommerceEntryRow->SaleDescription : 'product-description-'.$authoritativeRealId;
+			}
+
+			$authoritativeEcommerceData = cg_ecommerce_get_authoritative_ecommerce_entry_data($ecommerceEntryRow);
+			if(empty($normalizedItem['RawData']) || !is_array($normalizedItem['RawData'])){
+				$normalizedItem['RawData'] = [];
+			}
+			$normalizedItem['RawData']['realGid'] = $authoritativeGalleryId;
+			$normalizedItem['RawData']['id'] = $authoritativeRealId;
+			$normalizedItem['RawData']['ecommerceData'] = $authoritativeEcommerceData;
+
+			if(empty($normalizedItem['WpUploads']) || !is_array($normalizedItem['WpUploads'])){
+				$normalizedItem['WpUploads'] = [];
+			}
+
+			$normalizedItems[] = $normalizedItem;
+
+			$cartSignatureItems[] = implode(':', [
+				$ecommerceEntryId,
+				$authoritativeGalleryId,
+				$authoritativeRealId,
+				$quantity,
+				cg_ecommerce_format_money_value($priceGross),
+				cg_ecommerce_format_money_value($taxPercentage),
+				$isDownload,
+				$isShipping,
+				$isService,
+				$isUpload,
+				$isAlternativeShipping,
+				cg_ecommerce_format_money_value($alternativeShippingGross)
+			]);
+
+		}
+
+		sort($cartSignatureItems, SORT_STRING);
+
+		$shippingGross = $itemHasDefaultShipping ? $defaultShippingGross : 0;
+		$shippingNet = $shippingGross;
+		$shippingTaxValue = 0;
+		if($shippingGross && $defaultTax){
+			$shippingNet = round($shippingGross - ($shippingGross / 100 * $defaultTax),2);
+			$shippingTaxValue = round($shippingGross - $shippingNet,2);
+		}
+
+		$shippingTotal = round($shippingGross + $alternativeShippingTotal,2);
+		$priceTotalGrossItemsWithShipping = round($priceTotalGrossItems + $shippingTotal,2);
+		$priceTotalNetItems = round($priceTotalGrossItems - $taxValueTotalItems,2);
+		$priceTotalNetItemsWithShipping = round($priceTotalNetItems + $shippingNet + ($alternativeShippingTotal - $alternativeShippingTotalTaxValue),2);
+
+		$normalizedPurchaseUnit = !empty($purchaseUnits[0]) && is_array($purchaseUnits[0]) ? $purchaseUnits[0] : [];
+		$normalizedPurchaseUnit['items'] = $normalizedItems;
+		$normalizedPurchaseUnit['amount'] = [
+			'currency_code' => $currencyShort,
+			'value' => cg_ecommerce_format_money_value($priceTotalGrossItemsWithShipping),
+			'breakdown' => [
+				'item_total' => [
+					'currency_code' => $currencyShort,
+					'value' => cg_ecommerce_format_money_value($priceTotalNetItems)
+				],
+				'tax_total' => [
+					'currency_code' => $currencyShort,
+					'value' => cg_ecommerce_format_money_value($taxValueTotalItems)
+				],
+				'shipping' => [
+					'currency_code' => $currencyShort,
+					'value' => cg_ecommerce_format_money_value($shippingTotal)
+				]
+			]
+		];
+
+		$cartHashPayload = [
+			'currency' => $currencyShort,
+			'shipping_gross' => cg_ecommerce_format_money_value($shippingGross),
+			'shipping_net' => cg_ecommerce_format_money_value($shippingNet),
+			'shipping_tax' => cg_ecommerce_format_money_value($shippingTaxValue),
+			'alternative_shipping_total' => cg_ecommerce_format_money_value($alternativeShippingTotal),
+			'alternative_shipping_tax' => cg_ecommerce_format_money_value($alternativeShippingTotalTaxValue),
+			'items' => $cartSignatureItems
+		];
+
+		$cartHash = cg_hash_function('---cgStripeCart---'.wp_json_encode($cartHashPayload));
+		$amountCents = absint(round($priceTotalGrossItemsWithShipping * 100));
+
+		return [
+			'success' => true,
+			'message' => '',
+			'purchase_units' => [$normalizedPurchaseUnit],
+			'cart_hash' => $cartHash,
+			'amount_cents' => $amountCents,
+			'currency_short' => $currencyShort,
+			'item_count' => count($normalizedItems),
+			'DefaultShipping' => $defaultShippingGross,
+			'TaxPercentageDefault' => $defaultTax,
+			'ShippingNet' => $shippingNet,
+			'ShippingGross' => $shippingGross,
+			'ShippingTaxValue' => $shippingTaxValue,
+			'alternativeShippingTotal' => $alternativeShippingTotal,
+			'alternativeShippingTotalTaxValue' => $alternativeShippingTotalTaxValue,
+			'priceTotalUnformatted' => $priceTotalGrossItems,
+			'priceTotalWithShippingTotalUnformatted' => $priceTotalGrossItemsWithShipping,
+			'priceTotalWithShipping' => $priceTotalGrossItemsWithShipping,
+			'defaultShipping' => $shippingGross,
+			'PriceTotalNetItems' => $priceTotalNetItems,
+			'PriceTotalNetItemsWithShipping' => $priceTotalNetItemsWithShipping,
+			'PriceTotalGrossItems' => $priceTotalGrossItems,
+			'PriceTotalGrossItemsWithShipping' => $priceTotalGrossItemsWithShipping,
+			'TaxValueTotalItems' => $taxValueTotalItems,
+			'ShippingTotal' => $shippingTotal
+		];
+
+	}
+}
+
+if(!function_exists('cg_ecommerce_build_authoritative_stripe_cart')) {
+	function cg_ecommerce_build_authoritative_stripe_cart($purchaseUnits, $ecommerceOptions){
+		return cg_ecommerce_build_authoritative_checkout_cart($purchaseUnits, $ecommerceOptions);
+	}
+}
+
+if(!function_exists('cg_ecommerce_apply_authoritative_checkout_cart_to_post')) {
+	function cg_ecommerce_apply_authoritative_checkout_cart_to_post(&$post, $authoritativeCart, $ecommerceOptions){
+
+		$post['purchase_units'] = $authoritativeCart['purchase_units'];
+		$post['DefaultShipping'] = $authoritativeCart['DefaultShipping'];
+		$post['TaxPercentageDefault'] = $authoritativeCart['TaxPercentageDefault'];
+		$post['ShippingNet'] = $authoritativeCart['ShippingNet'];
+		$post['ShippingGross'] = $authoritativeCart['ShippingGross'];
+		$post['ShippingTaxValue'] = $authoritativeCart['ShippingTaxValue'];
+		$post['alternativeShippingTotal'] = $authoritativeCart['alternativeShippingTotal'];
+		$post['alternativeShippingTotalTaxValue'] = $authoritativeCart['alternativeShippingTotalTaxValue'];
+		$post['priceTotalUnformatted'] = $authoritativeCart['priceTotalUnformatted'];
+		$post['priceTotalWithShippingTotalUnformatted'] = $authoritativeCart['priceTotalWithShippingTotalUnformatted'];
+		$post['priceTotalWithShipping'] = $authoritativeCart['priceTotalWithShipping'];
+		$post['defaultShipping'] = $authoritativeCart['defaultShipping'];
+		$post['CurrencyShort'] = $authoritativeCart['currency_short'];
+		$post['CurrencyPosition'] = $ecommerceOptions->CurrencyPosition;
+
+	}
+}
+
 
 if(!function_exists('cg_ecommerce_processing_afterwards')) {
     function cg_ecommerce_processing_afterwards($Order,$OrderIdHash,$status,$ecommerce_options){
@@ -103,18 +439,20 @@ if(!function_exists('cg_ecommerce_processing_afterwards')) {
 	    if($itemHasTax || ($itemHasShipping && $TaxPercentageDefault)){
 		    $hasTaxToShow = true;
 	    }
-	    $invoiceFilePath = '';
-	    $HasInvoice = false;
 	    $cgProVersion = contest_gal1ery_key_check();
 
 	    $invoiceData = [
 		    'InvoiceNumber' => '',
-		    'ecommerceInvoicesFolder' => ''
+		    'ecommerceInvoicesFolder' => '',
+		    'invoiceFilePath' => ''
 	    ];
 
 	    // UPDATE FULL PAID ALS ERSTES EINFÜGEN
 	    if($ecommerce_options->CreateInvoice && $cgProVersion && cg_get_version()=='contest-gallery-pro' && $Order->IsFullPaid){
-		    $invoiceData = cg_ecommerce_payment_processing_create_invoice($Order->id);
+		    $invoiceDataCreated = cg_ecommerce_payment_processing_create_invoice($Order->id);
+		    if(is_array($invoiceDataCreated)){
+			    $invoiceData = array_merge($invoiceData,$invoiceDataCreated);
+		    }
 	    }
 	    // to do here
 	    $mailData = cg_ecommerce_prepare_payment_mail($ecommerce_options, $Order->id, $OrderIdHash, $ordersummaryandpage,$hasDownload,$language_FullOrderDetails,$language_Download);
@@ -195,16 +533,19 @@ if(!function_exists('cg_ecommerce_payment_processing_mail')) {
         $cgIsGeneral = true;
         add_action( 'wp_mail_failed', 'cg_on_wp_mail_error', 10, 1 );
 
-        if($CreateInvoice && $SendInvoice && $SendOrderConfirmationMail == 1 && $IsFullPaid){
-            if($InvoiceNumber){
+        if($CreateInvoice && $SendInvoice && $SendOrderConfirmationMail == 1 && $IsFullPaid && !empty($invoiceFilePath) && file_exists($invoiceFilePath) && is_readable($invoiceFilePath)){
+            $invoiceFilePathForUser = '';
+            $attachments = array($invoiceFilePath);
+            if($InvoiceNumber && !empty($ecommerceInvoicesFolder) && is_dir($ecommerceInvoicesFolder) && is_writable($ecommerceInvoicesFolder)){
                 $invoiceFilePathForUser = $ecommerceInvoicesFolder."/invoice-".$InvoiceNumber.'.pdf';
-                copy($invoiceFilePath, $invoiceFilePathForUser);
-                $attachments = array($invoiceFilePathForUser);
-            }else{
-                $attachments = array($invoiceFilePath);
+                if(copy($invoiceFilePath, $invoiceFilePathForUser)){
+                    $attachments = array($invoiceFilePathForUser);
+                }else{
+                    $invoiceFilePathForUser = '';
+                }
             }
-	        wp_mail($payer_email, $subject, $Msg, $headers, $attachments);
-            if($InvoiceNumber){
+            wp_mail($payer_email, $subject, $Msg, $headers, $attachments);
+            if(!empty($invoiceFilePathForUser) && file_exists($invoiceFilePathForUser)){
                 unlink($invoiceFilePathForUser);
             }
         }else{

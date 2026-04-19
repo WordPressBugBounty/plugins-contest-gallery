@@ -5,9 +5,7 @@ $tablenameWpUsers = $wpdb->base_prefix . "users";
 
 $registryAndLoginOptions = $wpdb->get_row( "SELECT * FROM $tablename_registry_and_login_options WHERE GeneralID = '1'" );
 
-//if(false){
-if(true){
-    // if($registryAndLoginOptions->LostPasswordMailActive==1){
+if(!empty($registryAndLoginOptions) && intval($registryAndLoginOptions->LostPasswordMailActive) === 1){
 
     $cgLostPasswordEmail = sanitize_email($_REQUEST['cgLostPasswordEmail']);
 

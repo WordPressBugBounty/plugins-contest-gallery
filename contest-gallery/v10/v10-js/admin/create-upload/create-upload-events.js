@@ -143,6 +143,21 @@ jQuery(document).ready(function ($) {
         });
     });
 
+    $(document).on('click', '#ausgabe1.cg_create_upload .cg_info_show_full_window_blog_view', function (e) {
+        var id = $(this).closest('.formField').attr('id');
+
+        $("#cgCreateUploadSortableArea .cg_view_option.cg_info_show_full_window_blog_view").each(function () {
+
+            var idToCompare = $(this).closest('.formField').attr('id');
+
+            if(id != idToCompare){
+                $(this).find('.cg_view_option_checkbox').removeClass("cg_view_option_checked").addClass('cg_view_option_unchecked');
+                $(this).find('.cg_view_option_checkbox input').prop("checked", false);
+            }
+
+        });
+    });
+
 
     $(document).on('click', '#ausgabe1.cg_create_upload .cg_info_show_gallery_sub_title', function (e) {
         var id = $(this).closest('.formField').attr('id');

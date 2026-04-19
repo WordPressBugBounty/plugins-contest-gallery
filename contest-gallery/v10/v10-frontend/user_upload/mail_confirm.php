@@ -1,7 +1,7 @@
 <?php
 if(!defined('ABSPATH')){exit;}
 
-global $wpdb;// Wichtig! Nicht entfernen!
+global $wpdb;// Important! Do not remove!
 
 $checkCGMailResult = 0;
 

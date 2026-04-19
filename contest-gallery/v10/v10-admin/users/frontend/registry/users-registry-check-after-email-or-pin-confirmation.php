@@ -364,13 +364,13 @@ if (count($userAccountEntries)) {
                 if(!empty($cgPinRequestKey)){
                     delete_transient('cg_pin_request_key_'.$cgPinRequestKey);
                 }
-                ?>
-                <script  data-cg-processing="true" data-cg-success="true">
-                    cgJsClass.gallery.vars.pinMessage = 'success';
-                    cgJsClass.gallery.vars.pinVerified = true;
-                    cgJsClass.gallery.vars.cgGetLoggedInFrontendUserKey = <?php echo json_encode($cgGetLoggedInFrontendUserKey);?>;
-                    cgJsClass.gallery.vars.cgJustLoggedInWpUserId = <?php echo json_encode($newWpId);?>;
-                </script>
+				?>
+				<script  data-cg-processing="true" data-cg-success="true">
+					cgJsClass.gallery.vars.pinMessage = 'success';
+					cgJsClass.gallery.vars.pinVerified = true;
+					cgJsClass.gallery.vars.cgGetLoggedInFrontendUserKey = <?php echo json_encode($cgGetLoggedInFrontendUserKey);?>;
+					cgJsClass.gallery.vars.cgJustLoggedInWpUserId = <?php echo json_encode($newWpId);?>;
+				</script>
                 <?php
                 die;
             }else{

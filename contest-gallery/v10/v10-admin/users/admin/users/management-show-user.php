@@ -138,11 +138,7 @@ foreach($userEntriesNew as $entry){
         $fieldName = $entry->meta_key;
         $formFieldType = $selectUserFormSorted[$entry->meta_key]->Field_Type;
 
-        if($formFieldType=="user-comment-field"){
-            $userFieldContent = esc_textarea( $entry->meta_value );
-        }else{
-            $userFieldContent = contest_gal1ery_convert_for_html_output_without_nl2br($entry->meta_value);
-        }
+        $userFieldContent = contest_gal1ery_convert_for_html_output_without_nl2br($entry->meta_value);
 
 
         echo "<div style='margin-bottom:10px;'>";
@@ -153,14 +149,15 @@ foreach($userEntriesNew as $entry){
 
         echo "<div>";
 
+        $userFieldContentDisplay = $userFieldContent;
         if($formFieldType=="user-text-field"){
-            $userFieldContent = html_entity_decode(stripslashes($userFieldContent));
+            $userFieldContentDisplay = html_entity_decode(stripslashes($userFieldContent));
         }
 
         if($formFieldType=="user-comment-field"){
-            echo "<textarea name='$fieldName' style='width:100%;height:100px;'>$userFieldContent</textarea>";
+            echo "<textarea name='".esc_attr($fieldName)."' style='width:100%;height:100px;'>".esc_textarea($userFieldContentDisplay)."</textarea>";
         }else{
-            echo "<input type='text' name='$fieldName' value='$userFieldContent' style='width:100%;' />";
+            echo "<input type='text' name='".esc_attr($fieldName)."' value='".esc_attr($userFieldContentDisplay)."' style='width:100%;' />";
         }
 
         echo "</div>";
@@ -205,18 +202,18 @@ foreach($userEntries as $entry){
     $userFieldDisabled = ($formFieldType=='user-check-agreement-field') ? 'disabled' : '';
 
     if($formFieldType=="user-text-field"){
-        $userFieldContent = html_entity_decode(stripslashes($userFieldContent));
-        echo "<input type='text' name='Entry_Field_Content[$id]' value='$userFieldContent' style='width:100%;' />";
+        $userFieldContentDisplay = html_entity_decode(stripslashes($userFieldContent));
+        echo "<input type='text' name='Entry_Field_Content[".(int)$id."]' value='".esc_attr($userFieldContentDisplay)."' style='width:100%;' />";
     }
 
     if($formFieldType=="user-select-field"){
-        $userFieldContent = html_entity_decode(stripslashes($userFieldContent));
-        echo "<input type='text' name='Entry_Field_Content[$id]' value='$userFieldContent' style='width:100%;' />";
+        $userFieldContentDisplay = html_entity_decode(stripslashes($userFieldContent));
+        echo "<input type='text' name='Entry_Field_Content[".(int)$id."]' value='".esc_attr($userFieldContentDisplay)."' style='width:100%;' />";
     }
 
     if($formFieldType=="user-comment-field"){
-        $userFieldContent = html_entity_decode(stripslashes($userFieldContent));
-        echo "<textarea type='comment' name='Entry_Field_Content[$id]' style='width:100%;height:100px;'>$userFieldContent</textarea>";
+        $userFieldContentDisplay = html_entity_decode(stripslashes($userFieldContent));
+        echo "<textarea type='comment' name='Entry_Field_Content[".(int)$id."]' style='width:100%;height:100px;'>".esc_textarea($userFieldContentDisplay)."</textarea>";
     }
     if($formFieldType=="user-check-agreement-field"){
         $userFieldContent = html_entity_decode(stripslashes($userFieldContent));

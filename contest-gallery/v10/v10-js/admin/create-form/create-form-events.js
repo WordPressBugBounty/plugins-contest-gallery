@@ -269,7 +269,7 @@ jQuery(document).ready(function ($) {
             $.each(lines, function (i, line) {
                 $cg_upl_content.append($('<div class="cg_upl_radio_button">' +
                     '<div class="cg_upl_radio_button_text">'+line+'</div>' +
-                    '<input type="radio" />' +
+                    '<input type="radio" disabled />' +
                     '</div>'));
             });
         }else{
@@ -299,7 +299,7 @@ jQuery(document).ready(function ($) {
                 // your per-line logic here
                 $cg_upl_content.append($('<div class="cg_upl_check_button">' +
                     '<div class="cg_upl_check_button_text">'+line+'</div>' +
-                    '<input type="checkbox" />' +
+                    '<input type="checkbox" disabled />' +
                     '</div>'));
             });
         }else{

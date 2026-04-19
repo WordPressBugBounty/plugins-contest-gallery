@@ -1,7 +1,7 @@
 <?php
 
 if(!function_exists('cg_create_json_files_when_activating')){
-	function cg_create_json_files_when_activating($GalleryID,$rowObject,$thumbSizesWp = [],$uploadFolder = [],$imagesDataArray=null,$galleryDBversion = 0, $RatingOverviewArray = [], $ExifDataAlreadySet = []){
+	function cg_create_json_files_when_activating($GalleryID,$rowObject,$thumbSizesWp = [],$uploadFolder = [],$imagesDataArray=null,$galleryDBversion = 0, $RatingOverviewArray = [], $ExifDataAlreadySet = [], $isBulkCopy = false){
 
 		if($imagesDataArray!=null){
 			$imagesDataArray[$rowObject->id] = array();
@@ -225,9 +225,12 @@ if(!function_exists('cg_create_json_files_when_activating')){
             $imageRatingArray['ImgType'] = 'png';
             $imageRatingArray['post_mime_type'] = 'image/png';
         }
+        $imageRatingArray['Exif'] = '';
+
+        $imageStatsArray = [];
 
 		// rating comment save here
-		$imageRatingArray['CountC'] = intval($rowObject->CountC);
+        $imageStatsArray['CountC'] = intval($rowObject->CountC);
 		// since 21.0.0
 		$countCtoReview = 0;
 		if(is_dir($dirImageComments)){
@@ -240,60 +243,64 @@ if(!function_exists('cg_create_json_files_when_activating')){
 				}
 			}
 			if($countCtotal){
-				$imageRatingArray['CountC'] = $countCtotal - $countCtoReview;
+                $imageStatsArray['CountC'] = $countCtotal - $countCtoReview;
 			}else{
-				$imageRatingArray['CountC'] = 0;
+                $imageStatsArray['CountC'] = 0;
 			}
 		}
 
+
 		//  $imageRatingArray['CountC'] =intval($rowObject->CountCtoReview);
-		$imageRatingArray['CountR'] = intval($rowObject->CountR);
-		$imageRatingArray['CountS'] = intval($rowObject->CountS);
-		$imageRatingArray['Rating'] = intval($rowObject->Rating);
-		$imageRatingArray['addCountS'] = intval($rowObject->addCountS);
-		$imageRatingArray['addCountR1'] = intval($rowObject->addCountR1);
-		$imageRatingArray['addCountR2'] = intval($rowObject->addCountR2);
-		$imageRatingArray['addCountR3'] = intval($rowObject->addCountR3);
-		$imageRatingArray['addCountR4'] = intval($rowObject->addCountR4);
-		$imageRatingArray['addCountR5'] = intval($rowObject->addCountR5);
-		$imageRatingArray['addCountR6'] = intval($rowObject->addCountR6);
-		$imageRatingArray['addCountR7'] = intval($rowObject->addCountR7);
-		$imageRatingArray['addCountR8'] = intval($rowObject->addCountR8);
-		$imageRatingArray['addCountR9'] = intval($rowObject->addCountR9);
-		$imageRatingArray['addCountR10'] = intval($rowObject->addCountR10);
-		$imageRatingArray['CountR1'] = intval($rowObject->CountR1);
-		$imageRatingArray['CountR2'] = intval($rowObject->CountR2);
-		$imageRatingArray['CountR3'] = intval($rowObject->CountR3);
-		$imageRatingArray['CountR4'] = intval($rowObject->CountR4);
-		$imageRatingArray['CountR5'] = intval($rowObject->CountR5);
-		$imageRatingArray['CountR6'] = intval($rowObject->CountR6);
-		$imageRatingArray['CountR7'] = intval($rowObject->CountR7);
-		$imageRatingArray['CountR8'] = intval($rowObject->CountR8);
-		$imageRatingArray['CountR9'] = intval($rowObject->CountR9);
-		$imageRatingArray['CountR10'] = intval($rowObject->CountR10);
-		$imageRatingArray['Exif'] = '';
+        $imageStatsArray['CountR'] = intval($rowObject->CountR);
+        $imageStatsArray['CountS'] = intval($rowObject->CountS);
+        $imageStatsArray['Rating'] = intval($rowObject->Rating);
+        $imageStatsArray['addCountS'] = intval($rowObject->addCountS);
+        $imageStatsArray['addCountR1'] = intval($rowObject->addCountR1);
+        $imageStatsArray['addCountR2'] = intval($rowObject->addCountR2);
+        $imageStatsArray['addCountR3'] = intval($rowObject->addCountR3);
+        $imageStatsArray['addCountR4'] = intval($rowObject->addCountR4);
+        $imageStatsArray['addCountR5'] = intval($rowObject->addCountR5);
+        $imageStatsArray['addCountR6'] = intval($rowObject->addCountR6);
+        $imageStatsArray['addCountR7'] = intval($rowObject->addCountR7);
+        $imageStatsArray['addCountR8'] = intval($rowObject->addCountR8);
+        $imageStatsArray['addCountR9'] = intval($rowObject->addCountR9);
+        $imageStatsArray['addCountR10'] = intval($rowObject->addCountR10);
+        $imageStatsArray['CountR1'] = intval($rowObject->CountR1);
+        $imageStatsArray['CountR2'] = intval($rowObject->CountR2);
+        $imageStatsArray['CountR3'] = intval($rowObject->CountR3);
+        $imageStatsArray['CountR4'] = intval($rowObject->CountR4);
+        $imageStatsArray['CountR5'] = intval($rowObject->CountR5);
+        $imageStatsArray['CountR6'] = intval($rowObject->CountR6);
+        $imageStatsArray['CountR7'] = intval($rowObject->CountR7);
+        $imageStatsArray['CountR8'] = intval($rowObject->CountR8);
+        $imageStatsArray['CountR9'] = intval($rowObject->CountR9);
+        $imageStatsArray['CountR10'] = intval($rowObject->CountR10);
+
+        //var_dump($imageRatingArray['CountC']);
+        //var_dump($RatingOverviewArray[$rowObject->id]['CountC']);
 
 		if(!empty($RatingOverviewArray)){
 			if(!empty($RatingOverviewArray[$rowObject->id])){
-				$imageRatingArray['CountC'] = (!empty($RatingOverviewArray[$rowObject->id]['CountC']) ? $RatingOverviewArray[$rowObject->id]['CountC'] : 0);
+                $imageStatsArray['CountC'] = (!empty($RatingOverviewArray[$rowObject->id]['CountC']) ? $RatingOverviewArray[$rowObject->id]['CountC'] : 0);
 				//$imageRatingArray['CountCtoReview'] = (!empty($RatingOverviewArray[$rowObject->id]['CountCtoReview']) ? $RatingOverviewArray[$rowObject->id]['CountCtoReview'] : 0);// added since 21.0.0
-				$imageRatingArray['CountS'] = (!empty($RatingOverviewArray[$rowObject->id]['CountS']) ? $RatingOverviewArray[$rowObject->id]['CountS'] : 0);
-				$imageRatingArray['CountR'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR']) ? $RatingOverviewArray[$rowObject->id]['CountR'] : 0);
-				$imageRatingArray['Rating'] = (!empty($RatingOverviewArray[$rowObject->id]['Rating']) ? $RatingOverviewArray[$rowObject->id]['Rating'] : 0);
-				$imageRatingArray['CountR1'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR1']) ? $RatingOverviewArray[$rowObject->id]['CountR1'] : 0);
-				$imageRatingArray['CountR2'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR2']) ? $RatingOverviewArray[$rowObject->id]['CountR2'] : 0);
-				$imageRatingArray['CountR3'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR3']) ? $RatingOverviewArray[$rowObject->id]['CountR3'] : 0);
-				$imageRatingArray['CountR4'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR4']) ? $RatingOverviewArray[$rowObject->id]['CountR4'] : 0);
-				$imageRatingArray['CountR5'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR5']) ? $RatingOverviewArray[$rowObject->id]['CountR5'] : 0);
-				$imageRatingArray['CountR6'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR6']) ? $RatingOverviewArray[$rowObject->id]['CountR6'] : 0);
-				$imageRatingArray['CountR7'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR7']) ? $RatingOverviewArray[$rowObject->id]['CountR7'] : 0);
-				$imageRatingArray['CountR8'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR8']) ? $RatingOverviewArray[$rowObject->id]['CountR8'] : 0);
-				$imageRatingArray['CountR9'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR9']) ? $RatingOverviewArray[$rowObject->id]['CountR9'] : 0);
-				$imageRatingArray['CountR10'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR10']) ? $RatingOverviewArray[$rowObject->id]['CountR10'] : 0);
+                $imageStatsArray['CountS'] = (!empty($RatingOverviewArray[$rowObject->id]['CountS']) ? $RatingOverviewArray[$rowObject->id]['CountS'] : 0);
+                $imageStatsArray['CountR'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR']) ? $RatingOverviewArray[$rowObject->id]['CountR'] : 0);
+                $imageStatsArray['Rating'] = (!empty($RatingOverviewArray[$rowObject->id]['Rating']) ? $RatingOverviewArray[$rowObject->id]['Rating'] : 0);
+                $imageStatsArray['CountR1'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR1']) ? $RatingOverviewArray[$rowObject->id]['CountR1'] : 0);
+                $imageStatsArray['CountR2'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR2']) ? $RatingOverviewArray[$rowObject->id]['CountR2'] : 0);
+                $imageStatsArray['CountR3'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR3']) ? $RatingOverviewArray[$rowObject->id]['CountR3'] : 0);
+                $imageStatsArray['CountR4'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR4']) ? $RatingOverviewArray[$rowObject->id]['CountR4'] : 0);
+                $imageStatsArray['CountR5'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR5']) ? $RatingOverviewArray[$rowObject->id]['CountR5'] : 0);
+                $imageStatsArray['CountR6'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR6']) ? $RatingOverviewArray[$rowObject->id]['CountR6'] : 0);
+                $imageStatsArray['CountR7'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR7']) ? $RatingOverviewArray[$rowObject->id]['CountR7'] : 0);
+                $imageStatsArray['CountR8'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR8']) ? $RatingOverviewArray[$rowObject->id]['CountR8'] : 0);
+                $imageStatsArray['CountR9'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR9']) ? $RatingOverviewArray[$rowObject->id]['CountR9'] : 0);
+                $imageStatsArray['CountR10'] = (!empty($RatingOverviewArray[$rowObject->id]['CountR10']) ? $RatingOverviewArray[$rowObject->id]['CountR10'] : 0);
 			}
 		}
 
-		// var_dump($imageRatingArray['addCountR5']);
+
+		// var_dump($imageStatsArray['addCountR5']);
 
 		$correctDateTimeOriginal = false;
 		$possibleCorrectDateTimeOriginal = false;
@@ -334,22 +341,43 @@ if(!function_exists('cg_create_json_files_when_activating')){
 			}
 		}
 
-		// set rating data
+		// set data
 		$jsonFile = $uploadFolder['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/image-data/image-data-'.$rowObject->id.'.json';
 		$fp = fopen($jsonFile, 'w');
 		fwrite($fp, json_encode($imageRatingArray));
 		fclose($fp);
 
-		cg_create_comments_json_file_when_activating_image($uploadFolder,$GalleryID,$rowObject->id);
+	        if(empty($isBulkCopy)){
+	            cg1l_migrate_image_stats_to_folder($GalleryID, true, true);// correct first if needs to correct
+	        }
+	        $lockFp = false;
+	        cg1l_get_stats_for_update($GalleryID, $rowObject->id, $lockFp);
+	        cg1l_set_stats_with_lock($GalleryID, $rowObject->id, $imageStatsArray, $lockFp);
+	        cg1l_release_stats_lock($lockFp);
+	        if(empty($isBulkCopy)){
+	            cg1l_push_recent_id_file($GalleryID, $rowObject->id, 'image-stats-data-last-update');
+	            cg1l_create_last_updated_time_file($GalleryID, 'image-stats-data-last-update');
+	        }
+
+		if(!empty($isBulkCopy)){
+			$imageCommentsDir = $uploadFolder['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/image-comments";
+			if(!is_dir($imageCommentsDir)){
+				mkdir($imageCommentsDir,0755,true);
+			}
+			$jsonFile = $imageCommentsDir."/image-comments-".$rowObject->id.".json";
+			$fp = fopen($jsonFile, 'w');
+			fwrite($fp, json_encode(array()));
+			fclose($fp);
+		}else{
+			cg_create_comments_json_file_when_activating_image($uploadFolder,$GalleryID,$rowObject->id,$isBulkCopy);
+		}
 
 		// leeres Info file wird kreiert falls noch nicht existiert
 		if(!is_file($uploadFolder['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/image-info/image-info-".$rowObject->id.".json")){
-
 			$jsonFile = $uploadFolder['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/image-info/image-info-".$rowObject->id.".json";
 			$fp = fopen($jsonFile, 'w');
 			fwrite($fp, json_encode(array()));
 			fclose($fp);
-
 		}
 
 		return $imagesDataArray;
@@ -359,7 +387,7 @@ if(!function_exists('cg_create_json_files_when_activating')){
 }
 
 if(!function_exists('cg_create_comments_json_file_when_activating_image')){
-	function cg_create_comments_json_file_when_activating_image($uploadFolder,$GalleryID,$imageId){
+	function cg_create_comments_json_file_when_activating_image($uploadFolder,$GalleryID,$imageId,$isBulkCopy = false){
 
 		$imageCommentsArray = array();
 		$dirImageComments = $uploadFolder['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/image-comments/ids/'.$imageId;
@@ -430,6 +458,19 @@ if(!function_exists('cg_create_comments_json_file_when_activating_image')){
 		$fp = fopen($jsonFile, 'w');
 		fwrite($fp, json_encode($imageCommentsArray));
 		fclose($fp);
+
+        if(!empty($isBulkCopy)){
+            return;
+        }
+
+        cg1l_push_recent_id_file_all_types($GalleryID,$imageId);
+
+        static $cg1l_last_updated_done = false;
+
+        if (!$cg1l_last_updated_done || time() > $cg1l_last_updated_done) {
+            $cg1l_last_updated_done = time();
+            cg1l_create_last_updated_time_file_all($GalleryID);
+        }
 
 	}
 }

@@ -43,12 +43,12 @@ if(!empty($radioArray)){
         if(empty($addOrShowRadioButtons)){
             $addOrShowRadioButtons = '<div class="cg_upl_radio_button">
 <div class="cg_upl_radio_button_text">'.$radioButton.'</div>
-<input type="radio" />
+<input type="radio" disabled />
 </div>';
         }else{
             $addOrShowRadioButtons .= '<div class="cg_upl_radio_button">
 <div class="cg_upl_radio_button_text">'.$radioButton.'</div>
-<input type="radio" />
+<input type="radio" disabled />
 </div>';
         }
     }

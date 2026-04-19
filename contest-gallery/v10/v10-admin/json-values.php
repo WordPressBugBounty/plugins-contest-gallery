@@ -51,7 +51,7 @@ $FullSizeSlideOutStart = 0;
 
 $AllowSort = 1;
 $RandomSort = 0;
-$RandomSortButton = 1;
+$RandomSortButton = 0;
 $AllowComments = 1;
 $CommentsOutGallery = 1;
 $AllowRating = 2;
@@ -129,6 +129,7 @@ $CommentsAlignGallery = 'left';
 $RatingAlignGallery = 'left';
 
 $Field1IdGalleryView = '';
+$Field1IdFullWindowBlogView = '';
 $Field1AlignGalleryView = 'left';
 $Field2IdGalleryView = '';
 $Field2AlignGalleryView = 'left';
@@ -226,7 +227,7 @@ $FbLikeNoShare = 0;
 $FbLikeOnlyShare = 0;
 $VoteNotOwnImage = 0;
 
-$PreselectSort = 'custom';
+$PreselectSort = 'date_descend';
 
 $UploadRequiresCookieMessage = 'Please allow cookies to upload';
 
@@ -266,6 +267,8 @@ $ConsentTikTok = 0;
 $PdfPreviewBackend = 0;
 $PdfPreviewFrontend = 0;
 ###NORMAL---END###
+
+
 $ShowExifDateTimeOriginalFormat = 'YYYY-MM-DD';
 $CommentsDateFormat = 'modern';
 $ShowDateFormat = 'modern';

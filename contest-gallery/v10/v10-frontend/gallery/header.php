@@ -70,6 +70,7 @@ if(($GalleryUpload==1 && !$isUserGallery) OR ($GalleryUpload==1 && $isUserGaller
 
 // Order of views will be determined
 
+$isEntryOnlyEcommerceHeaderOnlyBasket = !empty($entryId) && !empty($isOnlyGalleryEcommerce) && !empty($isGalleryShortcode);
 
 if($isOnlyUploadForm || $isOnlyContactForm){
     echo "<div class='cg_thumbs_and_categories_control cg_gallery_control_element'>";
@@ -77,10 +78,25 @@ if($isOnlyUploadForm || $isOnlyContactForm){
     echo "</div>";
 }else{
 
+if($isEntryOnlyEcommerceHeaderOnlyBasket){
+    echo "<div class='cg_gallery_view_sort_control' id='cgGalleryViewSortControl$galeryIDuserForJs' >";
+        echo "<div class='cg_sort_div'>";
+            echo'<div class="cg-sale-basket-open-parent" >';
+                echo'<div class="cg-sale-basket-open" data-cg-tooltip="'.$language_ShoppingCart.'" data-cg-gid="'.$galeryIDuserForJs.'">';
+                    echo'<div class="cg-sale-basket-icon"></div>';
+                    echo'<div class="cg-sale-items-count-container cg-sale-items-count-container-pending"><span class="cg-sale-items-count-value"></span></div>';
+                echo'</div>';
+            echo'</div>';
+        echo "</div>";
+    echo "</div>";
+}else{
+
 if(true){
 //if($GalleryUpload==1 OR $AllowSort == 1 OR $LooksCount>1 or $categoriesCheck or $Search==1 or $FullSizeGallery==1 OR $options['general']['RandomSortButton']==1){
+    // cgCenterImageClose will be used to be cloned and te be inserted in cg_sort_div_mobile_right via JS
+    echo "<div class='cg_hover_effect cg-center-image-close-fullwindow cg_hide $cgFeControlsStyle' id='cgCenterImageClose$galeryIDuserForJs' data-cg-gid='$galeryIDuserForJs' data-cg-tooltip='$language_CloseView'></div>";
 
-    if($GalleryUpload==1 OR $AllowSort == 1 OR $LooksCount>1 or $FullSizeGallery==1 OR $options['general']['RandomSortButton']==1 or $Search==1 OR !empty($isOnlyGalleryEcommerce)){
+    if($GalleryUpload==1 OR $AllowSort == 1 OR $LooksCount>1 or $FullSizeGallery==1 OR $options['general']['RandomSortButton']==1 or $Search==1 OR !empty($isOnlyGalleryEcommerce) OR !empty($options['visual']['EnableSwitchStyleGalleryButton'])){
 
         echo "<div class='cg_gallery_view_sort_control' id='cgGalleryViewSortControl$galeryIDuserForJs' >";
 
@@ -102,6 +118,7 @@ if(true){
         if($isInGalleryUpload  && empty($isOnlyGalleryWinner) && empty($isOnlyGalleryEcommerce)){
             //echo "<div data-cg-tooltip='$language_ImageUpload' class='cg-gallery-upload cg_gallery_control_element $cgFeControlsStyle' data-cg-gid='$galeryIDuserForJs'>";
             echo "<div class='cg-gallery-upload cg_gallery_control_element $cgFeControlsStyle' data-cg-gid='$galeryIDuserForJs'>";
+                echo '<div class="cg_skeleton"></div>';
                 echo $imageFieldFieldTitle;
             echo "</div>";
         }
@@ -110,13 +127,14 @@ if(true){
 	        echo'<div class="cg-sale-basket-open-parent" >';
                 echo'<div class="cg-sale-basket-open" data-cg-tooltip="'.$language_ShoppingCart.'" data-cg-gid="'.$galeryIDuserForJs.'">';
                 echo'<div class="cg-sale-basket-icon"></div>';
-                echo'<div class="cg-sale-items-count" >&nbsp;(<span id="cgSaleBasketItemsCount cg-sale-items-count" >0</span>)</div>';
+                echo'<div class="cg-sale-items-count-container cg-sale-items-count-container-pending"><span class="cg-sale-items-count-value"></span></div>';
                 echo'</div>';
             echo'</div>';
         }
 
         if($Search==1){
             echo "<div id='cgSearchInputDiv$galeryIDuserForJs' class='cg_search_input_div cg_gallery_control_element $cgFeControlsStyle'>";
+            echo '<div class="cg_skeleton"></div>';
             echo "<input  type='text' id='cgSearchInput$galeryIDuserForJs' autocomplete='off' placeholder='$language_Search' class='cg_search_input' data-cg-gid='$galeryIDuserForJs' />";
             echo "</div>";
         }
@@ -127,12 +145,7 @@ if(true){
             if($AllowSort == 1){
 
                 $selected = '';
-                echo '<label class="cg_select_order_label cg_gallery_control_element cg_hover_effect"><select data-cg-tooltip="'.$language_SortBy.'" id="cg_select_order'.$galeryIDuserForJs.'" class="cg_select_order cg_gallery_control_element '.$cgFeControlsStyle.'">';
-
-
-                if(in_array('custom',$AllowSortOptionsArray) && !$isUserGallery){// no custom in user gallery, might be included when new gallery created, correction here, might be already set in galleries
-                    echo '<option value="custom" class="cg_custom" '.$selected.'>'.$language_Custom.'</option>';
-                }
+                echo '<label class="cg_select_order_label cg_gallery_control_element cg_hover_effect"><div class="cg_skeleton"></div><select data-cg-tooltip="'.$language_SortBy.'" id="cg_select_order'.$galeryIDuserForJs.'" class="cg_select_order cg_gallery_control_element '.$cgFeControlsStyle.'">';
 
                 if(in_array('date-desc',$AllowSortOptionsArray)){
                     echo '<option value="date-desc" class="cg_date_descend" '.$selected.'>'.$language_DateDescend.'</option>';
@@ -193,6 +206,9 @@ if(true){
                         }
 
                     }
+                    if(in_array('custom',$AllowSortOptionsArray) && !$isUserGallery){// no custom in user gallery, might be included when new gallery created, correction here, might be already set in galleries
+                        echo '<option value="custom" class="cg_custom" '.$selected.'>'.$language_Custom.'</option>';
+                    }
                     if(in_array('random',$AllowSortOptionsArray)){
 
                         if($options['general']['RandomSort']==1){
@@ -209,10 +225,18 @@ if(true){
             }
 
             if($options['general']['RandomSortButton']==1){
-                echo "<div class='cg-lds-dual-ring cg_random_button_loader $cgFeControlsStyle cg_gallery_control_element'></div>";
-                echo "<span data-cg-tooltip='$language_RandomSortIcon' class='cg_random_button cg_hover_effect cg_hide cg_gallery_control_element $cgFeControlsStyle' data-cg-gid='$galeryIDuserForJs'></span>";
+                echo "<div class='cg-lds-dual-ring cg_random_button_loader $cgFeControlsStyle cg_gallery_control_element'><div class='cg_skeleton'></div></div>";
+                echo "<div data-cg-tooltip='$language_RandomSortIcon' class='cg_random_button cg_hover_effect cg_hide cg_gallery_control_element $cgFeControlsStyle' data-cg-gid='$galeryIDuserForJs'><div class='cg_skeleton'></div></div>";
             }
 
+        }
+
+        if(!empty($options['visual']['EnableSwitchStyleGalleryButton'])){
+            $switchColorsTooltipStyleText = $language_BrightStyle;
+            if($cgFeControlsStyle == 'cg_fe_controls_style_white'){
+                $switchColorsTooltipStyleText = $language_DarkStyle;
+            }
+            echo "<div class='cg_switch_colors cg_gallery_control_element cg_hover_effect'  data-cg-tooltip='$switchColorsTooltipStyleText' data-cg-gid='$galeryIDuserForJs'><div class='cg_skeleton'></div></div>";
         }
 
 
@@ -240,7 +264,8 @@ if(true){
         $showThumbsControl = true;
     }
 
-    if(count($orderGalleries)>1){
+    // not available since version 29.0.0
+    if(false && count($orderGalleries)>1){
 
         foreach($orderGalleries as $key => $value){
 
@@ -268,7 +293,7 @@ if(true){
         }
 
         $i = 0;
-        if($showThumbsControl){
+        if(false && $showThumbsControl){// since 29.0.0 not available
 
             echo "<div class='cg_gallery_thumbs_control'>";
 
@@ -320,16 +345,6 @@ if(true){
 
             }
 
-            if(!empty($options['visual']['EnableSwitchStyleGalleryButton'])){
-
-                $switchColorsTooltipStyleText = $language_BrightStyle;
-                if($cgFeControlsStyle == 'cg_fe_controls_style_white'){
-                    $switchColorsTooltipStyleText = $language_DarkStyle;
-                }
-
-                echo "<div class='cg_switch_colors cg_gallery_control_element cg_hover_effect'  data-cg-tooltip='$switchColorsTooltipStyleText' data-cg-gid='$galeryIDuserForJs'></div>";
-            }
-
             //echo "<span class='cg_view_switcher_stabilize' style='width:40px;height:40px;display:inline-block;margin:0;padding:0;'></span>";
             echo "</div>";
 
@@ -338,8 +353,8 @@ if(true){
 
     }
 
-
-    if($FullScreenGallery == 1 or $FullSizeGallery==1 or $SliderFullWindow=1){
+    // not available since version 29.0.0
+    if(false && ($FullScreenGallery == 1 or $FullSizeGallery==1 or $SliderFullWindow=1)){
 
         echo "<div class='cg-fullsize-div'>";
 
@@ -347,7 +362,6 @@ if(true){
             echo  "<div class='cg_hover_effect cg-center-image-fullscreen' data-cg-gid='$galeryIDuserForJs'></div>";
         }
 
-        echo "<div class='cg_hover_effect cg-center-image-close-fullwindow cg_hide $cgFeControlsStyle' id='cgCenterImageClose$galeryIDuserForJs' data-cg-gid='$galeryIDuserForJs' data-cg-tooltip='$language_CloseView'></div>";
 
         if($FullSizeGallery==1){
             echo "<div class='cg_hover_effect cg-center-image-fullwindow cg_hover_effect cg_gallery_control_element $cgFeControlsStyle' id='cgCenterImageFullwindowHeader$galeryIDuserForJs' data-cg-gid='$galeryIDuserForJs' data-cg-tooltip='$language_FullWindow'></div>";
@@ -359,7 +373,7 @@ if(true){
         }
 
         // because of float right at the end
-        echo "<div class='cg_hover_effect cg-fullwindow-configuration-button cg-header-controls-show-only-full-window cg_hide $cgFeControlsStyle' id='cgCenterImageFullWindowConfiguration$galeryIDuserForJs' data-cg-gid='$galeryIDuserForJs' data-cg-tooltip='$language_SearchOrSort'></div>";
+        echo "<div class='cg_hover_effect cg-fullwindow-configuration-button cg-header-controls-show-only-full-window cg_hide $cgFeControlsStyle' id='cgCenterImageFullWindowConfiguration$galeryIDuserForJs' data-cg-gid='$galeryIDuserForJs' data-cg-tooltip='$language_SearchOrSort'><div class='cg_skeleton'></div></div>";
 
        /* if($isInGalleryUpload){
             echo "<div class='cg-gallery-upload cg-header-controls-show-only-full-window cg_hide $cgFeControlsStyle' data-cg-gid='$galeryIDuserForJs'>";
@@ -387,4 +401,4 @@ if(true){
 
 }
 }
-
+}

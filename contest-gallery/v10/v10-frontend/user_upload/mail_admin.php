@@ -58,7 +58,7 @@ add_action('contest_gal1ery_mail_admin', 'contest_gal1ery_mail_admin',2,3);
 $tablename_mail_admin = $wpdb->prefix . "contest_gal1ery_mail_admin";
 $selectSQLemailAdmin = $wpdb->get_row( "SELECT * FROM $tablename_mail_admin WHERE GalleryID = '$galeryID'" );
 
-// Alle image IDs werden durchgegangen die gerade neu angelegt wurden
+// Iterate through all image IDs that were just newly created
 foreach($collectImageIDs as $key => $imageID){
 
     $UserEntries = '<br/>';
@@ -86,14 +86,14 @@ foreach($collectImageIDs as $key => $imageID){
 
         foreach ($selectFormInput as $value) {
 
-            // 1. Feld Typ
-            // 2. ID des Feldes in F_INPUT
-            // 3. Feld Reihenfolge
-            // 4. Feld Content
+            // 1. Field Type
+            // 2. ID of the field in F_INPUT
+            // 3. Field Order
+            // 4. Field Content
 
             $selectFieldType = 	$value->Field_Type;
-            $id = $value->id;// prim�re unique id der form wird auch gespeichert und sp�ter in entries inserted zur erkennung des verwendeten formular feldes
-            $fieldOrder = $value->Field_Order;// Die originale Field order in f_input Tabelle. Zwecks Vereinheitlichung.
+            $id = $value->id;// primary unique id of the form is also saved and later inserted in entries to recognize the used form field
+            $fieldOrder = $value->Field_Order;// The original Field order in f_input table. For standardization purposes.
             $selectContentFieldArray[] = $selectFieldType;
             $selectContentFieldArray[] = $id;
             $selectContentFieldArray[] = $fieldOrder;
@@ -108,10 +108,10 @@ foreach($collectImageIDs as $key => $imageID){
         foreach($selectContentFieldArray as $key => $formvalue){
 
             //	echo "<br>$i<br>";
-            // 1. Feld Typ
-            // 2. ID des Feldes in F_INPUT
-            // 3. Feld Reihenfolge
-            // 4. Feld Content
+            // 1. Field Type
+            // 2. ID of the field in F_INPUT
+            // 3. Field Order
+            // 4. Field Content
 
             if($formvalue=='text-f'){$fieldtype="nf"; $n=1; continue;}
             if($fieldtype=="nf" AND $n==1){$formFieldId=$formvalue; $n=2; continue;}
@@ -276,7 +276,7 @@ foreach($collectImageIDs as $key => $imageID){
 
         }
 
-        // Daten zur User URL sammeln
+        // Collect data for User URL
 
         $wpImgId = $wpdb->get_var("SELECT WpUpload FROM $tablename1 WHERE GalleryID = '$galeryID' AND  id = '$imageID'");
         $selectImageData = $wpdb->get_var( "SELECT guid FROM $table_posts WHERE ID = '$wpImgId' ");

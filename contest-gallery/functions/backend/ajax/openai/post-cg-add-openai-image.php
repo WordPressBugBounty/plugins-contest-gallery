@@ -5,7 +5,7 @@ add_action('wp_ajax_post_cg_add_openai_image', 'post_cg_add_openai_image');
 if (!function_exists('post_cg_add_openai_image')) {
     function post_cg_add_openai_image() {
 
-        cg_check_nonce();
+        cg_require_backend_access();
 
         if (defined('DOING_AJAX') && DOING_AJAX) {
 
@@ -139,6 +139,8 @@ if (!function_exists('post_cg_add_openai_image')) {
                         imagesavealpha($formImage,true);// required for png images... otherwise background black
                         imagepng($formImage,$fullPath);
                     }else{
+
+
                         // Initialize cURL session
                         /*$ch = curl_init($imageUrl);
 
@@ -225,7 +227,7 @@ if (!function_exists('post_cg_add_openai_image')) {
                                         // Fallback: Use getimagesizefromstring if finfo extension is missing
                                         $image_info = getimagesizefromstring($image_data);
                                         $is_valid_image = ($image_info !== false);
-                        }
+                                    }
 
                                     if (!$is_valid_image) {
                                         $cgAddOpenAiImageErrorMessage = 'Invalid file type. Only PNG, JPG, and WEBP are allowed.';

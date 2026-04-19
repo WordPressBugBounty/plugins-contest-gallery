@@ -1,10 +1,60 @@
 <?php
+if (!function_exists('cg_backend_ajax_error_json')) {
+    function cg_backend_ajax_error_json($message, $status = 400, $code = 'cg_backend_ajax_error') {
+        wp_send_json_error(array(
+            'message' => $message,
+            'code' => $code
+        ), $status);
+    }
+}
+
+if (!function_exists('cg_backend_ajax_require_access_json')) {
+    function cg_backend_ajax_require_access_json() {
+        if (!defined('DOING_AJAX') || !DOING_AJAX) {
+            cg_backend_ajax_error_json('Invalid AJAX request.', 400, 'cg_invalid_ajax_request');
+        }
+
+        if (!is_user_logged_in() || !cg_user_has_backend_access()) {
+            cg_backend_ajax_error_json('This area can be edited only as administrator, editor or author.', 403, 'cg_missing_rights');
+        }
+
+        $cg_nonce = '';
+        if (isset($_POST['cg_nonce'])) {
+            $cg_nonce = sanitize_text_field($_POST['cg_nonce']);
+        } elseif (isset($_GET['cg_nonce'])) {
+            $cg_nonce = sanitize_text_field($_GET['cg_nonce']);
+        }
+
+        if (empty($cg_nonce) || !wp_verify_nonce($cg_nonce, 'cg_nonce')) {
+            wp_send_json_error(array(
+                'message' => 'WP nonce security token not set or not valid anymore.',
+                'code' => 'cg_nonce_invalid',
+                'version' => cg_get_version()
+            ), 403);
+        }
+    }
+}
+
+if (!function_exists('cg_backend_ajax_validate_gallery_hash_json')) {
+    function cg_backend_ajax_validate_gallery_hash_json($GalleryID, $galleryHash) {
+        $GalleryID = absint($GalleryID);
+        if (empty($GalleryID) || empty($galleryHash)) {
+            cg_backend_ajax_error_json('Missing gallery validation data.', 403, 'cg_missing_gallery_hash');
+        }
+
+        $galleryHashToCompare = md5(wp_salt('auth') . '---cngl1---' . $GalleryID);
+        if ($galleryHash !== $galleryHashToCompare) {
+            cg_backend_ajax_error_json('Invalid gallery validation data.', 403, 'cg_invalid_gallery_hash');
+        }
+    }
+}
+
 // post_cg_get_current_permalinks
 add_action('wp_ajax_post_cg_get_current_permalinks', 'post_cg_get_current_permalinks');
 if (!function_exists('post_cg_get_current_permalinks')) {
     function post_cg_get_current_permalinks() {
 
-        cg_check_nonce();
+        cg_require_backend_access();
 
         global $wpdb;
         $tablename = $wpdb->prefix . "contest_gal1ery";
@@ -54,10 +104,8 @@ if (!function_exists('post_cg_get_current_permalinks')) {
 
 // create PDF preview
 add_action('wp_ajax_post_cg_create_pdf_preview_backend', 'post_cg_create_pdf_preview_backend');
-if (!function_exists('post_cg_create_pdf_preview_backend')) {
-    function post_cg_create_pdf_preview_backend($WpUpload = 0, $realId = 0, $cg_base_64 = '', $isFromFrontendUpload = false) {
-
-        cg_check_nonce();
+if (!function_exists('cg_create_pdf_preview_internal')) {
+    function cg_create_pdf_preview_internal($WpUpload = 0, $realId = 0, $cg_base_64 = '', $isFromFrontendUpload = false) {
 
         global $wpdb;
         $tablename_posts = $wpdb->prefix . "posts";
@@ -67,138 +115,149 @@ if (!function_exists('post_cg_create_pdf_preview_backend')) {
 
         $_POST = cg1l_sanitize_post($_POST);
 
-        //var_dump(33444);
-        //var_dump($_POST);
+        $result = [
+            'ok' => false,
+            'attach_id' => 0,
+            'preview_url' => '',
+            'error' => ''
+        ];
 
-        // create image attachment
         $wp_upload_dir = wp_upload_dir();
-        $currentUploadDir = $wp_upload_dir['basedir'];
-        $cgWpUploadToReplace = '';
-        $cgNewWpUploadWhichReplace = '';
-        if(empty($WpUpload)){
-            $WpUpload = absint($_POST['cg_wp_upload']);
+        $cgWpUploadToReplace = 0;
+        $cgNewWpUploadWhichReplace = 0;
+        if (empty($WpUpload)) {
+            $WpUpload = (!empty($_POST['cg_wp_upload'])) ? absint($_POST['cg_wp_upload']) : 0;
         }
-        if(empty($realId)){
-            $realId = absint($_POST['cgRealId']);
+        if (empty($realId)) {
+            $realId = (!empty($_POST['cgRealId'])) ? absint($_POST['cgRealId']) : 0;
         }
-        if(empty($cg_base_64)){
+        if (empty($cg_base_64)) {
             $cg_base_64 = (!empty($_POST['cg_base_64'])) ? $_POST['cg_base_64'] : '';
         }
-        if(!empty($_POST['cgWpUploadToReplace'])){
+        if (!empty($_POST['cgWpUploadToReplace'])) {
             $cgWpUploadToReplace = absint($_POST['cgWpUploadToReplace']);
         }
-        if(!empty($_POST['cgNewWpUploadWhichReplace'])){
+        if (!empty($_POST['cgNewWpUploadWhichReplace'])) {
             $cgNewWpUploadWhichReplace = absint($_POST['cgNewWpUploadWhichReplace']);
         }
 
-        $realIdRow = $wpdb->get_row( "SELECT * FROM $tablename WHERE id='$realId'" );
-        $WpUploadRow = $wpdb->get_row( "SELECT * FROM $tablename_posts WHERE ID='$WpUpload'" );
-
-        //var_dump('$cgWpUploadToReplace456');
-        //var_dump($cgWpUploadToReplace);
-        //var_dump('$cgNewWpUploadWhichReplace456');
-        //var_dump($cgNewWpUploadWhichReplace);
-
-        if(!empty($cgWpUploadToReplace) && !empty($cgNewWpUploadWhichReplace)  && !empty($realIdRow->EcommerceEntry)){
-            $EcommerceEntry = $realIdRow->EcommerceEntry;
-            $ecommerceEntry = $wpdb->get_row( "SELECT * FROM $tablename_ecommerce_entries WHERE id='$EcommerceEntry'" );
-            $removedWpUploadIdsFromSale = [$cgWpUploadToReplace];
-            //var_dump('cg_replace_ecommerce_file');
-            cg_replace_ecommerce_file($realIdRow->id, $realIdRow->GalleryID, $ecommerceEntry, $cgNewWpUploadWhichReplace, [],$removedWpUploadIdsFromSale);
+        if (empty($WpUpload) || empty($realId)) {
+            $result['error'] = 'missing_parameters';
+            return $result;
         }
 
-        // check multiple files
+        $realIdRow = $wpdb->get_row("SELECT * FROM $tablename WHERE id='$realId'");
+        if (empty($realIdRow)) {
+            $result['error'] = 'missing_real_id_row';
+            return $result;
+        }
+
+        $WpUploadRow = $wpdb->get_row("SELECT * FROM $tablename_posts WHERE ID='$WpUpload'");
+        if (empty($WpUploadRow)) {
+            $result['error'] = 'missing_wp_upload_row';
+            return $result;
+        }
+
+        if (!empty($cgWpUploadToReplace) && !empty($cgNewWpUploadWhichReplace) && !empty($realIdRow->EcommerceEntry)) {
+            $EcommerceEntry = $realIdRow->EcommerceEntry;
+            $ecommerceEntry = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_entries WHERE id='$EcommerceEntry'");
+            $removedWpUploadIdsFromSale = [$cgWpUploadToReplace];
+            cg_replace_ecommerce_file($realIdRow->id, $realIdRow->GalleryID, $ecommerceEntry, $cgNewWpUploadWhichReplace, [], $removedWpUploadIdsFromSale);
+        }
+
         $multipleFilesPdfPreview = 0;
         $multipleFilesTitle = '';
-        if(!empty($realIdRow->MultipleFiles) && $realIdRow->MultipleFiles!='""'){
+        if (!empty($realIdRow->MultipleFiles) && $realIdRow->MultipleFiles != '""') {
             $MultipleFiles = unserialize($realIdRow->MultipleFiles);
-            foreach($MultipleFiles as $file){
-                if(empty($file['isRealIdSource']) && $file['post_mime_type']=='application/pdf' && $file['WpUpload'] == $WpUpload && !empty($file['PdfPreview'])){
-                    // post_title
-                    $multipleFilesPdfPreview = $file['PdfPreview'];// set for multiple files then
+            foreach ($MultipleFiles as $file) {
+                if (empty($file['isRealIdSource']) && $file['post_mime_type'] == 'application/pdf' && $file['WpUpload'] == $WpUpload && !empty($file['PdfPreview'])) {
+                    $multipleFilesPdfPreview = $file['PdfPreview'];
                     $multipleFilesTitle = $file['post_title'];
                 }
             }
         }
 
-        //var_dump($realIdRow->PdfPreview);
-        //var_dump(get_post( $realIdRow->PdfPreview ));
-        if(!empty($realIdRow->PdfPreview) && !empty(get_post( $realIdRow->PdfPreview )) && $WpUpload == $realIdRow->WpUpload){
-            if(!$isFromFrontendUpload){
-                $PdfPreviewImage = wp_get_attachment_image_src($realIdRow->PdfPreview, 'large');
-                echo 'cg_guid###'.$PdfPreviewImage[0].'###cg_guid_end';
-            }
-        }elseif(!empty($multipleFilesPdfPreview) && !empty(get_post($multipleFilesPdfPreview))){// set for multiple files then
-            if(!$isFromFrontendUpload){
-                $multipleFilesPdfPreviewImage = wp_get_attachment_image_src($multipleFilesPdfPreview, 'large');
-                echo 'cg_guid###'.$multipleFilesPdfPreviewImage[0].'###cg_guid_end';
-            }
-        }else{
-            //var_dump(222);
+        if (!empty($realIdRow->PdfPreview) && !empty(get_post($realIdRow->PdfPreview)) && $WpUpload == $realIdRow->WpUpload) {
+            $PdfPreviewImage = wp_get_attachment_image_src($realIdRow->PdfPreview, 'large');
+            $result['ok'] = true;
+            $result['attach_id'] = absint($realIdRow->PdfPreview);
+            $result['preview_url'] = (!empty($PdfPreviewImage[0])) ? $PdfPreviewImage[0] : '';
+            return $result;
+        } elseif (!empty($multipleFilesPdfPreview) && !empty(get_post($multipleFilesPdfPreview))) {
+            $multipleFilesPdfPreviewImage = wp_get_attachment_image_src($multipleFilesPdfPreview, 'large');
+            $result['ok'] = true;
+            $result['attach_id'] = absint($multipleFilesPdfPreview);
+            $result['preview_url'] = (!empty($multipleFilesPdfPreviewImage[0])) ? $multipleFilesPdfPreviewImage[0] : '';
+            return $result;
+        } else {
             $content = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $cg_base_64));
-            $formImage = imagecreatefromstring($content);
+            if (empty($content)) {
+                $result['error'] = 'missing_preview_payload';
+                return $result;
+            }
 
-            if(!empty($multipleFilesPdfPreview)){
-                $fullName = $multipleFilesTitle.'-cg-pdf-preview';
-            }else{
-                $fullName = $WpUploadRow->post_title.'-cg-pdf-preview';
+            $formImage = imagecreatefromstring($content);
+            if (!$formImage) {
+                $result['error'] = 'invalid_preview_payload';
+                return $result;
+            }
+
+            if (!empty($multipleFilesPdfPreview)) {
+                $fullName = $multipleFilesTitle . '-cg-pdf-preview';
+            } else {
+                $fullName = $WpUploadRow->post_title . '-cg-pdf-preview';
             }
             $fullNamePath = $fullName;
             $fullNamePath = cg_pre_process_name_for_url_name($fullNamePath);
             $fullNamePath = cg_check_first_char_for_url_name_after_pre_processing($fullNamePath);
             $fullNamePath = cg_check_last_char_for_url_name_after_pre_processing($fullNamePath);
-            $fullNamePath = cg_sluggify_for_url($fullNamePath);// has to be tested with asia chars one time
+            $fullNamePath = cg_sluggify_for_url($fullNamePath);
             $fullNamePathFirst = $fullNamePath;
 
-            //var_dump('$fullName');
-            //var_dump($fullName);
-
-            $fullPath = $wp_upload_dir['basedir'].$wp_upload_dir['subdir'].'/'.$fullNamePathFirst.'.png';
-            //var_dump('$fullPath check');
-            //var_dump($fullPath);
-            if(file_exists($fullPath)){
-                //var_dump(112233);
+            $fullPath = $wp_upload_dir['basedir'] . $wp_upload_dir['subdir'] . '/' . $fullNamePathFirst . '.png';
+            if (file_exists($fullPath)) {
                 $i = 0;
-                do{
-                    if($i==0){
+                do {
+                    if ($i == 0) {
                         $i = 1;
-                    }else{
+                    } else {
                         $i++;
                     }
-                    $add = '-'.$i;
-                    $fullNamePath = $fullNamePathFirst.$add;
-                    $fullPath = $wp_upload_dir['basedir'].$wp_upload_dir['subdir'].'/'.$fullNamePath.'.png';
-                }while(file_exists($fullPath));
+                    $add = '-' . $i;
+                    $fullNamePath = $fullNamePathFirst . $add;
+                    $fullPath = $wp_upload_dir['basedir'] . $wp_upload_dir['subdir'] . '/' . $fullNamePath . '.png';
+                } while (file_exists($fullPath));
             }
 
-            //var_dump('$fullPath');
-            //var_dump($fullPath);
+            imagesavealpha($formImage, true);
+            imagepng($formImage, $fullPath);
 
-            //var_dump('$fullName');
-            //var_dump($fullName);
-
-            // for png
-            imagesavealpha($formImage,true);// required for png images... otherwise background black
-
-            //imagejpeg($formImage,$WpUploadFilesPostBaseUrls[$base64WatermarkedAndAltFilesWpUploadId]);
-            //imagegif($formImage,$WpUploadFilesPostBaseUrls[$base64WatermarkedAndAltFilesWpUploadId]);
-            imagepng($formImage,$fullPath);
-
-            //file_put_contents($fullNewPath,$content);
+            if (!file_exists($fullPath)) {
+                imagedestroy($formImage);
+                $result['error'] = 'preview_file_not_created';
+                return $result;
+            }
 
             $attachment = array(
-                'guid' => $wp_upload_dir['url']."/".$fullNamePath.'.png',
+                'guid' => $wp_upload_dir['url'] . "/" . $fullNamePath . '.png',
                 'post_mime_type' => 'image/png',
                 'post_title' => $fullName,
                 'post_content' => '',
                 'post_status' => 'inherit'
             );
 
-            $attach_id = wp_insert_attachment( $attachment, $fullPath );
-            $imagenew = get_post( $attach_id );
-            $fullsizepath = get_attached_file( $imagenew->ID );
-            $attach_data = wp_generate_attachment_metadata( $attach_id, $fullsizepath );
-            wp_update_attachment_metadata( $attach_id, $attach_data );
+            $attach_id = wp_insert_attachment($attachment, $fullPath);
+            if (empty($attach_id) || is_wp_error($attach_id)) {
+                imagedestroy($formImage);
+                $result['error'] = 'preview_attachment_insert_failed';
+                return $result;
+            }
+
+            $imagenew = get_post($attach_id);
+            $fullsizepath = get_attached_file($imagenew->ID);
+            $attach_data = wp_generate_attachment_metadata($attach_id, $fullsizepath);
+            wp_update_attachment_metadata($attach_id, $attach_data);
+            imagedestroy($formImage);
 
             $wpdb->query($wpdb->prepare(
                 "
@@ -206,37 +265,30 @@ if (!function_exists('post_cg_create_pdf_preview_backend')) {
 						(id, WpUpload, WpUploadPreview)
 						VALUES ( %s,%d,%d)
 					",
-                '',$WpUpload,$attach_id
+                '', $WpUpload, $attach_id
             ));
 
             $multipleFilesWpUploadForPdfPreview = 0;
 
-            if(!empty($realIdRow->MultipleFiles) && $realIdRow->MultipleFiles!='""'){
+            if (!empty($realIdRow->MultipleFiles) && $realIdRow->MultipleFiles != '""') {
                 $MultipleFiles = unserialize($realIdRow->MultipleFiles);
-                foreach($MultipleFiles as $file){
-                    if(empty($file['isRealIdSource']) && $file['post_mime_type']=='application/pdf' && $file['WpUpload'] == $WpUpload){
+                foreach ($MultipleFiles as $file) {
+                    if (empty($file['isRealIdSource']) && $file['post_mime_type'] == 'application/pdf' && $file['WpUpload'] == $WpUpload) {
                         $multipleFilesWpUploadForPdfPreview = $WpUpload;
                     }
                 }
             }
 
-            //var_dump('$multipleFilesWpUploadForPdfPreview');
-            //var_dump($multipleFilesWpUploadForPdfPreview);
-
-            if(!empty($multipleFilesWpUploadForPdfPreview)){
-                //var_dump('$multipleFilesPdfPreview');
-                //var_dump($multipleFilesPdfPreview);
+            if (!empty($multipleFilesWpUploadForPdfPreview)) {
                 $MultipleFiles = unserialize($realIdRow->MultipleFiles);
                 $MultipleFilesNew = [];
-                foreach($MultipleFiles as $order => $file){
-                    if(empty($file['isRealIdSource']) && $file['post_mime_type']=='application/pdf' && $file['WpUpload'] == $WpUpload && $multipleFilesWpUploadForPdfPreview == $WpUpload){
-                        //var_dump('set PdfPreview');
+                foreach ($MultipleFiles as $order => $file) {
+                    if (empty($file['isRealIdSource']) && $file['post_mime_type'] == 'application/pdf' && $file['WpUpload'] == $WpUpload && $multipleFilesWpUploadForPdfPreview == $WpUpload) {
                         $file['PdfPreview'] = $attach_id;
                         $PdfPreviewImage = wp_get_attachment_image_src($attach_id, 'full');
                         $file['PdfPreviewImage'] = $PdfPreviewImage[0];
                         $PdfPreviewImageLarge = wp_get_attachment_image_src($attach_id, 'large');
                         $file['PdfPreviewImageLarge'] = $PdfPreviewImageLarge[0];
-                        // important to set PdfOriginal
                         $file['PdfOriginal'] = get_the_guid($file['WpUpload']);
                         $file['full'] = $PdfPreviewImage[0];
                         $file['guid'] = $PdfPreviewImage[0];
@@ -251,42 +303,46 @@ if (!function_exists('post_cg_create_pdf_preview_backend')) {
                     }
                     $MultipleFilesNew[$order] = $file;
                 }
-                /*echo "<pre>";
-                    print_r($MultipleFilesNew);
-                echo "</pre>";*/
                 $MultipleFilesNew = serialize($MultipleFilesNew);
-                //var_dump('$realId set MultipleFiles');
-                //var_dump($realId);
-                // SET MultipleFiles='$MultipleFilesNew' ... serialized $MultipleFilesNew has to be in ''
                 $wpdb->query("UPDATE $tablename SET MultipleFiles='$MultipleFilesNew' WHERE id = $realId");
-            }else{
-                //var_dump('$realId set PdfPreview');
+            } else {
                 $wpdb->query("UPDATE $tablename SET PdfPreview=$attach_id WHERE id = $realId");
             }
 
-            if(!$isFromFrontendUpload){
-                if(!empty($realIdRow->Active)){
-                    $uploadFolder = wp_upload_dir();
-                    $thumbSizesWp = array();
-                    $thumbSizesWp['thumbnail_size_w'] = get_option("thumbnail_size_w");
-                    $thumbSizesWp['medium_size_w'] = get_option("medium_size_w");
-                    $thumbSizesWp['large_size_w'] = get_option("large_size_w");
-                    $imageArray = array();
-                    $pid = $realIdRow->id;
-                    $GalleryID = $realIdRow->GalleryID;
-                    $row = $wpdb->get_row( "SELECT DISTINCT $tablename_posts.*, $tablename.* FROM $tablename_posts, $tablename WHERE 
-                          (($tablename.id = $pid) AND $tablename.GalleryID='$GalleryID' AND $tablename.Active='1' and $tablename_posts.ID = $tablename.WpUpload) 
-                          OR 
-                          (($tablename.id = $pid) AND $tablename.GalleryID='$GalleryID' AND $tablename.Active='1' AND $tablename.WpUpload = 0) 
+            if (!$isFromFrontendUpload && !empty($realIdRow->Active)) {
+                $uploadFolder = wp_upload_dir();
+                $thumbSizesWp = array();
+                $thumbSizesWp['thumbnail_size_w'] = get_option("thumbnail_size_w");
+                $thumbSizesWp['medium_size_w'] = get_option("medium_size_w");
+                $thumbSizesWp['large_size_w'] = get_option("large_size_w");
+                $imageArray = array();
+                $pid = $realIdRow->id;
+                $GalleryID = $realIdRow->GalleryID;
+                $row = $wpdb->get_row("SELECT DISTINCT $tablename_posts.*, $tablename.* FROM $tablename_posts, $tablename WHERE
+                          (($tablename.id = $pid) AND $tablename.GalleryID='$GalleryID' AND $tablename.Active='1' and $tablename_posts.ID = $tablename.WpUpload)
+                          OR
+                          (($tablename.id = $pid) AND $tablename.GalleryID='$GalleryID' AND $tablename.Active='1' AND $tablename.WpUpload = 0)
                           GROUP BY $tablename.id  ORDER BY $tablename.id DESC LIMIT 0, 1");
-                    cg_create_json_files_when_activating($GalleryID,$row,$thumbSizesWp,$uploadFolder,$imageArray);
-                }
-
-                $PdfPreviewImage = wp_get_attachment_image_src($attach_id, 'large');
-                $PdfPreviewImage = $PdfPreviewImage[0];
-
-                echo 'cg_guid###'.$PdfPreviewImage.'###cg_guid_end';
+                cg_create_json_files_when_activating($GalleryID, $row, $thumbSizesWp, $uploadFolder, $imageArray);
             }
+
+            $PdfPreviewImage = wp_get_attachment_image_src($attach_id, 'large');
+
+            $result['ok'] = true;
+            $result['attach_id'] = absint($attach_id);
+            $result['preview_url'] = (!empty($PdfPreviewImage[0])) ? $PdfPreviewImage[0] : '';
+            return $result;
+        }
+    }
+}
+if (!function_exists('post_cg_create_pdf_preview_backend')) {
+    function post_cg_create_pdf_preview_backend($WpUpload = 0, $realId = 0, $cg_base_64 = '', $isFromFrontendUpload = false) {
+        cg_require_backend_access();
+        $result = cg_create_pdf_preview_internal($WpUpload, $realId, $cg_base_64, $isFromFrontendUpload);
+        if (!empty($result['ok']) && !$isFromFrontendUpload && !empty($result['preview_url'])) {
+            echo 'cg_guid###' . $result['preview_url'] . '###cg_guid_end';
+        } elseif (empty($result['ok'])) {
+            echo 'cg_error###' . $result['error'] . '###cg_error_end';
         }
     }
 }
@@ -296,212 +352,275 @@ add_action('wp_ajax_post_cg_move_to_another_gallery_get_inputs', 'post_cg_move_t
 if (!function_exists('post_cg_move_to_another_gallery_get_inputs')) {
 	function post_cg_move_to_another_gallery_get_inputs() {
 
-    global $wpdb;
-    $tablename_form_input = $wpdb->prefix . "contest_gal1ery_f_input";
-    $tablenameOptions = $wpdb->prefix . "contest_gal1ery_options";
-    $tablename_categories = $wpdb->prefix . "contest_gal1ery_categories";
+        cg_backend_ajax_require_access_json();
+        $_POST = cg1l_sanitize_post($_POST);
 
-    $contact_forms = $wpdb->get_results("SELECT * FROM $tablename_form_input WHERE id > 0");
+        $MoveFromGalleryID = (!empty($_POST['cgMoveFromGalleryID'])) ? absint($_POST['cgMoveFromGalleryID']) : 0;
+        $galleryHash = (!empty($_POST['cgGalleryHash'])) ? $_POST['cgGalleryHash'] : '';
+        cg_backend_ajax_validate_gallery_hash_json($MoveFromGalleryID, $galleryHash);
 
-    $contact_forms_by_gallery_id = [];
-    foreach ($contact_forms as $form){
-        if(!isset($contact_forms_by_gallery_id[$form->GalleryID])){
-	        $contact_forms_by_gallery_id[$form->GalleryID] = [];
+        global $wpdb;
+        $tablename_form_input = $wpdb->prefix . "contest_gal1ery_f_input";
+        $tablenameOptions = $wpdb->prefix . "contest_gal1ery_options";
+        $tablename_categories = $wpdb->prefix . "contest_gal1ery_categories";
+
+        $contact_forms = $wpdb->get_results("SELECT * FROM $tablename_form_input WHERE id > 0");
+
+        $contact_forms_by_gallery_id = [];
+        foreach ($contact_forms as $form){
+            if(!isset($contact_forms_by_gallery_id[$form->GalleryID])){
+                $contact_forms_by_gallery_id[$form->GalleryID] = [];
+            }
+            if(is_serialized($form->Field_Content)){
+                $form->Field_Content = unserialize($form->Field_Content);
+            }
+            $contact_forms_by_gallery_id[$form->GalleryID][] = $form;
         }
-	    if(is_serialized($form->Field_Content)){
-		    $form->Field_Content = unserialize($form->Field_Content);
-        }
-	    $contact_forms_by_gallery_id[$form->GalleryID][] = $form;
-    }
 
-		$galleryIDs = $wpdb->get_results("SELECT id FROM $tablenameOptions WHERE id >= 1 ORDER BY id DESC");
-		$allCategoriesByGalleryID = $wpdb->get_results("SELECT id, GalleryID, Name FROM $tablename_categories WHERE id >= 1 ORDER BY id DESC");
-		$allCategoriesByGalleryIDArray = [];
+        $galleryIDs = $wpdb->get_results("SELECT id FROM $tablenameOptions WHERE id >= 1 ORDER BY id DESC");
+        $allCategoriesByGalleryID = $wpdb->get_results("SELECT id, GalleryID, Name FROM $tablename_categories WHERE id >= 1 ORDER BY id DESC");
+        $allCategoriesByGalleryIDArray = [];
         foreach ($allCategoriesByGalleryID as $row){
             if(!isset($allCategoriesByGalleryIDArray[$row->GalleryID])){
-	            $allCategoriesByGalleryIDArray[$row->GalleryID] = [];
+                $allCategoriesByGalleryIDArray[$row->GalleryID] = [];
             }
-	        $allCategoriesByGalleryIDArray[$row->GalleryID][$row->id] = [];
-	        $allCategoriesByGalleryIDArray[$row->GalleryID][$row->id]['id'] = $row->id;
-	        $allCategoriesByGalleryIDArray[$row->GalleryID][$row->id]['name'] = $row->Name;
+            $allCategoriesByGalleryIDArray[$row->GalleryID][$row->id] = [];
+            $allCategoriesByGalleryIDArray[$row->GalleryID][$row->id]['id'] = $row->id;
+            $allCategoriesByGalleryIDArray[$row->GalleryID][$row->id]['name'] = $row->Name;
         }
 
-		?>
-    <script data-cg-processing="true">
-        cgJsClassAdmin.gallery.vars.allCategoriesByGalleryID = <?php echo json_encode($allCategoriesByGalleryIDArray);?>;
-        cgJsClassAdmin.gallery.vars.galleryIDs = <?php echo json_encode($galleryIDs);?>;// renew here for sure
-        cgJsClassAdmin.gallery.vars.contact_forms_by_gallery_id = <?php echo json_encode($contact_forms_by_gallery_id); ?>;
-    </script>
-<?php
+        wp_send_json_success(array(
+            'allCategoriesByGalleryID' => $allCategoriesByGalleryIDArray,
+            'galleryIDs' => $galleryIDs,
+            'contact_forms_by_gallery_id' => $contact_forms_by_gallery_id
+        ));
 
         }
-}
+	}
 
 // move to another gallery
 add_action('wp_ajax_post_cg_move_to_another_gallery', 'post_cg_move_to_another_gallery');
 if (!function_exists('post_cg_move_to_another_gallery')) {
 	function post_cg_move_to_another_gallery()
 	{
+		cg_backend_ajax_require_access_json();
 		contest_gal1ery_db_check();
 
 		$_POST = cg1l_sanitize_post($_POST);
 
-		$isBackendCall = true;
-		$isAjaxCall = true;
+		$cgMoveRealId = (!empty($_POST['cgMoveRealId'])) ? absint($_POST['cgMoveRealId']) : 0;
+		$InGalleryIDtoMove = (!empty($_POST['cg_in_gallery_id_to_move'])) ? absint($_POST['cg_in_gallery_id_to_move']) : 0;
+		$MoveFromGalleryID = (!empty($_POST['cgMoveFromGalleryID'])) ? absint($_POST['cgMoveFromGalleryID']) : 0;
+		$cgMoveCategory = (!empty($_POST['cgMoveCategory'])) ? absint($_POST['cgMoveCategory']) : 0;
+		$MoveAssignsRaw = (!empty($_POST['cgMoveAssigns']) && is_array($_POST['cgMoveAssigns'])) ? $_POST['cgMoveAssigns'] : array();
+		$galleryHash = (!empty($_POST['cgGalleryHash'])) ? $_POST['cgGalleryHash'] : '';
 
-		$isAjaxCategoriesCall = true;
+		cg_backend_ajax_validate_gallery_hash_json($MoveFromGalleryID, $galleryHash);
 
-		global $wp_version;
-		$sanitize_textarea_field = ($wp_version < 4.7) ? 'sanitize_text_field' : 'sanitize_textarea_field';
+		if (empty($cgMoveRealId) || empty($InGalleryIDtoMove) || empty($MoveFromGalleryID)) {
+			cg_backend_ajax_error_json('Missing move request data.', 400, 'cg_missing_move_data');
+		}
 
-		$cgVersion = cg_get_version_for_scripts();
+		if ($InGalleryIDtoMove == $MoveFromGalleryID) {
+			cg_backend_ajax_error_json('Entry can not be moved to the same gallery.', 400, 'cg_same_gallery_move');
+		}
 
-		if (defined('DOING_AJAX') && DOING_AJAX) {
+		global $wpdb;
+		$table_posts = $wpdb->prefix . "posts";
+		$tablename = $wpdb->prefix . "contest_gal1ery";
+		$tablename_options = $wpdb->prefix . "contest_gal1ery_options";
+		$tablename_comments = $wpdb->prefix . "contest_gal1ery_comments";
+		$tablename_entries = $wpdb->prefix . 'contest_gal1ery_entries';
+		$tablename_ip = $wpdb->prefix . "contest_gal1ery_ip";
+		$tablename_form_input = $wpdb->prefix . "contest_gal1ery_f_input";
+		$tablename_categories = $wpdb->prefix . "contest_gal1ery_categories";
 
-			$user = wp_get_current_user();
+		$sourceGalleryExists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $tablename_options WHERE id = %d", $MoveFromGalleryID));
+		if (empty($sourceGalleryExists)) {
+			cg_backend_ajax_error_json('Source gallery does not exist.', 400, 'cg_source_gallery_missing');
+		}
 
-			if (
-				is_super_admin($user->ID) ||
-				in_array('administrator', (array)$user->roles) ||
-				in_array('editor', (array)$user->roles) ||
-				in_array('author', (array)$user->roles)
-			) {
+		$optionsInGalleryToMove = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_options WHERE id = %d ORDER BY id DESC LIMIT 0, 1", $InGalleryIDtoMove));
+		if (empty($optionsInGalleryToMove)) {
+			cg_backend_ajax_error_json('Target gallery does not exist.', 400, 'cg_target_gallery_missing');
+		}
 
-				$cgMoveRealId = absint($_POST['cgMoveRealId']);
-				$InGalleryIDtoMove = absint($_POST['cg_in_gallery_id_to_move']);
-				$MoveFromGalleryID = absint($_POST['cgMoveFromGalleryID']);
-				$cgMoveCategory = absint($_POST['cgMoveCategory']);
-				$MoveAssigns = $_POST['cgMoveAssigns'];
+		$rowToMove = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename WHERE id = %d AND GalleryID = %d", $cgMoveRealId, $MoveFromGalleryID));
+		if (empty($rowToMove)) {
+			cg_backend_ajax_error_json('Entry does not belong to the selected source gallery.', 400, 'cg_entry_source_mismatch');
+		}
 
-				global $wpdb;
-				$table_posts = $wpdb->prefix . "posts";
-				$tablename = $wpdb->prefix . "contest_gal1ery";
-				$tablename_options = $wpdb->prefix . "contest_gal1ery_options";
-				$tablename_comments = $wpdb->prefix . "contest_gal1ery_comments";
-				$tablename_entries = $wpdb->prefix . 'contest_gal1ery_entries';
-				$tablename_ip = $wpdb->prefix . "contest_gal1ery_ip";
+		if (!empty($rowToMove->EcommerceEntry)) {
+			cg_backend_ajax_error_json('E-commerce entries can not be moved to another gallery.', 400, 'cg_ecommerce_entry_move_blocked');
+		}
 
-				$insert_id = cg_copy_table_row('contest_gal1ery',$cgMoveRealId, $valueCollect = [], $cgCopyType = '');
+		if (!empty($cgMoveCategory)) {
+			$categoryExists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $tablename_categories WHERE id = %d AND GalleryID = %d", $cgMoveCategory, $InGalleryIDtoMove));
+			if (empty($categoryExists)) {
+				cg_backend_ajax_error_json('Selected target category does not belong to the target gallery.', 400, 'cg_target_category_mismatch');
+			}
+		}
 
-				$Version = cg_get_version_for_scripts();
-
-				$wpdb->update(
-					"$tablename",
-					array('Version' => $Version,'GalleryID' => $InGalleryIDtoMove),
-					array('id' => $insert_id),
-					array('%s'),
-					array('%d')
-				);
-
-				$row = $wpdb->get_row("SELECT * FROM $tablename WHERE id = $insert_id");
-
-				// Delete previous entry because inserted as new one through cg_copy_table_row
-				$wpdb->query("DELETE FROM $tablename WHERE id = $cgMoveRealId");
-
-                // delete WpPages now
-				if(!empty($row->WpPage)){
-					wp_delete_post($row->WpPage,true);
+		$MoveAssigns = array();
+		if (!empty($MoveAssignsRaw)) {
+			$formInputs = $wpdb->get_results($wpdb->prepare("SELECT id, GalleryID, Field_Type FROM $tablename_form_input WHERE GalleryID IN (%d,%d)", $MoveFromGalleryID, $InGalleryIDtoMove));
+			$sourceFields = array();
+			$targetFields = array();
+			foreach ($formInputs as $formInput) {
+				if (absint($formInput->GalleryID) == $MoveFromGalleryID) {
+					$sourceFields[absint($formInput->id)] = $formInput->Field_Type;
+				} elseif (absint($formInput->GalleryID) == $InGalleryIDtoMove) {
+					$targetFields[absint($formInput->id)] = $formInput->Field_Type;
 				}
-				if(!empty($row->WpPageUser)){
-					wp_delete_post($row->WpPageUser,true);
-				}
-				if(!empty($row->WpPageNoVoting)){
-					wp_delete_post($row->WpPageNoVoting,true);
-				}
-				if(!empty($row->WpPageWinner)){
-					wp_delete_post($row->WpPageWinner,true);
-				}
-				if(!empty($row->WpPageEcommerce)){
-					wp_delete_post($row->WpPageEcommerce,true);
-				}
-
-                // Update parents
-				$optionsInGalleryToMove = $wpdb->get_row("SELECT * FROM $tablename_options WHERE id = $InGalleryIDtoMove ORDER BY id DESC LIMIT 0, 1");
-
-				if(!empty($optionsInGalleryToMove->WpPageParent)) {
-					$post_title = substr($row->NamePic,0,100);
-					cg_create_wp_pages($InGalleryIDtoMove,$insert_id,$post_title,$optionsInGalleryToMove,$optionsInGalleryToMove->Version);
-				}
-
-				if(!empty($cgMoveCategory)){
-					$wpdb->query("UPDATE $tablename SET Category=$cgMoveCategory WHERE id = $insert_id");
-				}else{
-					$wpdb->query("UPDATE $tablename SET Category=0 WHERE id = $insert_id");
-				}
-
-				$wpdb->query("UPDATE $tablename_ip SET pid=$insert_id, GalleryID = $InGalleryIDtoMove WHERE pid=$cgMoveRealId");
-				$wpdb->query("UPDATE $tablename_comments SET pid=$insert_id, GalleryID = $InGalleryIDtoMove WHERE pid=$cgMoveRealId");
-				$wpdb->query("UPDATE $tablename_entries SET pid=$insert_id, GalleryID = $InGalleryIDtoMove WHERE pid=$cgMoveRealId");
-
-				$input_ids_entries_to_delete = $wpdb->get_results("SELECT id, f_input_id FROM $tablename_entries WHERE pid  = $insert_id");
-				$input_ids_entries_to_delete_array = [];
-                foreach ($input_ids_entries_to_delete as $entry){
-	                $input_ids_entries_to_delete_array[$entry->f_input_id] = $entry->id;
-                }
-
-                if(!empty($MoveAssigns)){// have to be checked with not empty
-                    // now change the input ids if were assigned
-	                foreach ($MoveAssigns as $FromInput => $ToInput){
-		                $FromInput = absint($FromInput);
-		                $ToInput = absint($ToInput);
-		                $wpdb->query("UPDATE $tablename_entries SET f_input_id = $ToInput WHERE pid = $insert_id && f_input_id = $FromInput");
-                        if(isset($input_ids_entries_to_delete_array[$FromInput])){
-	                        unset($input_ids_entries_to_delete_array[$FromInput]);
-                        }
-	                }
-                }
-
-				foreach ($input_ids_entries_to_delete_array as $f_input_id => $entryId) {
-					$wpdb->query("DELETE FROM $tablename_entries WHERE id = $entryId");
-                }
-
-				$wp_upload_dir = wp_upload_dir();
-                // unlink activated entries if exists
-				if(file_exists($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$MoveFromGalleryID."/json/image-data/image-data-".$cgMoveRealId.".json")){
-					unlink($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$MoveFromGalleryID."/json/image-data/image-data-".$cgMoveRealId.".json");
-				}
-				if(file_exists($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$MoveFromGalleryID."/json/image-info/image-info-".$cgMoveRealId.".json")){
-					unlink($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$MoveFromGalleryID."/json/image-info/image-info-".$cgMoveRealId.".json");
-				}
-                // move file
-				if(file_exists($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$MoveFromGalleryID."/json/image-comments/image-comments-".$cgMoveRealId.".json")){
-                    if(!is_dir($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$InGalleryIDtoMove."/json/image-comments")){
-	                    mkdir($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$InGalleryIDtoMove."/json/image-comments",0755,true);
-                    }
-					rename($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$MoveFromGalleryID."/json/image-comments/image-comments-".$cgMoveRealId.".json", $wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$InGalleryIDtoMove."/json/image-comments/image-comments-".$insert_id.".json");
-				}
-                // move folder
-				if(is_dir($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$MoveFromGalleryID."/json/image-comments/ids/".$cgMoveRealId)){
-					if(!is_dir($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$InGalleryIDtoMove."/json/image-comments/ids")){
-						mkdir($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$InGalleryIDtoMove."/json/image-comments/ids",0755,true);
-                    }
-					rename($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$MoveFromGalleryID."/json/image-comments/ids/".$cgMoveRealId, $wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$InGalleryIDtoMove."/json/image-comments/ids/".$insert_id);
-				}
-
-				cg_json_upload_form_info_data_files_new($InGalleryIDtoMove,[$insert_id],true);
-
-                if($row->Active==1){
-	                $collect = "$tablename.id = ".$row->id;
-	                $GalleryID = $row->GalleryID;
-	                $row = $wpdb->get_row( "SELECT DISTINCT $table_posts.*, $tablename.* FROM $table_posts, $tablename WHERE 
-                                              (($collect) AND $tablename.GalleryID='$GalleryID' AND $tablename.Active='1' and $table_posts.ID = $tablename.WpUpload) 
-                                              OR 
-                                              (($collect) AND $tablename.GalleryID='$GalleryID' AND $tablename.Active='1' AND $tablename.WpUpload = 0) 
-                                          GROUP BY $tablename.id  ORDER BY $tablename.id DESC LIMIT 0, 1");
-	                cg_create_json_files_when_activating($InGalleryIDtoMove,$row);
-                }
-
-				die;
-
-			} else {
-				echo "<div id='cgSaveCategoriesCouldNotBeChanged'><h2>MISSINGRIGHTS<br>post_cg_social_platform_input can be edited only as administrator, editor or author.</h2></div>";
-				exit();
 			}
 
-			exit();
-		} else {
-			exit();
+			$allowedMoveFieldTypes = array('date-f', 'text-f', 'url-f', 'email-f', 'comment-f', 'select-f', 'radio-f', 'chk-f');
+			$usedTargetFields = array();
+			foreach ($MoveAssignsRaw as $FromInput => $ToInput) {
+				$FromInput = absint($FromInput);
+				$ToInput = absint($ToInput);
+
+				if (empty($FromInput) || empty($ToInput)) {
+					cg_backend_ajax_error_json('Invalid field assignment data.', 400, 'cg_invalid_move_assignment');
+				}
+				if (empty($sourceFields[$FromInput]) || empty($targetFields[$ToInput])) {
+					cg_backend_ajax_error_json('Field assignment does not belong to the selected galleries.', 400, 'cg_move_assignment_gallery_mismatch');
+				}
+				if (!in_array($sourceFields[$FromInput], $allowedMoveFieldTypes, true) || $sourceFields[$FromInput] != $targetFields[$ToInput]) {
+					cg_backend_ajax_error_json('Field assignment types do not match.', 400, 'cg_move_assignment_type_mismatch');
+				}
+				if (!empty($usedTargetFields[$ToInput])) {
+					cg_backend_ajax_error_json('A target field can only be assigned once.', 400, 'cg_move_assignment_duplicate_target');
+				}
+
+				$MoveAssigns[$FromInput] = $ToInput;
+				$usedTargetFields[$ToInput] = true;
+			}
 		}
+
+		$insert_id = cg_copy_table_row('contest_gal1ery',$cgMoveRealId, $valueCollect = [], $cgCopyType = '');
+		if (empty($insert_id)) {
+			cg_backend_ajax_error_json('Entry could not be copied to the target gallery.', 500, 'cg_move_copy_failed');
+		}
+
+		$Version = cg_get_version_for_scripts();
+
+		$updated = $wpdb->update(
+			"$tablename",
+			array('Version' => $Version,'GalleryID' => $InGalleryIDtoMove),
+			array('id' => $insert_id),
+			array('%s','%d'),
+			array('%d')
+		);
+
+		if ($updated === false) {
+			$wpdb->delete($tablename, array('id' => $insert_id), array('%d'));
+			cg_backend_ajax_error_json('Copied entry could not be assigned to the target gallery.', 500, 'cg_move_assign_gallery_failed');
+		}
+
+		$row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename WHERE id = %d", $insert_id));
+		if (empty($row)) {
+			cg_backend_ajax_error_json('Moved entry could not be loaded.', 500, 'cg_move_row_missing');
+		}
+
+		$wpdb->delete($tablename, array('id' => $cgMoveRealId, 'GalleryID' => $MoveFromGalleryID), array('%d','%d'));
+
+		// delete WpPages now
+		if(!empty($row->WpPage)){
+			wp_delete_post($row->WpPage,true);
+		}
+		if(!empty($row->WpPageUser)){
+			wp_delete_post($row->WpPageUser,true);
+		}
+		if(!empty($row->WpPageNoVoting)){
+			wp_delete_post($row->WpPageNoVoting,true);
+		}
+		if(!empty($row->WpPageWinner)){
+			wp_delete_post($row->WpPageWinner,true);
+		}
+		if(!empty($row->WpPageEcommerce)){
+			wp_delete_post($row->WpPageEcommerce,true);
+		}
+
+		// Update parents
+		if(!empty($optionsInGalleryToMove->WpPageParent)) {
+			$post_title = substr($row->NamePic,0,100);
+			cg_create_wp_pages($InGalleryIDtoMove,$insert_id,$post_title,$optionsInGalleryToMove,$optionsInGalleryToMove->Version);
+		}
+
+		$wpdb->update($tablename, array('Category' => $cgMoveCategory), array('id' => $insert_id), array('%d'), array('%d'));
+
+		$wpdb->update($tablename_ip, array('pid' => $insert_id, 'GalleryID' => $InGalleryIDtoMove), array('pid' => $cgMoveRealId, 'GalleryID' => $MoveFromGalleryID), array('%d','%d'), array('%d','%d'));
+		$wpdb->update($tablename_comments, array('pid' => $insert_id, 'GalleryID' => $InGalleryIDtoMove), array('pid' => $cgMoveRealId, 'GalleryID' => $MoveFromGalleryID), array('%d','%d'), array('%d','%d'));
+		$wpdb->update($tablename_entries, array('pid' => $insert_id, 'GalleryID' => $InGalleryIDtoMove), array('pid' => $cgMoveRealId, 'GalleryID' => $MoveFromGalleryID), array('%d','%d'), array('%d','%d'));
+
+		$input_ids_entries_to_delete = $wpdb->get_results($wpdb->prepare("SELECT id, f_input_id FROM $tablename_entries WHERE pid = %d", $insert_id));
+		$input_ids_entries_to_delete_array = [];
+		foreach ($input_ids_entries_to_delete as $entry){
+			$input_ids_entries_to_delete_array[$entry->f_input_id] = $entry->id;
+		}
+
+		if(!empty($MoveAssigns)){
+			foreach ($MoveAssigns as $FromInput => $ToInput){
+				$wpdb->query($wpdb->prepare("UPDATE $tablename_entries SET f_input_id = %d WHERE pid = %d AND f_input_id = %d", $ToInput, $insert_id, $FromInput));
+				if(isset($input_ids_entries_to_delete_array[$FromInput])){
+					unset($input_ids_entries_to_delete_array[$FromInput]);
+				}
+			}
+		}
+
+		foreach ($input_ids_entries_to_delete_array as $f_input_id => $entryId) {
+			$wpdb->query($wpdb->prepare("DELETE FROM $tablename_entries WHERE id = %d", $entryId));
+		}
+
+		$wp_upload_dir = wp_upload_dir();
+		// unlink activated entries if exists
+		if(file_exists($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$MoveFromGalleryID."/json/image-data/image-data-".$cgMoveRealId.".json")){
+			unlink($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$MoveFromGalleryID."/json/image-data/image-data-".$cgMoveRealId.".json");
+		}
+		if(file_exists($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$MoveFromGalleryID."/json/image-stats/image-stats-".$cgMoveRealId.".json")){
+			unlink($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$MoveFromGalleryID."/json/image-stats/image-stats-".$cgMoveRealId.".json");
+		}
+		if(file_exists($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$MoveFromGalleryID."/json/image-info/image-info-".$cgMoveRealId.".json")){
+			unlink($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$MoveFromGalleryID."/json/image-info/image-info-".$cgMoveRealId.".json");
+		}
+		// move file
+		if(file_exists($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$MoveFromGalleryID."/json/image-comments/image-comments-".$cgMoveRealId.".json")){
+			if(!is_dir($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$InGalleryIDtoMove."/json/image-comments")){
+				mkdir($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$InGalleryIDtoMove."/json/image-comments",0755,true);
+			}
+			rename($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$MoveFromGalleryID."/json/image-comments/image-comments-".$cgMoveRealId.".json", $wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$InGalleryIDtoMove."/json/image-comments/image-comments-".$insert_id.".json");
+		}
+		// move folder
+		if(is_dir($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$MoveFromGalleryID."/json/image-comments/ids/".$cgMoveRealId)){
+			if(!is_dir($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$InGalleryIDtoMove."/json/image-comments/ids")){
+				mkdir($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$InGalleryIDtoMove."/json/image-comments/ids",0755,true);
+			}
+			rename($wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$MoveFromGalleryID."/json/image-comments/ids/".$cgMoveRealId, $wp_upload_dir['basedir'] . "/contest-gallery/gallery-id-".$InGalleryIDtoMove."/json/image-comments/ids/".$insert_id);
+		}
+
+		cg_json_upload_form_info_data_files_new($InGalleryIDtoMove,[$insert_id],true);
+
+		if($row->Active==1){
+			$GalleryID = $row->GalleryID;
+			$rowForJson = $wpdb->get_row($wpdb->prepare(
+				"SELECT DISTINCT $table_posts.*, $tablename.* FROM $table_posts, $tablename WHERE
+				 (($tablename.id = %d) AND $tablename.GalleryID = %d AND $tablename.Active = '1' and $table_posts.ID = $tablename.WpUpload)
+				 OR
+				 (($tablename.id = %d) AND $tablename.GalleryID = %d AND $tablename.Active = '1' AND $tablename.WpUpload = 0)
+				 GROUP BY $tablename.id ORDER BY $tablename.id DESC LIMIT 0, 1",
+				$row->id, $GalleryID, $row->id, $GalleryID
+			));
+			if (!empty($rowForJson)) {
+				cg_create_json_files_when_activating($InGalleryIDtoMove,$rowForJson);
+			}
+		}
+
+		wp_send_json_success(array(
+			'entry_id' => $cgMoveRealId,
+			'new_entry_id' => $insert_id,
+			'target_gallery_id' => $InGalleryIDtoMove
+		));
 	}
 }
 // move to another gallery---- END
@@ -802,15 +921,15 @@ if (!function_exists('post_cg_social_platform_input')) {
 
 	            $post_title = substr(cg_pre_process_name_for_url_name($post_title),0,100);
 
-            $array = [
+	            $array = [
                     'post_title'=> $post_title,
-	            'post_name'=> $post_name,
+                    'post_name'=> $post_name,
                     'guid'=> $guid,
                     'post_type'=>$post_type,
                     'post_content'=>$post_content,
                     'post_mime_type'=>$post_mime_type,
-	            'post_status'=>'publish'
-            ];
+                    'post_status'=>'publish'
+                ];
 
 	            $postId = wp_insert_post($array);
 
@@ -859,7 +978,6 @@ if (!function_exists('post_cg_social_platforms_query')) {
 
 	    global $wp_version;
 	    $sanitize_textarea_field = ($wp_version < 4.7) ? 'sanitize_text_field' : 'sanitize_textarea_field';
-
 
 	    if (defined('DOING_AJAX') && DOING_AJAX) {
 
@@ -986,9 +1104,7 @@ if (!function_exists('post_cg_youtube_delete_from_library')) {
 // youtube add to gallery ---- END
 
 // sort files
-
 add_action('wp_ajax_post_cg_gallery_sort_files', 'post_cg_gallery_sort_files');
-
 if (!function_exists('post_cg_gallery_sort_files')) {
     function post_cg_gallery_sort_files()
     {
@@ -1033,36 +1149,42 @@ add_action('wp_ajax_post_cg_attach_to_another_user_select', 'post_cg_attach_to_a
 if (!function_exists('post_cg_attach_to_another_user_select')) {
 	function post_cg_attach_to_another_user_select()
 	{
-		if (defined('DOING_AJAX') && DOING_AJAX) {
+		cg_backend_ajax_require_access_json();
+		$_POST = cg1l_sanitize_post($_POST);
 
-			$user = wp_get_current_user();
+		$GalleryID = (!empty($_POST['GalleryID'])) ? absint($_POST['GalleryID']) : 0;
+		$galleryHash = (!empty($_POST['cgGalleryHash'])) ? $_POST['cgGalleryHash'] : '';
+		$cgUserSearch = (!empty($_POST['cgUserSearch'])) ? sanitize_text_field($_POST['cgUserSearch']) : '';
 
-			if (
-				is_super_admin($user->ID) ||
-				in_array('administrator', (array)$user->roles) ||
-				in_array('editor', (array)$user->roles) ||
-				in_array('author', (array)$user->roles)
-			) {
-				global $wpdb;
+		cg_backend_ajax_validate_gallery_hash_json($GalleryID, $galleryHash);
 
-				$wpUsers = $wpdb->base_prefix . "users";
-				$selectWPusers = $wpdb->get_results("SELECT ID, user_login, user_email FROM $wpUsers WHERE ID > 0 ORDER BY ID ASC");
+		global $wpdb;
 
-                echo "<select id='cgAttachToAnotherUserSelect' name='cgAttachToAnotherUserId' class='cg_no_outline_and_shadow_on_focus'>";
-                    foreach ($selectWPusers as $user){
-                        echo "<option value='$user->ID' data-user_login='$user->user_login' data-user_email='$user->user_email'>$user->user_login - $user->user_email (ID: $user->ID)</option>";
-                    }
-                echo "</select>";
-
-			} else {
-				echo "<div ><h2>MISSINGRIGHTS<br>This area can be edited only as administrator, editor or author.</h2></div>";
-				exit();
-			}
-
-			exit();
+		$wpUsers = $wpdb->base_prefix . "users";
+		if (!empty($cgUserSearch)) {
+			$like = '%' . $wpdb->esc_like($cgUserSearch) . '%';
+			$selectWPusers = $wpdb->get_results($wpdb->prepare("SELECT ID, user_login FROM $wpUsers WHERE ID > 0 AND (user_login LIKE %s OR user_email LIKE %s) ORDER BY user_login ASC LIMIT 20", $like, $like));
 		} else {
-			exit();
+			$selectWPusers = $wpdb->get_results("SELECT ID, user_login FROM $wpUsers WHERE ID > 0 ORDER BY ID ASC LIMIT 20");
 		}
+
+		$html = "<select id='cgAttachToAnotherUserSelect' name='cgAttachToAnotherUserId' class='cg_no_outline_and_shadow_on_focus'>";
+		if (empty($selectWPusers)) {
+			$html .= "<option value='' disabled selected>No users found</option>";
+		} else {
+			$isFirst = true;
+			foreach ($selectWPusers as $user){
+				$selected = ($isFirst) ? ' selected' : '';
+				$html .= "<option value='" . esc_attr($user->ID) . "' data-user_login='" . esc_attr($user->user_login) . "'" . $selected . ">" . esc_html($user->user_login) . " (ID: " . esc_html($user->ID) . ")</option>";
+				$isFirst = false;
+			}
+		}
+		$html .= "</select>";
+
+		wp_send_json_success(array(
+			'html' => $html,
+			'has_results' => (!empty($selectWPusers))
+		));
 	}
 }
 // attach to another user select --- END
@@ -1072,52 +1194,78 @@ add_action('wp_ajax_post_cg_attach_to_another_user', 'post_cg_attach_to_another_
 if (!function_exists('post_cg_attach_to_another_user')) {
 	function post_cg_attach_to_another_user()
 	{
-		if (defined('DOING_AJAX') && DOING_AJAX) {
+		cg_backend_ajax_require_access_json();
+		$_POST = cg1l_sanitize_post($_POST);
 
-			$user = wp_get_current_user();
+		global $wpdb;
 
-			if (
-				is_super_admin($user->ID) ||
-				in_array('administrator', (array)$user->roles) ||
-				in_array('editor', (array)$user->roles) ||
-				in_array('author', (array)$user->roles)
-			) {
-				global $wpdb;
+		$tablename = $wpdb->prefix . "contest_gal1ery";
+		$tablename_options = $wpdb->prefix . "contest_gal1ery_options";
+		$table_posts = $wpdb->prefix . "posts";
 
-				$tablename = $wpdb->prefix . "contest_gal1ery";
-				$table_posts = $wpdb->prefix . "posts";
-				#$wpUsers = $wpdb->prefix . "users";
+		$WpUserId = (isset($_POST['cgAttachToAnotherUserId'])) ? absint($_POST['cgAttachToAnotherUserId']) : 0;
+		$pid = (!empty($_POST['cgEntryId'])) ? absint($_POST['cgEntryId']) : 0;
+		$GalleryID = (!empty($_POST['GalleryID'])) ? absint($_POST['GalleryID']) : 0;
+		$galleryHash = (!empty($_POST['cgGalleryHash'])) ? $_POST['cgGalleryHash'] : '';
 
-				$WpUserId = absint($_POST['cgAttachToAnotherUserId']);
-				$pid = absint($_POST['cgEntryId']);
-				$GalleryID = absint($_POST['GalleryID']);
+		cg_backend_ajax_validate_gallery_hash_json($GalleryID, $galleryHash);
 
-				$wpdb->query("UPDATE $tablename SET WpUserId=$WpUserId WHERE id = $pid");
-
-				$Active = $wpdb->get_var( "SELECT Active FROM $tablename WHERE id = $pid");
-
-                if($Active==1){
-	                $row = $wpdb->get_row( "SELECT DISTINCT $table_posts.*, $tablename.* FROM $table_posts, $tablename WHERE 
-                          (($tablename.id = $pid) AND $tablename.GalleryID='$GalleryID' AND $tablename.Active='1' and $table_posts.ID = $tablename.WpUpload) 
-                          OR 
-                          (($tablename.id = $pid) AND $tablename.GalleryID='$GalleryID' AND $tablename.Active='1' AND $tablename.WpUpload = 0) 
-                          GROUP BY $tablename.id  ORDER BY $tablename.id DESC LIMIT 0, 1");
-	                cg_create_json_files_when_activating($GalleryID,$row);
-                }
-
-				#$wpUser = $wpdb->get_row("SELECT user_login, user_email FROM $wpUsers WHERE ID = $WpUserId");
-				//echo "###".$wpUser->user_login." - ".$wpUser->user_email."###";
-				echo "###post_cg_attach_to_another_user successful###";
-
-			} else {
-				echo "<div ><h2>MISSINGRIGHTS<br>This area can be edited only as administrator, editor or author.</h2></div>";
-				exit();
-			}
-
-			exit();
-		} else {
-			exit();
+		if (empty($pid) || empty($GalleryID)) {
+			cg_backend_ajax_error_json('Missing user assignment data.', 400, 'cg_missing_attach_data');
 		}
+
+		$galleryExists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $tablename_options WHERE id = %d", $GalleryID));
+		if (empty($galleryExists)) {
+			cg_backend_ajax_error_json('Gallery does not exist.', 400, 'cg_attach_gallery_missing');
+		}
+
+		$rowToUpdate = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename WHERE id = %d AND GalleryID = %d", $pid, $GalleryID));
+		if (empty($rowToUpdate)) {
+			cg_backend_ajax_error_json('Entry does not belong to the selected gallery.', 400, 'cg_attach_entry_gallery_mismatch');
+		}
+
+		$user_login = '';
+		if (!empty($WpUserId)) {
+			$wpUser = get_user_by('id', $WpUserId);
+			if (empty($wpUser)) {
+				cg_backend_ajax_error_json('Selected user does not exist.', 400, 'cg_attach_user_missing');
+			}
+			$user_login = $wpUser->user_login;
+		}
+
+		$updated = $wpdb->update(
+			$tablename,
+			array('WpUserId' => $WpUserId),
+			array('id' => $pid, 'GalleryID' => $GalleryID),
+			array('%d'),
+			array('%d','%d')
+		);
+
+		if ($updated === false) {
+			cg_backend_ajax_error_json('User assignment could not be saved.', 500, 'cg_attach_update_failed');
+		}
+
+		if($rowToUpdate->Active==1){
+			$row = $wpdb->get_row($wpdb->prepare(
+				"SELECT DISTINCT $table_posts.*, $tablename.* FROM $table_posts, $tablename WHERE
+				  (($tablename.id = %d) AND $tablename.GalleryID = %d AND $tablename.Active = '1' and $table_posts.ID = $tablename.WpUpload)
+				  OR
+				  (($tablename.id = %d) AND $tablename.GalleryID = %d AND $tablename.Active = '1' AND $tablename.WpUpload = 0)
+				  GROUP BY $tablename.id ORDER BY $tablename.id DESC LIMIT 0, 1",
+				$pid, $GalleryID, $pid, $GalleryID
+			));
+			if (!empty($row)) {
+				$row->WpUserId = $WpUserId;
+				cg_create_json_files_when_activating($GalleryID,$row);
+			}
+		}
+
+		wp_send_json_success(array(
+			'entry_id' => $pid,
+			'user_id' => $WpUserId,
+			'user_login' => $user_login,
+			'detached' => empty($WpUserId)
+		));
 	}
 }
 // attach to another user --- END
@@ -1147,11 +1295,11 @@ if (!function_exists('post_cg_test_ecom_keys')) {
                     $isTest = true;
                 }
 
-                if(empty($cg_secret)){// cause without secret an access token will be at least generated, but can not be used for further requests
-                    $accessToken='error' ;
-                }else{
-                    $accessToken = cg_paypal_get_access_token($cg_client,$cg_secret,$isTest);
-                }
+				if(empty($cg_secret)){// cause without secret an access token will be at least generated, but can not be used for further requests
+					$accessToken='error' ;
+				}else{
+					$accessToken = cg_paypal_get_access_token($cg_client,$cg_secret,$isTest);
+				}
 
                 if($accessToken!='error' && $accessToken!='no-internet'){
                     echo '###cgkeytrue###';
@@ -1266,7 +1414,6 @@ if (!function_exists('post_cg_shortcode_interval_conf')) {
 
 // AJAX Script für set comment ---- ENDE
 
-
 // show paypal transaction response
 
 add_action('wp_ajax_post_cg_show_paypal_api_response', 'post_cg_show_paypal_api_response');
@@ -1313,46 +1460,51 @@ add_action( 'wp_ajax_post_cg_set_for_paypal_sell', 'post_cg_set_for_paypal_sell'
 if(!function_exists('post_cg_set_for_paypal_sell')){
     function post_cg_set_for_paypal_sell() {
 
-	    // has to be unsanitized because of the url eventually configured by user
-	    $AllUploadsUsedText = contest_gal1ery_htmlentities_and_preg_replace($_POST['cgSellContainer']['AllUploadsUsedText']);
-        $_POST = cg1l_sanitize_post($_POST);
-	    $_POST['cgSellContainer']['AllUploadsUsedText'] = $AllUploadsUsedText;
-
         contest_gal1ery_db_check();
+        cg_backend_ajax_require_access_json();
 
-        $isBackendCall = true;
-        $isAjaxCall = true;
-
-        $isAjaxCategoriesCall = true;
-
-        global $wp_version;
-        $sanitize_textarea_field = ($wp_version<4.7) ? 'sanitize_text_field' : 'sanitize_textarea_field';
-
-        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-
-            $user = wp_get_current_user();
-
-            if (
-                is_super_admin($user->ID) ||
-                in_array( 'administrator', (array) $user->roles ) ||
-                in_array( 'editor', (array) $user->roles ) ||
-                in_array( 'author', (array) $user->roles )
-            ) {
-
-                cg_ecommerce_sale_conf();
-
-                die;
-
-            }else{
-                echo "MISSINGRIGHTS - This area can be edited only as administrator, editor or author.";
-                exit();
-            }
-
-            exit();
+        if (empty($_POST['cgSellContainer']) || !is_array($_POST['cgSellContainer'])) {
+            cg_backend_ajax_error_json('Missing sale settings data.', 400, 'cg_missing_sale_data');
         }
-        else {
-            exit();
+
+        $cgSellContainer = $_POST['cgSellContainer'];
+        $GalleryID = (isset($cgSellContainer['GalleryID'])) ? absint($cgSellContainer['GalleryID']) : 0;
+        $realId = (isset($cgSellContainer['realId'])) ? absint($cgSellContainer['realId']) : 0;
+        $saleAction = (isset($cgSellContainer['saleAction'])) ? sanitize_text_field($cgSellContainer['saleAction']) : '';
+        $galleryHash = (isset($_POST['cgGalleryHash'])) ? sanitize_text_field($_POST['cgGalleryHash']) : '';
+
+        cg_backend_ajax_validate_gallery_hash_json($GalleryID, $galleryHash);
+
+        if (empty($realId) || empty($GalleryID) || !in_array($saleAction, array('activate', 'deactivate'), true)) {
+            cg_backend_ajax_error_json('Missing sale settings data.', 400, 'cg_missing_sale_data');
         }
+
+        global $wpdb;
+        $tablename = $wpdb->prefix . "contest_gal1ery";
+        $entry = $wpdb->get_row($wpdb->prepare("SELECT id, GalleryID, EcommerceEntry FROM $tablename WHERE id = %d", $realId));
+
+        if (empty($entry)) {
+            cg_backend_ajax_error_json('Sale entry does not exist.', 400, 'cg_sale_entry_missing');
+        }
+
+        if (absint($entry->GalleryID) !== $GalleryID) {
+            cg_backend_ajax_error_json('Entry does not belong to the selected gallery.', 400, 'cg_sale_entry_gallery_mismatch');
+        }
+
+        if ($saleAction === 'deactivate' && empty($entry->EcommerceEntry)) {
+            cg_backend_ajax_error_json('Sale entry is not active.', 400, 'cg_sale_entry_not_active');
+        }
+
+        // has to be unsanitized because of the url eventually configured by user
+        $AllUploadsUsedText = '';
+        if (isset($_POST['cgSellContainer']['AllUploadsUsedText'])) {
+            $AllUploadsUsedText = contest_gal1ery_htmlentities_and_preg_replace($_POST['cgSellContainer']['AllUploadsUsedText']);
+        }
+        $_POST = cg1l_sanitize_post($_POST);
+        $_POST['cgSellContainer']['AllUploadsUsedText'] = $AllUploadsUsedText;
+
+        cg_ecommerce_sale_conf();
+        die;
     }
 }
 // set for paypal sell --- END
@@ -1402,51 +1554,6 @@ if(!function_exists('post_cg_download_original_source_for_ecommerce_sale')){
     }
 }
 
-// deactivate paypal sale
-add_action( 'wp_ajax_post_cg_deactivate_ecommerce_sale', 'post_cg_deactivate_ecommerce_sale' );
-if(!function_exists('post_cg_deactivate_ecommerce_sale')){
-    function post_cg_deactivate_ecommerce_sale() {
-
-        $_POST = cg1l_sanitize_post($_POST);
-
-        contest_gal1ery_db_check();
-
-        $isBackendCall = true;
-        $isAjaxCall = true;
-
-        $isAjaxCategoriesCall = true;
-
-        global $wp_version;
-        $sanitize_textarea_field = ($wp_version<4.7) ? 'sanitize_text_field' : 'sanitize_textarea_field';
-
-        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-
-            $user = wp_get_current_user();
-
-            if (
-                is_super_admin($user->ID) ||
-                in_array( 'administrator', (array) $user->roles ) ||
-                in_array( 'editor', (array) $user->roles ) ||
-                in_array( 'author', (array) $user->roles )
-            ) {
-
-                cg_deactivate_ecommerce_sale();
-
-                die;
-
-            }else{
-                echo "MISSINGRIGHTS - This area can be edited only as administrator, editor or author.";
-                exit();
-            }
-
-            exit();
-        }
-        else {
-            exit();
-        }
-    }
-}
-
 // set for paypal sell
 add_action( 'wp_ajax_post_cg_paypal_invoicing', 'post_cg_paypal_invoicing' );
 if(!function_exists('post_cg_paypal_invoicing')){
@@ -1477,7 +1584,7 @@ if(!function_exists('post_cg_paypal_invoicing')){
 
                 cg_get_paypal_data();
 
-                die;
+              die;
 
             }else{
                 echo "MISSINGRIGHTS - This area can be edited only as administrator, editor or author.";
@@ -1576,7 +1683,7 @@ if(!function_exists('post_cg_backend_image_upload')){
             if($WpProfileImage->WpUserId == $user->ID){
                 $wpdb->query($wpdb->prepare(
                     "
-            DELETE FROM $tablename WHERE WpUserId = %d && IsProfileImage = %d 
+            DELETE FROM $tablename WHERE WpUserId = %d && IsProfileImage = %d
         ",
                     $WpUserId, 1
                 ));
@@ -1586,8 +1693,8 @@ if(!function_exists('post_cg_backend_image_upload')){
         }
 
         if(!empty($_FILES) AND !empty($_FILES['cg_input_image_upload_file']) AND !empty($_FILES['cg_input_image_upload_file']['tmp_name']) AND !empty($_FILES['cg_input_image_upload_file']['tmp_name'][0])){
-                    cg_registry_add_profile_image('cg_input_image_upload_file',$WpUserId);
-                }
+            cg_registry_add_profile_image('cg_input_image_upload_file',$WpUserId);
+        }
 
     }
 }
@@ -1596,6 +1703,7 @@ if(!function_exists('post_cg_backend_image_upload')){
 add_action( 'wp_ajax_post_cg_get_current_nonce', 'post_cg_get_current_nonce' );
 if(!function_exists('post_cg_get_current_nonce')){
     function post_cg_get_current_nonce() {
+        cg_require_backend_access(false);
         $nonce = wp_create_nonce('cg_nonce');
         ?>
         <script data-cg-processing="true">
@@ -1610,7 +1718,7 @@ add_action( 'wp_ajax_post_cg_get_wp_user_meta', 'post_cg_get_wp_user_meta' );
 if(!function_exists('post_cg_get_wp_user_meta')){
     function post_cg_get_wp_user_meta() {
 
-        cg_check_nonce();
+        cg_require_backend_access();
 
         $WpUserId = absint($_POST['cg_wp_user_id']);
         $firstName = get_user_meta( $WpUserId, 'first_name', true );
@@ -1632,10 +1740,11 @@ if(!function_exists('post_cg_get_wp_user_meta')){
     }
 }
 
+
 add_action( 'wp_ajax_post_cg1l_delete_unconfirmed_mail', 'post_cg1l_delete_unconfirmed_mail' );
 if(!function_exists('post_cg1l_delete_unconfirmed_mail')){
     function post_cg1l_delete_unconfirmed_mail() {
-        cg_check_nonce();
+        cg_require_backend_access();
         cg1l_delete_unconfirmed_user(sanitize_text_field($_POST['cg_mail']));
     }
 }
@@ -1644,7 +1753,7 @@ add_action( 'wp_ajax_post_cg_list_unconfirmed_mails', 'post_cg_list_unconfirmed_
 if(!function_exists('post_cg_list_unconfirmed_mails')){
     function post_cg_list_unconfirmed_mails() {
 
-        cg_check_nonce();
+        cg_require_backend_access();
 
         global $wpdb;
         $tablename_mails = $wpdb->prefix . "contest_gal1ery_mails";
@@ -1683,11 +1792,11 @@ if(!function_exists('post_cg_list_unconfirmed_mails')){
                 if (isset($typeMap[$mail['MailType']])) {
                     $mails[$index]['MailTypeLabel'] = $typeMap[$mail['MailType']];
                 } else {
-                    if(!empty($mail['MailType'])){
-                        $mails[$index]['MailTypeLabel'] = ucfirst(str_replace('-', ' ', $mail['MailType']));
-                    }else{
-                        $mails[$index]['MailTypeLabel'] = '';
-                    }
+                   if(!empty($mail['MailType'])){
+                       $mails[$index]['MailTypeLabel'] = ucfirst(str_replace('-', ' ', $mail['MailType']));
+                   }else{
+                       $mails[$index]['MailTypeLabel'] = '';
+                   }
                 }
 
                 $mails[$index]['DateTime'] = $DateTime.' — '.$mails[$index]['MailTypeLabel'];
@@ -1709,12 +1818,12 @@ add_action('wp_ajax_post_cg1l_get_management_show_users', 'post_cg1l_get_managem
 if (!function_exists('post_cg1l_get_management_show_users')) {
     function post_cg1l_get_management_show_users() {
 
-        cg_check_nonce();
+        cg_require_backend_access();
         /*echo "<pre>";
             print_r($_POST);
         echo "</pre>";die;*/
-        //  if(empty($_POST['cg_form_submit'])){
-        $_GET = array_merge($_GET, $_POST);
+      //  if(empty($_POST['cg_form_submit'])){
+            $_GET = array_merge($_GET, $_POST);
         //}
         $cgProVersion = contest_gal1ery_key_check();
         if(!$cgProVersion){
@@ -1732,7 +1841,7 @@ add_action('wp_ajax_post_cg1l_get_unconfirmed_users', 'post_cg1l_get_unconfirmed
 if (!function_exists('post_cg1l_get_unconfirmed_users')) {
     function post_cg1l_get_unconfirmed_users() {
 
-        cg_check_nonce();
+        cg_require_backend_access();
         /*echo "<pre>";
             print_r($_POST);
         echo "</pre>";die;*/

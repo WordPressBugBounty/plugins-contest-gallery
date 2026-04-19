@@ -18,10 +18,10 @@ if(floatval($galleryDbVersion)<15.05){
     echo <<<HEREDOC
 <div class='cg_view_options_rows_container'>
 
-        <p class='cg_view_options_rows_container_title'>Gallery slide out, slider view or blog view</p>
+        <p class='cg_view_options_rows_container_title'>Gallery slide out or blog view</p>
         
         <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_view_option_full_width  cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px'>
+                <div class='cg_view_option cg_view_option_full_width  cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px cg_border_bottom_none'>
                     <div class='cg_view_option_title'>
                         <p>Open entry style<br><span class="cg_view_option_title_note">Select how a file image should be opened on click in a gallery</span></p>
                     </div>
@@ -32,14 +32,6 @@ if(floatval($galleryDbVersion)<15.05){
                             </div>
                             <div class='cg_view_option_radio_multiple_input'>
                                 <input type="radio" name="multiple-pics[cg_gallery_no_voting][general][AllowGalleryScript]" class="AllowGalleryScript cg_view_option_radio_multiple_input_field"  $AllowGalleryScript  />
-                            </div>
-                        </div>
-                        <div class='cg_view_option_radio_multiple_container SliderFullWindowContainer'>
-                            <div class='cg_view_option_radio_multiple_title'>
-                                Full window slider
-                            </div>
-                            <div class='cg_view_option_radio_multiple_input'>
-                                <input type="radio" name="multiple-pics[cg_gallery_no_voting][pro][SliderFullWindow]" class="SliderFullWindow cg_view_option_radio_multiple_input_field"  $SliderFullWindow   />
                             </div>
                         </div>
                         <div class='cg_view_option_radio_multiple_container BlogLookFullWindowContainer'>
@@ -60,8 +52,10 @@ HEREDOC;
     $TextBeforeWpPageEntryRow = '';
     $TextAfterWpPageEntryRow = '';
     $EventuallyPadding = '';
+    $AvailableEntryViewOptions = 'Blog view';
     $ForwardToWpPageEntryInNewTabOptions = '';
     if(floatval($galleryDbVersion)>=21){
+        $AvailableEntryViewOptions = 'Blog view or forward to entry landing page';
         $ForwardToWpPageEntry = (!empty($jsonOptions[$GalleryID.'-nv']['visual']['ForwardToWpPageEntry'])) ? 'checked' : '';
         $ForwardToWpPageEntryInNewTab = (!empty($jsonOptions[$GalleryID.'-nv']['visual']['ForwardToWpPageEntryInNewTab'])) ? '1' : '0';
         $EventuallyPadding = 'padding-bottom:20px;';
@@ -91,10 +85,10 @@ HEREDOC;
     echo <<<HEREDOC
 <div class='cg_view_options_rows_container'>
 
-        <p class='cg_view_options_rows_container_title'>Gallery slide out, slider view or blog view</p>
+        <p class='cg_view_options_rows_container_title'>$AvailableEntryViewOptions</p>
         
         <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_view_option_full_width  cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px'>
+                <div class='cg_view_option cg_view_option_full_width  cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px cg_border_bottom_none'>
                     <div class='cg_view_option_title'>
                         <p>Open entry style<br><span class="cg_view_option_title_note">Select how a file image should be opened on click in a gallery</span></p>
                     </div>
@@ -105,14 +99,6 @@ HEREDOC;
                             </div>
                             <div class='cg_view_option_radio_multiple_input'>
                                 <input type="radio" name="multiple-pics[cg_gallery_no_voting][visual][BlogLookFullWindow]" class="BlogLookFullWindow cg_view_option_radio_multiple_input_field"  $BlogLookFullWindow  />
-                            </div>
-                        </div>
-                        <div class='cg_view_option_radio_multiple_container SliderFullWindowContainer'>
-                            <div class='cg_view_option_radio_multiple_title'>
-                                Full window slider
-                            </div>
-                            <div class='cg_view_option_radio_multiple_input'>
-                                <input type="radio" name="multiple-pics[cg_gallery_no_voting][pro][SliderFullWindow]" class="SliderFullWindow cg_view_option_radio_multiple_input_field"  $SliderFullWindow   />
                             </div>
                         </div>
                         $ForwardToWpPageEntryOptions
@@ -1016,5 +1002,3 @@ echo <<<HEREDOC
     </div>
 </div>
 HEREDOC;
-
-

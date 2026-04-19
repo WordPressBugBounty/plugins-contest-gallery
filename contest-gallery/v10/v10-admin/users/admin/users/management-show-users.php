@@ -37,7 +37,7 @@ echo "</div>";
 
     if (isset($_GET["step"])) {
         $muster = "/^[0-9]+$/"; // reg. Ausdruck für Zahlen
-        if (preg_match($muster, $_GET["start"]) == 0) {
+        if (preg_match($muster, $_GET["step"]) == 0 || absint($_GET["step"]) === 0) {
             $step = 50; // Bei Manipulation Rückfall auf 0
         } else {
             $step = absint($_GET["step"]);
@@ -249,7 +249,7 @@ echo"&nbsp;&nbsp;Show users per Site:";
 
 */
 
-echo "<form id='cgUsersManagementForm' method='POST' action='?page=".cg_get_version()."/index.php&users_management=true&option_id=$GalleryID#cg-search-results-container' class='cg_load_backend_submit'>";
+echo "<form id='cgUsersManagementForm' method='POST' action='?page=".cg_get_version()."/index.php&users_management=true&option_id=$GalleryID#cg-search-results-container'>";
 
 
 if(!empty($_GET['wp_user_id'])){
@@ -539,5 +539,3 @@ HEREDOC;
     echo '</div>';
 
 }
-
-

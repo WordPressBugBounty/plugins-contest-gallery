@@ -16,6 +16,8 @@ if(!function_exists('cg_attach_to_another_user_container')){
             <input type='hidden' name='GalleryID' value='<?php echo $GalleryID;?>'>
             <input type='hidden' name='cgEntryId' value=''>
             <input type='hidden' name='action' value='post_cg_attach_to_another_user_select'>
+            <input type='search' id='cgAttachToAnotherUserSearch' class='cg_no_outline_and_shadow_on_focus' value='' placeholder='Search user'>
+            <div id='cgAttachToAnotherUserSelectContainer'></div>
             <div  id="cgAttachToAnotherUserSubmitButtonContainer" class="cg_hide">
                 <button  id="cgAttachToAnotherUserSubmitButton" type="submit" class="cg_backend_button_gallery_action">Attach</button>
                 <button  id="cgAttachToAnotherUserDetachButton" type="submit" class="cg_backend_button_gallery_action cg_hide">Detach</button>

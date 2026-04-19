@@ -592,9 +592,9 @@ cgJsClassAdmin.gallery.functions = {
             $('#cgStepsNavigationTop .cg_step, #cgStepsNavigationBottom .cg_step').not('.cg_step_selected').addClass('cg_searched_value');
         }
 
-        var $cgOrderSelect = $('#cgOrderSelect');
+        var $cgOrderSelect = $('#cgGalleryBackendContainer #cgOrderSelect');
         var cgOrderSelectValue = $cgOrderSelect.val();
-        if (cgOrderSelectValue != 'custom') {
+        if (cgOrderSelectValue != 'date_desc') {
             $cgOrderSelect.addClass('cg_searched_value');
         } else {
             $cgOrderSelect.removeClass('cg_searched_value');
@@ -700,8 +700,11 @@ cgJsClassAdmin.gallery.functions = {
 
         $("#cgAddImagesWpUploader").css("display", "block");
         var gid = $('#cgBackendGalleryId').val();
-        $('#cgOrderSelect #cg_custom').prop('selected', true);
-        localStorage.setItem('cgOrder_BG_' + gid, $('#cgOrderSelect').val());
+        var $cgOrderSelect = $('#cgGalleryBackendContainer #cgOrderSelect');
+        var currentOrder = $cgOrderSelect.val() || 'date_desc';
+        $cgOrderSelect.val(currentOrder);
+        $('#cgGalleryForm #cgOrderValue').val(currentOrder);
+        localStorage.setItem('cgOrder_BG_' + gid, currentOrder);
         var $cgSearchInput = $('#cgSearchInput');
         $cgSearchInput.val('');
         $cgSearchInput.removeClass('cg_searched_value');
@@ -790,7 +793,7 @@ cgJsClassAdmin.gallery.functions = {
             $cg_sortable_div.find('.cg-center-image-exif-no-data').addClass('cg_hide');
             if (data.Exif.DateTimeOriginal) {
                 $cg_sortable_div.find('.cg-exif-date-time-original').removeClass('cg_hide');
-                $cg_sortable_div.find('.cg-exif-date-time-original-text').text(data.Exif.DateTimeOriginal.split(' ')[0].replaceAll(':', '-'));
+                $cg_sortable_div.find('.cg-exif-date-time-original-text').text(data.Exif.DateTimeOriginal.split(' ')[0].split(':').join('-'));
             }
             if (data.Exif.MakeAndModel) {
                 $cg_sortable_div.find('.cg-exif-model').removeClass('cg_hide');
@@ -1516,7 +1519,7 @@ cgJsClassAdmin.gallery.functions = {
         if(scroll){
             $button.addClass('cg_blink');
             setTimeout(function (){
-                $button.get(0).scrollIntoView({behavior: 'smooth'});
+                $button.get(0).scrollIntoView();
             },10);
             setTimeout(function (){
                 $button.removeClass('cg_blink');

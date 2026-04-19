@@ -14,8 +14,6 @@ $table_usermeta = $wpdb->base_prefix . "usermeta";
 $entriesShort = $tablename_contest_gal1ery_create_user_entries;
 $wpUsers = $wpdb->base_prefix . "users";
 
-$_POST = cg1l_sanitize_post($_POST);
-
 // will be inserted if create csv
 echo "<div  id='cg_create_sale_orders_csv_container'>";
 echo "<input type='hidden' name='cg_create_sale_orders_csv' id='cg_create_sale_orders_csv' value='true' />";
@@ -23,22 +21,23 @@ echo "</div>";
 
     $start = 0; // Startwert setzen (0 = 1. Zeile)
     $step = 50;
+    $muster = "/^[0-9]+$/";
 
-    if (isset($_GET["start"])) {
-        $muster = "/^[0-9]+$/";
-        if (preg_match($muster, $_GET["start"]) == 0) {
+    if (isset($_GET["start"]) && !is_array($_GET["start"])) {
+        $startGet = wp_unslash($_GET["start"]);
+        if (preg_match($muster, $startGet) == 0) {
             $start = 0;
         } else {
-            $start = $_GET["start"];
+            $start = absint($startGet);
         }
     }
 
-    if (isset($_GET["step"])) {
-        $muster = "/^[0-9]+$/"; // reg. Ausdruck für Zahlen
-        if (preg_match($muster, $_GET["start"]) == 0) {
+    if (isset($_GET["step"]) && !is_array($_GET["step"])) {
+        $stepGet = wp_unslash($_GET["step"]);
+        if (preg_match($muster, $stepGet) == 0 || absint($stepGet) === 0) {
             $step = 50; // Bei Manipulation Rückfall auf 0
         } else {
-            $step = $_GET["step"];
+            $step = absint($stepGet);
         }
     }
 
@@ -60,6 +59,12 @@ if(!empty($_GET['cg_item_ids'])){
     $_POST['cg_item_ids'] = $_GET['cg_item_ids'];
 }
 
+$cgOrderNumberValue = (isset($_POST['cg_order_number']) && !is_array($_POST['cg_order_number'])) ? esc_attr(wp_unslash($_POST['cg_order_number'])) : '';
+$cgPayPalTransactionIdValue = (isset($_POST['cg_paypal_transaction_id']) && !is_array($_POST['cg_paypal_transaction_id'])) ? esc_attr(wp_unslash($_POST['cg_paypal_transaction_id'])) : '';
+$cgItemIdsValue = (isset($_POST['cg_item_ids']) && !is_array($_POST['cg_item_ids'])) ? esc_attr(wp_unslash($_POST['cg_item_ids'])) : '';
+$cgGalleryIdsValue = (isset($_POST['cg_gallery_ids']) && !is_array($_POST['cg_gallery_ids'])) ? esc_attr(wp_unslash($_POST['cg_gallery_ids'])) : '';
+$cgPayerEmailValue = (isset($_POST['cg_payer_email']) && !is_array($_POST['cg_payer_email'])) ? esc_attr(wp_unslash($_POST['cg_payer_email'])) : '';
+
 $return = cg_ecommerce_get_orders($start,$step);
 $saleOrders = $return['saleOrders'];
 $rows = $return['rows'];
@@ -77,15 +82,15 @@ echo "<input type='hidden' disabled name='cg_ecommerce_export_orders' id='cg_eco
 echo "<input type='hidden' name='cg_start'  value='$start' />";
 echo "<input type='hidden' name='cg_step'  value='$step' />";
 
-echo '<input  type="text" placeholder="Order number"  name="cg_order_number" value="'.(isset($_POST['cg_order_number'])  ? $_POST['cg_order_number'] : '').'" />';
+echo '<input  type="text" placeholder="Order number"  name="cg_order_number" value="'.$cgOrderNumberValue.'" />';
 
-echo '<input  type="text" placeholder="PayPal/Stripe ID"  name="cg_paypal_transaction_id" value="'.(isset($_POST['cg_paypal_transaction_id'])  ? $_POST['cg_paypal_transaction_id'] : '').'" />';
+echo '<input  type="text" placeholder="PayPal/Stripe ID"  name="cg_paypal_transaction_id" value="'.$cgPayPalTransactionIdValue.'" />';
 
-echo '<input  type="text" placeholder="Entry IDs - example: 25 26"  name="cg_item_ids" value="'.(isset($_POST['cg_item_ids'])  ? $_POST['cg_item_ids'] : '').'" />';
+echo '<input  type="text" placeholder="Entry IDs - example: 25 26"  name="cg_item_ids" value="'.$cgItemIdsValue.'" />';
 
-echo '<input  type="text" placeholder="Gallery IDs - example: 1 2"  name="cg_gallery_ids" value="'.(isset($_POST['cg_gallery_ids'])  ? $_POST['cg_gallery_ids'] : '').'" />';
+echo '<input  type="text" placeholder="Gallery IDs - example: 1 2"  name="cg_gallery_ids" value="'.$cgGalleryIdsValue.'" />';
 
-echo '<input  type="text" placeholder="Payer email"  name="cg_payer_email" value="'.(isset($_POST['cg_payer_email'])  ? $_POST['cg_payer_email'] : '').'" style="margin-right:16px;" />';
+echo '<input  type="text" placeholder="Payer email"  name="cg_payer_email" value="'.$cgPayerEmailValue.'" style="margin-right:16px;" />';
 
 echo "<input type='hidden' name='cg_create_sale_orders_csv_new_export' id='cg_create_sale_orders_csv_new_export' value='true' />";
 echo '<input type="hidden" name="cg-search-gallery-id-original" value="'.$cgSearchGalleryId.'" />';
@@ -299,5 +304,3 @@ HEREDOC;
     echo $usersTableHtmlEnd;
 
 }
-
-

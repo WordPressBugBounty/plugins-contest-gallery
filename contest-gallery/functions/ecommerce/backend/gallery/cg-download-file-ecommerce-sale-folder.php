@@ -33,7 +33,9 @@ var_dump($realId);*/
             $files = [];
             if(count($WpUploadFilesPostMeta)==1){
 
-                $WpUpload = $WpUploadFilesPosts[array_key_first($WpUploadFilesPosts)];
+                $WpUploadFilesPostKeys = array_keys($WpUploadFilesPosts);
+                $WpUploadFilesPostFirstKey = reset($WpUploadFilesPostKeys);
+                $WpUpload = $WpUploadFilesPosts[$WpUploadFilesPostFirstKey];
                 $ecommerceFileFolderWpUploadFolder = $ecommerceFileFolder.'/wp-upload-id-'.$WpUpload;
                 $filename = substr($WpUploadFilesPostMeta[$WpUpload]['_wp_attached_file'],strrpos($WpUploadFilesPostMeta[$WpUpload]['_wp_attached_file'],'/')+1,strlen($WpUploadFilesPostMeta[$WpUpload]['_wp_attached_file']));
                 $path = $ecommerceFileFolderWpUploadFolder.'/'.$filename;
@@ -77,7 +79,8 @@ var_dump($realId);*/
 
         }else{
 
-            $WpUpload = array_key_first($WpUploadFilesPosts);
+            $WpUploadFilesPostKeys = array_keys($WpUploadFilesPosts);
+            $WpUpload = reset($WpUploadFilesPostKeys);
 
             $ecommerceFileFolderWpUploadFolder = $ecommerceFileFolder.'/wp-upload-id-'.$WpUpload;
             $filename = substr($WpUploadFilesPostMeta[$WpUpload]['_wp_attached_file'],strrpos($WpUploadFilesPostMeta[$WpUpload]['_wp_attached_file'],'/')+1,strlen($WpUploadFilesPostMeta[$WpUpload]['_wp_attached_file']));

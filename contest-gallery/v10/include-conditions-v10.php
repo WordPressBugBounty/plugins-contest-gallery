@@ -138,7 +138,6 @@ if (!empty($_GET['edit_gallery'])) {
 
 if(!empty($_GET['show_comments'])){
     require_once('v10-admin/gallery/show-comments.php');
-
 }
 
 

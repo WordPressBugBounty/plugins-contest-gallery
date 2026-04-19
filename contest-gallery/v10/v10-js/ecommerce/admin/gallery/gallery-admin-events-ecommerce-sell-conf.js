@@ -428,8 +428,10 @@ jQuery(document).ready(function ($) {
 
         var $sortableDiv = cgJsClassAdmin.gallery.vars.$sortableDiv;
         var isNotActivatedForSale = false;
+        var isActiveForSale = ($sortableDiv.find('.cg_ecommerce_entry').val()!=0);
+        $cgSellContainerForm.attr('data-cg-was-active-for-sale', (isActiveForSale ? '1' : '0'));
 
-        if($sortableDiv.find('.cg_ecommerce_entry').val()!=0){
+        if(isActiveForSale){
             $cgSellContainer.find('#cgActivateSaleOption .cg_view_option_checkbox').addClass('cg_view_option_checked').removeClass('cg_view_option_unchecked');// has to be done at the beginning
             $cgSellContainer.find('#cgActivateSaleOption #cgActivateSale').prop('checked',true);
             $cgSellContainer.find('.cg_sale_conf').removeClass('cg_disabled cg_disabled_background_color_e0e0e0');
@@ -492,11 +494,7 @@ jQuery(document).ready(function ($) {
         $cgSellContainer.find('#cgSrcWpUploadId').val(cgJsClassAdmin.gallery.vars.$sortableDiv.find('.cg_wp_upload_id').val());
         $cgSellContainer.find('#cgRealId').val(cgJsClassAdmin.gallery.vars.$sortableDiv.find('.cg_real_id').val());
 
-        if(cgJsClassAdmin.gallery.vars.$sortableDiv.find('.IsEcommerceSale').val()==1){
-            $cgSellContainer.find('#cgSetForSell').text('Change settings');
-        }else{
-            $cgSellContainer.find('#cgSetForSell').text('Activate sale');
-        }
+        cgJsClassAdmin.gallery.functions.setForSellButtonLabel($cgSellContainer);
 
         $cgSellContainer.find('.Tax_radio').prop(false);
         $cgSellContainer.find('#TaxContainerRow').addClass('cg_hide');

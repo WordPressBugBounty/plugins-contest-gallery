@@ -84,16 +84,6 @@ $FeControlsStyleWhiteChecked = ($galleriesOptions['g']['FeControlsStyle']=='whit
 $FeControlsStyleBlackChecked = ($galleriesOptions['g']['FeControlsStyle']=='black') ? 'checked' : '';
 
 echo <<<HEREDOC
-<div class="cg_view_options_row">
-        <div class="cg_view_option cg_view_option_100_percent" id="BorderRadiusContainer">
-            <div class="cg_view_option_title">
-                <p>Round borders for all control elements and containers</p>
-            </div>
-            <div class="cg_view_option_checkbox cg_view_option_checked">
-                <input type="checkbox" name="cg_galleries[g][BorderRadius]" class="cg_shortcode_checkbox BorderRadius" checked="{$galleriesOptions['g']['BorderRadius']}">
-            </div>
-        </div>
-</div>
 <div class='cg_view_options_row'>
         <div class='cg_view_option cg_view_option_full_width cg_border_top_none cg_border_top_bottom_none'>
             <div class='cg_view_option_title'>
@@ -123,7 +113,7 @@ HEREDOC;
 
 echo <<<HEREDOC
 <div class="cg_view_options_row">
-        <div class="cg_view_option cg_view_option_100_percent" id="BorderRadiusContainer">
+        <div class="cg_view_option cg_view_option_100_percent">
             <div class="cg_view_option_title">
                 <p>Masonry view is always activated for cg_galleries... shortcodes</p>
             </div>
@@ -268,8 +258,8 @@ echo <<<HEREDOC
             <div class="cg_view_option cg_view_option_100_percent cg_border_top_none" id="GalleriesPagesNoIndexContainer">
                 <div class="cg_view_option_title">
                     <p style="margin-right: -30px;">
-                    	Allow search engines like Google to index the /contest-galleries... pages and subpages
-                    	<br><span class="cg_view_option_title_note"><b>NOTE:</b> if unchecked ...meta name="robots" content="noindex"... is set<br><b>NOTE:</b> noindex tells a robot to not index a page, it is used to keep pages out of search results</span>
+                        Allow search engines like Google to index the original Contest Gallery URLs under /contest-galleries...
+                        <br><span class="cg_view_option_title_note">Recommended: leave this disabled unless you want these original Contest Gallery URLs and their subpages to appear in search results.<br>If you use your own WordPress page with this shortcode as the main SEO page, keeping this disabled is usually the better choice and helps avoid duplicate or technical index pages.<br>If unchecked, &lt;meta name="robots" content="noindex"&gt; is set.</span>
                     </p>
                 </div>
                 <div class="cg_view_option_checkbox cg_view_option_checked">

@@ -13,7 +13,7 @@ if(floatval($galleryDbVersion)<15.05){
 
 echo <<<HEREDOC
 <div class='cg_view_options_rows_container'>
-        <p class='cg_view_options_rows_container_title'>Gallery slide out, slider view or blog view</p>
+        <p class='cg_view_options_rows_container_title'>Gallery slide out or blog view</p>
         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width'>
                     <div class='cg_view_option_title'>
@@ -26,14 +26,6 @@ echo <<<HEREDOC
                             </div>
                             <div class='cg_view_option_radio_multiple_input'>
                                 <input type="radio" name="AllowGalleryScript" class="AllowGalleryScript cg_view_option_radio_multiple_input_field"  $AllowGalleryScript  />
-                            </div>
-                        </div>
-                        <div class='cg_view_option_radio_multiple_container SliderFullWindowContainer'>
-                            <div class='cg_view_option_radio_multiple_title'>
-                                Full window slider
-                            </div>
-                            <div class='cg_view_option_radio_multiple_input'>
-                                <input type="radio" name="SliderFullWindow" class="SliderFullWindow cg_view_option_radio_multiple_input_field"  $SliderFullWindow   />
                             </div>
                         </div>
                         <div class='cg_view_option_radio_multiple_container BlogLookFullWindowContainer'>
@@ -53,10 +45,10 @@ HEREDOC;
     $TextBeforeWpPageEntryRow = '';
     $TextAfterWpPageEntryRow = '';
     $EventuallyPadding = '';
-    $AvailableEntryViewOptions = 'Slider view or blog view';
+    $AvailableEntryViewOptions = 'Blog view';
     $ForwardToWpPageEntryInNewTabOptions = '';
     if(floatval($galleryDbVersion)>=21){
-        $AvailableEntryViewOptions = 'Slider view, blog view or forward to entry landing page';
+        $AvailableEntryViewOptions = 'Blog view or forward to entry landing page';
         $EventuallyPadding = 'padding-bottom:20px;';
 $ForwardToWpPageEntryOptions = <<<HEREDOC
  <div class='cg_view_option_radio_multiple_container ForwardToWpPageEntryContainer'>
@@ -87,7 +79,7 @@ HEREDOC;
 <div class='cg_view_options_rows_container'>
         <p class='cg_view_options_rows_container_title'>$AvailableEntryViewOptions</p>
         <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_view_option_full_width cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px' style="$EventuallyPadding">
+                <div class='cg_view_option cg_view_option_full_width cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px cg_border_bottom_none' style="$EventuallyPadding">
                     <div class='cg_view_option_title'>
                         <p>Open entry style<br><span class="cg_view_option_title_note">Select how an entry should be opened on click in a gallery</span></p>
                     </div>
@@ -98,14 +90,6 @@ HEREDOC;
                             </div>
                             <div class='cg_view_option_radio_multiple_input'>
                                 <input type="radio" name="BlogLookFullWindow" class="BlogLookFullWindow cg_view_option_radio_multiple_input_field"  $BlogLookFullWindow  />
-                            </div>
-                        </div>
-                        <div class='cg_view_option_radio_multiple_container SliderFullWindowContainer'>
-                            <div class='cg_view_option_radio_multiple_title'>
-                                Full window slider
-                            </div>
-                            <div class='cg_view_option_radio_multiple_input'>
-                                <input type="radio" name="SliderFullWindow" class="SliderFullWindow cg_view_option_radio_multiple_input_field"  $SliderFullWindow   />
                             </div>
                         </div>
                        $ForwardToWpPageEntryOptions

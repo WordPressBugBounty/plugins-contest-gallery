@@ -49,8 +49,8 @@ msgid "Download invoice"
 msgstr "Stiahnite si faktúru"
 
 #: check-language-ecommerce.php:53
-msgid "Billing address different from delivery address?"
-msgstr "Fakturačná adresa sa líši od adresy doručenia?"
+msgid "Billing address different from delivery address"
+msgstr "Fakturačná adresa sa líši od adresy doručenia"
 
 #: check-language-ecommerce.php:55
 msgid "Country"
@@ -866,8 +866,8 @@ msgid "You have already used all your votes"
 msgstr "Už ste rozdali všetky svoje hlasy"
 
 #: check-language.php:304
-msgid "It is not allowed to vote for your own file"
-msgstr "Nie je dovolené hlasovať za vlastný súbor"
+msgid "You cannot vote for your own entry"
+msgstr "Nemôžete hlasovať za svoj vlastný príspevok"
 
 #: check-language.php:306
 msgid "Only registered users are allowed to vote"

@@ -1,9 +1,9 @@
 <?php
 
 
-// 4 Varianten hier möglich wenn andere Einstellungen getroffen wurden als standard
+// 4 variants possible here if other settings than standard were made
 
-// Prüfen für Rating mit einem Stern und nicht eingeloggtem User
+// Check for 1-star rating and non-logged-in user
 if($generalOptions['ShowOnlyUsersVotes']==1 && $generalOptions['CheckLogin']!=1 && $generalOptions['AllowRating']==2){
 
     $countS = $wpdb->get_var( $wpdb->prepare(
@@ -17,7 +17,7 @@ if($generalOptions['ShowOnlyUsersVotes']==1 && $generalOptions['CheckLogin']!=1 
 
 }
 
-// Prüfen für Rating mit einem Stern und eingeloggtem User
+// Check for 1-star rating and logged-in user
 if($generalOptions['ShowOnlyUsersVotes']==1 && $generalOptions['CheckLogin']==1 && $generalOptions['AllowRating']==2){
 
     if(is_user_logged_in()){
@@ -42,7 +42,7 @@ if($generalOptions['ShowOnlyUsersVotes']==1 && $generalOptions['CheckLogin']==1 
     }
 }
 
-// Prüfen für Rating mit fünf Sternen und nicht eingeloggtem User. countR und rating ist hier notwendig zu wissen
+// Check for 5-star rating and non-logged-in user. countR and rating is necessary to know here
 if($generalOptions['ShowOnlyUsersVotes']==1 && $generalOptions['CheckLogin']!=1 && ($generalOptions['AllowRating']>=12 OR $generalOptions['AllowRating']==1)){
 
     $countR = $wpdb->get_var( $wpdb->prepare(
@@ -66,9 +66,9 @@ if($generalOptions['ShowOnlyUsersVotes']==1 && $generalOptions['CheckLogin']!=1 
 }
 
 
-// Prüfen für Rating mit fünf Sternen und nicht eingeloggtem User. countR und rating ist hier notwendig zu wissen --- ENDE
+// Check for 5-star rating and non-logged-in user. countR and rating is necessary to know here --- ENDE
 
-// Prüfen für Rating mit fünf Sternen und eingeloggtem User. countR und rating ist hier notwendig zu wissen
+// Check for 5-star rating and logged-in user. countR and rating is necessary to know here
 
 if($generalOptions['ShowOnlyUsersVotes']==1 && $generalOptions['CheckLogin']==1 && ($generalOptions['AllowRating']>=12 OR $generalOptions['AllowRating']==1)){
 
@@ -105,5 +105,5 @@ if($generalOptions['ShowOnlyUsersVotes']==1 && $generalOptions['CheckLogin']==1 
 
 }
 
-// Prüfen für Rating mit fünf Sternen und eingeloggtem User. countR und rating ist hier notwendig zu wissen --- ENDE
+// Check for 5-star rating and non-logged-in user. countR and rating is necessary to know here --- END
 ?>

@@ -55,7 +55,7 @@ echo <<<HEREDOC
              <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_100_percent cg_border_top_none CheckMethodContainer $cgProFalse' id="CheckIpAndCookieContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Check by IP and Cookie<br/><span class="cg_view_option_title_note">IP will be tracked and cookie with unique cookie ID will be set and tracked<br>if this option is activated.<br>A user have to switch IP and to delete cookies to manipulate.</span></p>
+                        <p>Check by IP and Cookie<br/><span class="cg_view_option_title_note">IP will be tracked and a unique cookie ID will be set and tracked<br>if this option is activated.<br>A user is only recognized again if both the same IP and the same cookie are available.<br>Deleting cookies or using another browser or incognito window can allow voting again even on the same IP.</span></p>
                     </div>
                     <div class='cg_view_option_radio'>
                         <input type="radio" name="CheckMethod" class="CheckMethod" id="CheckIpAndCookie" value="ip-and-cookie" $CheckIpAndCookie>
@@ -544,5 +544,3 @@ HEREDOC;
 echo <<<HEREDOC
 </div>
 HEREDOC;
-
-

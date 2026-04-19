@@ -2,6 +2,8 @@
 
 global $wpdb;
 
+$isJustCheck = (!empty($isJustCheck)) ? true : false;
+
 $tablename = $wpdb->base_prefix . "$i"."contest_gal1ery";
 $tablename_ip = $wpdb->base_prefix . "$i"."contest_gal1ery_ip";
 $tablename_comments = $wpdb->base_prefix . "$i"."contest_gal1ery_comments";
@@ -33,6 +35,7 @@ $tablename_ecommerce_orders_items = $wpdb->base_prefix . "$i"."contest_gal1ery_e
 $columnsToRepairArray = array();
 
 $updateArray = include('update-conf.php');
+$isField1IdFullWindowBlogViewAdded = false;
 
 if(!isset($errorsArray)){
     $errorsArray = array();
@@ -40,45 +43,60 @@ if(!isset($errorsArray)){
 
 // add collate where is required and might be missing
 
-// Collation check for input entries was added in 21.0.1
-//$tablenameEntries = $wpdb->prefix . "contest_gal1ery_entries";
-$tableStatus =  $wpdb->get_results("SHOW TABLE STATUS where name like '$tablename_entries'");
-if(isset($tableStatus[0]) && isset($tableStatus[0]->Collation) && $tableStatus[0]->Collation!='utf8mb4_unicode_520_ci'){
-    //if(!$wpdb->query("ALTER TABLE $tablenameEntries CONVERT TO CHARACTER SET 'utf8mb4_unicode_520_ci' ")){
-    if(!$wpdb->query("ALTER TABLE $tablename_entries CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci")){
-        $wpdb->show_errors();
-        ob_start();
-        $wpdb->print_error();
-        $errorsArray[$tablename_entries] = ob_get_clean();
+if(!function_exists('cg_update_check_new_add_issue')){
+    function cg_update_check_new_add_issue(&$columnsToRepairArray,$tableName,$columnData){
+        if(empty($columnsToRepairArray[$tableName])){
+            $columnsToRepairArray[$tableName] = array();
+        }
+        if(empty($columnsToRepairArray['hasColumnsToImprove'])){
+            $columnsToRepairArray['hasColumnsToImprove'] = true;
+        }
+        $columnsToRepairArray[$tableName][] = $columnData;
     }
 }
 
-// Collation check for entries tablename was added in 23.0.0, Collation required for youtube names
-//$tablenameEntries = $wpdb->prefix . "contest_gal1ery_entries";
-$tableStatus =  $wpdb->get_results("SHOW TABLE STATUS where name like '$tablename'");
-if(isset($tableStatus[0]) && isset($tableStatus[0]->Collation) && $tableStatus[0]->Collation!='utf8mb4_unicode_520_ci'){
-    //if(!$wpdb->query("ALTER TABLE $tablename CONVERT TO CHARACTER SET 'utf8mb4_unicode_520_ci' ")){
-    if(!$wpdb->query("ALTER TABLE $tablename CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci")){
-        $wpdb->show_errors();
-        ob_start();
-        $wpdb->print_error();
-        $errorsArray[$tablename] = ob_get_clean();
+if(!function_exists('cg_update_check_new_handle_collation')){
+    function cg_update_check_new_handle_collation($tableName,$requiredCollation,$isJustCheck,&$columnsToRepairArray,&$errorsArray){
+        global $wpdb;
+
+        $tableStatus = $wpdb->get_results("SHOW TABLE STATUS where name like '$tableName'");
+        if(isset($tableStatus[0]) && isset($tableStatus[0]->Collation) && $tableStatus[0]->Collation!=$requiredCollation){
+            if(!empty($isJustCheck)){
+                cg_update_check_new_add_issue(
+                    $columnsToRepairArray,
+                    $tableName,
+                    array(
+                        'ColumnName' => 'Table collation',
+                        'IsColumnCouldNotBeModified' => true,
+                        'IsCollationCouldNotBeModified' => true,
+                        'ColumnTypeCurrent' => $tableStatus[0]->Collation,
+                        'ColumnTypeRequired' => $requiredCollation
+                    )
+                );
+            }else{
+                if(!$wpdb->query("ALTER TABLE $tableName CONVERT TO CHARACTER SET utf8mb4 COLLATE $requiredCollation")){
+                    $wpdb->show_errors();
+                    ob_start();
+                    $wpdb->print_error();
+                    $errorsArray[$tableName.'.Table collation'] = ob_get_clean();
+                }
+            }
+        }
     }
 }
+
+// Collation check for input entries was added in 21.0.1
+//$tablenameEntries = $wpdb->prefix . "contest_gal1ery_entries";
+cg_update_check_new_handle_collation($tablename_entries,'utf8mb4_unicode_520_ci',$isJustCheck,$columnsToRepairArray,$errorsArray);
+
+// Collation check for entries tablename was added in 23.0.0, Collation required for youtube names
+//$tablenameEntries = $wpdb->prefix . "contest_gal1ery_entries";
+cg_update_check_new_handle_collation($tablename,'utf8mb4_unicode_520_ci',$isJustCheck,$columnsToRepairArray,$errorsArray);
 
 // Collation check for entries $tablename_comments was added in 23.1.3, Collation required for comments
 // was not set between previous versions, insert in database was removed and then set back in 23.1.3 for IP and WpUserId, set in json files still exists also parallely without IP and WpUserId
 //$tablename_comments = $wpdb->prefix . "contest_gal1ery_entries";
-$tableStatus =  $wpdb->get_results("SHOW TABLE STATUS where name like '$tablename_comments'");
-if(isset($tableStatus[0]) && isset($tableStatus[0]->Collation) && $tableStatus[0]->Collation!='utf8mb4_unicode_520_ci'){
-    //if(!$wpdb->query("ALTER TABLE $tablename_comments CONVERT TO CHARACTER SET 'utf8mb4_unicode_520_ci' ")){
-    if(!$wpdb->query("ALTER TABLE $tablename_comments CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci")){
-        $wpdb->show_errors();
-        ob_start();
-        $wpdb->print_error();
-        $errorsArray[$tablename_comments] = ob_get_clean();
-    }
-}
+cg_update_check_new_handle_collation($tablename_comments,'utf8mb4_unicode_520_ci',$isJustCheck,$columnsToRepairArray,$errorsArray);
 // check here required because might be done twice because of corrections-and-improvements logic
 
 $databaseTablesAndColumnsArrayOfObjects = array();
@@ -143,9 +161,7 @@ foreach($updateArray as $tableName => $tableData){
         if(!$isColumnAvailable){
 
             if(!empty($isJustCheck)){
-                if(empty($columnsToRepairArray[$tableName])){$columnsToRepairArray[$tableName] = array();}
-                if(empty($columnsToRepairArray['hasColumnsToImprove'])){$columnsToRepairArray['hasColumnsToImprove'] = true;}
-                $columnsToRepairArray[$tableName][] = array('ColumnName' => $columnName, 'IsNoColumn' => true);
+                cg_update_check_new_add_issue($columnsToRepairArray,$tableName,array('ColumnName' => $columnName, 'IsNoColumn' => true));
             }else{
                 $columnType = trim(strtolower($columnData['COLUMN_TYPE']));
 
@@ -157,6 +173,10 @@ foreach($updateArray as $tableName => $tableData){
                     ob_start();
                     $wpdb->print_error();
                     $errorsArray[$columnName] = ob_get_clean();
+                }else{
+                    if($tableName == $tablename_options_visual && $columnName == 'Field1IdFullWindowBlogView'){
+                        $isField1IdFullWindowBlogViewAdded = true;
+                    }
                 }
 
             }
@@ -177,9 +197,7 @@ foreach($updateArray as $tableName => $tableData){
                     if($columnTypeToCompare=='int' && strpos($columnType,'int')!==false){// for new mysql 8 always simply int will be created not int(11) for example
                     }elseif($columnTypeToCompare=='bigint' && strpos($columnType,'bigint')!==false){// for new mysql 8 always simply bigint will be created not bigint(20) for example
                     }else{
-                        if(empty($columnsToRepairArray[$tableName])){$columnsToRepairArray[$tableName] = array();}
-                        if(empty($columnsToRepairArray['hasColumnsToImprove'])){$columnsToRepairArray['hasColumnsToImprove'] = true;}
-                        $columnsToRepairArray[$tableName][] = array('ColumnName' => $columnName, 'IsColumnCouldNotBeModified' => true, 'ColumnTypeCurrent' => $columnTypeToCompare, 'ColumnTypeRequired' => $columnType);
+                        cg_update_check_new_add_issue($columnsToRepairArray,$tableName,array('ColumnName' => $columnName, 'IsColumnCouldNotBeModified' => true, 'ColumnTypeCurrent' => $columnTypeToCompare, 'ColumnTypeRequired' => $columnType));
                     }
                 }else{
                     // check if type is same
@@ -203,6 +221,49 @@ foreach($updateArray as $tableName => $tableData){
 
 }
 
+if($isField1IdFullWindowBlogViewAdded && empty($isJustCheck)){
+
+    $wpdb->query("UPDATE $tablename_options_visual SET Field1IdFullWindowBlogView = Field1IdGalleryView WHERE (Field1IdFullWindowBlogView IS NULL OR Field1IdFullWindowBlogView = 0) AND Field1IdGalleryView > 0");
+
+    $optionsVisualRows = $wpdb->get_results("SELECT GalleryID, Field1IdFullWindowBlogView FROM $tablename_options_visual WHERE Field1IdFullWindowBlogView > 0");
+
+    if(!empty($optionsVisualRows)){
+        $wp_upload_dir = wp_upload_dir();
+
+        foreach($optionsVisualRows as $optionsVisualRow){
+            $GalleryID = absint($optionsVisualRow->GalleryID);
+            $Field1IdFullWindowBlogView = absint($optionsVisualRow->Field1IdFullWindowBlogView);
+
+            if(!$GalleryID || !$Field1IdFullWindowBlogView){
+                continue;
+            }
+
+            $optionsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/'.$GalleryID.'-options.json';
+
+            if(!file_exists($optionsFile)){
+                continue;
+            }
+
+            $optionsFileData = json_decode(file_get_contents($optionsFile),true);
+
+            if(!is_array($optionsFileData)){
+                continue;
+            }
+
+            foreach([$GalleryID,$GalleryID.'-u',$GalleryID.'-nv',$GalleryID.'-w',$GalleryID.'-ec'] as $optionsKey){
+                if(!empty($optionsFileData[$optionsKey]['visual'])){
+                    $optionsFileData[$optionsKey]['visual']['Field1IdFullWindowBlogView'] = $Field1IdFullWindowBlogView;
+                }
+            }
+
+            if(!empty($optionsFileData['visual'])){
+                $optionsFileData['visual']['Field1IdFullWindowBlogView'] = $Field1IdFullWindowBlogView;
+            }
+
+            file_put_contents($optionsFile,json_encode($optionsFileData));
+        }
+    }
+}
 
 
 ?>

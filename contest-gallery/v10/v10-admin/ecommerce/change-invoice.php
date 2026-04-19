@@ -47,6 +47,7 @@ include(__DIR__ ."/../../../check-language-ecommerce.php");
 
 $cg_version = cg_get_version();
 $site_url = get_site_url();
+$BackToOrderUrl = '?page='.$cg_version.'/index.php&cg_show_order=true&cg_order_id='.$OrderId.'&option_id='.$GalleryID;
 
 echo <<<HEREDOC
 <div id="cgChangeInvoiceLoader"  class="cg_backend_action_container cg_hide cg_overflow_y_hidden" style="max-width: 300px;max-height: 300px;min-height: 268px;">
@@ -68,11 +69,15 @@ echo <<<HEREDOC
 <form id="cgChangeInvoiceForm" action="?page=$cg_version/index.php" method='POST'>
 <input type="hidden" name="action" value="post_cg_change_invoice">
 <input type="hidden" name="cg_order_id_hash" value="$OrderIdHash">
-<div class="cg_row">
-	<div class="cg_col_12" style="text-align: center;" >
-			<span style="font-size: 22px; margin-bottom: 10px; display: inline-block;">Edit invoice</span><br>
+<div id="cgChangeInvoiceHeader">
+	<div id="cgChangeInvoiceBackButtonContainer">
+		<a href="$BackToOrderUrl" class="cg_load_backend_link"><input class="cg_backend_button cg_backend_button_back" type="button" value="Back to order" /></a>
+	</div>
+	<div id="cgChangeInvoiceTitleContainer">
+			<span id="cgChangeInvoiceTitle">Edit invoice</span><br>
 			<span class="cg_color_red"><b>NOTE:</b></span> edit invoice modules, the changes will overwrite the current invoice
 	</div>
+	<div id="cgChangeInvoiceHeaderPlaceholder"></div>
 </div>
 <div class="cg_row">
 	<div class="cg_col_6">

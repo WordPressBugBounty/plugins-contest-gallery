@@ -34,6 +34,10 @@ if(!function_exists('cg_deactivate_images')){
             if(file_exists($wp_upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/image-data/image-data-".$key.".json")){
                 unlink($wp_upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/image-data/image-data-".$key.".json");
             }
+
+            if(file_exists($wp_upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/image-stats/image-stats-".$key.".json")){
+                unlink($wp_upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/image-stats/image-stats-".$key.".json");
+            }
             // since v16.0.0 no need to deactivate anymore, json comments files can stay existed, because backup is also in json files
             /*        if(file_exists($wp_upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/image-comments/image-comments-".$key.".json")){
                         unlink($wp_upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/image-comments/image-comments-".$key.".json");
@@ -42,7 +46,34 @@ if(!function_exists('cg_deactivate_images')){
                 unlink($wp_upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/image-info/image-info-".$key.".json");
             }
 
+            $legacyAggregateFiles = [
+                $wp_upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/".$GalleryID."-images-info-values.json",
+                $wp_upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/".$GalleryID."-images-sort-values.json",
+            ];
+
+            foreach ($legacyAggregateFiles as $legacyAggregateFile) {
+                if(file_exists($legacyAggregateFile)){
+                    $legacyAggregateFileContent = json_decode(file_get_contents($legacyAggregateFile),true);
+                    if(is_array($legacyAggregateFileContent) && isset($legacyAggregateFileContent[$key])){
+                        unset($legacyAggregateFileContent[$key]);
+                        file_put_contents($legacyAggregateFile,json_encode($legacyAggregateFileContent));
+                    }
+                }
+            }
+
+            cg1l_push_recent_id_file_all_types($GalleryID,$key,true);
+
+            static $cg1l_last_updated_done = false;
+
+            if (!$cg1l_last_updated_done || time() > $cg1l_last_updated_done) {
+                $cg1l_last_updated_done = time();
+                cg1l_create_last_updated_time_file_all($GalleryID);
+            }
+
+
         }
+
+
 
         // ic = i counter
         for ($ic = 0;$ic<$queryArgsCounter;$ic++){

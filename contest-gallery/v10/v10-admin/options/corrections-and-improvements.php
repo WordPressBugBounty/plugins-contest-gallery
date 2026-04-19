@@ -113,50 +113,100 @@ $correctStatusText4 = 'Nothing to repair';
 $correctStatusClass4 = '';
 $correctStatusTextFull4 = 'All required columns available!';
 
+if(!function_exists('cg_corrections_database_issue_status')){
+	function cg_corrections_database_issue_status($tableName,$columnData,$errorsArray,$isRepairResult){
+		$columnName = (!empty($columnData['ColumnName'])) ? $columnData['ColumnName'] : '';
+		$errorKeyFull = $tableName.'.'.$columnName;
+		if(!empty($errorsArray[$errorKeyFull])){
+			return $errorsArray[$errorKeyFull];
+		}
+		if(!empty($errorsArray[$columnName])){
+			return $errorsArray[$columnName];
+		}
+		if(!empty($errorsArray[$tableName])){
+			return $errorsArray[$tableName];
+		}
+		if(isset($columnData['IsNoColumn'])){
+			return (!empty($isRepairResult)) ? 'Still not created' : 'Not created';
+		}
+		if(isset($columnData['IsCollationCouldNotBeModified'])){
+			$prefix = (!empty($isRepairResult)) ? 'Still different' : 'Modify';
+			return $prefix.': from '.$columnData['ColumnTypeCurrent'].' to '.$columnData['ColumnTypeRequired'];
+		}
+		if(isset($columnData['IsColumnCouldNotBeModified'])){
+			$prefix = (!empty($isRepairResult)) ? 'Still different' : 'Modify';
+			return $prefix.': from '.$columnData['ColumnTypeCurrent'].' to '.$columnData['ColumnTypeRequired'];
+		}
+		return '';
+	}
+}
 
-try {
-	if(isset($_POST['action_check_and_correct_database'])){
-		$i="";
-
-		// try all updates here!
-		include(__DIR__."/../../../update/update-check-new.php");
-		$isJustCheck = true;
-		include(__DIR__."/../../../update/update-check-new.php");
+if(!function_exists('cg_corrections_render_database_issues')){
+	function cg_corrections_render_database_issues($columnsToRepairArray,$errorsArray,$isRepairResult){
+		global $wpdb;
 
 		if(!empty($columnsToRepairArray['hasColumnsToImprove'])){
-
-			// unset here so processing does not stop
 			unset($columnsToRepairArray['hasColumnsToImprove']);
+		}
 
-			$correctStatusTextFull4 = '<span class="cg_database_improve_title">Please contact <a href="mailto:support@contest-gallery.com">support@contest-gallery.com</a><br>Copy and send following data with MySQL version:</span>';
-
+		if(!empty($isRepairResult)){
+			$correctStatusTextFull = '<span class="cg_database_improve_title">Please contact <a href="mailto:support@contest-gallery.com">support@contest-gallery.com</a><br>Copy and send following data with MySQL version:</span>';
 			if ( function_exists( 'mysqli_connect' ) ) {
 				$server_info = mysqli_get_server_info( $wpdb->dbh );
 			}else{
 				$server_info = mysql_get_server_info( $wpdb->dbh );
 			}
+			$correctStatusTextFull .= '<span class="cg_database_improve_mysql_version">MySQL version '.$wpdb->db_version().' - '.$server_info.'</span>';
+		}else{
+			$correctStatusTextFull = '<span class="cg_database_improve_title">Table data needs to be repaired</span>';
+		}
 
-			$correctStatusTextFull4 .= '<span class="cg_database_improve_mysql_version">MySQL version '.$wpdb->db_version().' - '.$server_info.'</span>';
-
-			foreach($columnsToRepairArray as $tableName => $tableData){
-				$correctStatusTextFull4 .= "<span class=\"cg_database_improve_table_name\">Table: $tableName</span><br>";
-				$correctStatusTextFull4 .= "<table><tbody>";
-				$correctStatusTextFull4 .= "<tr><th>Column</th><th>Status</th></tr>";
-				foreach($tableData as $columnData){
-					$statusText = '';
-					if(isset($columnData['IsNoColumn'])){
-						$statusText = $errorsArray[$columnData['ColumnName']];
-					}
-					if(isset($columnData['IsColumnCouldNotBeModified'])){
-						$statusText = $errorsArray[$columnData['ColumnName']];
-					}
-					$correctStatusTextFull4 .= "<tr><td>".$columnData['ColumnName']."</td><td>$statusText</td></tr>";
-				}
-				$correctStatusTextFull4 .= "</table></tbody>";
+		foreach($columnsToRepairArray as $tableName => $tableData){
+			$correctStatusTextFull .= "<span class=\"cg_database_improve_table_name\">Table: $tableName</span><br>";
+			$correctStatusTextFull .= "<table><tbody>";
+			$correctStatusTextFull .= "<tr><th>Column</th><th>Status</th></tr>";
+			foreach($tableData as $columnData){
+				$statusText = cg_corrections_database_issue_status($tableName,$columnData,$errorsArray,$isRepairResult);
+				$correctStatusTextFull .= "<tr><td>".$columnData['ColumnName']."</td><td>$statusText</td></tr>";
 			}
+			$correctStatusTextFull .= "</tbody></table>";
+		}
 
-			$correctStatusText4 = 'Repair';
-			$correctStatusClass4 = '';
+		return $correctStatusTextFull;
+	}
+}
+
+
+try {
+	if(isset($_POST['action_check_and_correct_database'])){
+		$i="";
+
+		$columnsToRepairArray = array();
+		$errorsArray = array();
+		$isJustCheck = true;
+		include(__DIR__."/../../../update/update-check-new.php");
+
+		if(!empty($columnsToRepairArray['hasColumnsToImprove'])){
+
+			$columnsToRepairArray = array();
+			$errorsArray = array();
+			$isJustCheck = false;
+			include(__DIR__."/../../../update/update-check-new.php");
+			$repairErrorsArray = $errorsArray;
+
+			$columnsToRepairArray = array();
+			$errorsArray = $repairErrorsArray;
+			$isJustCheck = true;
+			include(__DIR__."/../../../update/update-check-new.php");
+
+			if(!empty($columnsToRepairArray['hasColumnsToImprove'])){
+				$correctStatusTextFull4 = cg_corrections_render_database_issues($columnsToRepairArray,$errorsArray,true);
+				$correctStatusText4 = 'Repair';
+				$correctStatusClass4 = '';
+			}else{
+				$correctStatusText4 = 'Repaired';
+				$correctStatusClass4 = 'cg_corrected';
+			}
 
 		}else{
 			$correctStatusText4 = 'Repaired';
@@ -166,33 +216,14 @@ try {
 	}else{
 		$i="";
 
+		$columnsToRepairArray = array();
+		$errorsArray = array();
 		$isJustCheck = true;
 		include(__DIR__."/../../../update/update-check-new.php");
 
 		if(!empty($columnsToRepairArray['hasColumnsToImprove'])){
 
-			// unset here so processing does not stop
-			unset($columnsToRepairArray['hasColumnsToImprove']);
-
-			$correctStatusTextFull4 = '<span class="cg_database_improve_title">Table data needs to be repaired</span>';
-
-			foreach($columnsToRepairArray as $tableName => $tableData){
-				$correctStatusTextFull4 .= "<span class=\"cg_database_improve_table_name\">Table: $tableName</span><br>";
-				$correctStatusTextFull4 .= "<table><tbody>";
-				$correctStatusTextFull4 .= "<tr><th>Column</th><th>Status</th></tr>";
-				foreach($tableData as $columnData){
-					$statusText = '';
-					if(isset($columnData['IsNoColumn'])){
-						$statusText = 'Not created';
-					}
-					if(isset($columnData['IsColumnCouldNotBeModified'])){
-						$statusText = 'Modify: from '.$columnData['ColumnTypeCurrent'].' to '.$columnData['ColumnTypeRequired'].'';
-					}
-					$correctStatusTextFull4 .= "<tr><td>".$columnData['ColumnName']."</td><td>$statusText</td></tr>";
-				}
-				$correctStatusTextFull4 .= "</table></tbody>";
-			}
-
+			$correctStatusTextFull4 = cg_corrections_render_database_issues($columnsToRepairArray,$errorsArray,false);
 			$correctStatusText4 = 'Repair';
 			$correctStatusClass4 = '';
 

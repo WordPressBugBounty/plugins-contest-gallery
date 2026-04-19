@@ -31,24 +31,17 @@ if (!empty($_POST['ipId'])) {
 
 if($imageData->Active==1){
     cg_correct_entry_count($imageId);
-
-    $objectRow = $wpdb->get_row( "SELECT DISTINCT $table_posts.*, $tablename.* FROM $table_posts, $tablename WHERE 
-                                              ($tablename.GalleryID='$GalleryID' AND $tablename.id=$imageId and $table_posts.ID = $tablename.WpUpload)  OR 
-                                              ($tablename.GalleryID='$GalleryID' AND $tablename.id=$imageId AND $tablename.WpUpload = 0) 
-                                          GROUP BY $tablename.id ORDER BY $tablename.id DESC");
-    $uploadFolder = wp_upload_dir();
-    $thumbSizesWp = array();
-    $thumbSizesWp['thumbnail_size_w'] = get_option("thumbnail_size_w");
-    $thumbSizesWp['medium_size_w'] = get_option("medium_size_w");
-    $thumbSizesWp['large_size_w'] = get_option("large_size_w");
-    $imageArray = array();
-
-	$RatingOverviewArray = cg_get_correct_rating_overview($GalleryID);
-	$imageArray = cg_create_json_files_when_activating($GalleryID,$objectRow,$thumbSizesWp,$uploadFolder,$imageArray,floatval($generalOptions->Version),$RatingOverviewArray);
-
-// take care of order!
-    //cg_set_data_in_images_files_with_all_data($GalleryID,$imageArray);
-    //cg_json_upload_form_info_data_files($GalleryID,null);
-
+    $wp_upload_dir = wp_upload_dir();
+    $RatingOverviewArray = cg_get_correct_rating_overview($GalleryID);
+    cg1l_migrate_image_stats_to_folder($GalleryID, true, true);// correct first if needs to correct
+    $lockFp = false;
+    $ratingFileData = cg1l_get_stats_for_update($GalleryID, $imageId, $lockFp);
+    if(empty($RatingOverviewArray[$imageId])){
+        $RatingOverviewArray[$imageId] = [];
+    }
+    $ratingFileData = array_merge($ratingFileData, $RatingOverviewArray[$imageId]);
+    $ratingFileData = cg1l_set_stats_with_lock($GalleryID, $imageId, $ratingFileData, $lockFp);
+    cg1l_release_stats_lock($lockFp);
+    cg1l_push_recent_id_file($GalleryID,$imageId,'image-stats-data-last-update');
+    cg1l_create_last_updated_time_file($GalleryID,'image-stats-data-last-update');
 }
-

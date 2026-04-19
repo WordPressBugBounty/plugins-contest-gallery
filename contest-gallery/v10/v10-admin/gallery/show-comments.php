@@ -60,7 +60,6 @@ if(!empty($options[$galeryNR])){
 	if (!empty($_POST['delete-comment']) || !empty($_POST['activate-comment']) || !empty($_POST['deactivate-comment'])) {
 
 			//$deleteQuery = 'DELETE FROM ' . $tablename_comments . ' WHERE';
-
             $fileImageCommentsDir = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryNR.'/json/image-comments/ids/'.$pid;
             $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryNR.'/json/image-comments/image-comments-'.$pid.'.json';
             $fp = fopen($jsonFile, 'r');
@@ -227,7 +226,7 @@ if(!empty($options[$galeryNR])){
         if(floatval($options['general']['Version'])<16){// this condition added later in version 28.1.2.2,
             // comments will be inserted since 23.1.3, because of allocation correction, but also in dir, so what in dir counts in generally
             $countCommentsSQL = $wpdb->get_var(
-            "
+                "
                 SELECT COUNT(*) AS NumberOfRows 
                 FROM $tablename_comments 
                 WHERE pid = $pid
@@ -251,25 +250,22 @@ if(!empty($options[$galeryNR])){
             $wpdb->update(
             "$tablename",
                 array('CountC' => $countCommentsTotal, 'CountCtoReview' => $countCtoReview),
-            array('id' => $pid),
-            array('%d'),
-            array('%d')
+                array('id' => $pid),
+                array('%d'),
+                array('%d')
             );
 
-        // process rating comments data file
-
-        $dataFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryNR.'/json/image-data/image-data-'.$pid.'.json';
-        $fp = fopen($dataFile, 'r');
-        $ratingCommentsData =json_decode(fread($fp,filesize($dataFile)),true);
-        fclose($fp);
-
-        $ratingCommentsData['CountC'] = $countCommentsTotal;
-
-        $fp = fopen($dataFile, 'w');
-        fwrite($fp,json_encode($ratingCommentsData));
-        fclose($fp);
-
-        // process rating comments data file --- ENDE
+        if (!empty($_POST['delete-comment'])){
+            $lockFp = false;
+            $ratingFileData = cg1l_get_stats_for_update($galeryNR, $pid, $lockFp);
+            $ratingFileData['CountC'] = $countCommentsTotal;
+            $ratingFileData = cg1l_set_stats_with_lock($galeryNR, $pid, $ratingFileData, $lockFp);
+            cg1l_release_stats_lock($lockFp);
+            cg1l_push_recent_id_file($galeryNR,$pid,'image-comments-data-last-update');
+            cg1l_create_last_updated_time_file($galeryNR,'image-comments-data-last-update');
+            cg1l_push_recent_id_file($galeryNR,$pid,'image-stats-data-last-update');
+            cg1l_create_last_updated_time_file($galeryNR,'image-stats-data-last-update');
+        }
 
     }
 

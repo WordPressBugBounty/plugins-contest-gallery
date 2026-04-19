@@ -26,6 +26,74 @@ jQuery(document).ready(function ($) {
     }
 
     var cgChangedAndSearchedValueSelector = cgJsClassAdmin.gallery.vars.cgChangedAndSearchedValueSelector;
+    var cgAttachToAnotherUserSearchTimeout = null;
+
+    var cgBackendHandleJsonError = function (response, xhr, fallbackMessage) {
+        var data = {};
+        if(response && response.data){
+            data = response.data;
+        }else if(xhr && xhr.responseJSON && xhr.responseJSON.data){
+            data = xhr.responseJSON.data;
+        }
+
+        if(data.code && data.code == 'cg_nonce_invalid'){
+            var version = data.version ? data.version : cgJsClassAdmin.index.functions.cgGetVersionForUrlJs();
+            cgJsClassAdmin.index.functions.isInvalidNonce($,'###cg_version###'+version+'###cg_version######cg_nonce_invalid###');
+            return true;
+        }
+
+        if(xhr && xhr.responseText && cgJsClassAdmin.index.functions.isInvalidNonce($,xhr.responseText)){
+            return true;
+        }
+
+        var message = data.message ? data.message : fallbackMessage;
+        if(!message && xhr && xhr.responseText){
+            message = xhr.responseText;
+        }
+        if(!message){
+            message = 'Request could not be processed';
+        }
+        cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage(message);
+        return false;
+    };
+
+    var cgBackendShowAttachToAnotherUserSelectResponse = function ($cgAttachToAnotherUserForm, response) {
+        var data = response.data ? response.data : {};
+        $cgAttachToAnotherUserForm.find('#cgAttachToAnotherUserSelectContainer').html(data.html ? data.html : '');
+        $cgAttachToAnotherUserForm.find('#cgAttachToAnotherUserSubmitButton').prop('disabled', !data.has_results);
+    };
+
+    var cgBackendLoadAttachToAnotherUserSelect = function ($cgAttachToAnotherUserForm, searchValue) {
+        var $cgAttachToAnotherUserContainer = $cgAttachToAnotherUserForm.closest('#cgAttachToAnotherUserContainer');
+        $cgAttachToAnotherUserForm.find('input[name="action"]').val('post_cg_attach_to_another_user_select');
+        var formPostData = new FormData($cgAttachToAnotherUserForm.get(0));
+        formPostData.append('cg_nonce', CG1LBackendNonce.nonce);
+        formPostData.append('cgUserSearch', searchValue ? searchValue : '');
+
+        $cgAttachToAnotherUserContainer.find('.cg-lds-dual-ring-gallery-hide').removeClass('cg_hide');
+
+        $.ajax({
+            url: 'admin-ajax.php',
+            method: 'post',
+            data: formPostData,
+            dataType: 'json',
+            contentType: false,
+            processData: false
+        }).done(function (response) {
+            if(!response || !response.success){
+                cgBackendHandleJsonError(response, null, 'Users could not be loaded');
+                return;
+            }
+            cgBackendShowAttachToAnotherUserSelectResponse($cgAttachToAnotherUserForm, response);
+            $cgAttachToAnotherUserContainer.find('#cgAttachToAnotherUserSubmitButtonContainer').removeClass('cg_hide');
+            $cgAttachToAnotherUserForm.removeClass('cg_hide');
+        }).fail(function (xhr, status, error) {
+            cgBackendHandleJsonError(null, xhr, error ? error : 'Users could not be loaded');
+            $cgAttachToAnotherUserForm.removeClass('cg_hide');
+        }).always(function () {
+            $cgAttachToAnotherUserContainer.find('.cg-lds-dual-ring-gallery-hide').addClass('cg_hide');
+        });
+    };
 
     $(document).on('click', '#cgSortable .cg_go_to_save_button', function (e) {
         e.preventDefault();
@@ -1937,9 +2005,8 @@ debugger
                     });
                 }else{
                     var $cgOrderSelect = $('#cgOrderSelect');
-                    $cgOrderSelect.find('option').removeAttr('selected');
-                    var $selected = $cgOrderSelect.find('#cg_custom');
-                    $selected.attr('selected','selected');
+                    $cgOrderSelect.val('custom');
+                    var $selected = $cgOrderSelect.find(':selected');
                     $('#cgOrderValue').val('custom');
                     $('#cgSearchInput').val('').removeClass('cg_searched_value');
                     $('#cgSearchInputButton').addClass('cg_hide');
@@ -1964,12 +2031,10 @@ debugger
 
     // attach to another user open select
     $(document).on('click', '#cgSortable .cg_attach_to_another_user', function (e) {
-        debugger
         e.preventDefault();
         var cgEntryId = $(this).closest('.cg_backend_info_container').attr('data-cg-real-id');
         var $cg_backend_info_user_link_container = $(this).closest('.cg_backend_info_user_link_container');
         cgJsClassAdmin.gallery.vars.$cg_backend_info_user_link_container = $cg_backend_info_user_link_container;
-        var gid = $('#cgBackendGalleryId').val();
         cgJsClassAdmin.gallery.functions.showCgBackendBackgroundDrop();
         var $cgAttachToAnotherUserContainer = $('#cgAttachToAnotherUserContainer');
         $cgAttachToAnotherUserContainer.removeClass('cg_hide').find('.cg-lds-dual-ring-gallery-hide').removeClass('cg_hide');
@@ -1979,10 +2044,9 @@ debugger
         var form = document.getElementById('cgAttachToAnotherUserForm');
         var $cgAttachToAnotherUserForm = $(form);
         $cgAttachToAnotherUserForm.find('input[name="action"]').val('post_cg_attach_to_another_user_select');
-        var formPostData = new FormData(form);
-        var cg_nonce = CG1LBackendNonce.nonce;
-
         $cgAttachToAnotherUserForm.find('input[name="cgEntryId"]').val(cgEntryId);
+        $cgAttachToAnotherUserForm.find('#cgAttachToAnotherUserSearch').val('');
+        $cgAttachToAnotherUserForm.find('#cgAttachToAnotherUserSelectContainer').empty();
         $cgAttachToAnotherUserForm.addClass('cg_hide');
 
         if($cg_backend_info_user_link_container.find('.cg_added_by_username').length){
@@ -1992,61 +2056,45 @@ debugger
             $cgAttachToAnotherUserForm.find('#cgAttachToAnotherUserDetachButton').addClass('cg_hide');
         }
 
-        if($cgAttachToAnotherUserForm.find('#cgAttachToAnotherUserSelect').length){
-            $cgAttachToAnotherUserContainer.find('.cg-lds-dual-ring-gallery-hide').addClass('cg_hide');
-            $cgAttachToAnotherUserContainer.find('#cgAttachToAnotherUserSubmitButtonContainer').removeClass('cg_hide');
-            $cgAttachToAnotherUserForm.removeClass('cg_hide');
-            return;
-        }
+        cgBackendLoadAttachToAnotherUserSelect($cgAttachToAnotherUserForm, '');
+    });
 
-        $.ajax({
-            url: 'admin-ajax.php',
-            method: 'post',
-            data: formPostData,
-            dataType: null,
-            contentType: false,
-            processData: false
-        }).done(function (response) {
-            console.log('response success');
-            console.log(response);
-            var htmlDom = new DOMParser().parseFromString(response, 'text/html');
-            var $cgAttachToAnotherUserSelect = $(htmlDom.getElementById('cgAttachToAnotherUserSelect'));
-            $cgAttachToAnotherUserForm.prepend($cgAttachToAnotherUserSelect);
-            $cgAttachToAnotherUserForm.removeClass('cg_hide');
-            $cgAttachToAnotherUserContainer.find('.cg-lds-dual-ring-gallery-hide').addClass('cg_hide');
-            $cgAttachToAnotherUserContainer.find('#cgAttachToAnotherUserSubmitButtonContainer').removeClass('cg_hide');
-        }).fail(function (xhr, status, error) {
-            console.log('response error cg_attach_to_another_user');
-            console.log(xhr);
-            console.log(status);
-            console.log(error);
-        }).always(function () {
-            var test = 1;
-        });
+    $(document).on('input', '#cgAttachToAnotherUserSearch', function () {
+        var $input = $(this);
+        var $cgAttachToAnotherUserForm = $input.closest('form');
+        clearTimeout(cgAttachToAnotherUserSearchTimeout);
+        cgAttachToAnotherUserSearchTimeout = setTimeout(function () {
+            cgBackendLoadAttachToAnotherUserSelect($cgAttachToAnotherUserForm, $input.val());
+        }, 300);
     });
 
     // attach to another user
 
     $(document).on('click','#cgAttachToAnotherUserSubmitButton,#cgAttachToAnotherUserDetachButton',function (e){
-        debugger
         e.preventDefault();
         var $el = $(this);
         var $cgAttachToAnotherUserForm = $el.closest('form');
         $cgAttachToAnotherUserForm.find('input[name="action"]').val('post_cg_attach_to_another_user');
         var $cgAttachToAnotherUserContainer = $(this).closest('#cgAttachToAnotherUserContainer');
         var $cg_backend_info_user_link_container = cgJsClassAdmin.gallery.vars.$cg_backend_info_user_link_container;
+        var $option = $cgAttachToAnotherUserForm.find('select option:selected');
+        var isDetach = ($el.attr('id')=='cgAttachToAnotherUserDetachButton');
+
+        if(!isDetach && (!$option.length || !$option.val())){
+            cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Select a user first');
+            return;
+        }
+
         var formPostData = new FormData($cgAttachToAnotherUserForm.get(0));
+        formPostData.append('cg_nonce', CG1LBackendNonce.nonce);
         $cgAttachToAnotherUserContainer.find('.cg-lds-dual-ring-gallery-hide').removeClass('cg_hide');
         $cgAttachToAnotherUserForm.addClass('cg_hide');
-        var $option = $cgAttachToAnotherUserForm.find('select option:selected');
         var WpUserId = $option.val();
-        var text = $option.text();
         var user_login = $option.attr('data-user_login');
-        var user_email = $option.attr('data-user_email');
         var cg_nonce = CG1LBackendNonce.nonce;
         var gid = $('#cgBackendGalleryId').val();
 
-        if($el.attr('id')=='cgAttachToAnotherUserDetachButton'){
+        if(isDetach){
             formPostData.append('cgAttachToAnotherUserId',0);
         }
 
@@ -2054,39 +2102,53 @@ debugger
             url: 'admin-ajax.php',
             method: 'post',
             data: formPostData,
-            dataType: null,
+            dataType: 'json',
             contentType: false,
             processData: false
         }).done(function (response) {
+            if(!response || !response.success){
+                cgBackendHandleJsonError(response, null, 'User assignment could not be saved');
+                $cgAttachToAnotherUserForm.removeClass('cg_hide');
+                return;
+            }
 
             $cgAttachToAnotherUserContainer.find('.cg-lds-dual-ring-gallery-hide').addClass('cg_hide');
             $cgAttachToAnotherUserContainer.addClass('cg_hide');
             cgJsClassAdmin.gallery.functions.hideCgBackendBackgroundDropAndContainer();
 
-            if($el.attr('id')=='cgAttachToAnotherUserDetachButton'){
-                text = $cg_backend_info_user_link_container.find('.cg_added_by_username').text();
-                $cg_backend_info_user_link_container.find('.cg_added_by, .cg_image_action_href.cg_load_backend_link, .cg_attach_to_another_user').remove();
-                var $cg_attach_to_another_user = $('<div class="cg_action_button cg_attach_to_another_user ">Attach to registered user</div>');
+            if(isDetach){
+                var detachedUserLogin = $cg_backend_info_user_link_container.find('.cg_added_by_username').text();
+                $cg_backend_info_user_link_container.find('.cg_added_by, .cg_image_action_href.cg_load_backend_link, .cg_attach_to_another_user_title, .cg_attach_to_another_user').remove();
+                var $cg_attach_to_another_user_title = $('<div class="cg_attach_to_another_user_title">User assignment</div>');
+                var $cg_attach_to_another_user = $('<div class="cg_action_button cg_attach_to_another_user ">Attach registered user</div>');
                 $cg_backend_info_user_link_container.prepend($cg_attach_to_another_user);
-                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Entry dettached from <br><b style="color: black !important;">'+text+'</b>',true);
+                $cg_backend_info_user_link_container.prepend($cg_attach_to_another_user_title);
+                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Entry detached from <br><b style="color: black !important;">'+detachedUserLogin+'</b>',true);
             }else{
+                var responseData = response.data ? response.data : {};
+                WpUserId = responseData.user_id ? responseData.user_id : WpUserId;
+                user_login = responseData.user_login ? responseData.user_login : user_login;
+                var cgVersionForUrl = cgJsClassAdmin.index.functions.cgGetVersionForUrlJs();
                 var $cg_added_by = $('<span class="cg_added_by">Added by (username)</span>');
-                var $cg_action_href = $('<a class="cg_image_action_href cg_load_backend_link" title="'+user_email+'" href="?page=contest-gallery-pro/index.php&users_management=true&option_id='+gid+'&wp_user_id='+WpUserId+'&cg_nonce='+cg_nonce+'">'+
-                    '<div class="cg_image_action_span cg_for_id_wp_username_by_search_sort cg_added_by_username">'+user_login+'</div></a>');
-                var $cg_attach_to_another_user = $('<div class="cg_action_button cg_attach_to_another_user">Attach to another user<br>or detach<br>from user</div>');
-                $cg_backend_info_user_link_container.find('.cg_added_by, .cg_image_action_href.cg_load_backend_link, .cg_attach_to_another_user').remove();
+                var $cg_action_href = $('<a class="cg_image_action_href cg_load_backend_link"></a>');
+                $cg_action_href.attr('title',user_login);
+                $cg_action_href.attr('href','?page='+cgVersionForUrl+'/index.php&users_management=true&option_id='+gid+'&wp_user_id='+WpUserId+'&cg_nonce='+cg_nonce);
+                $cg_action_href.append($('<div class="cg_image_action_span cg_for_id_wp_username_by_search_sort cg_added_by_username"></div>').text(user_login));
+                var $cg_attach_to_another_user_title = $('<div class="cg_attach_to_another_user_title">User assignment</div>');
+                var $cg_attach_to_another_user = $('<div class="cg_action_button cg_attach_to_another_user">Attach / detach user</div>');
+                $cg_backend_info_user_link_container.find('.cg_added_by, .cg_image_action_href.cg_load_backend_link, .cg_attach_to_another_user_title, .cg_attach_to_another_user').remove();
                 $cg_backend_info_user_link_container.prepend($cg_attach_to_another_user);
+                $cg_backend_info_user_link_container.prepend($cg_attach_to_another_user_title);
                 $cg_backend_info_user_link_container.prepend($cg_action_href);
                 $cg_backend_info_user_link_container.prepend($cg_added_by);
-                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Entry attached to <br><b style="color: black !important;">'+text+'</b>',true);
+                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Entry attached to&nbsp;<br><b style="color: black !important;">'+user_login+'</b>',true);
             }
 
 
         }).fail(function (xhr, status, error) {
-            console.log('response error cgAttachToAnotherUserForm');
-            console.log(xhr);
-            console.log(status);
-            console.log(error);
+            cgBackendHandleJsonError(null, xhr, error ? error : 'User assignment could not be saved');
+            $cgAttachToAnotherUserContainer.find('.cg-lds-dual-ring-gallery-hide').addClass('cg_hide');
+            $cgAttachToAnotherUserForm.removeClass('cg_hide');
         }).always(function () {
 
         });
@@ -2264,31 +2326,38 @@ debugger
         $('#cgMoveToAnotherGalleryLoader').removeClass('cg_hide');
         $('#cgMoveToAnotherGalleryContent').addClass('cg_hide');
         if(!cgJsClassAdmin.gallery.vars.contact_forms_by_gallery_id){
+            var $cgMoveToAnotherGalleryForm = $('#cg_move_to_another_gallery_form');
             var data = {};
             data['action'] = 'post_cg_move_to_another_gallery_get_inputs';
+            data['cg_nonce'] = CG1LBackendNonce.nonce;
+            data['cgGalleryHash'] = $cgMoveToAnotherGalleryForm.find('input[name="cgGalleryHash"]').val();
+            data['cgMoveFromGalleryID'] = $('#cg_gallery_id').val();
 
             $.ajax({
                 url: 'admin-ajax.php',
                 method: 'post',
-                data: data
+                data: data,
+                dataType: 'json'
             }).done(function (response) {
+                if(!response || !response.success){
+                    cgBackendHandleJsonError(response, null, 'Move data could not be loaded');
+                    $('#cgMoveToAnotherGalleryContainer').addClass('cg_hide');
+                    $('#cgBackendBackgroundDrop').addClass('cg_hide');
+                    $('body').removeClass('cg_overflow_hidden');
+                    return;
+                }
 
-                var $response = jQuery(new DOMParser().parseFromString(response, 'text/html'));
-                $response.find('script[data-cg-processing="true"]').each(function () {
-                    var script = jQuery(this).html();
-                    eval(script);
-                });
+                cgJsClassAdmin.gallery.vars.allCategoriesByGalleryID = response.data.allCategoriesByGalleryID;
+                cgJsClassAdmin.gallery.vars.galleryIDs = response.data.galleryIDs;
+                cgJsClassAdmin.gallery.vars.contact_forms_by_gallery_id = response.data.contact_forms_by_gallery_id;
 
                 cgJsClassAdmin.gallery.functions.showMoveToGalleryContent($,$element);
 
             }).fail(function (xhr, status, error) {
-                debugger
-                console.log('response error');
-                console.log(xhr);
-                console.log('status error');
-                console.log(status);
-                console.log('error error');
-                console.log(error);
+                cgBackendHandleJsonError(null, xhr, error ? error : 'Move data could not be loaded');
+                $('#cgMoveToAnotherGalleryContainer').addClass('cg_hide');
+                $('#cgBackendBackgroundDrop').addClass('cg_hide');
+                $('body').removeClass('cg_overflow_hidden');
 
             }).always(function () {
 
@@ -2305,7 +2374,6 @@ debugger
 
     $(document).on('click','#cgMoveToAnotherGallerySubmit',function (e) {
         e.preventDefault();
-        debugger
         var $element = $(this);
         $('#cgMoveToAnotherGalleryContainer').removeClass('cg_hide');
         $('#cgBackendBackgroundDrop').removeClass('cg_hide');
@@ -2315,8 +2383,11 @@ debugger
 
         var cg_in_gallery_id_to_move = $('#cg_in_gallery_id_to_move_select').val();
 
+        var $cgMoveToAnotherGalleryForm = $('#cg_move_to_another_gallery_form');
         var data = {};
         data['action'] = 'post_cg_move_to_another_gallery';
+        data['cg_nonce'] = CG1LBackendNonce.nonce;
+        data['cgGalleryHash'] = $cgMoveToAnotherGalleryForm.find('input[name="cgGalleryHash"]').val();
         data['cg_in_gallery_id_to_move'] = cg_in_gallery_id_to_move;
         data['cgMoveRealId'] = $('#cgMoveEntryId').text();
         data['cgMoveFromGalleryID'] = $('#cg_gallery_id').val();
@@ -2334,23 +2405,23 @@ debugger
                 }
             });
         }
-        debugger
         $.ajax({
             url: 'admin-ajax.php',
             method: 'post',
-            data: data
+            data: data,
+            dataType: 'json'
         }).done(function (response) {
-            debugger
-            var $response = jQuery(new DOMParser().parseFromString(response, 'text/html'));
-            $response.find('script[data-cg-processing="true"]').each(function () {
-                var script = jQuery(this).html();
-                eval(script);
-            });
+            if(!response || !response.success){
+                cgBackendHandleJsonError(response, null, 'Entry could not be moved');
+                $('#cgMoveToAnotherGalleryContainer').addClass('cg_hide');
+                $('#cgBackendBackgroundDrop').addClass('cg_hide');
+                $('body').removeClass('cg_overflow_hidden');
+                return;
+            }
             $('body').removeClass('cg_overflow_hidden');
 
             if($('#cg_in_gallery_id_to_move_go_checkbox').prop('checked')){
                 var url = $('#cgMoveUrlAfterMove').attr('href')+'&option_id='+cg_in_gallery_id_to_move;
-                debugger
                 location.href = url;
             }else{
                 cgJsClassAdmin.gallery.vars.$cgSortableDiv.remove();
@@ -2365,17 +2436,11 @@ debugger
             }
 
         }).fail(function (xhr, status, error) {
-            debugger
-            console.log('response error');
-            console.log(xhr);
-            console.log('status error');
-            console.log(status);
-            console.log('error error');
-            console.log(error);
             $('body').removeClass('cg_overflow_hidden');
 
             $('#cgMoveToAnotherGalleryContainer').addClass('cg_hide');
-            cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage(error,true);
+            $('#cgBackendBackgroundDrop').addClass('cg_hide');
+            cgBackendHandleJsonError(null, xhr, error ? error : 'Entry could not be moved');
 
         }).always(function () {
 

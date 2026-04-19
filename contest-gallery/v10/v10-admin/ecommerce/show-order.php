@@ -425,7 +425,8 @@ Payment type not set
 	if($Order->IsTest){
 		$environment = ' (test environment)';
 	}
-    $TransactionIdText = "<b>PayPal Transaction ID$environment</b><br>$PayPalTransactionId";
+    $TransactionLabel = "PayPal Transaction ID$environment";
+    $TransactionValue = $PayPalTransactionId;
     $paymentStatusTextAndUrl = "All possible captured payment statuses can be found <a target='_blank' href='https://developer.paypal.com/docs/api/payments/v2/#definition-capture_status'>...developer.paypal.com/docs/api/payments...</a>";
 
 	if($Order->PaymentType == 'stripe'){
@@ -434,19 +435,29 @@ Payment type not set
 		$StripePiPaymentMethodId = $Order->StripePiPaymentMethodId;
 		$StripePiPaymentMethodConfDetailsId = $Order->StripePiPaymentMethodConfDetailsId;
 		$StripePiClientSecret = $Order->StripePiClientSecret;
-		$TransactionIdText = "<b>Stripe Payment Intent ID$environment</b><br>$StripePiId";
+		$TransactionLabel = "Stripe Payment Intent ID$environment";
+		$TransactionValue = $StripePiId;
 	}
 
-
-	echo "<div style='visibility: hidden;' id='mainCGdivOrderContainer' class='mainCGdivOrderContainer' >
-<p style='text-align: center;margin-bottom: 0;'><b>Status:</b> $status ($explanation)<br>
-$paymentStatusTextAndUrl</p>
-<div style='display:flex; text-align: center; justify-content: space-around;  max-width: 600px;margin: 0 auto;'>
-    <div>
-    <p>$TransactionIdText</p>
+	echo "<div style='visibility: hidden;' id='mainCGdivOrderContainer' class='mainCGdivOrderContainer cg_backend_order_cards' >
+<div class='cg_backend_order_header'>
+    <div class='cg_backend_order_status_card'>
+        <div class='cg_backend_order_card_eyebrow'>Payment status</div>
+        <div class='cg_backend_order_status_value'><b>Status:</b> ".esc_html($status)."</div>
+        <div class='cg_backend_order_status_explanation'>".esc_html($explanation)."</div>
+        <div class='cg_backend_order_status_help'>$paymentStatusTextAndUrl</div>
     </div>
-    <div>
-    <p ><b>Payer email</b><br>$PayerEmail</p>
+    <div class='cg_backend_order_meta_grid'>
+        <div class='cg_backend_order_meta_card cg_backend_order_meta_card_transaction'>
+            <div class='cg_backend_order_card_eyebrow'>Transaction</div>
+            <div class='cg_backend_order_meta_label'>".esc_html($TransactionLabel)."</div>
+            <div class='cg_backend_order_meta_value'>".esc_html($TransactionValue)."</div>
+        </div>
+        <div class='cg_backend_order_meta_card cg_backend_order_meta_card_payer'>
+            <div class='cg_backend_order_card_eyebrow'>Buyer</div>
+            <div class='cg_backend_order_meta_label'>Payer email</div>
+            <div class='cg_backend_order_meta_value'>".esc_html($PayerEmail)."</div>
+        </div>
     </div>
 </div>
 </div>";

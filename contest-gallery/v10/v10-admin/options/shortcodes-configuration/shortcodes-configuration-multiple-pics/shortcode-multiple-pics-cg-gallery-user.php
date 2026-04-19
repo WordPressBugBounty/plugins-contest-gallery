@@ -16,17 +16,9 @@ if(!empty($jsonOptions[$GalleryID.'-u']['visual']['AllowSortOptions'])){
 }
 
 
+// since 29.0.0 no full window and full screen
 echo <<<HEREDOC
-<div class='cg_view_options_row'>
-    <div class='cg_view_option'>
-        <div class='cg_view_option_title'>
-        <p>Number of entries per screen<br><span class="cg_view_option_title_note">Pagination</span></p>
-        </div>
-        <div class='cg_view_option_input'>
-        <input type="text" name="multiple-pics[cg_gallery_user][general][PicsPerSite]" class="PicsPerSite" maxlength="3" value="{$jsonOptions["$GalleryID-u"]["general"]["PicsPerSite"]}">
-        </div>
-    </div>
-
+<div class='cg_view_options_row cg_hide'>
     <div  class='cg_view_option cg_border_left_right_none'>
         <div class='cg_view_option_title'>
         <p>Enable full window button</p>
@@ -35,7 +27,6 @@ echo <<<HEREDOC
         <input type="checkbox" name="multiple-pics[cg_gallery_user][general][FullSizeGallery]" class="cg_shortcode_checkbox FullSizeGallery" checked="{$jsonOptions["$GalleryID-u"]["general"]["FullSizeGallery"]}"><br/>
         </div>
     </div>
-
     <div  class='cg_view_option'>
         <div  class='cg_view_option_title'>
         <p>Enable full screen button<br><span class="cg_view_option_title_note">Will appear when joining full window</span></p>
@@ -48,9 +39,102 @@ echo <<<HEREDOC
 
 HEREDOC;
 
+if(!empty($jsonOptions[$GalleryID.'-u']['general']['ThumbLookOrder'])){
+    $order = array();
+    $order[$jsonOptions[$GalleryID.'-u']['general']['ThumbLookOrder']] = 'ThumbLookOrder';
+    $order[$jsonOptions[$GalleryID.'-u']['general']['SliderLookOrder']] = 'SliderLookOrder';
+    $order[$jsonOptions[$GalleryID.'-u']['general']['HeightLookOrder']] = 'HeightLookOrder';
+    $order[$jsonOptions[$GalleryID.'-u']['general']['RowLookOrder']] = 'RowLookOrder';
+
+    if(empty($jsonOptions[$GalleryID.'-u']['visual']['BlogLookOrder'])){
+        $jsonOptions[$GalleryID.'-u']['visual']['BlogLookOrder'] = 5;
+    }
+
+    $order[$jsonOptions[$GalleryID.'-u']['visual']['BlogLookOrder']] = 'BlogLookOrder';
+
+    ksort($order);
+}
+
+$jsonOptions[$GalleryID.'-u']['visual']['BlogLook'] = (!empty($jsonOptions[$GalleryID.'-u']['visual']['BlogLook'])) ? $jsonOptions[$GalleryID.'-u']['visual']['BlogLook'] : 0;
+$jsonOptions[$GalleryID.'-u']['visual']['SliderThumbNav'] = (!isset($jsonOptions[$GalleryID.'-u']['visual']['SliderThumbNav'])) ? 1 : $jsonOptions[$GalleryID.'-u']['visual']['SliderThumbNav'];
+
+if($jsonOptions[$GalleryID.'-u']['general']['RowLook']==1){
+    $jsonOptions[$GalleryID.'-u']['general']['RowLook'] = 0;
+    $jsonOptions[$GalleryID.'-u']['general']['HeightLook'] = 1;
+}
+
+cg1l_correct_view_options_and_order($order,$jsonOptions[$GalleryID.'-u']['general']['ThumbLook'],$jsonOptions[$GalleryID.'-u']['general']['SliderLook'],$jsonOptions[$GalleryID.'-u']['visual']['BlogLook'],$jsonOptions[$GalleryID.'-u']['general']['HeightLook'],$jsonOptions[$GalleryID.'-u']['general']['RowLook'], true);
+
+echo <<<HEREDOC
+<div class='cg_view_options_row cg_hide'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px cg_border_bottom_none' style="padding-bottom:20px;">
+        <div class='cg_view_option_title'>
+            <p>Gallery view<br><span class="cg_view_option_title_note">Select how entries should be displayed in gallery</span></p>
+        </div>
+        <input type="hidden" name="multiple-pics[cg_gallery_user][general][order][]" value="t" />
+        <input type="hidden" name="multiple-pics[cg_gallery_user][general][order][]" value="s" />
+        <input type="hidden" name="multiple-pics[cg_gallery_user][general][order][]" value="b" />
+        <div class='cg_view_option_radio_multiple'>
+            <div class='cg_view_option_radio_multiple_container ThumbLookContainer cg_one_third_width'>
+                <div class='cg_view_option_radio_multiple_title'>
+                    Activate Masonry View
+                </div>
+                <div class='cg_view_option_radio_multiple_input'>
+                    <input type="radio" name="multiple-pics[cg_gallery_user][general][ThumbLook]" class="OrderLook cg_view_option_radio_multiple_input_field" checked="{$jsonOptions[$GalleryID.'-u']['general']['ThumbLook']}">
+                </div>
+            </div>
+            <div class='cg_view_option_radio_multiple_container SliderLookContainer cg_one_third_width'>
+                <div class='cg_view_option_radio_multiple_title'>
+                    Activate Slider View
+                </div>
+                <div class='cg_view_option_radio_multiple_input'>
+                    <input type="radio" name="multiple-pics[cg_gallery_user][general][SliderLook]" class="OrderLook cg_view_option_radio_multiple_input_field" checked="{$jsonOptions[$GalleryID.'-u']['general']['SliderLook']}">
+                </div>
+            </div>
+            <div class='cg_view_option_radio_multiple_container BlogLookContainer cg_one_third_width'>
+                <div class='cg_view_option_radio_multiple_title'>
+                    Activate Blog View
+                </div>
+                <div class='cg_view_option_radio_multiple_input'>
+                    <input type="radio" name="multiple-pics[cg_gallery_user][visual][BlogLook]" class="OrderLook cg_view_option_radio_multiple_input_field" checked="{$jsonOptions[$GalleryID.'-u']['visual']['BlogLook']}">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class='cg_view_options_row cg_hide'>
+    <div class='cg_view_option cg_view_option_33_percent cg_view_option_not_focus cg_border_top_none cg_border_bottom_none cg_border_right_none'>
+        <div class='cg_view_option_title'>
+            <p>&nbsp;</p>
+        </div>
+    </div>
+    <div class='cg_view_option cg_view_option_33_percent SliderThumbNavContainer cg_border_top_none cg_border_bottom_none cg_border_left_none cg_border_right_none'>
+        <div class='cg_view_option_title'>
+            <p>Enable thumbnail navigation</p>
+        </div>
+        <div class='cg_view_option_checkbox'>
+            <input type="checkbox" name="multiple-pics[cg_gallery_user][visual][SliderThumbNav]" class="cg_shortcode_checkbox SliderThumbNav" checked="{$jsonOptions[$GalleryID.'-u']['visual']['SliderThumbNav']}">
+        </div>
+    </div>
+    <div class='cg_view_option cg_view_option_33_percent cg_view_option_not_focus cg_border_top_none cg_border_bottom_none cg_border_left_none'>
+        <div class='cg_view_option_title'>
+            <p>&nbsp;</p>
+        </div>
+    </div>
+</div>
+HEREDOC;
+
 echo <<<HEREDOC
 <div class='cg_view_options_row'>
-    <div  class='cg_view_option cg_view_option_50_percent cg_border_top_right_bottom_none'>
+    <div class='cg_view_option cg_border_right_bottom_none cg_border_border_top_left_radius_8_px'>
+        <div class='cg_view_option_title '>
+        <p>Number of entries per screen<br><span class="cg_view_option_title_note">Pagination</span></p>
+        </div>
+        <div class='cg_view_option_input'>
+        <input type="text" name="multiple-pics[cg_gallery_user][general][PicsPerSite]" class="PicsPerSite" maxlength="3" value="{$jsonOptions["$GalleryID-u"]["general"]["PicsPerSite"]}">
+        </div>
+    </div>
+    <div  class='cg_view_option cg_border_right_bottom_none'>
         <div class='cg_view_option_title'>
         <p>Allow search for files<br/><span class="cg_view_option_title_note">Search by fields content, categories, file name or EXIF data - if available</span></p>
         </div>
@@ -58,8 +142,7 @@ echo <<<HEREDOC
         <input type="checkbox" name="multiple-pics[cg_gallery_user][pro][Search]" class="cg_shortcode_checkbox Search" checked="{$jsonOptions["$GalleryID-u"]["pro"]["Search"]}">
         </div>
     </div>
-
-    <div  class='cg_view_option cg_view_option_50_percent cg_border_top_bottom_none AllowSortContainer'>
+    <div  class='cg_view_option cg_border_bottom_none cg_border_border_top_right_radius_8_px AllowSortContainer'>
         <div class='cg_view_option_title'>
         <p>Allow sort<br/><span class="cg_view_option_title_note">Order by rating is not available if <br>"Show only user votes" or <br>"Hide voting until user vote" is activated</span></p>
         </div>
@@ -101,7 +184,6 @@ echo <<<HEREDOC
         <input type='hidden' name='multiple-pics[cg_gallery_user][visual][AllowSortOptionsArray][]' value='random' class='cg-allow-sort-input' />
 
         <div class="cgAllowSortOptionsContainer">
-        <label class="cg-allow-sort-option $cgCustomSortCheck cg_disabled" data-cg-target="custom"><span class="cg-allow-sort-option-cat">Custom</span><span class="cg-allow-sort-option-icon cg_hide"></span></label>
         <label class="cg-allow-sort-option $cgDateDescSortCheck" data-cg-target="date-desc"><span class="cg-allow-sort-option-cat">Date desc</span><span class="cg-allow-sort-option-icon"></span></label>
         <label class="cg-allow-sort-option $cgDateAscSortCheck" data-cg-target="date-asc"><span class="cg-allow-sort-option-cat">Date asc</span><span class="cg-allow-sort-option-icon"></span></label>
         <label class="cg-allow-sort-option $cgRateDescSortCheck" data-cg-target="rate-desc"><span class="cg-allow-sort-option-cat">Rating desc<br><small><strong>for one star voting</strong></small></span><span class="cg-allow-sort-option-icon"></span></label>
@@ -111,6 +193,7 @@ echo <<<HEREDOC
         <label class="cg-allow-sort-option $cgCommentDescSortCheck" data-cg-target="comment-desc"><span class="cg-allow-sort-option-cat">Comments desc</span><span class="cg-allow-sort-option-icon"></span></label>
         <label class="cg-allow-sort-option $cgCommentAscSortCheck" data-cg-target="comment-asc"><span class="cg-allow-sort-option-cat">Comments asc</span><span class="cg-allow-sort-option-icon"></span></label>
         <label class="cg-allow-sort-option $cgRandomSortCheck" data-cg-target="random"><span class="cg-allow-sort-option-cat">Random</span><span class="cg-allow-sort-option-icon"></span></label>
+        <label class="cg-allow-sort-option $cgCustomSortCheck cg_disabled" data-cg-target="custom"><span class="cg-allow-sort-option-cat">Custom</span><span class="cg-allow-sort-option-icon cg_hide"></span></label>
         </div>
         </div>
     </div>
@@ -187,15 +270,6 @@ if(empty($jsonOptions[$GalleryID.'-u'])){
     $FeControlsStyleBlackChecked = ($jsonOptions[$GalleryID.'-u']['visual']['FeControlsStyle']=='black') ? 'checked' : '0';
 }
 
-// add BorderRadius here
-if (!isset($jsonOptions[$GalleryID.'-u']['visual']['BorderRadius'])) {
-    if(!empty($BorderRadius)){
-        $jsonOptions[$GalleryID.'-u']['visual']['BorderRadius'] = 1;
-    }else{
-        $jsonOptions[$GalleryID.'-u']['visual']['BorderRadius'] = 0;
-    }
-}
-
 if(!isset($jsonOptions[$GalleryID.'-u']['visual']['EnableSwitchStyleGalleryButton'])){
     $jsonOptions[$GalleryID.'-u']['visual']['EnableSwitchStyleGalleryButton'] = 0;
 }
@@ -206,17 +280,6 @@ if(!isset($jsonOptions[$GalleryID.'-u']['visual']['SwitchStyleGalleryButtonOnlyT
 
 
 echo <<<HEREDOC
-
-<div class="cg_view_options_row">
-        <div class="cg_view_option cg_view_option_100_percent cg_border_top_none" id="BorderRadiusContainer">
-            <div class="cg_view_option_title">
-                <p>Round borders for all control elements and containers</p>
-            </div>
-            <div class="cg_view_option_checkbox cg_view_option_checked">
-                <input type="checkbox" name="multiple-pics[cg_gallery_user][visual][BorderRadius]" class="cg_shortcode_checkbox BorderRadius" checked="{$jsonOptions[$GalleryID.'-u']['visual']['BorderRadius']}">
-            </div>
-        </div>
-</div>
 <div class='cg_go_to_target' data-cg-go-to-target="TopControlsStyleContainer" >
 
 <div class='cg_view_options_row'>
@@ -259,26 +322,37 @@ echo <<<HEREDOC
 HEREDOC;
 
 // only json option, not in database available
-if(!empty($jsonOptions[$GalleryID.'-u']['visual']['ShowDate'])){
-	$ShowDate = '1';
+if(isset($jsonOptions[$GalleryID.'-u']['visual']['ShowDate'])){
+	$ShowDate = absint($jsonOptions[$GalleryID.'-u']['visual']['ShowDate']);
+	if(!in_array($ShowDate,array(0,1,2,3),true)){
+		$ShowDate = !empty($jsonOptions[$GalleryID.'-u']['visual']['ShowDate']) ? 1 : 0;
+	}
 }else{
-	$ShowDate = '0';
+	$ShowDate = 0;
 }
+
+$ShowDateChecked = (!empty($ShowDate)) ? 'checked' : '';
+$ShowDateCheckboxClass = (!empty($ShowDate)) ? 'cg_view_option_checked' : 'cg_view_option_unchecked';
+$ShowDateDisabledClass = empty($ShowDate) ? 'cg_disabled' : '';
+$ShowDateView = in_array($ShowDate,array(1,2,3),true) ? $ShowDate : 1;
+$ShowDateView1 = ($ShowDateView===1) ? 'checked' : '';
+$ShowDateView2 = ($ShowDateView===2) ? 'checked' : '';
+$ShowDateView3 = ($ShowDateView===3) ? 'checked' : '';
 
 echo <<<HEREDOC
         <div class="cg_view_options_row">
-                <div class="cg_view_option cg_view_option_50_percent cg_border_top_none cg_border_right_none" >
+                <div class="cg_view_option cg_view_option_50_percent cg_border_top_none cg_border_right_none cg_border_bottom_none ShowDateContainer" >
                     <div class="cg_view_option_title">
                         <p>Show date since added/uploaded to gallery</p>
                     </div>
-                    <div class="cg_view_option_checkbox cg_view_option_checked">
-                        <input type="checkbox" name="multiple-pics[cg_gallery_user][visual][ShowDate]" class="cg_shortcode_checkbox" checked="$ShowDate">
+                    <div class="cg_view_option_checkbox $ShowDateCheckboxClass">
+                        <input type="checkbox" name="multiple-pics[cg_gallery_user][visual][ShowDate]" class="cg_shortcode_checkbox ShowDate" $ShowDateChecked>
                     </div>
                 </div>
 HEREDOC;
 
 echo <<<HEREDOC
-    <div  class='cg_view_option cg_border_top_none cg_border_left_none  cg_view_option_50_percent  cg_view_option_flex_flow_column '>
+    <div  class='cg_view_option cg_border_top_none cg_border_left_none cg_border_bottom_none cg_view_option_50_percent cg_view_option_flex_flow_column ShowDateFormatContainer $ShowDateDisabledClass'>
         <div class='cg_view_option_title cg_view_option_title_full_width'>
         <p>Show date format
                     <br><span class="cg_view_option_title_note">Translation for seconds, minutes, hours, days<br>weeks, months, years can be found <a class="cg_no_outline_and_shadow_on_focus" href="{$editTranslationLink}l_GalleryDateFormat"  target="_blank">here</a></span>
@@ -305,6 +379,39 @@ foreach($CommentsDateFormatNamePathSelectedValuesArray as  $key =>  $value){
 
 echo <<<HEREDOC
                                </select>
+        </div>
+    </div>
+</div>
+HEREDOC;
+
+echo <<<HEREDOC
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none ShowDateViewContainer $ShowDateDisabledClass'>
+        <div class='cg_view_option_radio_multiple'>
+            <div class='cg_view_option_radio_multiple_container cg_border_top_none'>
+                <div class='cg_view_option_radio_multiple_title'>
+                    Show in gallery and entry view
+                </div>
+                <div class='cg_view_option_radio_multiple_input'>
+                    <input type="radio" name="multiple-pics[cg_gallery_user][visual][ShowDateView]" class="cg_view_option_radio_multiple_input_field" $ShowDateView1 value="1" />
+                </div>
+            </div>
+            <div class='cg_view_option_radio_multiple_container cg_border_top_none'>
+                <div class='cg_view_option_radio_multiple_title'>
+                    Show in gallery view only
+                </div>
+                <div class='cg_view_option_radio_multiple_input'>
+                    <input type="radio" name="multiple-pics[cg_gallery_user][visual][ShowDateView]" class="cg_view_option_radio_multiple_input_field" $ShowDateView2 value="2" />
+                </div>
+            </div>
+            <div class='cg_view_option_radio_multiple_container cg_border_top_none'>
+                <div class='cg_view_option_radio_multiple_title'>
+                    Show in entry view only
+                </div>
+                <div class='cg_view_option_radio_multiple_input'>
+                    <input type="radio" name="multiple-pics[cg_gallery_user][visual][ShowDateView]" class="cg_view_option_radio_multiple_input_field" $ShowDateView3 value="3" />
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -592,324 +699,6 @@ HEREDOC;
 
 //print_r($order);
 
-$showSliderViewOption = false;
-$showSliderViewOptionSet = false;
-
-if(!in_array("SliderLookOrder",$order)){
-    $showSliderViewOption = true;
-}
-
-$showBlogViewOption = false;
-$showBlogViewOptionSet = false;
-
-if(!in_array("BlogLookOrder",$order)){
-    $showBlogViewOption = true;
-}
-
-$i = 0;
-
-if(!empty($jsonOptions[$GalleryID.'-u']['general']['ThumbLookOrder'])){
-    $order = array();
-    $order[$jsonOptions[$GalleryID.'-u']['general']['ThumbLookOrder']] = 'ThumbLookOrder';
-    $order[$jsonOptions[$GalleryID.'-u']['general']['SliderLookOrder']] = 'SliderLookOrder';
-    $order[$jsonOptions[$GalleryID.'-u']['general']['HeightLookOrder']] = 'HeightLookOrder';
-    $order[$jsonOptions[$GalleryID.'-u']['general']['RowLookOrder']] = 'RowLookOrder';
-
-    if(empty($jsonOptions[$GalleryID.'-u']['visual']['BlogLookOrder'])){
-        $jsonOptions[$GalleryID.'-u']['visual']['BlogLookOrder'] = 5;
-    }
-
-    $order[$jsonOptions[$GalleryID.'-u']['visual']['BlogLookOrder']] = 'BlogLookOrder';
-
-    ksort($order);
-
-}else{
-    $order = $order;
-}
-
-
-// add BlogLook here
-$jsonOptions[$GalleryID.'-u']['visual']['BlogLook'] = (!empty($jsonOptions[$GalleryID.'-u']['visual']['BlogLook'])) ? $jsonOptions[$GalleryID.'-u']['visual']['BlogLook'] : 0;
-
-echo <<<HEREDOC
-
-
-<div class='cg_options_sortable'>
-
-<p class='cg_options_sortable_title'>View options and order</p>
-
-HEREDOC;
-
-if($jsonOptions[$GalleryID.'-u']['general']['RowLook']==1){
-    $jsonOptions[$GalleryID.'-u']['general']['RowLook'] = 0;
-    $jsonOptions[$GalleryID.'-u']['general']['HeightLook'] = 1;
-}
-
-$i = 0;
-
-foreach ($order as $key => $value) {
-
-    if ($value == "BlogLookOrder" or ($showBlogViewOption == true && $showBlogViewOptionSet == false)) {
-
-        $i++;
-
-        $showSliderViewOptionSet = true;
-
-        echo <<<HEREDOC
-        <div class='cg_options_sortableContainer'>
-            <div class='cg_options_sortableDiv'>
-             <div class="cg_options_order">$i.</div>
-              <div class="cg_options_order_change_order cg_move_view_to_bottom"><i></i></div>
-               <div class="cg_options_order_change_order cg_move_view_to_top"><i></i></div>
-                <div class='cg_view_options_row'>
-                    <div class='cg_view_option cg_view_options_and_order_checkbox_container cg_view_option_100_percent BlogLookContainer cg_border_radius_8_px'>
-                        <div class='cg_view_option_title'>
-                                <input type="hidden" name="multiple-pics[cg_gallery_user][general][order][]" value="b" >
-                                <p>Activate <u>Blog View</u></p>
-                         </div>
-                         <div  class='cg_view_option_checkbox cg_view_options_and_order_checkbox'>
-                            <input type="checkbox" name="multiple-pics[cg_gallery_user][visual][BlogLook]" class="cg_shortcode_checkbox BlogLook" checked="{$jsonOptions[$GalleryID.'-u']['visual']['BlogLook']}">
-                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-HEREDOC;
-
-    }
-
-    if ($value == "SliderLookOrder" or ($showSliderViewOption == true && $showSliderViewOptionSet == false)) {
-
-        $i++;
-
-        $showSliderViewOptionSet = true;
-
-        $jsonOptions[$GalleryID.'-u']['visual']['SliderThumbNav'] = (!isset($jsonOptions[$GalleryID.'-u']['visual']['SliderThumbNav'])) ? 1 : $jsonOptions[$GalleryID.'-u']['visual']['SliderThumbNav'];
-
-        echo <<<HEREDOC
-
-        <div class='cg_options_sortableContainer'>
-            <div class='cg_options_sortableDiv'>
-            <div class="cg_options_order">$i.</div>
-            <div class="cg_options_order_change_order cg_move_view_to_bottom"><i></i></div>
-                <div class="cg_options_order_change_order cg_move_view_to_top"><i></i></div>
-                <div class='cg_view_options_row'>
-                    <div class='cg_view_option cg_view_options_and_order_checkbox_container cg_border_right_none cg_view_option_50_percent SliderLookContainer cg_border_border_bottom_left_radius_8_px'>
-                        <div class='cg_view_option_title'>
-                                <input type="hidden" name="multiple-pics[cg_gallery_user][general][order][]" value="s" >
-                                <p>Activate <u>Slider View</u></p>
-                         </div>
-                         <div  class='cg_view_option_checkbox cg_view_options_and_order_checkbox'>
-                            <input type="checkbox" name="multiple-pics[cg_gallery_user][general][SliderLook]" class="cg_shortcode_checkbox SliderLook" checked="{$jsonOptions[$GalleryID.'-u']['general']['SliderLook']}">
-                         </div>
-                    </div>
-                    <div class='cg_view_option cg_view_option_50_percent SliderThumbNavContainer cg_border_border_top_right_radius_8_px cg_border_border_bottom_right_radius_8_px'>
-                        <div class='cg_view_option_title'>
-                                <p>Enable thumbnail navigation</p>
-                         </div>
-                         <div  class='cg_view_option_checkbox'>
-                            <input type="checkbox" name="multiple-pics[cg_gallery_user][visual][SliderThumbNav]" class="cg_shortcode_checkbox SliderThumbNav" checked="{$jsonOptions[$GalleryID.'-u']['visual']['SliderThumbNav']}" >
-                         </div>
-                    </div>
-                </div>
-        </div>
-    </div>
-    
-HEREDOC;
-
-    }
-
-    if ($value == "ThumbLookOrder") {
-
-        $i++;
-
-        echo <<<HEREDOC
-
-        <div class='cg_options_sortableContainer'>
-            <div class='cg_options_sortableDiv'>
-            <div class="cg_options_order">$i.</div>
-            <div class="cg_options_order_change_order cg_move_view_to_bottom"><i></i></div>
-                <div class="cg_options_order_change_order cg_move_view_to_top"><i></i></div>
-                <div class='cg_view_options_row'>
-                    <div class='cg_view_option  cg_view_option_100_percent ThumbLookContainer cg_border_radius_8_px'>
-                        <div class='cg_view_option_title'>
-                                <input type="hidden" name="multiple-pics[cg_gallery_user][general][order][]" value="t" >
-                                <p>Activate <u>Masonry View</u></p>
-                         </div>
-                         <div  class='cg_view_option_checkbox'>
-                            <input type="checkbox" name="multiple-pics[cg_gallery_user][general][ThumbLook]" class="cg_shortcode_checkbox ThumbLook" checked="{$jsonOptions[$GalleryID.'-u']['general']['ThumbLook']}">
-                         </div>
-                    </div>
-                </div>
-                <div class='cg_view_options_row cg_hide'>
-                    <div class='cg_view_option cg_border_right_none WidthThumbContainer'>
-                        <div class='cg_view_option_title'>
-                                <p>Width thumbs (px)</p>
-                         </div>
-                         <div  class='cg_view_option_input'>
-                            <input type="text" maxlength="3" name="multiple-pics[cg_gallery_user][general][WidthThumb]" class="WidthThumb" value="{$jsonOptions[$GalleryID.'-u']['general']['WidthThumb']}" >
-                         </div>
-                    </div>
-                    <div class='cg_view_option HeightThumbContainer cg_border_border_top_right_radius_8_px'>
-                        <div class='cg_view_option_title'>
-                                <p>Height thumbs (px)</p>
-                         </div>
-                         <div  class='cg_view_option_input'>
-                            <input type="text" maxlength="3" name="multiple-pics[cg_gallery_user][general][HeightThumb]" class="HeightThumb" value="{$jsonOptions[$GalleryID.'-u']['general']['HeightThumb']}" >
-                         </div>
-                    </div>
-                </div>
-                <div class='cg_view_options_row cg_hide'>
-                    <div class='cg_view_option cg_view_option_50_percent cg_border_top_right_none DistancePicsContainer cg_border_border_bottom_left_radius_8_px'>
-                        <div class='cg_view_option_title'>
-                                <p>Distance between thumbs horizontal (px)</p>
-                         </div>
-                         <div  class='cg_view_option_input'>
-                            <input type="text" maxlength="2" name="multiple-pics[cg_gallery_user][general][DistancePics]" class="DistancePics" value="{$jsonOptions[$GalleryID.'-u']['general']['DistancePics']}">
-                         </div>
-                    </div>
-                    <div class='cg_view_option cg_view_option_50_percent cg_border_top_none DistancePicsVContainer cg_border_border_bottom_right_radius_8_px'>
-                        <div class='cg_view_option_title'>
-                                <p>Distance between thumbs vertical (px)</p>
-                         </div>
-                         <div  class='cg_view_option_input'>
-                            <input type="text" maxlength="2" name="multiple-pics[cg_gallery_user][general][DistancePicsV]" class="DistancePicsV" value="{$jsonOptions[$GalleryID.'-u']['general']['DistancePicsV']}">
-                         </div>
-                    </div>
-                </div>
-        </div>
-    </div>
-
-HEREDOC;
-    }
-
-    if ($value == "HeightLookOrder") {
-        // since 21.2.0 no HeightLook anymore
-        continue;
-
-        echo <<<HEREDOC
-
-        <div class='cg_options_sortableContainer'>
-            <div class='cg_options_sortableDiv'>
-            <div class="cg_options_order">$i.</div>
-            <div class="cg_options_order_change_order cg_move_view_to_bottom"><i></i></div>
-                <div class="cg_options_order_change_order cg_move_view_to_top"><i></i></div>
-                <div class='cg_view_options_row'>
-                    <div class='cg_view_option cg_border_right_none cg_view_option_50_percent HeightLookContainer cg_border_border_top_left_radius_8_px'>
-                        <div class='cg_view_option_title'>
-                                <input type="hidden" name="multiple-pics[cg_gallery_user][general][order][]" value="h" >
-                                <p>Activate <u>Height View</u></p>
-                         </div>
-                         <div  class='cg_view_option_checkbox'>
-                            <input type="checkbox" name="multiple-pics[cg_gallery_user][general][HeightLook]" class="cg_shortcode_checkbox HeightLook" checked="{$jsonOptions[$GalleryID.'-u']['general']['HeightLook']}">
-                         </div>
-                    </div>
-                    <div class='cg_view_option cg_view_option_50_percent HeightLookHeightContainer cg_border_border_top_right_radius_8_px'>
-                        <div class='cg_view_option_title'>
-                                <p>Height of pics in a row (px)</p>
-                         </div>
-                         <div  class='cg_view_option_input'>
-                            <input type="text" maxlength="3" name="multiple-pics[cg_gallery_user][general][HeightLookHeight]" class="HeightLookHeight" value="{$jsonOptions[$GalleryID.'-u']['general']['HeightLookHeight']}" >
-                         </div>
-                    </div>
-                </div>
-                <div class='cg_view_options_row'>
-                    <div class='cg_view_option cg_view_option_50_percent cg_border_top_right_none HeightViewSpaceWidthContainer cg_border_border_bottom_left_radius_8_px'>
-                        <div class='cg_view_option_title'>
-                                <p>Horizontal distance between files (px)</p>
-                         </div>
-                         <div  class='cg_view_option_input'>
-                            <input type="text" maxlength="2" name="multiple-pics[cg_gallery_user][visual][HeightViewSpaceWidth]" class="HeightViewSpaceWidth" value="{$jsonOptions[$GalleryID.'-u']['visual']['HeightViewSpaceWidth']}">
-                         </div>
-                    </div>
-                    <div class='cg_view_option cg_view_option_50_percent cg_border_top_none HeightViewSpaceHeightContainer cg_border_border_bottom_right_radius_8_px'>
-                        <div class='cg_view_option_title'>
-                                <p>Vertical distance between files (px)</p>
-                         </div>
-                         <div  class='cg_view_option_input'>
-                            <input type="text" maxlength="2" name="multiple-pics[cg_gallery_user][visual][HeightViewSpaceHeight]" class="HeightViewSpaceHeight" value="{$jsonOptions[$GalleryID.'-u']['visual']['HeightViewSpaceHeight']}">
-                         </div>
-                    </div>
-                </div>
-        </div>
-    </div>
-    
-HEREDOC;
-
-    }
-
-    if ($value == "RowLookOrder") {
-
-        $rowViewDeprecatedText = '';
-        $rowViewDeprecatedDisabled = '';
-
-        if(intval($galleryDbVersion)<15){
-            $rowViewDeprecatedText = '<br><span class="cg_color_red">NOTE:</span> since plugin version 15.0.0<br>"Row View" is deprecated<br>can\'t fulfill mobile requirements<br>if "Row View" was activated before<br>"Height View" will be activated instead';
-            $rowViewDeprecatedDisabled = 'cg_disabled';
-        }else{
-            if(intval($galleryDbVersion)>=15){
-                continue;
-            }
-        }
-
-        $i++;
-
-        echo <<<HEREDOC
-        <div class='cg_options_sortableContainer'>
-            <div class='cg_options_sortableDiv'>
-                <div class="cg_options_order">$i.</div>
-                <div class="cg_options_order_change_order cg_move_view_to_bottom"><i></i></div>
-                <div class="cg_options_order_change_order cg_move_view_to_top"><i></i></div>
-                <div class='cg_view_options_row'>
-                    <div class='cg_view_option cg_border_right_none cg_view_option_50_percent RowLookContainer $rowViewDeprecatedDisabled'>
-                        <div class='cg_view_option_title'>
-                                <input type="hidden" name="multiple-pics[cg_gallery_user][general][order][]" value="r" >
-                                <p>Activate <u>Row View</u><br><span class="cg_font_weight_normal">(Same amount of files in each row)$rowViewDeprecatedText</span></p>
-                         </div>
-                         <div  class='cg_view_option_checkbox'>
-                            <input type="checkbox" name="multiple-pics[cg_gallery_user][general][RowLook]" class="cg_shortcode_checkbox RowLook" checked="{$jsonOptions[$GalleryID.'-u']['general']['RowLook']}">
-                         </div>
-                    </div>
-                    <div class='cg_view_option cg_view_option_50_percent PicsInRowContainer'>
-                        <div class='cg_view_option_title'>
-                                <p>Number of pics in a row</p>
-                         </div>
-                         <div  class='cg_view_option_input'>
-                            <input type="text" maxlength="2" name="multiple-pics[cg_gallery_user][general][PicsInRow]" class="PicsInRow" value="{$jsonOptions[$GalleryID.'-u']['general']['PicsInRow']}" >
-                         </div>
-                    </div>
-                </div>
-                <div class='cg_view_options_row'>
-                    <div class='cg_view_option cg_view_option_50_percent cg_border_top_right_none RowViewSpaceWidthContainer'>
-                        <div class='cg_view_option_title'>
-                                <p>Horizontal distance between files (px)</p>
-                         </div>
-                         <div  class='cg_view_option_input'>
-                            <input type="text" maxlength="2" name="multiple-pics[cg_gallery_user][visual][RowViewSpaceWidth]" class="RowViewSpaceWidth" value="{$jsonOptions[$GalleryID.'-u']['visual']['RowViewSpaceWidth']}">
-                         </div>
-                    </div>
-                    <div class='cg_view_option cg_view_option_50_percent cg_border_top_none RowViewSpaceHeightContainer'>
-                        <div class='cg_view_option_title'>
-                                <p>Vertical distance between files (px)</p>
-                         </div>
-                         <div  class='cg_view_option_input'>
-                            <input type="text" maxlength="2" name="multiple-pics[cg_gallery_user][visual][RowViewSpaceHeight]" class="RowViewSpaceHeight" value="{$jsonOptions[$GalleryID.'-u']['visual']['RowViewSpaceHeight']}">
-                         </div>
-                    </div>
-                </div>
-        </div>
-    </div>
-HEREDOC;
-
-    }
-
-}
-
-
-echo <<<HEREDOC
-</div>
-HEREDOC;
 
 if(!isset($jsonOptions[$GalleryID.'-u']['pro']['MainTitleGalleriesView'])){
 	$MainTitleGalleriesView = '';
@@ -918,7 +707,7 @@ if(!isset($jsonOptions[$GalleryID.'-u']['pro']['MainTitleGalleriesView'])){
 }
 
 echo <<<HEREDOC
-    <div class='cg_view_options_row' style="margin-top: -15px;">
+    <div class='cg_view_options_row' style="margin-top: 15px;">
         <div class='cg_view_option cg_view_option_full_width cg_border_border_top_left_radius_8_px  cg_border_border_top_right_radius_8_px cg_go_to_target' data-cg-go-to-target="MainTitleGalleriesViewArea">
             <div class='cg_view_option_title '>
                 <p>Main title cg_galleries_user view</p>

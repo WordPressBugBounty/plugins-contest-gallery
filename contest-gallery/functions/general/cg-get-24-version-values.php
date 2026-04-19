@@ -24,7 +24,6 @@ if(!function_exists('cg_get_24_version_values')){
 			'GalleryEntryPageRedirectURL' => '',
 			'GalleriesPagesNoIndex' => 0,
 			'GalleriesPagesNoFollow' => 0,
-			'BorderRadius' => 1,
 			'FeControlsStyle' => 'white'
 		];
 

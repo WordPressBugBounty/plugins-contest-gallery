@@ -1,6 +1,8 @@
 <?php
 if(!defined('ABSPATH')){exit;}
 
+// Read the gallery instance ID early so error responses can still target the
+// correct frontend gallery instance before the full request is normalized.
 $galeryIDuser = sanitize_text_field($_REQUEST['galeryIDuser']);
 
 if(!is_user_logged_in()){
@@ -21,17 +23,20 @@ else{
     $WpUserIdLoggedIn = $wp_get_current_user->data->ID;
 }
 
+// Normalize the incoming request before ownership and hash checks are applied.
 $_REQUEST = cg1l_sanitize_post($_REQUEST);
 $_POST = cg1l_sanitize_post($_POST);
 
+// Build the request context that ties the frontend gallery instance to the
+// currently authenticated WordPress user.
 $galeryID = intval(sanitize_text_field($_REQUEST['gid']));
 $pictureID = intval(sanitize_text_field($_REQUEST['pid']));
 $userId = intval(sanitize_text_field($_REQUEST['uid']));
 $galeryIDuser = sanitize_text_field($_REQUEST['galeryIDuser']);
 $galleryHash = sanitize_text_field($_REQUEST['galleryHash']);
-$galleryHashDecoded = wp_salt( 'auth').'---cngl1---'.$galeryIDuser;
 $galleryHashToCompare = cg_hash_function('---cngl1---'.$galeryIDuser, $galleryHash);
 
+// Reject requests that try to delete an entry on behalf of another user.
 if($WpUserIdLoggedIn!=$userId){
     ?>
     <script data-cg-processing="true">
@@ -46,6 +51,8 @@ if($WpUserIdLoggedIn!=$userId){
     return;
 }
 
+// Keep the gallery hash check in place so the delete request stays bound to
+// the rendered gallery instance that created it.
 if (!is_numeric($pictureID) or !is_numeric($galeryID) or !is_numeric($userId) or ($galleryHash != $galleryHashToCompare)){
     ?>
     <script data-cg-processing="true">
@@ -64,6 +71,8 @@ else {
     $tablename = $wpdb->prefix ."contest_gal1ery";
     $tablename_pro_options = $wpdb->prefix . "contest_gal1ery_pro_options";
 
+    // Only active entries that belong to the requesting user may be removed
+    // through the frontend delete flow.
     $isUserImage = $wpdb->get_var( $wpdb->prepare(
         "
         SELECT COUNT(*) AS UserImages
@@ -92,8 +101,19 @@ else {
         $valuesToDeleteArray = array($pictureID => $pictureID);
         $isMultipleFilesDelete = false;
 
-        $DeleteFromStorageIfDeletedInFrontend = $wpdb->get_var("SELECT DeleteFromStorageIfDeletedInFrontend FROM $tablename_pro_options WHERE GalleryID = '$galeryID'");
-        $entryRow = $wpdb->get_row("SELECT MultipleFiles FROM $tablename WHERE id = '$pictureID'");
+        // Reload the storage option so the shared delete helper knows whether
+        // the original WordPress attachment should also be removed.
+        $DeleteFromStorageIfDeletedInFrontend = $wpdb->get_var($wpdb->prepare(
+            "SELECT DeleteFromStorageIfDeletedInFrontend FROM $tablename_pro_options WHERE GalleryID = %d",
+            $galeryID
+        ));
+
+        // Load the current entry metadata again to enforce the sales lock on
+        // the server side even if the frontend state was bypassed.
+        $entryRow = $wpdb->get_row($wpdb->prepare(
+            "SELECT MultipleFiles, EcommerceEntry FROM $tablename WHERE id = %d",
+            $pictureID
+        ));
 
         if(!empty($entryRow->EcommerceEntry)){
             ?>
@@ -110,16 +130,14 @@ else {
         $MultipleFilesFromUserFrontendDelete = $entryRow->MultipleFiles;
         $MultipleFilesToDelete = [];
 
+        // Forward the serialized multi-file payload into the shared delete
+        // helper so every related attachment can be cleaned up consistently.
         if(!empty($MultipleFilesFromUserFrontendDelete)){
             $isMultipleFilesDelete = true;
             $MultipleFilesToDelete = [$pictureID => unserialize($MultipleFilesFromUserFrontendDelete)];
         }
 
-        if(!empty($DeleteFromStorageIfDeletedInFrontend)){
-            $DeleteFromStorageIfDeletedInFrontend = true;
-        }else{
-            $DeleteFromStorageIfDeletedInFrontend = false;
-        }
+        $DeleteFromStorageIfDeletedInFrontend = !empty($DeleteFromStorageIfDeletedInFrontend);
 
         /*        var_dump('$DeleteFromStorageIfDeletedInFrontend');
                 var_dump($DeleteFromStorageIfDeletedInFrontend);
@@ -151,15 +169,13 @@ else {
 
         ?>
         <script data-cg-processing="true">
-            //  alert(1);
+            // The frontend still expects an executable script fragment here so
+            // it can update the in-memory gallery state without a full reload.
             var gid = <?php echo json_encode($galeryIDuser);?>;
             var realIdToDelete = <?php echo json_encode($pictureID);?>;
             var isMultipleFilesDelete = <?php echo json_encode($isMultipleFilesDelete);?>;
-
             cgJsClass.gallery.getJson.removeImageFromImageData(gid,realIdToDelete,true);
-            cgJsClass.gallery.views.close(gid,true);
-            var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
-            cgJsClass.gallery.function.message.show(galeryIDuser,(isMultipleFilesDelete) ? cgJsClass.gallery.language[gid].DeleteImagesConfirm : cgJsClass.gallery.language[gid].DeleteImageConfirm);
+            cgJsClass.gallery.function.message.show(gid,(isMultipleFilesDelete) ? cgJsClass.gallery.language[gid].DeleteImagesConfirm : cgJsClass.gallery.language[gid].DeleteImageConfirm);
 
         </script>
         <?php
@@ -169,6 +185,4 @@ else {
 }
 
 ?>
-
-
 

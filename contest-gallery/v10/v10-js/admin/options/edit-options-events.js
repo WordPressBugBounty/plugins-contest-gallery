@@ -860,39 +860,41 @@ jQuery(document).ready(function($){
     $(document).on('click',".cg_view_options_and_order_checkbox_container",function(e){
         debugger
         if(!$(this).closest('.cg_view').find('.cg_view_options_and_order_checkbox.cg_view_option_checked').length && !$(this).find('.cg_view_options_and_order_checkbox').prop('checked')){
-            cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('At least one view option has to be selected');
+           // cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('At least one view option has to be selected');
         }
     });
 
     $(document).on('click',".HeightLookContainer",function(e){
         //cgViewOptionCheck(this,e);
-        cgJsClassAdmin.options.functions.cg_HeightLook(true,$,$(this).find('.HeightLook'));
+        //cgJsClassAdmin.options.functions.cg_HeightLook(true,$,$(this).find('.HeightLook'));
+        cgJsClassAdmin.options.functions.cg_SetOrderLook($,$(this));
 
     });
 
     $(document).on('click',".ThumbLookContainer",function(e){
         //cgViewOptionCheck(this,e);
-        cgJsClassAdmin.options.functions.cg_ThumbLook(true,$,$(this).find('.ThumbLook'));
-
+        //cgJsClassAdmin.options.functions.cg_ThumbLook(true,$,$(this).find('.ThumbLook'));
+        cgJsClassAdmin.options.functions.cg_SetOrderLook($,$(this));
     });
 
 
     $(document).on('click',".RowLookContainer",function(e){
         //cgViewOptionCheck(this,e);
-        cgJsClassAdmin.options.functions.cg_RowLook(true,$,$(this).find('.RowLook'));
-
+        //cgJsClassAdmin.options.functions.cg_RowLook(true,$,$(this).find('.RowLook'));
+        cgJsClassAdmin.options.functions.cg_SetOrderLook($,$(this));
     });
 
 
     $(document).on('click',".SliderLookContainer",function(e){
         //cgViewOptionCheck(this,e);
-        cgJsClassAdmin.options.functions.cg_SliderLook(true,$,$(this).find('.SliderLook'));
-
+        //cgJsClassAdmin.options.functions.cg_SliderLook(true,$,$(this).find('.SliderLook'));
+        cgJsClassAdmin.options.functions.cg_SetOrderLook($,$(this));
     });
 
     $(document).on('click',".BlogLookContainer",function(e){
         //cgViewOptionCheck(this,e);
-        cgJsClassAdmin.options.functions.cg_BlogLook(true,$,$(this).find('.BlogLook'));
+        //cgJsClassAdmin.options.functions.cg_BlogLook(true,$,$(this).find('.BlogLook'));
+        cgJsClassAdmin.options.functions.cg_SetOrderLook($,$(this));
     });
 
 
@@ -2097,6 +2099,15 @@ $(document).on('click','#RatingVisibleForGalleryEcommerceOption',function (e) {
 
 // Check EnableSwitchStyleImageViewButton --- END
 
+// Check ShowDate
+
+    $(document).on('click',".ShowDateContainer",function (e) {
+        //cgViewOptionCheck(this,e);
+        cgJsClassAdmin.options.functions.cg_ShowDate($,$(this).closest('.cg_view_container'));
+    });
+
+// Check ShowDate --- END
+
 // CheckGoogleContainer
 
     var cgShowDownloadGoogleSignInLib = function (){
@@ -2476,7 +2487,7 @@ $(document).on('click','#RatingVisibleForGalleryEcommerceOption',function (e) {
         var $TaxPercentageDefault = $('#TaxPercentageDefault');
         var firstPart = $TaxPercentageDefault.val().split(priceDividerBefore)[0];
         var secondPart = $TaxPercentageDefault.val().split(priceDividerBefore)[1];
-        var firstPartNew = firstPart.replaceAll(thousandsDividerBefore,cgJsClassAdmin.gallery.currencyInputFunctions.thousandsDivider);
+        var firstPartNew = firstPart.split(thousandsDividerBefore).join(cgJsClassAdmin.gallery.currencyInputFunctions.thousandsDivider);
         var newValue = firstPartNew+priceDivider+secondPart;
         $TaxPercentageDefault.val(newValue);
         cgJsClassAdmin.gallery.currencyInputFunctions.setCurNew($TaxPercentageDefault,true,undefined,e);
@@ -2484,7 +2495,7 @@ $(document).on('click','#RatingVisibleForGalleryEcommerceOption',function (e) {
         var $Shipping = $('#Shipping');
         var firstPart = $Shipping.val().split(priceDividerBefore)[0];
         var secondPart = $Shipping.val().split(priceDividerBefore)[1];
-        var firstPartNew = firstPart.replaceAll(thousandsDividerBefore,cgJsClassAdmin.gallery.currencyInputFunctions.thousandsDivider);
+        var firstPartNew = firstPart.split(thousandsDividerBefore).join(cgJsClassAdmin.gallery.currencyInputFunctions.thousandsDivider);
         var newValue = firstPartNew+priceDivider+secondPart;
         $Shipping.val(newValue);
         cgJsClassAdmin.gallery.currencyInputFunctions.setCurNew($Shipping,true,undefined,e);

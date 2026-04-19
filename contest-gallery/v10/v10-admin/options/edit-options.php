@@ -1,6 +1,6 @@
 <?php
-if(!defined('ABSPATH')){exit;}
 
+if(!defined('ABSPATH')){exit;}
 global $wpdb;
 
 $galeryNR = absint($_GET['option_id']);
@@ -56,13 +56,11 @@ include(__DIR__ ."/../../../check-language.php");
 
 // create options if required
 $checkCommentsNotificationOptions = $wpdb->get_var($wpdb->prepare( "SELECT COUNT(*) as NumberOfRows FROM $tablename_comments_notification_options WHERE GalleryID = %d",[$GalleryID]));
-
 if(empty($checkCommentsNotificationOptions)){
     include(__DIR__ ."/../../../update/update-entries-check/update-entries-comments-notification-options.php");
 }
 
 $selectSQL1 = $wpdb->get_row($wpdb->prepare( "SELECT * FROM $tablenameOptions WHERE id = %d",[$GalleryID]));
-
 $galleryDbVersion = $selectSQL1->Version;
 
 echo "<input type='hidden' id='cgGalleryDbVersion' value='$galleryDbVersion' >";
@@ -123,7 +121,7 @@ if(floatval($galleryDbVersion)>=22){
     $selectSQLecommerceOptions = cg_get_ecommerce_options();
 	$PayPalApiActive = ($selectSQLecommerceOptions->PayPalApiActive==2) ? '' : 'checked';
 	$PayPalTestActive = ($selectSQLecommerceOptions->PayPalTestActive==1) ? 'checked' : '';
-    $PayPalDisableFunding = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->PayPalDisableFunding);
+	$PayPalDisableFunding = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->PayPalDisableFunding);
     $PayPalSandboxClientId = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->PayPalSandboxClientId);
     $PayPalLiveClientId = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->PayPalLiveClientId);
     $PayPalLiveSecret = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->PayPalLiveSecret);
@@ -384,6 +382,7 @@ foreach($selectSQL4 as $value4){
 
     $ShowExif = ($value4->ShowExif==1) ? 'checked' : '';
     $GalleryUploadConfirmationText = contest_gal1ery_convert_for_html_output_without_nl2br($value4->GalleryUploadConfirmationText);
+    $ShowRefreshButtonAfterUpload = (!empty($value4->ShowRefreshButtonAfterUpload)) ? 'checked' : '';
     $GalleryUploadTextAfter = contest_gal1ery_convert_for_html_output_without_nl2br($value4->GalleryUploadTextAfter);
     $GalleryUploadTextBefore = contest_gal1ery_convert_for_html_output_without_nl2br($value4->GalleryUploadTextBefore);
 
@@ -392,7 +391,6 @@ foreach($selectSQL4 as $value4){
     $VotesInTimeIntervalReadable = html_entity_decode(stripslashes($value4->VotesInTimeIntervalReadable));
     $VotesInTimeIntervalReadableExploded = explode(':',$VotesInTimeIntervalReadable);
     $cg_date_hours_vote_interval = $VotesInTimeIntervalReadableExploded[0];
-
 
     if(!empty($VotesInTimeIntervalReadableExploded[1])){
         $cg_date_mins_vote_interval = $VotesInTimeIntervalReadableExploded[1];
@@ -455,119 +453,117 @@ $selectSQLemailUserVote = $wpdb->get_row($wpdb->prepare( "SELECT * FROM $tablena
 $ContentUserVoteMail = $selectSQLemailUserVote->Content;
 $ContentUserVoteMail = contest_gal1ery_convert_for_html_output_without_nl2br($ContentUserVoteMail);
 
-
 // Reihenfolge der Gallerien wird ermittelt --- ENDE
 
-$selectedCheckComments = ($selectSQL1->AllowComments==1) ? 'checked' : '';
-$AllowRating = $selectSQL1->AllowRating;
+    $selectedCheckComments = ($selectSQL1->AllowComments==1) ? 'checked' : '';
+    $AllowRating = $selectSQL1->AllowRating;
     if($AllowRating==1){// because of old logic, where 1 = 5 stars
         $AllowRating = 15;
     }
-$selectedCheckRating = ($selectSQL1->AllowRating==1 OR ($selectSQL1->AllowRating>=12 && $selectSQL1->AllowRating<=20)) ? 'checked' : '';
-$selectedCheckRating2 = ($selectSQL1->AllowRating==2) ? 'checked' : '';
-$selectedCheckFbLike = ($selectSQL1->FbLike==1) ? 'checked' : '';
-$selectedCheckFbLikeGallery = ($selectSQL1->FbLikeGallery==1) ? 'checked' : '';
-$selectedCheckFbLikeGalleryVote = ($selectSQL1->FbLikeGalleryVote==1) ? 'checked' : '';
-$selectedRatingOutGallery = ($selectSQL1->RatingOutGallery==1) ? 'checked' : '';
-$AllowComments = $selectSQL1->AllowComments;
+    $selectedCheckRating = ($selectSQL1->AllowRating==1 OR ($selectSQL1->AllowRating>=12 && $selectSQL1->AllowRating<=20)) ? 'checked' : '';
+    $selectedCheckRating2 = ($selectSQL1->AllowRating==2) ? 'checked' : '';
+    $selectedCheckFbLike = ($selectSQL1->FbLike==1) ? 'checked' : '';
+    $selectedCheckFbLikeGallery = ($selectSQL1->FbLikeGallery==1) ? 'checked' : '';
+    $selectedCheckFbLikeGalleryVote = ($selectSQL1->FbLikeGalleryVote==1) ? 'checked' : '';
+    $selectedRatingOutGallery = ($selectSQL1->RatingOutGallery==1) ? 'checked' : '';
+    $AllowComments = $selectSQL1->AllowComments;
 
-$selectedCommentsOutGallery = ($selectSQL1->CommentsOutGallery==1) ? 'checked' : '';
-$selectedCheckIp = ($selectSQL1->IpBlock==1) ? 'checked' : '';
-$selectedCheckFb = ($selectSQL1->FbLike==1) ? 'checked' : '';
-$CheckLogin = ($selectSQL1->CheckLogin==1) ? 'checked' : '';
-$CheckIp = ($selectSQL1->CheckIp==1 && $selectSQL1->CheckCookie!=1) ? 'checked' : '';
-$CheckCookie = ($selectSQL1->CheckCookie==1 && $selectSQL1->CheckIp!=1) ? 'checked' : '';
-$CheckIpAndCookie = ($selectSQL1->CheckIp==1 && $selectSQL1->CheckCookie==1) ? 'checked' : '';
+    $selectedCommentsOutGallery = ($selectSQL1->CommentsOutGallery==1) ? 'checked' : '';
+    $selectedCheckIp = ($selectSQL1->IpBlock==1) ? 'checked' : '';
+    $selectedCheckFb = ($selectSQL1->FbLike==1) ? 'checked' : '';
+    $CheckLogin = ($selectSQL1->CheckLogin==1) ? 'checked' : '';
+    $CheckIp = ($selectSQL1->CheckIp==1 && $selectSQL1->CheckCookie!=1) ? 'checked' : '';
+    $CheckCookie = ($selectSQL1->CheckCookie==1 && $selectSQL1->CheckIp!=1) ? 'checked' : '';
+    $CheckIpAndCookie = ($selectSQL1->CheckIp==1 && $selectSQL1->CheckCookie==1) ? 'checked' : '';
 if($dbVersion<14){
-$RegistryUserRole = html_entity_decode(stripslashes($selectSQL1->RegistryUserRole));
+    $RegistryUserRole = html_entity_decode(stripslashes($selectSQL1->RegistryUserRole));
 }
 
     if($CheckLogin == '' && $CheckIp == '' && $CheckCookie == ''  && $CheckIpAndCookie == ''){
         $CheckLogin = 'checked';
     }
 
-$CheckCookieAlertMessage = contest_gal1ery_no_convert($selectSQL1->CheckCookieAlertMessage);
+    $CheckCookieAlertMessage = contest_gal1ery_no_convert($selectSQL1->CheckCookieAlertMessage);
 
     if(empty($CheckCookieAlertMessage)){
         $CheckCookieAlertMessage = 'Please allow cookies to vote';
     }
 
-$HideUntilVote = ($selectSQL1->HideUntilVote==1) ? 'checked' : '';
-$ShowOnlyUsersVotes = ($selectSQL1->ShowOnlyUsersVotes==1) ? 'checked' : '';
-$HideInfo = ($selectSQL1->HideInfo==1) ? 'checked' : '';
+    $HideUntilVote = ($selectSQL1->HideUntilVote==1) ? 'checked' : '';
+    $ShowOnlyUsersVotes = ($selectSQL1->ShowOnlyUsersVotes==1) ? 'checked' : '';
+    $HideInfo = ($selectSQL1->HideInfo==1) ? 'checked' : '';
 
     //echo "<br>HideInfo: $HideInfo<br>";
 
-$ActivateUpload = ($selectSQL1->ActivateUpload==1) ? 'checked' : '';
+    $ActivateUpload = ($selectSQL1->ActivateUpload==1) ? 'checked' : '';
 
     if(floatval($galleryDbVersion)>=21.1){// to be complete, in real the old contestStart and contestEnd settings will be not displayed
         $ContestEnd = 0;
         $ContestStart = 0;
     }
 
-$ContestEnd = ($selectSQL1->ContestEnd==1) ? 'checked' : '';
-$ContestEndInstant = ($selectSQL1->ContestEnd==2) ? 'checked' : '';
-$ContestEndTime = date('Y-m-d',(!empty($selectSQL1->ContestEndTime)) ? $selectSQL1->ContestEndTime : 0);
-$ContestStart = ($selectSQL1->ContestStart==1) ? 'checked' : '';
-$ContestStartTime = date('Y-m-d',(!empty($selectSQL1->ContestStartTime)) ? $selectSQL1->ContestStartTime : 0);
+    $ContestEnd = ($selectSQL1->ContestEnd==1) ? 'checked' : '';
+    $ContestEndInstant = ($selectSQL1->ContestEnd==2) ? 'checked' : '';
+    $ContestEndTime = date('Y-m-d',(!empty($selectSQL1->ContestEndTime)) ? $selectSQL1->ContestEndTime : 0);
+    $ContestStart = ($selectSQL1->ContestStart==1) ? 'checked' : '';
+    $ContestStartTime = date('Y-m-d',(!empty($selectSQL1->ContestStartTime)) ? $selectSQL1->ContestStartTime : 0);
 
     $ContestEndTimeHours = '';
     $ContestEndTimeMins = '';
     if(!empty($ContestEndTime)){
-    $ContestEndTimeHours = date('H',($selectSQL1->ContestEndTime==='') ? 0 : $selectSQL1->ContestEndTime);
-    $ContestEndTimeMins = date('i',($selectSQL1->ContestEndTime==='') ? 0 : $selectSQL1->ContestEndTime);
+        $ContestEndTimeHours = date('H',($selectSQL1->ContestEndTime==='') ? 0 : $selectSQL1->ContestEndTime);
+        $ContestEndTimeMins = date('i',($selectSQL1->ContestEndTime==='') ? 0 : $selectSQL1->ContestEndTime);
     }
 
     $ContestStartTimeHours = '';
     $ContestStartTimeMins = '';
     if(!empty($ContestStartTime)){
-    $ContestStartTimeHours = date('H',($selectSQL1->ContestStartTime==='') ? 0 : $selectSQL1->ContestStartTime);
-    $ContestStartTimeMins = date('i',($selectSQL1->ContestStartTime==='') ? 0 : $selectSQL1->ContestStartTime);
+        $ContestStartTimeHours = date('H',($selectSQL1->ContestStartTime==='') ? 0 : $selectSQL1->ContestStartTime);
+        $ContestStartTimeMins = date('i',($selectSQL1->ContestStartTime==='') ? 0 : $selectSQL1->ContestStartTime);
     }
 
     echo "<input type='hidden' id='getContestEndTime' value='".@$ContestEndTime."'>";
     echo "<input type='hidden' id='getContestStartTime' value='".@$ContestStartTime."'>";
-$FullSize = ($selectSQL1->FullSize==1) ? 'checked' : '';// full screen mode!
-$FullSizeGallery = ($selectSQL1->FullSizeGallery==1) ? 'checked' : '';// full window mode!
-$FullSizeSlideOutStart = ($selectSQL1->FullSizeSlideOutStart==1) ? 'checked' : '';
-$OnlyGalleryView = ($selectSQL1->OnlyGalleryView==1) ? 'checked' : '';
-$SinglePicView = ($selectSQL1->SinglePicView==1) ? 'checked' : '';
-$ScaleOnly = ($selectSQL1->ScaleOnly==1) ? 'checked' : '';
-$ScaleAndCut = ($selectSQL1->ScaleAndCut==1) ? 'checked' : '';
+    $FullSize = ($selectSQL1->FullSize==1) ? 'checked' : '';// full screen mode!
+    $FullSizeGallery = ($selectSQL1->FullSizeGallery==1) ? 'checked' : '';// full window mode!
+    $FullSizeSlideOutStart = ($selectSQL1->FullSizeSlideOutStart==1) ? 'checked' : '';
+    $OnlyGalleryView = ($selectSQL1->OnlyGalleryView==1) ? 'checked' : '';
+    $SinglePicView = ($selectSQL1->SinglePicView==1) ? 'checked' : '';
+    $ScaleOnly = ($selectSQL1->ScaleOnly==1) ? 'checked' : '';
+    $ScaleAndCut = ($selectSQL1->ScaleAndCut==1) ? 'checked' : '';
 
-$AllowGalleryScript = ($selectSQL1->AllowGalleryScript==1) ? 'checked' : '';
+    $AllowGalleryScript = ($selectSQL1->AllowGalleryScript==1) ? 'checked' : '';
 
-$InfiniteScroll = $selectSQL1->InfiniteScroll;
+    $InfiniteScroll = $selectSQL1->InfiniteScroll;
 
     //echo "<br>InfiniteScroll: $InfiniteScroll<br>";
 
+//$InfiniteScroll = ($value->InfiniteScroll==1) ? 'checked' : '';
 
-    //$InfiniteScroll = ($value->InfiniteScroll==1) ? 'checked' : '';
+    $FullSizeImageOutGallery = ($selectSQL1->FullSizeImageOutGallery==1) ? 'checked' : '';
+    $FullSizeImageOutGalleryNewTab = ($selectSQL1->FullSizeImageOutGalleryNewTab==1) ? 'checked' : '';
+    $ShowAlwaysInfoSlider = ($selectSQL1->ShowAlwaysInfoSlider==1) ? 'checked' : '';
 
-$FullSizeImageOutGallery = ($selectSQL1->FullSizeImageOutGallery==1) ? 'checked' : '';
-$FullSizeImageOutGalleryNewTab = ($selectSQL1->FullSizeImageOutGalleryNewTab==1) ? 'checked' : '';
-$ShowAlwaysInfoSlider = ($selectSQL1->ShowAlwaysInfoSlider==1) ? 'checked' : '';
-
-$HeightLook = ($selectSQL1->HeightLook==1) ? 'checked' : '';
-$RowLook = ($selectSQL1->RowLook==1) ? 'checked' : '';
+    $HeightLook = ($selectSQL1->HeightLook==1) ? 'checked' : '';
+    $RowLook = ($selectSQL1->RowLook==1) ? 'checked' : '';
     if($RowLook=='checked'){ // since 07.02.2022 row look will be replaced by height look if selected
         $RowLook = '';
         $HeightLook = 'checked';
     }
-$ThumbLook = ($selectSQL1->ThumbLook==1) ? 'checked' : '';
-$SliderLook = ($selectSQL1->SliderLook==1) ? 'checked' : '';
+    $ThumbLook = ($selectSQL1->ThumbLook==1) ? 'checked' : '';
+    $SliderLook = ($selectSQL1->SliderLook==1) ? 'checked' : '';
 
-$ThumbsInRow = ($selectSQL1->ThumbsInRow==1) ? 'checked' : '';
-$LastRow = ($selectSQL1->LastRow==1) ? 'checked' : '';
-$AllowSort = ($selectSQL1->AllowSort==1) ? 'checked' : '';
-$RandomSort = ($selectSQL1->RandomSort==1) ? 'checked' : '';
-$RandomSortButton = ($selectSQL1->RandomSortButton==1) ? 'checked' : '';
-$PicsInRow = $selectSQL1->PicsInRow;
-$PicsPerSite = $selectSQL1->PicsPerSite;
-$VotesPerUser = $selectSQL1->VotesPerUser;
+    $ThumbsInRow = ($selectSQL1->ThumbsInRow==1) ? 'checked' : '';
+    $LastRow = ($selectSQL1->LastRow==1) ? 'checked' : '';
+    $AllowSort = ($selectSQL1->AllowSort==1) ? 'checked' : '';
+    $RandomSort = ($selectSQL1->RandomSort==1) ? 'checked' : '';
+    $RandomSortButton = ($selectSQL1->RandomSortButton==1) ? 'checked' : '';
+    $PicsInRow = $selectSQL1->PicsInRow;
+    $PicsPerSite = $selectSQL1->PicsPerSite;
+    $VotesPerUser = $selectSQL1->VotesPerUser;
     if($VotesPerUser==0){$VotesPerUser='';}
-$GalleryName1 = $selectSQL1->GalleryName;
-$ShowAlways = ($selectSQL1->ShowAlways==1) ? 'checked' : '';
+    $GalleryName1 = $selectSQL1->GalleryName;
+    $ShowAlways = ($selectSQL1->ShowAlways==1) ? 'checked' : '';
 
     //echo "<br>GalleryName: $GalleryName<br>";
 
@@ -576,31 +572,31 @@ $ShowAlways = ($selectSQL1->ShowAlways==1) ? 'checked' : '';
     $Use_as_URL = $wpdb->get_var($wpdb->prepare("SELECT Use_as_URL FROM $tablename_form_input WHERE GalleryID = %d AND Use_as_URL = '1' ",[$GalleryID]));
 
     //echo "<br>Use_as_URL: $Use_as_URL<br>";
-$ForwardToURL = ($selectSQL1->ForwardToURL==1) ? 'checked' : '';
-$ForwardType = ($selectSQL1->ForwardType==2) ? 'checked' : '';
+    $ForwardToURL = ($selectSQL1->ForwardToURL==1) ? 'checked' : '';
+    $ForwardType = ($selectSQL1->ForwardType==2) ? 'checked' : '';
     //echo $ForwardType;
     //Prüfen ob Forward URL aus dem Slider oder aus der Gallerie weiterleiten soll
-$ForwardFrom = $selectSQL1->ForwardFrom;
+    $ForwardFrom = $selectSQL1->ForwardFrom;
     $ForwardFromSlider = ($ForwardFrom==1) ? 'checked' : '';
     $ForwardFromGallery = ($ForwardFrom==2) ? 'checked' : '';
     $ForwardFromSinglePic = ($ForwardFrom==3) ? 'checked' : '';
 
     // Forward images to URL options --- ENDE
 
-$AdjustThumbLook = ($selectSQL1->AdjustThumbLook==1) ? 'checked' : '';
+    $AdjustThumbLook = ($selectSQL1->AdjustThumbLook==1) ? 'checked' : '';
 
-$WidthThumb = $selectSQL1->WidthThumb;
-$HeightThumb = $selectSQL1->HeightThumb;
-$DistancePics = $selectSQL1->DistancePics;
-$DistancePicsV = $selectSQL1->DistancePicsV;
+    $WidthThumb = $selectSQL1->WidthThumb;
+    $HeightThumb = $selectSQL1->HeightThumb;
+    $DistancePics = $selectSQL1->DistancePics;
+    $DistancePicsV = $selectSQL1->DistancePicsV;
 
-$WidthGallery = $selectSQL1->WidthGallery;
-$HeightGallery = $selectSQL1->HeightGallery;
-$HeightLookHeight = $selectSQL1->HeightLookHeight;
-$Inform = $selectSQL1->Inform;
-$InformAdmin = ($selectSQL1->InformAdmin==1) ? 'checked' : '';
-$MaxResJPGwidth = $selectSQL1 ->MaxResJPGwidth;
-$MaxResJPGheight = $selectSQL1 ->MaxResJPGheight;
+    $WidthGallery = $selectSQL1->WidthGallery;
+    $HeightGallery = $selectSQL1->HeightGallery;
+    $HeightLookHeight = $selectSQL1->HeightLookHeight;
+    $Inform = $selectSQL1->Inform;
+    $InformAdmin = ($selectSQL1->InformAdmin==1) ? 'checked' : '';
+    $MaxResJPGwidth = $selectSQL1 ->MaxResJPGwidth;
+    $MaxResJPGheight = $selectSQL1 ->MaxResJPGheight;
 $MinResJPGwidth = $selectSQL1 ->MinResJPGwidth;
 $MinResJPGheight = $selectSQL1 ->MinResJPGheight;
     //Leeren Wert kann man by MySQL nicht einfügen. Es entsteht immer eine NULL
@@ -608,55 +604,55 @@ $MinResJPGheight = $selectSQL1 ->MinResJPGheight;
     if($MaxResJPGheight==0){$MaxResJPGheight='';}
 if($MinResJPGwidth==0){$MinResJPGwidth='';}
 if($MinResJPGheight==0){$MinResJPGheight='';}
-$MaxResPNGwidth = $selectSQL1 ->MaxResPNGwidth;
-$MaxResPNGheight = $selectSQL1 ->MaxResPNGheight;
+    $MaxResPNGwidth = $selectSQL1 ->MaxResPNGwidth;
+    $MaxResPNGheight = $selectSQL1 ->MaxResPNGheight;
 $MinResPNGwidth = $selectSQL1 ->MinResPNGwidth;
 $MinResPNGheight = $selectSQL1 ->MinResPNGheight;
     if($MaxResPNGwidth==0){$MaxResPNGwidth='';}
     if($MaxResPNGheight==0){$MaxResPNGheight='';}
 if($MinResPNGwidth==0){$MinResPNGwidth='';}
 if($MinResPNGheight==0){$MinResPNGheight='';}
-$MaxResGIFwidth = $selectSQL1 ->MaxResGIFwidth;
-$MaxResGIFheight = $selectSQL1 ->MaxResGIFheight;
+    $MaxResGIFwidth = $selectSQL1 ->MaxResGIFwidth;
+    $MaxResGIFheight = $selectSQL1 ->MaxResGIFheight;
 $MinResGIFwidth = $selectSQL1 ->MinResGIFwidth;
 $MinResGIFheight = $selectSQL1 ->MinResGIFheight;
     if($MaxResGIFwidth==0){$MaxResGIFwidth='';}
     if($MaxResGIFheight==0){$MaxResGIFheight='';}
 if($MinResGIFwidth==0){$MinResGIFwidth='';}
 if($MinResGIFheight==0){$MinResGIFheight='';}
-$MaxResJPGon = ($selectSQL1->MaxResJPGon==1) ? 'checked' : '';
-$MaxResPNGon = ($selectSQL1->MaxResPNGon==1) ? 'checked' : '';
-$MaxResGIFon = ($selectSQL1->MaxResGIFon==1) ? 'checked' : '';
+    $MaxResJPGon = ($selectSQL1->MaxResJPGon==1) ? 'checked' : '';
+    $MaxResPNGon = ($selectSQL1->MaxResPNGon==1) ? 'checked' : '';
+    $MaxResGIFon = ($selectSQL1->MaxResGIFon==1) ? 'checked' : '';
 $MinResJPGon = ($selectSQL1->MinResJPGon==1) ? 'checked' : '';
 $MinResPNGon = ($selectSQL1->MinResPNGon==1) ? 'checked' : '';
 $MinResGIFon = ($selectSQL1->MinResGIFon==1) ? 'checked' : '';
-$MaxResICOwidth = $selectSQL1 ->MaxResICOwidth;
-$MaxResICOheight = $selectSQL1 ->MaxResICOheight;
+    $MaxResICOwidth = $selectSQL1 ->MaxResICOwidth;
+    $MaxResICOheight = $selectSQL1 ->MaxResICOheight;
     if($MaxResICOwidth==0){$MaxResICOwidth='';}
     if($MaxResICOheight==0){$MaxResICOheight='';}
-$MaxResICOon = ($selectSQL1->MaxResICOon==1) ? 'checked' : '';
-$FbLikeGoToGalleryLink = (empty($selectSQL1->FbLikeGoToGalleryLink)) ? '' : $selectSQL1->FbLikeGoToGalleryLink;
+    $MaxResICOon = ($selectSQL1->MaxResICOon==1) ? 'checked' : '';
+    $FbLikeGoToGalleryLink = (empty($selectSQL1->FbLikeGoToGalleryLink)) ? '' : $selectSQL1->FbLikeGoToGalleryLink;
     $FbLikeGoToGalleryLink = contest_gal1ery_no_convert($FbLikeGoToGalleryLink);
 
-$ActivatePostMaxMB = ($selectSQL1->ActivatePostMaxMB==1) ? 'checked' : '';
-$PostMaxMB = $selectSQL1 ->PostMaxMB;
+    $ActivatePostMaxMB = ($selectSQL1->ActivatePostMaxMB==1) ? 'checked' : '';
+    $PostMaxMB = $selectSQL1 ->PostMaxMB;
     if($PostMaxMB==0){$PostMaxMB='';}
 
-$ActivateBulkUpload = ($selectSQL1->ActivateBulkUpload==1) ? 'checked' : '';
-$BulkUploadQuantity = $selectSQL1 ->BulkUploadQuantity;
+    $ActivateBulkUpload = ($selectSQL1->ActivateBulkUpload==1) ? 'checked' : '';
+    $BulkUploadQuantity = $selectSQL1 ->BulkUploadQuantity;
     if($BulkUploadQuantity==0){$BulkUploadQuantity='';}
 
-$BulkUploadMinQuantity = $selectSQL1->BulkUploadMinQuantity;
+    $BulkUploadMinQuantity = $selectSQL1->BulkUploadMinQuantity;
     if($BulkUploadMinQuantity==0){$BulkUploadMinQuantity='';}
 
-$GalleryName = $selectSQL1->GalleryName;
+    $GalleryName = $selectSQL1->GalleryName;
 
-$ActivatePostMaxMBfile = ($selectSQL1->ActivatePostMaxMBfile==1) ? 'checked' : '';
-$PostMaxMBfile = $selectSQL1 ->PostMaxMBfile;
-$WpPageParent = $selectSQL1 ->WpPageParent;
-$WpPageParentUser = $selectSQL1 ->WpPageParentUser;
-$WpPageParentNoVoting = $selectSQL1 ->WpPageParentNoVoting;
-$WpPageParentWinner = $selectSQL1 ->WpPageParentWinner;
+    $ActivatePostMaxMBfile = ($selectSQL1->ActivatePostMaxMBfile==1) ? 'checked' : '';
+    $PostMaxMBfile = $selectSQL1 ->PostMaxMBfile;
+    $WpPageParent = $selectSQL1 ->WpPageParent;
+    $WpPageParentUser = $selectSQL1 ->WpPageParentUser;
+    $WpPageParentNoVoting = $selectSQL1 ->WpPageParentNoVoting;
+    $WpPageParentWinner = $selectSQL1 ->WpPageParentWinner;
     $WpPageParentEcommerce = $selectSQL1 ->WpPageParentEcommerce;
     $WpPageParentPermalink = ($WpPageParent) ? get_permalink($WpPageParent) : '';
     $WpPageParentUserPermalink = ($WpPageParentUser) ? get_permalink($WpPageParentUser) : '';
@@ -668,7 +664,6 @@ $WpPageParentWinner = $selectSQL1 ->WpPageParentWinner;
 //print_r($selectSQL2);
 
 foreach($selectSQL2 as $value2){
-
     // Wenn 0 dann confirmation text, wenn 1 dann URL Weiterleitung
     $Forward = ($value2->Forward==1) ? 'checked' : '';
     $ForwardUploadConf = ($value2->Forward==0) ? 'checked' : '';
@@ -681,13 +676,10 @@ foreach($selectSQL2 as $value2){
     $Confirmation_Text = $value2->Confirmation_Text;
     $Confirmation_Text = contest_gal1ery_convert_for_html_output_without_nl2br($Confirmation_Text);
     $Confirmation_Text_Disabled = ($value2->Forward==0) ? '' : 'disabled';
-
 }
 
 //	print_r($selectSQL3);
-
 foreach($selectSQL3 as $value3){
-
     $Field1IdGalleryView = $value3->Field1IdGalleryView;
     $ThumbViewBorderWidth = $value3->ThumbViewBorderWidth;
     $ThumbViewBorderRadius = $value3->ThumbViewBorderRadius;
@@ -721,6 +713,7 @@ foreach($selectSQL3 as $value3){
     $FeControlsStyleBlack = ($value3->FeControlsStyle=='black') ? 'checked' : '';
     $FeControlsStyleWhiteUpload = ($value3->FeControlsStyleUpload=='white' OR empty($value3->FeControlsStyleUpload)) ? 'checked' : '';
     $FeControlsStyleBlackUpload = ($value3->FeControlsStyleUpload=='black') ? 'checked' : '';
+
     $FeControlsStyleWhiteRegistry = ($value3->FeControlsStyleRegistry=='white' OR empty($value3->FeControlsStyleRegistry)) ? 'checked' : '';
     $FeControlsStyleBlackRegistry = ($value3->FeControlsStyleRegistry=='black') ? 'checked' : '';
     $FeControlsStyleWhiteLogin = ($value3->FeControlsStyleLogin=='white' OR empty($value3->FeControlsStyleLogin)) ? 'checked' : '';
@@ -826,7 +819,6 @@ if(intval($galleryDbVersion)>=14){
         $TextPinConfirmation = 'Complete your registration by using the PIN below: <br/><br/> $pin$';
     }
     $RegPinSubject = contest_gal1ery_convert_for_html_output_without_nl2br($RegPinSubject);
-
 }
 
 
@@ -942,7 +934,6 @@ $mGallerySendToNotConfirmedUsers = ($selectSQLmailGallery->SendToNotConfirmedUse
 
 
 // JSON options KORREKTUR SCRIPT HIER
-
 $jsonOptionsFile = $upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryNR.'/json/'.$galeryNR.'-options.json';
 $fp = fopen($jsonOptionsFile, 'r');
 $jsonOptions = json_decode(fread($fp,filesize($jsonOptionsFile)),true);
@@ -1002,7 +993,6 @@ $ShowExifDateTimeOriginalFormatNamePathSelectedValuesArray = [
 // Get email text options --- ENDE
 
 // get mail exception logs
-
 $mailExceptions = '';
 $fileName = md5(wp_salt( 'auth').'---cnglog---'.$GalleryID);
 $fileMailExceptions = $uploadFolder['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/logs/errors/mail-'.$fileName.'.log';
@@ -1058,6 +1048,7 @@ if(empty($_POST['cg_edit_translations']) && empty($_GET['cg_edit_translations'])
 }
 
 echo "<form id='cgEditOptionsForm' action='?page=".cg_get_version()."/index.php&edit_options=true&option_id=$galeryNR' method='post'  data-cg-submit-message='Options saved'  class='cg_load_backend_submit cg_load_backend_submit_save_data $cg_edit_general'>";
+
 echo '<input type="hidden" name="cgDbVersion" value="'.$galleryDbVersion.'" >';
 
 if(!empty($_POST['cg_edit_translations']) || !empty($_GET['cg_edit_translations'])){
@@ -1112,13 +1103,12 @@ if(empty($_POST['cg_edit_ecommerce']) && empty($_GET['cg_edit_ecommerce'])){
 		if(empty($CgEntriesOwnSlugNameGalleriesEcommerce)){$CgEntriesOwnSlugNameGalleriesEcommerce='';}
 
 	}else{
-if (is_multisite()) {
-    $CgEntriesOwnSlugName = cg_get_blog_option( get_current_blog_id(),'CgEntriesOwnSlugName');
-}else{
-    $CgEntriesOwnSlugName = get_option('CgEntriesOwnSlugName');
-}
-
-if(empty($CgEntriesOwnSlugName)){$CgEntriesOwnSlugName='';}
+		if (is_multisite()) {
+			$CgEntriesOwnSlugName = cg_get_blog_option( get_current_blog_id(),'CgEntriesOwnSlugName');
+		}else{
+			$CgEntriesOwnSlugName = get_option('CgEntriesOwnSlugName');
+		}
+		if(empty($CgEntriesOwnSlugName)){$CgEntriesOwnSlugName='';}
 	}
 }
 

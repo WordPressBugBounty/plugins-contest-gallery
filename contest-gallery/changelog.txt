@@ -1,5 +1,24 @@
 Contest Gallery
 
+= 29.0.0 =
+* NEW: Full window blog view now includes a vertical slider on desktop and mobile with seamless virtual scrolling and no pagination.
+* NEW: Full window blog view now has modern scroll, wheel, touch and buttons handling for desktop and mobile.
+* NEW: Modern comment rendering, modern date display, profile images/avatars, and improved action/link buttons in full window view and on entry pages.
+* NEW: Modernized frontend controls, including category chips, upload dropzone, radio/checkbox fields, agreement checkboxes and checkout agreement checkboxes, for upload/registry forms, full window blog view and entry landing page layouts.
+* NEW: Optimized PHP first rendering for better SEO on gallery and entry pages.
+* NEW: Better SEO output for landing pages, entry pages and ecommerce entries, with improved meta tags, Open Graph and JSON-LD data.
+* NEW: SEO best-practice rendering for media descriptions, ALT text, video/audio accessibility labels and download descriptions.
+* NEW: Cleaner gallery, entry landing page and cg_galleries URLs, canonical URLs, and Back to gallery / Back to galleries / pagination navigation for better SEO.
+* NEW: Added server-side previous/next entry previews on entry landing pages for better SEO and more user-friendly gallery navigation.
+* NEW: Added a separate full window blog view title field in "Edit upload form" options
+* NEW: Option to show or hide the refresh button after in-gallery uploads.
+* REMOVED: Full window slider view, slider view and blog view options, as they are no longer modern, had no real use case, were not ideal for SEO, and required too much maintenance.
+* FIXED: Small bugs.
+* FIXED: Potential security vulnerability.
+* IMPROVED: Security hardening, cookie validation, upload field validation, output escaping, download permission checks and code sanitization.
+* IMPROVED: Internal backend logic and admin workflows, including faster plugin activation, database schema checks, gallery creation performance and more.
+* IMPROVED: Backend styling in several areas.
+
 = 28.1.7 =
 * FIXED: Potential security vulnerability.
 * IMPROVED: Security hardening and code sanitization.
@@ -11,12 +30,21 @@ Contest Gallery
 * IMPROVED: Security hardening and code sanitization.
 * FIXED: Small bugs.
 
+= 28.1.5.1 =
+* FIXED: PRO version could not be activated if normal wasn't deactivated.
+
 = 28.1.5 =
 * FIXED: Security issue.
 * IMPROVED: Backend security and stability improvements.
 
 = 28.1.4 =
 * FIXED: Security issue.
+
+= 28.1.3.2 =
+* FIXED: Sort by rating did not work in frontend when "Show only user votes" was activated and multiple galleries shortcodes on same page were inserted.
+
+= 28.1.3.1 =
+* FIXED: Sort by rating did not work in frontend when "Show only user votes" was activated.
 
 = 28.1.3 =
 * FIXED: Security issue.
@@ -42,14 +70,16 @@ Contest Gallery
 * FIXED: Small bugs.
 
 = 28.1.0.1 =
+* FIXED: “Full order details” link not working correctly.
+* FIXED: Small bugs.
+
+= 28.1.0 =
 * NEW: Added cg_users_pin shortcode.
 * NEW: Added option “Show user-friendly PIN-based email verification form for unregistered users” when “Check if is registered user” is enabled as voting recognition method.
 * NEW: Added option “Show user-friendly PIN-based email verification form for unregistered users” when “Check if is registered user” is enabled as upload recognition method.
 * NEW: Added “Jury (allowed voters)” setting. You can now define email addresses of registered users who are allowed to vote.
 * FIXED: “Users management” area was broken in Firefox.
 * FIXED: Allowed file types of the frontend upload form were not correctly recognized in the sale order area when an upload (charge users for upload) was purchased.
-* FIXED: “Full order details” link not working correctly.
-* FIXED: Small bugs.
 
 = 28.0.6 =
 * NEW: Registered but unconfirmed users are now listed in the "Users management" area.
@@ -59,15 +89,20 @@ Contest Gallery
 * NEW: Frontend users can resend the confirmation email when clicking an expired confirmation link.
 * NEW: Norwegian and Swedish translations completed.
 * NEW: Hindi (hi_IN) translations added.
+* IMPROVED: Registration code mechanics.
+* FIXED: Small bugs.
+
+= 28.0.5 =
 * NEW: Added "Header tracking code on gallery landing page" option.
 * NEW: Added "General text before gallery on gallery landing page" option.
 * NEW: Added "General text after gallery on gallery landing page" option.
 * NEW: Added "Header tracking code on galleries landing page" option.
 * NEW: Added "General text before galleries on galleries landing page" option.
 * NEW: Added "General text after galleries on galleries landing page" option.
-* NEW: Added header tracking code option for entry landing pages.
-* IMPROVED: Registration code mechanics.
 * FIXED: Small bugs.
+
+= 28.0.4 =
+* NEW: Added header tracking code option for entry landing pages.
 * FIXED: Password reset (Lost password) was not functioning correctly.
 
 = V28.0.3 =
@@ -96,11 +131,11 @@ Contest Gallery
 * NEW: Security improvements.
 
 = V27.0.3 =
-* NEW: Security improvements.
 * FIXED: Removing votes for an entry in backend area did not reset the total counter of the votes for the entry.
 * FIXED: "Check by IP and Cookie" did work incorrect.
 
 = V27.0.2 =
+* NEW: Security improvements.
 * FIXED: Bugs frontend registration form area.
 
 = V27.0.1 =
@@ -112,9 +147,6 @@ Contest Gallery
 * NEW: cg_users_contact shortcode ist renamed in cg_users_upload shortcode, but can still be used like always.
 * NEW: "Contact form" renamed to "Upload form" everywhere for more clarity.
 * FIXED: Deleting "Select categories" upload form field caused issues in some cases.
-
-= V26.1.2 =
-* FIXED: Plugin name changed to avoid trademark issues.
 
 = V26.1.1 =
 * FIXED: Security issue.
@@ -130,14 +162,17 @@ Contest Gallery
 = V26.0.8 =
 * NEW: Create images via OpenAI API and add them to your WordPress media library.
 
+= V26.0.7.1 =
+* FIXED: Opening the backend URL to check new comment from "New comment notification e-mail for admin" did not work.
+
 = V26.0.7 =
 * NEW: Security improvements.
 * FIXED: Security issue.
 
 = V26.0.6 =
+* NEW: Create real PDF preview image when adding a PDF file in backend or frontend. Options available in "Edit options" >>> "PDF". Imagick library is not required.
 * NEW: "Show or hide back to galleries button on gallery landing page" option added in "Gallery view" options for every type of cg_gallery... shortcode.
 * NEW: "Back to galleries button custom URL on gallery landing page" option added in "Gallery view" options for every type of cg_gallery... shortcode.
-* NEW: Create real PDF preview image when adding a PDF file in backend or frontend.
 * FIXED: Different little bugs.
 
 = V26.0.5.1 =
@@ -151,7 +186,7 @@ Contest Gallery
 * FIXED: Using multiple different upload forms if multiple different "uploads" were purchased, did not work on order summary page.
 
 = V26.0.3 =
-* NEW: Show contact form collapsed option if file upload is required. By default is uncollapsed for new galleries.
+* NEW: Show upload form collapsed option if file upload is required. By default is uncollapsed for new galleries.
 * NEW: Slightly improved borders and shadows for bright gallery color style in frontend in case of very bright monitors.
 * NEW: Enable PayPal and Stripe sandbox testing options. By default is disabled, so not desired test purchases in test environment can be done with PayPal or Stripe credit cards for testing.
 * FIXED: Rotating of upload form on mobile devices did not work properly.
@@ -175,6 +210,7 @@ Contest Gallery
 * NEW: Allow search engines like Google to index or follow the /contest-galleries... pages and subpages, options. By default is deactivated.
 * NEW: Allow sort by rating possible if "Show only user votes" or "Hide voting until user vote" is activated, for cg_gallery_no_voting and cg_gallery_winner shortcodes.
 * FIXED: Changing options for "Shortcode interval configuration" stuck if options page not reloaded for a while.
+* FIXED: cg_galleries... shortcodes option "Entry preview to display" >>> "Show highest rated entry" did not work always right.
 
 = V25.1.3 =
 * NEW: Improved frontend shortcodes load visually for slower connections.
@@ -182,24 +218,31 @@ Contest Gallery
 
 = V25.1.2 =
 * FIXED: Security issue.
+
+= V25.1.1 =
+* NEW: "Create @googlemail Google Sign In users as @gmail WordPress users in the database" as "Login Google" option.
 * FIXED: Order status might be not always correct on the order summary page.
 
 = V25.1.0 =
 * NEW: Translation of "Buy now" and "Add to cart" now possible.
+* NEW: Maximum "Contact entries for a user per category" removed, due to complicated to implement and never worked right.
 * FIXED: Backend entries search showed sometimes results which doesn't contain the search word.
 * FIXED: "Contact entries total per user" per user current value not corrected if an entry was deleted using cg_gallery_user shortcode.
 
 = V25.0.9.1 =
-* FIXED: If URL field in "Edit contact form"  was activated to be displayed in frontend then additionally not required "https://" was added to inserted URL even if http:// or https:// were already set in the URL.
+* FIXED: If URL field in "Edit upload form"  was activated to be displayed in frontend then additionally not required "https://" was added to inserted URL even if http:// or https:// were already set in the URL.
 
 = V25.0.9 =
 * FIXED: Selected role groups which can edit Contest Gallery "Registration form" will be converted to "Contest Gallery Since V14" user role, caused in update 25.0.8.
 
 = V25.0.8 =
-* NEW: "Field title gallery or entry view" added in "Contact form" to input, textarea, select, select-categories, date and URL types of fields. Will be visible instead of "Contact form field title" in gallery or entry view, if set.
-* NEW: "Forward to the URL by click on an entry in masonry view" added to URL contact form field.
+* NEW: "Field title gallery or entry view" added in "Upload form" to input, textarea, select, select-categories, date and URL types of fields. Will be visible instead of "Upload form field title" in gallery or entry view, if set.
+* NEW: "Forward to the URL by click on an entry in masonry view" added to URL upload form field.
 * NEW: Selected role groups which can edit Contest Gallery "Registration form" fields are now also  use "Logout URL" and "Back to gallery URL" if configured in "Login options".
 * FIXED: "Login form" did not work for all cases.
+
+= V25.0.7 =
+* NEW: CC and BCC added to registration "Confirmation e-mail".
 * FIXED: Registration "Confirmation e-mail" did not work for all cases.
 * FIXED: Contest is over not shown when using cg_galleries... type of shortcode.
 
@@ -218,12 +261,12 @@ Contest Gallery
 * FIXED: Content not always centered when opening "Blog view" or "Slider view" in full window mode.
 * FIXED: Line break between stars on mobile when voting if 10 stars voting is activated.
 * FIXED: After commenting an image as logged in user and then opening the image again, the nicknames for comments of logged in users disappear.
+* FIXED: Updating Google Sign In library did not always work.
 
 = V25.0.3 =
 * NEW: "Show date entry added/uploaded to gallery" in frontend. Can be configured in "Gallery view" options.
 
 = V25.0.2 =
-* NEW: Long descriptions for entries, "Third title" in "Edit contact form", now available in normal version.
 * NEW: Attach an entry to a registered user of your choice.
 
 = V25.0.1 =
@@ -233,10 +276,14 @@ Contest Gallery
 = V25.0.0 =
 * NEW: Masonry cards view for frontend. Modern responsive view with modern look.
 * NEW: Thumb view will be converted in masonry view.
-* NEW: Adding long descriptions now possible in masonry view. Check third title (description) for a field in "Edit contact form" area.
+* NEW: Adding long descriptions now possible in masonry view. Check third title (description) for a field in "Edit upload form" area.
 
 = V24.0.9 =
 * FIXED: Apostrophe was visible as html entity in comments section in frontend after page reload.
+
+= V24.0.8.1 =
+* FIXED: "Text if all uploads were used" after ecommerce entry "Upload" purchase in order summary area was not correct HTML formatted.
+* FIXED: False error message might appear if Google Sign-In lib is installed, that not latest version is used.
 
 = V24.0.8 =
 * NEW: Security improvements.
@@ -342,9 +389,9 @@ Contest Gallery
 * FIXED: Disabling "Show image EXIF data" in frontend, still show EXIF data.
 
 = V21.3.7 =
-* FIXED: Entries might not displayed in frontend after resaving in backend, if certain contact form configuration.
+* FIXED: Entries might not displayed in frontend after resaving in backend, if certain upload form configuration.
 * FIXED: Entries information could not be updated in backend if frontend repair option was used.
-* FIXED: Check by cookie for contact form logic improved, so works also now on cached sites.
+* FIXED: Check by cookie for upload form logic improved, so works also now on cached sites.
 
 = V21.3.6 =
 * FIXED: Security issue - found by patchstack.com team.
@@ -398,6 +445,12 @@ Contest Gallery
 
 = V21.2.8 =
 * FIXED: Frontend gallery titles and subtitles were not actualized in all cases.
+
+= V21.2.7 =
+* FIXED: "Contact entries for a user per category" counter worked only after page reload.
+
+= V21.2.6 =
+* NEW: "Contact entries for a user per category" option available.
 
 = V21.2.5 =
 * NEW: Thumb view images not cropped anymore.
@@ -472,7 +525,7 @@ Contest Gallery
 * FIXED: Possible XSS vulnerability found by patchstack.com team.
 
 = V21.1.2 =
-* FIXED: Editing fields of user gallery using cg_gallery_user shortcode is not possible if select field is added to contact form.
+* FIXED: Editing fields of user gallery using cg_gallery_user shortcode is not possible if select field is added to upload form.
 * FIXED: "Show as info in single entry view" option not available for date field.
 
 = V21.1.1 =
@@ -525,19 +578,19 @@ Contest Gallery
 * NEW: Contest Gallery Custom Post Type Pages for new or copied galleries.
 * NEW: Every entry has own pages. With galleries as parent pages.
 * NEW: Social share buttons available for new or copied galleries.
-* NEW: Configure in contact form which input or textarea should be shared on social media.
+* NEW: Configure in upload form which input or textarea should be shared on social media.
 * NEW: Further options related new entry landing pages.
 * NEW: Improved frontend look for new or copied galleries. Entry title, rating and comments count placed under the thumbs.
 * NEW: Improved backend look.
 
 = V20.0.0 =
-* NEW: Contact form. File upload in frontend is not mandatory anymore. Form can be used to add entries with and without file upload.
+* NEW: Upload form. File upload in frontend is not mandatory anymore. Form can be used to add entries with and without file upload.
 * NEW: Entries without file upload are also manageable in backend and will be displayed in frontend.
 * NEW: cg_users_upload shortcode ist renamed in cg_users_contact shortcode, but can still be used like always.
 * NEW: Improved frontend gallery design.
 * NEW: Improved frontend handling when entries opened in full window.
 * NEW: Improved frontend handling on mobile devices.
-* NEW: Improved contact form design and creation handling in backend.
+* NEW: Improved upload form design and creation handling in backend.
 * NEW: Improved registration form design and creation handling backend.
 * FIXED: Forwarding to another page after upload did not always work.
 * FIXED: Multiple issues relating gallery appearance and mobile devices in frontend.
@@ -653,6 +706,7 @@ Contest Gallery
 = V17.0.2 =
 * NEW: Video file types can be added, uploaded and played in gallery: WEBM, MP4, MOV
 * FIXED: Forwarding to file from "File activation e-mail" did not work if cg_users_upload form shortcode was used.
+* FIXED: If "Images upload" in "Edit upload form" is deactivated, then other file types can not be uploaded in frontend too.
 
 = V17.0.1 =
 * NEW: New file types can be added and uploaded in gallery: MP3, WAV, OGG, M4A
@@ -672,6 +726,7 @@ Contest Gallery
 * NEW: Allow/Disallow file types as upload option for frontend upload form.
 * NEW: ICO images can be added now as file type.
 * NEW: PNGs and GIFs can be uploaded only in PRO version now.
+* FIXED: Bulk upload bugs.
 
 = V16.0.1.1 =
 * FIXED: cg_users_upload shortcode upload form not visible if certain options combination is activated.
@@ -686,6 +741,10 @@ Contest Gallery
 * NEW: Information for each image can be edited in bulk upload.
 * NEW: All kind of emojis can be added to comments form now. No not allowed emojis message anymore when using own mobile device emojis.
 * FIXED: Japanese and Korean chars could not be typed in comments and upload form.
+
+= V15.0.5.1 =
+* FIXED: "Hide until vote" option for "Vote via 1 star" functionality did not always work in right way.
+* FIXED: "Count one star voting" in "Show votes" area did not always display right number.
 
 = V15.0.5 =
 * NEW: Modern skeleton loader will be shown for images on loading in frontend gallery.
@@ -702,6 +761,7 @@ Contest Gallery
 = V15.0.2 =
 * NEW: Sum character is described when clicking on voting in frontend and multiple stars voting is activated. Translation of "Sum" can be found in "Edit options" >>> "Translations Gallery" or in language files translations.
 * FIXED: Opened "Select vote" modal for multiple stars voting did not adopted "Opened image color style".
+* FIXED: Saving options did not work if "Google sign in library" is installed and PHP version changed and "Google sign in library" was not updated for the new PHP version.
 
 = V15.0.1 =
 * FIXED: Opening URL from "Image activation e-mail" did not work if another variant of cg_gallery shortcode (like cg_gallery_no_voting for example) was inserted. If different variants of same gallery shortcodes are inserted on same page the one at the top will be prioritized now.
@@ -737,6 +797,9 @@ Contest Gallery
 * NEW: Sort by "Rating sum" for "5 stars voting" in backend and frontend.
 * FIXED: Tooltip on scroll over frontend gallery elements appearance not precise for all kind of themes.
 * FIXED: "Show thank you for voting message" option might not work in all cases. Requires options resave if not working.
+
+= V14.1.4 =
+* FIXED: "Show only user votes" option did not worked correctly. Votes were counted but not visible after site reload.
 
 = V14.1.3 =
 * NEW: "Allow only logged in users to comment" option in "Image view options".
@@ -788,6 +851,9 @@ Contest Gallery
 * FIXED: Remove votes manually in backend not always executed.
 * FIXED: Background alignment of overlay when deleting images in backend. Was imprecise before.
 
+= V13.1.0.8 =
+* FIXED: "Forward to another page after login" option did not work.
+
 = V13.1.0.7 =
 * FIXED: Security issue - improved conditions user authentication when exporting data Contest Gallery backend area.
 
@@ -796,6 +862,9 @@ Contest Gallery
 
 = V13.1.0.5 =
 * FIXED: Some japanese characters could not be typed in upload form.
+
+= V13.1.0.4 =
+* FIXED: CSS for upload form shortcode was not loaded.
 
 = V13.1.0.3 =
 * NEW: "of" as translation validation message available now for pagination translation in frontend.
@@ -915,6 +984,9 @@ Contest Gallery
 * FIXED: Some translations might be not always visible in frontend.
 * FIXED: Image information data might be visible in frontend which is not configured as visible in "Edit upload form" after frontend upload. If this is the case then please go "Edit options" >>> "Status, repair..." and click "Repair frontend" button.
 
+= V12.3.0.4 =
+* FIXED: Trying to include folder which does not exists error message in frontend.
+
 = V12.3.0.3 =
 * FIXED: Plugin activation might fail in some cases.
 
@@ -926,6 +998,17 @@ Contest Gallery
 
 = V12.3.0 =
 * NEW: Improved frontend data rendering, adapted for more templates.
+* NEW: "Show HTML message after every successful vote" option, available in "Voting options".
+* NEW: "Show HTML message if voting limitation reached" option, available in "Voting options".
+
+= V12.2.3.4 =
+* FIXED: Initializing WordPress TinyMCE editor might not work on some WordPress instances.
+
+= V12.2.3.3 =
+* FIXED: Activating PRO version might not work in some cases.
+
+= V12.2.3.2 =
+* FIXED: "Delete votes" option did not work in some cases.
 
 = V12.2.3.1 =
 * FIXED: EXIF data was not immediately displayed after uploading via frontend upload form if auto activation was not enabled.
@@ -981,6 +1064,7 @@ Contest Gallery
 
 = V12.1.3 =
 * NEW: Copy image link option for single image view available in "Image view options".
+* FIXED: Contest start time did not work for uploads.
 
 = V12.1.2.3 =
 * FIXED: Delete user images option in frontend for cg_gallery_user shortcode is not visible in some cases.
@@ -1049,6 +1133,7 @@ Contest Gallery
 * FIXED: Last images in a row of "Thumb view" are sometimes full width size scaled.
 * FIXED: Opening blog view in full window did not show up as expected if 11th image of gallery was clicked.
 * FIXED: Checking database status on a multisite from a subsite did not work correctly.
+* FIXED: Updating option for PRO version did not show up in plugins area if all updates were done in plugins area.
 
 = V11.1.3 =
 * NEW: "One vote per category" option in "Voting options".
@@ -1228,7 +1313,7 @@ Contest Gallery
 
 = V10.9.8.8.4 =
 * NEW: Extending IP recognition. Further recognition variants added. Message in backend if IP can not be recognized.
-* NEW: If "Show as title in gallery view" is activated for URL field, then field headline will be displayed and forwards to URL if clicked.
+* NEW: If "Show as title in gallery" is activated for URL field, then field headline will be displayed and forwards to URL if clicked.
 * FIXED: Wrong order in frontend when copying a gallery.
 
 = V10.9.8.8.3 =
@@ -1818,13 +1903,13 @@ Contest Gallery
 * FIXED: Gallery stopped loading for special kind of sorting.
 
 = V10.2.5 =
-* NEW: Uploaded images added instantly to gallery in frontend, without site reload, if "In gallery upload form" and "Automatically activate users images after frontend upload" is activated and used.
+* NEW: Uploaded images added instantly to gallery in frontend, without site reload, if "In gallery upload form" and "Automatically activate users files after frontend upload" is activated and used.
 * NEW: Improved slide out performance single image view.
 * FIXED: Missing information in admin mail.
 * FIXED: Backslash appears when quotes are added in comments area.
 * FIXED: Gallery stopped loading if not existing image tried to be found when site load.
 * FIXED: Image activation mail was not send if url parameter was missing in content mail.
-* FIXED: Multiple images upload and "Automatically activate users images after frontend upload".
+* FIXED: Multiple images upload and "Automatically activate users files after frontend upload".
 
 = V10.2.3 =
 * NEW: Delete votes. Frontend users can remove their votes and give them to another picture. For galleries created after V10.
@@ -1845,7 +1930,7 @@ Contest Gallery
 
 = V10.1.4 =
 * FIXED: Small images were scaled to full gallery width.
-* FIXED: Automatically activate users images after frontend upload for galleries created after V10.
+* FIXED: Automatically activate users files after frontend upload for galleries created after V10.
 
 = V10.1.3 =
 * FIXED: Thumb view width adjustment for galleries created after V10.

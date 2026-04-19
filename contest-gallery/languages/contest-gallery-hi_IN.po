@@ -46,8 +46,8 @@ msgid "Download invoice"
 msgstr "चालान डाउनलोड करें"
 
 #: check-language-ecommerce.php:53
-msgid "Billing address different from delivery address?"
-msgstr "बिलिंग पता डिलीवरी पते से अलग है?"
+msgid "Billing address different from delivery address"
+msgstr "बिलिंग पता डिलीवरी पते से अलग है"
 
 #: check-language-ecommerce.php:55
 msgid "Country"
@@ -856,8 +856,8 @@ msgid "You have already used all your votes"
 msgstr "आप अपने सभी वोट उपयोग कर चुके हैं"
 
 #: check-language.php:304
-msgid "It is not allowed to vote for your own file"
-msgstr "आप अपनी फ़ाइल के लिए वोट नहीं कर सकते"
+msgid "You cannot vote for your own entry"
+msgstr "आप अपनी स्वयं की प्रविष्टि के लिए वोट नहीं कर सकते"
 
 #: check-language.php:306
 msgid "Only registered users are allowed to vote"

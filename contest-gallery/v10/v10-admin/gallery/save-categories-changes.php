@@ -180,3 +180,7 @@ $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.
 $fp = fopen($jsonFile, 'w');
 fwrite($fp, json_encode($options));
 fclose($fp);
+
+if(function_exists('cg1l_create_last_updated_time_file_all')){
+    cg1l_create_last_updated_time_file_all($GalleryID);
+}

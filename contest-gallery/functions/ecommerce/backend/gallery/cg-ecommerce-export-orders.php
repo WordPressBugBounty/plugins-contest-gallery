@@ -20,10 +20,10 @@ if(!function_exists('cg_ecommerce_export_orders')){
 			}
 		}
 
-        $step = 50;
+		$step = 50;
 		if (isset($_POST["cg_step"])) {
 			$muster = "/^[0-9]+$/"; // reg. Ausdruck für Zahlen
-			if (preg_match($muster, $_POST["cg_start"]) == 0) {
+			if (preg_match($muster, $_POST["cg_step"]) == 0) {
 				$step = 50;
 			} else {
 				$step = $_POST["cg_step"];
@@ -36,138 +36,138 @@ if(!function_exists('cg_ecommerce_export_orders')){
 		$currenciesArray = cg_get_ecommerce_currencies_array_formatted_by_short_key();
 
 		$saleItemsIdsByOrderIdArray = [];
-		$saleItemsCollectedOrderIds = '';
+		$saleItemsCollectedOrderIds = [];
+		$saleItemsArray = [];
 
 		foreach($saleOrders as $saleOrder){
 			$OrderId = $saleOrder->id;
-			if(!$saleItemsCollectedOrderIds){
-				$saleItemsCollectedOrderIds .= "ParentOrder = $OrderId";
-			}else{
-				$saleItemsCollectedOrderIds .= " or ParentOrder = $OrderId";
-			}
+			$saleItemsCollectedOrderIds[] = $OrderId;
+			$saleItemsArray[$saleOrder->id] = [];
 		}
 
-		$saleItems = $wpdb->get_results("SELECT * FROM $tablename_ecommerce_orders_items WHERE ($saleItemsCollectedOrderIds)");
-		$saleItemsArray = [];
+		$saleItems = array();
+		if(!empty($saleItemsCollectedOrderIds)){
+			$SaleItemsPlaceholders = implode(',', array_fill(0, count($saleItemsCollectedOrderIds), '%d'));
+			$saleItemsQuery = "SELECT * FROM $tablename_ecommerce_orders_items WHERE ParentOrder IN ($SaleItemsPlaceholders)";
+			$saleItems = $wpdb->get_results(cg_ecommerce_get_orders_prepare_query($wpdb, $saleItemsQuery, $saleItemsCollectedOrderIds));
+		}
 
 		foreach($saleItems as $saleItem){
 			if(!isset($saleItemsIdsByOrderIdArray[$saleItem->ParentOrder])){
-				$saleItemsArray[$saleItem->ParentOrder] = [];
 				$saleItemsIdsByOrderIdArray[$saleItem->ParentOrder] = [];
 			}
 			$saleItemsIdsByOrderIdArray[$saleItem->ParentOrder][] = $saleItem->pid;
 			$saleItemsArray[$saleItem->ParentOrder][] = $saleItem;
 		}
 
-		if(!empty($saleOrders)){
-			$k = 0;
+		$k = 0;
 
-			$csvData = array();
+		$csvData = array();
 
-			$i=0;
-			$r=0;
+		$i=0;
+		$r=0;
 
-			$csvData[$i][$k]="Order number";
-			$k++;
-			$csvData[$i][$k]="Purchase date";
-			$k++;
-			$csvData[$i][$k]="PayPal transaction ID";
-			$k++;
-			$csvData[$i][$k]="Stripe Payment Intent ID";
-			$k++;
-			$csvData[$i][$k]="Payer email";
-			$k++;
-			$csvData[$i][$k]="Invoice address first name ";
-			$k++;
-			$csvData[$i][$k]="Invoice address last name ";
-			$k++;
-			$csvData[$i][$k]="Invoice address company";
-			$k++;
-			$csvData[$i][$k]="Invoice address address line 1";
-			$k++;
-			$csvData[$i][$k]="Invoice address address line 2";
-			$k++;
-			$csvData[$i][$k]="Invoice address city";
-			$k++;
-			$csvData[$i][$k]="Invoice address postal code";
-			$k++;
-			$csvData[$i][$k]="Invoice address state short";
-			$k++;
-			$csvData[$i][$k]="Invoice address state";
-			$k++;
-			$csvData[$i][$k]="Invoice address country short";
-			$k++;
-			$csvData[$i][$k]="Invoice address country";
-			$k++;
-			$csvData[$i][$k]="VAT Number";
-			$k++;
-			$csvData[$i][$k]="Shipping address first name ";
-			$k++;
-			$csvData[$i][$k]="Shipping address last name ";
-			$k++;
-			$csvData[$i][$k]="Shipping address company";
-			$k++;
-			$csvData[$i][$k]="Shipping address address line 1";
-			$k++;
-			$csvData[$i][$k]="Shipping address address line 2";
-			$k++;
-			$csvData[$i][$k]="Shipping address city";
-			$k++;
-			$csvData[$i][$k]="Shipping address postal code";
-			$k++;
-			$csvData[$i][$k]="Shipping address state short";
-			$k++;
-			$csvData[$i][$k]="Shipping address state";
-			$k++;
-			$csvData[$i][$k]="Shipping address country short";
-			$k++;
-			$csvData[$i][$k]="Shipping address country";
-			$k++;
-			$csvData[$i][$k]="Shipping default net";
-			$k++;
-			$csvData[$i][$k]="Shipping default gross";
-			$k++;
-			$csvData[$i][$k]="Total net (with shipping if exists)";
-			$k++;
-			$csvData[$i][$k]="Total gross (with shipping if exists)";
-			$k++;
-			$csvData[$i][$k]="Quantity";
-			$k++;
-			$csvData[$i][$k]="Type";
-			$k++;
-			$csvData[$i][$k]="Title";
-			$k++;
-			$csvData[$i][$k]="Price unit net";
-			$k++;
-			$csvData[$i][$k]="Price total net";
-			$k++;
-			$csvData[$i][$k]="Tax percentage";
-			$k++;
-			$csvData[$i][$k]="Tax total";
-			$k++;
-			$csvData[$i][$k]="Price total gross";
-			$k++;
-			$csvData[$i][$k]="Shipping alternative net";
-			$k++;
-			$csvData[$i][$k]="Shipping alternative gross";
-			$k++;
-			$csvData[$i][$k]="Entry ID";
-			$k++;
-			$csvData[$i][$k]="Gallery ID";
-			$k++;
-			$csvData[$i][$k]="Environment";
-			$k++;
+		$csvData[$i][$k]="Order number";
+		$k++;
+		$csvData[$i][$k]="Purchase date";
+		$k++;
+		$csvData[$i][$k]="PayPal transaction ID";
+		$k++;
+		$csvData[$i][$k]="Stripe Payment Intent ID";
+		$k++;
+		$csvData[$i][$k]="Payer email";
+		$k++;
+		$csvData[$i][$k]="Invoice address first name ";
+		$k++;
+		$csvData[$i][$k]="Invoice address last name ";
+		$k++;
+		$csvData[$i][$k]="Invoice address company";
+		$k++;
+		$csvData[$i][$k]="Invoice address address line 1";
+		$k++;
+		$csvData[$i][$k]="Invoice address address line 2";
+		$k++;
+		$csvData[$i][$k]="Invoice address city";
+		$k++;
+		$csvData[$i][$k]="Invoice address postal code";
+		$k++;
+		$csvData[$i][$k]="Invoice address state short";
+		$k++;
+		$csvData[$i][$k]="Invoice address state";
+		$k++;
+		$csvData[$i][$k]="Invoice address country short";
+		$k++;
+		$csvData[$i][$k]="Invoice address country";
+		$k++;
+		$csvData[$i][$k]="VAT Number";
+		$k++;
+		$csvData[$i][$k]="Shipping address first name ";
+		$k++;
+		$csvData[$i][$k]="Shipping address last name ";
+		$k++;
+		$csvData[$i][$k]="Shipping address company";
+		$k++;
+		$csvData[$i][$k]="Shipping address address line 1";
+		$k++;
+		$csvData[$i][$k]="Shipping address address line 2";
+		$k++;
+		$csvData[$i][$k]="Shipping address city";
+		$k++;
+		$csvData[$i][$k]="Shipping address postal code";
+		$k++;
+		$csvData[$i][$k]="Shipping address state short";
+		$k++;
+		$csvData[$i][$k]="Shipping address state";
+		$k++;
+		$csvData[$i][$k]="Shipping address country short";
+		$k++;
+		$csvData[$i][$k]="Shipping address country";
+		$k++;
+		$csvData[$i][$k]="Shipping default net";
+		$k++;
+		$csvData[$i][$k]="Shipping default gross";
+		$k++;
+		$csvData[$i][$k]="Total net (with shipping if exists)";
+		$k++;
+		$csvData[$i][$k]="Total gross (with shipping if exists)";
+		$k++;
+		$csvData[$i][$k]="Quantity";
+		$k++;
+		$csvData[$i][$k]="Type";
+		$k++;
+		$csvData[$i][$k]="Title";
+		$k++;
+		$csvData[$i][$k]="Price unit net";
+		$k++;
+		$csvData[$i][$k]="Price total net";
+		$k++;
+		$csvData[$i][$k]="Tax percentage";
+		$k++;
+		$csvData[$i][$k]="Tax total";
+		$k++;
+		$csvData[$i][$k]="Price total gross";
+		$k++;
+		$csvData[$i][$k]="Shipping alternative net";
+		$k++;
+		$csvData[$i][$k]="Shipping alternative gross";
+		$k++;
+		$csvData[$i][$k]="Entry ID";
+		$k++;
+		$csvData[$i][$k]="Gallery ID";
+		$k++;
+		$csvData[$i][$k]="Environment";
+		$k++;
 
-			/*echo "<pre>";
-			print_r($saleItemsArray);
-			echo "</pre>";
+		/*echo "<pre>";
+		print_r($saleItemsArray);
+		echo "</pre>";
 
-			die;*/
+		die;*/
 
-			// Simple amount of orders
-			$order = 0;
+		// Simple amount of orders
+		$order = 0;
 
-			foreach($saleOrders as $saleOrder){
+		foreach($saleOrders as $saleOrder){
 				$i++;
 				$k = 0;
 				$order++;
@@ -371,11 +371,6 @@ if(!function_exists('cg_ecommerce_export_orders')){
 					$koi++;
 				}
 			}
-
-		}else{
-			echo "<b style='font-size: 22px;'><b>No data selected</b></p>";
-			die;
-		}
 
 		if(!empty($_GET['cg_order_id'])){
 			$filename = "cg-order-".absint($_GET['cg_order_id']).".csv";

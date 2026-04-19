@@ -133,8 +133,7 @@ cgJsClassAdmin.options.functions.ecommerce = {
             }
         }
 
-        resultString = resultString.replaceAll('---','-');
-        resultString = resultString.replaceAll('--','-');
+        resultString = resultString.replace(/-+/g,'-');
 
         if(resultString.slice(0,1)=='-'){
             resultString = resultString.slice(1);

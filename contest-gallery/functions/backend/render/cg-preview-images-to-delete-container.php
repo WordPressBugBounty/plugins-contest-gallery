@@ -24,16 +24,16 @@ for [cg_gallery_user id=\"".$GalleryID."'\"] shortcode can be configured in \"Up
 <span class='cg_image_action_span'>Forgot something, let me edit again</span>
 </div>
 
+<div  class='cg_preview_images_to_delete_button_container cg_files_to_delete_available' id='cgPreviewImagesToDeleteButtonContinueWithDeletingOriginalSource'>
+<span class='cg_image_action_span'>Yes, delete original source from storage also and continue</span>
+</div>
+
 <div  class='cg_preview_images_to_delete_button_container cg_files_to_delete_available'>
 <input type='checkbox' id='cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckbox' /><label for='cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckbox' id='cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckboxLabel'>Please delete original source from storage also</label>
 <p id='cgPreviewImagesToDeleteOriginalSourceDeleteConfirmCheckboxMessage' class='cg_hide'>Please confirm that you want to delete orignal source also (deleted files can't be restored)
 <span class='cg_note cg_hide'><br><b>NOTE:</b> additional files added to a file will be also deleted and can't be restored</span>
 <span class='cg_note_pdf cg_hide'><br><b>NOTE:</b> generated PDF previews related to a PDF will be also deleted and can't be restored</span>
 </p>
-</div>
-
-<div  class='cg_preview_images_to_delete_button_container cg_files_to_delete_available' id='cgPreviewImagesToDeleteButtonContinueWithDeletingOriginalSource'>
-<span class='cg_image_action_span'>Yes, delete original source from storage also and continue</span>
 </div>
 
 <div  class='cg_preview_images_to_delete_button_container cg_files_to_delete_not_available' id='cgPreviewImagesToDeleteButtonGoBackToEdit'  style='padding-top:20px;'>

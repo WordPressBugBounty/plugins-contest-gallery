@@ -54,6 +54,9 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
                 var script = jQuery(this).html();
                 eval(script);
             });
+            if(cgJsClassAdmin.index.vars.cgNextGalleryId){
+                localStorage.setItem('cgOrder_BG_'+cgJsClassAdmin.index.vars.cgNextGalleryId, 'date_desc');
+            }
             var urlWithNewOptionId = cgJsClassAdmin.index.functions.replaceOptionIdInUrl(location.href,cgJsClassAdmin.index.vars.cgNextGalleryId);
             window.history.replaceState({}, '', urlWithNewOptionId);
         }
@@ -149,6 +152,13 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
                     cgJsClassAdmin.mainMenu.functions.load($,$formLinkObject,$response);
                 }
 
+                if($cg_main_container.find('#cgFrontendTestMatrix').length){
+                    $response.find('script[data-cg-processing="true"]').each(function () {
+                        var script = jQuery(this).html();
+                        eval(script);
+                    });
+                }
+
                 if($cg_main_container.find('#cgUsersListSteps').length){
                     cgJsClassAdmin.gallery.vars.cgMailBodyToSendTinyMceUnconfirmed = false;
                     cgJsClassAdmin.index.functions.loadUnconfirmedUsers($);
@@ -183,11 +193,14 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
         cgJsClassAdmin.index.functions.resize(cgJsClassAdmin.index.vars.$wpBodyContent,cgJsClassAdmin.index.vars.$cg_main_container);
 
         var $cgCreatedNewGallery = $('#cgCreatedNewGallery');
+        var $cgNavMenuRowContainer = $('#cg_nav_menu_row_container');
         var $cgEditOptionsButton = $('#cgEditOptionsButton');
         var $cgDocumentation = $('#cgDocumentation');
 
         if($cgCreatedNewGallery.length){
             $cgCreatedNewGallery.get(0).scrollIntoView();
+        }else if($cgNavMenuRowContainer.length){
+            $cgNavMenuRowContainer.get(0).scrollIntoView();
         }else if($cgEditOptionsButton.length){
             $cgEditOptionsButton.get(0).scrollIntoView();
         }else if($cgDocumentation.length){

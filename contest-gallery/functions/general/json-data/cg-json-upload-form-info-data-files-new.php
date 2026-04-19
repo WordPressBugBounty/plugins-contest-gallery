@@ -2,7 +2,7 @@
 
 add_action('cg_json_upload_form_info_data_files_new','cg_json_upload_form_info_data_files_new');
 if(!function_exists('cg_json_upload_form_info_data_files_new')){
-	function cg_json_upload_form_info_data_files_new($GalleryID,$pidsArray=[],$isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized = false,$IsForWpPageTitleInputDeleted = false,$IsFromCopyGalleryOrActualizeAll = false){
+	function cg_json_upload_form_info_data_files_new($GalleryID,$pidsArray=[],$isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized = false,$IsForWpPageTitleInputDeleted = false,$IsFromCopyGalleryOrActualizeAll = false,$deferFrontendFreshness = false){
 
 		// var_dump('$isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized123');
 		// var_dump($isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized);
@@ -15,8 +15,19 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 		$tablename_options_visual = $wpdb->prefix . "contest_gal1ery_options_visual";
 		$tablename_entries = $wpdb->prefix . "contest_gal1ery_entries";
 
-		$wp_upload_dir = wp_upload_dir();
-		$jsonUpload = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json';
+			$GalleryID = absint($GalleryID);
+			$wp_upload_dir = wp_upload_dir();
+			$jsonUpload = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json';
+			$pidsArraySanitized = array();
+			if(!empty($pidsArray) && is_array($pidsArray)){
+				foreach($pidsArray as $pid){
+					$pid = absint($pid);
+					if(!empty($pid)){
+						$pidsArraySanitized[$pid] = $pid;
+					}
+				}
+			}
+			$pidsArray = array_values($pidsArraySanitized);
 
 		if(!is_dir($jsonUpload)){
 			mkdir($jsonUpload,0755,true);
@@ -26,9 +37,14 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 		$inputIdsArray = [];
 		$options = $wpdb->get_row("SELECT * FROM $tablename_options WHERE id = $GalleryID");
 		$optionsVisual = $wpdb->get_row("SELECT * FROM $tablename_options_visual WHERE GalleryID = $GalleryID");
-		if(!empty($optionsVisual->Field1IdGalleryView)){$inputIdsArray[]=$optionsVisual->Field1IdGalleryView;}
-		if(!empty($optionsVisual->Field2IdGalleryView)){$inputIdsArray[]=$optionsVisual->Field2IdGalleryView;}
-		if(!empty($optionsVisual->Field3IdGalleryView)){$inputIdsArray[]=$optionsVisual->Field3IdGalleryView;}
+		$Field1IdGalleryView = (!empty($optionsVisual) && isset($optionsVisual->Field1IdGalleryView)) ? absint($optionsVisual->Field1IdGalleryView) : 0;
+		$Field1IdFullWindowBlogView = (!empty($optionsVisual) && isset($optionsVisual->Field1IdFullWindowBlogView)) ? absint($optionsVisual->Field1IdFullWindowBlogView) : 0;
+		$Field2IdGalleryView = (!empty($optionsVisual) && isset($optionsVisual->Field2IdGalleryView)) ? absint($optionsVisual->Field2IdGalleryView) : 0;
+		$Field3IdGalleryView = (!empty($optionsVisual) && isset($optionsVisual->Field3IdGalleryView)) ? absint($optionsVisual->Field3IdGalleryView) : 0;
+		if(!empty($Field1IdGalleryView)){$inputIdsArray[]=$Field1IdGalleryView;}
+		if(!empty($Field1IdFullWindowBlogView)){$inputIdsArray[]=$Field1IdFullWindowBlogView;}
+		if(!empty($Field2IdGalleryView)){$inputIdsArray[]=$Field2IdGalleryView;}
+		if(!empty($Field3IdGalleryView)){$inputIdsArray[]=$Field3IdGalleryView;}
 
 		$inputs = $wpdb->get_results("SELECT * FROM $tablename_form_input WHERE GalleryID = $GalleryID");
 		$frontendInputProperties = ['Show_Slider','WatermarkPosition','SubTitle','ThirdTitle','EcommerceTitle','EcommerceDescription','IsForWpPageTitle','FieldTitleGallery'];
@@ -60,38 +76,24 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 			}
 		}
 
-		if(!empty($pidsArray)){
-			$collect = '';
-			foreach ($pidsArray as $pid){
-				if(!$collect){
-					$collect .= "pid = $pid";
-				}else{
-					$collect .= " or pid = $pid";
-				}
+			if(!empty($pidsArray)){
+				$pidsPlaceholders = implode(',', array_fill(0, count($pidsArray), '%d'));
+				$entries = $wpdb->get_results($wpdb->prepare("SELECT * FROM $tablename_entries WHERE GalleryID = %d AND pid IN ($pidsPlaceholders) ORDER BY pid ASC",array_merge(array($GalleryID),$pidsArray)));
+			}else{
+				$entries = $wpdb->get_results("SELECT * FROM $tablename_entries WHERE GalleryID = $GalleryID ORDER BY pid ASC");
 			}
-			$entries = $wpdb->get_results("SELECT * FROM $tablename_entries WHERE GalleryID = $GalleryID && ($collect) ORDER BY pid ASC");
-		}else{
-			$entries = $wpdb->get_results("SELECT * FROM $tablename_entries WHERE GalleryID = $GalleryID ORDER BY pid ASC");
-		}
 
         $Version = intval($options->Version);
 
 	    if($Version>=22 && $IsForWpPageTitleInputId && !empty($isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized)  && empty($IsForWpPageTitleInputDeleted)){
 
-			// var_dump('change 1');
-			if(!empty($pidsArray)){
-				$collect = '';
-				foreach ($pidsArray as $pid){
-					if(!$collect){
-						$collect .= "id = $pid";
-					}else{
-						$collect .= " or id = $pid";
-					}
+				// var_dump('change 1');
+				if(!empty($pidsArray)){
+					$pidsPlaceholders = implode(',', array_fill(0, count($pidsArray), '%d'));
+					$galleryEntries = $wpdb->get_results($wpdb->prepare("SELECT * FROM $tablename WHERE GalleryID = %d AND id IN ($pidsPlaceholders) ORDER BY id ASC",array_merge(array($GalleryID),$pidsArray)));
+				}else{
+					$galleryEntries = $wpdb->get_results("SELECT * FROM $tablename WHERE GalleryID = $GalleryID ORDER BY id ASC");
 				}
-				$galleryEntries = $wpdb->get_results("SELECT * FROM $tablename WHERE GalleryID = $GalleryID && ($collect) ORDER BY id ASC");
-			}else{
-				$galleryEntries = $wpdb->get_results("SELECT * FROM $tablename WHERE GalleryID = $GalleryID ORDER BY id ASC");
-			}
 
 			global $cg_post_names_for_a_title;
 			$cg_post_names_for_a_title = [];
@@ -369,9 +371,23 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 				$jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/image-info/image-info-'.$row->pid.'.json';
 				file_put_contents($jsonFile, json_encode($arrayDataForImage[$row->pid]));
 
+	                if(!empty($deferFrontendFreshness)){
+	                    continue;
+	                }
+
+	                cg1l_push_recent_id_file($GalleryID,$row->pid,'image-info-data-last-update');
+
+                static $cg1l_last_updated_done = false;
+
+                if (!$cg1l_last_updated_done || time() > $cg1l_last_updated_done) {
+                    $cg1l_last_updated_done = time();
+                    cg1l_create_last_updated_time_file($GalleryID,'image-info-data-last-update');
+                }
+
 			}
 		}
 
+
+
 	}
 }
-

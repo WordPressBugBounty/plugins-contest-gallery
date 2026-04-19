@@ -18,7 +18,7 @@ if (isset($_GET['start'])) {
 if (isset($_GET['step'])) {
     $muster = '/^[0-9]+$/';
     $step_value = isset($_GET['step']) ? $_GET['step'] : '';
-    $step = (preg_match($muster, $step_value) === 1) ? absint($_GET['step']) : 50;
+    $step = (preg_match($muster, $step_value) === 1 && absint($_GET['step']) > 0) ? absint($_GET['step']) : 50;
 }
 
 // --- SEARCH ---
@@ -132,6 +132,8 @@ if($rows){
     SELECT ReceiverMail, COUNT(*) AS count
     FROM {$tablename_mails}
     WHERE ReceiverMail IN ($placeholders)
+      AND WpUserId = 0
+      AND MailType IN ('registry-resend-frontend', 'registry-resend-backend', 'registry-frontend')
     GROUP BY ReceiverMail
 ", $mails);
     $counts = $wpdb->get_results($sql2);
@@ -196,7 +198,7 @@ echo "
         </div>
         
         <div id='cgUnconfrmedSearch' class='" . (($rows == 0) ? 'cg_hidden' : '') . "'>
-            <form id='cgUnconfirmedManagementForm' method='POST' action='?page=" . cg_get_version() . "/index.php&unconfirmed_management=true#cg-search-results-container' class='cg_load_backend_submit'>
+            <form id='cgUnconfirmedManagementForm' method='POST' action='?page=" . cg_get_version() . "/index.php&unconfirmed_management=true#cg-search-results-container'>
                 <input 
                     style='flex-grow:1;' 
                     class='cg_search_user_name' 
@@ -248,7 +250,7 @@ echo '
                     $cg_hide_mails = '';
                     $mailsCount = $keyed[$user->Field_Content];
                 }
-                echo '<td><div class="cg_resend '.$cgProFalse.'">Resend mail</div><div class="cg_mails '.$cg_hide_mails.'">Mails <b>'.$mailsCount.'</b></div><div class="cg_delete">Delete</div></td>
+                echo '<td><div class="cg_resend '.$cgProFalse.'">Resend mail</div><div class="cg_mails '.$cg_hide_mails.'">Reg mails <b>'.$mailsCount.'</b></div><div class="cg_delete">Delete</div></td>
                 </tr>';
             }
         }else{
@@ -259,4 +261,3 @@ echo '
 echo     '</tbody>
     </table>
 </div>';
-

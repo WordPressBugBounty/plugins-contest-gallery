@@ -1,7 +1,8 @@
 <?php
 
-$cg_copy_start = $_POST['cg_copy_start'];
-$cg_processed_images = $cg_copy_start + 100;
+$cgCopyBatchSize = 50;
+$cg_copy_start = absint($_POST['cg_copy_start']);
+$cg_processed_images = $cg_copy_start + $cgCopyBatchSize;
 
 // otherwise is already defined
 if(!empty($_POST['option_id_next_gallery'])){
@@ -47,33 +48,48 @@ if($cg_processed_images<$imagesToProcess){
 }
 
 // Important, order by ID asc!!!! last pictures first, then ids gets descending!
-$galleryToCopy = $wpdb->get_results($wpdb->prepare("SELECT * FROM $tablename WHERE GalleryID = %d AND EcommerceEntry = 0 ORDER BY id ASC LIMIT %d, 100",[$idToCopy,$cg_copy_start]));
+$galleryToCopy = $wpdb->get_results($wpdb->prepare("SELECT * FROM $tablename WHERE GalleryID = %d AND EcommerceEntry = 0 ORDER BY id ASC LIMIT %d, %d",array($idToCopy,$cg_copy_start,$cgCopyBatchSize)));
 // var_dump($galleryToCopy);
 //die;
 
-$collectForPostTitle = '';
-$WpUploadsArray = [];
+$wpUploadIdsForPostTitle = array();
+$oldImageIdsForCopy = array();
 foreach ($galleryToCopy as $rowObject){
-    $WpUpload = $rowObject->WpUpload;
-    if($collectForPostTitle == ''){
-        $collectForPostTitle .= "ID = $WpUpload";
-    }else{
-        $collectForPostTitle .= " OR ID = $WpUpload";
+    $WpUpload = absint($rowObject->WpUpload);
+    if(!empty($WpUpload)){
+        $wpUploadIdsForPostTitle[$WpUpload] = $WpUpload;
+    }
+    $oldImageIdForCopy = absint($rowObject->id);
+    if(!empty($oldImageIdForCopy)){
+        $oldImageIdsForCopy[$oldImageIdForCopy] = $oldImageIdForCopy;
     }
 }
+$wpUploadIdsForPostTitle = array_values($wpUploadIdsForPostTitle);
+$oldImageIdsForCopy = array_values($oldImageIdsForCopy);
 
 
 $post_titles_array = [];
 $WpPostTitles = [];
-if(!empty($collectForPostTitle)){
-	$WpPostTitles = $wpdb->get_results( "SELECT DISTINCT ID, post_title FROM $table_posts WHERE ($collectForPostTitle)");
+if(!empty($wpUploadIdsForPostTitle)){
+    $wpUploadIdsPlaceholders = implode(',', array_fill(0, count($wpUploadIdsForPostTitle), '%d'));
+	$WpPostTitles = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT ID, post_title FROM $table_posts WHERE ID IN ($wpUploadIdsPlaceholders)",$wpUploadIdsForPostTitle));
 }
 
 foreach ($WpPostTitles as $WpPostTitle){
     $post_titles_array[$WpPostTitle->ID] = $WpPostTitle->post_title;
 }
 
-$IsForWpPageTitleInputId = $wpdb->get_var("SELECT id FROM $tablename_form_input WHERE GalleryID = '$idToCopy' AND IsForWpPageTitle=1");
+$IsForWpPageTitleInputId = $wpdb->get_var($wpdb->prepare("SELECT id FROM $tablename_form_input WHERE GalleryID = %d AND IsForWpPageTitle=1",[$idToCopy]));
+$wpPageTitlesByOldPid = array();
+if(!empty($IsForWpPageTitleInputId) && !empty($oldImageIdsForCopy)){
+    $oldImageIdsPlaceholders = implode(',', array_fill(0, count($oldImageIdsForCopy), '%d'));
+    $wpPageTitleRows = $wpdb->get_results($wpdb->prepare("SELECT pid, Short_Text FROM $tablename_entries WHERE GalleryID = %d AND f_input_id = %d AND pid IN ($oldImageIdsPlaceholders)",array_merge(array($idToCopy,$IsForWpPageTitleInputId),$oldImageIdsForCopy)));
+    foreach($wpPageTitleRows as $wpPageTitleRow){
+        if(!empty($wpPageTitleRow->Short_Text)){
+            $wpPageTitlesByOldPid[$wpPageTitleRow->pid] = $wpPageTitleRow->Short_Text;
+        }
+    }
+}
 
 // get $collectInputIdsArray
 $fp = fopen($galleryUpload . '/json/' . $nextIDgallery . '-collect-cat-ids-array.json', 'r');
@@ -91,9 +107,6 @@ $collectActiveImageIdsArray = array();
 $imageRatingArray = array();
 $imagesDataArray = array();
 
-$oldIdsToCopyStringCollect = '';
-$newIdsToCopyStringCollect = '';
-
 $Version = cg_get_version_for_scripts();
 
 $tableNameForColumns = $wpdb->prefix . 'contest_gal1ery';
@@ -105,12 +118,6 @@ foreach($galleryToCopy as $key => $rowObject){
     $WpUpload = $rowObject->WpUpload;
     $Active = $rowObject->Active;
     $lastImageIdOld = $rowObject->id;
-
-    if(empty($oldIdsToCopyStringCollect)){
-        $oldIdsToCopyStringCollect = "$tablename_entries.pid = $lastImageIdOld";
-    }else{
-        $oldIdsToCopyStringCollect .= " OR $tablename_entries.pid = $lastImageIdOld";
-    }
 
     $prevId = 0;
     $WpUpload = 0;
@@ -165,15 +172,9 @@ foreach($galleryToCopy as $key => $rowObject){
 
     $nextId = cg_copy_table_row('contest_gal1ery',$rowObject->id,['contest_gal1ery' => $valueCollect],$cgCopyType,$columns);
 
-    // $collectImageIdsArray will be collected in next step at the bottom
-    $nextId = $wpdb->insert_id;
-
     $WpPageTitle = '';
-    if(!empty($IsForWpPageTitleInputId)){
-        $ShortText = $wpdb->get_var("SELECT Short_Text FROM $tablename_entries WHERE pid = '$prevId' AND f_input_id=$IsForWpPageTitleInputId");
-        if(!empty($ShortText)){
-            $WpPageTitle = $ShortText;
-        }
+    if(!empty($IsForWpPageTitleInputId) && isset($wpPageTitlesByOldPid[$prevId])){
+        $WpPageTitle = $wpPageTitlesByOldPid[$prevId];
     }
 
     if(!empty($WpPageTitle)){
@@ -268,27 +269,45 @@ foreach($galleryToCopy as $key => $rowObject){
         array('%d')
     );
 
+    $copiedRowObject = $wpdb->get_row($wpdb->prepare(
+        "
+            SELECT $table_posts.*, $tablename.*
+            FROM $tablename
+            LEFT JOIN $table_posts ON $tablename.WpUpload = $table_posts.ID
+            WHERE $tablename.id = %d
+            LIMIT 1
+        ",
+        [$nextId]
+    ));
+
+    if(empty($copiedRowObject)){
+        $copiedRowObject = $wpdb->get_row($wpdb->prepare(
+            "
+                SELECT *
+                FROM $tablename
+                WHERE id = %d
+                LIMIT 1
+            ",
+            [$nextId]
+        ));
+    }
+
+    if(!empty($copiedRowObject)){
+        if(!isset($copiedRowObject->post_date)){$copiedRowObject->post_date = '';}
+        if(!isset($copiedRowObject->post_content)){$copiedRowObject->post_content = '';}
+        if(!isset($copiedRowObject->post_title)){$copiedRowObject->post_title = '';}
+        if(!isset($copiedRowObject->post_name)){$copiedRowObject->post_name = '';}
+        if(!isset($copiedRowObject->post_excerpt)){$copiedRowObject->post_excerpt = '';}
+    }
+
     if($Active==1){
+        $imagesDataArray = cg_create_json_files_when_activating($nextIDgallery,$copiedRowObject,$thumbSizesWp,$uploadFolder,$imagesDataArray,0,array(),array(),true);
 
-        if(!empty($WpUpload)){
-            $rowObject = $wpdb->get_row($wpdb->prepare("SELECT DISTINCT $table_posts.*, $tablename.* FROM $table_posts, $tablename WHERE 
-                                              ($tablename.GalleryID=%d  AND $tablename.EcommerceEntry = 0 AND $tablename.Active='1' and $table_posts.ID = $tablename.WpUpload)
-                                          GROUP BY $tablename.id ORDER BY $tablename.id DESC LIMIT 0, 1",[$nextIDgallery]));
-        }else{
-            $rowObject = $wpdb->get_row($wpdb->prepare("SELECT DISTINCT $table_posts.*, $tablename.* FROM $table_posts, $tablename WHERE 
-                                              ($tablename.GalleryID=%d  AND $tablename.EcommerceEntry = 0 AND $tablename.Active='1' AND $tablename.WpUpload = 0) 
-                                          GROUP BY $tablename.id ORDER BY $tablename.id DESC LIMIT 0, 1",[$nextIDgallery]));
-        }
-
-        $imagesDataArray = cg_create_json_files_when_activating($nextIDgallery,$rowObject,$thumbSizesWp,$uploadFolder,$imagesDataArray);
-
-        $collectImageIdsArray[$lastImageIdOld] = $rowObject->id;
-        $collectActiveImageIdsArray[$lastImageIdOld] = $rowObject->id;
+        $collectImageIdsArray[$lastImageIdOld] = $nextId;
+        $collectActiveImageIdsArray[$lastImageIdOld] = $nextId;
 
     }else{
-
-        $lastImageId = $wpdb->get_var("SELECT id FROM $tablename WHERE EcommerceEntry = 0 ORDER BY id DESC LIMIT 0, 1");
-        $collectImageIdsArray[$lastImageIdOld] = $lastImageId;
+        $collectImageIdsArray[$lastImageIdOld] = $nextId;
 
     }
 
@@ -330,7 +349,9 @@ fclose($fp);
 // check which fileds are allowed for json save because allowed gallery or single view
 $uploadFormFields = $wpdb->get_results($wpdb->prepare("SELECT * FROM $tablename_form_input WHERE GalleryID = %d",[$nextIDgallery]));
 
-$Field1IdGalleryView = $wpdb->get_var($wpdb->prepare("SELECT Field1IdGalleryView FROM $tablename_options_visual WHERE GalleryID = %d",[$nextIDgallery]));
+$optionsVisual = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_options_visual WHERE GalleryID = %d",[$nextIDgallery]));
+$Field1IdGalleryView = (!empty($optionsVisual) && isset($optionsVisual->Field1IdGalleryView)) ? absint($optionsVisual->Field1IdGalleryView) : 0;
+$Field1IdFullWindowBlogView = (!empty($optionsVisual) && isset($optionsVisual->Field1IdFullWindowBlogView)) ? absint($optionsVisual->Field1IdFullWindowBlogView) : 0;
 
 $fieldsForFrontendArray = array();
 $inputTitles = array();
@@ -340,16 +361,17 @@ foreach ($uploadFormFields as $field) {
 
     $inputTitles[$field->id] = $Field_Content['titel'];
 
-    if ($field->id == $Field1IdGalleryView or $field->Show_Slider == 1) {
+    if ($field->id == $Field1IdGalleryView or $field->id == $Field1IdFullWindowBlogView or $field->Show_Slider == 1) {
         $fieldsForFrontendArray[] = $field->id;
     }
 }
 
-if(!empty($oldIdsToCopyStringCollect)){
-    $oldIdsToCopyStringCollect = "AND ($oldIdsToCopyStringCollect)";
+if(!empty($oldImageIdsForCopy)){
+    $oldImageIdsPlaceholders = implode(',', array_fill(0, count($oldImageIdsForCopy), '%d'));
+    $galleryToCopy = $wpdb->get_results($wpdb->prepare("SELECT * FROM $tablename_entries WHERE GalleryID = %d AND pid IN ($oldImageIdsPlaceholders) ORDER BY pid DESC",array_merge(array($idToCopy),$oldImageIdsForCopy)));
+}else{
+    $galleryToCopy = array();
 }
-
-$galleryToCopy = $wpdb->get_results($wpdb->prepare("SELECT * FROM $tablename_entries WHERE GalleryID = %d $oldIdsToCopyStringCollect ORDER BY pid DESC",[$idToCopy]));
 
 $valueCollect = array();
 
@@ -439,25 +461,14 @@ if(!empty($galleryToCopy)){
 
 
 // insert entries json
-foreach ($collectActiveImageIdsArray as $oldImageId => $newImageId){
-
-    if(empty($newIdsToCopyStringCollect)){
-        $newIdsToCopyStringCollect = "$tablename_entries.pid = $newImageId";
-    }else{
-        $newIdsToCopyStringCollect .= " OR $tablename_entries.pid = $newImageId";
-    }
-
-}
-/*echo "<br>";
-var_dump ($newIdsToCopyStringCollect);
-echo "<br>";
-
-die;*/
 //do_action('cg_json_upload_form_info_data_files',$nextIDgallery,$newIdsToCopyStringCollect);
 //cg_json_upload_form_info_data_files_new($nextIDgallery,[],true);// not required since 24.0.0 ... will be inserted in correct way so or so
 // has to be done twice for correct url order
 //cg_json_upload_form_info_data_files_new($nextIDgallery,[],true);// not required since 24.0.0 ... will be inserted in correct way so or so
-cg_json_upload_form_info_data_files_new($nextIDgallery,[]);// simply actualize only contest gallery image info files since 24.0.0
+$copyImageInfoPids = array_values($collectImageIdsArray);
+if(!empty($copyImageInfoPids)){
+    cg_json_upload_form_info_data_files_new($nextIDgallery,$copyImageInfoPids,false,false,true,true);// simply actualize only current contest gallery image info files since 24.0.0
+}
 
 if($cgCopyType=='cg_copy_type_all'){
 
@@ -466,6 +477,11 @@ if($cgCopyType=='cg_copy_type_all'){
 
     // copy comments here
     cg_copy_comments($cg_copy_start,$idToCopy,$nextIDgallery,$collectImageIdsArray);
+}
+
+if($cg_processed_images >= $imagesToProcess){
+    cg1l_migrate_image_stats_to_folder($nextIDgallery,true,false);
+    cg1l_create_last_updated_time_file_all($nextIDgallery);
 }
 
 // forward

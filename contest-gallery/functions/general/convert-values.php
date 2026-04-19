@@ -183,7 +183,7 @@ if(!function_exists('cg_get_array_from_multiple_line_textarea')){
 }
 
 if(!function_exists('cg_neutralize_csv_value')){
-    function cg_neutralize_csv_value($value, bool $strict_numbers = true, bool $keep_newlines = true): string
+    function cg_neutralize_csv_value($value, $strict_numbers = true, $keep_newlines = true)
     {
         $v = (string) $value;
 
@@ -231,7 +231,7 @@ if(!function_exists('cg_neutralize_csv_value')){
 }
 
 if(!function_exists('cg_neutralize_csv_array')){
-    function cg_neutralize_csv_array(array $data): array {
+    function cg_neutralize_csv_array(array $data) {
         foreach ($data as $key => $value) {
             if (is_array($value)) {
                 // 🔁 Rekursiv tiefer gehen
@@ -242,5 +242,37 @@ if(!function_exists('cg_neutralize_csv_array')){
             }
         }
         return $data;
+    }
+}
+
+if(!function_exists('cg1l_load_language_file_categorized')){
+    function cg1l_load_language_file_categorized($file, $category, &$target)
+    {
+        if (!file_exists($file)) {
+            echo "FILE NOT FOUND: $file<br>";
+            return;
+        }
+
+        // Lokale Variablen VOR dem Include
+        $before = array_keys(get_defined_vars());
+
+        // Datei wird im Scope dieser Funktion ausgeführt:
+        include $file;
+
+        // Lokale Variablen NACH dem Include
+        $after = array_keys(get_defined_vars());
+
+        // Nur neu hinzugekommene Variablen:
+        $new = array_diff($after, $before);
+
+        foreach ($new as $varName) {
+            // Nur Sprachvariablen erfassen
+            if (strpos($varName, 'language_') === 0) {
+                $key = substr($varName, strlen('language_'));
+
+                // Wert der lokalen Variable holen
+                $target[$category][$key] = ${$varName};
+            }
+        }
     }
 }

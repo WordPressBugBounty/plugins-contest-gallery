@@ -2,6 +2,27 @@
 
 if(!defined('ABSPATH')){exit;}
 
+if(!function_exists('cg_backend_gallery_exif_value_to_string')){
+	function cg_backend_gallery_exif_value_to_string($value){
+		if(is_array($value)){
+			foreach($value as $arrayValue){
+				$arrayValue = cg_backend_gallery_exif_value_to_string($arrayValue);
+				if($arrayValue !== ''){
+					return $arrayValue;
+				}
+			}
+			return '';
+		}
+		if(is_object($value) || is_resource($value) || $value === null || $value === false){
+			return '';
+		}
+		if(is_bool($value)){
+			return ($value) ? '1' : '';
+		}
+		return trim((string)$value);
+	}
+}
+
 if(!isset($_POST['contest_gal1ery_post_create_data_csv'])){
 	$_POST['contest_gal1ery_post_create_data_csv'] = false;
 }
@@ -652,9 +673,6 @@ if($isAjaxCall){
 		if((float)$optionsSQL->Version>=22 && $ImgTypeToShow!='con'){
 			echo "<div><div class=\"cg_sell\" >";
 			echo "<div class='cg_sell_button cg_sell_activate_button cg_sale_settings $ytbDisabled' data-cg-real-id='$id' >Sales settings$ytbHint</div>";
-			echo '<div style="padding-top:2px;position: relative;margin-bottom: 10px;text-align:center;" class="'.$ytbHintInfo.'"><span class="cg-info-icon" >info</span>
-    <span class="cg-info-container cg-info-container-gallery-user" style="top: 34px; margin-left: -132px; display: none;">cg_gallery_ecommerce and "Sales settings"<br>are not available for '.$ytbHintText.' entries</span>
-    </div>';
 			echo '</div></div>';
 		}
 
@@ -757,15 +775,15 @@ if($isAjaxCall){
         if(!empty($getEntriesMail)){
 		echo "<div class='cg_send_mail'>";
             echo "<input type='hidden' value='$getEntriesMail' class='cg_email_to_send' >";
-            echo "<div  class='cg_send_mail_item' style='margin-right: 20px;'>";
+            echo "<div class='cg_send_mail_item'>";
                 echo "<div  class='cg_send_custom_mail $cgProFalse'>";
                     echo "Send custom mail";
                 echo "</div>";
-                echo "<div  class='cg_info_container'>";
-                    echo "<div  class='cg-info-icon' style='text-align: center;display: block;text-align: center;margin-top:5px;'>";
+                echo "<div class='cg_info_container'>";
+                    echo "<div class='cg-info-icon'>";
                         echo "Info";
                     echo "</div>";
-                    echo "<div  class='cg-info-container' style='margin-left: -21px; margin-top: -11px; width: max-content;'>";
+                    echo "<div class='cg-info-container'>";
                         echo "Send mail with available fields";
                     echo "</div>";
                 echo "</div>";
@@ -775,11 +793,11 @@ if($isAjaxCall){
                     echo "<div  class='cg_deactivate_send_custom_mail $cgProFalse'>";
                         echo "Deactivate and send custom mail";
                     echo "</div>";
-                    echo "<div  class='cg_info_container'>";
-                        echo "<div  class='cg-info-icon' style='text-align: center;display: block;text-align: center;margin-top:5px;'>";
+                    echo "<div class='cg_info_container'>";
+                        echo "<div class='cg-info-icon'>";
                             echo "Info";
                         echo "</div>";
-                        echo "<div  class='cg-info-container' style='margin-left: -34px; margin-top: -11px; width: max-content;'>";
+                        echo "<div class='cg-info-container'>";
                             echo "Deactivate and send mail with available fields";
                         echo "</div>";
                     echo "</div>";
@@ -789,11 +807,11 @@ if($isAjaxCall){
                     echo "<div  class='cg_activate_send_custom_mail $cgProFalse'>";
                         echo "Activate and send custom mail";
                     echo "</div>";
-                    echo "<div  class='cg_info_container'>";
-                        echo "<div  class='cg-info-icon' style='text-align: center;display: block;text-align: center;margin-top:5px;'>";
+                    echo "<div class='cg_info_container'>";
+                        echo "<div class='cg-info-icon'>";
                             echo "Info";
                         echo "</div>";
-                        echo "<div  class='cg-info-container' style='margin-left: -34px; margin-top: -14px; width: max-content;'>";
+                        echo "<div class='cg-info-container'>";
                             echo "Activate and send mail with custom fields";
                         echo "</div>";
                     echo "</div>";
@@ -1012,7 +1030,7 @@ if($isAjaxCall){
 				$ytbHintText = $ImgType;
 				//$ytbHint = '<br><span class="cg_ytb_hint">Not available for '.$socialTypeName.' type entry so far</span>';
 			}
-			echo "<div class='cg_manage_multiple_files $ytbDisabled' >Add, manage, replace<br>file/s$ytbHint or social embed</div>";
+			echo "<div class='cg_action_button cg_manage_multiple_files $ytbDisabled' >Add / manage / replace</div>";
 		}
 
 		// Add additional files released in v18 and available for all galleries copied or created since v17
@@ -1083,8 +1101,6 @@ if($isAjaxCall){
 		}
 
 		if($EcommerceEntry>0){
-			$currencyChar = $currenciesArray[$CurrencyShort];
-
 			$priceStringToShow = cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$Price);
 
 			$SaleString = '';
@@ -1106,23 +1122,10 @@ if($isAjaxCall){
 			if($IsShipping){
 				$ShippingCostsString = 'Shipping';
 				if($IsAlternativeShipping){
-					$AlternativeShippingForShipping = $AlternativeShipping;
-					if($PriceDivider==','){
-						$AlternativeShippingForShipping = str_replace(strval($AlternativeShipping),'.',',');
-					}
-					$shippingPriceStringToShow = $currencyChar.$AlternativeShippingForShipping;
-					if($CurrencyPosition=='right'){
-						$shippingPriceStringToShow = $AlternativeShippingForShipping.$currencyChar;
-					}
+					$shippingPriceStringToShow = cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,floatval($AlternativeShipping));
 					$ShippingPriceStringToShowContainer .= "<br><span class='cg_sale_shipping' >Extra shipping ($shippingPriceStringToShow)</span>";
 				}else{
-					if($PriceDivider==','){
-						$ShippingOptionValue = str_replace($ShippingOptionValue,'.',',');
-					}
-					$shippingPriceStringToShow = $currencyChar.$ShippingOptionValue;
-					if($CurrencyPosition=='right'){
-						$shippingPriceStringToShow = strval($ShippingOptionValue).$currencyChar;
-					}
+					$shippingPriceStringToShow = cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,floatval($ShippingOptionValue));
 					$ShippingPriceStringToShowContainer .= "<br><span class='cg_sale_shipping' >Default shipping ($shippingPriceStringToShow)</span>";
 				}
 			}else{
@@ -1344,17 +1347,19 @@ if($isAjaxCall){
 				if(in_array($WpUserId,$wpUsersIdsWithNotConfirmedMailArray)){
 					echo "<div class='cg_mail_not_confirmed' >Mail not confirmed</div>";
 				}
-                    echo "<div class='cg_action_button cg_attach_to_another_user $cgProFalse' >";
-                        echo "Attach to another user<br>or detach<br>from user";
-                    echo '</div>';
+				echo "<div class='cg_attach_to_another_user_title'>User assignment</div>";
+				echo "<div class='cg_action_button cg_attach_to_another_user $cgProFalse' >";
+					echo "Attach / detach user";
+				echo '</div>';
 				echo '</div>';
 			}
 		}
         if(!$isUserShown){
 	        echo "<div class='cg_backend_info_user_link_container'>";
-                echo "<div class='cg_action_button cg_attach_to_another_user $cgProFalse' >";
-                echo "Attach to registered user";
-                echo '</div>';
+				echo "<div class='cg_attach_to_another_user_title'>User assignment</div>";
+				echo "<div class='cg_action_button cg_attach_to_another_user $cgProFalse' >";
+				echo "Attach registered user";
+				echo '</div>';
 	        echo '</div>';
         }
 		// Link zum Wordpress User in WP Management ---- ENDE
@@ -2228,7 +2233,7 @@ if($isAjaxCall){
 
 				$DateTimeOriginal = '';
 				if(!empty($exifData['DateTimeOriginal'])){
-					$DateTimeOriginal = $exifData['DateTimeOriginal'];
+					$DateTimeOriginal = cg_backend_gallery_exif_value_to_string($exifData['DateTimeOriginal']);
 					$DateTimeOriginal = explode(' ',$DateTimeOriginal);
 					$DateTimeOriginal = $DateTimeOriginal[0];
 					$DateTimeOriginal = str_replace(':','-',$DateTimeOriginal);
@@ -2238,18 +2243,21 @@ if($isAjaxCall){
 
 				$MakeAndModel = '';
 				if(!empty($exifData['MakeAndModel'])){// Make And Model or only Model might be available
-					$MakeAndModel = $exifData['MakeAndModel'];
+					$MakeAndModel = cg_backend_gallery_exif_value_to_string($exifData['MakeAndModel']);
 				} elseif(!empty($exifData['Model'])){// Make And Model or only Model might be available
-					$MakeAndModel = $exifData['Model'];
+					$MakeAndModel = cg_backend_gallery_exif_value_to_string($exifData['Model']);
 				}
 
 				echo '<div class="'.((!empty($exifData['MakeAndModel'])) ? '' : 'cg_hide').' cg-exif cg-exif-model"><span class="cg-exif-model-img cg-exif-img"></span><span class="cg-exif-model-text cg-exif-text">'.contest_gal1ery_convert_for_html_output_without_nl2br($MakeAndModel).'</span></div>';
 
-				$ApertureFNumber = '';
-				echo '<div class="'.((!empty($exifData['ApertureFNumber'])) ? '' : 'cg_hide').' cg-exif cg-exif-aperturefnumber cg-exif"><span class="cg-exif-aperturefnumber-img cg-exif-img"></span><span class="cg-exif-aperturefnumber-text cg-exif-text">'.((!empty($exifData['ApertureFNumber'])) ? contest_gal1ery_convert_for_html_output_without_nl2br($exifData['ApertureFNumber']) : '').'</span></div>';
-				echo '<div class="'.((!empty($exifData['ExposureTime'])) ? '' : 'cg_hide').' cg-exif cg-exif-exposuretime cg-exif"><span class="cg-exif-exposuretime-img cg-exif-img"></span><span class="cg-exif-exposuretime-text cg-exif-text">'.((!empty($exifData['ExposureTime'])) ? contest_gal1ery_convert_for_html_output_without_nl2br($exifData['ExposureTime']) : '').'</span></div>';
-				echo '<div class="'.((!empty($exifData['ISOSpeedRatings'])) ? '' : 'cg_hide').' cg-exif cg-exif-isospeedratings cg-exif"><span class="cg-exif-isospeedratings-img cg-exif-img"></span><span class="cg-exif-isospeedratings-text cg-exif-text">'.((!empty($exifData['ISOSpeedRatings'])) ? contest_gal1ery_convert_for_html_output_without_nl2br($exifData['ISOSpeedRatings']) : '').'</span></div>';
-				echo '<div class="'.((!empty($exifData['FocalLength'])) ? '' : 'cg_hide').' cg-exif cg-exif-focallength cg-exif"><span class="cg-exif-focallength-img cg-exif-img"></span><span class="cg-exif-focallength-text cg-exif-text">'.((!empty($exifData['FocalLength'])) ? contest_gal1ery_convert_for_html_output_without_nl2br($exifData['FocalLength']) : '').'</span></div>';
+				$ApertureFNumber = (!empty($exifData['ApertureFNumber'])) ? cg_backend_gallery_exif_value_to_string($exifData['ApertureFNumber']) : '';
+				$ExposureTime = (!empty($exifData['ExposureTime'])) ? cg_backend_gallery_exif_value_to_string($exifData['ExposureTime']) : '';
+				$ISOSpeedRatings = (!empty($exifData['ISOSpeedRatings'])) ? cg_backend_gallery_exif_value_to_string($exifData['ISOSpeedRatings']) : '';
+				$FocalLength = (!empty($exifData['FocalLength'])) ? cg_backend_gallery_exif_value_to_string($exifData['FocalLength']) : '';
+				echo '<div class="'.((!empty($ApertureFNumber)) ? '' : 'cg_hide').' cg-exif cg-exif-aperturefnumber cg-exif"><span class="cg-exif-aperturefnumber-img cg-exif-img"></span><span class="cg-exif-aperturefnumber-text cg-exif-text">'.contest_gal1ery_convert_for_html_output_without_nl2br($ApertureFNumber).'</span></div>';
+				echo '<div class="'.((!empty($ExposureTime)) ? '' : 'cg_hide').' cg-exif cg-exif-exposuretime cg-exif"><span class="cg-exif-exposuretime-img cg-exif-img"></span><span class="cg-exif-exposuretime-text cg-exif-text">'.contest_gal1ery_convert_for_html_output_without_nl2br($ExposureTime).'</span></div>';
+				echo '<div class="'.((!empty($ISOSpeedRatings)) ? '' : 'cg_hide').' cg-exif cg-exif-isospeedratings cg-exif"><span class="cg-exif-isospeedratings-img cg-exif-img"></span><span class="cg-exif-isospeedratings-text cg-exif-text">'.contest_gal1ery_convert_for_html_output_without_nl2br($ISOSpeedRatings).'</span></div>';
+				echo '<div class="'.((!empty($FocalLength)) ? '' : 'cg_hide').' cg-exif cg-exif-focallength cg-exif"><span class="cg-exif-focallength-img cg-exif-img"></span><span class="cg-exif-focallength-text cg-exif-text">'.contest_gal1ery_convert_for_html_output_without_nl2br($FocalLength).'</span></div>';
 				echo '</div>';
 
 				echo '</div>';

@@ -178,7 +178,7 @@ if (!defined('ABSPATH')) {
 
     }
     if($cg_users_pin){
-        $pin = random_int(1000, 9999);
+        $pin = wp_rand(1000, 9999);
         $Subject = str_ireplace($posPin, $pin, contest_gal1ery_convert_for_html_output_without_nl2br($proOptions->RegPinSubject));
         $pinHashed = password_hash($pin,PASSWORD_DEFAULT);
         $wpdb->query($wpdb->prepare(
@@ -305,28 +305,28 @@ if (!defined('ABSPATH')) {
                 $user_email, $activation_key, 0, $Version, 1, $Tstamp
             ));
 
-            if(!empty($attach_id)){
-                cg_registry_add_profile_image('cg_input_image_upload_file',$newWpId,false,false,$attach_id);
-            }
+			if(!empty($attach_id)){
+				cg_registry_add_profile_image('cg_input_image_upload_file',$newWpId,false,false,$attach_id);
+			}
 
 			$cgGetLoggedInFrontendUserKey = wp_hash_password(wp_generate_password( 32, true, true ));
 			update_user_meta( $newWpId, 'cgGetLoggedInFrontendUserKey', $cgGetLoggedInFrontendUserKey);
 
-            //wp_set_auth_cookie( $newWpId,true );// will be done ajax
+			//wp_set_auth_cookie( $newWpId,true );// will be done ajax
 
 			$addOn = 'cg_gallery_id_registry='.$GalleryID.'&cg_login_user_after_registration=true';
 
-            $url = (strpos($currentPageUrl, '?')) ? $currentPageUrl . '&' .$addOn : $currentPageUrl . '?' .$addOn;
-            // if RegMailOptional and direct login after registration!!!
-            ?>
-            <script  data-cg-processing="true" data-cg-success="true">
+			$url = (strpos($currentPageUrl, '?')) ? $currentPageUrl . '&' .$addOn : $currentPageUrl . '?' .$addOn;
+			// if RegMailOptional and direct login after registration!!!
+			?>
+			<script  data-cg-processing="true" data-cg-success="true">
 				cgJsClass.gallery.vars.cgGetLoggedInFrontendUserKey = <?php echo json_encode($cgGetLoggedInFrontendUserKey);?>;
 				cgJsClass.gallery.vars.cgJustLoggedInWpUserId = <?php echo json_encode($newWpId);?>;
 				var result = cgJsClass.gallery.registry.functions.loginUserByKey(jQuery,0,cgJsClass.gallery.vars.cgGetLoggedInFrontendUserKey);
-                if(result){
+				if(result){
 					cgJsClass.gallery.function.general.tools.getCurrentNonce(jQuery);
-                    cgJsClass.gallery.vars.$regFormContainer.find('#cg_check_mail_name_value').val(0);// then success and can be reloaded, val(1) will be set when form submit
-                    var url = <?php echo json_encode($url);?>;
+					cgJsClass.gallery.vars.$regFormContainer.find('#cg_check_mail_name_value').val(0);// then success and can be reloaded, val(1) will be set when form submit
+					var url = <?php echo json_encode($url);?>;
                     window._cgLocationUrl = url;
                 }else{
                     var cg_error = "Login not possible. Please contact administrator.";
@@ -347,17 +347,17 @@ if (!defined('ABSPATH')) {
             die;
         }
 
-    }else{
+	}else{
 
-        if($cg_users_pin){
+		if($cg_users_pin){
 			$cgPinRequestKey = wp_generate_password(48, false, false);
 			set_transient('cg_pin_request_key_'.$cgPinRequestKey, $activation_key, DAY_IN_SECONDS);
-            ?>
-            <script  data-cg-processing="true" data-cg-success="true">
+			?>
+			<script  data-cg-processing="true" data-cg-success="true">
 				cgJsClass.gallery.vars.activationKey = <?php echo json_encode($cgPinRequestKey);?>;
-            </script>
-            <?php
-            die;
+			</script>
+			<?php
+			die;
         }else{
             $addOn = 'cg_gallery_id_registry='.$GalleryID.'&cg_forward_user_after_reg=true';
             $url = (strpos($currentPageUrl, '?')) ? $currentPageUrl . '&' .$addOn : $currentPageUrl . '?' .$addOn;

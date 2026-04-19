@@ -23,8 +23,9 @@ if(!function_exists('cg_json_upload_form_info_data_files')){
 
         $optionsVisual = $wpdb->get_row("SELECT * FROM $tablename_options_visual WHERE GalleryID = $GalleryID");
 
-        $f_InputForGallery = $optionsVisual->Field1IdGalleryView;
-        $f_TagInGallery = $optionsVisual->Field2IdGalleryView;
+        $f_InputForGallery = (!empty($optionsVisual) && isset($optionsVisual->Field1IdGalleryView)) ? absint($optionsVisual->Field1IdGalleryView) : 0;
+        $f_InputForFullWindowBlogView = (!empty($optionsVisual) && isset($optionsVisual->Field1IdFullWindowBlogView)) ? absint($optionsVisual->Field1IdFullWindowBlogView) : 0;
+        $f_TagInGallery = (!empty($optionsVisual) && isset($optionsVisual->Field2IdGalleryView)) ? absint($optionsVisual->Field2IdGalleryView) : 0;
         $SubTitle = $wpdb->get_var("SELECT id FROM $tablename_form_input WHERE GalleryID = $GalleryID AND SubTitle = 1");
         $ThirdTitle = $wpdb->get_var("SELECT id FROM $tablename_form_input WHERE GalleryID = $GalleryID AND ThirdTitle = 1");
 
@@ -32,6 +33,12 @@ if(!function_exists('cg_json_upload_form_info_data_files')){
 
         if(!empty($f_InputForGallery)){
             $Field1IdGalleryViewToSelect = " OR (GalleryID=$GalleryID AND id=$f_InputForGallery)";
+        }
+
+        $Field1IdFullWindowBlogViewToSelect = '';
+
+        if(!empty($f_InputForFullWindowBlogView)){
+            $Field1IdFullWindowBlogViewToSelect = " OR (GalleryID=$GalleryID AND id=$f_InputForFullWindowBlogView)";
         }
 
         $Field2IdGalleryViewToSelect = '';
@@ -50,7 +57,7 @@ if(!function_exists('cg_json_upload_form_info_data_files')){
             $ThirdTitleToSelect = " OR (GalleryID=$GalleryID AND id=$ThirdTitle)";
         }
 
-        $singleViewOrderDataJson = $wpdb->get_results("SELECT id, Field_Type, Field_Order, Field_Content FROM $tablename_form_input WHERE (GalleryID = $GalleryID AND Show_Slider = 1 AND Active = 1)$Field1IdGalleryViewToSelect$Field2IdGalleryViewToSelect$SubTitleToSelect$ThirdTitleToSelect ORDER BY Field_Order DESC");
+        $singleViewOrderDataJson = $wpdb->get_results("SELECT id, Field_Type, Field_Order, Field_Content FROM $tablename_form_input WHERE (GalleryID = $GalleryID AND Show_Slider = 1 AND Active = 1)$Field1IdGalleryViewToSelect$Field1IdFullWindowBlogViewToSelect$Field2IdGalleryViewToSelect$SubTitleToSelect$ThirdTitleToSelect ORDER BY Field_Order DESC");
 
         $watermarkPositionRowForDataJson = $wpdb->get_row("SELECT id, WatermarkPosition FROM $tablename_form_input WHERE GalleryID = $GalleryID AND WatermarkPosition != '' AND Active = 1");
 
@@ -89,6 +96,18 @@ if(!function_exists('cg_json_upload_form_info_data_files')){
                 $selectEntriesQuery .= $tablename_entries.'.f_input_id = '.$f_TagInGallery.' OR ';
                 $fieldInputIdsArray[$f_TagInGallery] = array();
                 $fieldInputIdsArray[$f_TagInGallery]['Show_Tag'] = true;
+            }
+        }
+
+        if(!empty($f_InputForFullWindowBlogView)){
+            if(!in_array($f_InputForFullWindowBlogView,$fieldIdsArray)){
+                $selectEntriesQuery .= $tablename_entries.'.f_input_id = '.$f_InputForFullWindowBlogView.' OR ';
+
+                $fieldInputIdsArray[$f_InputForFullWindowBlogView] = array();
+                $fieldInputIdsArray[$f_InputForFullWindowBlogView]['Show_Slider'] = false;
+                $fieldInputIdsArray[$f_InputForFullWindowBlogView]['Show_Full_Window_Blog_View'] = true;
+            }else{
+                $fieldInputIdsArray[$f_InputForFullWindowBlogView]['Show_Full_Window_Blog_View'] = true;
             }
         }
 
@@ -270,7 +289,6 @@ if(!function_exists('cg_json_upload_form_info_data_files')){
                         $fp = fopen($jsonFile, 'w');
                         fwrite($fp, json_encode($arrayDataForImage[$lastPid]));
                         fclose($fp);
-
                     }else{// set empty array then, so no data is available for frontend
                         $collectAllArrayDataForImage[$lastPid] = array();// will be saved later in -images-info-values
                         $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/image-info/image-info-'.$lastPid.'.json';
@@ -279,6 +297,13 @@ if(!function_exists('cg_json_upload_form_info_data_files')){
                         fclose($fp);
                     }
 
+                    static $cg1l_last_updated_done = false;
+
+                    if (!$cg1l_last_updated_done || time() > $cg1l_last_updated_done) {
+                        $cg1l_last_updated_done = time();
+                        cg1l_create_last_updated_time_file($GalleryID,'image-info-data-last-update');
+                    }
+                    cg1l_push_recent_id_file($gid,$lastPid,'image-info-data-last-update');
                 }
 
 
@@ -299,12 +324,18 @@ if(!function_exists('cg_json_upload_form_info_data_files')){
                     fwrite($fp, json_encode(array()));
                     fclose($fp);
 
+                    static $cg1l_last_updated_done_2 = false;
+
+                    if (!$cg1l_last_updated_done_2 || time() > $cg1l_last_updated_done_2) {
+                        $cg1l_last_updated_done_2 = time();
+                        cg1l_create_last_updated_time_file($GalleryID,'image-info-data-last-update');
+                    }
+                    cg1l_push_recent_id_file($GalleryID,$row->id,'image-info-data-last-update');
+
                 }
             }
 
         }
-        //   die;
 
     }
 }
-

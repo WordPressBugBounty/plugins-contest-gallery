@@ -70,7 +70,8 @@ $chkHiddenCount = 1700;
 
 $cg_info_show_slider_title = 'Show as info in single entry view';
 $cg_info_show_gallery_title = 'Show as title in gallery view (only 1 allowed)';
-$cg_tag_show_gallery_title = 'Show as HTML title attribute in gallery (only 1 allowed)';
+$cg_info_show_full_window_blog_title = 'Show as main title in full window blog view (only 1 allowed)';
+$cg_tag_show_gallery_title = 'Use as media description (SEO) (only 1 allowed)';
 
 $cg_disabled_sub_and_third_title = '';
 $cg_disabled_sub_and_third_title_note = '';
@@ -146,6 +147,9 @@ if(true){
 
     if($id==$Field1IdGalleryView){$checked='checked';}
     else{$checked='';}
+
+    if($id==$Field1IdFullWindowBlogView){$checkedShowFullWindowBlogView='checked';}
+    else{$checkedShowFullWindowBlogView='';}
 
     $checkedSubTitle = false;
     $checkedThirdTitle = false;

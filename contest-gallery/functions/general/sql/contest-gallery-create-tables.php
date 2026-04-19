@@ -124,12 +124,14 @@ if(!function_exists('contest_gal1ery_create_table')){
 		OrderItem INT(11) DEFAULT 0,
 		PdfPreview BIGINT(20) DEFAULT 0,
 		Mails INT(11) DEFAULT 0,
+        INDEX WpUserId_index (WpUserId),
         INDEX GalleryID_index (GalleryID),
         INDEX PdfPreview_index (PdfPreview)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
             cg_echo_last_sql_error($isShowError,$lastError);
+
         }
 
         if($wpdb->get_var("SHOW TABLES LIKE '$tablename_ip'") != $tablename_ip){
@@ -147,7 +149,8 @@ if(!function_exists('contest_gal1ery_create_table')){
         CookieId VARCHAR (99),
         Category INT(11) DEFAULT 0,
         CategoriesOn TINYINT DEFAULT 0,
-        INDEX pid (pid),
+        INDEX pid_index (pid),
+        INDEX WpUserId_index (WpUserId),
         INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -167,7 +170,8 @@ if(!function_exists('contest_gal1ery_create_table')){
 		WpUserId INT(11) DEFAULT 0,
 		ReviewTstamp INT(11) DEFAULT 0,
 		Active TINYINT DEFAULT 0,
-        INDEX pid (pid),
+        INDEX pid_index (pid),
+        INDEX WpUserId_index (WpUserId),
         INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -290,6 +294,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		RegistryUserRole VARCHAR(1000) NOT NULL,
 		ContestStart TINYINT DEFAULT 0,
 		ContestStartTime VARCHAR(100) NOT NULL,
+		GeneralID TINYINT DEFAULT 0,
 		MaxResICOon INT(1) DEFAULT 0,
 		MaxResICOwidth INT(20) DEFAULT 0,
 		MaxResICOheight INT(20) DEFAULT 0,
@@ -577,6 +582,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		CommentsAlignGallery VARCHAR(20) NOT NULL,
 		RatingAlignGallery VARCHAR(20) NOT NULL,
 		Field1IdGalleryView INT(20),
+		Field1IdFullWindowBlogView INT(20) DEFAULT 0,
 		Field1AlignGalleryView VARCHAR(20) NOT NULL,
 		Field2IdGalleryView INT(20),
 		Field2AlignGalleryView VARCHAR(20) NOT NULL,
@@ -749,7 +755,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		Checked TINYINT DEFAULT 0,
 		InputDate DateTime DEFAULT '0000-00-00 00:00:00',
 		Tstamp INT(11) DEFAULT 0,
-        INDEX pid (pid),
+        INDEX pid_index (pid),
         INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -789,6 +795,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 			GalleryUploadTextBefore TEXT,
 			GalleryUploadTextAfter TEXT,
 			GalleryUploadConfirmationText TEXT,
+			ShowRefreshButtonAfterUpload TINYINT DEFAULT 1,
 			ShowNickname TINYINT DEFAULT 0,
 			MinusVote TINYINT DEFAULT 0,
 			SlideTransition VARCHAR(20) DEFAULT 'translateX',
@@ -890,6 +897,7 @@ HEREDOC;
 
                 $GalleryUploadConfirmationText = "<p>Your entry was successful.<br/>We will activate your file soon.<br/>Your file has to be approved.</p>";
                 $GalleryUploadConfirmationText = htmlentities($GalleryUploadConfirmationText, ENT_QUOTES);
+                $ShowRefreshButtonAfterUpload = 1;
 
                 $ShowNickname = 0;
                 $MinusVote = 0;
@@ -956,7 +964,7 @@ HEREDOC;
                                 TextEmailConfirmation,TextPinConfirmation,TextAfterEmailConfirmation,TextAfterPinConfirmation,
                                 RegMailAddressor,RegMailReply,RegMailSubject,RegPinSubject,RegUserUploadOnly,RegUserUploadOnlyText,
                                 Manipulate,ShowOther,CatWidget,Search,
-                                GalleryUpload,GalleryUploadTextBefore,GalleryUploadTextAfter,GalleryUploadConfirmationText,ShowNickname,MinusVote,SlideTransition,
+                                GalleryUpload,GalleryUploadTextBefore,GalleryUploadTextAfter,GalleryUploadConfirmationText,ShowRefreshButtonAfterUpload,ShowNickname,MinusVote,SlideTransition,
                                 VotesInTime,VotesInTimeQuantity,VotesInTimeIntervalReadable,VotesInTimeIntervalSeconds,VotesInTimeIntervalAlertMessage,ShowExif,
 								HideRegFormAfterLogin,HideRegFormAfterLoginShowTextInstead,HideRegFormAfterLoginTextToShow,
 								RegUserGalleryOnly,RegUserGalleryOnlyText,RegUserMaxUpload,IsModernFiveStar,GalleryUploadOnlyUser,FbLikeNoShare,VoteNotOwnImage,PreselectSort,
@@ -974,7 +982,7 @@ HEREDOC;
                                 %s,%s,%s,%s,
                                 %s,%s,%s,%s,%d,%s,
                                 %d,%d,%d,%d,
-                                %d,%s,%s,%s,%d,%d,%s,
+                                %d,%s,%s,%s,%d,%d,%d,%s,
                                 %d,%d,%s,%d,%s,%d,
                                 %d,%d,%s,
                                 %d,%s,%d,%d,
@@ -993,7 +1001,7 @@ HEREDOC;
                         0,$ForwardAfterLoginText,
                         $TextEmailConfirmation,$TextPinConfirmation,$TextAfterEmailConfirmation,$TextAfterPinConfirmation,
                         $RegMailAddressor,$RegMailReply,$RegMailSubject,$RegPinSubject,0,$RegUserUploadOnlyText,0,1,$CatWidget,$Search,
-                        $GalleryUpload,$GalleryUploadTextBefore,$GalleryUploadTextAfter,$GalleryUploadConfirmationText,$ShowNickname,$MinusVote,$SlideTransition,
+                        $GalleryUpload,$GalleryUploadTextBefore,$GalleryUploadTextAfter,$GalleryUploadConfirmationText,$ShowRefreshButtonAfterUpload,$ShowNickname,$MinusVote,$SlideTransition,
                         $VotesInTime,$VotesInTimeQuantity,$VotesInTimeIntervalReadable,$VotesInTimeIntervalSeconds,$VotesInTimeIntervalAlertMessage,$ShowExif,
                         $HideRegFormAfterLogin,$HideRegFormAfterLoginShowTextInstead,$HideRegFormAfterLoginTextToShow,
                         $RegUserGalleryOnly,$RegUserGalleryOnlyText,$RegUserMaxUpload,$IsModernFiveStar,
@@ -1152,6 +1160,7 @@ HEREDOC;
 		ForwardToUrlNewTab TINYINT DEFAULT 0,
         EcommerceTitle TINYINT DEFAULT 0,
 		EcommerceDescription TINYINT DEFAULT 0,
+		WpAttachmentDetailsType VARCHAR(20) DEFAULT '',
 		RowNumber INT(11) DEFAULT 0,
 		ColNumber INT(11) DEFAULT 0,
 		RowCols INT(11) DEFAULT 0
@@ -1327,20 +1336,20 @@ HEREDOC;
 
         if($wpdb->get_var("SHOW TABLES LIKE '$tablename_registry_and_login_options'") != $tablename_registry_and_login_options){
             $sql = "CREATE TABLE $tablename_registry_and_login_options (
-		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-		GalleryID INT(20) DEFAULT 0,
-		GeneralID TINYINT DEFAULT 0,
-        LogoutLink VARCHAR(1000) NOT NULL,
-        BackToGalleryLink VARCHAR(1000) NOT NULL,
-        RegistryUserRole VARCHAR(1000) NOT NULL,
-        LostPasswordMailActive TINYINT DEFAULT 0,
-        LostPasswordMailAddressor VARCHAR(200) NOT NULL,
-        LostPasswordMailReply VARCHAR(200) NOT NULL,
-        LostPasswordMailSubject VARCHAR(200) NOT NULL,
-        LostPasswordMailConfirmation TEXT NOT NULL,
-        TextBeforeLoginForm TEXT NOT NULL,
-        EditProfileGroups TEXT NOT NULL,
-        TextBeforeRegFormBeforeLoggedIn TEXT NOT NULL,
+            id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            GalleryID INT(20) DEFAULT 0,
+            GeneralID TINYINT DEFAULT 0,
+            LogoutLink VARCHAR(1000) NOT NULL,
+            BackToGalleryLink VARCHAR(1000) NOT NULL,
+            RegistryUserRole VARCHAR(1000) NOT NULL,
+            LostPasswordMailActive TINYINT DEFAULT 0,
+            LostPasswordMailAddressor VARCHAR(200) NOT NULL,
+            LostPasswordMailReply VARCHAR(200) NOT NULL,
+            LostPasswordMailSubject VARCHAR(200) NOT NULL,
+            LostPasswordMailConfirmation TEXT NOT NULL,
+            TextBeforeLoginForm TEXT NOT NULL,
+            EditProfileGroups TEXT NOT NULL,
+            TextBeforeRegFormBeforeLoggedIn TEXT NOT NULL,
             TextBeforePinFormBeforeLoggedIn TEXT NOT NULL,
             PermanentTextWhenLoggedIn TEXT NOT NULL,
             ConfirmExpiry INT(11) DEFAULT 172800,

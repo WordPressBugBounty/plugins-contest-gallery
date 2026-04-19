@@ -1,29 +1,91 @@
 jQuery(document).ready(function($){
 
+    var submitUsersManagementSearchForm = function ($form, submitter) {
+        var formPostData = new FormData($form.get(0));
+        var actionUrl = $form.attr('action');
+        var params = cgJsClassAdmin.index.functions.getParamsFromUrl(actionUrl);
+        var isUnconfirmed = $form.attr('id') === 'cgUnconfirmedManagementForm';
+        var $box = isUnconfirmed ? $('#cgUnconfirmedManagementList') : $('#cgUsersManagementList');
+        var $submitter = $(submitter);
+
+        if (!$submitter.length) {
+            $submitter = $form.find('button[type="submit"], input[type="submit"]').first();
+        }
+
+        $('body').addClass('cg_pointer_events_none');
+        $submitter.addClass('cg_skeleton_loader_on_page_load');
+
+        if ($box.length) {
+            cgJsClassAdmin.gallery.functions.createCgUsersManagementListLoaderClone($, $box);
+        }
+
+        Object.keys(params).forEach(function (key) {
+            formPostData.append(key, params[key]);
+        });
+
+        formPostData.append('action', isUnconfirmed ? 'post_cg1l_get_unconfirmed_users' : 'post_cg1l_get_management_show_users');
+        formPostData.append('cg_nonce', CG1LBackendNonce.nonce);
+
+        if (!params.option_id) {
+            var dataGid = $submitter.attr('data-cg-gid');
+            if (dataGid) {
+                formPostData.append('option_id', dataGid);
+            }
+        }
+
+        formPostData.append('cg_form_submit', true);
+
+        jQuery.ajax({
+            url: 'admin-ajax.php',
+            type: 'POST',
+            dataType: 'html',
+            data: formPostData,
+            processData: false,
+            contentType: false
+        }).done(function (response) {
+            var $response = $(new DOMParser().parseFromString(response, 'text/html'));
+
+            $box.replaceWith($response.find(isUnconfirmed ? '#cgUnconfirmedManagementList' : '#cgUsersManagementList'));
+            $(isUnconfirmed ? '#cgUnconfirmedListStepsContainer' : '#cgUserListStepsContainer')
+                .replaceWith($response.find(isUnconfirmed ? '#cgUnconfirmedListStepsContainer' : '#cgUserListStepsContainer'));
+        }).fail(function (xhr, status, error) {
+            var msg = 'Error saving user data: ' + (error || status);
+            if (xhr.responseText) {
+                msg += ' — ' + xhr.responseText;
+            }
+            cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage(msg);
+        }).always(function () {
+            $('body').removeClass('cg_pointer_events_none');
+            $submitter.removeClass('cg_skeleton_loader_on_page_load');
+        });
+    };
+
     $(document).on('click','#cgRegistrationSearchReset',function () {
         debugger
-        $('#cgUsersManagementForm .cg_search_user_name').val('');
-        $('#cgRegistrationSearchSubmit').click();
+        var $form = $('#cgUsersManagementForm');
+        $form.find('.cg_search_user_name').val('');
+        $form.find('input[name="cg-search-user-name-original"]').val('');
+        $form.find('select[name="cg-search-gallery-id"]').val('');
+        $form.find('input[name="cg-search-gallery-id-original"]').val('');
+        $form.trigger('submit');
     });
 
     $(document).on('click','#cgUnconfirmedSearchReset',function () {
         debugger
-        $('#cgUnconfirmedManagementForm .cg_search_user_name').val('');
-        $('#cgUnconfirmedSearchSubmit').click();
+        var $form = $('#cgUnconfirmedManagementForm');
+        $form.find('.cg_search_user_name').val('');
+        $form.trigger('submit');
     });
 
     $(document).on('click','#cg_create_user_data_csv_submit',function () {
         debugger
-        //e.preventDefault();// no prevent default here!!!!
-
         var $cgUsersManagementForm = $('#cgUsersManagementForm');
-        $cgUsersManagementForm.removeClass('cg_load_backend_submit');
-        $cgUsersManagementForm.find('#cg_create_user_data_csv_new_export').removeAttr('disabled');
-        $cgUsersManagementForm.find('#cgRegistrationSearchSubmit').click();
+        var $cgCreateUserDataCsvNewExport = $cgUsersManagementForm.find('#cg_create_user_data_csv_new_export');
+        $cgCreateUserDataCsvNewExport.removeAttr('disabled');
+        $cgUsersManagementForm.get(0).submit();
 
         setTimeout(function () {
-            $cgUsersManagementForm.find('#cg_create_user_data_csv_new_export').attr('disabled','disabled');
-            $cgUsersManagementForm.addClass('cg_load_backend_submit');
+            $cgCreateUserDataCsvNewExport.attr('disabled','disabled');
         },100);
 
     });
@@ -163,41 +225,31 @@ jQuery(document).ready(function($){
                     msg += ' — ' + xhr.responseText;
                 }
                 cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage(msg);
-                $('body').removeClass('cg_pointer_events_none');
-                $button.removeClass('cg_skeleton_loader_on_page_load');
             });
 
     });
 
-    $(document).on('click', '#cgRegistrationSearchSubmit, #cgUnconfirmedSearchSubmit, #cgRegUserAdminFormSubmit', function (e) {
+    $(document).on('submit', '#cgUsersManagementForm, #cgUnconfirmedManagementForm', function (e) {
+        debugger
+        e.preventDefault();
+        e.stopPropagation();
+
+        submitUsersManagementSearchForm($(this), e.originalEvent && e.originalEvent.submitter ? e.originalEvent.submitter : null);
+    });
+
+    $(document).on('click', '#cgRegUserAdminFormSubmit', function (e) {
         debugger
         var $el = $(this);
-        var isExportData = false;
-
-        if($el.attr('id')=='cgRegistrationSearchSubmit'){
-            if(!$el.closest('form').hasClass('cg_load_backend_submit')){
-                isExportData = true;
-            }
-        }
-        if(isExportData){return;}
 
         e.preventDefault();// has to be done here if export
 
         var formPostData = new FormData($el.closest('form').get(0));
 
-        var $button = $el.find('button[type="submit"]');
+        var $button = $el;
         $('body').addClass('cg_pointer_events_none');
         $button.addClass('cg_skeleton_loader_on_page_load');
 
         var actionUrl = $el.closest('form').attr('action');
-
-        if($el.attr('id')=='cgRegistrationSearchSubmit'){
-            var $box = $('#cgUsersManagementList');
-            cgJsClassAdmin.gallery.functions.createCgUsersManagementListLoaderClone($,$box);
-        }else if($el.attr('id')=='cgUnconfirmedSearchSubmit'){
-            var $box = $('#cgUnconfirmedManagementList');
-            cgJsClassAdmin.gallery.functions.createCgUsersManagementListLoaderClone($,$box);
-        }
 
         var params = cgJsClassAdmin.index.functions.getParamsFromUrl(actionUrl);
 
@@ -206,14 +258,14 @@ jQuery(document).ready(function($){
             formPostData.append(key, params[key]);
         });
 
-        if($el.attr('id')=='cgUnconfirmedSearchSubmit'){
-            formPostData.append('action', 'post_cg1l_get_unconfirmed_users');
-        }else{
-            formPostData.append('action', 'post_cg1l_get_management_show_users');
-        }
-
+        formPostData.append('action', 'post_cg1l_get_management_show_users');
         formPostData.append('cg_nonce',CG1LBackendNonce.nonce);
-        formPostData.append('option_id',$el.attr('data-cg-gid'));
+        if (!params.option_id) {
+            var dataGid = $el.attr('data-cg-gid');
+            if (dataGid) {
+                formPostData.append('option_id', dataGid);
+            }
+        }
         formPostData.append('cg_form_submit',true);
 
         debugger
@@ -230,24 +282,8 @@ jQuery(document).ready(function($){
                 // console.log(response);
                 var $response = $(new DOMParser().parseFromString(response, 'text/html'));
 
-                if($el.attr('id')=='cgRegistrationSearchSubmit'){
-                    $box.replaceWith($response.find('#cgUsersManagementList'));
-                    $('#cgUsersManagementForm').replaceWith($response.find('#cgUsersManagementForm'));
-                    $('#cgRegUserStepsSelect').replaceWith($response.find('#cgRegUserStepsSelect'));
-                    $('#cgRegUsersStepNav').replaceWith($response.find('#cgRegUsersStepNav'));
-                    $('body').removeClass('cg_pointer_events_none');
-                }else if($el.attr('id')=='cgUnconfirmedSearchSubmit'){
-                    $box.replaceWith($response.find('#cgUnconfirmedManagementList'));
-                    $('#cgUnconfirmedUserStepsSelect').replaceWith($response.find('#cgUnconfirmedUserStepsSelect'));
-                    $('#cgUnconfirmedUsersStepNav').replaceWith($response.find('#cgUnconfirmedUsersStepNav'));
-                    $('body').removeClass('cg_pointer_events_none');
-                }else{
-                    cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Changes saved',true);
-                    $('#cgRegUserStepsSelect').trigger('change');
-                    //$button.removeClass('cg_skeleton_loader_on_page_load');
-                    //console.log('cgRegUserAdminForm submit done');
-                    //$cgUsersManagementListLoaderClone.replaceWith($response.find('#cgUsersManagementList').length);
-                }
+                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Changes saved',true);
+                $('#cgRegUserStepsSelect').trigger('change');
             })
             .fail(function (xhr, status, error) {
                 var msg = 'Error saving user data: ' + (error || status);
@@ -450,6 +486,8 @@ jQuery(document).ready(function($){
         var mail = $(this).closest('tr').find('.cg_mail_data').text();
 
         var $box = cgJsClassAdmin.gallery.functions.showModal('#cgMailsList');
+        $box.find('.cg_mails_count').text('');
+        $box.find('.cg_entry_id').text('('+mail+')');
         $box.find('.cg_row:not(.cg_row_loader,.cg_row_error)').remove();
         $box.find('.cg_row_error').addClass('cg_hide');
         $box.find('.cg_row_loader').removeClass('cg_hide');
@@ -474,6 +512,7 @@ jQuery(document).ready(function($){
             $box.find('.cg_row_content').removeClass('cg_hide');
             $box.find('.cg_row_error').addClass('cg_hide');
             $box.find('.cg_row_loader').addClass('cg_hide');
+            $box.find('.cg_mails_count').text(cgJsClassAdmin.gallery.vars.cg_unconfirmed_mails.length);
 
             cgJsClassAdmin.gallery.vars.cg_unconfirmed_mails.forEach(function (mail,i){
 

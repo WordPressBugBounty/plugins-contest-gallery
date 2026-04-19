@@ -18,7 +18,7 @@ ini_set('error_reporting', E_ALL);*/
 // ----------------------------------------------------------- Rate images ----------------------------------------------------------
 //------------------------------------------------------------
 
-
+global $wpdb;
 $tablename = $wpdb->prefix ."contest_gal1ery";
 $tablenameIP = $wpdb->prefix ."contest_gal1ery_ip";
 $tablename_options_visual = $wpdb->prefix . "contest_gal1ery_options_visual";
@@ -32,19 +32,13 @@ $wp_upload_dir = wp_upload_dir();
 $options = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/'.$galeryID.'-options.json';
 $fp = fopen($options, 'r');
 $options =json_decode(fread($fp,filesize($options)),true);
+fclose($fp);
 
 $optionsSource = $options;
 
 if(!empty($options[$galeryID])){
     $options = $options[$galeryID];
 }
-
-fclose($fp);
-
-$jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/image-data/image-data-'.$pictureID.'.json';
-$fp = fopen($jsonFile, 'r');
-$ratingFileData =json_decode(fread($fp,filesize($jsonFile)),true);
-fclose($fp);
 
 // possible code if has to be checked if categories has to be some kind of visible in frontend
 /*
@@ -71,7 +65,6 @@ if(file_exists($jsonFormUploadFile)){
     }
 }*/
 
-
 if (($rateValue>10 or $rateValue<1) or ($galleryHash != $galleryHashToCompare)){
     ?>
     <script data-cg-processing="true">
@@ -80,7 +73,7 @@ if (($rateValue>10 or $rateValue<1) or ($galleryHash != $galleryHashToCompare)){
         var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
         var pictureID = <?php echo json_encode($pictureID);?>;
         var isFromSingleView = <?php echo json_encode($isFromSingleView);?>;
-        var ratingFileData = <?php echo json_encode($ratingFileData);?>;
+        var ratingFileData = true;
 
         cgJsClass.gallery.function.message.close(true);
 
@@ -97,13 +90,13 @@ else {
     $explodeHash = explode('---cngl1---',$galleryHashDecoded);
     //if($explodeHash[1]==$galeryID.'-u'){
     if(strpos($explodeHash[1],$galeryID.'-u')!==false){
-            ?>
+        ?>
         <script data-cg-processing="true">
 
             var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
             var pictureID = <?php echo json_encode($pictureID);?>;
             var isFromSingleView = <?php echo json_encode($isFromSingleView);?>;
-            var ratingFileData = <?php echo json_encode($ratingFileData);?>;
+            var ratingFileData = true;
 
             cgJsClass.gallery.function.message.close(true);
 
@@ -117,13 +110,13 @@ else {
     }
 
     if(strpos($explodeHash[1],$galeryID.'-nv')!==false){
-            ?>
+        ?>
         <script data-cg-processing="true">
 
             var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
             var pictureID = <?php echo json_encode($pictureID);?>;
             var isFromSingleView = <?php echo json_encode($isFromSingleView);?>;
-            var ratingFileData = <?php echo json_encode($ratingFileData);?>;
+            var ratingFileData = true;
 
             cgJsClass.gallery.function.message.close(true);
 
@@ -150,7 +143,7 @@ else {
             var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
             var pictureID = <?php echo json_encode($pictureID);?>;
             var isFromSingleView = <?php echo json_encode($isFromSingleView);?>;
-            var ratingFileData = <?php echo json_encode($ratingFileData);?>;
+            var ratingFileData = true;
 
             cgJsClass.gallery.function.message.close(true);
 
@@ -161,14 +154,14 @@ else {
 	}
 
     if(strpos($explodeHash[1],$galeryID.'-w')!==false){
-            return;
+        return;
     }
 
     $intervalConf = cg_shortcode_interval_check($galeryID,$optionsSource,'cg_gallery');
     if(!$intervalConf['shortcodeIsActive']){
         ?>
         <script data-cg-processing="true">
-            var ratingFileData = <?php echo json_encode($ratingFileData);?>;
+            var ratingFileData = true;
             var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
             var isFromSingleView = <?php echo json_encode($isFromSingleView);?>;
             var pictureID = <?php echo json_encode($pictureID);?>;
@@ -238,6 +231,27 @@ else {
     $VoteMessageSuccessText = (!empty($options['pro']['VoteMessageSuccessText'])) ? $options['pro']['VoteMessageSuccessText'] : '';
     $VoteMessageWarningActive = (!empty($options['pro']['VoteMessageWarningActive'])) ? 1 : 0;
     $VoteMessageWarningText = (!empty($options['pro']['VoteMessageWarningText'])) ? $options['pro']['VoteMessageWarningText'] : '';
+    $VotesPerUserAllVotesUsedHtmlMessage = (!empty($options['pro']['VotesPerUserAllVotesUsedHtmlMessage'])) ? $options['pro']['VotesPerUserAllVotesUsedHtmlMessage'] : ((!empty($language_VotesPerUserAllVotesUsedHtmlMessage)) ? $language_VotesPerUserAllVotesUsedHtmlMessage : '');
+    $cg_has_visible_vote_html_message = static function ($message) {
+        if(!is_string($message) || $message === ''){
+            return false;
+        }
+
+        $decodedMessage = html_entity_decode($message, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $decodedMessage = str_replace("\xC2\xA0", ' ', $decodedMessage);
+
+        $textOnlyMessage = strip_tags($decodedMessage);
+        $textOnlyMessage = preg_replace('/\x{00A0}+/u', ' ', $textOnlyMessage);
+        $textOnlyMessage = preg_replace('/\s+/u', ' ', $textOnlyMessage);
+
+        if(trim($textOnlyMessage) !== ''){
+            return true;
+        }
+
+        return preg_match('/<(img|svg|video|audio|iframe|object|embed|canvas|picture)\b/i', $decodedMessage) === 1;
+    };
+    $hasVoteMessageWarningTextContent = $cg_has_visible_vote_html_message($VoteMessageWarningText);
+    $hasVotesPerUserAllVotesUsedHtmlMessageContent = $cg_has_visible_vote_html_message($VotesPerUserAllVotesUsedHtmlMessage);
 
     $CategoriesOn = 0;// means that it was visible for user in that time that he votes for this category
 
@@ -270,10 +284,6 @@ else {
     }
     $countVotesOfUserPerGallery = 0;
 
-    if(empty($ratingFileData['Category'])){// repair here for sure
-        $ratingFileData['Category'] = 0;
-    }
-
     $cookieVotingJustActivated = false;
 
     $OptionSet = '';
@@ -301,15 +311,13 @@ else {
             var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
             var pictureID = <?php echo json_encode($pictureID);?>;
             var isFromSingleView = <?php echo json_encode($isFromSingleView);?>;
-            var ratingFileData = <?php echo json_encode($ratingFileData);?>;
-
+            var ratingFileData = true;
 
             cgJsClass.gallery.function.general.time.photoContestStartTimeCheck(galeryIDuser,ActualTimeSecondsFromPhp,ContestStartTimeFromPhp,ContestStart);
             cgJsClass.gallery.rating.setRatingFiveStar(pictureID,0,0,false,galeryIDuser,false,false,ratingFileData,isFromSingleView);
 
         </script>
         <?php
-
         return;
     }
 
@@ -324,18 +332,15 @@ else {
             var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
             var pictureID = <?php echo json_encode($pictureID);?>;
             var isFromSingleView = <?php echo json_encode($isFromSingleView);?>;
-            var ratingFileData = <?php echo json_encode($ratingFileData);?>;
+            var ratingFileData = true;
 
             cgJsClass.gallery.function.general.time.photoContestEndTimeCheck(galeryIDuser,ActualTimeSecondsFromPhp,ContestEndTimeFromPhp,ContestEnd);
             cgJsClass.gallery.rating.setRatingFiveStar(pictureID,0,0,false,galeryIDuser,false,false,ratingFileData,isFromSingleView);
 
         </script>
         <?php
-
         return;
     }
-
-
 
     if (is_user_logged_in()) {
         $currentUser = wp_get_current_user(); // WP_User object
@@ -355,12 +360,10 @@ else {
             var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
             var pictureID = <?php echo json_encode($pictureID);?>;
             var isFromSingleView = <?php echo json_encode($isFromSingleView);?>;
-            var ratingFileData = <?php echo json_encode($ratingFileData);?>;
+            var ratingFileData = true;
             cgJsClass.gallery.rating.setRatingFiveStar(pictureID,0,0,false,galeryIDuser,false,false,ratingFileData,isFromSingleView);
-
         </script>
         <?php
-
         return;
     }
 
@@ -388,24 +391,25 @@ else {
             $isAllowed = false;
         }
         if(!$isAllowed){
-        ?>
-        <script data-cg-processing="true">
+            ?>
+            <script data-cg-processing="true">
                 var ContestStartTimeFromPhp = <?php echo json_encode($ContestStartTime);?>;
                 var ContestStart = <?php echo json_encode($ContestStart);?>;
-            var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
-            var pictureID = <?php echo json_encode($pictureID);?>;
-            var isFromSingleView = <?php echo json_encode($isFromSingleView);?>;
-            var ratingFileData = <?php echo json_encode($ratingFileData);?>;
-            cgJsClass.gallery.rating.setRatingFiveStar(pictureID,0,0,false,galeryIDuser,false,false,ratingFileData,isFromSingleView);
+                var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
+                var pictureID = <?php echo json_encode($pictureID);?>;
+                var isFromSingleView = <?php echo json_encode($isFromSingleView);?>;
+                var ratingFileData = true;
+                cgJsClass.gallery.rating.setRatingFiveStar(pictureID,0,0,false,galeryIDuser,false,false,ratingFileData,isFromSingleView);
                 cgJsClass.gallery.function.message.show(galeryIDuser,<?php echo json_encode($language_OnlyJuryMembersCanVote);?>);
-        </script>
-        <?php
-
-        return;
-    }
+            </script>
+            <?php
+            return;
+        }
     }
 
     $userIP = cg1l_sanitize_method(cg_get_user_ip());
+    //$userIP = 1234;
+
     if(empty($userIP) OR $userIP == 'unknown'){
         ?>
         <script data-cg-processing="true">
@@ -415,7 +419,17 @@ else {
         </script>
         <?php
         echo 'IP could not be identified, code 506. Please contact administrator.';
-        die;
+        return;
+    }
+
+    cg1l_migrate_image_stats_to_folder($galeryID, true);// correct first if needs to correct
+    $imageData = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/image-data/image-data-'.$pictureID.'.json';
+    $imageData = json_decode(file_get_contents($imageData),true);
+    $lockFp = false;
+    $ratingFileData = cg1l_get_stats_for_update($galeryID, $pictureID, $lockFp);
+
+    if(empty($imageData['Category'])){// repair here for sure
+        $imageData['Category'] = 0;
     }
 
     if($VoteNotOwnImage==1 && empty($minusVoteNow) && $CheckCookie!=1){//does not need to work for check cookie in the moment
@@ -432,7 +446,7 @@ else {
         }
 
         if($isOwnImage){
-
+            cg1l_release_stats_lock($lockFp);
             ?>
             <script data-cg-processing="true">
 
@@ -447,11 +461,8 @@ else {
                 cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].ItIsNotAllowedToVoteForYourOwnPicture);
 
             </script>
-
             <?php
-
             return;
-
         }
 
     }
@@ -460,6 +471,7 @@ else {
         $CookieId = cg_get_valid_frontend_cookie($galeryID,'voting');
         if(empty($CookieId)) {
             $cookieValue = cg_set_cookie($galeryID,'voting');
+            cg1l_release_stats_lock($lockFp);
             ?>
             <script data-cg-processing="true">
 
@@ -469,10 +481,10 @@ else {
                 var isFromSingleView = <?php echo json_encode($isFromSingleView);?>;
                 var ratingFileData = <?php echo json_encode($ratingFileData);?>;
 
-                    cgJsClass.gallery.function.message.close(true);
+                cgJsClass.gallery.function.message.close(true);
                     cgJsClass.gallery.rating.setRatingFiveStar(pictureID,0,0,false,galeryIDuser,false,false,ratingFileData,isFromSingleView,undefined,undefined,true);
                 cgJsClass.gallery.function.message.show(galeryIDuser,CheckCookieAlertMessage);
-                    cgJsClass.gallery.vars.cookiesNotAllowed = true;
+                cgJsClass.gallery.vars.cookiesNotAllowed = true;
 
                 // cookie value will be get via getCookie before request
                 //var cookieValue = <?php //echo json_encode($cookieValue);?>;
@@ -491,8 +503,8 @@ else {
     $getRatingPicture = 0;
     $countVotesOfUserPerGallery = 0;
 
-    // Sowohl Rating mit 5 Sternen wie auch Rating mit 1 Stern sollen von einander getrennt behandelt werden.
-    // Deswegen die Abfragen mit if AllowRating ....
+    // Both 5-star rating and 1-star rating should be handled separately from each other.
+    // Therefore the queries with if AllowRating ....
     if ($CheckLogin == 1 && $wpUserId>0)
     {
         if(is_user_logged_in()){
@@ -538,20 +550,13 @@ else {
                 "
             SELECT COUNT(*) AS NumberOfRows
             FROM $tablenameIP 
-            WHERE (pid = %d and GalleryID = %d and IP = %s and Rating > %s) OR (pid = %d and GalleryID = %d and CookieId = %s and Rating > %s)
+            WHERE pid = %d and GalleryID = %d and IP = %s and CookieId = %s and Rating > %s
         ",
-                $pictureID,$galeryID,$userIP,0,$pictureID,$galeryID,$CookieId,0
+                $pictureID,$galeryID,$userIP,$CookieId,0
             ) );
 
         } else{
-            $getRatingPicture = $wpdb->get_var( $wpdb->prepare(
-                "
-            SELECT COUNT(*) AS NumberOfRows
-            FROM $tablenameIP 
-            WHERE pid = %d and GalleryID = %d and IP = %s and Rating > %s
-        ",
-                $pictureID,$galeryID,$userIP,0
-            ) );
+            $getRatingPicture = 0;
         }
 
     }
@@ -601,21 +606,14 @@ else {
             if(!empty($CookieId)) {
                 $countVotesOfUserPerGallery = $wpdb->get_var( $wpdb->prepare(
                     "
-						SELECT COUNT(*) AS NumberOfRows
-						FROM $tablenameIP 
-						WHERE (GalleryID = %d and IP = %s and Rating > %d) OR (GalleryID = %d and CookieId = %s and Rating > %d)
-					",
-                    $galeryID,$userIP,0,$galeryID,$CookieId,0
+							SELECT COUNT(*) AS NumberOfRows
+							FROM $tablenameIP
+							WHERE GalleryID = %d and IP = %s and CookieId = %s and Rating > %d
+						",
+                    $galeryID,$userIP,$CookieId,0
                 ) );
             }else{
-                $countVotesOfUserPerGallery = $wpdb->get_var( $wpdb->prepare(
-                    "
-						SELECT COUNT(*) AS NumberOfRows
-						FROM $tablenameIP 
-						WHERE GalleryID = %d and IP = %s and Rating > %d
-					",
-                    $galeryID,$userIP,0
-                ) );
+                $countVotesOfUserPerGallery = 0;
             }
         }
     }
@@ -633,7 +631,7 @@ else {
 						FROM $tablenameIP 
 						WHERE GalleryID = %d and WpUserId = %s and Rating > %d and Category = %d and CategoriesOn = %d
 					",
-                    $galeryID,$wpUserId,0,$ratingFileData['Category'],1
+                    $galeryID,$wpUserId,0,$imageData['Category'],1
                 ) );
             }
         }
@@ -646,7 +644,7 @@ else {
 						FROM $tablenameIP 
 						WHERE GalleryID = %d and CookieId = %s and Rating > %d and Category = %d and CategoriesOn = %d
 					",
-                    $galeryID,$CookieId,0,$ratingFileData['Category'],1
+                    $galeryID,$CookieId,0,$imageData['Category'],1
                 ) );
             }
         }
@@ -657,28 +655,21 @@ else {
 						FROM $tablenameIP 
 						WHERE GalleryID = %d and IP = %s and Rating > %d and Category = %d and CategoriesOn = %d
 					",
-                $galeryID,$userIP,0,$ratingFileData['Category'],1
+                $galeryID,$userIP,0,$imageData['Category'],1
             ) );
         }
         elseif ($CheckIp == 1 && $CheckCookie==1) {
             if(!empty($CookieId)) {
                 $countVotesOfUserPerCategory = $wpdb->get_var( $wpdb->prepare(
                     "
-						SELECT COUNT(*) AS NumberOfRows
-						FROM $tablenameIP 
-						WHERE (GalleryID = %d and IP = %s and Rating > %d and Category = %d and CategoriesOn = %d) OR (GalleryID = %d and CookieId = %s and Rating > %d and Category = %d and CategoriesOn = %d)
-					",
-                    $galeryID,$userIP,0,$ratingFileData['Category'],1,$galeryID,$CookieId,0,$ratingFileData['Category'],1
+							SELECT COUNT(*) AS NumberOfRows
+							FROM $tablenameIP
+							WHERE GalleryID = %d and IP = %s and CookieId = %s and Rating > %d and Category = %d and CategoriesOn = %d
+						",
+                    $galeryID,$userIP,$CookieId,0,$imageData['Category'],1
                 ) );
             }else{
-                $countVotesOfUserPerCategory = $wpdb->get_var( $wpdb->prepare(
-                    "
-						SELECT COUNT(*) AS NumberOfRows
-						FROM $tablenameIP 
-						WHERE GalleryID = %d and IP = %s and Rating > %d and Category = %d and CategoriesOn = %d
-					",
-                    $galeryID,$userIP,0,$ratingFileData['Category'],1
-                ) );
+                $countVotesOfUserPerCategory = 0;
             }
         }
 
@@ -704,8 +695,8 @@ else {
        }
        /**###NORMAL-END###**/
 
-     $lastVotedIpRow = 0;
-    if($CheckLogin==1 && $wpUserId>0){
+       $lastVotedIpRow = 0;
+       if($CheckLogin==1 && $wpUserId>0){
         if(is_user_logged_in()){
             $lastVotedIpRow = $wpdb->get_row( "SELECT id, Rating FROM $tablenameIP WHERE Rating >= '1' && WpUserId = '$wpUserId' && GalleryID = '$galeryID' && pid = '$pictureID' ORDER BY id DESC LIMIT 1" );
             $countUserVotesForImage = $wpdb->get_var( "SELECT COUNT(*) AS NumberOfRows FROM $tablenameIP WHERE Rating >= '1' && WpUserId = '$wpUserId' && GalleryID = '$galeryID' && pid = '$pictureID'" );
@@ -733,36 +724,29 @@ else {
     }elseif ($CheckIp == 1 && $CheckCookie==1) {
         if(!empty($CookieId)) {
             $lastVotedIpRow = $wpdb->get_row($wpdb->prepare(
-                "SELECT id, Rating FROM $tablenameIP WHERE (Rating >= %d AND IP = %s AND GalleryID = %d AND pid = %d) OR (Rating >= %d AND CookieId = %s AND GalleryID = %d AND pid = %d) ORDER BY id DESC LIMIT 1",
+                "SELECT id, Rating FROM $tablenameIP WHERE Rating >= %d AND IP = %s AND CookieId = %s AND GalleryID = %d AND pid = %d ORDER BY id DESC LIMIT 1",
                 1,
                 $userIP,
-                $galeryID,
-                $pictureID,
-                1,
                 $CookieId,
                 $galeryID,
                 $pictureID
             ));
             $countUserVotesForImage = $wpdb->get_var($wpdb->prepare(
-                "SELECT COUNT(*) AS NumberOfRows FROM $tablenameIP WHERE (Rating >= %d AND IP = %s AND GalleryID = %d AND pid = %d) OR (Rating >= %d AND CookieId = %s AND GalleryID = %d AND pid = %d)",
+                "SELECT COUNT(*) AS NumberOfRows FROM $tablenameIP WHERE Rating >= %d AND IP = %s AND CookieId = %s AND GalleryID = %d AND pid = %d",
                 1,
                 $userIP,
-                $galeryID,
-                $pictureID,
-                1,
                 $CookieId,
                 $galeryID,
                 $pictureID
             ));
         } else {
-            $lastVotedIpRow = $wpdb->get_row("SELECT id, Rating FROM $tablenameIP WHERE Rating >= '1' && IP = '$userIP' && GalleryID = '$galeryID' && pid = '$pictureID' ORDER BY id DESC LIMIT 1");
-            $countUserVotesForImage = $wpdb->get_var("SELECT COUNT(*) AS NumberOfRows FROM $tablenameIP WHERE Rating >= '1' && IP = '$userIP' && GalleryID = '$galeryID' && pid = '$pictureID'");
+            $lastVotedIpRow = 0;
+            $countUserVotesForImage = 0;
         }
     }
 
     // maybe vote was done without reloading after changing configuration and user votes were reseted! Thats why this check has to be done!
         if(!empty($lastVotedIpRow)){
-
 
             $wpdb->delete( $tablenameIP, array( 'id' => $lastVotedIpRow->id ), array( '%d' ) );
 
@@ -770,10 +754,11 @@ else {
             $rating = intval($ratingFileData['Rating'])-intval($lastVotedIpRow->Rating);
             $ratingFileData['CountR'] = $countR;
 
-
+            $countRtype = 'CountR' . (int) $lastVotedIpRow->Rating; // e.g. CountR5
+            $ratingToRemove = (int) $lastVotedIpRow->Rating;
+            $countRtoAdd = intval($ratingFileData['CountR'.$lastVotedIpRow->Rating])-1;
             if($IsModernFiveStar==1){
-                $countRtype = 'CountR'.$lastVotedIpRow->Rating;
-                $countRtoAdd = intval($ratingFileData['CountR'.$lastVotedIpRow->Rating])-1;
+                /*
                 // update main table
                 $wpdb->update(
                     "$tablename",
@@ -781,35 +766,67 @@ else {
                     array('id' => $pictureID),
                     array('%d','%d','%d'),
                     array('%d')
+                );*/
+                if (!preg_match('/^CountR(10|[1-9])$/', $countRtype)) {
+                    return false; // safety: prevent SQL injection via column name
+                }
+                // atomic way
+                $sql = $wpdb->prepare(
+                    "UPDATE {$tablename}
+                     SET
+                        CountR = GREATEST(CountR - 1, 0),
+                        Rating = GREATEST(Rating - %d, 0),
+                        {$countRtype} = GREATEST({$countRtype} - 1, 0)
+                     WHERE id = %d",
+                    $ratingToRemove,
+                    $pictureID
                 );
+                $rows = $wpdb->query($sql);
             }else{
-                $wpdb->update(
+                // old version
+                /*$wpdb->update(
                     "$tablename",
                     array('CountR' => $countR,'Rating' => $rating),
                     array('id' => $pictureID),
                     array('%d','%d'),
                     array('%d')
+                );*/
+                // atomic
+                $rows = $wpdb->query(
+                    $wpdb->prepare(
+                        "UPDATE {$tablename}
+                         SET
+                            CountR = GREATEST(CountR - 1, 0),
+                            Rating = GREATEST(Rating - %d, 0)
+                         WHERE id = %d",
+                        $ratingToRemove,
+                        $pictureID
+                    )
                 );
             }
 
 
-            $fp = fopen($jsonFile, 'w');
+            //$fp = fopen($jsonFile, 'w');
             $ratingFileData['CountR'] = intval($countR);
             $ratingFileData['Rating'] = intval($rating);
 
-            if($IsModernFiveStar==1){
+             if($IsModernFiveStar==1){
                 $ratingFileData['CountR'.$lastVotedIpRow->Rating] = $countRtoAdd;
             }
 
+            //fwrite($fp,json_encode($ratingFileData));
+            //fclose($fp);
 
-            fwrite($fp,json_encode($ratingFileData));
-            fclose($fp);
+            $ratingFileData = cg1l_set_stats_with_lock($galeryID, $pictureID, $ratingFileData, $lockFp);
+            cg1l_release_stats_lock($lockFp);
+            cg1l_push_recent_id_file($galeryID,$pictureID,'image-stats-data-last-update');
+            cg1l_create_last_updated_time_file($galeryID,'image-stats-data-last-update');
 
             $isSetUserVoteToNull = false;
             if(empty($countUserVotesForImage)){
                 $isSetUserVoteToNull = true;
             }
-
+            cg1l_release_stats_lock($lockFp);
             ?>
             <script data-cg-processing="true">
 
@@ -824,9 +841,7 @@ else {
                 if(cgJsClass.gallery.function.general.time.photoContestEndTimeCheck(galeryIDuser,ContestEndTimeFromPhp,ContestEnd)==true){
                     var Rating = <?php echo json_encode($lastVotedIpRow->Rating);?>;
                     Rating = parseInt(Rating);
-
                     cgJsClass.gallery.rating.setRatingFiveStar(pictureID,-1,-Rating,false,galeryIDuser,false,false,ratingFileData,isFromSingleView,isSetUserVoteToNull);
-
                 }else{
                     cgJsClass.gallery.rating.setRatingFiveStar(pictureID,0,0,false,galeryIDuser,false,false,ratingFileData,isFromSingleView,isSetUserVoteToNull);
                 }
@@ -835,11 +850,11 @@ else {
 
             </script>
             <?php
-
             return;
 
 
         }else{
+            cg1l_release_stats_lock($lockFp);
             ?>
             <script data-cg-processing="true">
 
@@ -852,9 +867,7 @@ else {
 
             </script>
             <?php
-
             return;
-
         }
 
 
@@ -870,6 +883,17 @@ else {
                 $VotesUserInTstamp = $wpdb->get_var("SELECT COUNT(*) FROM $tablenameIP WHERE Tstamp > '$TstampToCompare' && WpUserId='$wpUserId' && GalleryID = '$galeryID' && Rating>='1'");
             }
 
+        }elseif($CheckIp==1 && $CheckCookie==1){
+            if(!empty($CookieId)) {
+                $VotesUserInTstamp = $wpdb->get_var($wpdb->prepare(
+                    "SELECT COUNT(*) FROM $tablenameIP WHERE Tstamp > %d AND IP = %s AND CookieId = %s AND GalleryID = %d AND Rating >= %d",
+                    $TstampToCompare,
+                    $userIP,
+                    $CookieId,
+                    $galeryID,
+                    1
+                ));
+            }
         }elseif($CheckCookie){
             if(!empty($CookieId)) {
                 $VotesUserInTstamp = $wpdb->get_var($wpdb->prepare(
@@ -889,7 +913,7 @@ else {
         }
 
         if($VotesInTime == 1 && ($VotesUserInTstamp>=$VotesInTimeQuantity)){
-
+            cg1l_release_stats_lock($lockFp);
             ?>
             <script data-cg-processing="true">
 
@@ -903,9 +927,7 @@ else {
 
             </script>
             <?php
-
             return;
-
         }
 
     }
@@ -921,14 +943,13 @@ else {
     if (!empty($getRatingPicture) and $OneVotePerPicture==1){
         // One vote per picture case
         // Picture already rated!!!!
-
         /**###NORMAL###**/
         if(is_dir ($plugin_dir_path.'/../../../../../contest-gallery')){
             cg_update_to_pro_five_stars($galeryIDuser,$pictureID,$ratingFileData,$isFromSingleView,'Update to PRO version to use "One vote per picture" function');
             return true;
         }
         /**###NORMAL-END###**/
-
+        cg1l_release_stats_lock($lockFp);
         ?>
         <script data-cg-processing="true">
 
@@ -936,6 +957,7 @@ else {
             var pictureID = <?php echo json_encode($pictureID);?>;
             var isFromSingleView = <?php echo json_encode($isFromSingleView);?>;
             var ratingFileData = <?php echo json_encode($ratingFileData);?>;
+            var hasVoteMessageWarningTextContent = <?php echo json_encode($hasVoteMessageWarningTextContent);?>;
             cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive = <?php echo json_encode($VoteMessageWarningActive);?>;
             cgJsData[galeryIDuser].options.pro.VoteMessageWarningText = <?php echo json_encode($VoteMessageWarningText);?>;
 
@@ -943,7 +965,7 @@ else {
 
             cgJsClass.gallery.rating.setRatingFiveStar(pictureID,0,0,false,galeryIDuser,false,false,ratingFileData,isFromSingleView,undefined,undefined,true);
 
-            if(cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive==1){
+            if(cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive==1 && hasVoteMessageWarningTextContent){
                 cgJsClass.gallery.function.message.showPro(galeryIDuser,cgJsData[galeryIDuser].options.pro.VoteMessageWarningText);
             }else{
                 if(cgJsData[galeryIDuser].vars.rawData[pictureID].MultipleFilesParsed){
@@ -958,14 +980,13 @@ else {
 
     } elseif (($countVotesOfUserPerGallery >= $VotesPerUser) && ($VotesPerUser!=0)){
         // All votes used case
-
         /**###NORMAL###**/
         if(is_dir ($plugin_dir_path.'/../../../../../contest-gallery')){
             cg_update_to_pro_five_stars($galeryIDuser,$pictureID,$ratingFileData,$isFromSingleView,'Update to PRO version to use "Votes per user" function');
             return true;
         }
         /**###NORMAL-END###**/
-
+        cg1l_release_stats_lock($lockFp);
         ?>
         <script data-cg-processing="true">
 
@@ -973,16 +994,19 @@ else {
             var pictureID = <?php echo json_encode($pictureID);?>;
             var isFromSingleView = <?php echo json_encode($isFromSingleView);?>;
             var ratingFileData = <?php echo json_encode($ratingFileData);?>;
+            var hasVoteMessageWarningTextContent = <?php echo json_encode($hasVoteMessageWarningTextContent);?>;
+            var hasVotesPerUserAllVotesUsedHtmlMessageContent = <?php echo json_encode($hasVotesPerUserAllVotesUsedHtmlMessageContent);?>;
             cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive = <?php echo json_encode($VoteMessageWarningActive);?>;
             cgJsData[galeryIDuser].options.pro.VoteMessageWarningText = <?php echo json_encode($VoteMessageWarningText);?>;
+            cgJsData[galeryIDuser].options.pro.VotesPerUserAllVotesUsedHtmlMessage = <?php echo json_encode($VotesPerUserAllVotesUsedHtmlMessage);?>;
 
             cgJsClass.gallery.function.message.close(true);
 
             cgJsClass.gallery.rating.setRatingFiveStar(pictureID,0,0,false,galeryIDuser,true,false,ratingFileData,isFromSingleView,undefined,undefined,true);
 
-            if(cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive==1){
+            if(cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive==1 && hasVoteMessageWarningTextContent){
                 cgJsClass.gallery.function.message.showPro(galeryIDuser,cgJsData[galeryIDuser].options.pro.VoteMessageWarningText);
-            }elseif(cgJsData[galeryIDuser].options.pro.VotesPerUserAllVotesUsedHtmlMessage){
+            }else if(hasVotesPerUserAllVotesUsedHtmlMessageContent){
                 cgJsClass.gallery.function.message.showPro(galeryIDuser,cgJsData[galeryIDuser].options.pro.VotesPerUserAllVotesUsedHtmlMessage);
             }else{
                 cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].AllVotesUsed);
@@ -995,7 +1019,7 @@ else {
 
     } elseif (($countVotesOfUserPerCategory >= 1) && (!empty($VotePerCategory))){
         // One vote per category
-
+        cg1l_release_stats_lock($lockFp);
         ?>
         <script data-cg-processing="true">
 
@@ -1003,6 +1027,7 @@ else {
             var pictureID = <?php echo json_encode($pictureID);?>;
             var isFromSingleView = <?php echo json_encode($isFromSingleView);?>;
             var ratingFileData = <?php echo json_encode($ratingFileData);?>;
+            var hasVoteMessageWarningTextContent = <?php echo json_encode($hasVoteMessageWarningTextContent);?>;
             cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive = <?php echo json_encode($VoteMessageWarningActive);?>;
             cgJsData[galeryIDuser].options.pro.VoteMessageWarningText = <?php echo json_encode($VoteMessageWarningText);?>;
 
@@ -1010,7 +1035,7 @@ else {
 
             cgJsClass.gallery.rating.setRatingFiveStar(pictureID,0,0,false,galeryIDuser,true,false,ratingFileData,isFromSingleView,undefined,undefined,true);
 
-            if(cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive==1){
+            if(cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive==1 && hasVoteMessageWarningTextContent){
                 cgJsClass.gallery.function.message.showPro(galeryIDuser,cgJsData[galeryIDuser].options.pro.VoteMessageWarningText);
             }else{
                 cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].YouHaveAlreadyVotedThisCategory);
@@ -1022,14 +1047,13 @@ else {
 
     } elseif (($countVotesOfUserPerCategory >= $VotesPerCategory) && (!empty($VotesPerCategory))){
         // Votes per category
-
         /**###NORMAL###**/
         if(is_dir ($plugin_dir_path.'/../../../../../contest-gallery')){
             cg_update_to_pro_five_stars($galeryIDuser,$pictureID,$ratingFileData,$isFromSingleView,'Update to PRO version to use "Votes per category" function');
             return true;
         }
         /**###NORMAL-END###**/
-
+        cg1l_release_stats_lock($lockFp);
         ?>
         <script data-cg-processing="true">
 
@@ -1037,6 +1061,7 @@ else {
             var pictureID = <?php echo json_encode($pictureID);?>;
             var isFromSingleView = <?php echo json_encode($isFromSingleView);?>;
             var ratingFileData = <?php echo json_encode($ratingFileData);?>;
+            var hasVoteMessageWarningTextContent = <?php echo json_encode($hasVoteMessageWarningTextContent);?>;
             cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive = <?php echo json_encode($VoteMessageWarningActive);?>;
             cgJsData[galeryIDuser].options.pro.VoteMessageWarningText = <?php echo json_encode($VoteMessageWarningText);?>;
 
@@ -1044,7 +1069,7 @@ else {
 
             cgJsClass.gallery.rating.setRatingFiveStar(pictureID,0,0,false,galeryIDuser,true,false,ratingFileData,isFromSingleView,undefined,undefined,true);
 
-            if(cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive==1){
+            if(cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive==1 && hasVoteMessageWarningTextContent){
                 cgJsClass.gallery.function.message.showPro(galeryIDuser,cgJsData[galeryIDuser].options.pro.VoteMessageWarningText);
             }else{
                 cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].YouHaveNoMoreVotesInThisCategory);
@@ -1057,8 +1082,8 @@ else {
     }
     else{
 
-        // KANN NUR EINTRETEN WENN DIE OPTIONS GERADE GEÄNDERT WURDEN UND KEIN SEITENRELOAD STATTFAND
-        // ES SOLL NICHT VERARBEITET WERDEN WEIL ES SEIN KÖNNTE DAS COOKIES BEIM NUTZER GAR NICHT ERLAUBT WAREN,
+        // CAN ONLY HAPPEN IF OPTIONS WERE JUST CHANGED AND NO PAGE RELOAD HAPPENED
+        // IT SHOULD NOT BE PROCESSED BECAUSE IT COULD BE THAT COOKIES WERE NOT ALLOWED FOR THE USER,
         if($CheckCookie==1) {
             if(!isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {
                 //  return;
@@ -1067,6 +1092,10 @@ else {
         }
 
         if($cookieVotingJustActivated == false){
+
+            /*echo "<pre>";
+            print_r($ratingFileData);
+            echo "</pre>";*/
 
                 // vote done!!! Save and forward
             $VoteDate = date('d-M-Y H:i:s', $Tstamp);
@@ -1078,17 +1107,18 @@ else {
                         ( id, IP, GalleryID, pid, Rating, RatingS,WpUserId,VoteDate,Tstamp,OptionSet,CookieId,Category,CategoriesOn)
                         VALUES ( %s,%s,%d,%d,%d,%d,%d,%s,%d,%s,%s,%d,%d )
                     ",
-                '',$userIP,$galeryID,$pictureID,$rateValue,0,$wpUserId,$VoteDate,$Tstamp,$OptionSet,$CookieId,$ratingFileData['Category'],$CategoriesOn
+                '',$userIP,$galeryID,$pictureID,$rateValue,0,$wpUserId,$VoteDate,$Tstamp,$OptionSet,$CookieId,$imageData['Category'],$CategoriesOn
             ) );
 
-            // speichern in der Haupttabelle und im File
+            // save in main table and file
 
             $countR = intval($ratingFileData['CountR'])+1;
             $rating = intval($ratingFileData['Rating'])+intval($rateValue);
-
+            $countRtype = 'CountR'.$rateValue;
+            $countRtoAdd = intval($ratingFileData['CountR'.$rateValue])+1;
             if($IsModernFiveStar==1){
-                $countRtype = 'CountR'.$rateValue;
-                $countRtoAdd = intval($ratingFileData['CountR'.$rateValue])+1;
+                // old way
+                /*
                 // update will still be done in case but not really used
                 // since 13.02.2022 always dynamic values from tablename_ip will be get
                $wpdb->update(
@@ -1097,7 +1127,22 @@ else {
                     array('id' => $pictureID),
                     array('%d','%d','%d'),
                     array('%d')
+                );*/
+                if (!preg_match('/^CountR(10|[1-9])$/', $countRtype)) {
+                    return false; // safety: prevent SQL injection via column name
+                }
+                // atomic way
+                $sql = $wpdb->prepare(
+                    "UPDATE {$tablename}
+                     SET
+                        CountR = GREATEST(CountR + 1, 0),
+                        Rating = GREATEST(Rating + %d, 0),
+                        {$countRtype} = GREATEST({$countRtype} + 1, 0)
+                     WHERE id = %d",
+                    $rateValue,
+                    $pictureID
                 );
+                $rows = $wpdb->query($sql);
             }else{
                 $wpdb->update(
                     "$tablename",
@@ -1106,9 +1151,20 @@ else {
                     array('%d','%d'),
                     array('%d')
                 );
+                $rows = $wpdb->query(
+                    $wpdb->prepare(
+                        "UPDATE {$tablename}
+                         SET
+                            CountR = GREATEST(CountR + 1, 0),
+                            Rating = GREATEST(Rating + %d, 0)
+                         WHERE id = %d",
+                        $rateValue,
+                        $pictureID
+                    )
+                );
             }
 
-            $fp = fopen($jsonFile, 'w');
+            //$fp = fopen($jsonFile, 'w');
             $ratingFileData['CountR'] = intval($countR);
             $ratingFileData['Rating'] = intval($rating);
 
@@ -1116,13 +1172,23 @@ else {
                 $ratingFileData['CountR'.$rateValue] = $countRtoAdd;
             }
 
-            fwrite($fp,json_encode($ratingFileData));
-            fclose($fp);
+            //fwrite($fp,json_encode($ratingFileData));
+            //fclose($fp);
 
+            /*echo "<pre>";
+                print_r($ratingFileData);
+            echo "</pre>";
+
+            die;*/
+
+            $ratingFileData = cg1l_set_stats_with_lock($galeryID, $pictureID, $ratingFileData, $lockFp);
+            cg1l_release_stats_lock($lockFp);
+            cg1l_push_recent_id_file($galeryID,$pictureID,'image-stats-data-last-update');
+            cg1l_create_last_updated_time_file($galeryID,'image-stats-data-last-update');
 
         }
 
-
+        cg1l_release_stats_lock($lockFp);
         ?>
         <script data-cg-processing="true">
 
@@ -1134,7 +1200,7 @@ else {
             var isFromSingleView = <?php echo json_encode($isFromSingleView);?>;
             cgJsData[galeryIDuser].options.pro.VoteMessageSuccessActive = <?php echo json_encode($VoteMessageSuccessActive);?>;
             cgJsData[galeryIDuser].options.pro.VoteMessageSuccessText = <?php echo json_encode($VoteMessageSuccessText);?>;
-
+            debugger
              if(!cookieVotingJustActivated){
                 var rateValue = <?php echo json_encode($rateValue);?>;
 

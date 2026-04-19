@@ -1,10 +1,10 @@
 <?php
 if(!function_exists('cg_shortcode_interval_check')){
-    function cg_shortcode_interval_check($GalleryID,$options,$cg_gallery_shortcode_type,$isFromCGgalleries = false){
+    function cg_shortcode_interval_check($GalleryID,$options,$shortcode_name,$isFromCGgalleries = false){
 
 	    $wp_upload_dir = wp_upload_dir();
 
-	    if($cg_gallery_shortcode_type=='cg_users_reg' || $cg_gallery_shortcode_type=='cg_google_sign_in' || $cg_gallery_shortcode_type=='cg_users_login'){
+	    if($shortcode_name=='cg_users_reg' || $shortcode_name=='cg_google_sign_in' || $shortcode_name=='cg_users_login'){
 		    $optionsPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/json/interval-conf.json';
             if(!file_exists($optionsPath)){
                 file_put_contents($optionsPath,json_encode(['interval' => ['cg_users_reg' => [],'cg_google_sign_in' => [],'cg_users_login' => []]]));
@@ -24,30 +24,30 @@ if(!function_exists('cg_shortcode_interval_check')){
             $options['interval']['cg_users_upload'] = $options['interval']['cg_users_contact'];
         }
 
-        if(isset($options['interval'][$cg_gallery_shortcode_type])
-            && isset($options['interval'][$cg_gallery_shortcode_type]['active'])
-            && $options['interval'][$cg_gallery_shortcode_type]['active']=='on'
+        if(isset($options['interval'][$shortcode_name])
+            && isset($options['interval'][$shortcode_name]['active'])
+            && $options['interval'][$shortcode_name]['active']=='on'
         ){
             $shortcodeCheckIsActivated = true;
-            $TextWhenShortcodeIntervalIsOn = $options['interval'][$cg_gallery_shortcode_type]['TextWhenShortcodeIntervalIsOn'];
-            $TextWhenShortcodeIntervalIsOff = $options['interval'][$cg_gallery_shortcode_type]['TextWhenShortcodeIntervalIsOff'];
+            $TextWhenShortcodeIntervalIsOn = $options['interval'][$shortcode_name]['TextWhenShortcodeIntervalIsOn'];
+            $TextWhenShortcodeIntervalIsOff = $options['interval'][$shortcode_name]['TextWhenShortcodeIntervalIsOff'];
             $isActive = false;
             $currentYear = date("Y");
             // selectedIntervalType
-            if(isset($options['interval'][$cg_gallery_shortcode_type][$currentYear])){
-                $interval = $options['interval'][$cg_gallery_shortcode_type][$currentYear]['selectedIntervalType'];
+            if(isset($options['interval'][$shortcode_name][$currentYear])){
+                $interval = $options['interval'][$shortcode_name][$currentYear]['selectedIntervalType'];
                 $currentMonthName = strtolower(date('F'));
-                if(isset($options['interval'][$cg_gallery_shortcode_type][$currentYear])){
+                if(isset($options['interval'][$shortcode_name][$currentYear])){
                     if($interval=='monthly'){
-                        $fromDate = $options['interval'][$cg_gallery_shortcode_type][$currentYear][$interval][$currentMonthName]['fromDate'];
-                        $toDate = $options['interval'][$cg_gallery_shortcode_type][$currentYear][$interval][$currentMonthName]['toDate'];
+                        $fromDate = $options['interval'][$shortcode_name][$currentYear][$interval][$currentMonthName]['fromDate'];
+                        $toDate = $options['interval'][$shortcode_name][$currentYear][$interval][$currentMonthName]['toDate'];
                         if($fromDate && $toDate){
-                            $fromDate = $options['interval'][$cg_gallery_shortcode_type][$currentYear][$interval][$currentMonthName]['fromDate'];
-                            $toDate = $options['interval'][$cg_gallery_shortcode_type][$currentYear][$interval][$currentMonthName]['toDate'];
-                            $fromHours = $options['interval'][$cg_gallery_shortcode_type][$currentYear][$interval][$currentMonthName]['fromHours'];
-                            $fromMinutes = $options['interval'][$cg_gallery_shortcode_type][$currentYear][$interval][$currentMonthName]['fromMinutes'];
-                            $toHours = $options['interval'][$cg_gallery_shortcode_type][$currentYear][$interval][$currentMonthName]['toHours'];
-                            $toMinutes = $options['interval'][$cg_gallery_shortcode_type][$currentYear][$interval][$currentMonthName]['toMinutes'];
+                            $fromDate = $options['interval'][$shortcode_name][$currentYear][$interval][$currentMonthName]['fromDate'];
+                            $toDate = $options['interval'][$shortcode_name][$currentYear][$interval][$currentMonthName]['toDate'];
+                            $fromHours = $options['interval'][$shortcode_name][$currentYear][$interval][$currentMonthName]['fromHours'];
+                            $fromMinutes = $options['interval'][$shortcode_name][$currentYear][$interval][$currentMonthName]['fromMinutes'];
+                            $toHours = $options['interval'][$shortcode_name][$currentYear][$interval][$currentMonthName]['toHours'];
+                            $toMinutes = $options['interval'][$shortcode_name][$currentYear][$interval][$currentMonthName]['toMinutes'];
                             $dateNow = cg_get_date_time_object_based_on_wp_timezone_conf((new DateTime('now'))->getTimestamp());
 
                             $intervalStartDate = new DateTime($fromDate.' '.$fromHours.':'.$fromMinutes.':00');
@@ -61,14 +61,14 @@ if(!function_exists('cg_shortcode_interval_check')){
                     }
                     if($interval=='weekly'){
 
-                        $dayStart = $options['interval'][$cg_gallery_shortcode_type][$currentYear][$interval]['dayStart'];
-                        $dayEnd = $options['interval'][$cg_gallery_shortcode_type][$currentYear][$interval]['dayEnd'];
+                        $dayStart = $options['interval'][$shortcode_name][$currentYear][$interval]['dayStart'];
+                        $dayEnd = $options['interval'][$shortcode_name][$currentYear][$interval]['dayEnd'];
                         if($dayStart && $dayEnd){
 
-                            $fromHours = $options['interval'][$cg_gallery_shortcode_type][$currentYear][$interval]['fromHours'];
-                            $fromMinutes = $options['interval'][$cg_gallery_shortcode_type][$currentYear][$interval]['fromMinutes'];
-                            $toHours = $options['interval'][$cg_gallery_shortcode_type][$currentYear][$interval]['toHours'];
-                            $toMinutes = $options['interval'][$cg_gallery_shortcode_type][$currentYear][$interval]['toMinutes'];
+                            $fromHours = $options['interval'][$shortcode_name][$currentYear][$interval]['fromHours'];
+                            $fromMinutes = $options['interval'][$shortcode_name][$currentYear][$interval]['fromMinutes'];
+                            $toHours = $options['interval'][$shortcode_name][$currentYear][$interval]['toHours'];
+                            $toMinutes = $options['interval'][$shortcode_name][$currentYear][$interval]['toMinutes'];
                             $dateNow = cg_get_date_time_object_based_on_wp_timezone_conf((new DateTime('now'))->getTimestamp());
                             $intervalStartDate = new DateTime(date('Y-m-d', strtotime("$dayStart this week")).' '.$fromHours.':'.$fromMinutes.':00');
                             $intervalEndDate = new DateTime(date('Y-m-d', strtotime("$dayEnd this week")).' '.$toHours.':'.$toMinutes.':59');
@@ -80,10 +80,10 @@ if(!function_exists('cg_shortcode_interval_check')){
                         }
                     }
                     if($interval=='daily'){
-                        $fromHours = $options['interval'][$cg_gallery_shortcode_type][$currentYear][$interval]['fromHours'];
-                        $fromMinutes = $options['interval'][$cg_gallery_shortcode_type][$currentYear][$interval]['fromMinutes'];
-                        $toHours = $options['interval'][$cg_gallery_shortcode_type][$currentYear][$interval]['toHours'];
-                        $toMinutes = $options['interval'][$cg_gallery_shortcode_type][$currentYear][$interval]['toMinutes'];
+                        $fromHours = $options['interval'][$shortcode_name][$currentYear][$interval]['fromHours'];
+                        $fromMinutes = $options['interval'][$shortcode_name][$currentYear][$interval]['fromMinutes'];
+                        $toHours = $options['interval'][$shortcode_name][$currentYear][$interval]['toHours'];
+                        $toMinutes = $options['interval'][$shortcode_name][$currentYear][$interval]['toMinutes'];
                         if($fromHours && $toHours && $fromMinutes && $toMinutes){
                             $dateNow = cg_get_date_time_object_based_on_wp_timezone_conf((new DateTime('now'))->getTimestamp());
                             $intervalStartDate = new DateTime(date('Y-m-d', strtotime("today")).' '.$fromHours.':'.$fromMinutes.':00');

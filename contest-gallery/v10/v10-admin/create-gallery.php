@@ -70,9 +70,9 @@ if(!empty($_POST['cg_create'])){
 "Automatically activate users entries after successful frontend upload" can be activated/deactivated in "Edit options" >>> "Upload options"
 </p>';
     $GalleryUploadConfirmationText = htmlentities($GalleryUploadConfirmationText, ENT_QUOTES);
+    $ShowRefreshButtonAfterUpload = 1;
 
     // pro options
-
     $ForwardAfterRegText = 'Thank you for your registration<br/>Check your email account to confirm your email and complete the registration. If you don\'t see any message then plz check also the spam folder.';
     $ForwardAfterLoginText = 'You are now logged in. Have fun with contest.';
     $TextEmailConfirmation = 'Complete your registration by clicking on the link below: <br/><br/> $regurl$';
@@ -88,7 +88,6 @@ if(!empty($_POST['cg_create'])){
     $FeVotingIconType = 'star';
 
     include('json-values.php');
-
     include('create-options.php');
 
     //$nextIDgallery = $wpdb->get_var("SELECT MAX(id) FROM $tablenameOptions");
@@ -106,11 +105,11 @@ if(!empty($_POST['cg_create'])){
 
     // cg_gallery_user shortcode
 	$array = cg_post_type_parent_galleries_array($nextIDgallery,'user');
-    $WpPageParentUser = wp_insert_post($array);
+	$WpPageParentUser = wp_insert_post($array);
 
     // cg_gallery_no_voting shortcode
 	$array = cg_post_type_parent_galleries_array($nextIDgallery,'no-voting');
-    $WpPageParentNoVoting = wp_insert_post($array);
+	$WpPageParentNoVoting = wp_insert_post($array);
 
     // cg_gallery_winner shortcode
 	$array = cg_post_type_parent_galleries_array($nextIDgallery,'winner');
@@ -126,13 +125,13 @@ if(!empty($_POST['cg_create'])){
 	cg_insert_into_contest_gal1ery_wp_pages($WpPageParentWinner);
 	cg_insert_into_contest_gal1ery_wp_pages($WpPageParentEcommerce);
 
-    $wpdb->update(
-        "$tablenameOptions",
-        array('WpPageParent' => $WpPageParent,'WpPageParentUser' => $WpPageParentUser,'WpPageParentNoVoting' => $WpPageParentNoVoting,'WpPageParentWinner' => $WpPageParentWinner,'WpPageParentEcommerce' => $WpPageParentEcommerce),
-        array('id' => $nextIDgallery),
-        array('%d','%d','%d','%d','%d'),
-        array('%d')
-    );
+	$wpdb->update(
+		"$tablenameOptions",
+		array('WpPageParent' => $WpPageParent,'WpPageParentUser' => $WpPageParentUser,'WpPageParentNoVoting' => $WpPageParentNoVoting,'WpPageParentWinner' => $WpPageParentWinner,'WpPageParentEcommerce' => $WpPageParentEcommerce),
+		array('id' => $nextIDgallery),
+		array('%d','%d','%d','%d','%d'),
+		array('%d')
+	);
 
     $tag = get_term_by('slug', ' contest-gallery-plugin-tag','post_tag');
     if(empty($tag)){
@@ -143,7 +142,6 @@ if(!empty($_POST['cg_create'])){
     }
 
     // Erschaffen eines Galerieordners
-
     $uploadFolder = wp_upload_dir();
     $galleryUpload = $uploadFolder['basedir'].'/contest-gallery/gallery-id-'.$nextIDgallery.'';
     $galleryJsonFolder = $uploadFolder['basedir'].'/contest-gallery/gallery-id-'.$nextIDgallery.'/json';
@@ -175,18 +173,6 @@ if(!empty($_POST['cg_create'])){
 
     $fp = fopen($galleryJsonFolderReadMeFile,'w');
     fwrite($fp,'Removing json files manually will break functionality of your gallery');
-    fclose($fp);
-
-    $fp = fopen($galleryUpload.'/json/'.$nextIDgallery.'-categories.json', 'w');
-    fwrite($fp, json_encode(array()));
-    fclose($fp);
-
-    $fp = fopen($galleryUpload.'/json/'.$nextIDgallery.'-form-upload.json', 'w');
-    fwrite($fp, json_encode(array()));
-    fclose($fp);
-
-    $fp = fopen($galleryUpload.'/json/'.$nextIDgallery.'-single-view-order.json', 'w');
-    fwrite($fp, json_encode(array()));
     fclose($fp);
 
     $createdGallery = "true";
@@ -260,7 +246,6 @@ if(!empty($_POST['cg_create'])){
         '',$nextIDgallery,$Forward,
         $Forward_URL,$confirmation_text
     ) );
-
 
 
     // Determine email of blog admin and variables for email table
@@ -433,9 +418,7 @@ if(!empty($_POST['cg_create'])){
         4,$fieldContent,0,0,1,'',''
     ));
 
-
-    $imageIdFormInput = $wpdb->get_var( "SELECT id FROM $tablename_form_input WHERE GalleryID='$nextIDgallery' AND Field_Type='image-f' ");
-
+    $imageIdFormInput = $wpdb->insert_id;
 
     // comment field first, Form_Output will be also created later bottom
 
@@ -466,7 +449,6 @@ if(!empty($_POST['cg_create'])){
     $commentIdFormInput = $wpdb->insert_id;
 
     // add input comment field then, Form_Output will be also created later bottom
-
     $nfFieldsArray = array();
     // 1. Feldtitel
     $nfFieldsArray['titel']="Title";
@@ -493,14 +475,18 @@ if(!empty($_POST['cg_create'])){
 
     //$textIdFormInput = $wpdb->get_var( "SELECT id FROM $tablename_form_input WHERE GalleryID='$nextIDgallery' AND Field_Type='text-f' ");
 	$textIdFormInput = $wpdb->insert_id;
-	$EcommerceTitleToSet = $textIdFormInput;
+	$titleUploadFieldId = $textIdFormInput;
+	$EcommerceTitleToSet = $titleUploadFieldId;
 
     // Dann next ID hier einfügen zum anezgein in der Gallerie das Feld!!!!
     $wpdb->update(
         "$tablename_options_visual",
-        array('Field1IdGalleryView' => $textIdFormInput),
+        array(
+            'Field1IdGalleryView' => $titleUploadFieldId,
+            'Field1IdFullWindowBlogView' => $titleUploadFieldId
+        ),
         array('GalleryID' => $nextIDgallery),
-        array('%d'),
+        array('%d','%d'),
         array('%d')
     );
 
@@ -517,7 +503,7 @@ if(!empty($_POST['cg_create'])){
     // Dann next ID hier einfügen zum anezgein des alternative file type names in single view!!!!
     $wpdb->update(
         "$tablename_options_visual",
-        array('Field3IdGalleryView' => $textIdFormInput),
+        array('Field3IdGalleryView' => $titleUploadFieldId),
         array('GalleryID' => $nextIDgallery),
         array('%d'),
         array('%d')
@@ -541,9 +527,19 @@ if(!empty($_POST['cg_create'])){
 						VALUES ( %s,%d,%d,
 						%s,%d,%s)
 					",
-        '',$textIdFormInput,$nextIDgallery,
+        '',$titleUploadFieldId,$nextIDgallery,
         'text-f',1,'Title'
     ));
+
+    // since 29.0.0 text-f for SEO
+    $textIdFormInput = $wpdb->insert_id;
+    $wpdb->update(
+        "$tablename_options_visual",
+        array('Field2IdGalleryView' => $textIdFormInput),
+        array('GalleryID' => $nextIDgallery),
+        array('%d'),
+        array('%d')
+    );
 
     $wpdb->query($wpdb->prepare(
         "
@@ -589,7 +585,7 @@ if(!empty($_POST['cg_create'])){
 					TextEmailConfirmation,TextPinConfirmation,RegPinSubject,TextAfterEmailConfirmation,TextAfterPinConfirmation,
 					RegMailAddressor,RegMailReply,RegMailSubject,RegUserUploadOnly,RegUserUploadOnlyText,
 					Manipulate,ShowOther,CatWidget,Search,
-					GalleryUpload,GalleryUploadTextBefore,GalleryUploadTextAfter,GalleryUploadConfirmationText,ShowNickname,MinusVote,SlideTransition,
+					GalleryUpload,GalleryUploadTextBefore,GalleryUploadTextAfter,GalleryUploadConfirmationText,ShowRefreshButtonAfterUpload,ShowNickname,MinusVote,SlideTransition,
                     VotesInTime,VotesInTimeQuantity,VotesInTimeIntervalReadable,VotesInTimeIntervalSeconds,VotesInTimeIntervalAlertMessage,ShowExif,SliderFullWindow,
                     HideRegFormAfterLogin,HideRegFormAfterLoginShowTextInstead,HideRegFormAfterLoginTextToShow,
 					RegUserGalleryOnly,RegUserGalleryOnlyText,RegUserMaxUpload,IsModernFiveStar,
@@ -609,7 +605,7 @@ if(!empty($_POST['cg_create'])){
 					%s,%s,%s,%s,%s,
 					%s,%s,%s,%d,%s,
 					%d,%d,%d,%d,
-					%d,%s,%s,%s,%d,%d,%s,
+					%d,%s,%s,%s,%d,%d,%d,%s,
                     %d,%d,%s,%d,%s,%d,%d,
                     %d,%d,%s,
                     %d,%s,%d,%d,
@@ -630,7 +626,7 @@ if(!empty($_POST['cg_create'])){
             $TextEmailConfirmation,$TextPinConfirmation,$RegPinSubject,$TextAfterEmailConfirmation,$TextAfterPinConfirmation,
             $RegMailAddressor,$RegMailReply,$RegMailSubject,$RegUserUploadOnly,$RegUserUploadOnlyText,
             $Manipulate,$ShowOther,$CatWidget,$Search,
-            $GalleryUpload,$GalleryUploadTextBefore,$GalleryUploadTextAfter,$GalleryUploadConfirmationText,$ShowNickname,$MinusVote,$SlideTransition,
+            $GalleryUpload,$GalleryUploadTextBefore,$GalleryUploadTextAfter,$GalleryUploadConfirmationText,$ShowRefreshButtonAfterUpload,$ShowNickname,$MinusVote,$SlideTransition,
             $VotesInTime,$VotesInTimeQuantity,$VotesInTimeIntervalReadable,$VotesInTimeIntervalSeconds,$VotesInTimeIntervalAlertMessage,$ShowExif,$SliderFullWindow,
             $HideRegFormAfterLogin,$HideRegFormAfterLoginShowTextInstead,$HideRegFormAfterLoginTextToShow,
             $RegUserGalleryOnly,$RegUserGalleryOnlyText,$RegUserMaxUpload,$IsModernFiveStar,
@@ -656,10 +652,11 @@ if(!empty($_POST['cg_create'])){
 
         include('options/json-options.php');
 
-        $jsonOptions['visual']['Field1IdGalleryView'] = $textIdFormInput;
+        $jsonOptions['visual']['Field1IdGalleryView'] = $titleUploadFieldId;
+        $jsonOptions['visual']['Field1IdFullWindowBlogView'] = $titleUploadFieldId;
         $jsonOptions['visual']['Field2IdGalleryView'] = 0;
-        $jsonOptions['visual']['Field3IdGalleryView'] = $textIdFormInput;
-        $jsonOptions['visual']['IsForWpPageTitleID'] = $textIdFormInput;
+        $jsonOptions['visual']['Field3IdGalleryView'] = $titleUploadFieldId;
+        $jsonOptions['visual']['IsForWpPageTitleID'] = $titleUploadFieldId;
         $jsonOptions['visual']['IsForWpPageDescriptionID'] = $commentIdFormInput;
         $jsonOptions['visual']['EcommerceTitle'] = $EcommerceTitleToSet;
         $jsonOptions['visual']['ThirdTitle'] = $commentIdFormInput;
@@ -699,9 +696,7 @@ if(!empty($_POST['cg_create'])){
 }
 
 if(isset($_POST['cg_copy'])){
-
     include('copy-gallery.php');
-
 }
 
 ?>

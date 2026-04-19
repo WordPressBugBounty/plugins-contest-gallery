@@ -42,7 +42,7 @@ if (count($userAccountEntries)) {
         ['%s']
     );
 
-    $pin = random_int(1000, 9999);
+    $pin = wp_rand(1000, 9999);
     $pinHashed = password_hash($pin,PASSWORD_DEFAULT);
 
     $wpdb->update(

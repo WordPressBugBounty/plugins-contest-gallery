@@ -21,7 +21,6 @@ if(!isset($cgl_heart)){
     $cgl_heart = '';
 }
 
-
 $heredoc = <<<HEREDOC
 <div id="cgMessagesContainerPro" class="cg_hide cg_messages_container_pro $cgFeControlsStyle $BorderRadiusClass $cgl_heart">
    <div id="cgMessagesDiv">

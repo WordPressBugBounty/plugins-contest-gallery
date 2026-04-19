@@ -23,17 +23,32 @@ if(!function_exists('cg_load_galleries_shortcode')){
 		    $galleriesIds = explode(',',$atts['id']);
 		    $hasGalleriesIds = true;
 	    }
-        $galleriesIds = array_map('trim', $galleriesIds);
+        $galleriesIds = cg1l_normalize_positive_int_id_list(array_map('trim', $galleriesIds));
+        $hasGalleriesIds = (!empty($hasGalleriesIds) && !empty($galleriesIds));
 
-	    if(!empty($_GET['cg_gallery_id'])){
-		    $galeryID = intval($_GET['cg_gallery_id']);
-		    $isCGalleries = 0;
-		    $is_from_single_view_for_cg_galleries = 1;
-	    }else{
-		    global $wpdb;
-		    $tablename_options = $wpdb->prefix . "contest_gal1ery_options";
-		    $galeryID = $wpdb->get_var( "SELECT id FROM $tablename_options ORDER BY id DESC LIMIT 0, 1" );
-	    }
+	    global $wpdb;
+	    $tablename_options = $wpdb->prefix . "contest_gal1ery_options";
+	    $galeryID = absint($wpdb->get_var( "SELECT id FROM $tablename_options ORDER BY id DESC LIMIT 0, 1" ));
+
+        $requestedGalleryId = absint(get_query_var('cgl_gallery'));
+        if(empty($requestedGalleryId) && !empty($_GET['cg_gallery_id'])){
+            $requestedGalleryId = absint($_GET['cg_gallery_id']);
+        }
+
+        if(
+            !empty($requestedGalleryId) &&
+            (
+                !$hasGalleriesIds ||
+                in_array($requestedGalleryId, $galleriesIds, true)
+            )
+        ){
+            $requestedOptionsFile = wp_upload_dir()['basedir'].'/contest-gallery/gallery-id-'.$requestedGalleryId.'/json/'.$requestedGalleryId.'-options.json';
+            if(file_exists($requestedOptionsFile)){
+                $galeryID = $requestedGalleryId;
+                $isCGalleries = 0;
+                $is_from_single_view_for_cg_galleries = 1;
+            }
+        }
 
 	    $frontend_gallery = '';
 

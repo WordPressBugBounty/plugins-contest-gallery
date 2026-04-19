@@ -116,12 +116,19 @@ else {
         $tablename_form_input = $wpdb->prefix . "contest_gal1ery_f_input";
 
 	    $galeryrow = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablenameOptions WHERE id = %d",[$galeryID]));
-	    $Field1IdGalleryView = $wpdb->get_var("SELECT Field1IdGalleryView FROM $tablename_options_visual WHERE GalleryID = $galeryID");
+	    $optionsVisual = $wpdb->get_row("SELECT * FROM $tablename_options_visual WHERE GalleryID = $galeryID");
+	    $Field1IdGalleryView = (!empty($optionsVisual) && isset($optionsVisual->Field1IdGalleryView)) ? absint($optionsVisual->Field1IdGalleryView) : 0;
+        $Field1IdFullWindowBlogView = (!empty($optionsVisual) && isset($optionsVisual->Field1IdFullWindowBlogView)) ? absint($optionsVisual->Field1IdFullWindowBlogView) : 0;
 
         $Field1IdGalleryViewToSelect = '';
+        $Field1IdFullWindowBlogViewToSelect = '';
 
         if(!empty($Field1IdGalleryView)){
             $Field1IdGalleryViewToSelect = " OR (GalleryID=$galeryID AND id=$Field1IdGalleryView)";
+        }
+
+        if(!empty($Field1IdFullWindowBlogView)){
+            $Field1IdFullWindowBlogViewToSelect = " OR (GalleryID=$galeryID AND id=$Field1IdFullWindowBlogView)";
         }
 
         $uploadFormFields = $wpdb->get_results("SELECT * FROM $tablename_form_input WHERE GalleryID = $galeryID");
@@ -169,7 +176,7 @@ else {
         }
 
         $selectSQL = $wpdb->get_results( "SELECT * FROM $tablename_form_input WHERE (GalleryID = $galeryID AND ($collectedFieldIds)
-                    AND (Field_Type = 'text-f' OR Field_Type = 'url-f' OR Field_Type = 'comment-f' OR Field_Type = 'radio-f' OR Field_Type = 'chk-f' OR Field_Type = 'select-f' OR Field_Type = 'date-f') AND Show_Slider = 1)$Field1IdGalleryViewToSelect" );
+                    AND (Field_Type = 'text-f' OR Field_Type = 'url-f' OR Field_Type = 'comment-f' OR Field_Type = 'radio-f' OR Field_Type = 'chk-f' OR Field_Type = 'select-f' OR Field_Type = 'date-f') AND Show_Slider = 1)$Field1IdGalleryViewToSelect$Field1IdFullWindowBlogViewToSelect" );
 
         $isCgWpPageEntryLandingPage = false;
         if(!empty($_POST['isCgWpPageEntryLandingPage'])){
@@ -257,6 +264,8 @@ echo "</pre>";
 
         if(file_exists($filePath)){
 	        $imageInfoFileDataArray = json_decode(file_get_contents($filePath),true);
+            cg1l_push_recent_id_file($galeryID,$pictureID,'image-info-data-last-update');
+            cg1l_create_last_updated_time_file($galeryID,'image-info-data-last-update');
         }
         if(empty($imageInfoFileDataArray)){
 	        $imageInfoFileDataArray = null;
@@ -287,7 +296,13 @@ echo "</pre>";
             cgJsClass.gallery.info.setInfoFromEditImageData(gid,realId,data,catId,entryUrlAfterEdit);
             var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
 
-            cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[gid].DataSaved);
+            if(
+                !cgJsClass.gallery.user ||
+                !cgJsClass.gallery.user.suppressGenericUserEditDataSavedMessages ||
+                !cgJsClass.gallery.user.suppressGenericUserEditDataSavedMessages[gid]
+            ){
+                cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[gid].DataSaved);
+            }
 
         </script>
         <?php
@@ -297,6 +312,3 @@ echo "</pre>";
 }
 
 ?>
-
-
-

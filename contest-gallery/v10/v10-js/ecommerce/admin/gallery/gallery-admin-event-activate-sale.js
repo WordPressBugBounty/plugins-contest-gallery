@@ -3,15 +3,21 @@ jQuery(document).ready(function ($) {
 
     $(document).on('click','#cgActivateSaleOption',function () {
         var $cgSellContainer = $('#cgSellContainer');
-        $cgSellContainer.find('#cgSellContainerSubmitButtonContainer').removeClass('cg_disabled_background_color_e0e0e0');
+        var wasActiveForSale = ($cgSellContainer.find('#cgSellForm').attr('data-cg-was-active-for-sale') == '1');
         setTimeout(function (){// has to be done with timeout so works correctly
             if($cgSellContainer.find('#cgActivateSale').prop('checked')){
                 $cgSellContainer.find('.cg_sale_conf,#cgSellWatermarkPreview').removeClass('cg_disabled cg_disabled_background_color_e0e0e0');
+                $cgSellContainer.find('#cgSellContainerSubmitButtonContainer').removeClass('cg_disabled_background_color_e0e0e0');
                 if($cgSellContainer.find('#IsAlternativeShipping').prop('checked')==true){
                     $cgSellContainer.find('#ShippingContainer').removeClass('cg_disabled cg_disabled_background_color_e0e0e0');
                 }
             }else{
                 $cgSellContainer.find('.cg_sale_conf,#ShippingContainer,#cgSellWatermarkPreview').addClass('cg_disabled cg_disabled_background_color_e0e0e0');
+                if(wasActiveForSale){
+                    $cgSellContainer.find('#cgSellContainerSubmitButtonContainer').removeClass('cg_disabled_background_color_e0e0e0');
+                }else{
+                    $cgSellContainer.find('#cgSellContainerSubmitButtonContainer').addClass('cg_disabled_background_color_e0e0e0');
+                }
                 if(!$('#cgServiceKeysFileRemoveNote').hasClass('cg_hide') && !$('#cgDownloadKeysFileRemoveNote').hasClass('cg_hide')){
                     $('#cgDownloadAndServiceKeyFilesWillBeDeleted').removeClass('cg_hide');
                 }else if(!$('#cgDownloadKeysFileRemoveNote').hasClass('cg_hide')){
@@ -21,6 +27,7 @@ jQuery(document).ready(function ($) {
                 }
                 //$('#cgBackendBackgroundDrop').addClass('cg_high_overlay');
             }
+            cgJsClassAdmin.gallery.functions.setForSellButtonLabel($cgSellContainer);
         },100);
     });
 
@@ -29,6 +36,11 @@ jQuery(document).ready(function ($) {
         e.preventDefault();
 
         var $form = $(this).closest('form');
+        var saleAction = cgJsClassAdmin.gallery.functions.getSetForSellSaleAction($form);
+        if(!saleAction){
+            return;
+        }
+        $form.find('#cgSellAction').val(saleAction);
 
         var id = cgJsClassAdmin.gallery.vars.$sortableDiv.attr('data-cg-real-id');
         var TaxEntry = $form.find('#Tax').val();
@@ -104,6 +116,11 @@ jQuery(document).ready(function ($) {
 
         var form = $form.get(0);
         var formPostData = new FormData(form);
+        if(typeof formPostData.set == 'function'){
+            formPostData.set('cg_nonce', CG1LBackendNonce.nonce);
+        }else{
+            formPostData.append('cg_nonce', CG1LBackendNonce.nonce);
+        }
 
         var firstBase64OrFile;
         var firstBase64OrFileType;

@@ -84,20 +84,58 @@ if($PaymentType == 'paypal'){
 	$PayPalOrderResponse = cg_get_paypal_order($accessToken,$_POST['id'],$IsTest);
 
 	if(empty($PayPalOrderResponse['id'])){
-		?>
-        <script data-cg-processing="true">
-            cgJsClass.gallery.vars.ecommerce.TransactionError = <?php echo json_encode($PayPalOrderResponse['message']);?>;
-        </script>
-		<?php
-		die;
+		$Error = !empty($PayPalOrderResponse['message']) ? sanitize_text_field($PayPalOrderResponse['message']) : cg_ecommerce_get_reload_checkout_error();
 	}
 
-	if(!empty($PayPalOrderResponse['status'])){
+	if(empty($Error) && !empty($PayPalOrderResponse['status'])){
 		$PaymentStatus = $PayPalOrderResponse['status'];
 	}
 
-	if(!empty($PayPalOrderResponse['status']) && $PayPalOrderResponse['status']=='COMPLETED'){
-		$IsFullPaid = true;
+	if(empty($Error)){
+		$payPalAuthoritativeCart = cg_ecommerce_build_authoritative_checkout_cart($_POST['purchase_units'], $ecommerce_options);
+		if(empty($payPalAuthoritativeCart['success'])){
+			$Error = $payPalAuthoritativeCart['message'];
+		}else{
+			$payPalAmountValue = '';
+			$payPalCurrency = '';
+
+			if(!empty($PayPalOrderResponse['purchase_units'][0]['amount']['value'])){
+				$payPalAmountValue = cg_ecommerce_format_money_value($PayPalOrderResponse['purchase_units'][0]['amount']['value']);
+			}
+
+			if(!empty($PayPalOrderResponse['purchase_units'][0]['amount']['currency_code'])){
+				$payPalCurrency = strtolower(sanitize_text_field($PayPalOrderResponse['purchase_units'][0]['amount']['currency_code']));
+			}
+
+			$payPalExpectedAmountValue = cg_ecommerce_format_money_value($payPalAuthoritativeCart['PriceTotalGrossItemsWithShipping']);
+			$payPalExpectedCurrency = strtolower($payPalAuthoritativeCart['currency_short']);
+
+			if(
+				$PaymentStatus !== 'COMPLETED' ||
+				empty($payPalAmountValue) ||
+				empty($payPalCurrency) ||
+				$payPalAmountValue !== $payPalExpectedAmountValue ||
+				$payPalCurrency !== $payPalExpectedCurrency
+			){
+				$Error = cg_ecommerce_get_reload_checkout_error();
+			}else{
+				cg_ecommerce_apply_authoritative_checkout_cart_to_post($_POST, $payPalAuthoritativeCart, $ecommerce_options);
+				$_POST['id'] = $PayPalOrderResponse['id'];
+				if(!empty($PayPalOrderResponse['payer']['email_address'])){
+					$_POST['payer']['email_address'] = sanitize_email($PayPalOrderResponse['payer']['email_address']);
+				}
+				$IsFullPaid = true;
+			}
+		}
+	}
+
+	if(!empty($Error)){
+		?>
+        <script data-cg-processing="true">
+            cgJsClass.gallery.vars.ecommerce.TransactionError = <?php echo json_encode($Error);?>;
+        </script>
+		<?php
+		die;
 	}
 
 }elseif($PaymentType == 'stripe'){
@@ -141,6 +179,36 @@ if($PaymentType == 'paypal'){
 	}
 
 	curl_close($ch);
+
+	if(empty($Error)){
+		$stripeAuthoritativeCart = cg_ecommerce_build_authoritative_stripe_cart($_POST['purchase_units'], $ecommerce_options);
+		if(empty($stripeAuthoritativeCart['success'])){
+			$Error = $stripeAuthoritativeCart['message'];
+		}else{
+			$stripeResultMetadata = !empty($result['metadata']) && is_array($result['metadata']) ? $result['metadata'] : [];
+			$stripeResultAmount = !empty($result['amount']) ? absint($result['amount']) : 0;
+			$stripeResultCurrency = !empty($result['currency']) ? strtolower(sanitize_text_field($result['currency'])) : '';
+			$stripeExpectedCurrency = strtolower($stripeAuthoritativeCart['currency_short']);
+			$stripeMetadataAmount = !empty($stripeResultMetadata['cg_amount_cents']) ? absint($stripeResultMetadata['cg_amount_cents']) : 0;
+			$stripeMetadataCurrency = !empty($stripeResultMetadata['cg_currency']) ? strtolower(sanitize_text_field($stripeResultMetadata['cg_currency'])) : '';
+			$stripeMetadataCartHash = !empty($stripeResultMetadata['cg_cart_hash']) ? sanitize_text_field($stripeResultMetadata['cg_cart_hash']) : '';
+
+			if(
+				empty($stripeMetadataCartHash) ||
+				empty($stripeMetadataAmount) ||
+				empty($stripeMetadataCurrency) ||
+				$stripeMetadataCartHash !== $stripeAuthoritativeCart['cart_hash'] ||
+				$stripeMetadataAmount !== $stripeAuthoritativeCart['amount_cents'] ||
+				$stripeMetadataCurrency !== $stripeExpectedCurrency ||
+				$stripeResultAmount !== $stripeAuthoritativeCart['amount_cents'] ||
+				$stripeResultCurrency !== $stripeExpectedCurrency
+			){
+				$Error = cg_ecommerce_get_stripe_reload_checkout_error();
+			}else{
+				cg_ecommerce_apply_authoritative_checkout_cart_to_post($_POST, $stripeAuthoritativeCart, $ecommerce_options);
+			}
+		}
+	}
 
 	if(!empty($Error)){
 		?>
@@ -208,6 +276,14 @@ $EUshortcodes = cg_get_eu_countries_shortcodes();
 include(__DIR__ ."/../../../check-language-ecommerce.php");
 
 $hasTaxToShow = false;
+$outputTransactionError = function ($Error) {
+	?>
+    <script data-cg-processing="true">
+        cgJsClass.gallery.vars.ecommerce.TransactionError = <?php echo json_encode($Error);?>;
+    </script>
+	<?php
+	die;
+};
 
 $InvoiceAddressFirstName = (isset($_POST['cgInvoiceAddressFirstName'])) ? $_POST['cgInvoiceAddressFirstName'] : '';
 $InvoiceAddressLastName = (isset($_POST['cgInvoiceAddressLastName'])) ? $_POST['cgInvoiceAddressLastName'] : '';
@@ -222,8 +298,9 @@ $InvoiceAddressCountryShort = (isset($_POST['cgInvoiceAddressCountryShort'])) ? 
 $InvoiceAddressCountryTranslation = (isset($_POST['cgInvoiceAddressCountryTranslation'])) ? $_POST['cgInvoiceAddressCountryTranslation'] : '';
 
 $EcommerceTaxNr = (isset($_POST['cgEcommerceTaxNr'])) ? $_POST['cgEcommerceTaxNr'] : '';
-
-$InvoiceAddressForHtmlOutput = cg_ecommerce_create_invoice_address_for_html_output($InvoiceAddressFirstName,$InvoiceAddressLastName,$InvoiceAddressCompany,$InvoiceAddressLine1,$InvoiceAddressLine2,$InvoiceAddressStateShort,$InvoiceAddressCountryShort,$InvoiceAddressCity,$InvoiceAddressPostalCode,$InvoiceAddressStateTranslation,$EUshortcodes,$InvoiceAddressCountryTranslation,$EcommerceTaxNr,$language_VatNumber);
+if(empty($InvoiceAddressCountryShort)){
+	$InvoiceAddressCountryTranslation = '';
+}
 
 $ShippingAddressFirstName = (isset($_POST['cgShippingAddressFirstName'])) ? $_POST['cgShippingAddressFirstName'] : '';
 $ShippingAddressLastName = (isset($_POST['cgShippingAddressLastName'])) ? $_POST['cgShippingAddressLastName'] : '';
@@ -236,6 +313,9 @@ $ShippingAddressCity = (isset($_POST['cgShippingAddressCity'])) ? $_POST['cgShip
 $ShippingAddressPostalCode = (isset($_POST['cgShippingAddressPostalCode'])) ? $_POST['cgShippingAddressPostalCode'] : '';
 $ShippingAddressCountryShort = (isset($_POST['cgShippingAddressCountryShort'])) ? $_POST['cgShippingAddressCountryShort'] : '';
 $ShippingAddressCountryTranslation = (isset($_POST['cgShippingAddressCountryTranslation'])) ? $_POST['cgShippingAddressCountryTranslation'] : '';
+if(empty($ShippingAddressCountryShort)){
+	$ShippingAddressCountryTranslation = '';
+}
 
 $DefaultShipping = round(floatval($_POST['DefaultShipping']),2);
 $DefaultTax = round(floatval($_POST['TaxPercentageDefault']),2);
@@ -249,9 +329,11 @@ $alternativeShippingTotalTaxValue = round(floatval($_POST['alternativeShippingTo
 //$PriceTotalNet = $PriceTotalGrossItemsWithShipping - $TaxValueTotalItems;
 
 $itemHasDefaultShipping = false;
+$hasShippingAddressRequired = false;
 $PriceTotalNetItems = 0;
 foreach ($_POST['purchase_units'][0]['items'] as $key => $item){
 	if(!empty($item['IsShipping'])){
+		$hasShippingAddressRequired = true;
 		if(!empty($item['alternative_shipping_amount_value_gross'])){
 		}else{
 			$itemHasDefaultShipping = true;
@@ -261,6 +343,40 @@ foreach ($_POST['purchase_units'][0]['items'] as $key => $item){
 	$PriceTotalNet = $PriceUnitNet*intval($item['quantity']);
 	$PriceTotalNetItems = $PriceTotalNetItems+$PriceTotalNet;
 }
+
+$billingAddressRequiredFields = array(
+	$InvoiceAddressFirstName,
+	$InvoiceAddressLastName,
+	$InvoiceAddressLine1,
+	$InvoiceAddressCity,
+	$InvoiceAddressPostalCode,
+	$InvoiceAddressCountryShort
+);
+
+foreach($billingAddressRequiredFields as $billingAddressRequiredField){
+	if(trim((string)$billingAddressRequiredField)===''){
+		$outputTransactionError('Please complete the required billing address fields.');
+	}
+}
+
+if($hasShippingAddressRequired){
+	$shippingAddressRequiredFields = array(
+		$ShippingAddressFirstName,
+		$ShippingAddressLastName,
+		$ShippingAddressLine1,
+		$ShippingAddressCity,
+		$ShippingAddressPostalCode,
+		$ShippingAddressCountryShort
+	);
+
+	foreach($shippingAddressRequiredFields as $shippingAddressRequiredField){
+		if(trim((string)$shippingAddressRequiredField)===''){
+			$outputTransactionError('Please complete the required shipping address fields.');
+		}
+	}
+}
+
+$InvoiceAddressForHtmlOutput = cg_ecommerce_create_invoice_address_for_html_output($InvoiceAddressFirstName,$InvoiceAddressLastName,$InvoiceAddressCompany,$InvoiceAddressLine1,$InvoiceAddressLine2,$InvoiceAddressStateShort,$InvoiceAddressCountryShort,$InvoiceAddressCity,$InvoiceAddressPostalCode,$InvoiceAddressStateTranslation,$EUshortcodes,$InvoiceAddressCountryTranslation,$EcommerceTaxNr,$language_VatNumber);
 
 if($itemHasDefaultShipping){
     //var_dump('$alternativeShippingTotalTaxValue');
@@ -392,7 +508,7 @@ if(file_exists($logFilePath)){
         $i++;
     }while(file_exists($logFilePath));
 }
-// LOGS DOCH IN DER DATENBANK speichern zwecks adresse anzeigen dann nützlich, in der datenbank ist es immer und alles kann nachgebaut werden daraus
+// DO save LOGS IN THE DATABASE for the purpose of showing addresses later, it's always in the database and everything can be rebuilt from it
 //var_dump('$logFilePath');
 //var_dump($logFilePath);
 
@@ -482,7 +598,17 @@ if(true){
     $ParentOrder = $OrderId;
     $createdOrderId =  $OrderId;
 
-    $OrderIdHash = md5($PayPalTransactionId.uniqid(time()).time());
+    $OrderIdHash = '';
+    if(function_exists('random_bytes')){
+        try{
+            $OrderIdHash = bin2hex(random_bytes(16));
+        }catch(Exception $e){
+            $OrderIdHash = '';
+        }
+    }
+    if(empty($OrderIdHash)){
+        $OrderIdHash = wp_generate_password(32,false,false);
+    }
 
     $wpdb->update(
         "$tablename_ecommerce_orders",
@@ -528,14 +654,6 @@ if(true){
             'ecommerceInvoicesFolder' => '',
             'invoiceFilePath' => ''
         ];
-
-	    ###PRO###
-	    if($CreateInvoice && $cgProVersion && cg_get_version()=='contest-gallery-pro' && $IsFullPaid){
-            $invoiceData = cg_ecommerce_payment_processing_create_invoice($createdOrderId);
-		    // order might be modified, by adding invoice
-		    $Order = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_orders WHERE id = '$OrderId' LIMIT 1");
-	    }
-	    ###PRO-END###
 
 	    //var_dump(        'sale id sale item invoice and mail');
 	    //var_dump(        '$OrderId');

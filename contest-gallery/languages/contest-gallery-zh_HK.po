@@ -46,8 +46,8 @@ msgid "Download invoice"
 msgstr "下載發票"
 
 #: check-language-ecommerce.php:53
-msgid "Billing address different from delivery address?"
-msgstr "帳單地址與送貨地址不同？"
+msgid "Billing address different from delivery address"
+msgstr "帳單地址與送貨地址不同"
 
 #: check-language-ecommerce.php:55
 msgid "Country"
@@ -862,8 +862,8 @@ msgid "You have already used all your votes"
 msgstr "已用盡你能投的票"
 
 #: check-language.php:304
-msgid "It is not allowed to vote for your own file"
-msgstr "不允許為自己的文件投票"
+msgid "You cannot vote for your own entry"
+msgstr "你不能為自己的參賽項目投票"
 
 #: check-language.php:306
 msgid "Only registered users are allowed to vote"

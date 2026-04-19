@@ -35,6 +35,16 @@ echo <<<HEREDOC
                 </div>
             </div>
             <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_view_option_100_percent cg_border_top_none' id="ShowRefreshButtonAfterUploadContainer" >
+                    <div class='cg_view_option_title'>
+                        <p>Show refresh button after upload<br><span class="cg_view_option_title_note">Button will appear after successful upload to allow another entry</span></p>
+                    </div>
+                    <div class='cg_view_option_checkbox'>
+                        <input type="checkbox" name="ShowRefreshButtonAfterUpload"  id="ShowRefreshButtonAfterUpload" $ShowRefreshButtonAfterUpload>
+                    </div>
+                </div>
+            </div>
+            <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="wp-GalleryUploadConfirmationText-wrap-Container">
                     <div class='cg_view_option_title'>
                         <p>Confirmation text after upload</p>
@@ -861,5 +871,4 @@ HEREDOC;
 echo <<<HEREDOC
 </div>
 HEREDOC;
-
 

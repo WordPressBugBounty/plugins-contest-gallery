@@ -22,6 +22,8 @@ jQuery(document).ready(function($){
             $(this).append('<span class="cg_tooltiptext">Copy shortcode</span>');
         }
 
+        debugger
+
     });
 
     $(document).on('mouseleave','.cg_tooltip',function () {

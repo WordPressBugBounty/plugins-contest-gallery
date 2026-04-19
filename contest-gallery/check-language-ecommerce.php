@@ -50,7 +50,7 @@ __('Invoice');$l_Invoice = "Invoice";$language_Invoice = (!empty($translations[$
 
 __('Download invoice');$l_DownloadInvoice = "Download invoice";$language_DownloadInvoice = (!empty($translations[$l_DownloadInvoice]) && $is_frontend) ? $translations[$l_DownloadInvoice] : ((empty(trim(__($l_DownloadInvoice,$domain)))) ? __($l_DownloadInvoice,$domainDefault) : __($l_DownloadInvoice,$domain)); if(empty($translations[$l_DownloadInvoice])){$translations[$l_DownloadInvoice]='';}
 
-__('Billing address different from delivery address?');$l_ShipToDifferentAddress = "Billing address different from delivery address?";$language_ShipToDifferentAddress = (!empty($translations[$l_ShipToDifferentAddress]) && $is_frontend) ? $translations[$l_ShipToDifferentAddress] : ((empty(trim(__($l_ShipToDifferentAddress,$domain)))) ? __($l_ShipToDifferentAddress,$domainDefault) : __($l_ShipToDifferentAddress,$domain)); if(empty($translations[$l_ShipToDifferentAddress])){$translations[$l_ShipToDifferentAddress]='';}
+__('Billing address different from delivery address');$l_ShipToDifferentAddress = "Billing address different from delivery address";$language_ShipToDifferentAddress = (!empty($translations[$l_ShipToDifferentAddress]) && $is_frontend) ? $translations[$l_ShipToDifferentAddress] : ((empty(trim(__($l_ShipToDifferentAddress,$domain)))) ? __($l_ShipToDifferentAddress,$domainDefault) : __($l_ShipToDifferentAddress,$domain)); if(empty($translations[$l_ShipToDifferentAddress])){$translations[$l_ShipToDifferentAddress]='';}
 
 __('Country');$l_Country = "Country";$language_Country = (!empty($translations[$l_Country]) && $is_frontend) ? $translations[$l_Country] : ((empty(trim(__($l_Country,$domain)))) ? __($l_Country,$domainDefault) : __($l_Country,$domain)); if(empty($translations[$l_Country])){$translations[$l_Country]='';}
 
@@ -93,9 +93,9 @@ __('Last Name');$l_LastName = "Last Name";$language_LastName = (!empty($translat
 
 __('Company');$l_Company = "Company";$language_Company = (!empty($translations[$l_Company]) && $is_frontend) ? $translations[$l_Company] : ((empty(trim(__($l_Company,$domain)))) ? __($l_Company,$domainDefault) : __($l_Company,$domain)); if(empty($translations[$l_Company])){$translations[$l_Company]='';}
 
-__('Address Line 1');$l_AddressLIneOne = "Address Line 1";$language_AddressLIneOne = (!empty($translations[$l_AddressLIneOne]) && $is_frontend) ? $translations[$l_AddressLIneOne] : ((empty(trim(__($l_AddressLIneOne,$domain)))) ? __($l_AddressLIneOne,$domainDefault) : __($l_AddressLIneOne,$domain)); if(empty($translations[$l_AddressLIneOne])){$translations[$l_AddressLIneOne]='';}
+__('Address Line 1');$l_AddressLineOne = "Address Line 1";$language_AddressLineOne = (!empty($translations[$l_AddressLineOne]) && $is_frontend) ? $translations[$l_AddressLineOne] : ((empty(trim(__($l_AddressLineOne,$domain)))) ? __($l_AddressLineOne,$domainDefault) : __($l_AddressLineOne,$domain)); if(empty($translations[$l_AddressLineOne])){$translations[$l_AddressLineOne]='';}
 
-__('Address Line 2');$l_AddressLIneTwo = "Address Line 2";$language_AddressLIneTwo = (!empty($translations[$l_AddressLIneTwo]) && $is_frontend) ? $translations[$l_AddressLIneTwo] : ((empty(trim(__($l_AddressLIneTwo,$domain)))) ? __($l_AddressLIneTwo,$domainDefault) : __($l_AddressLIneTwo,$domain)); if(empty($translations[$l_AddressLIneTwo])){$translations[$l_AddressLIneTwo]='';}
+__('Address Line 2');$l_AddressLineTwo = "Address Line 2";$language_AddressLineTwo = (!empty($translations[$l_AddressLineTwo]) && $is_frontend) ? $translations[$l_AddressLineTwo] : ((empty(trim(__($l_AddressLineTwo,$domain)))) ? __($l_AddressLineTwo,$domainDefault) : __($l_AddressLineTwo,$domain)); if(empty($translations[$l_AddressLineTwo])){$translations[$l_AddressLineTwo]='';}
 
 __('City');$l_City = "City";$language_City= (!empty($translations[$l_City]) && $is_frontend) ? $translations[$l_City] : ((empty(trim(__($l_City,$domain)))) ? __($l_City,$domainDefault) : __($l_City,$domain)); if(empty($translations[$l_City])){$translations[$l_City]='';}
 

@@ -31,12 +31,12 @@ if(!empty($checkArray)){
         if(empty($addOrShowCheckButtons)){
             $addOrShowCheckButtons = '<div class="cg_upl_check_button">
 <div class="cg_upl_check_button_text">'.$checkButton.'</div>
-<input type="checkbox" />
+<input type="checkbox" disabled />
 </div>';
         }else{
             $addOrShowCheckButtons .= '<div class="cg_upl_check_button">
 <div class="cg_upl_check_button_text">'.$checkButton.'</div>
-<input type="checkbox" />
+<input type="checkbox" disabled />
 </div>';
         }
     }

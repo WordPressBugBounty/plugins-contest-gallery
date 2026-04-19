@@ -2,7 +2,7 @@
 /*
 Plugin Name: Contest Gallery
 Description: Upload form, files, photos and videos upload contest gallery plugin for WordPress. Create upload forms for entries with or without file/image upload. Create user registration form. Create login form. Create responsive galleries and allow to vote for any kind of entries. Sell entries via PayPal or Stripe API. Create or edit images via OpenAI API.
-Version: 28.1.7
+Version: 29.0.0
 Author: Contest Gallery
 Plugin URI: https://www.contest-gallery.com
 Author URI: https://www.contest-gallery.com
@@ -34,30 +34,32 @@ function wpb_new_gravatar ($avatar_defaults) {
     return $avatar_defaults;
 }*/
 
-if(!defined('ABSPATH')){exit;}
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 add_filter('parse_query', 'cg_hide_slugs_page_area');
 if (!function_exists('cg_hide_slugs_page_area')) {
-    function cg_hide_slugs_page_area($query) {
-        if(!is_admin()) return;
-        if(!empty($_GET['post_type']) && $_GET['post_type']=='page'){
-            // Create array of all the slugs you wanna hide
-            // only for new "galleries" types
-            //$hidden_slugs = ['contest-galleries', 'contest-galleries-user', 'contest-galleries-no-voting', 'contest-galleries-winner', 'contest-galleries-ecommerce'];
-            $hidden_slugs = [];
-            $wp_upload_dir = wp_upload_dir();
-            $pagesFile = $wp_upload_dir['basedir'] . '/contest-gallery/gallery-general/json/galleries-pages.json';
-            if(file_exists($pagesFile)){
-                $hidden_slugs = json_decode(file_get_contents($pagesFile),true);
-            }
-            // Loop through slugs & pass each slug as page path value
-            //$hidden_slugs = []; // for test
-            foreach ($hidden_slugs as $key => $ID ) {
-                $hidden_slugs[] = $ID;
-            }
-            $query->query_vars['post__not_in'] =  $hidden_slugs;
-        }
-    }
+	function cg_hide_slugs_page_area($query) {
+		if(!is_admin()) return;
+		if(!empty($_GET['post_type']) && $_GET['post_type']=='page'){
+			// Create array of all the slugs you wanna hide
+			// only for new "galleries" types
+			//$hidden_slugs = ['contest-galleries', 'contest-galleries-user', 'contest-galleries-no-voting', 'contest-galleries-winner', 'contest-galleries-ecommerce'];
+			$hidden_slugs = [];
+			$wp_upload_dir = wp_upload_dir();
+			$pagesFile = $wp_upload_dir['basedir'] . '/contest-gallery/gallery-general/json/galleries-pages.json';
+			if(file_exists($pagesFile)){
+				$hidden_slugs = json_decode(file_get_contents($pagesFile),true);
+			}
+			// Loop through slugs & pass each slug as page path value
+			//$hidden_slugs = []; // for test
+			foreach ($hidden_slugs as $key => $ID ) {
+				$hidden_slugs[] = $ID;
+			}
+			$query->query_vars['post__not_in'] =  $hidden_slugs;
+		}
+	}
 }
 
 /**###NORMAL###**/
@@ -76,18 +78,17 @@ if(!function_exists('cg_normal_version_register_activation_hook')){
 register_activation_hook( __FILE__, 'cg_normal_version_register_activation_hook' );
 /**###NORMAL-END###**/
 
-if(!function_exists('cg_add_defer_to_cg_js_files')){
-    function cg_add_defer_to_cg_js_files( $url)
+if (!function_exists('cg_add_defer_to_cg_js_files')) {
+    function cg_add_defer_to_cg_js_files($url)
     {
-        if (strpos( $url, 'contest-gallery/v10/v10-js/' ) !== false)
-        {
+        if (strpos($url, 'contest-gallery/v10/v10-js/') !== false) {
             return "$url' defer='defer";
         }
         return $url;
     }
 }
 
-//add_filter( 'clean_url', 'cg_add_defer_to_cg_js_files');// clean url is available since 2.3 WP version
+//add_filter('clean_url', 'cg_add_defer_to_cg_js_files');// clean url is available since 2.3 WP version
 
 include('functions/general/mail/cg-user-vote-mail.php');
 include('functions/general/mail/cg-user-vote-mail-prepare.php');
@@ -105,7 +106,22 @@ include('functions/general/cg-hash.php');
 include('functions/general/cg-general-functions.php');
 include('functions/general/cgl1-texts.php');
 include('functions/general/cg-contest-gallery-plugin-page-functions.php');
+include('functions/frontend/render/cg1l-create-rating-comments-div.php');
+include('functions/frontend/render/cg1l-render-frontend-elements.php');
+include('functions/frontend/render/comment/cg1l-render-entry-comment.php');
+include('functions/frontend/render/rating/cg1l-render-entry-rating-one-star.php');
+include('functions/frontend/render/rating/cg1l-render-entry-rating-five-stars.php');
+include('functions/frontend/render/rating/cg1l-render-gallery-rating.php');
 include('functions/frontend/cg-create-noscript-html.php');
+include('functions/frontend/prepare/cg-prepare-data-for-frontend.php');
+include('functions/frontend/prepare/cg-prepare-urls-data.php');
+include('functions/frontend/prepare/cg-prepare-info-data.php');
+include('functions/frontend/prepare/cg-prepare-comments-data.php');
+include('functions/frontend/prepare/cg-prepare-query-data.php');
+include('functions/frontend/prepare/cg-prepare-image-data.php');
+include('functions/frontend/prepare/cg-prepare-stats-data.php');
+include('functions/frontend/cg-set-data-for-frontend.php');
+include('functions/frontend/cg-get-data-for-frontend.php');
 include('functions/frontend/cg-general-frontend.php');
 include('functions/frontend/cg-shortcode-interval-check.php');
 include('functions/google/cg-create-get-google-options.php');
@@ -124,33 +140,35 @@ include('functions/backend/ajax/openai/post-cg-generate-openai-image.php');
 include('functions/backend/ajax/openai/post-cg-edit-openai-image.php');
 include('functions/backend/ajax/openai/post-cg-add-openai-image.php');
 include('functions/general/cg-check-file-types.php');
+include('functions/general/correct/cg-correct-data.php');
 include('functions/ecommerce/cg-ecommerce-include-functions.php');
 include('functions/ecommerce/general/cg-ecommerce-payment-processing-create-invoice.php');
 include('functions/ecommerce/general/cg-ecommerce-create-invoice-address-for-html-output.php');
 include('functions/ecommerce/general/cg-ecommerce-payment-processing-functions.php');
 include('functions/ecommerce/general/cg-ecommerce-payment-processing-data.php');
-
 /**###NORMAL###**/
+include('functions/general/option/cg-reset-to-normal-version-options-if-required.php');
 include('functions/general/normal/cg-update-to-pro.php');
 /**###NORMAL-END###**/
+//include('update/update.php');
 
-if(!empty($_POST['cg_export_votes'])){
+if (!empty($_POST['cg_export_votes'])) {
 
-    if(is_admin() && ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) && ($_GET['page']=='contest-gallery/index.php' OR $_GET['page']=='contest-gallery-pro/index.php')){
+    if (is_admin() && (!defined('DOING_AJAX') || !DOING_AJAX) && ($_GET['page'] == 'contest-gallery/index.php' OR $_GET['page'] == 'contest-gallery-pro/index.php')) {
 
-        include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-        if(is_plugin_active( cg_get_version().'/index.php' )==false){
-            echo "Please contact site administrator if you see this, code 855";exit();
+        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+        if (is_plugin_active(cg_get_version() . '/index.php') == false) {
+            echo "Please contact site administrator if you see this, code 855";
+            exit();
         }
 
-
-        if(!empty($_POST['cg_export_votes_all'])){
+        if (!empty($_POST['cg_export_votes_all'])) {
             include('v10/v10-admin/export/export-votes-all.php');
-            add_action('init','cg_votes_csv_export_all');
+            add_action('init', 'cg_votes_csv_export_all');
             do_action('cg_votes_csv_export_all');
-        }else{
+        } else {
             include('v10/v10-admin/export/export-votes.php');
-            add_action('init','cg_votes_csv_export');
+            add_action('init', 'cg_votes_csv_export');
             do_action('cg_votes_csv_export');
         }
 
@@ -166,8 +184,8 @@ if (!empty($_GET['cg_download_original_source_for_ecommerce_sale']) &&($_GET['pa
             exit();
         }
         include(__DIR__.'/functions/ecommerce/backend/gallery/cg-download-file-ecommerce-sale-folder.php');
-        add_action('init', 'cg_download_file_ecommerce_sale');
-        do_action('cg_download_file_ecommerce_sale');
+	    add_action('init', 'cg_download_file_ecommerce_sale');
+	    do_action('cg_download_file_ecommerce_sale');
     }
 }
 
@@ -179,8 +197,8 @@ if ((!empty($_GET['cg_download_keys_for_ecommerce_sale']) || !empty($_GET['cg_se
             exit();
         }
         include('functions/ecommerce/backend/gallery/cg-download-keys-ecommerce-entry.php');
-        add_action('init', 'cg_download_keys_ecommerce_entry');
-        do_action('cg_download_keys_ecommerce_entry');
+	    add_action('init', 'cg_download_keys_ecommerce_entry');
+	    do_action('cg_download_keys_ecommerce_entry');
     }
 }
 
@@ -188,37 +206,40 @@ if (!empty($_POST['contest_gal1ery_post_create_data_csv']) && !empty($_GET['edit
 
     if (is_admin() && (!defined('DOING_AJAX') || !DOING_AJAX) && ($_GET['page'] == 'contest-gallery/index.php' or $_GET['page'] == 'contest-gallery-pro/index.php')) {
 
-        include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-        if(is_plugin_active( cg_get_version().'/index.php' )==false){
-            echo "Please contact site administrator if you see this, code 856";exit();
+        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+
+        if (is_plugin_active(cg_get_version() . '/index.php') == false) {
+            echo "Please contact site administrator if you see this, code 856";
+            exit();
         }
 
         include('v10/v10-admin/export/export-images-data.php');
-        add_action('init','cg_images_data_csv_export');
+        add_action('init', 'cg_images_data_csv_export');
         do_action('cg_images_data_csv_export');
 
         include('v10/v10-admin/export/controller.php');
-        add_action('init','cg_remove_not_required_coded_csvs');
+        add_action('init', 'cg_remove_not_required_coded_csvs');
         do_action('cg_remove_not_required_coded_csvs');
 
     }
 
 }
 
-if(!empty($_POST['cg_create_user_data_csv_new_export']) && !empty($_GET['users_management']) && !empty($_GET['option_id']) && ($_GET['page']=='contest-gallery/index.php' OR $_GET['page']=='contest-gallery-pro/index.php')){
-    if(is_admin() && ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) && ($_GET['page']=='contest-gallery/index.php' OR $_GET['page']=='contest-gallery-pro/index.php')){
+if (!empty($_POST['cg_create_user_data_csv_new_export']) && !empty($_GET['users_management']) && !empty($_GET['option_id']) && ($_GET['page'] == 'contest-gallery/index.php' OR $_GET['page'] == 'contest-gallery-pro/index.php')) {
+    if (is_admin() && (!defined('DOING_AJAX') || !DOING_AJAX) && ($_GET['page'] == 'contest-gallery/index.php' OR $_GET['page'] == 'contest-gallery-pro/index.php')) {
 
-        include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-        if(is_plugin_active( cg_get_version().'/index.php' )==false){
-            echo "Please contact site administrator if you see this, code 857";exit();
+        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+        if (is_plugin_active(cg_get_version() . '/index.php') == false) {
+            echo "Please contact site administrator if you see this, code 857";
+            exit();
         }
 
         include('v10/v10-admin/export/export-user-data-registry-new-export.php');
-        add_action('init','cg_user_data_registry_csv_new_export');
+        add_action('init', 'cg_user_data_registry_csv_new_export');
         do_action('cg_user_data_registry_csv_new_export');
 
         include('v10/v10-admin/export/controller.php');
-        add_action('init','cg_remove_not_required_coded_csvs');
+        add_action('init', 'cg_remove_not_required_coded_csvs');
         do_action('cg_remove_not_required_coded_csvs');
 
     }
@@ -242,14 +263,15 @@ if ((!empty($_POST['cg_ecommerce_export_orders'])) && ($_GET['page'] == 'contest
 
 }
 
-if(!empty($_POST['cg_action_check_and_download_mail_log_for_gallery'])){
+if (!empty($_POST['cg_action_check_and_download_mail_log_for_gallery'])) {
 
-    if(is_admin() && ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) && ($_GET['page']=='contest-gallery/index.php' OR $_GET['page']=='contest-gallery-pro/index.php')){
+    if (is_admin() && (!defined('DOING_AJAX') || !DOING_AJAX) && ($_GET['page'] == 'contest-gallery/index.php' OR $_GET['page'] == 'contest-gallery-pro/index.php')) {
 
-        include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 
-        if(is_plugin_active( cg_get_version().'/index.php' )==false){
-            echo "Please contact site administrator if you see this, code 8561";exit();
+        if (is_plugin_active(cg_get_version() . '/index.php') == false) {
+            echo "Please contact site administrator if you see this, code 8561";
+            exit();
         }
 
         include('v10/v10-admin/export/export-mail-log-data.php');
@@ -261,14 +283,14 @@ if(!empty($_POST['cg_action_check_and_download_mail_log_for_gallery'])){
 //Create MySQL WP Table
 
 // Register a new shortcode: [book]
-add_shortcode( 'cg_gallery', 'contest_gal1ery_frontend_gallery' );
-include(__DIR__.'/shortcodes/cg_gallery.php');
-add_shortcode( 'cg_gallery_user', 'contest_gal1ery_frontend_gallery_user_images' );
-include(__DIR__.'/shortcodes/cg_gallery_user.php');
-add_shortcode( 'cg_gallery_no_voting', 'contest_gal1ery_frontend_gallery_no_voting' );
-include(__DIR__.'/shortcodes/cg_gallery_no_voting.php');
-add_shortcode( 'cg_gallery_winner', 'contest_gal1ery_frontend_gallery_winner' );
-include(__DIR__.'/shortcodes/cg_gallery_winner.php');
+add_shortcode('cg_gallery', 'contest_gal1ery_frontend_gallery');
+include(__DIR__ . '/shortcodes/cg_gallery.php');
+add_shortcode('cg_gallery_user', 'contest_gal1ery_frontend_gallery_user_images');
+include(__DIR__ . '/shortcodes/cg_gallery_user.php');
+add_shortcode('cg_gallery_no_voting', 'contest_gal1ery_frontend_gallery_no_voting');
+include(__DIR__ . '/shortcodes/cg_gallery_no_voting.php');
+add_shortcode('cg_gallery_winner', 'contest_gal1ery_frontend_gallery_winner');
+include(__DIR__ . '/shortcodes/cg_gallery_winner.php');
 add_shortcode( 'cg_gallery_ecommerce', 'contest_gal1ery_frontend_gallery_ecommerce' );
 include(__DIR__.'/shortcodes/cg_gallery_ecommerce.php');
 add_shortcode('cg_galleries', 'contest_gal1ery_frontend_galleries');
@@ -277,21 +299,21 @@ add_shortcode('cg_galleries_no_voting', 'contest_gal1ery_frontend_galleries_no_v
 add_shortcode('cg_galleries_winner', 'contest_gal1ery_frontend_galleries_winner');
 add_shortcode('cg_galleries_ecommerce', 'contest_gal1ery_frontend_galleries_ecommerce');
 include(__DIR__ . '/shortcodes/cg_galleries.php');
-add_shortcode( 'cg_users_upload', 'contest_gal1ery_users_upload' );
-include(__DIR__.'/shortcodes/cg_users_upload.php');
+add_shortcode('cg_users_upload', 'contest_gal1ery_users_upload');
+include(__DIR__ . '/shortcodes/cg_users_upload.php');
 add_shortcode('cg_users_contact', 'contest_gal1ery_users_contact');
 include(__DIR__ . '/shortcodes/cg_users_contact.php');
-add_shortcode( 'cg_mail_confirm', 'contest_gal1ery_check_confirmation_link' );// Achtung !!! Mail Confirm wird schon verwendet in users-upload-check
-include(__DIR__.'/shortcodes/cg_mail_confirm.php');
+add_shortcode('cg_mail_confirm', 'contest_gal1ery_check_confirmation_link');// Achtung !!! Mail Confirm wird schon verwendet in users-upload-check
+include(__DIR__ . '/shortcodes/cg_mail_confirm.php');
 
 // setup_theme runs before theme is loaded!
 // see https://codex.wordpress.org/Plugin_API/Action_Reference
 add_shortcode('cg_users_pin', 'cg1l_cg_users_pin');
 include(__DIR__ . '/shortcodes/cg_users_pin.php');
-add_shortcode( 'cg_users_reg', 'contest_gal1ery_users_registry' );
-include(__DIR__.'/shortcodes/cg_users_reg.php');
-add_shortcode( 'cg_users_login', 'contest_gal1ery_users_login' );
-include(__DIR__.'/shortcodes/cg_users_login.php');
+add_shortcode('cg_users_reg', 'contest_gal1ery_users_registry');
+include(__DIR__ . '/shortcodes/cg_users_reg.php');
+add_shortcode('cg_users_login', 'contest_gal1ery_users_login');
+include(__DIR__ . '/shortcodes/cg_users_login.php');
 add_shortcode('cg_entry_on_off', 'contest_gal1ery_entry_on_off');
 include(__DIR__ . '/shortcodes/cg_entry_on_off.php');
 add_shortcode('cg_order_summary', 'contest_gal1ery_order_summary');
@@ -299,7 +321,7 @@ include(__DIR__ . '/shortcodes/cg_order_summary.php');
 
 include('functions/general/sql/contest-gallery-create-tables.php');
 
-register_activation_hook( __FILE__, 'contest_gal1ery_db_check' );
+register_activation_hook(__FILE__, 'contest_gal1ery_db_check');
 
 include('functions/general/contest-gallery-db-version-check.php');
 
@@ -348,47 +370,46 @@ function ajax_test_enqueue_scripts1() {
 
 // init languages
 
-if(!function_exists('contest_gallery_init_languages')){
-    function contest_gallery_init_languages() {
+if (!function_exists('contest_gallery_init_languages')) {
+    function contest_gallery_init_languages()
+    {
 
-        $folderName = (basename(dirname(__FILE__))=='trunk') ? 'contest-gallery' :  basename(dirname(__FILE__)); // check if offline development
-        load_plugin_textdomain( 'contest-gallery', false, $folderName . '/languages/' );
+        $folderName = (basename(dirname(__FILE__)) == 'trunk') ? 'contest-gallery' : basename(dirname(__FILE__)); // check if offline development
+        load_plugin_textdomain('contest-gallery', false, $folderName . '/languages/');
 
     }
 }
 add_action('plugins_loaded', 'contest_gallery_init_languages');
-
-
 // init languages --- ENDE
 
 
 // localize Scripts --- ENDE
 
-
 add_action('admin_menu', 'contest_gallery_add_page');
-if(!function_exists('contest_gallery_add_page')){
-    function contest_gallery_add_page() {
+if (!function_exists('contest_gallery_add_page')) {
+    function contest_gallery_add_page()
+    {
         /**###NORMAL###**/
         add_menu_page( 'Contest Gallery', 'Contest Gallery', 'edit_posts', __FILE__, 'contest_gallery_action', 'none');
-        /**###NORMAL---END###**/
+        /**###NORMAL-END###**/
     }
 }
 
-if(!function_exists('cg_backend_menu_star')){
-    function cg_backend_menu_star() {
-        ###NORMAL###
-            wp_enqueue_style( 'cg_backend_menu_star', plugins_url('/v10/v10-css/backend/cg_backend_menu_star.css', __FILE__), false, cg_get_version_for_scripts() );
-        ###NORMAL---END###
+if (!function_exists('cg_backend_menu_star')) {
+    function cg_backend_menu_star()
+    {
+        /**###NORMAL###**/
+        wp_enqueue_style( 'cg_backend_menu_star', plugins_url('/v10/v10-css/backend/cg_backend_menu_star.css', __FILE__), false, cg_get_version_for_scripts() );
+        /**###NORMAL-END###**/
     }
 }
-add_action( 'admin_enqueue_scripts', 'cg_backend_menu_star', 10 );
+add_action('admin_enqueue_scripts', 'cg_backend_menu_star', 10);
 
 // WP Media Upload wird hier aktiviert!!!!!
-if (is_admin ()){
-    add_action ( 'admin_enqueue_scripts', 'wp_enqueue_media');
+if (is_admin()) {
+    add_action('admin_enqueue_scripts', 'wp_enqueue_media');
 }
 // WP Media Upload wird hier aktiviert!!!!! ---- ENDE
-
 
 
 //------------------------------------------------------------
@@ -406,9 +427,6 @@ include('functions/general/sql/cg-copy-comments.php');
 include('functions/general/sanitize/cg-sanitize.php');
 include('functions/general/sanitize/cg-sanitize-files.php');
 include('functions/general/cg-copy-pre7-gallery-images.php');
-/**###NORMAL###**/
-include('functions/general/option/cg-reset-to-normal-version-options-if-required.php');
-###NORMAL---END###
 include('functions/general/cg-copy-fb-sites.php');
 include('functions/general/cg-create-fb-html.php');
 include('functions/general/cg-create-fb-sites.php');
@@ -442,22 +460,23 @@ include('functions/backend/render/cg-add-fields-pressed-after-content-modificati
 include('functions/backend/render/templates/cg-create-template-from-body.php');
 include('functions/backend/render/templates/cg-email-backend-template.php');
 
-add_action('cg_delete_files_and_folder','cg_delete_files_and_folder');
-if(!function_exists('cg_delete_files_and_folder')){
-    function cg_delete_files_and_folder($folderName,$isDeleteFilesOnly = false){
+add_action('cg_delete_files_and_folder', 'cg_delete_files_and_folder');
+if (!function_exists('cg_delete_files_and_folder')) {
+    function cg_delete_files_and_folder($folderName, $isDeleteFilesOnly = false)
+    {
 
-        if(is_dir($folderName)){
+        if (is_dir($folderName)) {
 
             $folderContent = scandir($folderName);
 
-            foreach ($folderContent as $item){
-                if(is_file($folderName.'/'.$item)){
-                    unlink($folderName.'/'.$item);
+            foreach ($folderContent as $item) {
+                if (is_file($folderName . '/' . $item)) {
+                    unlink($folderName . '/' . $item);
                 }
             }
 
-            if(!$isDeleteFilesOnly){
-                 rmdir($folderName);
+            if (!$isDeleteFilesOnly) {
+                rmdir($folderName);
             }
 
         }
@@ -472,59 +491,60 @@ include('v10/include-functions-v10.php');
 
 // view control backend
 
-add_action( 'wp_ajax_post_contest_gallery_action_ajax', 'post_contest_gallery_action_ajax' );
-if(!function_exists('post_contest_gallery_action_ajax')){
+add_action('wp_ajax_post_contest_gallery_action_ajax', 'post_contest_gallery_action_ajax');
+if (!function_exists('post_contest_gallery_action_ajax')) {
 
     function post_contest_gallery_action_ajax() {
-        cg_check_nonce();
+        cg_require_backend_access();
 
         $isBackendCall = true;
         $isAjaxCall = true;
 
         global $wp_version;
-        $sanitize_textarea_field = ($wp_version<4.7) ? 'sanitize_text_field' : 'sanitize_textarea_field';
+        $sanitize_textarea_field = ($wp_version < 4.7) ? 'sanitize_text_field' : 'sanitize_textarea_field';
 
-        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+        if (defined('DOING_AJAX') && DOING_AJAX) {
 
             $user = wp_get_current_user();
 
             if (
                 is_super_admin($user->ID) ||
-                in_array( 'administrator', (array) $user->roles ) ||
-                in_array( 'editor', (array) $user->roles ) ||
-                in_array( 'author', (array) $user->roles )
+                in_array('administrator', (array)$user->roles) ||
+                in_array('editor', (array)$user->roles) ||
+                in_array('author', (array)$user->roles)
             ) {
 
-                if(!empty($isBackendCall)){
-                    if(empty($_POST['cgBackendHash'])){
-                        echo 0;die;
-                    }else{
+                if (!empty($isBackendCall)) {
+                    if (empty($_POST['cgBackendHash'])) {
+                        echo 0;
+                        die;
+                    } else {
 
                         $cgBackendHashHash = $_POST['cgBackendHash'];
-                        $cgBackendHashDecoded = wp_salt( 'auth').'---cgbackend---';
+                        $cgBackendHashDecoded = wp_salt('auth') . '---cgbackend---';
                         $cgBackendHashToCompare = md5($cgBackendHashDecoded);
 
-                        if ($cgBackendHashHash != $cgBackendHashToCompare){
-                            echo 0;die;
+                        if ($cgBackendHashHash != $cgBackendHashToCompare) {
+                            echo 0;
+                            die;
                         }
 
                     }
 
                 }
 
-                $isGalleryAjaxBackendLoad = true;
-                $cgVersion = cg_get_version_for_scripts();
 
-                include('index-functions.php');
+                    $isGalleryAjaxBackendLoad = true;
+                    $cgVersion = cg_get_version_for_scripts();
+                    include('index-functions.php');
 
-            }else{
+            } else {
                 echo "<h2>MISSINGRIGHTS<br>This area can be edited only as administrator, editor or author.</h2>";
                 exit();
             }
 
             exit();
-        }
-        else {
+        } else {
             exit();
         }
 
@@ -538,10 +558,8 @@ if (!function_exists('cg_index_scripts_and_functions')) {
     function cg_index_scripts_and_functions()
     {
         $cgVersion = cg_get_version_for_scripts();
-
         include('index-scripts.php');
         include('index-functions.php');
-
     }
 }
 
@@ -559,13 +577,12 @@ if (!function_exists('contest_gallery_action')) {
     }
 }
 
-
 add_filter ('template_include', 'cg_template_include_for_cg_post_type');
 //add_filter ('single_template', 'wpse255804_redirect_page_template');// page_template is not working and single_template does not takes complete own template, only small part other parts are not controllable
 //add_filter ('page_template', 'wpse255804_redirect_page_template');
 if(!function_exists('cg_template_include_for_cg_post_type')){
     function cg_template_include_for_cg_post_type ($template) {
-        global $post;
+	    global $post;
 	    if(!empty($post) && ($post->post_mime_type == 'contest-gallery-plugin-page-galleries-slug' || $post->post_mime_type == 'contest-gallery-plugin-page-galleries-user-slug' || $post->post_mime_type == 'contest-gallery-plugin-page-galleries-ecommerce-slug' || $post->post_mime_type == 'contest-gallery-plugin-page-galleries-winner-slug' || $post->post_mime_type == 'contest-gallery-plugin-page-galleries-no-voting-slug')){
 
 		    $shortcode_name = 'cg_gallery';
@@ -586,27 +603,26 @@ if(!function_exists('cg_template_include_for_cg_post_type')){
 
 		    $wp_upload_dir = wp_upload_dir();
 
-		    $galleriesOptions = cg_galleries_options($wp_upload_dir,$shortcode_name,$post->post_mime_type);
+		    $galleriesOptions = cg_galleries_options($shortcode_name,$post->post_mime_type);
 
 		    if(!empty($galleriesOptions['GalleriesPageRedirectURL'])){
 			    wp_redirect($galleriesOptions['GalleriesPageRedirectURL'], 301);
 		    }
 
 		    $optionsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/'.$galeryID.'-options.json';
-
 		    $template = __DIR__ . '/templates/landing.php';
 
 		    return $template;
 
 	    }elseif(!empty($post) && ($post->post_type=='contest-gallery' || $post->post_type=='contest-g' || $post->post_type=='contest-g-user' || $post->post_type=='contest-g-no-voting' || $post->post_type=='contest-g-winner' || $post->post_type=='contest-g-ecommerce')){
 
-            global $wpdb;
-            global $wp;
+	        global $wpdb;
+	        global $wp;
             $tablename = $wpdb->prefix . "contest_gal1ery";
             $tablename_options = $wpdb->prefix . "contest_gal1ery_options";
             $tablename_wp_pages = $wpdb->prefix . "contest_gal1ery_wp_pages";
 
-            $wp_upload_dir = wp_upload_dir();
+	        $wp_upload_dir = wp_upload_dir();
             $slugNameFilePath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/post-type-slug-name-do-not-edit-or-remove.txt';
             $slugName = 'contest-gallery';
             if(file_exists($slugNameFilePath)){
@@ -627,7 +643,7 @@ if(!function_exists('cg_template_include_for_cg_post_type')){
             }else{
                 $WpPageParent = $wpdb->get_var( "SELECT WpPage FROM $tablename_wp_pages WHERE WpPage = $postParent LIMIT 1" );
             }
-            if(!empty($WpPageParent)){// check fo redirect here and redirect here, because template_redirect is best for it, headers not sent here
+		    if(!empty($WpPageParent)){// check fo redirect here and redirect here, because template_redirect is best for it, headers not sent here
                 $optionsRowObject = $wpdb->get_row( "SELECT * FROM $tablename_options WHERE WpPageParent = $WpPageParent OR WpPageParentUser = $WpPageParent OR WpPageParentNoVoting = $WpPageParent OR WpPageParentWinner = $WpPageParent  OR WpPageParentEcommerce = $WpPageParent LIMIT 1" );
                 if(!empty($optionsRowObject)){
                     $GalleryID = $optionsRowObject->id;
@@ -639,13 +655,16 @@ if(!function_exists('cg_template_include_for_cg_post_type')){
                     elseif($optionsRowObject->WpPageParentWinner == $WpPageParent){$GalleryIDuser=$GalleryID.'-w';}
                     elseif($optionsRowObject->WpPageParentEcommerce == $WpPageParent){$GalleryIDuser=$GalleryID.'-ec';}
 
-                    $optionsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/'.$GalleryID.'-options.json';
+	                $optionsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/'.$GalleryID.'-options.json';
                     $options = json_decode(file_get_contents($optionsFile),true);
                     $options = (!empty($options[$GalleryIDuser])) ? $options[$GalleryIDuser] : $options;
                     if($isParentPage && !empty($options['pro']['WpPageParentRedirectURL'])){
-                        wp_redirect($options['pro']['WpPageParentRedirectURL'], 301);
+	                    wp_redirect($options['pro']['WpPageParentRedirectURL'], 301);
                     }else{
-                        if(!$isParentPage){
+	                    if($GalleryIDuser === $GalleryID.'-nv' && !empty($options['general']['CheckCookie'])){
+		                    cg_get_valid_frontend_cookie($GalleryID,'voting',true);
+	                    }
+	                    if(!$isParentPage){
                             $postId = $post->ID;
                             $cgIdCalled = $wpdb->get_var( "SELECT id FROM $tablename WHERE WpPage = $postId OR WpPageUser = $postId OR WpPageNoVoting = $postId OR WpPageWinner = $postId OR WpPageEcommerce = $postId LIMIT 1" );
                         }
@@ -694,32 +713,32 @@ if(!function_exists('cg_check_and_add_post_type_file_if_required')){
 add_action( 'upgrader_process_complete', 'cg_wp_upe_upgrade_completed_post_type_check_old', 10, 2 );
 // for gallery versions before 24... post type slug could be changed
 if(!function_exists('cg_wp_upe_upgrade_completed_post_type_check_old')){
-    /**
-     * This function runs when WordPress completes its upgrade process
-     * It iterates through each plugin updated to see if ours is included
-     * @param $upgrader_object Array
-     * @param $options Array
-     */
+	/**
+	 * This function runs when WordPress completes its upgrade process
+	 * It iterates through each plugin updated to see if ours is included
+	 * @param $upgrader_object Array
+	 * @param $options Array
+	 */
 	function cg_wp_upe_upgrade_completed_post_type_check_old( $upgrader_object, $options ) {
-        // The path to our plugin's main file
-        $our_plugin = plugin_basename( __FILE__ );
-        // If an update has taken place and the updated type is plugins and the plugins element exists
-        if( $options['action'] == 'update' && $options['type'] == 'plugin' && isset( $options['plugins'] ) ) {
-            // Iterate through the plugins being updated and check if ours is there
-            foreach( $options['plugins'] as $plugin ) {
-                if( $plugin == $our_plugin ) {
-                    $wp_upload_dir = wp_upload_dir();
-                    $slugNameFilePath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/post-type-slug-name-do-not-edit-or-remove.txt';
-                    if (is_multisite()) {
-                        $CgEntriesOwnSlugNameOption = cg_get_blog_option(get_current_blog_id(),'CgEntriesOwnSlugName');
-                    }else{
-                        $CgEntriesOwnSlugNameOption = get_option('CgEntriesOwnSlugName');
-                    }
-                    cg_check_and_add_post_type_file_if_required($slugNameFilePath,$CgEntriesOwnSlugNameOption);
-                }
-            }
-        }
-    }
+		// The path to our plugin's main file
+		$our_plugin = plugin_basename( __FILE__ );
+		// If an update has taken place and the updated type is plugins and the plugins element exists
+		if( $options['action'] == 'update' && $options['type'] == 'plugin' && isset( $options['plugins'] ) ) {
+			// Iterate through the plugins being updated and check if ours is there
+			foreach( $options['plugins'] as $plugin ) {
+				if( $plugin == $our_plugin ) {
+					$wp_upload_dir = wp_upload_dir();
+					$slugNameFilePath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/post-type-slug-name-do-not-edit-or-remove.txt';
+					if (is_multisite()) {
+						$CgEntriesOwnSlugNameOption = cg_get_blog_option(get_current_blog_id(),'CgEntriesOwnSlugName');
+					}else{
+						$CgEntriesOwnSlugNameOption = get_option('CgEntriesOwnSlugName');
+					}
+					cg_check_and_add_post_type_file_if_required($slugNameFilePath,$CgEntriesOwnSlugNameOption);
+				}
+			}
+		}
+	}
 }
 
 // was developed for v24 but not required, cause post type slug can not be changed anymore
@@ -800,55 +819,6 @@ $wp_upload_dir = wp_upload_dir();
 $rewriteRulesChangedFilePath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/rewrite-rules-changed-do-not-edit-or-remove.txt';
 //file_put_contents($rewriteRulesChangedFilePath,'changed');
 
-if(!function_exists('cg_is_registered_only_ecommerce_download_privileged_user')){
-    function cg_is_registered_only_ecommerce_download_privileged_user() {
-        if(!is_user_logged_in()){
-            return false;
-        }
-
-        $user = wp_get_current_user();
-
-        return (
-            is_super_admin($user->ID) ||
-            in_array('administrator', (array) $user->roles, true)
-        );
-    }
-}
-
-if(!function_exists('cg_check_registered_only_ecommerce_download_access')){
-    function cg_check_registered_only_ecommerce_download_access($Order, $notAllowedMessage) {
-        global $wpdb;
-
-        if(empty($Order)){
-            return;
-        }
-
-        $tablename_ecommerce_options = $wpdb->prefix . "contest_gal1ery_ecommerce_options";
-        $ecommerceOptions = $wpdb->get_row("SELECT RegUserOrderSummaryOnly FROM $tablename_ecommerce_options WHERE GeneralID = 1");
-
-        if(empty($ecommerceOptions) || empty($ecommerceOptions->RegUserOrderSummaryOnly)){
-            return;
-        }
-
-        if(cg_is_registered_only_ecommerce_download_privileged_user()){
-            return;
-        }
-
-        $WpUserIdOrder = absint($Order->WpUserId);
-        $WpUserIdLoggedIn = get_current_user_id();
-
-        if(
-            !is_user_logged_in() ||
-            empty($WpUserIdOrder) ||
-            empty($WpUserIdLoggedIn) ||
-            $WpUserIdOrder !== $WpUserIdLoggedIn
-        ){
-            echo $notAllowedMessage;die;
-        }
-    }
-}
-
-
 if(!function_exists('cg_download_invoice')){
     add_action('template_redirect','cg_download_invoice');
     function cg_download_invoice() {
@@ -862,22 +832,21 @@ if(!function_exists('cg_download_invoice')){
             if(empty($Order)){
                 echo "Order not found to download invoice";die;
             }else{
-                cg_check_registered_only_ecommerce_download_access(
-                    $Order,
-                    'Invoice download not possible. Please log in with the account used for this order.'
-                );
-
+                if(!cg_current_user_can_access_ecommerce_order($Order)){
+                    status_header(403);
+                    echo "Invoice download not possible";die;
+                }
                 $wp_upload_dir = wp_upload_dir();
                 $InvoiceFilePath = $Order->InvoiceFilePath;
                 $fileUrl = str_replace('WP_UPLOAD_DIR',$wp_upload_dir['basedir'],$InvoiceFilePath);
 
-                if(!empty($Order->InvoiceNumberChanged)){
-                    $fileNameToShow = 'invoice-'.$Order->InvoiceNumberChanged.'.pdf';
-                }elseif(!empty($Order->InvoiceNumber) && $Order->InvoiceEdited == '0000-00-00 00:00:00'){// might be edited but then InvoiceNumberChanged empty
-                    $fileNameToShow = 'invoice-'.$Order->InvoiceNumber.'.pdf';
-                }else{
-                    $fileNameToShow = basename($fileUrl);
-                }
+	            if(!empty($Order->InvoiceNumberChanged)){
+		            $fileNameToShow = 'invoice-'.$Order->InvoiceNumberChanged.'.pdf';
+	            }elseif(!empty($Order->InvoiceNumber) && $Order->InvoiceEdited == '0000-00-00 00:00:00'){// might be edited but then InvoiceNumberChanged empty
+		            $fileNameToShow = 'invoice-'.$Order->InvoiceNumber.'.pdf';
+	            }else{
+		            $fileNameToShow = basename($fileUrl);
+	            }
 
                 if(!file_exists($fileUrl)){
                     echo "Invoice file not found";die;
@@ -906,6 +875,10 @@ if(!function_exists('cg_download_logs')){
     add_action('template_redirect','cg_download_logs');
     function cg_download_logs() {
         if (isset($_GET['cg_download_logs_order_id_hash'])) {
+            if(!cg_user_has_backend_access()){
+                status_header(403);
+                echo "Log download not possible";die;
+            }
 
             global $wpdb;
             $tablename_ecommerce_orders = $wpdb->prefix . "contest_gal1ery_ecommerce_orders";
@@ -920,7 +893,7 @@ if(!function_exists('cg_download_logs')){
                 $LogFilePath = $Order->LogFilePath;
                 $fileUrl = str_replace('WP_UPLOAD_DIR',$wp_upload_dir['basedir'],$LogFilePath);
 
-                $fileNameToShow = basename($fileUrl);
+	            $fileNameToShow = basename($fileUrl);
                 if(!file_exists($fileUrl)){
                     echo "Log file not found";die;
                 }else{
@@ -945,35 +918,30 @@ if(!function_exists('cg_download_logs')){
 }
 
 if(!function_exists('cg_download_sale_item')){
-    add_action('template_redirect','cg_download_sale_item');
-    function cg_download_sale_item() {
-        if (isset($_GET['cg_download_file_order_id_hash']) && isset($_GET['cg_entry'])) {
-            global $wpdb;
+	add_action('template_redirect','cg_download_sale_item');
+	function cg_download_sale_item() {
+		if (isset($_GET['cg_download_file_order_id_hash']) && isset($_GET['cg_entry'])) {
+			global $wpdb;
 			$tablename = $wpdb->prefix . "contest_gal1ery";
 			$tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
-            $tablename_ecommerce_orders = $wpdb->prefix . "contest_gal1ery_ecommerce_orders";
+			$tablename_ecommerce_orders = $wpdb->prefix . "contest_gal1ery_ecommerce_orders";
 			$tablename_ecommerce_orders_items = $wpdb->prefix . "contest_gal1ery_ecommerce_orders_items";
 			$tablePostMeta = $wpdb->prefix . "postmeta";
 			$OrderIdHash = sanitize_text_field(wp_unslash($_GET['cg_download_file_order_id_hash']));
-            $WpUpload = absint($_GET['cg_wp_upload']);
+			$WpUpload = absint($_GET['cg_wp_upload']);
 			$Order = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_ecommerce_orders WHERE OrderIdHash = %s LIMIT 1",$OrderIdHash));
 
-			if((empty($_COOKIE['cg_order']) || $_COOKIE['cg_order']!=cg_hash_function('---cg_order---'.$OrderIdHash)) &&
-			!is_user_logged_in()){
-				echo 'Download not possible';die;
-			}
-
 			if(empty($Order)){
-                echo "Order not found";die;
-            }else{
-                cg_check_registered_only_ecommerce_download_access(
-                    $Order,
-                    'Download not possible. Please log in with the account used for this order.'
-                );
-
+				echo "Order not found";die;
+			}else{
+				if(!cg_current_user_can_access_ecommerce_order($Order)){
+					status_header(403);
+					echo 'Download not possible';die;
+				}
 				$id = $Order->id;
 				$downloadNotFound = true;
-                $wp_upload_dir = wp_upload_dir();
+
+				$wp_upload_dir = wp_upload_dir();
 
 				$orderItems = $wpdb->get_results("SELECT * FROM $tablename_ecommerce_orders_items WHERE ParentOrder = '$id' ");
 
@@ -986,15 +954,16 @@ if(!function_exists('cg_download_sale_item')){
 					$WpUploadFilesForSale = null;
 					if($ecommerceEntry->WpUploadFilesForSale){
 						$WpUploadFilesForSale = unserialize($ecommerceEntry->WpUploadFilesForSale);
-}
+					}
+
 					if($WpUploadFilesForSale && in_array($WpUpload,$WpUploadFilesForSale)!==false){
 
 						// old code for copied files
 						/*$RawData = unserialize($orderItem->RawData);
 						$metaData = $RawData['ecommerceData']['WpUploadFilesPostMeta'][$WpUpload];
-                        $soldDownloadsFolder = $wp_upload_dir['basedir'].'/contest-gallery/ecommerce/sold-downloads';
-                        $soldDownloadsFolderWpUpload = $soldDownloadsFolder.'/wp-upload-id-'.$WpUpload;
-                        $filename = substr($metaData['_wp_attached_file'],strrpos($metaData['_wp_attached_file'],'/')+1,strlen($metaData['_wp_attached_file']));
+						$soldDownloadsFolder = $wp_upload_dir['basedir'].'/contest-gallery/ecommerce/sold-downloads';
+						$soldDownloadsFolderWpUpload = $soldDownloadsFolder.'/wp-upload-id-'.$WpUpload;
+						$filename = substr($metaData['_wp_attached_file'],strrpos($metaData['_wp_attached_file'],'/')+1,strlen($metaData['_wp_attached_file']));
 						$fileUrl = $soldDownloadsFolderWpUpload.'/'.$filename;*/
 
 						// #2 use collected data to move files to contest gallery folder
@@ -1004,34 +973,34 @@ if(!function_exists('cg_download_sale_item')){
 						$filename = substr($WpMetaAttachedFile,strrpos($WpMetaAttachedFile,'/')+1,strlen($WpMetaAttachedFile));
 						$fileUrl = $ecommerceFileFolderWpUploadFolder.'/'.$filename;
 
-                        if(!file_exists($fileUrl)){
-                            echo "Entry file not found";die;
-                        }
+						if(!file_exists($fileUrl)){
+							echo "Entry file not found";die;
+						}
 						$downloadNotFound = false;
-                        //Define header information
-                        header('Content-Description: File Transfer');
+						//Define header information
+						header('Content-Description: File Transfer');
 						//header('Content-Type: image/jpg'); // not required... image might be broken because of that
-                        header("Cache-Control: no-cache, must-revalidate");
-                        header("Expires: 0");
-                        header('Content-Disposition: attachment; filename="'.basename($fileUrl).'"');
-                        header('Content-Length: ' . filesize($fileUrl));
-                        header('Pragma: public');
+						header("Cache-Control: no-cache, must-revalidate");
+						header("Expires: 0");
+						header('Content-Disposition: attachment; filename="'.basename($fileUrl).'"');
+						header('Content-Length: ' . filesize($fileUrl));
+						header('Pragma: public');
 //Clear system output buffer
-                        flush();
+						flush();
 //Read the size of the file
-                        readfile($fileUrl);
+						readfile($fileUrl);
 //Terminate from the script
-                        die();
+						die();
 					}
 				}
 
 				if($downloadNotFound){
-						echo "Download not available anymore";die;
-                    }
+					echo "Download not available anymore";die;
+				}
 
-            }
-        }
-    }
+			}
+		}
+	}
 }
 
 if(!function_exists('cg_ecommerce_export_orders_get')){
@@ -1080,4 +1049,162 @@ function cg_filter_wp_get_attachment_metadata( $data, $attachment_id ){
     }
     return $data;
 }*/
+/**
+ * Register the custom query variable so WordPress recognizes it.
+ */
+if (!function_exists('cgl_register_query_vars')) {
+    function cgl_register_query_vars( $vars ) {
+        $vars[] = 'cgl_page';
+        $vars[] = 'cgl_gallery';
+        $vars[] = 'cgl_from_gallery_page';
+        $vars[] = 'cgl_from_galleries_page';
+        $vars[] = 'cgl_origin_page_id';
+        return $vars;
+    }
+}
+add_filter( 'query_vars', 'cgl_register_query_vars' );
 
+/**
+ * Canonicalize navigation states to the clean SEO target URL.
+ */
+if (!function_exists('cgl_adjust_canonical_url')) {
+    function cgl_adjust_canonical_url( $canonical_url ) {
+        $queriedPost = get_post( get_queried_object_id() );
+
+        if ( empty( $canonical_url ) ) {
+            return $canonical_url;
+        }
+
+        if ( is_string( $canonical_url ) && strpos( $canonical_url, '<' ) !== false ) {
+            if (
+                preg_match( '/href=(["\'])([^"\']+)\1/i', $canonical_url, $matches ) &&
+                ! empty( $matches[2] ) &&
+                function_exists( 'cgl_get_resolved_canonical_url' )
+            ) {
+                $cleanCanonicalUrl = cgl_get_resolved_canonical_url( $matches[2], '', false, $queriedPost );
+                if ( ! empty( $cleanCanonicalUrl ) ) {
+                    return preg_replace(
+                        '/href=(["\'])([^"\']+)\1/i',
+                        'href="' . esc_url( $cleanCanonicalUrl ) . '"',
+                        $canonical_url,
+                        1
+                    );
+                }
+            }
+
+            return $canonical_url;
+        }
+
+        if ( function_exists( 'cgl_get_resolved_canonical_url' ) ) {
+            $cleanCanonicalUrl = cgl_get_resolved_canonical_url( $canonical_url, '', false, $queriedPost );
+            if ( ! empty( $cleanCanonicalUrl ) ) {
+                return $cleanCanonicalUrl;
+            }
+        }
+
+        return remove_query_arg( [ 'cg_gallery_id', 'cgl_gallery', 'cgl_page', 'cgl_from_gallery_page', 'cgl_from_galleries_page', 'cgl_origin_page_id' ], $canonical_url );
+    }
+}
+
+// Support for WordPress default and various SEO plugins
+add_filter( 'get_canonical_url', 'cgl_adjust_canonical_url' );
+add_filter( 'wpseo_canonical', 'cgl_adjust_canonical_url' );           // Yoast SEO
+add_filter( 'aioseo_canonical_url', 'cgl_adjust_canonical_url' );     // All in One SEO
+add_filter( 'rank_math/frontend/canonical', 'cgl_adjust_canonical_url' ); // Rank Math
+add_filter( 'seopress_titles_canonical', 'cgl_adjust_canonical_url' );    // SEOPress
+// The SEO Framework (usually uses WP default, added for safety)
+add_filter( 'the_seo_framework_rel_canonical_output', 'cgl_adjust_canonical_url' );
+
+if (!function_exists('cgl_set_navigation_wp_robots')) {
+    function cgl_set_navigation_wp_robots( $robots ) {
+        if ( ! function_exists( 'cgl_has_navigation_query_args' ) || ! cgl_has_navigation_query_args() ) {
+            return $robots;
+        }
+
+        if ( ! is_array( $robots ) ) {
+            $robots = [];
+        }
+
+        $robots['noindex'] = true;
+
+        if ( empty( $robots['nofollow'] ) ) {
+            $robots['follow'] = true;
+        }
+
+        return $robots;
+    }
+}
+add_filter( 'wp_robots', 'cgl_set_navigation_wp_robots' );
+
+/**
+ * Modify the document title for standard WordPress themes (Array-based).
+ */
+if (!function_exists('cgl_modify_gallery_title')) {
+    function cgl_modify_gallery_title( $title_parts ) {
+        return $title_parts;
+    }
+}
+add_filter( 'document_title_parts', 'cgl_modify_gallery_title' );
+
+/**
+ * Modify the title string for SEO plugins (String-based).
+ */
+if (!function_exists('cgl_modify_seo_title_string')) {
+    function cgl_modify_seo_title_string( $title ) {
+        return $title;
+    }
+}
+
+// Register title modifications for SEO plugins
+add_filter( 'wpseo_title', 'cgl_modify_seo_title_string' );               // Yoast SEO
+add_filter( 'rank_math/frontend/title', 'cgl_modify_seo_title_string' );  // Rank Math
+add_filter( 'aioseo_title', 'cgl_modify_seo_title_string' );              // All in One SEO
+add_filter( 'seopress_titles_title', 'cgl_modify_seo_title_string' );     // SEOPress
+
+/**
+ * Modify the meta description to include the page number.
+ */
+if (!function_exists('cgl_modify_meta_description')) {
+    function cgl_modify_meta_description( $description ) {
+        return $description;
+    }
+}
+
+// Register description modifications for SEO plugins
+add_filter( 'wpseo_metadesc', 'cgl_modify_meta_description' );            // Yoast SEO
+add_filter( 'rank_math/frontend/description', 'cgl_modify_meta_description' ); // Rank Math
+add_filter( 'aioseo_description', 'cgl_modify_meta_description' );        // All in One SEO
+add_filter( 'seopress_titles_desc', 'cgl_modify_meta_description' );       // SEOPress
+
+#toDo sitemap bilder darstellung
+/*
+if (!function_exists('cgl_add_images_to_yoast_sitemap')) {
+    function cgl_add_images_to_yoast_sitemap( $images, $post_id ) {
+        // Prüfe hier, ob der Post deinen Shortcode [cg_gallery] enthält
+        $post = get_post( $post_id );
+        if ( has_shortcode( $post->post_content, 'cg_gallery' ) ) {
+
+            // Hier müsstest du eine Funktion haben, die alle Bild-URLs der Galerie holt
+            // Beispielhaft:
+            $gallery_images = [
+                ['src' => 'https://domain.de/wp-content/uploads/bild1.jpg', 'title' => 'Bild Titel 1'],
+                ['src' => 'https://domain.de/wp-content/uploads/bild2.jpg', 'title' => 'Bild Titel 2'],
+            ];
+
+            foreach ( $gallery_images as $img ) {
+                $images[] = array(
+                    'src'   => $img['src'],
+                    'title' => $img['title']
+                );
+            }
+        }
+        return $images;
+    }
+}
+
+add_filter( 'wpseo_sitemap_urlimages', 'cgl_add_images_to_yoast_sitemap', 10, 2 );
+add_filter( 'rank_math/sitemap/urlimages', function( $images, $post_id ) {
+    // Gleiche Logik wie oben: Bilder sammeln und dem $images Array hinzufügen
+    // $images[] = ['src' => 'URL', 'title' => 'Titel'];
+    return $images;
+}, 10, 2 );*/

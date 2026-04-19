@@ -21,108 +21,42 @@ $wpdb->query( $wpdb->prepare(
 
 // create Categories
 
-$wpdb->query( $wpdb->prepare(
-    "
+$categoriesArray = array();
+$categoriesToCreate = array(
+    1 => 'People',
+    2 => 'Nature',
+    3 => 'Food',
+    4 => 'Architecture',
+    5 => 'Animals',
+    6 => 'Lost Places',
+    7 => 'Machines',
+    8 => 'Macro',
+    9 => 'Monochrome',
+    10 => 'Landscape'
+);
+
+foreach($categoriesToCreate as $categoryOrder => $categoryName){
+    $categoryInserted = $wpdb->query( $wpdb->prepare(
+        "
                       INSERT INTO $tablenameCategories
                       ( id, GalleryID, Name, Field_Order, Active)
                       VALUES ( %s,%s,%s,%s,%d )
                    ",
-    '',$nextIDgallery,'People',1,1
-) );
+        '',$nextIDgallery,$categoryName,$categoryOrder,1
+    ) );
 
-$wpdb->query( $wpdb->prepare(
-    "
-                      INSERT INTO $tablenameCategories
-                      ( id, GalleryID, Name, Field_Order, Active)
-                      VALUES ( %s,%s,%s,%s,%d )
-                   ",
-    '',$nextIDgallery,'Nature',2,1
-) );
-
-$wpdb->query( $wpdb->prepare(
-    "
-                      INSERT INTO $tablenameCategories
-                      ( id, GalleryID, Name, Field_Order, Active)
-                      VALUES ( %s,%s,%s,%s,%d )
-                   ",
-    '',$nextIDgallery,'Food',3,1
-) );
-
-$wpdb->query( $wpdb->prepare(
-    "
-                      INSERT INTO $tablenameCategories
-                      ( id, GalleryID, Name, Field_Order, Active)
-                      VALUES ( %s,%s,%s,%s,%d )
-                   ",
-    '',$nextIDgallery,'Architecture',4,1
-) );
-
-$wpdb->query( $wpdb->prepare(
-    "
-                      INSERT INTO $tablenameCategories
-                      ( id, GalleryID, Name, Field_Order, Active)
-                      VALUES ( %s,%s,%s,%s,%d )
-                   ",
-    '',$nextIDgallery,'Animals',5,1
-) );
-
-$wpdb->query( $wpdb->prepare(
-    "
-                      INSERT INTO $tablenameCategories
-                      ( id, GalleryID, Name, Field_Order, Active)
-                      VALUES ( %s,%s,%s,%s,%d )
-                   ",
-    '',$nextIDgallery,'Lost Places',6,1
-) );
-
-$wpdb->query( $wpdb->prepare(
-    "
-                      INSERT INTO $tablenameCategories
-                      ( id, GalleryID, Name, Field_Order, Active)
-                      VALUES ( %s,%s,%s,%s,%d )
-                   ",
-    '',$nextIDgallery,'Machines',7,1
-) );
-
-$wpdb->query( $wpdb->prepare(
-    "
-                      INSERT INTO $tablenameCategories
-                      ( id, GalleryID, Name, Field_Order, Active)
-                      VALUES ( %s,%s,%s,%s,%d )
-                   ",
-    '',$nextIDgallery,'Macro',8,1
-) );
-
-$wpdb->query( $wpdb->prepare(
-    "
-                      INSERT INTO $tablenameCategories
-                      ( id, GalleryID, Name, Field_Order, Active)
-                      VALUES ( %s,%s,%s,%s,%d )
-                   ",
-    '',$nextIDgallery,'Monochrome',9,1
-) );
-
-$wpdb->query( $wpdb->prepare(
-    "
-                      INSERT INTO $tablenameCategories
-                      ( id, GalleryID, Name, Field_Order, Active)
-                      VALUES ( %s,%s,%s,%s,%d )
-                   ",
-    '',$nextIDgallery,'Landscape',10,1
-) );
-
+    if($categoryInserted!==false){
+        $category = new stdClass();
+        $category->id = (string)$wpdb->insert_id;
+        $category->GalleryID = (string)$nextIDgallery;
+        $category->Name = $categoryName;
+        $category->Field_Order = (string)$categoryOrder;
+        $category->Active = '1';
+        $categoriesArray[$category->id] = $category;
+    }
+}
 
 // make json file
-
-$categories = $wpdb->get_results("SELECT * FROM $tablenameCategories WHERE GalleryID = '$nextIDgallery' ORDER BY Field_Order");
-
-$categoriesArray = array();
-
-foreach($categories as $category){
-
-    $categoriesArray[$category->id] = $category;
-
-}
 
 $fp = fopen($galleryUpload.'/json/'.$nextIDgallery.'-categories.json', 'w');
 fwrite($fp, json_encode($categoriesArray));

@@ -1,12 +1,12 @@
 <?php
 	
-	global $wpdb;
-	$tablename = $wpdb->prefix."contest_gal1ery";
-	//$proUploads = $wpdb->get_var( "SELECT COUNT(*) FROM $tablename WHERE id > '0' ");
+global $wpdb;
+$tablename = $wpdb->prefix."contest_gal1ery";
+//$proUploads = $wpdb->get_var( "SELECT COUNT(*) FROM $tablename WHERE id > '0' ");
 
-	if(!get_option("p_cgal1ery_reminder_time")){
-		add_option( "p_cgal1ery_reminder_time", time() );
-	}
+if(!get_option("p_cgal1ery_reminder_time")){
+	add_option( "p_cgal1ery_reminder_time", time());
+}
 
 cg_shortcode_interval_configuration_container($GalleryID,$cgProFalse);
 
@@ -18,6 +18,7 @@ echo "Contest Gallery documentation";
 echo "</span></a>";
 echo "</div>";
 echo "<input type='hidden' id='cgGetVersionForUrlJs' value='".cg_get_version()."' />";
+
 
 ###NORMAL###
 if(!empty($cgProVersion)){// check with no empty!
@@ -37,6 +38,7 @@ if(empty($cgProVersionLink)){
 $galeryNR = $GalleryID;
 
     include("nav-shortcode.php");
+
 
 echo "</div>";
 
@@ -139,42 +141,39 @@ if(intval($galleryDbVersion)>=22){
 
 	echo "</div>";
 
-	//fef050 fcd729
+//fef050 fcd729
 /*echo "<table class='cg_do_not_remove_when_ajax_load' style='background-color:#ffffff;padding:15px 0;width:100%;box-shadow: 2px 4px 12px rgba(0,0,0,.08);border-radius:8px;' >";
-	echo "<tr>";
+echo "<tr>";
 echo "<td align='center'><div><a href='?page=".cg_get_version()."/index.php'  class='cg_load_backend_link'><input class='cg_backend_button cg_backend_button_back' type='button' value='<<< Back to menu' ></a></div></td>";
 echo "<td align='center'><div><a href='?page=".cg_get_version()."/index.php&edit_options=true&option_id=$GalleryID' class='cg_load_backend_link cg_edit_options'><input type='button' class='cg_backend_button cg_backend_button_general ' value='Edit options' /></a></div></td>";
 echo "<td align='center'><div><a href='?page=".cg_get_version()."/index.php&edit_options=true&option_id=$GalleryID' class='cg_load_backend_link cg_edit_translations'><input type='button' class='cg_backend_button cg_backend_button_general ' value='Edit translations' /></a></div></td>";
 echo "<td align='center'><div><a href='?page=".cg_get_version()."/index.php&define_upload=true&option_id=$GalleryID'  class='cg_load_backend_link'><input type='button' class='cg_backend_button cg_backend_button_general' value='Edit upload form'  /></a></div></td>";
-	echo "<td align='center'><div>";
+echo "<td align='center'><div>";
+//echo "<form method='POST' action='?page=".cg_get_version()."/index.php&create_user_form=true&option_id=$GalleryID'><input type='hidden' name='option_id' value='$GalleryID'><input type='submit' value='PRO users management' style='text-align:center;width:180px;background:linear-gradient(0deg, #ffbe4e 50%, #ffbe4e 50%);' /></form><br/>";
+echo "<a href='?page=".cg_get_version()."/index.php&create_user_form=true&option_id=$GalleryID'  class='cg_load_backend_link'><input class='cg_backend_button cg_backend_button_general'  type='button' value='Edit registration form'  /></a>";
 
-		//echo "<form method='POST' action='?page=".cg_get_version()."/index.php&create_user_form=true&option_id=$GalleryID'><input type='hidden' name='option_id' value='$GalleryID'><input type='submit' value='PRO users management' style='text-align:center;width:180px;background:linear-gradient(0deg, #ffbe4e 50%, #ffbe4e 50%);' /></form><br/>";
-		echo "<a href='?page=".cg_get_version()."/index.php&create_user_form=true&option_id=$GalleryID'  class='cg_load_backend_link'><input class='cg_backend_button cg_backend_button_general'  type='button' value='Edit registration form'  /></a>";
-		
+echo "</div></td>";
+echo "</tr>";
 
-
-	echo "</div></td>"; 
-	echo "</tr>";
-	
 echo "</table>";*/
 
 echo "<div id='cg_nav_menu_row_container'  class='cg_do_not_remove_when_ajax_load cg_nav_menu_row_container' >";
     echo "<div class='cg_nav_menu_row'>";
     echo "<div ><a href='?page=".cg_get_version()."/index.php'  class='cg_load_backend_link cg_load_backend_link_back_to_menu'><input class='cg_backend_button cg_backend_button_back ' type='button' value='Back to menu' ></a><br/></div>";
-    echo "<div><a id='cgNavMenuContactForm' href='?page=".cg_get_version()."/index.php&option_id=$GalleryID&define_upload=true' class='cg_load_backend_link'><input type='submit' class='cg_backend_button cg_backend_button_general'  style='padding-left: 20px;'  value='Edit upload form' /></form><br/></div>";
+    echo "<div><a id='cgNavMenuContactForm' href='?page=".cg_get_version()."/index.php&option_id=$GalleryID&define_upload=true' class='cg_load_backend_link'><input type='submit' class='cg_backend_button cg_backend_button_general' value='Edit upload form' /></form><br/></div>";
     echo "<div>";
-    echo "<a id='cgNavMenuRegForm'  href='?page=".cg_get_version()."/index.php&create_user_form=true&option_id=$GalleryID' class='cg_load_backend_link'><input type='hidden' name='option_id' value='$GalleryID'><input class='cg_backend_button cg_backend_button_general'  type='submit'   style='padding-left: 25px;'   value='Edit user form'  /></a>";
+    echo "<a id='cgNavMenuRegForm'  href='?page=".cg_get_version()."/index.php&create_user_form=true&option_id=$GalleryID' class='cg_load_backend_link'><input type='hidden' name='option_id' value='$GalleryID'><input class='cg_backend_button cg_backend_button_general'  type='submit' value='Edit user form'  /></a>";
     echo "</div>";
     echo "<div>";
-    echo "<a  id='cgNavMenuUsersManagement'  href='?page=".cg_get_version()."/index.php&users_management=true&option_id=$GalleryID' class='cg_load_backend_link'><input class='cg_backend_button cg_backend_button_general'  style='padding-left: 20px;'   type='button' id='cgUsersManagement' value='Users management' /></a>";
+    echo "<a  id='cgNavMenuUsersManagement'  href='?page=".cg_get_version()."/index.php&users_management=true&option_id=$GalleryID' class='cg_load_backend_link'><input class='cg_backend_button cg_backend_button_general' type='button' id='cgUsersManagement' value='Users management' /></a>";
     echo "</div>";
     echo "</div>";
 
     echo "<div class='cg_nav_menu_row'>";
-    echo "<div><a id='cgEditOptionsButton' href='?page=".cg_get_version()."/index.php&edit_options=true&option_id=$GalleryID' class='cg_load_backend_link'><input type='submit' class='cg_backend_button cg_backend_button_general'  style='padding-left: 20px;'  value='Edit options'  /></a><br/></div>";
-    echo "<div><a id='cgNavMenuEditTranslations' href='?page=".cg_get_version()."/index.php&edit_options=true&option_id=$GalleryID&cg_edit_translations=true' class='cg_load_backend_link cg_edit_translations'><input type='submit' class='cg_backend_button cg_backend_button_general '  style='padding-left: 20px;'   value='Edit translations'  /></a><br/></div>";
-    echo "<div><a id='cgNavMenuEditEcommerce'  href='?page=".cg_get_version()."/index.php&edit_options=true&option_id=$GalleryID&cg_edit_ecommerce=true' class='cg_load_backend_link cg_edit_ecommerce'><input type='submit' class='cg_backend_button cg_backend_button_general '   style='padding-left: 20px;'  value='Edit ecommerce'  /></a><br/></div>";
-    echo "<div><a id='cgNavMenuEcommerceOrders'  href='?page=".cg_get_version()."/index.php&option_id=$GalleryID&cg_orders=true' class='cg_load_backend_link'><input type='submit' class='cg_backend_button cg_backend_button_general '   style='padding-left: 20px;'  value='Ecommerce orders'  /></a><br/></div>";
+    echo "<div><a id='cgEditOptionsButton' href='?page=".cg_get_version()."/index.php&edit_options=true&option_id=$GalleryID' class='cg_load_backend_link'><input type='submit' class='cg_backend_button cg_backend_button_general' value='Edit options'  /></a><br/></div>";
+    echo "<div><a id='cgNavMenuEditTranslations' href='?page=".cg_get_version()."/index.php&edit_options=true&option_id=$GalleryID&cg_edit_translations=true' class='cg_load_backend_link cg_edit_translations'><input type='submit' class='cg_backend_button cg_backend_button_general ' value='Edit translations'  /></a><br/></div>";
+    echo "<div><a id='cgNavMenuEditEcommerce'  href='?page=".cg_get_version()."/index.php&edit_options=true&option_id=$GalleryID&cg_edit_ecommerce=true' class='cg_load_backend_link cg_edit_ecommerce'><input type='submit' class='cg_backend_button cg_backend_button_general ' value='Edit ecommerce'  /></a><br/></div>";
+    echo "<div><a id='cgNavMenuEcommerceOrders'  href='?page=".cg_get_version()."/index.php&option_id=$GalleryID&cg_orders=true' class='cg_load_backend_link'><input type='submit' class='cg_backend_button cg_backend_button_general ' value='Ecommerce orders'  /></a><br/></div>";
     echo "</div>";
 echo "</div>";
 

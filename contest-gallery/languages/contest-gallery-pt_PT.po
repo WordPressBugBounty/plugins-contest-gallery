@@ -46,8 +46,8 @@ msgid "Download invoice"
 msgstr "Baixe o Invoice"
 
 #: check-language-ecommerce.php:53
-msgid "Billing address different from delivery address?"
-msgstr "Endereço de cobrança diferente do endereço de entrega?"
+msgid "Billing address different from delivery address"
+msgstr "O endereço de cobrança é diferente do endereço de entrega"
 
 #: check-language-ecommerce.php:55
 msgid "Country"
@@ -868,8 +868,8 @@ msgid "You have already used all your votes"
 msgstr "Você já usou todos os seus votos"
 
 #: check-language.php:304
-msgid "It is not allowed to vote for your own file"
-msgstr "Não é permitido votar em seu próprio arquivo"
+msgid "You cannot vote for your own entry"
+msgstr "Não pode votar na sua própria entrada"
 
 #: check-language.php:306
 msgid "Only registered users are allowed to vote"

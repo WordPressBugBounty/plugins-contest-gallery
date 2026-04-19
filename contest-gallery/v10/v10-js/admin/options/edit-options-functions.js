@@ -21,14 +21,6 @@ cgJsClassAdmin.options.vars = {
         "                        <p><span class=\"cg_view_option_title_note\">Select how an entry should be opened on click in a gallery</span></p>\n" +
         "                    </div>\n" +
         "                    <div class='cg_view_option_radio_multiple'>\n" +
-        "                        <div class='cg_view_option_radio_multiple_container SliderFullWindowContainer' id='SliderFullWindowContainerMessage'>\n" +
-        "                            <div class='cg_view_option_radio_multiple_title'>\n" +
-        "                                Full window slider\n" +
-        "                            </div>\n" +
-        "                            <div class='cg_view_option_radio_multiple_input'>\n" +
-        "                                <input type=\"radio\" name=\"SliderFullWindow\" class=\"SliderFullWindow cg_view_option_radio_multiple_input_field\"    />\n" +
-        "                            </div>\n" +
-        "                        </div>\n" +
         "                        <div class='cg_view_option_radio_multiple_container BlogLookFullWindowContainer' id='BlogLookFullWindowContainerMessage'>\n" +
         "                            <div class='cg_view_option_radio_multiple_title'>\n" +
         "                                Full window blog view\n" +
@@ -291,7 +283,7 @@ cgJsClassAdmin.options.functions = {
 
         cgJsClassAdmin.options.functions.cgCheckPreselect($);
 
-        cgJsClassAdmin.options.functions.cg_SliderLookOnLoad($);
+       // cgJsClassAdmin.options.functions.cg_SliderLookOnLoad($);
 
         cgJsClassAdmin.options.functions.cg_ShowExifOnLoad($);
 
@@ -299,7 +291,7 @@ cgJsClassAdmin.options.functions = {
 
         cgJsClassAdmin.options.functions.cg_SliderFullWindowOnLoad($);
 
-        cgJsClassAdmin.options.functions.cg_BlogLookFullWindowOnLoad($);
+        //cgJsClassAdmin.options.functions.cg_BlogLookFullWindowOnLoad($);
 
         cgJsClassAdmin.options.functions.cg_ForwardToWpPageEntryOnLoad($);
 
@@ -394,11 +386,11 @@ cgJsClassAdmin.options.functions = {
         cgJsClassAdmin.options.functions.cg_allowUploadGIF($);
         cgJsClassAdmin.options.functions.cg_allowUploadICO($);
 
-        cgJsClassAdmin.options.functions.cg_HeightLookOnLoad($);
+       // cgJsClassAdmin.options.functions.cg_HeightLookOnLoad($);
 
-        cgJsClassAdmin.options.functions.cg_ThumbLookOnLoad($);
+        //cgJsClassAdmin.options.functions.cg_ThumbLookOnLoad($);
 
-        cgJsClassAdmin.options.functions.cg_RowLookOnLoad($);
+       // cgJsClassAdmin.options.functions.cg_RowLookOnLoad($);
 
         // cgJsClassAdmin.options.functions.checkInGalleryUpload($);
 
@@ -500,6 +492,8 @@ cgJsClassAdmin.options.functions = {
         cgJsClassAdmin.options.functions.cg_EnableSwitchStyleGalleryButtonOnLoad($);
 
         cgJsClassAdmin.options.functions.cg_EnableSwitchStyleImageViewButtonOnLoad($);
+
+        cgJsClassAdmin.options.functions.cg_ShowDateOnLoad($);
 
         // show last selected multiple if one star is selected just for visual reason
         if($('#AllowRating2').prop('checked')){
@@ -1505,12 +1499,14 @@ cgJsClassAdmin.options.functions = {
         }
 
     },
+    cg_SetOrderLook: function ($,$element) {
+        $element.closest('.cg_options_sortable').find('.OrderLook').prop('checked',false).closest('.cg_view_option_radio').removeClass('cg_view_option_checked');
+        $element.find('.OrderLook').prop('checked',true).closest('.cg_view_option_radio').addClass('cg_view_option_checked');
+    },
     cg_HeightLookOnLoad: function ($) {
-
         $('.cg_options_sortable .HeightLook').each(function () {
             cgJsClassAdmin.options.functions.cg_HeightLook(false,$,$(this));
         });
-
     },
     cg_HeightLook: function (click,$,$element) {
 
@@ -2142,6 +2138,20 @@ cgJsClassAdmin.options.functions = {
             $cg_view_container.find('.SwitchStyleImageViewButtonOnlyImageViewContainer').removeClass('cg_disabled');
         }else{
             $cg_view_container.find('.SwitchStyleImageViewButtonOnlyImageViewContainer').addClass('cg_disabled');
+        }
+    },
+    cg_ShowDateOnLoad: function ($) {
+        $('.ShowDateContainer').each(function (){
+            cgJsClassAdmin.options.functions.cg_ShowDate($,$(this).closest('.cg_view_container'));
+        });
+    },
+    cg_ShowDate: function ($,$cg_view_container) {
+        if($cg_view_container.find('.ShowDate:not(.cg_shortcode_checkbox_clone)').prop("checked")){
+            $cg_view_container.find('.ShowDateFormatContainer').removeClass('cg_disabled');
+            $cg_view_container.find('.ShowDateViewContainer').removeClass('cg_disabled');
+        }else{
+            $cg_view_container.find('.ShowDateFormatContainer').addClass('cg_disabled');
+            $cg_view_container.find('.ShowDateViewContainer').addClass('cg_disabled');
         }
     },
     addCheckedUncheckedClasses: function ($) {

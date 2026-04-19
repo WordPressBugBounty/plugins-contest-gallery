@@ -19,7 +19,7 @@ if(floatval($galleryDbVersion)<15.05){
 
     echo <<<HEREDOC
 <div class='cg_view_options_rows_container'>
-        <p class='cg_view_options_rows_container_title'>Gallery slide out, slider view or blog view</p>        
+        <p class='cg_view_options_rows_container_title'>Gallery slide out or blog view</p>
         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width'>
                     <div class='cg_view_option_title'>
@@ -32,14 +32,6 @@ if(floatval($galleryDbVersion)<15.05){
                             </div>
                             <div class='cg_view_option_radio_multiple_input'>
                                 <input type="radio" name="multiple-pics[cg_gallery_user][general][AllowGalleryScript]" class="AllowGalleryScript cg_view_option_radio_multiple_input_field"  $AllowGalleryScript  />
-                            </div>
-                        </div>
-                        <div class='cg_view_option_radio_multiple_container SliderFullWindowContainer'>
-                            <div class='cg_view_option_radio_multiple_title'>
-                                Full window slider
-                            </div>
-                            <div class='cg_view_option_radio_multiple_input'>
-                                <input type="radio" name="multiple-pics[cg_gallery_user][pro][SliderFullWindow]" class="SliderFullWindow cg_view_option_radio_multiple_input_field"  $SliderFullWindow   />
                             </div>
                         </div>
                         <div class='cg_view_option_radio_multiple_container BlogLookFullWindowContainer'>
@@ -61,8 +53,10 @@ HEREDOC;
     $TextBeforeWpPageEntryRow = '';
     $TextAfterWpPageEntryRow = '';
     $EventuallyPadding = '';
+    $AvailableEntryViewOptions = 'Blog view';
     $ForwardToWpPageEntryInNewTabOptions = '';
 if(floatval($galleryDbVersion)>=21){
+    $AvailableEntryViewOptions = 'Blog view or forward to entry landing page';
     $EventuallyPadding = 'padding-bottom:20px;';
     $ForwardToWpPageEntry = (!empty($jsonOptions[$GalleryID.'-u']['visual']['ForwardToWpPageEntry'])) ? 'checked' : '';
     $ForwardToWpPageEntryInNewTab = (!empty($jsonOptions[$GalleryID.'-u']['visual']['ForwardToWpPageEntryInNewTab'])) ? '1' : '0';
@@ -92,9 +86,9 @@ HEREDOC;
 
     echo <<<HEREDOC
 <div class='cg_view_options_rows_container'>
-        <p class='cg_view_options_rows_container_title'>Gallery slide out, slider view or blog view</p>
+        <p class='cg_view_options_rows_container_title'>$AvailableEntryViewOptions</p>
         <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_view_option_full_width  cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px'>
+                <div class='cg_view_option cg_view_option_full_width  cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px cg_border_bottom_none'>
                     <div class='cg_view_option_title'>
                         <p>Open entry style<br><span class="cg_view_option_title_note">Select how a file image should be opened on click in a gallery</span></p>
                     </div>
@@ -105,14 +99,6 @@ HEREDOC;
                             </div>
                             <div class='cg_view_option_radio_multiple_input'>
                                 <input type="radio" name="multiple-pics[cg_gallery_user][visual][BlogLookFullWindow]" class="BlogLookFullWindow cg_view_option_radio_multiple_input_field"  $BlogLookFullWindow  />
-                            </div>
-                        </div>
-                        <div class='cg_view_option_radio_multiple_container SliderFullWindowContainer'>
-                            <div class='cg_view_option_radio_multiple_title'>
-                                Full window slider
-                            </div>
-                            <div class='cg_view_option_radio_multiple_input'>
-                                <input type="radio" name="multiple-pics[cg_gallery_user][pro][SliderFullWindow]" class="SliderFullWindow cg_view_option_radio_multiple_input_field"  $SliderFullWindow   />
                             </div>
                         </div>
                         $ForwardToWpPageEntryOptions
@@ -360,7 +346,7 @@ if(!isset($jsonOptions[$GalleryID.'-u']['visual']['ShareButtons'])){
 echo <<<HEREDOC
 <div class="cg_view_options_row ShareButtonsHiddenRow" >
            <input type='hidden' name="multiple-pics[cg_gallery_user][visual][ShareButtons]" value='{$jsonOptions[$GalleryID . '-u']['visual']['ShareButtons']}' class='ShareButtonsHiddenInput' />
-            <div class="cg_view_option cg_view_option_full_width cg_border_bottom_none " style="margin-bottom: -25px;" >
+            <div class="cg_view_option cg_view_option_full_width cg_border_bottom_none " style="margin-bottom: -10px;" >
                 <div class="cg_view_option_title ">
                     <p>Social share buttons<br>
                     <span class="cg_view_option_title_note"><span class="cg_font_weight_bold">NOTE: </span>for cg_gallery_user shortcode unset by default, because shortcode is for registered and logged in users</span>
@@ -378,7 +364,7 @@ $YahooChecked = (in_array('yahoo',$ShareButtonsExploded)!==false) ? 'checked' : 
 $EvernoteChecked = (in_array('evernote',$ShareButtonsExploded)!==false) ? 'checked' : '';
 
 echo <<<HEREDOC
-<div class="cg_view_options_row $ShareButtonsHide">
+<div class="cg_view_options_row $ShareButtonsHide cg_disabled_background_color_e0e0e0">
     <div class="cg_view_option  cg_view_option_20_percent cg_border_top_bottom_none cg_border_right_none cg_share_button_option ">
         <div class="cg_view_option_title">
             <p>Email</p>
@@ -429,7 +415,7 @@ $TelegramChecked = (in_array('telegram',$ShareButtonsExploded)!==false) ? 'check
 $SkypeChecked = (in_array('skype',$ShareButtonsExploded)!==false) ? 'checked' : '';
 
 echo <<<HEREDOC
-<div class="cg_view_options_row $ShareButtonsHide">
+<div class="cg_view_options_row $ShareButtonsHide cg_disabled_background_color_e0e0e0">
     <div class="cg_view_option $cgProFalse cg-pro-false-small   cg_view_option_20_percent cg_border_top_bottom_none cg_border_right_none cg_share_button_option ">
         <div class="cg_view_option_title">
             <p>Facebook</p>
@@ -480,7 +466,7 @@ $LinkedInChecked = (in_array('linkedin',$ShareButtonsExploded)!==false) ? 'check
 $VKChecked = (in_array('vk',$ShareButtonsExploded)!==false) ? 'checked' : '';
 
 echo <<<HEREDOC
-<div class="cg_view_options_row $ShareButtonsHide">
+<div class="cg_view_options_row $ShareButtonsHide cg_disabled_background_color_e0e0e0">
        <div class="cg_view_option cg_view_option_20_percent cg_border_top_bottom_none  cg_border_right_none  cg_share_button_option">
         <div class="cg_view_option_title">
             <p>Pinterest</p>
@@ -531,7 +517,7 @@ $DoubanChecked = (in_array('douban',$ShareButtonsExploded)!==false) ? 'checked' 
 $RenRenChecked = (in_array('renren',$ShareButtonsExploded)!==false) ? 'checked' : '';
 
 echo <<<HEREDOC
-<div class="cg_view_options_row $ShareButtonsHide">
+<div class="cg_view_options_row $ShareButtonsHide cg_disabled_background_color_e0e0e0">
        <div class="cg_view_option  $cgProFalse  cg-pro-false-small cg_view_option_20_percent cg_border_top_bottom_none  cg_border_right_none cg_share_button_option ">
         <div class="cg_view_option_title">
             <p>OK</p>
@@ -1042,5 +1028,3 @@ echo <<<HEREDOC
     </div>
 </div>
 HEREDOC;
-
-

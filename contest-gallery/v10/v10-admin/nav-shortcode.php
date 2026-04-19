@@ -13,26 +13,21 @@ if(intval($galleryDbVersion)<14){
 }
 
 
-echo "<div class='td_gallery_info_content_row'>";
+echo "<div class='td_gallery_info_content_row td_gallery_info_content_row_primary'>";
 
-echo "<div class='td_gallery_info_content' style='width: 71.5%;box-sizing: border-box;display:flex;flex-flow:row;align-items:center;'>";
+echo "<div class='td_gallery_info_content td_gallery_info_content_primary'>";
 
-echo "<div class='td_gallery_info_shortcode td_gallery_info_shortcode_pro' style='border: unset; padding: 0;height: 100%;width: 32%;border-right: thin solid #dedede;border-width:0.5px;' >
+echo "<div class='td_gallery_info_shortcode td_gallery_info_shortcode_pro td_gallery_info_shortcode_primary_pro' >
 $cgProVersionLink
 </div>";
 
-echo "<div class='td_gallery_info_shortcode' style='flex-grow:1;border-right: unset;'>
-<div class='td_gallery_info_name' style='border-bottom: none;'><div style='margin-right: 5px;'>Gallery name<br><div class='td_gallery_info_name_span'><span class='td_gallery_info_name_span_bold'>$GalleryName</span></div></div><a class='td_gallery_info_name_edit_link cg_load_backend_link' href=\"?page=".cg_get_version()."/index.php&edit_options=true&option_id=".$galeryNR."&cg_go_to=cgEditGalleryNameRow\" ><div class='td_gallery_info_name_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div></a></div>
+echo "<div class='td_gallery_info_shortcode td_gallery_info_shortcode_primary_name'>
+<div class='td_gallery_info_name td_gallery_info_name_gallery'><div class='td_gallery_info_name_gallery_label'>Gallery name<br><div class='td_gallery_info_name_span'><span class='td_gallery_info_name_span_bold'>$GalleryName</span></div></div><a class='td_gallery_info_name_edit_link cg_load_backend_link' href=\"?page=".cg_get_version()."/index.php&edit_options=true&option_id=".$galeryNR."&cg_go_to=cgEditGalleryNameRow\" ><div class='td_gallery_info_name_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div></a></div>
 </div>";
 
 echo "</div>";
 
-echo "<div class='td_gallery_info_content' style='width: 23.5%;
-    border-left: thin solid #dedede;
-    border-right: unset;
-    box-sizing: border-box;
-    border-bottom: thin solid #dedede;
-    margin-left: 0.5px;'>";
+echo "<div class='td_gallery_info_content td_gallery_info_content_secondary'>";
 
 echo "<div class='td_gallery_info_shortcode $cgProFalse' >
     <div>
@@ -59,13 +54,13 @@ because it's options are general and apply to all galleries.</span>
 echo "</div>";
 echo "</div>";
 
-echo "<div class='td_gallery_info_content_row'>";
+echo "<div class='td_gallery_info_content_row td_gallery_info_content_row_grid'>";
 
 echo "<div class='td_gallery_info_content'>";
 
-echo "<div class='td_gallery_info_shortcode' style='min-height: 62px; '>";
+echo "<div class='td_gallery_info_shortcode'>";
 echo "<div>
-      <div class='td_gallery_info_name_title' style='font-size: 15px;'>Voting gallery</div>
+      <div class='td_gallery_info_name_title td_gallery_info_name_title_large'>Voting gallery</div>
       <div class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip'>[cg_gallery id=\"".$galeryNR."\"]</div>
         <div class='cg-info-icon-parent'>
             <div class=\"cg-info-icon\">read info
@@ -189,7 +184,7 @@ HEREDOC;
 echo "<div class='td_gallery_info_shortcode'>
     <div>
          <div class='td_gallery_info_name_title'><span class='td_gallery_info_name_title_span $cg_v14_note_caret'>User form</span></div>
-    <div class='td_gallery_info_name_span' style='max-width: 230px;'><span class='td_gallery_info_name_span_box cg_shortcode_copy cg_tooltip' style='margin-right: 30px;'>[cg_users_reg]</span><span style='margin-right: 10px;display: none;'>or</span><span class='td_gallery_info_name_span_box cg_shortcode_copy cg_tooltip'>[cg_users_pin]</span></div>
+    <div class='td_gallery_info_name_span td_gallery_info_name_span_user_form'><span class='td_gallery_info_name_span_box td_gallery_info_name_span_box_primary cg_shortcode_copy cg_tooltip'>[cg_users_reg]</span><span class='td_gallery_info_name_span_separator'>or</span><span class='td_gallery_info_name_span_box cg_shortcode_copy cg_tooltip'>[cg_users_pin]</span></div>
         <div class='cg-info-icon-parent'>
             <span class=\"cg-info-icon $cg_v14_note_caret\">read info
     <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide'    data-cg-shortcode='cg_users_reg'  ></div>
@@ -237,7 +232,7 @@ Can be added multiple times on a page with different <b>id’s</b>.
     <div class='td_gallery_info_shortcode_conf   cg_tooltip'  data-cg-shortcode='cg_gallery_winner' data-cg-title-main='Gallery of selected winners' data-cg-title-sub='[cg_gallery_winner id=\"".$galeryNR."\"]'></div>";
 echo "</div></div>";
 
-echo "<div class='td_gallery_info_content' style='border-right: none;'>";
+echo "<div class='td_gallery_info_content'>";
 
 $cg_v14_note_caret = '';
 $cg_v14_note_caret_text = '';
@@ -275,11 +270,11 @@ if(intval($galleryDbVersion)<22){
 	$cg_hide_before_22 = 'cg_hide';
 }
 
-echo "<div class='td_gallery_info_shortcode $cg_hide_before_22' style='border-bottom-right-radius: 8px;' >";
+echo "<div class='td_gallery_info_shortcode td_gallery_info_shortcode_ecommerce $cg_hide_before_22' >";
 
 echo "<div>
          <div class='td_gallery_info_name_title'>Sell products gallery</div>
-    <div class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip' style='padding-left: 0;white-space: pre;'>[cg_gallery_ecommerce id=\"".$galeryNR."\"]</div>
+    <div class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip'>[cg_gallery_ecommerce id=\"".$galeryNR."\"]</div>
         <div class='cg-info-icon-parent'>
             <div class=\"cg-info-icon\">read info
     <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide'  data-cg-shortcode='cg_gallery_ecommerce' ></div>

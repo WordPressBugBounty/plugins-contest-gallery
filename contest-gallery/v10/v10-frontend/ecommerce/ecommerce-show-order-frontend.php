@@ -74,7 +74,7 @@ $tablename_ecommerce_orders_items = $wpdb->prefix . "contest_gal1ery_ecommerce_o
 $tablename_ecommerce_options = $wpdb->prefix . "contest_gal1ery_ecommerce_options";
 
 // please provide sales id should be visible if not provided
-// ales id sanitize $_GET und dann verarbeiten
+// sanitize all id $_GET and then process
 
 $OrderIdHash = cg1l_sanitize_method(wp_unslash($_GET['cg_order']));
 //$optionsNormal = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_orders WHERE id='$OrderId'");
@@ -196,35 +196,17 @@ if(empty($Order)){
 		$FeControlsStyleOrder = ($ecommerceOptions['FeControlsStyleOrder'] == 'white') ? 'cg_fe_controls_style_white' : '';
 		$BorderRadiusOrder = ($ecommerceOptions['BorderRadiusOrder'] == '1') ? 'cg_border_radius_controls_and_containers' : '';
 
-		$WpUserIdOrder = $Order->WpUserId;
-		$WpUserIdLoggedIn = get_current_user_id();
-
-		$user = wp_get_current_user();
-
-		$isAllowedUser = false;
+		$isAllowedUser = cg_current_user_can_access_ecommerce_order($Order);
+		$orderHasOwner = cg_ecommerce_order_has_owner($Order);
         $HasInvoice = false;
 
         $cgProVersion = contest_gal1ery_key_check();
 
-		if (
-			is_super_admin($user->ID) ||
-			in_array( 'administrator', (array) $user->roles ) ||
-			in_array( 'editor', (array) $user->roles ) ||
-			in_array( 'author', (array) $user->roles )
-		) {
-			$isAllowedUser = true;
-		}
-
-		if (is_user_logged_in() && $WpUserIdOrder && $WpUserIdLoggedIn) {
-			$isAllowedUser = true;
-		}
-
-		if(
-			($ecommerceOptions['RegUserOrderSummaryOnly']==1 && !is_user_logged_in())
-			||
-			(is_user_logged_in() && !$isAllowedUser)
-		){
+		if($orderHasOwner && !$isAllowedUser){
 			$RegUserOrderSummaryOnlyText = contest_gal1ery_convert_for_html_output_without_nl2br($ecommerceOptions['RegUserOrderSummaryOnlyText']);
+			if(empty($RegUserOrderSummaryOnlyText)){
+				$RegUserOrderSummaryOnlyText = '<p style="text-align: center;"><b>Please log in with the account used for this purchase to view the order.</b></p>';
+			}
 			echo "<div  id='mainCGdivOrderContainer' class='mainCGdivOrderContainer mainCGdiv $FeControlsStyleOrder $BorderRadiusOrder'>
 $RegUserOrderSummaryOnlyText
 </div>"; return;
@@ -529,6 +511,7 @@ Payment type not set
         cgJsClass.gallery.vars.ecommerce.is_admin = <?php echo json_encode(is_admin()); ?>;
         cgJsClass.gallery.vars.ecommerce.EUshortcodes = <?php echo json_encode(cg_get_eu_countries_shortcodes());?>;
         cgJsClassEcommerceShowSaleOrderLoaded = true;
+        cgJsClass.gallery.vars.allowed_mime_types = <?php echo json_encode(get_allowed_mime_types());?>;
 
         //debugger
 

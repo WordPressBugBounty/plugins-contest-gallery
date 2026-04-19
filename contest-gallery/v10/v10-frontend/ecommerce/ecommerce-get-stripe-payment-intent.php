@@ -18,28 +18,37 @@ $StripePiId = '';
 $ecommerceOptions = $wpdb->get_row("SELECT * FROM $tablenameEcommerceOptions WHERE GeneralID = '1'");
 
 $StripeError = '';
+$result = [];
 
 if(isset($_POST['cgPurchaseUnits']) && !empty($ecommerceOptions->StripeApiActive)){
 
     $data = $_POST['cgPurchaseUnits'];
+	$authoritativeStripeCart = cg_ecommerce_build_authoritative_stripe_cart($data, $ecommerceOptions);
+
+	if(empty($authoritativeStripeCart['success'])){
+		$StripeError = 'Error:' . $authoritativeStripeCart['message'];
+	}else{
 
 	/*echo "<pre>";
 	print_r($data);
 	echo "</pre>";*/
 
-	$currency = strtolower($data[0]['amount']['breakdown']['item_total']['currency_code']);
-	//$currency = 'eur';
-	$amount = absint($data[0]['amount']['value']/0.01);
+	$currency = strtolower($authoritativeStripeCart['currency_short']);
+	$amount = $authoritativeStripeCart['amount_cents'];
 
     //var_dump($data[0]['amount']['value']);
 
     $metaData = [];
-	$metaData['currency_code'] =  $data[0]['amount']['currency_code'];
-	$metaData['total_value'] =  $data[0]['amount']['value'];
-	$metaData['items_total_value'] = $data[0]['amount']['breakdown']['item_total']['value'];
-	$metaData['shipping'] = !empty($data[0]['amount']['breakdown']['shipping']['value']) ? $data[0]['amount']['breakdown']['shipping']['value'] : '0.00';
+	$metaData['currency_code'] =  $authoritativeStripeCart['purchase_units'][0]['amount']['currency_code'];
+	$metaData['total_value'] =  $authoritativeStripeCart['purchase_units'][0]['amount']['value'];
+	$metaData['items_total_value'] = $authoritativeStripeCart['purchase_units'][0]['amount']['breakdown']['item_total']['value'];
+	$metaData['shipping'] = !empty($authoritativeStripeCart['purchase_units'][0]['amount']['breakdown']['shipping']['value']) ? $authoritativeStripeCart['purchase_units'][0]['amount']['breakdown']['shipping']['value'] : '0.00';
+	$metaData['cg_amount_cents'] = strval($authoritativeStripeCart['amount_cents']);
+	$metaData['cg_currency'] = strtolower($authoritativeStripeCart['currency_short']);
+	$metaData['cg_cart_hash'] = $authoritativeStripeCart['cart_hash'];
+	$metaData['cg_item_count'] = strval($authoritativeStripeCart['item_count']);
 
-    foreach ($data[0]['items'] as $key => $item){
+    foreach ($authoritativeStripeCart['purchase_units'][0]['items'] as $key => $item){
 	    if(empty($item['name'])){$item['name'] = '';}
 	    if(empty($item['quantity'])){$item['quantity'] = '';}
 	    if(empty($item['priceGross'])){$item['priceGross'] = '';}
@@ -100,6 +109,7 @@ if(isset($_POST['cgPurchaseUnits']) && !empty($ecommerceOptions->StripeApiActive
 	}
 
 	curl_close($ch);
+	}
 
 	/*echo "<pre>";
 	print_r($result);

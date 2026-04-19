@@ -284,23 +284,6 @@ if(!function_exists('contest_gal1ery_entry_on_off')){
 
                         cg_deactivate_images($GalleryID,$wp_upload_dir,[$id => $id]);
 
-                        $imagesInfoValuesFile = $wp_upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/".$GalleryID."-images-info-values.json";
-                        if(file_exists($imagesInfoValuesFile)){
-                            $imagesInfoValuesFileContent = json_decode(file_get_contents($imagesInfoValuesFile),true);
-                            if(!empty($imagesInfoValuesFileContent) && isset($imagesInfoValuesFileContent[$id])){
-                                unset($imagesInfoValuesFileContent[$id]);
-                                file_put_contents($imagesInfoValuesFile,json_encode($imagesInfoValuesFileContent));
-                            }
-                        }
-                        $imagesSortValuesFile = $wp_upload_dir['basedir']."/contest-gallery/gallery-id-".$GalleryID."/json/".$GalleryID."-images-sort-values.json";
-                        if(file_exists($imagesSortValuesFile)){
-                            $imagesSortValuesFileContent = json_decode(file_get_contents($imagesSortValuesFile),true);
-                            if(!empty($imagesSortValuesFileContent) && isset($imagesSortValuesFileContent[$id])){
-                                unset($imagesSortValuesFileContent[$id]);
-                                file_put_contents($imagesSortValuesFile,json_encode($imagesSortValuesFileContent));
-                            }
-                        }
-
                         echo "<div class='cg_entry_on_off_link_header'>";
                         echo "<p>Entry ID $id successful deactivated</p>";
                         echo '</div>';

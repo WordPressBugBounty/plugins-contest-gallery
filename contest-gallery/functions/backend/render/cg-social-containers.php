@@ -31,7 +31,7 @@ if(!function_exists('cg_social_library')){
 	function cg_social_library($GalleryID){
 
 		echo "<div id='cgYoutubeLibraryContainer' class='cg_media_container cg_hide' data-cg-gid='$GalleryID'>";
-		    echo "<div id='cgYoutubeNoEntries' class='cg_hide'>No YouTube entries added</div>";
+		    echo "<div id='cgYoutubeNoEntries' class='cg_hide'>No social embed entries added</div>";
 		    echo "<div id='cgYoutubeLibraryLoader' class='cg-lds-dual-ring-gallery-hide cg_hide'></div>";
 		?>
             <form enctype="multipart/form-data" id="cgAddYoutubeToGalleryForm"  action='<?php echo '?page="'.cg_get_version().'"/index.php'; ?>' method='POST'>
