@@ -623,7 +623,7 @@ if(!function_exists('cg1l_render_single_entry_view')){
             $centerImage = '<div id="'.$imgId.'" class="cgl_on_load cg-center-image cg_translateX cg_transition cg-center-image-alternative-file-type-video" data-cg-real-id="'.$rid.'" >
                     <div class="cg-center-image-video">
                       <video
-                        class=""
+                        class="cg-center-image-video-entry-content"
                         controls 
                         preload="metadata"   
                         aria-describedby="'.$ariaDescribedby.'"'.$mediaDescriptionAttribute.'

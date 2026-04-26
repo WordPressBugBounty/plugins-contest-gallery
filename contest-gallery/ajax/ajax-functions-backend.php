@@ -1189,6 +1189,132 @@ if (!function_exists('post_cg_attach_to_another_user_select')) {
 }
 // attach to another user select --- END
 
+// backend gallery user filter options
+add_action('wp_ajax_post_cg_backend_gallery_user_filter_options', 'post_cg_backend_gallery_user_filter_options');
+if (!function_exists('post_cg_backend_gallery_user_filter_options')) {
+	function post_cg_backend_gallery_user_filter_options()
+	{
+		cg_backend_ajax_require_access_json();
+		$_POST = cg1l_sanitize_post($_POST);
+
+		$GalleryID = (!empty($_POST['GalleryID'])) ? absint($_POST['GalleryID']) : 0;
+		$galleryHash = (!empty($_POST['cgGalleryHash'])) ? $_POST['cgGalleryHash'] : '';
+		$cgUserSearch = (!empty($_POST['cgUserSearch'])) ? sanitize_text_field($_POST['cgUserSearch']) : '';
+		$selectedValue = (isset($_POST['selectedValue']) && !is_array($_POST['selectedValue'])) ? sanitize_text_field($_POST['selectedValue']) : '';
+
+		cg_backend_ajax_validate_gallery_hash_json($GalleryID, $galleryHash);
+
+		global $wpdb;
+
+		$tablename = $wpdb->prefix . "contest_gal1ery";
+		$wpUsers = $wpdb->base_prefix . "users";
+
+		$options = array();
+		$selectedOption = array(
+			'value' => '',
+				'label' => 'All user entries'
+		);
+		$resolvedValue = '';
+		$seenValues = array();
+
+		$hasWithoutUser = intval($wpdb->get_var($wpdb->prepare(
+			"SELECT COUNT(*) FROM $tablename WHERE GalleryID = %d AND WpUserId = 0",
+			array($GalleryID)
+		))) > 0;
+
+		$selectedUserId = 0;
+		if($selectedValue !== '0'){
+			$selectedUserId = absint($selectedValue);
+		}
+
+		$selectedUser = null;
+		if($selectedValue === '0' && $hasWithoutUser){
+			$resolvedValue = '0';
+			$selectedOption = array(
+				'value' => '0',
+					'label' => 'Without registered user'
+			);
+		} elseif(!empty($selectedUserId)) {
+			$selectedUser = $wpdb->get_row($wpdb->prepare(
+				"SELECT DISTINCT $wpUsers.ID, $wpUsers.user_login
+				FROM $wpUsers, $tablename
+				WHERE $tablename.GalleryID = %d AND $tablename.WpUserId = %d AND $wpUsers.ID = $tablename.WpUserId
+				LIMIT 1",
+				array($GalleryID, $selectedUserId)
+			));
+			if(!empty($selectedUser)){
+				$resolvedValue = (string)$selectedUser->ID;
+				$selectedOption = array(
+					'value' => $resolvedValue,
+					'label' => $selectedUser->user_login . ' (ID: ' . $selectedUser->ID . ')'
+				);
+			}
+		}
+
+		$options[] = array(
+			'value' => '',
+				'label' => 'All user entries',
+			'selected' => ($resolvedValue === '')
+		);
+		$seenValues[] = '';
+
+		if($hasWithoutUser){
+			$options[] = array(
+				'value' => '0',
+				'label' => 'Without registered user',
+				'selected' => ($resolvedValue === '0')
+			);
+			$seenValues[] = '0';
+		}
+
+		$query = "SELECT DISTINCT $wpUsers.ID, $wpUsers.user_login
+			FROM $wpUsers, $tablename
+			WHERE $tablename.GalleryID = %d AND $tablename.WpUserId > 0 AND $wpUsers.ID = $tablename.WpUserId";
+
+		$queryArgs = array($GalleryID);
+
+		if(!empty($cgUserSearch)){
+			$like = '%' . $wpdb->esc_like($cgUserSearch) . '%';
+			$query .= " AND ($wpUsers.user_login LIKE %s OR $wpUsers.user_email LIKE %s OR $wpUsers.user_nicename LIKE %s OR $wpUsers.display_name LIKE %s)";
+			$queryArgs[] = $like;
+			$queryArgs[] = $like;
+			$queryArgs[] = $like;
+			$queryArgs[] = $like;
+		}
+
+		$query .= " ORDER BY $wpUsers.user_login ASC LIMIT 100";
+
+		$selectWPusers = $wpdb->get_results($wpdb->prepare($query, $queryArgs));
+
+		if(!empty($selectWPusers)){
+			foreach($selectWPusers as $user){
+				$userValue = (string)$user->ID;
+				$options[] = array(
+					'value' => $userValue,
+					'label' => $user->user_login . ' (ID: ' . $user->ID . ')',
+					'selected' => ($resolvedValue === $userValue)
+				);
+				$seenValues[] = $userValue;
+			}
+		}
+
+		if($resolvedValue !== '' && !in_array($resolvedValue, $seenValues, true) && !empty($selectedOption['label'])){
+			$options[] = array(
+				'value' => $selectedOption['value'],
+				'label' => $selectedOption['label'],
+				'selected' => true
+			);
+		}
+
+		wp_send_json_success(array(
+			'options' => $options,
+			'resolved_value' => $resolvedValue,
+			'selected_option' => $selectedOption
+		));
+	}
+}
+// backend gallery user filter options --- END
+
 // attach to another user
 add_action('wp_ajax_post_cg_attach_to_another_user', 'post_cg_attach_to_another_user');
 if (!function_exists('post_cg_attach_to_another_user')) {

@@ -60,8 +60,14 @@
         return '<a href="'.esc_url($href).'" class="'.esc_attr(implode(' ',$hiddenLinkClasses)).'"'.$targetAttr.'>Details</a>';
     };
 
-    $cg_wrap_gallery_media_shell = function($content){
-        return '<div class="cg_masonry_media_shell">'.$content.'</div>';
+    $cg_wrap_gallery_media_shell = function($content, $extraClass = ''){
+        $classes = 'cg_masonry_media_shell';
+
+        if(!empty($extraClass)){
+            $classes .= ' '.trim($extraClass);
+        }
+
+        return '<div class="'.esc_attr($classes).'">'.$content.'</div>';
     };
 
     $cg_resolve_cgalleries_target_gallery_id = function($fullData){
@@ -168,6 +174,15 @@
         $HeightAttribute = $attrs['HeightAttribute'];
         $rThumb          = $attrs['rThumb'];
         $imgStyle        = $attrs['imgStyle'];
+        $naturalWidth    = !empty($fullData['Width']) ? intval($fullData['Width']) : 0;
+        $naturalHeight   = !empty($fullData['Height']) ? intval($fullData['Height']) : 0;
+        $isSmallMasonryImage = (
+            cg_is_is_image($ImgType) &&
+            $naturalWidth > 0 &&
+            $naturalHeight > 0 &&
+            $naturalWidth <= 140 &&
+            $naturalHeight <= 140
+        );
 
         // later for multiple stars voting
         //<meta itemprop="ratingValue" content="4.8">
@@ -371,7 +386,7 @@
             $figure = '<figure class="cg_figure" itemscope itemtype="https://schema.org/'.$itemTypeObject.'Object">
                 '.$meta.'
                 '.$metaComment.'
-                '.$cg_wrap_gallery_media_shell($cg_render_gallery_media_link($imageContent,$galleryMediaHref,$galleryMediaTargetAttr,$galleryMediaLinkClass)).'
+                '.$cg_wrap_gallery_media_shell($cg_render_gallery_media_link($imageContent,$galleryMediaHref,$galleryMediaTargetAttr,$galleryMediaLinkClass),$isSmallMasonryImage ? 'cg_masonry_media_shell_small_image' : '').'
                 '.$watermarkMarkup.'
                 '.$cg_gallery_info.'
               </figure>';

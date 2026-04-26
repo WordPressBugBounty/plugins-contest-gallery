@@ -34,6 +34,9 @@ if(!function_exists('cg_create_exif_data')){
     function cg_create_exif_data($wpImageId){
 
         $exifDataForImage = array();
+        $fullFilePath = '';
+        $fullFilePathEnd = '';
+        $supportedExifFileTypes = array('jpg','jpeg','tif','tiff');
 
         if(function_exists('exif_read_data')){
 
@@ -41,10 +44,22 @@ if(!function_exists('cg_create_exif_data')){
 
                 // simply the fastest processing way, to check the string end, instead do some database request again
                 $fullFilePath = get_attached_file($wpImageId);
-                $fullFilePathExploded = explode('.',$fullFilePath);
-                $fullFilePathEnd = end($fullFilePathExploded);
 
-                if(cg_is_alternative_file_type(trim(strtolower($fullFilePathEnd)))){
+                if(empty($fullFilePath) || !is_string($fullFilePath) || !file_exists($fullFilePath) || !is_readable($fullFilePath)){
+                    return $exifDataForImage;
+                }
+
+                $fullFilePathEnd = trim(strtolower(pathinfo($fullFilePath, PATHINFO_EXTENSION)));
+
+                if(empty($fullFilePathEnd)){
+                    return $exifDataForImage;
+                }
+
+                if(cg_is_alternative_file_type($fullFilePathEnd)){
+                    return $exifDataForImage;
+                }
+
+                if(!in_array($fullFilePathEnd,$supportedExifFileTypes,true)){
                     return $exifDataForImage;
                 }
 
@@ -110,9 +125,6 @@ if(!function_exists('cg_create_exif_data')){
                 }
 
             }catch (Exception $e) {
-
-                echo $e->getMessage();
-
             }
 
         }

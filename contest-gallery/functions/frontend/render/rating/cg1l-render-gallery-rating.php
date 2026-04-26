@@ -56,8 +56,6 @@ if(!function_exists('cg1l_get_rating_gallery_five_star')){
             $ratingCount = 0;
         }
 
-        $countStats = $ratingCount;
-
         $AllowRating = absint($options['general']['AllowRating'])-10;
         for ($i = 1; $i <= $AllowRating; $i++) {
             if (!isset($ratingsCount[$i])) {
@@ -147,8 +145,6 @@ if(!function_exists('cg1l_get_rating_gallery_five_star')){
         $html .= $ratingCount.'</div>'; // rating count
         $html .= $cgRateMinus;
         $html .= '</div>'; // child
-        $interactionStatistic = cg1l_get_interaction_statistic($countStats);
-        $html .= $interactionStatistic;
         $html .= '</div>'; // wrapper
 
         return $html;
@@ -188,29 +184,16 @@ if(!function_exists('cg1l_get_rating_gallery_one_star_for_reload')){
         if(!empty($options['pro']['MinusVote']) && intval($options['pro']['MinusVote']) === 1 && $alreadyVotedUi && $shortcode_name !== 'cg_gallery_user' && $isVotingPossible){
             $cg_rate_minus = '<div data-cg_rate_star_id="'.$pid.'" class="cg_rate_minus" data-cg-gid="'.$galeryIDuserForJs.'"'.$undoTooltipAttr.'></div>';
         }
-        $interactionStatistic = cg1l_get_interaction_statistic($ratingCount);
         if(!$alreadyVoted && $options['general']['HideUntilVote']==1){
             $ratingCount = '';
         }
-        return '<div class="cg_gallery_rating_div_child'.$position.$alreadyVoted_class.'" id="cg_gallery_rating_div_child'.$pid.'" itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating">
+        return '<div class="cg_gallery_rating_div_child'.$position.$alreadyVoted_class.'" id="cg_gallery_rating_div_child'.$pid.'">
               <div class="cg_voted_confirm '.$cg_voted_confirm_hide.'"'.$votedTooltipAttr.'></div>
               <div data-cg-pid="'.$pid.'" data-cg-gid="'.$galeryIDuserForJs.'" data-cg-gid-real="'.$gidReal.'" data-cg_rate_star_id="'.$pid.'" class="cg_rate_star cg_rate_star_gallery cg_gallery_rating_div_star cg_gallery_rating_div_star_one_star '.$ratingStat.' '.$shortcode_name.' '.$disallowed.'" data-cg-shortcode="'.$shortcode_name.'"'.$voteTooltipAttr.'>
               </div>
-              <div id="rating_cg-'.$pid.'" class="cg_gallery_rating_div_count" itemprop="ratingCount">'.$ratingCount.'</div>
+              <div id="rating_cg-'.$pid.'" class="cg_gallery_rating_div_count">'.$ratingCount.'</div>
               '.$cg_rate_minus.'
-              '.$interactionStatistic.' 
             </div>';
-    }
-}
-
-if(!function_exists('cg1l_get_interaction_statistic')){
-    function cg1l_get_interaction_statistic($Count){
-        return '<div itemprop="interactionStatistic" itemscope
-             itemtype="https://schema.org/InteractionCounter" style="display:none;">
-            <meta itemprop="interactionType"
-                  content="https://schema.org/LikeAction">
-            <meta itemprop="userInteractionCount" content="'.$Count.'">
-        </div>';
     }
 }
 

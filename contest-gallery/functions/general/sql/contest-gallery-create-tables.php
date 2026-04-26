@@ -76,6 +76,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		Width INT(11),
 		Height INT(11),
 		WpUserId INT(11) DEFAULT 0,
+		FrontendUpload TINYINT DEFAULT NULL,
 		rSource INT(11),
 		rThumb INT(11),
 		addCountS INT(11) DEFAULT 0,
@@ -172,6 +173,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		Active TINYINT DEFAULT 0,
         INDEX pid_index (pid),
         INDEX WpUserId_index (WpUserId),
+        INDEX Active_index (Active),
         INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');

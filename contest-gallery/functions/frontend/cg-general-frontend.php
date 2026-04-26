@@ -159,20 +159,23 @@ if (!function_exists('cg1l_get_image_attributes')) {
         $HeightAttribute = '160';
         $rThumb = '';
         $imgStyle = 'style="width: 100%; height: auto;"';
+        $naturalWidth = (!empty($fullData['Width'])) ? absint($fullData['Width']) : 0;
+        $naturalHeight = (!empty($fullData['Height'])) ? absint($fullData['Height']) : 0;
 
         if (
-            !empty($fullData['Width']) &&
-            !empty($fullData['Height']) &&
+            $naturalWidth &&
+            $naturalHeight &&
             isset($fullData['rThumb']) &&
             ($fullData['rThumb'] == '90' || $fullData['rThumb'] == '270')
         ) {
-            $WidthAttribute = ' height="' . $fullData['Height'] . '"';
-            $HeightAttribute = ' width="' . $fullData['Width'] . '"';
+            $WidthAttribute = ' height="' . $naturalHeight . '"';
+            $HeightAttribute = ' width="' . $naturalWidth . '"';
             $rThumb = ' cg' . $fullData['rThumb'] . 'degree';
-            $imgStyle = 'style="width: ' . round(absint($fullData['Width']) / absint($fullData['Height']) * 100, 2) . '%; height: 100%;"';
-        } elseif (!empty($fullData['Width']) && !empty($fullData['Height'])) {
-            $WidthAttribute = ' width="' . $fullData['Width'] . '"';
-            $HeightAttribute = ' height="' . $fullData['Height'] . '"';
+            $imgStyle = 'style="width: ' . round($naturalWidth / $naturalHeight * 100, 2) . '%; height: 100%; max-width: ' . $naturalHeight . 'px; max-height: ' . $naturalWidth . 'px;"';
+        } elseif ($naturalWidth && $naturalHeight) {
+            $WidthAttribute = ' width="' . $naturalWidth . '"';
+            $HeightAttribute = ' height="' . $naturalHeight . '"';
+            $imgStyle = 'style="width: 100%; height: auto; max-width: ' . $naturalWidth . 'px; max-height: ' . $naturalHeight . 'px;"';
         }
 
         return array(

@@ -44,7 +44,13 @@ cgJsClassAdmin.gallery.pdf = {
         $sortableDiv.find('.cg_backend_image_full_size_target').addClass('cg_hide');
 
         if (($sortableDiv.find('.cg_backend_info_container').attr('data-cg-wp-upload') == WpUpload) || (cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId] && cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][1] && cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][1]['WpUpload'] == WpUpload)) {
-            $sortableDiv.find('.cg_backend_image_full_size_target > a').attr('href', pdfUrl).empty().append('<div class="cg0degree cg_backend_image" style="background: url(' + pdfPreviewUrl + '?time=' + new Date().getTime() + ') no-repeat center" ></div>');
+            cgJsClassAdmin.gallery.functions.setBackendPreviewImage(
+                $sortableDiv.find('.cg_backend_image_full_size_target'),
+                pdfPreviewUrl + '?time=' + new Date().getTime(),
+                pdfUrl,
+                'cg0degree',
+                'Show preview'
+            );
         }
 
         debugger
@@ -119,7 +125,13 @@ cgJsClassAdmin.gallery.pdf = {
                         guid = guid.split('###cg_guid_end')[0];
 
                         if (($sortableDiv.find('.cg_backend_info_container').attr('data-cg-wp-upload') == WpUpload) || (cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId] && cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][1] && cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][1]['WpUpload'] == WpUpload)) {
-                            $sortableDiv.find('.cg_backend_image_full_size_target > a').attr('href', pdfUrl).empty().append('<div class="cg0degree cg_backend_image" style="background: url(' + guid + '?time=' + new Date().getTime() + ') no-repeat center" ></div>');
+                            cgJsClassAdmin.gallery.functions.setBackendPreviewImage(
+                                $sortableDiv.find('.cg_backend_image_full_size_target'),
+                                guid + '?time=' + new Date().getTime(),
+                                pdfUrl,
+                                'cg0degree',
+                                'Show preview'
+                            );
                         }
 
                         cgJsClassAdmin.gallery.vars.pdfPreviewsCreated++;

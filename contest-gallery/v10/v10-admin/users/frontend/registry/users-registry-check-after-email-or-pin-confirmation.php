@@ -24,7 +24,7 @@ if(strpos($cgkey,'-confirmed')!==false OR strpos($cgkey,'-unconfirmed')!==false)
     return;
 }
 
-$userAccountEntries = $wpdb->get_results( $wpdb->prepare("SELECT Field_Type, Field_Content, Tstamp FROM $tablenameCreateUserEntries WHERE activation_key=%s", $cgkey) );
+$userAccountEntries = $wpdb->get_results( $wpdb->prepare("SELECT Field_Type, Field_Content, Tstamp, wp_user_id FROM $tablenameCreateUserEntries WHERE activation_key=%s", $cgkey) );
 
 include (__DIR__.'/../../../../../check-language-general.php');
 
@@ -51,6 +51,36 @@ if (count($userAccountEntries)) {
         </script>
         <?php
         return;
+    }
+
+    $unconfirmedMail = '';
+    $unconfirmedUserData = false;
+    foreach ($userAccountEntries as $key => $value) {
+        if($value->Field_Type == 'unconfirmed-mail'){
+            $unconfirmedMail = $value->Field_Content;
+        }
+    }
+
+    if($unconfirmedMail){
+        $unconfirmedUserData = cg1l_resolve_unconfirmed_user_for_activation($userAccountEntries,$cgkey);
+
+        if(empty($unconfirmedUserData) || empty($unconfirmedUserData['wp_user_id']) || empty($unconfirmedUserData['email'])){
+            echo "<div id='cg_activation'  class='mainCGdivUploadForm mainCGdivUploadFormStatic $FeControlsStyleRegistry $BorderRadiusRegistry'>";
+            echo "<p>E-mail confirmation. Data not found. Please contact administrator.</p>";
+            echo "</div>";
+            ?>
+            <script defer>
+                setTimeout(function (){
+                    jQuery("html, body").animate({ scrollTop: jQuery('#cg_activation').offset().top-60}, 0);
+                },100);
+            </script>
+            <?php
+            return;
+        }
+
+        $newWpId = absint($unconfirmedUserData['wp_user_id']);
+        $unconfirmedMail = $unconfirmedUserData['email'];
+        $mainMail = $unconfirmedMail;
     }
 
     $currentTime = time();
@@ -115,13 +145,6 @@ if (count($userAccountEntries)) {
 
     $user  = get_user_by( 'email', $mainMail );
 
-    $unconfirmedMail = '';
-    foreach ($userAccountEntries as $key => $value) {
-        if($value->Field_Type == 'unconfirmed-mail'){
-            $unconfirmedMail = $value->Field_Content;
-        }
-    }
-
     if ( $user && empty($unconfirmedMail)) {// here is better because check is within activation key expiration time
         echo "<div id='cg_activation'  class='mainCGdivUploadForm mainCGdivUploadFormStatic $FeControlsStyleRegistry $BorderRadiusRegistry'>";
         echo "<p>User is already registered</p>";
@@ -139,12 +162,6 @@ if (count($userAccountEntries)) {
 
 
     if($unconfirmedMail){// if regmailoptional option was used
-        $newWpId = $wpdb->get_var(
-            $wpdb->prepare(
-                "SELECT ID FROM $tablenameWpUsers WHERE user_email = %s",
-                $unconfirmedMail
-            )
-        );
         if(empty($newWpId)){// theoretically should never be the case
             echo "<p style='font-weight: bold; text-align: center;'>User already deleted</p>";
             return;
@@ -166,6 +183,25 @@ if (count($userAccountEntries)) {
             ],
             [
                 '%d',
+            ]
+        );
+        $wpdb->update(
+            $tablenameCreateUserEntries,
+            [
+                'wp_user_id' => absint($newWpId),
+                'Field_Content' => $unconfirmedMail,
+            ],
+            [
+                'activation_key' => $cgkey,
+                'Field_Type' => 'unconfirmed-mail',
+            ],
+            [
+                '%d',
+                '%s',
+            ],
+            [
+                '%s',
+                '%s',
             ]
         );
         cg1l_delete_unconfirmed_user($unconfirmedMail);

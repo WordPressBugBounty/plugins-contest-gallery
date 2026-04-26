@@ -27,6 +27,7 @@ jQuery(document).ready(function ($) {
 
     var cgChangedAndSearchedValueSelector = cgJsClassAdmin.gallery.vars.cgChangedAndSearchedValueSelector;
     var cgAttachToAnotherUserSearchTimeout = null;
+    var cgBackendUserEntriesFilterSearchTimeout = null;
 
     var cgBackendHandleJsonError = function (response, xhr, fallbackMessage) {
         var data = {};
@@ -179,6 +180,76 @@ debugger
 
         cgJsClassAdmin.gallery.load.changeViewByControl($,false,false,false,false,false,$selected);
 
+    });
+
+    $(document).on('click', '#cgBackendUserEntriesFilterToggle', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var $container = $('#cgBackendUserEntriesFilter');
+        var isOpen = $container.hasClass('cg_open');
+
+        cgJsClassAdmin.gallery.functions.closeBackendGalleryUserFilter($);
+
+        if (!isOpen) {
+            $container.addClass('cg_open');
+            $('#cgBackendUserEntriesFilterPopover').removeClass('cg_hide');
+            $('#cgBackendUserEntriesFilterSearch').focus();
+            cgJsClassAdmin.gallery.functions.refreshBackendGalleryUserFilterOptions($);
+        }
+    });
+
+    $(document).on('click', '#cgBackendUserEntriesFilterPopover', function (e) {
+        e.stopPropagation();
+    });
+
+    $(document).on('input', '#cgBackendUserEntriesFilterSearch', function () {
+        var value = $(this).val();
+        clearTimeout(cgBackendUserEntriesFilterSearchTimeout);
+        cgBackendUserEntriesFilterSearchTimeout = setTimeout(function () {
+            cgJsClassAdmin.gallery.functions.refreshBackendGalleryUserFilterOptions($, {
+                searchValue: value
+            });
+        }, 250);
+    });
+
+    $(document).on('click', '#cgBackendUserEntriesFilterOptions .cg_backend_user_entries_filter_option', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var $option = $(this);
+        var newValue = $option.attr('data-cg-value');
+        if (!(newValue || newValue === '0')) {
+            newValue = '';
+        }
+
+        var $hidden = $('#cgWpUserIdFilterValue');
+        var oldValue = $hidden.val();
+        if (!(oldValue || oldValue === '0')) {
+            oldValue = '';
+        }
+
+        cgJsClassAdmin.gallery.functions.setBackendGalleryUserFilterSelection($, newValue, $.trim($option.text()));
+        $('#cgBackendUserEntriesFilterSearch').val('');
+        cgJsClassAdmin.gallery.functions.closeBackendGalleryUserFilter($);
+
+        if (String(oldValue) === String(newValue)) {
+            return;
+        }
+
+        cgJsClassAdmin.gallery.functions.abortRequest();
+        $('#cgStartValue').val('0');
+
+        // to go simply sure that nothing will be deleted!!!
+        $('#cgGalleryForm').find('.cg_delete').remove();
+
+        removeCgActiveFromViewControl();
+
+        cgJsClassAdmin.gallery.load.changeViewByControl($, null, null, false, true);
+    });
+
+    $(document).on('click', function () {
+        cgJsClassAdmin.gallery.functions.closeBackendGalleryUserFilter($);
     });
 
     $(document).on('change', '#cgMainMenuTable #cgOrderSelect', function () {
@@ -1030,7 +1101,12 @@ debugger
                     $divContainer.prepend($element);
                 }else{
                     $divContainer.prepend($element);
-                    $divContainer.find('.cg_backend_image_full_size_target').css('background',$(this).find('.cg_backend_image').css('background'));
+                    var $existingPreviewStage = $(this).find('.cg_backend_image_stage').first();
+                    if($existingPreviewStage.length){
+                        $divContainer.find('.cg_backend_image_full_size_target').append($existingPreviewStage.clone());
+                    }else{
+                        $divContainer.find('.cg_backend_image_full_size_target').css('background',$(this).find('.cg_backend_image').css('background'));
+                    }
                 }
 
                 $cg_preview_files_container.append($divContainer);
@@ -2142,6 +2218,17 @@ debugger
                 $cg_backend_info_user_link_container.prepend($cg_action_href);
                 $cg_backend_info_user_link_container.prepend($cg_added_by);
                 cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Entry attached to&nbsp;<br><b style="color: black !important;">'+user_login+'</b>',true);
+            }
+
+            if($('#cgWpUserIdFilterValue').length){
+                if($('#cgWpUserIdFilterValue').val()){
+                    $('#cgStartValue').val('0');
+                    cgJsClassAdmin.gallery.load.changeViewByControl($, null, null, false, true);
+                }else{
+                    cgJsClassAdmin.gallery.functions.refreshBackendGalleryUserFilterOptions($, {
+                        reloadOnInvalid: true
+                    });
+                }
             }
 
 

@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, openai
 Requires at least: 5.6
-Stable tag: 29.0.1
+Stable tag: 29.0.2
 Tested up to: 6.9.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -253,6 +253,16 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= 29.0.2 =
+* NEW: Added a compact backend gallery dashboard with activity stats, trend graph and improved AJAX refresh behavior.
+* NEW: New galleries can now track whether entries were added from the frontend or backend.
+* FIXED: Major mobile full window and entry view stability issues, including search, keyboard overlays, browser back/edge-back handling, upload/comment/info modals, zoom and entry landing page behavior.
+* IMPROVED: Full window wheel and swipe navigation now feels faster and more responsive, with smoother input handling on desktop and mobile.
+* FIXED: Additional files now navigate more reliably on mobile in both entry view and full window view.
+* IMPROVED: Rating cards in full window view are now easier to use because the whole visible card can be clicked, while undo/remove still requires the dedicated remove icon.
+* FIXED: Removed invalid rating review schema output that could lead to Google review snippet validation issues.
+* FIXED: Potential security vulnerability.
 
 = 29.0.1 =
 * FIXED: In full window blog view, unfolded category filters could overlap the search and sorting controls in the configuration panel.

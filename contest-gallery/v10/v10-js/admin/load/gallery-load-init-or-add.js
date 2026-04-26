@@ -128,6 +128,13 @@ cgJsClassAdmin.gallery.load = {
 
         var cgSearch_BG = localStorage.getItem('cgSearch_BG_'+gid);
         if(cgSearch_BG){$('#cgSearchInput').val(cgSearch_BG)}
+        var $cgWpUserIdFilterValue = $('#cgWpUserIdFilterValue');
+        var cgWpUserFilter_BG = localStorage.getItem(cgJsClassAdmin.gallery.functions.getBackendGalleryUserFilterStorageKey(gid));
+        if($cgWpUserIdFilterValue.length){
+            if(cgWpUserFilter_BG || cgWpUserFilter_BG === '0' || cgWpUserFilter_BG === ''){
+                $cgWpUserIdFilterValue.val(cgWpUserFilter_BG);
+            }
+        }
 
         var form = document.getElementById('cgGalleryForm');
         var formPostData = new FormData(form);
@@ -187,6 +194,7 @@ debugger
             $('#cgGalleryLoader').addClass('cg_hide');
 
             var htmlDom = new DOMParser().parseFromString(response, 'text/html');
+            cgJsClassAdmin.gallery.functions.refreshBackendDashboardFromResponse($, htmlDom);
             var $cgSortable = $(htmlDom.getElementById('cgSortable'));
             cgJsClassAdmin.gallery.vars.$cgSortable = $cgSortable;
             var $cgGallerySubmitTop = $(htmlDom.getElementById('cgGallerySubmitTop'));
@@ -235,6 +243,9 @@ debugger
             cgJsClassAdmin.gallery.functions.sortableInit($);
             cgJsClassAdmin.gallery.functions.markSortedByCustomFields($);
             cgJsClassAdmin.gallery.functions.initDateTimePicker($);
+            cgJsClassAdmin.gallery.functions.refreshBackendGalleryUserFilterOptions($, {
+                reloadOnInvalid: true
+            });
 
             if(isNoImagesFound){
                 cgJsClassAdmin.gallery.functions.checkIfFurtherImagesAvailable($);

@@ -28,59 +28,59 @@ if(empty($_POST['cg_show_only_winners']) AND empty($_POST['cg_show_only_active']
 
 // partial connect with max two tables at same time, otherwise load to long!!!
 $searchStringUnion = "
-                    SELECT * FROM (   
+                    SELECT * FROM (
                            SELECT DISTINCT $tablename.id
                            FROM $tablename,
                             $tablenameentries
-                           WHERE $tablename.GalleryID = %d 
-                           $selectWinnersOnly$selectActiveOnly$selectInactiveOnly   AND                                       
-                           $tablenameentries.GalleryID = %d 
+                           WHERE $tablename.GalleryID = %d
+                           $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql   AND
+                           $tablenameentries.GalleryID = %d
                            AND $tablename.id = $tablenameentries.pid
-                           AND 
+                           AND
                            ($tablenameentries.Short_Text like %s OR $tablenameentries.Long_Text like %s OR $tablename.id like %s OR $tablename.Exif like %s)
                            UNION
-                             SELECT 
+                             SELECT
                             DISTINCT $tablename.id
-                            FROM 
+                            FROM
                               $tablename,
                               $tablename_categories
-                            WHERE 
-                              $tablename.GalleryID = %d  
-                              $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND                                         
-                              $tablename_categories.GalleryID = %d AND 
-                              $tablename.Category = $tablename_categories.id AND 
+                            WHERE
+                              $tablename.GalleryID = %d
+                              $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                              $tablename_categories.GalleryID = %d AND
+                              $tablename.Category = $tablename_categories.id AND
                               ($tablename_categories.GalleryID = %d AND $tablename_categories.Name LIKE %s)
                               UNION
-                             SELECT 
+                             SELECT
                             DISTINCT $tablename.id
-                            FROM 
+                            FROM
                               $tablename,
                               $table_posts
-                            WHERE 
-                              $tablename.GalleryID = %d  
-                              $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
-                              $tablename.WpUpload = $table_posts.ID AND 
+                            WHERE
+                              $tablename.GalleryID = %d
+                              $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                              $tablename.WpUpload = $table_posts.ID AND
                               ($table_posts.post_content LIKE %s OR $table_posts.post_title LIKE %s OR $table_posts.post_name LIKE %s)
                               UNION
-                             SELECT 
+                             SELECT
                             DISTINCT $tablename.id
-                            FROM 
+                            FROM
                               $tablename,
                               $wpUsers
-                            WHERE 
-                              $tablename.GalleryID = %d  
-                              $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
-                              $tablename.WpUserId = $wpUsers.ID AND 
+                            WHERE
+                              $tablename.GalleryID = %d
+                              $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                              $tablename.WpUserId = $wpUsers.ID AND
                               ($wpUsers.user_login LIKE %s OR $wpUsers.user_nicename LIKE %s OR $wpUsers.user_email LIKE %s OR $wpUsers.display_name LIKE %s)
                               UNION
-                             SELECT 
+                             SELECT
                             DISTINCT $tablename.id
-                            FROM 
+                            FROM
                               $tablename
-                            WHERE 
-                              $tablename.GalleryID = %d  
-                              $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
-                              $tablename.id LIKE %s  
+                            WHERE
+                              $tablename.GalleryID = %d
+                              $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                              $tablename.id LIKE %s
     ";
 
 $searchStringUnionPrepareArray = [
@@ -118,15 +118,15 @@ if (strpos($order, 'cg_input_') !== false or strpos($order, 'cg_textarea_') !== 
 
     if($search==''){
 
-        $selectSQLQuery = " SELECT * FROM (   
+        $selectSQLQuery = " SELECT * FROM (
                                                SELECT $tablenameentries.$textType, $tablename.*
                                                FROM $tablename,
                                                    $tablenameentries
-                                               WHERE $tablename.GalleryID = %d 
-                                               AND $tablenameentries.GalleryID = %d 
+                                               WHERE $tablename.GalleryID = %d
+                                               AND $tablenameentries.GalleryID = %d
                                                AND $tablename.id = $tablenameentries.pid
-                                               AND $tablenameentries.f_input_id = %d 
-                                               $selectWinnersOnly$selectActiveOnly$selectInactiveOnly 
+                                               AND $tablenameentries.f_input_id = %d
+                                               $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql
                                             UNION
                                                 SELECT
                                                   (
@@ -141,8 +141,8 @@ if (strpos($order, 'cg_input_') !== false or strpos($order, 'cg_textarea_') !== 
                                                FROM $tablename,
                                                    $tablenameentries
                                                WHERE $tablename.id != $tablenameentries.pid
-                                                   AND $tablename.GalleryID = %d 
-                                                   $selectWinnersOnly$selectActiveOnly$selectInactiveOnly                                     
+                                                   AND $tablename.GalleryID = %d
+                                                   $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql
                                              ) A
                                         group by id
                                         order by $textType $orderDirection, rowid $orderDirection
@@ -169,15 +169,15 @@ if (strpos($order, 'cg_input_') !== false or strpos($order, 'cg_textarea_') !== 
                                             FROM
                                                 $tablename
                                             LEFT JOIN $tablenameentries
-                                            ON $tablename.id = $tablenameentries.pid AND $tablenameentries.f_input_id = %d 
+                                            ON $tablename.id = $tablenameentries.pid AND $tablenameentries.f_input_id = %d
                                             WHERE
-                                                $tablename.id IN 
+                                                $tablename.id IN
                                          (
                                          $searchStringUnion
                                          ) A
                                         group by id) group by id
                                         ORDER BY $textType $orderDirection, rowid $orderDirection
-                                        LIMIT %d, %d 
+                                        LIMIT %d, %d
                                         ";
 
         array_unshift($searchStringUnionPrepareArray,$f_input_id);
@@ -209,7 +209,7 @@ if (strpos($order, 'cg_categories_') !== false) {
     if($search==''){
 
         $selectSQLQuery = "SELECT *
-                                        FROM (      
+                                        FROM (
                                            SELECT DISTINCT (CASE
                                             WHEN NOT EXISTS(SELECT NULL
                                            FROM $tablename_categories
@@ -217,14 +217,14 @@ if (strpos($order, 'cg_categories_') !== false) {
                                            ELSE $tablename_categories.Name END) AS Name, $tablename.*
                                           FROM $tablename,
                                                $tablename_categories
-                                          WHERE ($tablename.GalleryID = %d 
+                                          WHERE ($tablename.GalleryID = %d
                                             AND $tablename_categories.GalleryID = %d
-                                            $selectWinnersOnly$selectActiveOnly$selectInactiveOnly 
+                                            $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql
                                             AND $tablename.Category = $tablename_categories.id)
                                             OR
                                                   ($tablename.GalleryID = %d AND $tablename.Category = 0
-                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly
-                                                  )  
+                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql
+                                                  )
                                              ) A
                                         group by id
                                         order by Name $orderDirection, rowid $orderDirection
@@ -252,9 +252,9 @@ if (strpos($order, 'cg_categories_') !== false) {
                                             FROM
                                                 $tablename
                                             LEFT JOIN $tablename_categories
-                                            ON $tablename.Category = $tablename_categories.id 
+                                            ON $tablename.Category = $tablename_categories.id
                                             WHERE
-                                                $tablename.id IN 
+                                                $tablename.id IN
                                          (
                                          $searchStringUnion
                                              ) A
@@ -293,7 +293,7 @@ if (strpos($order, 'cg_email_registered_users') !== false) {
 
         $selectSQLQuery = "
                                         SELECT *
-                                        FROM (      
+                                        FROM (
                                            SELECT DISTINCT (CASE
                                             WHEN NOT EXISTS(SELECT NULL
                                            FROM $wpUsers
@@ -301,13 +301,13 @@ if (strpos($order, 'cg_email_registered_users') !== false) {
                                            ELSE $wpUsers.user_email END) AS user_email, $tablename.*
                                           FROM $tablename,
                                                $wpUsers
-                                          WHERE ($tablename.GalleryID = %d 
+                                          WHERE ($tablename.GalleryID = %d
                                             AND $tablename.WpUserId = $wpUsers.ID
-                                            $selectWinnersOnly$selectActiveOnly$selectInactiveOnly
+                                            $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql
                                             )
                                             OR
-                                                  ($tablename.GalleryID = %d AND $tablename.WpUserId = 0 
-                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly)  
+                                                  ($tablename.GalleryID = %d AND $tablename.WpUserId = 0
+                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql)
                                              ) A
                                         group by id
                                         order by user_email $orderDirection, rowid $orderDirection
@@ -336,9 +336,9 @@ if (strpos($order, 'cg_email_registered_users') !== false) {
                                             FROM
                                                 $tablename
                                             LEFT JOIN $wpUsers
-                                            ON $tablename.WpUserId = $wpUsers.ID 
+                                            ON $tablename.WpUserId = $wpUsers.ID
                                             WHERE
-                                                $tablename.id IN 
+                                                $tablename.id IN
                                          ($searchStringUnion) A
                                         group by id) group by id
                                         ORDER BY user_email $orderDirection, rowid $orderDirection
@@ -370,7 +370,7 @@ if (strpos($order, 'wp_username') !== false) {
 
         $selectSQLQuery = "
                                         SELECT *
-                                        FROM (      
+                                        FROM (
                                            SELECT DISTINCT (CASE
                                             WHEN NOT EXISTS(SELECT NULL
                                            FROM $wpUsers
@@ -380,14 +380,14 @@ if (strpos($order, 'wp_username') !== false) {
                                                $wpUsers
                                           WHERE ($tablename.GalleryID = %d
                                             AND $tablename.WpUserId = $wpUsers.ID
-                                            $selectWinnersOnly$selectActiveOnly$selectInactiveOnly
+                                            $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql
                                             )
                                             OR
-                                                  ($tablename.GalleryID = %d AND $tablename.WpUserId = 0 
-                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly)  
+                                                  ($tablename.GalleryID = %d AND $tablename.WpUserId = 0
+                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql)
                                              ) A
                                         group by id
-                                        order by user_login $orderDirection, rowid $orderDirection 
+                                        order by user_login $orderDirection, rowid $orderDirection
                                         LIMIT %d, %d
                                         ";
 
@@ -412,12 +412,12 @@ if (strpos($order, 'wp_username') !== false) {
                                             FROM
                                                 $tablename
                                             LEFT JOIN $wpUsers
-                                            ON $tablename.WpUserId = $wpUsers.ID 
+                                            ON $tablename.WpUserId = $wpUsers.ID
                                             WHERE
-                                                $tablename.id IN 
+                                                $tablename.id IN
                                          ($searchStringUnion) A
                                         group by id) group by id
-                                        ORDER BY user_login $orderDirection, rowid $orderDirection 
+                                        ORDER BY user_login $orderDirection, rowid $orderDirection
                                         LIMIT $start, $step";
 
         $searchStringUnionPrepareArray[] = $start;

@@ -90,6 +90,147 @@ if(!function_exists('cg1l_wp_insert_user')){
     }
 }
 
+if(!function_exists('cg1l_prepare_registry_fields_for_storage')){
+    function cg1l_prepare_registry_fields_for_storage($cg_check,$galleryDbVersion,$GalleryID){
+
+        if(empty($cg_check) || !is_array($cg_check)){
+            return false;
+        }
+
+        global $wpdb;
+        $tablenameCreateUserForm = $wpdb->prefix . "contest_gal1ery_create_user_form";
+
+        $allowedFieldTypes = array(
+            'main-user-name' => true,
+            'main-nick-name' => true,
+            'main-mail' => true,
+            'password' => true,
+            'password-confirm' => true,
+            'user-comment-field' => true,
+            'profile-image' => true,
+            'wpfn' => true,
+            'wpln' => true,
+            'user-text-field' => true,
+            'user-check-field' => true,
+            'user-radio-field' => true,
+            'user-select-field' => true,
+            'user-robot-field' => true,
+            'user-check-agreement-field' => true
+        );
+
+        if(intval($galleryDbVersion)>=14 || empty($GalleryID)){
+            $formRows = $wpdb->get_results("SELECT id, Field_Type, Field_Order FROM $tablenameCreateUserForm WHERE GeneralID = '1' AND Active = '1'");
+        }else{
+            $formRows = $wpdb->get_results($wpdb->prepare("SELECT id, Field_Type, Field_Order FROM $tablenameCreateUserForm WHERE GalleryID = %d AND Active = '1'",absint($GalleryID)));
+        }
+
+        if(empty($formRows)){
+            return false;
+        }
+
+        $formRowsById = array();
+        foreach($formRows as $formRow){
+            $formRowsById[absint($formRow->id)] = $formRow;
+        }
+
+        $prepared = array();
+        $usedFormInputIds = array();
+
+        foreach($cg_check as $key => $value){
+            if(!is_array($value) || !isset($value["Form_Input_ID"]) || !isset($value["Field_Type"]) || !isset($value["Field_Order"])){
+                return false;
+            }
+
+            $Form_Input_ID = absint($value["Form_Input_ID"]);
+
+            if(empty($Form_Input_ID) || empty($formRowsById[$Form_Input_ID]) || !empty($usedFormInputIds[$Form_Input_ID])){
+                return false;
+            }
+
+            $formRow = $formRowsById[$Form_Input_ID];
+            $dbFieldType = sanitize_text_field($formRow->Field_Type);
+
+            if(empty($allowedFieldTypes[$dbFieldType])){
+                return false;
+            }
+
+            $postedFieldType = sanitize_text_field($value["Field_Type"]);
+            $postedFieldOrder = sanitize_text_field($value["Field_Order"]);
+
+            if($postedFieldType !== $dbFieldType || (string)$postedFieldOrder !== (string)$formRow->Field_Order){
+                return false;
+            }
+
+            $usedFormInputIds[$Form_Input_ID] = true;
+            $value["Form_Input_ID"] = $Form_Input_ID;
+            $value["Field_Type"] = $dbFieldType;
+            $value["Field_Order"] = $formRow->Field_Order;
+            $prepared[$key] = $value;
+        }
+
+        return $prepared;
+
+    }
+}
+
+if(!function_exists('cg1l_resolve_unconfirmed_user_for_activation')){
+    function cg1l_resolve_unconfirmed_user_for_activation($userAccountEntries,$cgkey){
+
+        if(empty($cgkey) || empty($userAccountEntries) || !is_array($userAccountEntries)){
+            return false;
+        }
+
+        $unconfirmedEntries = array();
+
+        foreach($userAccountEntries as $entry){
+            if(!empty($entry->Field_Type) && $entry->Field_Type == 'unconfirmed-mail'){
+                $unconfirmedEntries[] = $entry;
+            }
+        }
+
+        if(count($unconfirmedEntries)!==1){
+            return false;
+        }
+
+        $unconfirmedEntry = $unconfirmedEntries[0];
+        $email = sanitize_email(strtolower($unconfirmedEntry->Field_Content));
+
+        if(empty($email) || is_email($email) == false){
+            return false;
+        }
+
+        $entryWpUserId = (!empty($unconfirmedEntry->wp_user_id)) ? absint($unconfirmedEntry->wp_user_id) : 0;
+
+        $allowedActivationKeys = array($cgkey,'cg-key---'.$cgkey);
+
+        if(!empty($entryWpUserId)){
+            $user = get_user_by('id',$entryWpUserId);
+            if(!empty($user) && strtolower($user->user_email)==$email && in_array($user->user_activation_key,$allowedActivationKeys,true)){
+                return array(
+                    'wp_user_id' => absint($user->ID),
+                    'email' => $email
+                );
+            }
+            return false;
+        }
+
+        $user = get_user_by('email',$email);
+        if(empty($user) || empty($user->ID)){
+            return false;
+        }
+
+        if(in_array($user->user_activation_key,$allowedActivationKeys,true)){
+            return array(
+                'wp_user_id' => absint($user->ID),
+                'email' => $email
+            );
+        }
+
+        return false;
+
+    }
+}
+
 if(!function_exists('cg1l_delete_unconfirmed_user')){
     function cg1l_delete_unconfirmed_user($mainMail){
 
@@ -156,6 +297,25 @@ if(!function_exists('cg1l_resend_unconfirmed_mail')){
             $old_activation_key = $row->activation_key;
         }
 
+        $oldUserAccountEntries = $wpdb->get_results(
+            $wpdb->prepare("SELECT Field_Type, Field_Content, wp_user_id, Tstamp FROM $tablenameCreateUserEntries WHERE activation_key=%s",$old_activation_key)
+        );
+
+        if(empty($oldUserAccountEntries)){
+            return false;
+        }
+
+        $resolvedUnconfirmedUser = false;
+        foreach($oldUserAccountEntries as $oldUserAccountEntry){
+            if($oldUserAccountEntry->Field_Type == 'unconfirmed-mail'){
+                $resolvedUnconfirmedUser = cg1l_resolve_unconfirmed_user_for_activation($oldUserAccountEntries,$old_activation_key);
+                if(empty($resolvedUnconfirmedUser)){
+                    return false;
+                }
+                break;
+            }
+        }
+
         $password = wp_generate_password( 32, true, true );
 
         $time = time();
@@ -177,6 +337,51 @@ if(!function_exists('cg1l_resend_unconfirmed_mail')){
 
         if(empty($insertedRows)){
             return false;
+        }
+
+        if(!empty($resolvedUnconfirmedUser)){
+            $newWpId = absint($resolvedUnconfirmedUser['wp_user_id']);
+            $ReceiverMail = $resolvedUnconfirmedUser['email'];
+
+            $userKeyUpdated = $wpdb->update(
+                $wpdb->users,
+                array(
+                    'user_activation_key' => $new_activation_key,
+                ),
+                array(
+                    'ID' => $newWpId,
+                ),
+                array(
+                    '%s',
+                ),
+                array(
+                    '%d',
+                )
+            );
+
+            if($userKeyUpdated === false){
+                return false;
+            }
+
+            $wpdb->update(
+                $tablenameCreateUserEntries,
+                array(
+                    'wp_user_id' => $newWpId,
+                    'Field_Content' => $ReceiverMail,
+                ),
+                array(
+                    'activation_key' => $new_activation_key,
+                    'Field_Type' => 'unconfirmed-mail',
+                ),
+                array(
+                    '%d',
+                    '%s',
+                ),
+                array(
+                    '%s',
+                    '%s',
+                )
+            );
         }
 
         $TextEmailConfirmation = str_ireplace($posUrl, $pageUrlForEmail . "cgkey=$new_activation_key#cg_activation", $resolved_body);

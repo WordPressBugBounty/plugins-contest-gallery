@@ -15,7 +15,7 @@ if(!function_exists('cg1l_is_voting_possible_for_shortcode')){
 }
 
 /**
- * Print the rating UI (single-star style) with accessibility + schema.org rich data.
+ * Print the rating UI (single-star style) with accessibility markup only.
  *
  * Works for both normal 1–5 ratings or simple cumulative +1 votes.
  *
@@ -79,17 +79,11 @@ if(!function_exists('cg1l_render_rating_component_entry_one_star')){
 
         $cg1l_render_center_div_reload = cg1l_render_center_div_reload_one_star($realId,$gid,$realGid,$alreadyVotedUi,$ratingCount,$shortcode_name,$options);
 
-        $interactionStatistic = cg1l_get_interaction_statistic($ratingCount);
         $galleryRatingClass = 'cg_gallery_rating_div cg_gallery_rating_div_one_star';
 
         return '<div id="' . esc_attr($ratingDivId) . '" class="cg-center-image-rating-div cgHundertPercentWidth" role="group" aria-label="' . esc_attr($ariaLabel) . '">
-    <div class="' . esc_attr($galleryRatingClass) . '" id="' . esc_attr($galleryRatingId) . '" itemscope itemtype="https://schema.org/AggregateRating">
-        <!-- Schema.org meta tags for Google rich results -->
-        <meta itemprop="ratingValue" content="' . esc_attr($ratingValue) . '">
-        <meta itemprop="bestRating" content="' . esc_attr($bestRating) . '">
-        <meta itemprop="worstRating" content="' . esc_attr($worstRating) . '">
+    <div class="' . esc_attr($galleryRatingClass) . '" id="' . esc_attr($galleryRatingId) . '">
         '.$cg1l_render_center_div_reload.' 
-        '.$interactionStatistic.' 
     </div>
 </div>';
     }

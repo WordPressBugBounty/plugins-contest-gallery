@@ -229,11 +229,17 @@ if($doNotProcess!=1){
     //echo "nextId $nextId<br>";
 
     // updating string after all the 0 at the end does not work at the top insert query. That is why version have to be inserted here
+    $cgUpdateEntryData = array('Version' => $Version);
+    $cgUpdateEntryFormats = array('%s');
+    if($wpdb->get_var("SHOW COLUMNS FROM $tablename LIKE 'FrontendUpload'")){
+        $cgUpdateEntryData['FrontendUpload'] = 0;
+        $cgUpdateEntryFormats[] = '%d';
+    }
     $wpdb->update(
 		"$tablename",
-		array('Version' => $Version),
+		$cgUpdateEntryData,
 		array('id' => $nextId), 
-		array('%s'),
+		$cgUpdateEntryFormats,
 		array('%d')
 	);
 
@@ -344,5 +350,3 @@ if(!empty($PdfPreviewsToCreate)){
     $PdfPreviewsToCreate .= '###cg-pdf-previews-to-create-end';
     echo $PdfPreviewsToCreate;
 }
-
-

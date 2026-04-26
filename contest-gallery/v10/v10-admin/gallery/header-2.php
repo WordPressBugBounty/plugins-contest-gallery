@@ -24,6 +24,89 @@ if($cgVersion<7){
 $admin_url = admin_url();
 $plugins_url = plugins_url();
 
+$cgGalleryDashboardStats = (!empty($cgGalleryDashboardStats) && is_array($cgGalleryDashboardStats)) ? $cgGalleryDashboardStats : [];
+$cgGalleryDashboardUploadsTotal = (!empty($cgGalleryDashboardStats['uploadsTotal'])) ? intval($cgGalleryDashboardStats['uploadsTotal']) : 0;
+$cgGalleryDashboardFrontendUploads = (!empty($cgGalleryDashboardStats['frontendUploads'])) ? intval($cgGalleryDashboardStats['frontendUploads']) : 0;
+$cgGalleryDashboardBackendUploads = (!empty($cgGalleryDashboardStats['backendUploads'])) ? intval($cgGalleryDashboardStats['backendUploads']) : 0;
+$cgGalleryDashboardActiveShown = (!empty($cgGalleryDashboardStats['activeShown'])) ? intval($cgGalleryDashboardStats['activeShown']) : 0;
+$cgGalleryDashboardInactiveUploads = (!empty($cgGalleryDashboardStats['inactiveUploads'])) ? intval($cgGalleryDashboardStats['inactiveUploads']) : 0;
+$cgGalleryDashboardVotesTotal = (!empty($cgGalleryDashboardStats['votesTotal'])) ? intval($cgGalleryDashboardStats['votesTotal']) : 0;
+$cgGalleryDashboardCommentsTotal = (!empty($cgGalleryDashboardStats['commentsTotal'])) ? intval($cgGalleryDashboardStats['commentsTotal']) : 0;
+$cgGalleryDashboardCanSplitUploads = (!empty($cgGalleryDashboardStats['canSplitUploads'])) ? true : false;
+$cgGalleryDashboardTrend = (!empty($cgGalleryDashboardStats['trend']) && is_array($cgGalleryDashboardStats['trend'])) ? $cgGalleryDashboardStats['trend'] : [];
+$cgGalleryDashboardTrendDays = (!empty($cgGalleryDashboardTrend['days']) && is_array($cgGalleryDashboardTrend['days'])) ? $cgGalleryDashboardTrend['days'] : [];
+$cgGalleryDashboardTrendMax = (!empty($cgGalleryDashboardTrend['max'])) ? intval($cgGalleryDashboardTrend['max']) : 0;
+$cgGalleryDashboardTrendTotal = (!empty($cgGalleryDashboardTrend['total'])) ? intval($cgGalleryDashboardTrend['total']) : 0;
+$cgGalleryDashboardTrendToday = (!empty($cgGalleryDashboardTrend['today'])) ? intval($cgGalleryDashboardTrend['today']) : 0;
+$cgGalleryDashboardTrendPoints = '';
+$cgGalleryDashboardTrendAreaPoints = '';
+$cgGalleryDashboardTrendPlotWidth = 300;
+$cgGalleryDashboardTrendPlotHeight = 92;
+$cgGalleryDashboardTrendBaseY = 78;
+$cgGalleryDashboardTrendRangeY = 62;
+$cgGalleryDashboardTrendDaysCount = count($cgGalleryDashboardTrendDays);
+
+if($cgGalleryDashboardTrendDaysCount > 1){
+    foreach($cgGalleryDashboardTrendDays as $cgGalleryDashboardTrendIndex => $cgGalleryDashboardTrendDay){
+        $cgGalleryDashboardTrendCount = (!empty($cgGalleryDashboardTrendDay['count'])) ? intval($cgGalleryDashboardTrendDay['count']) : 0;
+        $cgGalleryDashboardTrendX = ($cgGalleryDashboardTrendIndex / ($cgGalleryDashboardTrendDaysCount - 1)) * $cgGalleryDashboardTrendPlotWidth;
+        $cgGalleryDashboardTrendY = $cgGalleryDashboardTrendBaseY;
+        if(!empty($cgGalleryDashboardTrendMax)){
+            $cgGalleryDashboardTrendY = $cgGalleryDashboardTrendBaseY - (($cgGalleryDashboardTrendCount / $cgGalleryDashboardTrendMax) * $cgGalleryDashboardTrendRangeY);
+        }
+        $cgGalleryDashboardTrendPoints .= number_format($cgGalleryDashboardTrendX,2,'.','').','.number_format($cgGalleryDashboardTrendY,2,'.','').' ';
+    }
+}
+
+$cgGalleryDashboardTrendPoints = trim($cgGalleryDashboardTrendPoints);
+if(empty($cgGalleryDashboardTrendPoints)){
+    $cgGalleryDashboardTrendPoints = '0,'.$cgGalleryDashboardTrendBaseY.' '.$cgGalleryDashboardTrendPlotWidth.','.$cgGalleryDashboardTrendBaseY;
+}
+$cgGalleryDashboardTrendAreaPoints = '0,'.$cgGalleryDashboardTrendPlotHeight.' '.$cgGalleryDashboardTrendPoints.' '.$cgGalleryDashboardTrendPlotWidth.','.$cgGalleryDashboardTrendPlotHeight;
+
+$cgGalleryDashboardMetrics = [];
+if($cgGalleryDashboardCanSplitUploads){
+    $cgGalleryDashboardMetrics[] = ['label' => 'Added backend','value' => $cgGalleryDashboardBackendUploads,'class' => 'cg_gallery_backend_dashboard_metric_backend'];
+}else{
+    $cgGalleryDashboardMetrics[] = ['label' => 'Uploads','value' => $cgGalleryDashboardUploadsTotal,'class' => 'cg_gallery_backend_dashboard_metric_uploads'];
+}
+$cgGalleryDashboardMetrics[] = ['label' => 'Active','value' => $cgGalleryDashboardActiveShown,'class' => 'cg_gallery_backend_dashboard_metric_active'];
+$cgGalleryDashboardMetrics[] = ['label' => 'Inactive','value' => $cgGalleryDashboardInactiveUploads,'class' => 'cg_gallery_backend_dashboard_metric_inactive'];
+if($cgGalleryDashboardCanSplitUploads){
+    $cgGalleryDashboardMetrics[] = ['label' => 'Uploads frontend','value' => $cgGalleryDashboardFrontendUploads,'class' => 'cg_gallery_backend_dashboard_metric_frontend'];
+}
+$cgGalleryDashboardMetrics[] = ['label' => 'Votes','value' => $cgGalleryDashboardVotesTotal,'class' => 'cg_gallery_backend_dashboard_metric_votes'.($cgGalleryDashboardCanSplitUploads ? '' : ' cg_gallery_backend_dashboard_metric_legacy_bottom_left')];
+$cgGalleryDashboardMetrics[] = ['label' => 'Comments','value' => $cgGalleryDashboardCommentsTotal,'class' => 'cg_gallery_backend_dashboard_metric_comments'.($cgGalleryDashboardCanSplitUploads ? '' : ' cg_gallery_backend_dashboard_metric_legacy_bottom_middle')];
+
+echo "<div id='cgGalleryBackendDashboardCard' class='cg_gallery_backend_dashboard_card'>";
+echo "<div class='cg_gallery_backend_dashboard_graph'>";
+echo "<div class='cg_gallery_backend_dashboard_header'>";
+echo "<div class='cg_gallery_backend_dashboard_title'>Gallery dashboard</div>";
+echo "<div class='cg_gallery_backend_dashboard_subtitle'>Activity last 30 days</div>";
+echo "</div>";
+echo "<div class='cg_gallery_backend_dashboard_trend_chart'>";
+echo "<svg class='cg_gallery_backend_dashboard_trend_svg' viewBox='0 0 ".$cgGalleryDashboardTrendPlotWidth." ".$cgGalleryDashboardTrendPlotHeight."' preserveAspectRatio='none' aria-hidden='true' focusable='false'>";
+echo "<polygon class='cg_gallery_backend_dashboard_trend_area' points='".esc_attr($cgGalleryDashboardTrendAreaPoints)."'></polygon>";
+echo "<polyline class='cg_gallery_backend_dashboard_trend_line' points='".esc_attr($cgGalleryDashboardTrendPoints)."'></polyline>";
+echo "<line class='cg_gallery_backend_dashboard_trend_axis' x1='0' y1='".$cgGalleryDashboardTrendBaseY."' x2='".$cgGalleryDashboardTrendPlotWidth."' y2='".$cgGalleryDashboardTrendBaseY."'></line>";
+echo "</svg>";
+echo "</div>";
+echo "<div class='cg_gallery_backend_dashboard_trend_meta'>";
+echo "<span>Today: ".esc_html($cgGalleryDashboardTrendToday)."</span>";
+echo "<span>30 days: ".esc_html($cgGalleryDashboardTrendTotal)."</span>";
+echo "</div>";
+echo "</div>";
+echo "<div class='cg_gallery_backend_dashboard_metrics'>";
+foreach($cgGalleryDashboardMetrics as $cgGalleryDashboardMetric){
+    $cgGalleryDashboardMetricClass = (!empty($cgGalleryDashboardMetric['class'])) ? ' '.esc_attr($cgGalleryDashboardMetric['class']) : '';
+    echo "<div class='cg_gallery_backend_dashboard_metric".$cgGalleryDashboardMetricClass."'>";
+    echo "<div class='cg_gallery_backend_dashboard_metric_value'>".esc_html($cgGalleryDashboardMetric['value'])."</div>";
+    echo "<div class='cg_gallery_backend_dashboard_metric_label'>".esc_html($cgGalleryDashboardMetric['label'])."</div>";
+    echo "</div>";
+}
+echo "</div>";
+echo "</div>";
+
 echo "<div id='cgGalleryBackendMetaCard' class='cg_gallery_backend_meta_card".(!empty($categories) ? " cg_gallery_backend_meta_card_has_categories" : " cg_gallery_backend_meta_card_upload_only")."'>";
 echo "<div class='cg_gallery_backend_meta_layout'>";
 echo "<div class='cg_gallery_backend_meta_upload_column'>";
@@ -357,6 +440,7 @@ echo "<input type='hidden' id='cgStepValue' name='cg_step' value='$step'>";
 
 // what order
 echo "<input type='hidden' id='cgOrderValue' name='cg_order' value='$order'>";
+echo "<input type='hidden' id='cgWpUserIdFilterValue' name='cg_wp_user_id_filter' value='".esc_attr($cgWpUserIdFilterValue)."'>";
 echo "<input type='hidden' id='cgAllowRating' value='$AllowRating'>";
 
 // image link value has to be loaded at the beginning!
@@ -624,6 +708,19 @@ echo "<div id='cg_sort_files_div'>";
 ?>
         <div style="margin-left: 20px; display: flex; align-items: center; justify-content: center;font-weight:bold;" id="cg_sort_files_form_button" class="cg_backend_button_gallery_action cg_hide">Sort entries</div>
 <?php
+echo "</div>";
+
+echo "<div id='cgBackendUserEntriesFilterContainer' class='cg_backend_user_entries_filter_container'>";
+echo "<div id='cgBackendUserEntriesFilter' class='cg_backend_user_entries_filter'>";
+echo "<button type='button' id='cgBackendUserEntriesFilterToggle' class='cg_backend_user_entries_filter_toggle cg_no_outline_and_shadow_on_focus'>";
+echo "<span id='cgBackendUserEntriesFilterCurrent'>All user entries</span>";
+echo "<span class='cg_backend_user_entries_filter_chevron'></span>";
+echo "</button>";
+echo "<div id='cgBackendUserEntriesFilterPopover' class='cg_backend_user_entries_filter_popover cg_hide'>";
+echo "<input type='search' id='cgBackendUserEntriesFilterSearch' class='cg_no_outline_and_shadow_on_focus' value='' placeholder='Search user'>";
+echo "<div id='cgBackendUserEntriesFilterOptions'></div>";
+echo "</div>";
+echo "</div>";
 echo "</div>";
 
 

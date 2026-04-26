@@ -59,6 +59,7 @@ return array(
         'Version' => array('COLUMN_TYPE' => 'VARCHAR(30)','DEFAULT' => '""'),// Update 14.05.2020
         'CheckSet' => array('COLUMN_TYPE' => 'VARCHAR(30)','DEFAULT' => '""'),// Update ab 19.05.2020
         'CookieId' => array('COLUMN_TYPE' => 'VARCHAR(99)','DEFAULT' => '""'),// Update ab 19.05.2020
+        'FrontendUpload' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 'NULL'),// Update ab 21.04.2026
         'Winner' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 03.08.2020
         'IsProfileImage' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 26.12.2021
         'MultipleFiles' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 28.07.2022

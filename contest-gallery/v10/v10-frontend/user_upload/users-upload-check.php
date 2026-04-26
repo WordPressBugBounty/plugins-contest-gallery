@@ -967,11 +967,17 @@ if(!$isManipulated){
                 }
 
                 // updating string after all the 0 at the end does not work at the top insert query. That is why version have to be inserted here
+                $cgUpdateEntryData = array('Version' => $Version,'CookieId' => $CookieId,'CheckSet' => $CheckSet);
+                $cgUpdateEntryFormats = array('%s','%s','%s');
+                if($wpdb->get_var("SHOW COLUMNS FROM $tablename1 LIKE 'FrontendUpload'")){
+                    $cgUpdateEntryData['FrontendUpload'] = 1;
+                    $cgUpdateEntryFormats[] = '%d';
+                }
                 $wpdb->update(
                     "$tablename1",
-                    array('Version' => $Version,'CookieId' => $CookieId,'CheckSet' => $CheckSet),
+                    $cgUpdateEntryData,
                     array('id' => $nextId),
-                    array('%s','%s','%s'),
+                    $cgUpdateEntryFormats,
                     array('%d')
                 );
 

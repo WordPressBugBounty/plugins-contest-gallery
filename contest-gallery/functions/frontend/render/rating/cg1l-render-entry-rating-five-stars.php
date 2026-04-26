@@ -26,7 +26,6 @@ if (!function_exists('cg1l_is_voting_possible_for_shortcode')) {
  *
  * Requirements/assumptions:
  * - cg1l_get_rating_count($fullData,$options,$countSuserVotes) exists.
- * - cg1l_get_interaction_statistic($ratingCount) exists.
  * - check-language.php provides $language_YouHaveAlreadyVotedThisPicture and $language_VoteNow.
  */
 
@@ -92,13 +91,11 @@ if (!function_exists('cg1l_render_rating_component_entry_multi_stars')) {
             $options
         );
 
-        $interactionStatistic = cg1l_get_interaction_statistic($ratingCount);
         $galleryRatingClass = 'cg_gallery_rating_div cg_gallery_rating_div_five_stars';
 
         return '<div id="' . esc_attr($ratingDivId) . '" class="cg-center-image-rating-div cgHundertPercentWidth" role="group" aria-label="' . esc_attr($ariaLabel) . '">
     <div class="' . esc_attr($galleryRatingClass) . '" id="' . esc_attr($galleryRatingId) . '">
         ' . $reloadHtml . '
-        ' . $interactionStatistic . '
     </div>
 </div>';
     }

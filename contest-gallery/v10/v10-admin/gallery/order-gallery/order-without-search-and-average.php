@@ -20,18 +20,18 @@ if (!empty($_POST['cg_show_only_inactive'])) {
 $customOrder = '';
 
 if ($order=='custom') {
-    $selectSQLQuery = "SELECT * FROM $tablename WHERE GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly ORDER BY PositionNumber ASC, id DESC LIMIT %d, %d";
+    $selectSQLQuery = "SELECT * FROM $tablename WHERE GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql ORDER BY PositionNumber ASC, id DESC LIMIT %d, %d";
     $selectSQL = $wpdb->get_results($wpdb->prepare($selectSQLQuery,[$GalleryID,$start,$step]));
 }
 
 if ($order == 'date_desc') {
-    $selectSQLQuery = "SELECT * FROM $tablename WHERE GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly ORDER BY id DESC LIMIT %d, %d";
+    $selectSQLQuery = "SELECT * FROM $tablename WHERE GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql ORDER BY id DESC LIMIT %d, %d";
     $selectSQL = $wpdb->get_results($wpdb->prepare($selectSQLQuery,[$GalleryID,$start,$step]));
 
 }
 
 if ($order == 'date_asc') {
-    $selectSQLQuery = "SELECT * FROM $tablename WHERE GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly ORDER BY id ASC LIMIT %d, %d";
+    $selectSQLQuery = "SELECT * FROM $tablename WHERE GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql ORDER BY id ASC LIMIT %d, %d";
     $selectSQL = $wpdb->get_results($wpdb->prepare($selectSQLQuery,[$GalleryID,$start,$step]));
 }
 
@@ -55,12 +55,12 @@ if ($order == 'rating_desc') {
                    CASE WHEN NOT EXISTS(SELECT NULL FROM $tablenameIP WHERE $tablename.id = $tablenameIP.pid)
                       THEN 1
                       ELSE 0
-                   END 
+                   END
                   ) AS CountRnotExists
-                        FROM $tablenameIP, $tablename WHERE 
-                        ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0 $selectWinnersOnly$selectActiveOnly$selectInactiveOnly) OR 
-                        ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly)
-                        GROUP BY $tablename.id) AS CountRtotalDataCollect 
+                        FROM $tablenameIP, $tablename WHERE
+                        ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0 $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql) OR
+                        ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql)
+                        GROUP BY $tablename.id) AS CountRtotalDataCollect
                         GROUP BY id ORDER BY CountRtotalCount DESC, id DESC LIMIT %d, %d";
 
         $selectSQL = $wpdb->get_results($wpdb->prepare($selectSQLQuery,[$GalleryID,$GalleryID,$start,$step]));
@@ -77,8 +77,8 @@ if ($order == 'rating_desc') {
                    END
                   ) AS CountSnotExists
                         FROM $tablenameIP, $tablename WHERE
-                        ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.RatingS > 0 $selectWinnersOnly$selectActiveOnly$selectInactiveOnly) OR 
-                        ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly)
+                        ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.RatingS > 0 $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql) OR
+                        ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql)
                         GROUP BY $tablename.id) AS CountStotalDataCollect
                         GROUP BY id ORDER BY CountStotalCount DESC, id DESC LIMIT %d, %d
                         ";
@@ -109,12 +109,12 @@ if ($order == 'rating_asc') {
                    CASE WHEN NOT EXISTS(SELECT NULL FROM $tablenameIP WHERE $tablename.id = $tablenameIP.pid)
                       THEN 1
                       ELSE 0
-                   END 
+                   END
                   ) AS CountRnotExists
-                        FROM $tablenameIP, $tablename WHERE 
-                        ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0 $selectWinnersOnly$selectActiveOnly$selectInactiveOnly) OR 
-                        ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly)
-                        GROUP BY $tablename.id) AS CountRtotalDataCollect 
+                        FROM $tablenameIP, $tablename WHERE
+                        ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0 $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql) OR
+                        ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql)
+                        GROUP BY $tablename.id) AS CountRtotalDataCollect
                         GROUP BY id ORDER BY CountRtotalCount ASC, id ASC LIMIT %d, %d
          ";
 
@@ -131,12 +131,12 @@ if ($order == 'rating_asc') {
                CASE WHEN NOT EXISTS(SELECT NULL FROM $tablenameIP WHERE $tablename.id = $tablenameIP.pid)
                   THEN 1
                   ELSE 0
-               END 
+               END
               ) AS CountSnotExists
-                    FROM $tablenameIP, $tablename WHERE 
-                    ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.RatingS > 0 $selectWinnersOnly$selectActiveOnly$selectInactiveOnly) OR 
-                    ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly)
-                    GROUP BY $tablename.id) AS CountStotalDataCollect 
+                    FROM $tablenameIP, $tablename WHERE
+                    ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.RatingS > 0 $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql) OR
+                    ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql)
+                    GROUP BY $tablename.id) AS CountStotalDataCollect
                     GROUP BY id ORDER BY CountStotalCount ASC, id ASC LIMIT %d, %d";
 
         $selectSQL = $wpdb->get_results($wpdb->prepare($selectSQLQuery,[$GalleryID,$GalleryID,$start,$step]));
@@ -174,11 +174,11 @@ if ($order == 'rating_desc_with_manip') {
                    CASE WHEN NOT EXISTS(SELECT NULL FROM $tablenameIP WHERE $tablename.id = $tablenameIP.pid)
                       THEN 1
                       ELSE 0
-                   END 
+                   END
                   ) AS CountRnotExists
-                        FROM $tablenameIP, $tablename WHERE 
-                        ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0 $selectWinnersOnly$selectActiveOnly$selectInactiveOnly) OR 
-                        ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly)
+                        FROM $tablenameIP, $tablename WHERE
+                        ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0 $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql) OR
+                        ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql)
                         GROUP BY $tablename.id) AS CountRtotalDataCollectWithManip
                         GROUP BY id ORDER BY CountRtotalCountWithManip DESC, id DESC LIMIT %d, %d";
 
@@ -193,12 +193,12 @@ if ($order == 'rating_desc_with_manip') {
                    CASE WHEN NOT EXISTS(SELECT NULL FROM $tablenameIP WHERE $tablename.id = $tablenameIP.pid)
                       THEN 1
                       ELSE 0
-                   END 
+                   END
                   ) AS CountSnotExists
-                        FROM $tablenameIP, $tablename WHERE 
-                        ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.RatingS > 0 $selectWinnersOnly$selectActiveOnly$selectInactiveOnly) OR 
-                        ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly)
-                        GROUP BY $tablename.id) AS CountStotalDataCollectWithManip 
+                        FROM $tablenameIP, $tablename WHERE
+                        ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.RatingS > 0 $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql) OR
+                        ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql)
+                        GROUP BY $tablename.id) AS CountStotalDataCollectWithManip
                         GROUP BY id ORDER BY CountStotalCountWithManip DESC, id DESC LIMIT %d, %d";
 
         $selectSQL = $wpdb->get_results($wpdb->prepare($selectSQLQuery,[$GalleryID,$GalleryID,$start,$step]));
@@ -235,11 +235,11 @@ if ($order == 'rating_asc_with_manip') {
                    CASE WHEN NOT EXISTS(SELECT NULL FROM $tablenameIP WHERE $tablename.id = $tablenameIP.pid)
                       THEN 1
                       ELSE 0
-                   END 
+                   END
                   ) AS CountRnotExists
-                        FROM $tablenameIP, $tablename WHERE 
-                        ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0 $selectWinnersOnly$selectActiveOnly$selectInactiveOnly) OR 
-                        ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly)
+                        FROM $tablenameIP, $tablename WHERE
+                        ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0 $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql) OR
+                        ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql)
                         GROUP BY $tablename.id) AS CountRtotalDataCollectWithManip
                         GROUP BY id ORDER BY CountRtotalCountWithManip ASC, id ASC LIMIT %d, %d";
 
@@ -254,12 +254,12 @@ if ($order == 'rating_asc_with_manip') {
                    CASE WHEN NOT EXISTS(SELECT NULL FROM $tablenameIP WHERE $tablename.id = $tablenameIP.pid)
                       THEN 1
                       ELSE 0
-                   END 
+                   END
                   ) AS CountSnotExists
-                        FROM $tablenameIP, $tablename WHERE 
-                        ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.RatingS > 0 $selectWinnersOnly$selectActiveOnly$selectInactiveOnly) OR 
-                        ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly)
-                        GROUP BY $tablename.id) AS CountStotalDataCollectWithManip 
+                        FROM $tablenameIP, $tablename WHERE
+                        ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.RatingS > 0 $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql) OR
+                        ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql)
+                        GROUP BY $tablename.id) AS CountStotalDataCollectWithManip
                         GROUP BY id ORDER BY CountStotalCountWithManip ASC, id ASC LIMIT %d, %d";
 
         $selectSQL = $wpdb->get_results($wpdb->prepare($selectSQLQuery,[$GalleryID,$GalleryID,$start,$step]));
@@ -268,12 +268,12 @@ if ($order == 'rating_asc_with_manip') {
 }
 
 if ($order == 'comments_desc') {
-    $selectSQLQuery = "SELECT * FROM $tablename WHERE GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly ORDER BY CountC DESC, id DESC LIMIT %d, %d ";
+    $selectSQLQuery = "SELECT * FROM $tablename WHERE GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql ORDER BY CountC DESC, id DESC LIMIT %d, %d ";
     $selectSQL = $wpdb->get_results($wpdb->prepare($selectSQLQuery,[$GalleryID,$start,$step]));
 }
 
 if ($order == 'comments_asc') {
-    $selectSQLQuery = "SELECT * FROM $tablename WHERE GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly ORDER BY CountC ASC, id DESC LIMIT %d, %d";
+    $selectSQLQuery = "SELECT * FROM $tablename WHERE GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql ORDER BY CountC ASC, id DESC LIMIT %d, %d";
     $selectSQL = $wpdb->get_results($wpdb->prepare($selectSQLQuery,[$GalleryID,$start,$step]));
 }
 

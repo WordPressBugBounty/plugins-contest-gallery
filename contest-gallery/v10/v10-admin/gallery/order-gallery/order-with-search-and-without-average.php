@@ -132,67 +132,67 @@ $searchIntval = absint($search);
 // partial connect with max two tables at same time, otherwise load to long!!!
 $countSearchSQLQuery = "SELECT COUNT(*) AS NumberOfRows FROM (
                                                 $checkCookieIdOrIP
-                                                SELECT 
+                                                SELECT
                                                 DISTINCT $tablename.*$orderByCount
-                                                FROM 
+                                                FROM
                                                   $tablename,
                                                   $tablenameentries
-                                                WHERE 
-                                                  $tablename.GalleryID = %d  
-                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND                                            
-                                                  $tablenameentries.GalleryID = %d AND 
-                                                  $tablename.id = $tablenameentries.pid AND 
-                                                  ($tablenameentries.Short_Text like %s OR $tablenameentries.Long_Text like %s OR $tablename.id = %d) 
+                                                WHERE
+                                                  $tablename.GalleryID = %d
+                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                                                  $tablenameentries.GalleryID = %d AND
+                                                  $tablename.id = $tablenameentries.pid AND
+                                                  ($tablenameentries.Short_Text like %s OR $tablenameentries.Long_Text like %s OR $tablename.id = %d)
                                                   UNION
-                                                 SELECT 
+                                                 SELECT
                                                 DISTINCT $tablename.*$orderByCount
-                                                FROM 
+                                                FROM
                                                   $tablename
-                                                WHERE 
-                                                  $tablename.GalleryID = %d  AND 
+                                                WHERE
+                                                  $tablename.GalleryID = %d  $cgWpUserIdFilterSql AND
                                                   ($tablename.Exif like %s)
                                                   UNION
-                                                 SELECT 
+                                                 SELECT
                                                 DISTINCT $tablename.*$orderByCount
-                                                FROM 
+                                                FROM
                                                   $tablename,
                                                   $tablename_categories
-                                                WHERE 
-                                                  $tablename.GalleryID = %d   
-                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
-                                                  $tablename_categories.GalleryID = %d AND 
-                                                  $tablename.Category = $tablename_categories.id AND 
+                                                WHERE
+                                                  $tablename.GalleryID = %d
+                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                                                  $tablename_categories.GalleryID = %d AND
+                                                  $tablename.Category = $tablename_categories.id AND
                                                   ($tablename_categories.GalleryID = %d AND $tablename_categories.Name LIKE %s)
                                                   UNION
-                                                 SELECT 
+                                                 SELECT
                                                 DISTINCT $tablename.*$orderByCount
-                                                FROM 
+                                                FROM
                                                   $tablename,
                                                   $table_posts
-                                                WHERE 
-                                                  $tablename.GalleryID = %d   
-                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
-                                                  $tablename.WpUpload = $table_posts.ID AND 
+                                                WHERE
+                                                  $tablename.GalleryID = %d
+                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                                                  $tablename.WpUpload = $table_posts.ID AND
                                                   ($table_posts.post_content LIKE %s OR $table_posts.post_title LIKE %s OR $table_posts.post_name LIKE %s)
                                                  UNION
-                                                 SELECT 
+                                                 SELECT
                                                 DISTINCT $tablename.*$orderByCount
-                                                FROM 
+                                                FROM
                                                   $tablename,
                                                   $wpUsers
-                                                WHERE 
-                                                  $tablename.GalleryID = %d  
-                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
-                                                  $tablename.WpUserId = $wpUsers.ID AND 
+                                                WHERE
+                                                  $tablename.GalleryID = %d
+                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                                                  $tablename.WpUserId = $wpUsers.ID AND
                                                   ($wpUsers.user_login LIKE %s OR $wpUsers.user_nicename LIKE %s OR $wpUsers.user_email LIKE %s OR $wpUsers.display_name LIKE %s)
                                                   UNION
-                                                 SELECT 
+                                                 SELECT
                                                 DISTINCT $tablename.*$orderByCount
-                                                FROM 
+                                                FROM
                                                   $tablename
-                                                WHERE 
-                                                  $tablename.GalleryID = %d  
-                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
+                                                WHERE
+                                                  $tablename.GalleryID = %d
+                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
                                                   $tablename.id = %d
                                                   ) A";
 
@@ -229,68 +229,68 @@ $selectSQLqueryPreparedArguments[] = $step;
 
 $selectSQLquery = "SELECT * FROM (
                                                 $checkCookieIdOrIP
-                                                SELECT 
+                                                SELECT
                                                 DISTINCT $tablename.*$orderByCount
-                                                FROM 
+                                                FROM
                                                   $tablename,
                                                   $tablenameentries
-                                                WHERE 
-                                                  $tablename.GalleryID = %d  
-                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
-                                                  $tablenameentries.GalleryID = %d AND 
-                                                  $tablename.id = $tablenameentries.pid AND 
-                                                  ($tablenameentries.Short_Text like %s OR $tablenameentries.Long_Text like %s OR $tablename.id = %d) AND 
-                                                  $tablenameentries.f_input_id >= 1 
+                                                WHERE
+                                                  $tablename.GalleryID = %d
+                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                                                  $tablenameentries.GalleryID = %d AND
+                                                  $tablename.id = $tablenameentries.pid AND
+                                                  ($tablenameentries.Short_Text like %s OR $tablenameentries.Long_Text like %s OR $tablename.id = %d) AND
+                                                  $tablenameentries.f_input_id >= 1
                                                   UNION
-                                                 SELECT 
+                                                 SELECT
                                                 DISTINCT $tablename.*$orderByCount
-                                                FROM 
+                                                FROM
                                                   $tablename
-                                                WHERE 
-                                                  $tablename.GalleryID = %d  AND 
+                                                WHERE
+                                                  $tablename.GalleryID = %d  $cgWpUserIdFilterSql AND
                                                   ($tablename.Exif like %s)
                                                   UNION
-                                                 SELECT 
+                                                 SELECT
                                                 DISTINCT $tablename.*$orderByCount
-                                                FROM 
+                                                FROM
                                                   $tablename,
                                                   $tablename_categories
-                                                WHERE 
-                                                  $tablename.GalleryID = %d  
-                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
-                                                  $tablename_categories.GalleryID = %d AND 
-                                                  $tablename.Category = $tablename_categories.id AND 
+                                                WHERE
+                                                  $tablename.GalleryID = %d
+                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                                                  $tablename_categories.GalleryID = %d AND
+                                                  $tablename.Category = $tablename_categories.id AND
                                                   ($tablename_categories.GalleryID = %d AND $tablename_categories.Name LIKE %s)
                                                   UNION
-                                                 SELECT 
+                                                 SELECT
                                                 DISTINCT $tablename.*$orderByCount
-                                                FROM 
+                                                FROM
                                                   $tablename,
                                                   $table_posts
-                                                WHERE 
-                                                  $tablename.GalleryID = %d  
-                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
-                                                  $tablename.WpUpload = $table_posts.ID AND 
+                                                WHERE
+                                                  $tablename.GalleryID = %d
+                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                                                  $tablename.WpUpload = $table_posts.ID AND
                                                   ($table_posts.post_content LIKE %s OR $table_posts.post_title LIKE %s OR $table_posts.post_name LIKE %s)
                                                   UNION
-                                                 SELECT 
+                                                 SELECT
                                                 DISTINCT $tablename.*$orderByCount
-                                                FROM 
+                                                FROM
                                                   $tablename,
                                                   $wpUsers
-                                                WHERE 
-                                                  $tablename.GalleryID = %d  
-                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
-                                                  $tablename.WpUserId = $wpUsers.ID AND 
+                                                WHERE
+                                                  $tablename.GalleryID = %d
+                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                                                  $tablename.WpUserId = $wpUsers.ID AND
                                                   ($wpUsers.user_login LIKE %s OR $wpUsers.user_nicename LIKE %s OR $wpUsers.user_email LIKE %s OR $wpUsers.display_name LIKE %s)
                                                   UNION
-                                                 SELECT 
+                                                 SELECT
                                                 DISTINCT $tablename.*$orderByCount
-                                                FROM 
+                                                FROM
                                                   $tablename
-                                                WHERE 
-                                                  $tablename.GalleryID = %d  
-                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
+                                                WHERE
+                                                  $tablename.GalleryID = %d
+                                                  $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
                                                   $tablename.id = %d
                                                   ) A
                                                  $orderByQueryPart

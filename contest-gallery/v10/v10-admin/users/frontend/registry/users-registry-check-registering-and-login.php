@@ -31,7 +31,53 @@ if (!defined('ABSPATH')) {
 
     include(__DIR__ . "/../../../../../check-language.php");
 
-    $cg_check = $_POST['cg_Fields'];
+    $cg_check = (!empty($_POST['cg_Fields']) && is_array($_POST['cg_Fields'])) ? $_POST['cg_Fields'] : array();
+    $cg_check = cg1l_prepare_registry_fields_for_storage($cg_check,$galleryDbVersion,$GalleryID);
+
+    if($cg_check===false){
+        ?>
+        <script  data-cg-processing="true"  data-cg-processing-error="true">
+            var cg_error = "Registration manipulation prevention code 334. Please contact Administrator if you have questions.";
+            var cg_registry_manipulation_error = cgJsClass.gallery.vars.$regFormContainer.find('#cg_registry_manipulation_error').text(cg_error).removeClass("cg_hide");
+            console.log(cg_error);
+        </script>
+        <?php
+        die;
+    }
+
+    $cg_main_mail_in_fields = '';
+    $cg_main_user_name_in_fields = '';
+    $cg_main_nick_name_in_fields = '';
+
+    foreach ($cg_check as $key => $value) {
+        if ($value["Field_Type"] == "main-mail") {
+            $cg_main_mail_in_fields = sanitize_email(strtolower($value["Field_Content"]));
+        }
+        if ($value["Field_Type"] == "main-user-name") {
+            $cg_main_user_name_in_fields = sanitize_text_field($value["Field_Content"]);
+        }
+        if ($value["Field_Type"] == "main-nick-name") {
+            $cg_main_nick_name_in_fields = sanitize_text_field($value["Field_Content"]);
+        }
+    }
+
+    if(
+        empty($cg_main_mail_in_fields) || $cg_main_mail_in_fields != $cg_main_mail
+        || (empty($cg_users_pin) && (empty($cg_main_user_name_in_fields) || $cg_main_user_name_in_fields != $cg_main_user_name))
+        || (intval($galleryDbVersion)>=14 && ($cg_main_nick_name_in_fields !== '' || $cg_main_nick_name !== '') && $cg_main_nick_name_in_fields != $cg_main_nick_name)
+    ){
+        ?>
+        <script  data-cg-processing="true"  data-cg-processing-error="true">
+            var cg_error = "Registration manipulation prevention code 335. Please contact Administrator if you have questions.";
+            var cg_registry_manipulation_error = cgJsClass.gallery.vars.$regFormContainer.find('#cg_registry_manipulation_error').text(cg_error).removeClass("cg_hide");
+            console.log(cg_error);
+        </script>
+        <?php
+        die;
+    }
+
+    $password = '';
+    $passwordConfirm = '';
 
     /*echo "<pre>";
     print_r($cg_check);
@@ -301,7 +347,7 @@ if (!defined('ABSPATH')) {
         VALUES (%s,%d,%d,%d,%s,
         %s,%s,%d,%s,%d,%d)
     ",
-                '', $GalleryID, 0, 0, 'unconfirmed-mail',
+                '', $GalleryID, $newWpId, 0, 'unconfirmed-mail',
                 $user_email, $activation_key, 0, $Version, 1, $Tstamp
             ));
 

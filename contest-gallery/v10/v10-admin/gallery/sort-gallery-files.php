@@ -178,12 +178,12 @@ foreach ($galleryFilesArray as $WpUpload => $galleryFile){
         if(empty($galleryFile['large'])){
             $galleryFile['large'] = '';// kurzfristige Lösung  12.10.2022
         }
+        $imageWidthAttribute = (!empty($galleryFile['Width'])) ? ' width="'.absint($galleryFile['Width']).'"' : '';
+        $imageHeightAttribute = (!empty($galleryFile['Height'])) ? ' height="'.absint($galleryFile['Height']).'"' : '';
         echo "<div class='cg_backend_image_full_size_target_container'>";
         //echo $galleryFile['id'];
         echo '<div class="cg_backend_image_full_size_target_container_drag"></div>';
-        echo '<div class="cg'.$galleryFile['rThumb'].'degree cg_backend_image_full_size_target" 
-                    style="background: url('.$wp_upload_dir['baseurl'].$galleryFile['large'].') center center no-repeat;">
-                    </div>';
+        echo '<div class="cg_backend_image_full_size_target"><div class="cg_backend_image cg_backend_image_stage"><img class="cg'.$galleryFile['rThumb'].'degree cg_backend_image_preview" src="'.$wp_upload_dir['baseurl'].$galleryFile['large'].'"'.$imageWidthAttribute.$imageHeightAttribute.' alt="" ></div></div>';
         echo "<input type='hidden' class='cg_position' data-cg-real-id=".$galleryFile['id']."  name='cg_position[".$galleryFile['id']."]' value='$order' >";
         echo "</div>";
     }else{

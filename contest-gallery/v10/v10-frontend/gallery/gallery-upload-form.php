@@ -34,16 +34,16 @@ echo "<div class='cg_skeleton_loader_on_page_load_container' style='margin-botto
 echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:25%;'></div>";
 echo "</div>";
 echo "<div class='cg_skeleton_loader_on_page_load_container' style='margin-bottom: 10px;' >";
-echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:50%;'></div>";
+echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:40%;'></div>";
 echo "</div>";
 echo "<div class='cg_skeleton_loader_on_page_load_container' style='margin-bottom: 10px;' >";
-echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:75%;'></div>";
+echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:60%;'></div>";
 echo "</div>";
 echo "<div class='cg_skeleton_loader_on_page_load_container' style='margin-bottom: 10px;'  >";
-echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:100%;'></div>";
+echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:80%;'></div>";
 echo "</div>";
 echo "<div class='cg_skeleton_loader_on_page_load_container' >";
-echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:60%;'></div>";
+echo "<div class='cg_skeleton_loader_on_page_load' style='height:30px;width:100%;'></div>";
 echo "</div>";
 echo "</div>";
 

@@ -174,6 +174,8 @@ cgJsClassAdmin.gallery.reload = {
 
             }
 
+            cgJsClassAdmin.gallery.functions.refreshBackendDashboardFromResponse($, $response);
+
             if(isWithSaveChanges && isReloadAfterSaleSettingsSave){
                 cgJsClassAdmin.gallery.functions.setForSellAjaxProcessing(cgJsClassAdmin.gallery.vars.ecommerce.activateSale.formPostData);
             }else{

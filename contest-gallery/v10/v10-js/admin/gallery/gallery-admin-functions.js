@@ -7,6 +7,243 @@ cgJsClassAdmin.gallery.functions = {
             delete cgJsClassAdmin.gallery.functions.requests[index];
         }
 
+        if (cgJsClassAdmin.gallery.vars.backendGalleryUserFilterRequest) {
+            cgJsClassAdmin.gallery.vars.backendGalleryUserFilterRequest.abort();
+            cgJsClassAdmin.gallery.vars.backendGalleryUserFilterRequest = null;
+        }
+
+    },
+    refreshBackendDashboardFromResponse: function ($, responseSource) {
+
+        if(!responseSource){
+            return;
+        }
+
+        var $newDashboard = $();
+        if(responseSource.jquery){
+            $newDashboard = responseSource.find('#cgGalleryBackendDashboardCard').first();
+        }else if(responseSource.getElementById){
+            var newDashboardElement = responseSource.getElementById('cgGalleryBackendDashboardCard');
+            if(newDashboardElement){
+                $newDashboard = $(newDashboardElement);
+            }
+        }else{
+            $newDashboard = $(responseSource).find('#cgGalleryBackendDashboardCard').first();
+        }
+
+        if(!$newDashboard.length){
+            return;
+        }
+
+        var $currentDashboard = $('#cgGalleryBackendDashboardCard').first();
+        if($currentDashboard.length){
+            $currentDashboard.replaceWith($newDashboard);
+            return;
+        }
+
+        var $metaCard = $('#cgGalleryBackendMetaCard').first();
+        if($metaCard.length){
+            $newDashboard.insertBefore($metaCard);
+        }
+
+    },
+    getBackendGalleryUserFilterStorageKey: function (gid) {
+        return 'cgWpUserFilter_BG_' + gid;
+    },
+    setBackendGalleryUserFilterSelection: function ($, value, label, skipStorage) {
+        var $container = $('#cgBackendUserEntriesFilter');
+        var $hidden = $('#cgWpUserIdFilterValue');
+        var gid = $('#cgBackendGalleryId').val();
+        var normalizedValue = '';
+
+        if (value || value === 0 || value === '0') {
+            normalizedValue = String(value);
+        }
+
+        if (!label) {
+            label = 'All user entries';
+        }
+
+        $hidden.val(normalizedValue);
+        $('#cgBackendUserEntriesFilterCurrent').text(label);
+
+        if (normalizedValue !== '') {
+            $container.addClass('cg_searched_value');
+        } else {
+            $container.removeClass('cg_searched_value');
+        }
+
+        $('#cgBackendUserEntriesFilterOptions .cg_backend_user_entries_filter_option').removeClass('cg_backend_user_entries_filter_option_selected');
+        $('#cgBackendUserEntriesFilterOptions .cg_backend_user_entries_filter_option').filter(function () {
+            return $(this).attr('data-cg-value') === normalizedValue;
+        }).first().addClass('cg_backend_user_entries_filter_option_selected');
+
+        if (!skipStorage && gid) {
+            localStorage.setItem(cgJsClassAdmin.gallery.functions.getBackendGalleryUserFilterStorageKey(gid), normalizedValue);
+        }
+    },
+    closeBackendGalleryUserFilter: function ($) {
+        $('#cgBackendUserEntriesFilter').removeClass('cg_open');
+        $('#cgBackendUserEntriesFilterPopover').addClass('cg_hide');
+        $('#cgBackendUserEntriesFilterSearch').val('');
+    },
+    renderBackendGalleryUserFilterOptions: function ($, options, resolvedValue) {
+        var $optionsContainer = $('#cgBackendUserEntriesFilterOptions');
+        $optionsContainer.empty();
+
+        if (!options || !options.length) {
+            $optionsContainer.append($('<div class="cg_backend_user_entries_filter_empty"></div>').text('No users found'));
+            return;
+        }
+
+        options.forEach(function (option) {
+            var value = '';
+            if (option.value || option.value === 0 || option.value === '0') {
+                value = String(option.value);
+            }
+
+            var $button = $('<button type="button" class="cg_backend_user_entries_filter_option"></button>');
+            $button.attr('data-cg-value', value);
+            $button.text(option.label ? option.label : '');
+
+            if ((option.selected && resolvedValue === value) || (!option.selected && resolvedValue === value)) {
+                $button.addClass('cg_backend_user_entries_filter_option_selected');
+            }
+
+            $optionsContainer.append($button);
+        });
+    },
+    refreshBackendGalleryUserFilterOptions: function ($, options) {
+        var $container = $('#cgBackendUserEntriesFilter');
+        var $hidden = $('#cgWpUserIdFilterValue');
+        var $search = $('#cgBackendUserEntriesFilterSearch');
+
+        if (!$container.length || !$hidden.length) {
+            return;
+        }
+
+        options = options || {};
+
+        var gid = $('#cgBackendGalleryId').val();
+        var searchValue = '';
+        if (options.searchValue || options.searchValue === '0') {
+            searchValue = String(options.searchValue);
+        } else {
+            searchValue = $search.val() ? $search.val() : '';
+        }
+
+        var currentValue = $hidden.val();
+        if (!(currentValue || currentValue === '0')) {
+            currentValue = '';
+        } else {
+            currentValue = String(currentValue);
+        }
+
+        if (cgJsClassAdmin.gallery.vars.backendGalleryUserFilterRequest) {
+            cgJsClassAdmin.gallery.vars.backendGalleryUserFilterRequest.abort();
+        }
+
+        var formPostData = new FormData();
+        formPostData.append('action', 'post_cg_backend_gallery_user_filter_options');
+        formPostData.append('cg_nonce', CG1LBackendNonce.nonce);
+        formPostData.append('GalleryID', gid);
+        formPostData.append('cgGalleryHash', $('#cgGalleryForm input[name="cgGalleryHash"]').val());
+        formPostData.append('cgUserSearch', searchValue);
+        formPostData.append('selectedValue', currentValue);
+
+        $container.addClass('cg_loading');
+
+        cgJsClassAdmin.gallery.vars.backendGalleryUserFilterRequest = $.ajax({
+            url: 'admin-ajax.php',
+            method: 'post',
+            data: formPostData,
+            dataType: 'json',
+            contentType: false,
+            processData: false
+        }).done(function (response) {
+            var data = response && response.data ? response.data : {};
+            if (data.code && data.code === 'cg_nonce_invalid') {
+                var version = data.version ? data.version : cgJsClassAdmin.index.functions.cgGetVersionForUrlJs();
+                cgJsClassAdmin.index.functions.isInvalidNonce($, '###cg_version###' + version + '###cg_version######cg_nonce_invalid###');
+                return;
+            }
+
+            if (!response || !response.success) {
+                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('User entries filter could not be loaded');
+                return;
+            }
+
+            var resolvedValue = '';
+            if (data.resolved_value || data.resolved_value === '0') {
+                resolvedValue = String(data.resolved_value);
+            }
+
+            var selectedLabel = 'All user entries';
+            if (data.selected_option && data.selected_option.label) {
+                selectedLabel = data.selected_option.label;
+            } else if (data.options && data.options.length) {
+                data.options.forEach(function (option) {
+                    var optionValue = '';
+                    if (option.value || option.value === '0') {
+                        optionValue = String(option.value);
+                    }
+                    if (optionValue === resolvedValue) {
+                        selectedLabel = option.label ? option.label : selectedLabel;
+                    }
+                });
+            }
+
+            cgJsClassAdmin.gallery.functions.renderBackendGalleryUserFilterOptions($, data.options ? data.options : [], resolvedValue);
+            cgJsClassAdmin.gallery.functions.setBackendGalleryUserFilterSelection($, resolvedValue, selectedLabel);
+
+            if (options.reloadOnInvalid && currentValue !== resolvedValue) {
+                $('#cgStartValue').val('0');
+                cgJsClassAdmin.gallery.load.changeViewByControl($, null, null, false, true);
+            }
+        }).fail(function (xhr, status) {
+            if (status !== 'abort') {
+                if (xhr && xhr.responseText && cgJsClassAdmin.index.functions.isInvalidNonce($, xhr.responseText)) {
+                    return;
+                }
+                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('User entries filter could not be loaded');
+            }
+        }).always(function () {
+            $container.removeClass('cg_loading');
+            cgJsClassAdmin.gallery.vars.backendGalleryUserFilterRequest = null;
+        });
+    },
+    getBackendPreviewImageHtml: function (src, href, rotationClass, title, width, height) {
+        var widthAttribute = '';
+        var heightAttribute = '';
+        var normalizedWidth = parseInt(width, 10) || 0;
+        var normalizedHeight = parseInt(height, 10) || 0;
+
+        if (normalizedWidth) {
+            widthAttribute = ' width="' + normalizedWidth + '"';
+        }
+        if (normalizedHeight) {
+            heightAttribute = ' height="' + normalizedHeight + '"';
+        }
+
+        return '<a href="' + href + '" target="_blank" title="' + title + '" alt="' + title + '">' +
+            '<div class="cg_backend_image cg_backend_image_stage">' +
+            '<img class="cg_backend_image_preview ' + rotationClass + '" src="' + src + '"' + widthAttribute + heightAttribute + ' alt="' + title + '">' +
+            '</div>' +
+            '</a>';
+    },
+    setBackendPreviewImage: function ($target, src, href, rotationClass, title, width, height) {
+        if (!$target || !$target.length) {
+            return;
+        }
+
+        $target.empty().append(cgJsClassAdmin.gallery.functions.getBackendPreviewImageHtml(
+            src,
+            href,
+            rotationClass,
+            title,
+            width,
+            height
+        ));
     },
     addSocialTabs: function (file_frame, isReplace, WpUploadToReplace,isAddFilesOrReplaceFile) {
         cgJsClassAdmin.gallery.vars.file_frame = file_frame;

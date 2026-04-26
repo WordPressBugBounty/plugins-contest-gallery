@@ -157,12 +157,12 @@ if($search===''){
                    CASE WHEN NOT EXISTS(SELECT NULL FROM $tablenameIP WHERE $tablename.id = $tablenameIP.pid)
                       THEN 1
                       ELSE 0
-                   END 
+                   END
                   ) AS CountRnotExists
-                        FROM $tablenameIP, $tablename WHERE 
-                        ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0 $selectWinnersOnly$selectActiveOnly$selectInactiveOnly) OR 
-                        ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly)
-                        GROUP BY $tablename.id) AS CountRtotalAverage 
+                        FROM $tablenameIP, $tablename WHERE
+                        ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0 $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql) OR
+                        ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql)
+                        GROUP BY $tablename.id) AS CountRtotalAverage
                         GROUP BY id $orderBy
                         ";
 
@@ -182,79 +182,79 @@ if($search===''){
                    CASE WHEN NOT EXISTS(SELECT NULL FROM $tablenameIP WHERE $tablename.id = $tablenameIP.pid)
                       THEN 1
                       ELSE 0
-                   END 
+                   END
                   ) AS CountRnotExists
-                        FROM $tablenameIP, $tablename, $tablenameentries WHERE 
-                        (($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0) OR 
+                        FROM $tablenameIP, $tablename, $tablenameentries WHERE
+                        (($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0) OR
                         ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d))
-                         AND 
+                         AND
                         (
-                        $tablename.GalleryID = %d  
-                        $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND 
-                       $tablenameentries.GalleryID = %d AND 
-                       $tablename.id = $tablenameentries.pid AND 
-                       ($tablenameentries.Short_Text like %s OR $tablenameentries.Long_Text like %s OR $tablename.id like %s OR $tablename.Exif like %s) AND 
+                        $tablename.GalleryID = %d
+                        $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                       $tablenameentries.GalleryID = %d AND
+                       $tablename.id = $tablenameentries.pid AND
+                       ($tablenameentries.Short_Text like %s OR $tablenameentries.Long_Text like %s OR $tablename.id like %s OR $tablename.Exif like %s) AND
                        $tablenameentries.f_input_id >= 1
                          )
                         GROUP BY $tablename.id) AS CountRtotalSum
-                        
+
                         UNION
-                
+
                 SELECT $countFields, $CountRtotalSumCalculated $fieldsToSelectString  from (SELECT DISTINCT $tablename.*, $tablenameIP.pid, $sumCountR,
                   (
                    CASE WHEN NOT EXISTS(SELECT NULL FROM $tablenameIP WHERE $tablename.id = $tablenameIP.pid)
                       THEN 1
                       ELSE 0
-                   END 
+                   END
                   ) AS CountRnotExists
-                        FROM $tablenameIP, $tablename, $tablename_categories WHERE 
-                        (($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0) OR 
+                        FROM $tablenameIP, $tablename, $tablename_categories WHERE
+                        (($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0) OR
                         ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d))
-                         AND 
-                      ($tablename.GalleryID = %d  
-                      $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
-                      $tablename_categories.GalleryID = %d AND 
-                      $tablename.Category = $tablename_categories.id AND 
+                         AND
+                      ($tablename.GalleryID = %d
+                      $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                      $tablename_categories.GalleryID = %d AND
+                      $tablename.Category = $tablename_categories.id AND
                       ($tablename_categories.GalleryID = %d AND $tablename_categories.Name LIKE %s))
                         GROUP BY $tablename.id) AS CountRtotalSum
-                        
+
                         UNION
-                
+
                 SELECT $countFields, $CountRtotalSumCalculated $fieldsToSelectString  from (SELECT DISTINCT $tablename.*, $tablenameIP.pid, $sumCountR,
                   (
                    CASE WHEN NOT EXISTS(SELECT NULL FROM $tablenameIP WHERE $tablename.id = $tablenameIP.pid)
                       THEN 1
                       ELSE 0
-                   END 
+                   END
                   ) AS CountRnotExists
-                        FROM $tablenameIP, $tablename, $table_posts WHERE 
-                        (($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0) OR 
+                        FROM $tablenameIP, $tablename, $table_posts WHERE
+                        (($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0) OR
                         ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d))
-                         AND 
-                      ( $tablename.GalleryID = %d  
-                      $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND 
-                      $tablename.WpUpload = $table_posts.ID AND 
+                         AND
+                      ( $tablename.GalleryID = %d
+                      $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                      $tablename.WpUpload = $table_posts.ID AND
                       ($table_posts.post_content LIKE %s OR $table_posts.post_title LIKE %s OR $table_posts.post_name LIKE %s))
                         GROUP BY $tablename.id) AS CountRtotalSum
-                        
+
                         UNION
-                
+
                 SELECT $countFields, $CountRtotalSumCalculated $fieldsToSelectString  from (SELECT DISTINCT $tablename.*, $tablenameIP.pid, $sumCountR,
                   (
                    CASE WHEN NOT EXISTS(SELECT NULL FROM $tablenameIP WHERE $tablename.id = $tablenameIP.pid)
                       THEN 1
                       ELSE 0
-                   END 
+                   END
                   ) AS CountRnotExists
-                        FROM $tablenameIP, $tablename, $wpUsers WHERE 
-                        (($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0) OR 
+                        FROM $tablenameIP, $tablename, $wpUsers WHERE
+                        (($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0) OR
                         ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d))
-                         AND 
-                      ( $tablename.GalleryID = %d  
-                      $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
-                      $tablename.WpUserId = $wpUsers.ID AND 
+                         AND
+                      ( $tablename.GalleryID = %d
+                      $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                      $tablename.WpUserId = $wpUsers.ID AND
                       ($wpUsers.user_login LIKE %s OR $wpUsers.user_nicename LIKE %s OR $wpUsers.user_email LIKE %s OR $wpUsers.display_name LIKE %s))
-                        GROUP BY $tablename.id) AS CountRtotalSum                        
+                        GROUP BY $tablename.id) AS CountRtotalSum
                         ) A
                         ";
 
@@ -273,79 +273,79 @@ if($search===''){
                    CASE WHEN NOT EXISTS(SELECT NULL FROM $tablenameIP WHERE $tablename.id = $tablenameIP.pid)
                       THEN 1
                       ELSE 0
-                   END 
+                   END
                   ) AS CountRnotExists
-                        FROM $tablenameIP, $tablename, $tablenameentries WHERE 
-                        (($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0) OR 
+                        FROM $tablenameIP, $tablename, $tablenameentries WHERE
+                        (($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0) OR
                         ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d))
-                         AND 
+                         AND
                         (
-                        $tablename.GalleryID = %d  
-                        $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
-                       $tablenameentries.GalleryID = %d AND 
-                       $tablename.id = $tablenameentries.pid AND 
-                       ($tablenameentries.Short_Text like %s OR $tablenameentries.Long_Text like %s OR $tablename.id like %s OR $tablename.Exif like %s) AND 
+                        $tablename.GalleryID = %d
+                        $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                       $tablenameentries.GalleryID = %d AND
+                       $tablename.id = $tablenameentries.pid AND
+                       ($tablenameentries.Short_Text like %s OR $tablenameentries.Long_Text like %s OR $tablename.id like %s OR $tablename.Exif like %s) AND
                        $tablenameentries.f_input_id >= 1
                          )
                         GROUP BY $tablename.id) AS CountRtotalSum
-                        
+
                         UNION
-                
+
                 SELECT $countFields, $CountRtotalSumCalculated $fieldsToSelectString  from (SELECT DISTINCT $tablename.*, $tablenameIP.pid, $sumCountR,
                   (
                    CASE WHEN NOT EXISTS(SELECT NULL FROM $tablenameIP WHERE $tablename.id = $tablenameIP.pid)
                       THEN 1
                       ELSE 0
-                   END 
+                   END
                   ) AS CountRnotExists
-                        FROM $tablenameIP, $tablename, $tablename_categories WHERE 
-                        (($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0) OR 
+                        FROM $tablenameIP, $tablename, $tablename_categories WHERE
+                        (($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0) OR
                         ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d))
-                         AND 
-                      ($tablename.GalleryID = %d  
-                      $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
-                      $tablename_categories.GalleryID = %d AND 
-                      $tablename.Category = $tablename_categories.id AND 
+                         AND
+                      ($tablename.GalleryID = %d
+                      $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                      $tablename_categories.GalleryID = %d AND
+                      $tablename.Category = $tablename_categories.id AND
                       ($tablename_categories.GalleryID = %d AND $tablename_categories.Name LIKE %s))
                         GROUP BY $tablename.id) AS CountRtotalSum
-                        
+
                         UNION
-                
+
                 SELECT $countFields, $CountRtotalSumCalculated $fieldsToSelectString  from (SELECT DISTINCT $tablename.*, $tablenameIP.pid, $sumCountR,
                   (
                    CASE WHEN NOT EXISTS(SELECT NULL FROM $tablenameIP WHERE $tablename.id = $tablenameIP.pid)
                       THEN 1
                       ELSE 0
-                   END 
+                   END
                   ) AS CountRnotExists
-                        FROM $tablenameIP, $tablename, $table_posts WHERE 
-                        (($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0) OR 
+                        FROM $tablenameIP, $tablename, $table_posts WHERE
+                        (($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0) OR
                         ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d))
-                         AND 
-                      ( $tablename.GalleryID = %d  
-                      $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND 
-                      $tablename.WpUpload = $table_posts.ID AND 
+                         AND
+                      ( $tablename.GalleryID = %d
+                      $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                      $tablename.WpUpload = $table_posts.ID AND
                       ($table_posts.post_content LIKE %s OR $table_posts.post_title LIKE %s OR $table_posts.post_name LIKE %s))
                         GROUP BY $tablename.id) AS CountRtotalSum
-                        
+
                         UNION
-                
+
                 SELECT $countFields, $CountRtotalSumCalculated $fieldsToSelectString  from (SELECT DISTINCT $tablename.*, $tablenameIP.pid, $sumCountR,
                   (
                    CASE WHEN NOT EXISTS(SELECT NULL FROM $tablenameIP WHERE $tablename.id = $tablenameIP.pid)
                       THEN 1
                       ELSE 0
-                   END 
+                   END
                   ) AS CountRnotExists
-                        FROM $tablenameIP, $tablename, $wpUsers WHERE 
-                        (($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0) OR 
+                        FROM $tablenameIP, $tablename, $wpUsers WHERE
+                        (($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = %d AND $tablenameIP.Rating > 0) OR
                         ($tablename.id != $tablenameIP.pid AND $tablename.GalleryID = %d))
-                         AND 
-                      ( $tablename.GalleryID = %d  
-                      $selectWinnersOnly$selectActiveOnly$selectInactiveOnly AND  
-                      $tablename.WpUserId = $wpUsers.ID AND 
+                         AND
+                      ( $tablename.GalleryID = %d
+                      $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql AND
+                      $tablename.WpUserId = $wpUsers.ID AND
                       ($wpUsers.user_login LIKE %s OR $wpUsers.user_nicename LIKE %s OR $wpUsers.user_email LIKE %s OR $wpUsers.display_name LIKE %s))
-                        GROUP BY $tablename.id) AS CountRtotalSum                        
+                        GROUP BY $tablename.id) AS CountRtotalSum
                         ) A
                         group by id $orderBy
                         ";

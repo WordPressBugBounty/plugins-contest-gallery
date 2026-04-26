@@ -62,6 +62,7 @@ cgJsClassAdmin.gallery.load.changeViewByControl = function ($,$cgStep,$cgStart,i
         }
 
         localStorage.setItem('cgSearch_BG_'+gid, $('#cgSearchInput').val());
+        localStorage.setItem(cgJsClassAdmin.gallery.functions.getBackendGalleryUserFilterStorageKey(gid), $('#cgWpUserIdFilterValue').val() ? $('#cgWpUserIdFilterValue').val() : '');
 
         if(isFormSubmit){
             var scrollTop = $('#cgGalleryForm').offset().top-50;
@@ -117,6 +118,7 @@ cgJsClassAdmin.gallery.load.changeViewByControl = function ($,$cgStep,$cgStart,i
             cgJsClassAdmin.gallery.vars.inputsChanged = false;
 
             var htmlDom = new DOMParser().parseFromString(response, 'text/html');
+            cgJsClassAdmin.gallery.functions.refreshBackendDashboardFromResponse($, htmlDom);
 
             var DOM_cgSortable = htmlDom.getElementById('cgSortable');
             var DOM_cgGallerySubmitTop = htmlDom.getElementById('cgGallerySubmitTop');
@@ -173,6 +175,9 @@ cgJsClassAdmin.gallery.load.changeViewByControl = function ($,$cgStep,$cgStart,i
             cgJsClassAdmin.gallery.functions.sortableInit($);
             cgJsClassAdmin.gallery.functions.markSortedByCustomFields($);
             cgJsClassAdmin.gallery.functions.initDateTimePicker($);
+            cgJsClassAdmin.gallery.functions.refreshBackendGalleryUserFilterOptions($, {
+                reloadOnInvalid: true
+            });
 
             if(isNoImagesFound){
                 cgJsClassAdmin.gallery.functions.checkIfFurtherImagesAvailable($);
