@@ -26,12 +26,13 @@ $ShowOther = $options['pro']['ShowOther'];
 
 $categoriesCheck = false;
 $categoriesCount = 0;
+$isCategoryUploadFieldActive = (!empty($isCategoryUploadFieldActive)) ? true : false;
 
-if($ShowOther==1){
+if($isCategoryUploadFieldActive && $ShowOther==1){
     $categoriesCount++;
 }
 
-if(!empty($jsonCategories) && $CatWidget==1){
+if($isCategoryUploadFieldActive && !empty($jsonCategories) && $CatWidget==1){
     foreach($jsonCategories as $categoryID => $category){
         if($category['Active']==1){
             $categoriesCount++;
@@ -256,7 +257,9 @@ if(true){
 
     echo "<div class='cg_thumbs_and_categories_control cg_gallery_control_element'>";
 
-    include('categories-container.php');
+    if($isCategoryUploadFieldActive){
+        include('categories-container.php');
+    }
 
     $showThumbsControl = false;
 

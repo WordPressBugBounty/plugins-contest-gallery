@@ -451,7 +451,7 @@ cgJsClassAdmin.gallery.functions = {
         jQuery('.cg_backend_action_container').addClass('cg_hide');
         jQuery('#cg_main_container').removeClass('cg_active cg_pointer_events_none');
         var $cgBackendGalleryDynamicMessage = jQuery('#cgBackendGalleryDynamicMessage');
-        $cgBackendGalleryDynamicMessage.removeClass('cgMediaAssignProcess cg_overflow_y_scroll');// remove potential set classes before
+        $cgBackendGalleryDynamicMessage.removeClass('cgMediaAssignProcess cg_network_export_modal cg_overflow_y_scroll');// remove potential set classes before
         if ($cgBackendGalleryDynamicMessage.hasClass('cg_no_action_message')) {
             if (isHideSlow) {
                 jQuery('#cgBackendBackgroundDrop').addClass('cg_hide').removeClass('cg_active cg_pointer_events_none');

@@ -5,6 +5,134 @@ jQuery(document).ready(function ($) {
     var $clickedDatepicker = undefined;
     var openedShortcode = '';
 
+    var setShortcodeIntervalNotice = function ($container,type,message) {
+        var $notice = $container.find('#cgShortcodeIntervalConfigurationNotice');
+        $notice.removeClass('cg_shortcode_interval_notice_warning cg_shortcode_interval_notice_error cg_shortcode_interval_notice_success');
+        if(!message){
+            $notice.addClass('cg_hide').text('');
+            return;
+        }
+        $notice.addClass('cg_shortcode_interval_notice_'+type).removeClass('cg_hide').text(message);
+    };
+
+    var clearShortcodeIntervalValidation = function ($container) {
+        $container.find('.cg_shortcode_interval_validation_error').removeClass('cg_shortcode_interval_validation_error');
+        var $notice = $container.find('#cgShortcodeIntervalConfigurationNotice');
+        if($notice.hasClass('cg_shortcode_interval_notice_error')){
+            setShortcodeIntervalNotice($container,'','');
+        }
+    };
+
+    var getActiveYear = function ($container) {
+        var year = $container.find('.cg_shortcode_conf_tab > div.active').attr('data-cg-year');
+        if(!year){
+            year = $container.find('.cgShortcodeIntervalConfiguration:not(.cg_hide)').attr('data-cg-year');
+        }
+        return year;
+    };
+
+    var setActiveYearInput = function ($container) {
+        $container.find('.cg_shortcode_interval_active_year').val(getActiveYear($container));
+    };
+
+    var getActiveYearConfiguration = function ($container) {
+        return $container.find('#cgShortcodeIntervalConfiguration'+getActiveYear($container));
+    };
+
+    var getSelectedIntervalType = function ($yearConfiguration) {
+        var intervalType = $yearConfiguration.find('.cg_main_options_interval_type .cg_view_option_radio_multiple_input_field:checked').val();
+        return intervalType ? intervalType : 'monthly';
+    };
+
+    var hasMonthlyRange = function ($yearConfiguration) {
+        var hasRange = false;
+        $yearConfiguration.find('.cg_shortcode_interval_datepicker_row[data-cg-interval-type="monthly"]').each(function () {
+            if($(this).find('.cg_shortcode_interval_datepicker_input_start').val() && $(this).find('.cg_shortcode_interval_datepicker_input_end').val()){
+                hasRange = true;
+                return false;
+            }
+        });
+        return hasRange;
+    };
+
+    var hasWeeklyRange = function ($yearConfiguration) {
+        var $weeklyRow = $yearConfiguration.find('.cg_shortcode_interval_datepicker_row[data-cg-interval-type="weekly"]');
+        return !!($weeklyRow.find('.cg_days_select_start').val() && $weeklyRow.find('.cg_days_select_end').val());
+    };
+
+    var hasInactiveSelectedIntervalSettings = function ($container) {
+        var $yearConfiguration = getActiveYearConfiguration($container);
+        var intervalType = getSelectedIntervalType($yearConfiguration);
+        if(intervalType=='monthly'){
+            return hasMonthlyRange($yearConfiguration);
+        }
+        if(intervalType=='weekly'){
+            return hasWeeklyRange($yearConfiguration);
+        }
+        if(intervalType=='daily'){
+            return true;
+        }
+        return false;
+    };
+
+    var setIntervalActivation = function ($container,isChecked) {
+        var $activate = $container.find('#cgShortcodeIntervalConfigurationActivate');
+        $activate.prop('checked',isChecked);
+        if(isChecked){
+            $activate.closest('.cg_view_option_checkbox').removeClass('cg_view_option_unchecked').addClass('cg_view_option_checked');
+        }else{
+            $activate.closest('.cg_view_option_checkbox').removeClass('cg_view_option_checked').addClass('cg_view_option_unchecked');
+        }
+    };
+
+    var updateInactiveIntervalWarning = function ($container) {
+        var $activate = $container.find('#cgShortcodeIntervalConfigurationActivate');
+        if(!$activate.prop('checked') && hasInactiveSelectedIntervalSettings($container)){
+            setShortcodeIntervalNotice($container,'warning','Selected interval settings are saved but ignored until interval restriction is enabled.');
+            return;
+        }
+        var $notice = $container.find('#cgShortcodeIntervalConfigurationNotice');
+        if($notice.hasClass('cg_shortcode_interval_notice_warning')){
+            setShortcodeIntervalNotice($container,'','');
+        }
+    };
+
+    var activateIntervalAfterUserSelection = function ($container) {
+        var $activate = $container.find('#cgShortcodeIntervalConfigurationActivate');
+        clearShortcodeIntervalValidation($container);
+        if(!$activate.prop('checked')){
+            setIntervalActivation($container,true);
+            setShortcodeIntervalNotice($container,'success','Interval restriction was enabled automatically because you selected interval settings.');
+        }
+    };
+
+    var validateActiveIntervalConfiguration = function ($container) {
+        setActiveYearInput($container);
+        clearShortcodeIntervalValidation($container);
+
+        if(!$container.find('#cgShortcodeIntervalConfigurationActivate').prop('checked')){
+            updateInactiveIntervalWarning($container);
+            return true;
+        }
+
+        var $yearConfiguration = getActiveYearConfiguration($container);
+        var intervalType = getSelectedIntervalType($yearConfiguration);
+
+        if(intervalType=='monthly' && !hasMonthlyRange($yearConfiguration)){
+            $yearConfiguration.find('.cg_main_options_monthly').addClass('cg_shortcode_interval_validation_error');
+            setShortcodeIntervalNotice($container,'error','Please select at least one monthly date range before saving, or disable interval restriction.');
+            return false;
+        }
+
+        if(intervalType=='weekly' && !hasWeeklyRange($yearConfiguration)){
+            $yearConfiguration.find('.cg_main_options_weekly').addClass('cg_shortcode_interval_validation_error');
+            setShortcodeIntervalNotice($container,'error','Please select a weekly start day and end day before saving, or disable interval restriction.');
+            return false;
+        }
+
+        return true;
+    };
+
     $(document).on('click','.td_gallery_info_shortcode_conf_status',function (e) {
         $(this).parent().find('.td_gallery_info_shortcode_conf').click();
     });
@@ -141,6 +269,9 @@ jQuery(document).ready(function ($) {
 
         $cgShortcodeIntervalConfigurationContainer.attr('data-cg-shortcode',shortcode);
         $cgShortcodeIntervalConfigurationContainer.find('.shortcodeType').val(shortcode);
+        setActiveYearInput($cgShortcodeIntervalConfigurationContainer);
+        setShortcodeIntervalNotice($cgShortcodeIntervalConfigurationContainer,'','');
+        clearShortcodeIntervalValidation($cgShortcodeIntervalConfigurationContainer);
 
         var jsonOptions = cgJsClassAdmin.index.vars.cgOptionsJson.interval;
         //var jsonOptions = {};
@@ -299,6 +430,8 @@ jQuery(document).ready(function ($) {
             }
         });
 
+        updateInactiveIntervalWarning($cgShortcodeIntervalConfigurationContainer);
+
         $('.cg_shortcode_interval_datepicker').on('show.daterangepicker', function(ev, picker) {
             picker.container.addClass('cg_visibility_hidden');
             if(!picker.container.find('drp-calendar.left .active.start-date.available:not(.ends)').length){
@@ -346,6 +479,7 @@ jQuery(document).ready(function ($) {
             //var dateEndString = days[picker.endDate._d.getDay()] + ' ' +dayOfMonth;
             var dateEndString = dayOfMonth + '  (' + days[picker.endDate._d.getDay()]+')';
             $cg_shortcode_interval_datepicker_row.find('.cg_shortcode_interval_time_set_date_end').text(dateEndString);
+            activateIntervalAfterUserSelection($('#cgShortcodeIntervalConfigurationContainer'));
 
         });
 
@@ -354,6 +488,7 @@ jQuery(document).ready(function ($) {
             $cg_shortcode_interval_datepicker_row.find('.cg_view_option_select').addClass('cg_hide');
             $cg_shortcode_interval_datepicker_row.find('.cg_shortcode_interval_datepicker_input_start').val('');
             $cg_shortcode_interval_datepicker_row.find('.cg_shortcode_interval_datepicker_input_end').val('');
+            validateActiveIntervalConfiguration($('#cgShortcodeIntervalConfigurationContainer'));
         });
 
 
@@ -381,6 +516,8 @@ jQuery(document).ready(function ($) {
         $cg_main_options_interval_type.find('.cg_view_option_radio_multiple_input_field[value="'+option+'"]').attr('checked','checked').prop('checked',true).closest('.cg_view_option_radio_multiple_input').removeClass('cg_view_option_unchecked').addClass('cg_view_option_checked');
         $cgShortcodeIntervalConfiguration.find('.cg_main_options_shortcode_interval').addClass('cg_hide');
         $cgShortcodeIntervalConfiguration.find('.cg_main_options_'+option).removeClass('cg_hide');
+        setActiveYearInput($cgShortcodeIntervalConfigurationContainer);
+        updateInactiveIntervalWarning($cgShortcodeIntervalConfigurationContainer);
 
     });
 
@@ -389,6 +526,26 @@ jQuery(document).ready(function ($) {
         var $cgShortcodeIntervalConfiguration = $(this).closest('.cgShortcodeIntervalConfiguration');
         $cgShortcodeIntervalConfiguration.find('.cg_main_options_shortcode_interval').addClass('cg_hide');
         $cgShortcodeIntervalConfiguration.find('.cg_main_options_shortcode_interval.cg_main_options_'+intervalType).removeClass('cg_hide');
+        var $cgShortcodeIntervalConfigurationContainer = $('#cgShortcodeIntervalConfigurationContainer');
+        setActiveYearInput($cgShortcodeIntervalConfigurationContainer);
+        activateIntervalAfterUserSelection($cgShortcodeIntervalConfigurationContainer);
+    });
+
+    $(document).on('change','#cgShortcodeIntervalConfigurationContainer .cg_days_select_start, #cgShortcodeIntervalConfigurationContainer .cg_days_select_end, #cgShortcodeIntervalConfigurationContainer .cg-hourspicker-from-left, #cgShortcodeIntervalConfigurationContainer .cg-minutespicker-from-left, #cgShortcodeIntervalConfigurationContainer .cg-hourspicker-from-right, #cgShortcodeIntervalConfigurationContainer .cg-minutespicker-from-right',function () {
+        var $cgShortcodeIntervalConfigurationContainer = $('#cgShortcodeIntervalConfigurationContainer');
+        setActiveYearInput($cgShortcodeIntervalConfigurationContainer);
+        activateIntervalAfterUserSelection($cgShortcodeIntervalConfigurationContainer);
+    });
+
+    $(document).on('click','#cgShortcodeIntervalConfigurationActivate',function () {
+        var $cgShortcodeIntervalConfigurationContainer = $('#cgShortcodeIntervalConfigurationContainer');
+        setTimeout(function () {
+            if($cgShortcodeIntervalConfigurationContainer.find('#cgShortcodeIntervalConfigurationActivate').prop('checked')){
+                validateActiveIntervalConfiguration($cgShortcodeIntervalConfigurationContainer);
+            }else{
+                updateInactiveIntervalWarning($cgShortcodeIntervalConfigurationContainer);
+            }
+        },50);
     });
 
     // submit interval conf
@@ -396,10 +553,14 @@ jQuery(document).ready(function ($) {
     $(document).on('submit', '#cgShortcodeIntervalConfigurationForm', function (e) {
         e.preventDefault();
 
+        var $cgShortcodeIntervalConfigurationContainer = $('#cgShortcodeIntervalConfigurationContainer');
+        if(!validateActiveIntervalConfiguration($cgShortcodeIntervalConfigurationContainer)){
+            return;
+        }
+
         var form = document.getElementById('cgShortcodeIntervalConfigurationForm');
         var formPostData = new FormData(form);
 
-        var $cgShortcodeIntervalConfigurationContainer = $('#cgShortcodeIntervalConfigurationContainer');
         var $cgShortcodeIntervalConfigurationForm = $cgShortcodeIntervalConfigurationContainer.find('#cgShortcodeIntervalConfigurationForm');
         $cgShortcodeIntervalConfigurationForm.addClass('cg_hide');
         $cgShortcodeIntervalConfigurationContainer.find('.cg-lds-dual-ring-gallery-hide').removeClass('cg_hide');

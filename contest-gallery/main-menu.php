@@ -276,8 +276,25 @@ The <b>cg_galleries_ecommerce</b> shortcode type <b>can be used only once per pa
 </div>
 HEREDOC;
 
+	if(!function_exists('cg_gallery_transfer_visual_import_box_html')){
+		function cg_gallery_transfer_visual_import_box_html(){
+			return '<div id="cgGalleryTransferContainer">'
+				.'<div class="cg-gallery-transfer-action cg-gallery-transfer-import cg_gallery_backend_action_block cg_gallery_backend_action_block_zip">'
+					.'<div class="cg-gallery-transfer-title">Import gallery ZIP</div>'
+					.'<form id="cgGalleryTransferImportForm" class="cg_gallery_backend_action_form" enctype="multipart/form-data">'
+						.'<input type="file" id="cgGalleryTransferImportFile" name="cg_gallery_transfer_zip" accept=".zip" />'
+						.'<input class="cg_backend_button cg_backend_button_gallery_action" type="submit" value="Upload ZIP" />'
+					.'</form>'
+				.'</div>'
+				.'<div id="cgGalleryTransferProgress" class="cg_hide"></div>'
+				.'<div id="cgGalleryTransferImportPreview" class="cg_hide"></div>'
+				.'</div>';
+		}
+	}
+
 	if(count($selectSQL)){
 		echo $cgGalleriesShortcodes;
+		echo cg_gallery_transfer_visual_import_box_html();
 		echo "<div id='cgViewControl' class='cg-main-menu'>
 <div class='cg_order'><select id='cgOrderSelect'>
 <option value='desc' $cg_order_desc_selected>id descend (order)</option>
@@ -301,10 +318,22 @@ HEREDOC;
 		echo '<input type="hidden" name="option_id" value="'.$nextID.'">';
 		echo '<input type="hidden" name="create" value="true">
 <input type="hidden" name="page" value="'.cg_get_version().'/index.php">';
-		echo "<button type='submit'  id='cgCreateFirstGalleryButton'>
-                <div class='cg_sub_2'>Add entries, edit upload and registration forms, and view available shortcodes</div>
-                <div class='cg_sub_1'>Create new gallery</div>
-                <div class='cg_sub_3'></div>
+		echo "<button type='submit'  id='cgCreateFirstGalleryButton' aria-label='Create new gallery'>
+                <span class='cg_first_gallery_badge'>Start your first contest</span>
+                <span class='cg_first_gallery_main'>
+                    <span class='cg_first_gallery_copy'>
+                        <span class='cg_sub_1'>Create new gallery</span>
+                        <span class='cg_sub_2'>Upload entries, customize forms and publish your gallery with shortcodes.</span>
+                    </span>
+                    <span class='cg_sub_3' aria-hidden='true'></span>
+                </span>
+                <span class='cg_first_gallery_chips' aria-hidden='true'>
+                    <span>Entries</span>
+                    <span>Upload form</span>
+                    <span>Registration</span>
+                    <span>Shortcodes</span>
+                </span>
+                <span class='cg_first_gallery_cta'>Get started</span>
             </button>";
 		echo '</form>';
 	}
@@ -412,6 +441,7 @@ $unix = time();
 
 
 		echo "<div class='td_gallery_buttons'>";
+		echo "<div class='td_gallery_buttons_row td_gallery_buttons_primary'>";
 
 		// EDIT GALLERY
 
@@ -463,6 +493,12 @@ $unix = time();
 		echo '<input  type="hidden" name="cg_delete_gallery" value="true"><input class=\'cg_backend_button\' type="button" value="Delete gallery" onClick="return cgJsClassAdmin.mainMenu.functions.cgCheckDelete(' . $option_id . ',' . ( intval( $Version ) ) . ',this,' . $EcommerceDownloadEntries . ')"></form></p></div>';
 
 		echo "</div>";
+		echo "<div class='td_gallery_buttons_row td_gallery_buttons_export'>";
+		echo cg_network_export_action_block_html($option_id,'main-menu');
+		echo '<div class="cg_button_edit cg_button_gallery_zip_export"><p>'.cg_gallery_transfer_export_button_html($option_id).'</p></div>';
+		echo "</div>";
+
+		echo "</div>";
 		echo "</div>";
 
 		echo "</div>";
@@ -473,6 +509,18 @@ $unix = time();
 echo "<br/>";
 
 echo '</div>';
+
+if(function_exists('cg_network_export_modal_container')){
+	cg_network_export_modal_container();
+}
+
+if(function_exists('cg_gallery_transfer_export_modal_html')){
+	echo cg_gallery_transfer_export_modal_html();
+}
+
+if(function_exists('cg_gallery_transfer_import_modal_html')){
+	echo cg_gallery_transfer_import_modal_html();
+}
 
 echo "<div id='cgCopyMessageContainer' class='cg_hide'>";
 

@@ -9,7 +9,10 @@ $galeryIDuser = sanitize_text_field($_REQUEST['galeryIDuser']);
 $galleryHash = sanitize_text_field($_REQUEST['galleryHash']);
 $galleryHashDecoded = wp_salt( 'auth').'---cngl1---'.$galeryIDuser;
 $galleryHashToCompare = cg_hash_function('---cngl1---'.$galeryIDuser, $galleryHash);
-$isFromSingleView = sanitize_text_field(sanitize_text_field($_REQUEST['isFromSingleView']));
+$isFromSingleView = 'false';
+if (isset($_REQUEST['isFromSingleView']) && is_scalar($_REQUEST['isFromSingleView'])) {
+    $isFromSingleView = sanitize_text_field(wp_unslash((string) $_REQUEST['isFromSingleView']));
+}
 /*error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 ini_set('error_reporting', E_ALL);*/

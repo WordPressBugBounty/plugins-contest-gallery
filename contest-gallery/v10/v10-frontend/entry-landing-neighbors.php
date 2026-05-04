@@ -126,6 +126,7 @@ if(!function_exists('cg1l_render_entry_landing_neighbors')){
 		$options['general'] = (!empty($options['general']) && is_array($options['general'])) ? $options['general'] : [];
 		$options['visual'] = (!empty($options['visual']) && is_array($options['visual'])) ? $options['visual'] : [];
 		$options['pro'] = (!empty($options['pro']) && is_array($options['pro'])) ? $options['pro'] : [];
+		$blogLookFullWindowActive = (!empty($options['visual']['BlogLookFullWindow']) && intval($options['visual']['BlogLookFullWindow']) === 1);
 
 		$options['general']['ThumbLook'] = 1;
 		$options['general']['SliderLook'] = 0;
@@ -138,7 +139,7 @@ if(!function_exists('cg1l_render_entry_landing_neighbors')){
 		$options['visual']['BlogLook'] = 0;
 		$options['visual']['BlogLookOrder'] = 3;
 		$options['visual']['ForwardToWpPageEntry'] = 1;
-		$options['visual']['ForwardToWpPageEntryInNewTab'] = (!empty($options['visual']['ForwardToWpPageEntryInNewTab'])) ? 1 : 0;
+		$options['visual']['ForwardToWpPageEntryInNewTab'] = ($blogLookFullWindowActive) ? 0 : ((!empty($options['visual']['ForwardToWpPageEntryInNewTab'])) ? 1 : 0);
 		$options['pro']['MinusVote'] = 0;
 		$options['pro']['PreselectSort'] = 'custom';
 

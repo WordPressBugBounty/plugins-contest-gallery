@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, openai
 Requires at least: 5.6
-Stable tag: 29.0.2
+Stable tag: 30.0.0
 Tested up to: 6.9.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -50,6 +50,22 @@ Create galleries (material, modern, responsive) and allow users to vote and comm
 == OpenAI ==
 * Create or edit images via OpenAI API
 * Add created or edited images to your WordPress media library
+
+== External services ==
+
+= Contest Gallery Network =
+Contest Gallery Network is an optional public gallery directory operated at https://www.contest-gallery.net/.
+
+The plugin contacts this service only when an administrator explicitly clicks "Publish to network" in the WordPress admin area and confirms the Contest Gallery Network privacy notice. After publishing, the listing is refreshed once daily by WordPress Cron while the plugin remains active. Administrators can remove the listing again with "Unpublish from Network".
+
+Submitted data includes public website and gallery listing information: website title and URL, gallery title, gallery description, tags/categories, the selected public gallery URL, preview image URLs, and public activity numbers such as entries, votes and comments.
+
+The plugin does not submit IP addresses, email addresses, usernames, registration data, comment text, form field values or other private user data to Contest Gallery Network.
+
+Contest Gallery Network may verify domain ownership, review submitted public content and images for safety, and publish the listing only if it passes review. If the service does not receive updates for 14 days, the public listing can expire and be removed from the Network index.
+
+Service privacy policy: https://www.contest-gallery.net/privacy-policy/
+Service terms: https://www.contest-gallery.net/terms-and-conditions/
 
 == Plugin limitations ==
 * **Since 2019: No uploads limitation anymore**
@@ -253,6 +269,19 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= 30.0.0 =
+* NEW: Added Contest Gallery Network publishing workflow for gallery listings, including update handling for already published galleries.
+* NEW: Added Gallery ZIP export and import to transfer galleries between sites, including entries, media files, votes, comments and user assignment options.
+* IMPROVED: Large gallery transfer handling with progress UI, temporary file cleanup and safer ZIP download/import processing.
+* IMPROVED: Backend user entry filtering can now show user related entry counts instead of only technical user IDs.
+* IMPROVED: Modernized backend option controls for a cleaner and more readable administration experience.
+* FIXED: Mobile full window browser back and edge gesture handling for the compact blog slider popover.
+* FIXED: Imported galleries could fail to render when video data was incomplete.
+* FIXED: "Thank you for voting" translation was not applied in all frontend voting message contexts.
+* FIXED: Registry/PIN form helper content could appear on gallery pages where it should not be visible.
+* FIXED: Backend sale image preview could appear empty in the selling activation area.
+* FIXED: Small bugs.
 
 = 29.0.2 =
 * NEW: Added a compact backend gallery dashboard with activity stats, trend graph and improved AJAX refresh behavior.

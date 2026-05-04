@@ -309,13 +309,7 @@ cgJsClassAdmin.index.functions = {
 
         $cg_main_container.find('a[href*="page='+version+'/index.php"]').each(function (){
             var href = $(this).attr('href');
-            if(href.indexOf('cg_nonce=')===-1){
-                var hrefWithNonce = href+'&cg_nonce='+cg_nonce;
-                $(this).attr('href',hrefWithNonce);
-            }else{
-                var url = cgJsClassAdmin.index.functions.replaceCgNonceInUrl(href,cg_nonce);
-                $(this).attr('href',url);
-            }
+            $(this).attr('href',cgJsClassAdmin.index.functions.addCgNonceToUrl(href,cg_nonce));
         });
 
         $cg_main_container.find('form').each(function (){
@@ -325,12 +319,8 @@ cgJsClassAdmin.index.functions = {
                 $(this).prepend($('<input type="hidden" id="cgNonce" name="cg_nonce" value="'+cg_nonce+'" />'))
             }
             var action = $(this).attr('action');
-            if(action && action.indexOf('cg_nonce=')===-1){
-                var hrefWithNonce = action+'&cg_nonce='+cg_nonce;
-                $(this).attr('action',hrefWithNonce);
-            }else if(action && action.indexOf('cg_nonce=')>-1){
-                var url = cgJsClassAdmin.index.functions.replaceCgNonceInUrl(action,cg_nonce);
-                $(this).attr('action',url);
+            if(action){
+                $(this).attr('action',cgJsClassAdmin.index.functions.addCgNonceToUrl(action,cg_nonce));
             }
         });
         if(replaceUrl){
@@ -339,6 +329,22 @@ cgJsClassAdmin.index.functions = {
                 window.history.replaceState({}, '', url);
             }
         }
+    },
+    addCgNonceToUrl: function (url,cg_nonce) {
+        if(!url){
+            return url;
+        }
+        if(url.indexOf('cg_nonce=')>-1){
+            return cgJsClassAdmin.index.functions.replaceCgNonceInUrl(url,cg_nonce);
+        }
+        var hash = '';
+        var hashPosition = url.indexOf('#');
+        if(hashPosition>-1){
+            hash = url.substr(hashPosition);
+            url = url.substr(0,hashPosition);
+        }
+        var separator = (url.indexOf('?')===-1) ? '?' : ((url.slice(-1)==='?' || url.slice(-1)==='&') ? '' : '&');
+        return url+separator+'cg_nonce='+cg_nonce+hash;
     },
     replaceCgNonceInUrl: function (url,cg_nonce) {
         return url.replace(/([?#&])cg_nonce=[^&#]*/, '$1cg_nonce=' + cg_nonce);

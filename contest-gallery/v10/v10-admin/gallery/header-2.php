@@ -118,7 +118,7 @@ echo '<input type="hidden" id="cg_admin_url" value="'. $admin_url .'">';
 <div class="cg_gallery_backend_upload_area">
     <!--<input type="number" value="" class="regular-text process_custom_images" id="process_custom_images" name="" max="10" min="1" step="10">-->
     <div class="cg_gallery_backend_upload_intro">
-        <div class="cg_gallery_backend_upload_intro_title">Upload files and media</div>
+        <div class="cg_gallery_backend_upload_intro_title">Add files and media to gallery</div>
         <div class="cg_gallery_backend_upload_intro_text">Add files, social embeds, or create images with OpenAI.</div>
     </div>
     <div id="cgAddImagesWpUploader">
@@ -149,6 +149,10 @@ if($cgVersion<7){
 echo "<div style='display:none;' id='cg_wp_upload_ids'></div>";
 echo "<div id='cg_wp_upload_div'></div>";
 echo "</div>";
+
+if(function_exists('cg_network_export_action_block_html')){
+	echo cg_network_export_action_block_html($GalleryID,'edit-gallery');
+}
 
 if(!empty($categories)){
 

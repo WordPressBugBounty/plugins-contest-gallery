@@ -38,6 +38,32 @@ if(!function_exists('cg1l_sanitize_files')){
 
         }
 
+        $frontendUploadFieldContent = [];
+        $frontendUploadImageUploadAllowed = true;
+        $frontendUploadAllowUploadJPG = 1;
+        $frontendUploadAllowUploadPNG = 1;
+        $frontendUploadAllowUploadGIF = 1;
+        $frontendUploadAllowUploadICO = 1;
+
+        if($isFrontendUpload){
+
+            global $wpdb;
+            $tablename_form_input = $wpdb->prefix . "contest_gal1ery_f_input";
+            $tablenameProOptions = $wpdb->prefix . "contest_gal1ery_pro_options";
+            $imageInputFieldContent = $wpdb->get_var($wpdb->prepare("SELECT Field_Content FROM $tablename_form_input WHERE GalleryID = %d AND Field_Type = 'image-f'", $galeryID));
+            $frontendUploadFieldContent = unserialize($imageInputFieldContent);
+            if(!is_array($frontendUploadFieldContent)){
+                $frontendUploadFieldContent = [];
+            }
+            $proOptions = $wpdb->get_row($wpdb->prepare("SELECT AllowUploadJPG, AllowUploadPNG, AllowUploadGIF, AllowUploadICO FROM $tablenameProOptions WHERE GalleryID = %d", $galeryID));
+            $frontendUploadAllowUploadJPG = (!empty($proOptions) && isset($proOptions->AllowUploadJPG)) ? intval($proOptions->AllowUploadJPG) : 1;
+            $frontendUploadAllowUploadPNG = (!empty($proOptions) && isset($proOptions->AllowUploadPNG)) ? intval($proOptions->AllowUploadPNG) : 1;
+            $frontendUploadAllowUploadGIF = (!empty($proOptions) && isset($proOptions->AllowUploadGIF)) ? intval($proOptions->AllowUploadGIF) : 1;
+            $frontendUploadAllowUploadICO = (!empty($proOptions) && isset($proOptions->AllowUploadICO)) ? intval($proOptions->AllowUploadICO) : 1;
+            $frontendUploadImageUploadAllowed = (!empty($frontendUploadFieldContent['file-type-img']) && $frontendUploadFieldContent['file-type-img'] == 'img') ? true : false;
+
+        }
+
         foreach($FILES[$keyFiles]['tmp_name'] as $key => $value){
 
             if(is_array($FILES[$keyFiles]['type'][$key])){// new processing
@@ -52,45 +78,54 @@ if(!function_exists('cg1l_sanitize_files')){
 
             if($isFrontendUpload){
 
-                global $wpdb;
-                $tablename_form_input = $wpdb->prefix . "contest_gal1ery_f_input";
-                $imageInputFieldContent = $wpdb->get_var("SELECT Field_Content FROM $tablename_form_input WHERE GalleryID = $galeryID AND Field_Type = 'image-f'");
-                $fieldContent = unserialize($imageInputFieldContent);
+                if(is_array($FILES[$keyFiles]['name'][$key])){// new processing
+                    $fileExtensionForTypeCheck = strtolower(pathinfo($FILES[$keyFiles]['name'][$key][0], PATHINFO_EXTENSION));
+                }else{
+                    $fileExtensionForTypeCheck = strtolower(pathinfo($FILES[$keyFiles]['name'][$key], PATHINFO_EXTENSION));
+                }
 
                 $notAllowedFileType = '';
-                if(empty($fieldContent['alternative-file-type-pdf']) &&  $type == 'application/pdf'){
+                if(($type == 'image/jpeg' || $type == 'image/jpg' || $type == 'image/x-citrix-jpeg' || $fileExtensionForTypeCheck == 'jpg' || $fileExtensionForTypeCheck == 'jpeg' || $fileExtensionForTypeCheck == 'jpe') && (!$frontendUploadImageUploadAllowed || empty($frontendUploadAllowUploadJPG))){
+                    $notAllowedFileType = 'jpg';
+                }elseif(($type == 'image/png' || $type == 'image/x-citrix-png' || $fileExtensionForTypeCheck == 'png') && (!$frontendUploadImageUploadAllowed || empty($frontendUploadAllowUploadPNG))){
+                    $notAllowedFileType = 'png';
+                }elseif(($type == 'image/gif' || $type == 'image/x-citrix-gif' || $fileExtensionForTypeCheck == 'gif') && (!$frontendUploadImageUploadAllowed || empty($frontendUploadAllowUploadGIF))){
+                    $notAllowedFileType = 'gif';
+                }elseif(($type == 'image/x-icon' || $type == 'image/vnd.microsoft.icon' || $fileExtensionForTypeCheck == 'ico') && (!$frontendUploadImageUploadAllowed || empty($frontendUploadAllowUploadICO))){
+                    $notAllowedFileType = 'ico';
+                }elseif(empty($frontendUploadFieldContent['alternative-file-type-pdf']) &&  $type == 'application/pdf'){
                     $notAllowedFileType = 'pdf';
-                }elseif(empty($fieldContent['alternative-file-type-zip']) &&  $type == 'application/x-zip-compressed'){
+                }elseif(empty($frontendUploadFieldContent['alternative-file-type-zip']) &&  ($type == 'application/x-zip-compressed' || $type == 'application/zip')){
                     $notAllowedFileType = 'zip';
-                }elseif(empty($fieldContent['alternative-file-type-txt']) && $type == 'text/plain'){
+                }elseif(empty($frontendUploadFieldContent['alternative-file-type-txt']) && $type == 'text/plain'){
                     $notAllowedFileType = 'txt';
-                }elseif(empty($fieldContent['alternative-file-type-doc']) && $type == 'application/msword'){
+                }elseif(empty($frontendUploadFieldContent['alternative-file-type-doc']) && $type == 'application/msword'){
                     $notAllowedFileType = 'doc';
-                }elseif(empty($fieldContent['alternative-file-type-docx']) && $type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
+                }elseif(empty($frontendUploadFieldContent['alternative-file-type-docx']) && $type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
                     $notAllowedFileType = 'docx';
-                }elseif(empty($fieldContent['alternative-file-type-xls']) && $type == 'application/vnd.ms-excel'){
+                }elseif(empty($frontendUploadFieldContent['alternative-file-type-xls']) && $type == 'application/vnd.ms-excel'){
                     $notAllowedFileType = 'xls';
-                }elseif(empty($fieldContent['alternative-file-type-xlsx']) && $type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
+                }elseif(empty($frontendUploadFieldContent['alternative-file-type-xlsx']) && $type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
                     $notAllowedFileType = 'xlsx';
-                }elseif(empty($fieldContent['alternative-file-type-csv']) && $type == 'text/csv'){
+                }elseif(empty($frontendUploadFieldContent['alternative-file-type-csv']) && $type == 'text/csv'){
                     $notAllowedFileType = 'csv';
-                }elseif(empty($fieldContent['alternative-file-type-mp3']) && $type == 'audio/mpeg'){
+                }elseif(empty($frontendUploadFieldContent['alternative-file-type-mp3']) && $type == 'audio/mpeg'){
                     $notAllowedFileType = 'mp3';
-                }elseif(empty($fieldContent['alternative-file-type-m4a']) && $type == 'audio/x-m4a'){
+                }elseif(empty($frontendUploadFieldContent['alternative-file-type-m4a']) && $type == 'audio/x-m4a'){
                     $notAllowedFileType = 'm4a';
-                }elseif(empty($fieldContent['alternative-file-type-ogg']) && $type == 'audio/ogg'){
+                }elseif(empty($frontendUploadFieldContent['alternative-file-type-ogg']) && $type == 'audio/ogg'){
                     $notAllowedFileType = 'ogg';
-                }elseif(empty($fieldContent['alternative-file-type-wav']) && $type == 'audio/wav'){
+                }elseif(empty($frontendUploadFieldContent['alternative-file-type-wav']) && $type == 'audio/wav'){
                     $notAllowedFileType = 'wav';
-                }elseif(empty($fieldContent['alternative-file-type-mp4']) && $type == 'video/mp4'){
+                }elseif(empty($frontendUploadFieldContent['alternative-file-type-mp4']) && $type == 'video/mp4'){
                     $notAllowedFileType = 'mp4';
-                }elseif(empty($fieldContent['alternative-file-type-webm']) && $type == 'video/webm'){
+                }elseif(empty($frontendUploadFieldContent['alternative-file-type-webm']) && $type == 'video/webm'){
                     $notAllowedFileType = 'webm';
-                }elseif(empty($fieldContent['alternative-file-type-mov']) && $type == 'video/quicktime'){
+                }elseif(empty($frontendUploadFieldContent['alternative-file-type-mov']) && $type == 'video/quicktime'){
                     $notAllowedFileType = 'mov';
-                }elseif(empty($fieldContent['alternative-file-type-ppt']) && $type == 'application/vnd.ms-powerpoint'){
+                }elseif(empty($frontendUploadFieldContent['alternative-file-type-ppt']) && $type == 'application/vnd.ms-powerpoint'){
                     $notAllowedFileType = 'ppt';
-                }elseif(empty($fieldContent['alternative-file-type-pptx']) && $type == 'application/vnd.openxmlformats-officedocument.presentationml.presentation'){
+                }elseif(empty($frontendUploadFieldContent['alternative-file-type-pptx']) && $type == 'application/vnd.openxmlformats-officedocument.presentationml.presentation'){
                     $notAllowedFileType = 'pptx';
                }
 
@@ -256,6 +291,4 @@ if(!function_exists('cg1l_sanitize_files')){
         return $FILES;
     }
 }
-
-
 

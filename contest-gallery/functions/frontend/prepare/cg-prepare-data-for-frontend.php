@@ -545,11 +545,37 @@ if (!function_exists('cg1l_frontend_is_shortcode_allowed_for_entry')) {
     }
 }
 
+if (!function_exists('cg1l_frontend_has_active_category_upload_field')) {
+    function cg1l_frontend_has_active_category_upload_field($formUploadFullData)
+    {
+        if (!is_array($formUploadFullData) || empty($formUploadFullData)) {
+            return false;
+        }
+
+        foreach ($formUploadFullData as $field) {
+            if (
+                is_array($field) &&
+                !empty($field['Field_Type']) &&
+                $field['Field_Type'] === 'selectc-f' &&
+                (!isset($field['Active']) || intval($field['Active']) === 1)
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
 if (!function_exists('cg1l_frontend_is_category_allowed_for_entry')) {
-    function cg1l_frontend_is_category_allowed_for_entry($fullData, $categoriesFullData, $options)
+    function cg1l_frontend_is_category_allowed_for_entry($fullData, $categoriesFullData, $options, $formUploadFullData = null)
     {
         if (!is_array($fullData)) {
             return false;
+        }
+
+        if (is_array($formUploadFullData) && !cg1l_frontend_has_active_category_upload_field($formUploadFullData)) {
+            return true;
         }
 
         $categoryId = (!empty($fullData['Category'])) ? absint($fullData['Category']) : 0;
@@ -567,7 +593,7 @@ if (!function_exists('cg1l_frontend_is_category_allowed_for_entry')) {
 }
 
 if (!function_exists('cg1l_frontend_get_entry_filter_block_reason')) {
-    function cg1l_frontend_get_entry_filter_block_reason($shortcode_name, $fullData, $categoriesFullData, $options, $WpUserId = 0)
+    function cg1l_frontend_get_entry_filter_block_reason($shortcode_name, $fullData, $categoriesFullData, $options, $WpUserId = 0, $formUploadFullData = null)
     {
         if (!is_array($fullData)) {
             return [];
@@ -579,7 +605,7 @@ if (!function_exists('cg1l_frontend_get_entry_filter_block_reason')) {
             ];
         }
 
-        if (cg1l_frontend_is_category_allowed_for_entry($fullData, $categoriesFullData, $options)) {
+        if (cg1l_frontend_is_category_allowed_for_entry($fullData, $categoriesFullData, $options, $formUploadFullData)) {
             return [];
         }
 
@@ -607,7 +633,7 @@ if (!function_exists('cg1l_frontend_get_entry_filter_block_reason')) {
 }
 
 if (!function_exists('cg1l_frontend_get_allowed_real_ids')) {
-    function cg1l_frontend_get_allowed_real_ids($imagesFullData, $shortcode_name, $categoriesFullData, $options, $WpUserId = 0)
+    function cg1l_frontend_get_allowed_real_ids($imagesFullData, $shortcode_name, $categoriesFullData, $options, $WpUserId = 0, $formUploadFullData = null)
     {
         if (!is_array($imagesFullData)) {
             return [];
@@ -620,7 +646,7 @@ if (!function_exists('cg1l_frontend_get_allowed_real_ids')) {
                 continue;
             }
 
-            if (!cg1l_frontend_is_category_allowed_for_entry($fullData, $categoriesFullData, $options)) {
+            if (!cg1l_frontend_is_category_allowed_for_entry($fullData, $categoriesFullData, $options, $formUploadFullData)) {
                 continue;
             }
 
@@ -1678,31 +1704,49 @@ if (!function_exists('cg1l_set_slider_data')) {
     function cg1l_set_slider_data($fullData,&$dataSlider,$options,$countUserVotes,$downloadSaleEntryIdsLookup = []){
         $Width = '';
         $Height = '';
+        $id = (!empty($fullData['id'])) ? intval($fullData['id']) : 0;
+        if(empty($id)){
+            return $dataSlider;
+        }
+        $imgType = (isset($fullData['ImgType'])) ? $fullData['ImgType'] : '';
+        $guid = (isset($fullData['guid'])) ? $fullData['guid'] : '';
+        $medium = (isset($fullData['medium'])) ? $fullData['medium'] : '';
+        $full = (isset($fullData['full'])) ? $fullData['full'] : '';
+        $postContent = (isset($fullData['post_content'])) ? $fullData['post_content'] : '';
+        $countC = (isset($fullData['CountC'])) ? $fullData['CountC'] : 0;
+        $namePic = (isset($fullData['NamePic'])) ? $fullData['NamePic'] : '';
+        $thumbSource = '';
         $sliderPopoverFallbackBasename = '';
-        if(cg_is_is_image($fullData['ImgType'])){
-            $isDownloadSaleEntry = !empty($fullData['id']) && !empty($downloadSaleEntryIdsLookup[intval($fullData['id'])]);
+        if(!isset($fullData['CountS'])){
+            $fullData['CountS'] = 0;
+        }
+        if(!isset($fullData['addCountS'])){
+            $fullData['addCountS'] = 0;
+        }
+        if(cg_is_is_image($imgType)){
+            $isDownloadSaleEntry = !empty($downloadSaleEntryIdsLookup[$id]);
             if($isDownloadSaleEntry){
-                if(!empty($fullData['full'])){
-                    $thumbSource = $fullData['full'];
-                }elseif(!empty($fullData['guid'])){
-                    $thumbSource = $fullData['guid'];
+                if(!empty($full)){
+                    $thumbSource = $full;
+                }elseif(!empty($guid)){
+                    $thumbSource = $guid;
                 }else{
-                    $thumbSource = $fullData['medium'];
+                    $thumbSource = $medium;
                 }
             }else{
-                $thumbSource = $fullData['medium'];
+                $thumbSource = (!empty($medium)) ? $medium : $guid;
             }
             $sliderPopoverFallbackBasename = cg1l_get_slider_popover_fallback_basename($fullData);
-        }elseif($fullData['ImgType'] == 'twt' || $fullData['ImgType'] == 'tkt'){
-            $thumbSource = $fullData['post_content'];
-        }elseif(cg_is_alternative_file_type_video($fullData['ImgType'])){
-            $Width = $fullData['Width'];
-            $Height = $fullData['Height'];
-            $thumbSource = $fullData['guid'];
+        }elseif($imgType == 'twt' || $imgType == 'tkt'){
+            $thumbSource = $postContent;
+        }elseif(cg_is_alternative_file_type_video($imgType)){
+            $Width = (isset($fullData['Width'])) ? $fullData['Width'] : '';
+            $Height = (isset($fullData['Height'])) ? $fullData['Height'] : '';
+            $thumbSource = $guid;
         }else{
-            $thumbSource = $fullData['guid'];
+            $thumbSource = $guid;
         }
-        $dataSlider[$fullData['id']] = [$thumbSource,cg1l_get_rating_count($fullData,$options),$countUserVotes,$fullData['CountC'],$Width,$Height,$fullData['ImgType'],$fullData['NamePic'],$sliderPopoverFallbackBasename];
+        $dataSlider[$id] = [$thumbSource,cg1l_get_rating_count($fullData,$options),$countUserVotes,$countC,$Width,$Height,$imgType,$namePic,$sliderPopoverFallbackBasename];
         return $dataSlider;
     }
 }

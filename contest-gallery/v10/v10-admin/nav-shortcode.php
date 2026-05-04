@@ -34,9 +34,7 @@ echo "<div class='td_gallery_info_shortcode $cgProFalse' >
       <div class='td_gallery_info_name_title'>Google sign in button</div>
       <div class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip'>[cg_google_sign_in]</div>
         <div class='cg-info-icon-parent'>
-            <div class=\"cg-info-icon\">read info
-    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide'   data-cg-shortcode='cg_google_sign_in'  ></div>
-    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide'   data-cg-shortcode='cg_google_sign_in'  ></div></div>
+            <div class=\"cg-info-icon\">read info</div>
             <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;\">
             Displays the Google Sign-In button.<br>
 <b>Can be used only once per page</b>.<br><br>
@@ -48,6 +46,8 @@ because it's options are general and apply to all galleries.</span>
         </div>
     </div>
     <div class='td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide'   data-cg-shortcode='cg_google_sign_in'  ></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide'   data-cg-shortcode='cg_google_sign_in'  ></div>
     <div class='td_gallery_info_shortcode_conf cg_tooltip $hideIntervalForGeneralForBefore14' data-cg-shortcode='cg_google_sign_in' data-cg-title-main='Google sign in button' data-cg-title-sub='[cg_google_sign_in]'></div>
 </div>";
 
@@ -63,10 +63,7 @@ echo "<div>
       <div class='td_gallery_info_name_title td_gallery_info_name_title_large'>Voting gallery</div>
       <div class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip'>[cg_gallery id=\"".$galeryNR."\"]</div>
         <div class='cg-info-icon-parent'>
-            <div class=\"cg-info-icon\">read info
-                <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide'   data-cg-shortcode='cg_gallery'  ></div>
-                <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide'   data-cg-shortcode='cg_gallery'  ></div>
-            </div>
+            <div class=\"cg-info-icon\">read info</div>
             <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;\">Shows <b>all activated entries</b> in the gallery.<br>
 Visitors <b>can vote</b> on entries.<br>
 Place the gallery shortcode <b>as often as you like</b><br>
@@ -75,6 +72,8 @@ by assigning different <b>id’s</b>.
         </div>
     </div>
     <div class='td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide'   data-cg-shortcode='cg_gallery'  ></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide'   data-cg-shortcode='cg_gallery'  ></div>
     <div class='td_gallery_info_shortcode_conf   cg_tooltip'  data-cg-shortcode='cg_gallery'  data-cg-title-main='Voting gallery' data-cg-title-sub='[cg_gallery id=\"".$galeryNR."\"]'></div>
 </div>";
 echo "<div class='td_gallery_info_shortcode'>";
@@ -83,9 +82,7 @@ echo "<div>
      <div class='td_gallery_info_name_title'>Logged in user files only</div>
     <div class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip'>[cg_gallery_user id=\"".$galeryNR."\"]</div>
         <div class='cg-info-icon-parent'>
-            <div class=\"cg-info-icon\">read info
-    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide '   data-cg-shortcode='cg_gallery_user'  ></div>
-    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide'   data-cg-shortcode='cg_gallery_user'  ></div></div>
+            <div class=\"cg-info-icon\">read info</div>
             <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;\">Shows only the entries uploaded by the logged-in user.<br>
 Voting is <b>not available</b>.<br>
 All votes are always displayed.<br>
@@ -103,6 +100,8 @@ can be configured in the <b>\"Upload options\"</b>.
         </div>
     </div>
     <div class='td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide '   data-cg-shortcode='cg_gallery_user'  ></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide'   data-cg-shortcode='cg_gallery_user'  ></div>
     <div class='td_gallery_info_shortcode_conf   cg_tooltip'  data-cg-shortcode='cg_gallery_user'  data-cg-title-main='Logged in user files only' data-cg-title-sub='[cg_gallery_user id=\"".$galeryNR."\"]'></div>";
 
 echo "</div>";
@@ -117,13 +116,13 @@ echo "<div class='td_gallery_info_shortcode' >
      <div class='td_gallery_info_name_title'>Upload form</div>
     <div class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip'>[cg_users_upload id=\"".$galeryNR."\"]</div>
         <div class='cg-info-icon-parent'>
-            <div class=\"cg-info-icon\">read info
-    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide ' data-cg-shortcode='cg_users_upload' ></div>
-    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide' data-cg-shortcode='cg_users_upload' ></div></div>
+            <div class=\"cg-info-icon\">read info</div>
     <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;\">Displays the <b>upload form</b>.<br>
 Can be used multiple times on a page with different <b>id’s</b>.</div>
     </div>
     <div class='td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide ' data-cg-shortcode='cg_users_upload' ></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide' data-cg-shortcode='cg_users_upload' ></div>
     <div class='td_gallery_info_shortcode_conf   cg_tooltip'  data-cg-shortcode='cg_users_upload'  data-cg-title-main='Upload form' data-cg-title-sub='[cg_users_upload id=\"".$galeryNR."\"]'></div>
 </div>";
 
@@ -132,9 +131,7 @@ echo "<div>
      <div class='td_gallery_info_name_title'>Gallery without voting</div>
     <div class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip'>[cg_gallery_no_voting id=\"".$galeryNR."\"]</div>
         <div class='cg-info-icon-parent'>
-            <div class=\"cg-info-icon\">read info
-    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide '   data-cg-shortcode='cg_gallery_no_voting'  ></div>
-    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide'   data-cg-shortcode='cg_gallery_no_voting'  ></div></div>
+            <div class=\"cg-info-icon\">read info</div>
             <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;\">All <b>activated entries</b> are <b>visible</b>.<br>
 <b>Voting, sorting by votes</b>, and <b>preselecting by votes</b> options are <b>not available</b> and not displayed.<br>
 Can be used as a <b>normal gallery without voting</b>.<br>
@@ -143,6 +140,8 @@ Can be placed multiple times on a page using different <b>id’s</b>.
         </div>
     </div>
     <div class='td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide '   data-cg-shortcode='cg_gallery_no_voting'  ></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide'   data-cg-shortcode='cg_gallery_no_voting'  ></div>
     <div class='td_gallery_info_shortcode_conf   cg_tooltip'  data-cg-shortcode='cg_gallery_no_voting'  data-cg-title-main='Gallery without voting' data-cg-title-sub='[cg_gallery_no_voting id=\"".$galeryNR."\"]'></div>
 ";
 echo "</div>";
@@ -186,9 +185,7 @@ echo "<div class='td_gallery_info_shortcode'>
          <div class='td_gallery_info_name_title'><span class='td_gallery_info_name_title_span $cg_v14_note_caret'>User form</span></div>
     <div class='td_gallery_info_name_span td_gallery_info_name_span_user_form'><span class='td_gallery_info_name_span_box td_gallery_info_name_span_box_primary cg_shortcode_copy cg_tooltip'>[cg_users_reg]</span><span class='td_gallery_info_name_span_separator'>or</span><span class='td_gallery_info_name_span_box cg_shortcode_copy cg_tooltip'>[cg_users_pin]</span></div>
         <div class='cg-info-icon-parent'>
-            <span class=\"cg-info-icon $cg_v14_note_caret\">read info
-    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide'    data-cg-shortcode='cg_users_reg'  ></div>
-    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide'   data-cg-shortcode='cg_users_reg'  ></div></span>
+            <span class=\"cg-info-icon $cg_v14_note_caret\">read info</span>
 <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;min-width: 350px;\">
 Displays the <b>user registration form</b>.<br><b>Hidden</b> by default if <b>logged in</b><br>
 <br>
@@ -207,6 +204,8 @@ $cg_v14_note_caret_text</span>
         </div>
     </div>
     <div class='td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide'    data-cg-shortcode='cg_users_reg'  ></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide'   data-cg-shortcode='cg_users_reg'  ></div>
     <div class='td_gallery_info_shortcode_conf   cg_tooltip $hideIntervalForGeneralForBefore14'  data-cg-shortcode='cg_users_reg'  data-cg-title-main='User registration form' data-cg-title-sub='[cg_users_reg] and [cg_users_pin]'></div>
 </div>";
 
@@ -216,9 +215,7 @@ echo "<div>
          <div class='td_gallery_info_name_title'>Gallery of selected winners</div>
     <div class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip'>[cg_gallery_winner id=\"".$galeryNR."\"]</div>
         <div class='cg-info-icon-parent'>
-            <div class=\"cg-info-icon\">read info
-    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide'  data-cg-shortcode='cg_gallery_winner' ></div>
-    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide'   data-cg-shortcode='cg_gallery_winner' ></div></div>
+            <div class=\"cg-info-icon\">read info</div>
             <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;\">Only <b>activated entries marked as winners</b> are displayed.<br>
 Total <b>voting is visible</b> but <b>can’t be voted</b>.<br>
 The options <b>\"Hide until vote\"</b> and <b>\"Show only user votes\"</b> are disabled.<br>
@@ -229,6 +226,8 @@ Can be added multiple times on a page with different <b>id’s</b>.
         </div>
     </div>
     <div class='td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide'  data-cg-shortcode='cg_gallery_winner' ></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide'   data-cg-shortcode='cg_gallery_winner' ></div>
     <div class='td_gallery_info_shortcode_conf   cg_tooltip'  data-cg-shortcode='cg_gallery_winner' data-cg-title-main='Gallery of selected winners' data-cg-title-sub='[cg_gallery_winner id=\"".$galeryNR."\"]'></div>";
 echo "</div></div>";
 
@@ -255,13 +254,13 @@ echo "<div class='td_gallery_info_shortcode'  >
         <div class='td_gallery_info_name_title'><span class='td_gallery_info_name_title_span $cg_v14_note_caret'>User login</span></div>
     <div class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip'>[cg_users_login$cgGalleryIdToShowForGeneralShortcodes]</div>
         <div class='cg-info-icon-parent'>
-            <span class=\"cg-info-icon $cg_v14_note_caret\">read info
-    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide'  data-cg-shortcode='cg_users_login'  ></div>
-    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide'  data-cg-shortcode='cg_users_login'   ></div></span>
+            <span class=\"cg-info-icon $cg_v14_note_caret\">read info</span>
 <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;\">Displays login form.<br><br>Login form is <b>invisible if logged in.</b><br><br><b>Can be used only once per page.</b>$cg_v14_note_caret_text</span>
         </div>
     </div>
     <div class='td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide'  data-cg-shortcode='cg_users_login'  ></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide'  data-cg-shortcode='cg_users_login'   ></div>
     <div class='td_gallery_info_shortcode_conf   cg_tooltip $hideIntervalForGeneralForBefore14'  data-cg-shortcode='cg_users_login'  data-cg-title-main='User login' data-cg-title-sub='[cg_users_login]'></div>
 </div>";
 
@@ -276,9 +275,7 @@ echo "<div>
          <div class='td_gallery_info_name_title'>Sell products gallery</div>
     <div class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip'>[cg_gallery_ecommerce id=\"".$galeryNR."\"]</div>
         <div class='cg-info-icon-parent'>
-            <div class=\"cg-info-icon\">read info
-    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide'  data-cg-shortcode='cg_gallery_ecommerce' ></div>
-    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide'   data-cg-shortcode='cg_gallery_ecommerce' ></div></div>
+            <div class=\"cg-info-icon\">read info</div>
             <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;left:5%;\">Displays only entries that are activated for selling.<br>
 Every entry can be activated for selling.<br>
 Use the <b>\"Sales settings\"</b> button to activate an entry for selling.<br>
@@ -291,6 +288,8 @@ Example: <b>[cg_gallery_ecommerce id=\"$galeryNR\" test=\"true\"]</b>
         </div>
     </div>
     <div class='td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip'></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_on   cg_tooltip cg_hide'  data-cg-shortcode='cg_gallery_ecommerce' ></div>
+    <div class='td_gallery_info_shortcode_conf_status td_gallery_info_shortcode_conf_status_off   cg_tooltip cg_hide'   data-cg-shortcode='cg_gallery_ecommerce' ></div>
     <div class='td_gallery_info_shortcode_conf   cg_tooltip'  data-cg-shortcode='cg_gallery_ecommerce' data-cg-title-main='Sell products gallery' data-cg-title-sub='[cg_gallery_ecommerce id=\"".$galeryNR."\"]'></div>";
 echo "</div></div>";
 echo "</div>";

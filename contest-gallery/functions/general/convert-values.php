@@ -91,9 +91,34 @@ if(!function_exists('contest_gal1ery_no_convert')){
     }
 }
 
+if(!function_exists('cg1l_convert_mixed_value_to_string')){
+    function cg1l_convert_mixed_value_to_string($content){
+        if(is_array($content)){
+            foreach($content as $value){
+                $value = cg1l_convert_mixed_value_to_string($value);
+                if($value !== ''){
+                    return $value;
+                }
+            }
+            return '';
+        }
+
+        if(is_object($content) || is_resource($content) || $content === null || $content === false){
+            return '';
+        }
+
+        if(is_bool($content)){
+            return ($content) ? '1' : '';
+        }
+
+        return (string)$content;
+    }
+}
+
 if(!function_exists('cg_stripslashes_recursively')){
     function cg_stripslashes_recursively ($content){
         if(!empty($content)){
+            $content = cg1l_convert_mixed_value_to_string($content);
             $content=implode("",explode("\\",$content));
             return stripslashes(trim($content));
         }else{
@@ -105,7 +130,7 @@ if(!function_exists('cg_stripslashes_recursively')){
 if(!function_exists('contest_gal1ery_convert_for_html_output_without_nl2br')){
     function contest_gal1ery_convert_for_html_output_without_nl2br ($content){
         if(!empty($content)){
-            $content = trim($content);
+            $content = trim(cg1l_convert_mixed_value_to_string($content));
         }else{
             $content = '';
         }
@@ -252,6 +277,9 @@ if(!function_exists('cg1l_load_language_file_categorized')){
             echo "FILE NOT FOUND: $file<br>";
             return;
         }
+
+        // Frontend language payloads must respect custom frontend translations.
+        $is_frontend = true;
 
         // Lokale Variablen VOR dem Include
         $before = array_keys(get_defined_vars());

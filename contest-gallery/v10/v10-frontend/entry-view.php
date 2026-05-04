@@ -150,6 +150,8 @@ if(!function_exists('cg1l_render_single_entry_view')){
         };
 
         $formatExifDateTimeOriginal = function($dateTimeOriginal, $format) {
+            $dateTimeOriginal = cg1l_convert_mixed_value_to_string($dateTimeOriginal);
+
             if(empty($dateTimeOriginal)){
                 return '';
             }
@@ -179,6 +181,7 @@ if(!function_exists('cg1l_render_single_entry_view')){
         };
 
         $renderExifInfoRow = function($classes, $imageClass, $textClass, $value) {
+            $value = cg1l_convert_mixed_value_to_string($value);
             return '<div class="'.esc_attr($classes).'"><span class="'.esc_attr($imageClass).'"></span><span class="'.esc_attr($textClass).'">'.contest_gal1ery_convert_for_html_output_without_nl2br($value).'</span></div>';
         };
 
@@ -498,9 +501,9 @@ if(!function_exists('cg1l_render_single_entry_view')){
                 if(!isset($options['general']['ShowExifModel']) || intval($options['general']['ShowExifModel']) === 1){
                     $makeAndModel = '';
                     if(!empty($exifData['MakeAndModel'])){
-                        $makeAndModel = $exifData['MakeAndModel'];
+                        $makeAndModel = cg1l_convert_mixed_value_to_string($exifData['MakeAndModel']);
                     }elseif(!empty($exifData['Model'])){
-                        $makeAndModel = $exifData['Model'];
+                        $makeAndModel = cg1l_convert_mixed_value_to_string($exifData['Model']);
                     }
 
                     if(!empty($makeAndModel)){
@@ -509,19 +512,19 @@ if(!function_exists('cg1l_render_single_entry_view')){
                 }
 
                 if((!isset($options['general']['ShowExifApertureFNumber']) || intval($options['general']['ShowExifApertureFNumber']) === 1) && !empty($exifData['ApertureFNumber'])){
-                    $exifApertureFNumber = $exifData['ApertureFNumber'];
+                    $exifApertureFNumber = cg1l_convert_mixed_value_to_string($exifData['ApertureFNumber']);
                 }
 
                 if((!isset($options['general']['ShowExifExposureTime']) || intval($options['general']['ShowExifExposureTime']) === 1) && !empty($exifData['ExposureTime'])){
-                    $exifExposureTime = $exifData['ExposureTime'];
+                    $exifExposureTime = cg1l_convert_mixed_value_to_string($exifData['ExposureTime']);
                 }
 
                 if((!isset($options['general']['ShowExifISOSpeedRatings']) || intval($options['general']['ShowExifISOSpeedRatings']) === 1) && !empty($exifData['ISOSpeedRatings'])){
-                    $exifISOSpeedRatings = $exifData['ISOSpeedRatings'];
+                    $exifISOSpeedRatings = cg1l_convert_mixed_value_to_string($exifData['ISOSpeedRatings']);
                 }
 
                 if((!isset($options['general']['ShowExifFocalLength']) || intval($options['general']['ShowExifFocalLength']) === 1) && !empty($exifData['FocalLength'])){
-                    $exifFocalLength = $exifData['FocalLength'];
+                    $exifFocalLength = cg1l_convert_mixed_value_to_string($exifData['FocalLength']);
                 }
 
             }

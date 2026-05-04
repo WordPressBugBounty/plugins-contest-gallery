@@ -1,4 +1,6 @@
 <?php
+include_once(__DIR__.'/../v10/v10-admin/gallery-transfer/gallery-transfer.php');
+
 if (!function_exists('cg_backend_ajax_error_json')) {
     function cg_backend_ajax_error_json($message, $status = 400, $code = 'cg_backend_ajax_error') {
         wp_send_json_error(array(
@@ -1209,18 +1211,30 @@ if (!function_exists('post_cg_backend_gallery_user_filter_options')) {
 		$tablename = $wpdb->prefix . "contest_gal1ery";
 		$wpUsers = $wpdb->base_prefix . "users";
 
+		$formatEntryCountText = function($count){
+			$count = intval($count);
+			return $count . ' ' . (($count === 1) ? 'entry' : 'entries');
+		};
+
+		$totalEntriesCount = intval($wpdb->get_var($wpdb->prepare(
+			"SELECT COUNT(*) FROM $tablename WHERE GalleryID = %d",
+			array($GalleryID)
+		)));
+
+		$withoutUserCount = intval($wpdb->get_var($wpdb->prepare(
+			"SELECT COUNT(*) FROM $tablename WHERE GalleryID = %d AND WpUserId = 0",
+			array($GalleryID)
+		)));
+
 		$options = array();
 		$selectedOption = array(
 			'value' => '',
-				'label' => 'All user entries'
+				'label' => 'All user entries (' . $formatEntryCountText($totalEntriesCount) . ')'
 		);
 		$resolvedValue = '';
 		$seenValues = array();
 
-		$hasWithoutUser = intval($wpdb->get_var($wpdb->prepare(
-			"SELECT COUNT(*) FROM $tablename WHERE GalleryID = %d AND WpUserId = 0",
-			array($GalleryID)
-		))) > 0;
+		$hasWithoutUser = ($withoutUserCount > 0);
 
 		$selectedUserId = 0;
 		if($selectedValue !== '0'){
@@ -1232,13 +1246,15 @@ if (!function_exists('post_cg_backend_gallery_user_filter_options')) {
 			$resolvedValue = '0';
 			$selectedOption = array(
 				'value' => '0',
-					'label' => 'Without registered user'
+					'label' => 'Without registered user (' . $formatEntryCountText($withoutUserCount) . ')'
 			);
 		} elseif(!empty($selectedUserId)) {
 			$selectedUser = $wpdb->get_row($wpdb->prepare(
-				"SELECT DISTINCT $wpUsers.ID, $wpUsers.user_login
-				FROM $wpUsers, $tablename
-				WHERE $tablename.GalleryID = %d AND $tablename.WpUserId = %d AND $wpUsers.ID = $tablename.WpUserId
+				"SELECT $wpUsers.ID, $wpUsers.user_login, COUNT($tablename.id) AS entries_count
+				FROM $tablename
+				INNER JOIN $wpUsers ON $wpUsers.ID = $tablename.WpUserId
+				WHERE $tablename.GalleryID = %d AND $tablename.WpUserId = %d
+				GROUP BY $wpUsers.ID, $wpUsers.user_login
 				LIMIT 1",
 				array($GalleryID, $selectedUserId)
 			));
@@ -1246,14 +1262,14 @@ if (!function_exists('post_cg_backend_gallery_user_filter_options')) {
 				$resolvedValue = (string)$selectedUser->ID;
 				$selectedOption = array(
 					'value' => $resolvedValue,
-					'label' => $selectedUser->user_login . ' (ID: ' . $selectedUser->ID . ')'
+					'label' => $selectedUser->user_login . ' (' . $formatEntryCountText($selectedUser->entries_count) . ')'
 				);
 			}
 		}
 
 		$options[] = array(
 			'value' => '',
-				'label' => 'All user entries',
+				'label' => 'All user entries (' . $formatEntryCountText($totalEntriesCount) . ')',
 			'selected' => ($resolvedValue === '')
 		);
 		$seenValues[] = '';
@@ -1261,15 +1277,16 @@ if (!function_exists('post_cg_backend_gallery_user_filter_options')) {
 		if($hasWithoutUser){
 			$options[] = array(
 				'value' => '0',
-				'label' => 'Without registered user',
+				'label' => 'Without registered user (' . $formatEntryCountText($withoutUserCount) . ')',
 				'selected' => ($resolvedValue === '0')
 			);
 			$seenValues[] = '0';
 		}
 
-		$query = "SELECT DISTINCT $wpUsers.ID, $wpUsers.user_login
-			FROM $wpUsers, $tablename
-			WHERE $tablename.GalleryID = %d AND $tablename.WpUserId > 0 AND $wpUsers.ID = $tablename.WpUserId";
+		$query = "SELECT $wpUsers.ID, $wpUsers.user_login, COUNT($tablename.id) AS entries_count
+			FROM $tablename
+			INNER JOIN $wpUsers ON $wpUsers.ID = $tablename.WpUserId
+			WHERE $tablename.GalleryID = %d AND $tablename.WpUserId > 0";
 
 		$queryArgs = array($GalleryID);
 
@@ -1282,7 +1299,7 @@ if (!function_exists('post_cg_backend_gallery_user_filter_options')) {
 			$queryArgs[] = $like;
 		}
 
-		$query .= " ORDER BY $wpUsers.user_login ASC LIMIT 100";
+		$query .= " GROUP BY $wpUsers.ID, $wpUsers.user_login ORDER BY $wpUsers.user_login ASC LIMIT 100";
 
 		$selectWPusers = $wpdb->get_results($wpdb->prepare($query, $queryArgs));
 
@@ -1291,7 +1308,7 @@ if (!function_exists('post_cg_backend_gallery_user_filter_options')) {
 				$userValue = (string)$user->ID;
 				$options[] = array(
 					'value' => $userValue,
-					'label' => $user->user_login . ' (ID: ' . $user->ID . ')',
+					'label' => $user->user_login . ' (' . $formatEntryCountText($user->entries_count) . ')',
 					'selected' => ($resolvedValue === $userValue)
 				);
 				$seenValues[] = $userValue;

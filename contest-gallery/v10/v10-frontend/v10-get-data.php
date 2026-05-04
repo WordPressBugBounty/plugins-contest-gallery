@@ -108,6 +108,7 @@ $languageNames = [
 $variablesGallery = [];
 $variablesGeneral = [];
 $allowedRealIds = [];
+$shouldUseAllowedRealIds = false;
 
 $tablename = $wpdb->prefix . "contest_gal1ery";
 $tablenameOptions = $wpdb->prefix . "contest_gal1ery_options";
@@ -456,11 +457,14 @@ $dataSliderSortedPids = [];
 $jsonCommentsData = [];
 $jsonInfoData = [];
 $categoriesFullData = [];
+$formUploadFullData = [];
 $imagesFullData = [];
 $imagesFullDataCurrentPage = [];
 $imagesFullDataOriginalLength = 0;
 $entryFullDataBeforeAllowedFilter = [];
 $categoriesFullDataFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$realGid.'/json/'.$realGid.'-categories.json';
+$formUploadFullDataFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$realGid.'/json/'.$realGid.'-form-upload.json';
+$isCategoryUploadFieldActive = false;
 $currentPageNumber = (!empty($cglCurrentPageNumber)) ? max(1, absint($cglCurrentPageNumber)) : cgl_get_current_page_number();
 $backToGalleriesFromPage = cgl_get_from_galleries_page();
 $backToGalleriesFromPageNumber = cgl_get_from_galleries_page(true);
@@ -501,6 +505,14 @@ if(!$isCGalleries && !$isOnlyUploadForm && !$isOnlyContactForm && file_exists($c
         $categoriesFullData = [];
     }
 }
+
+if(file_exists($formUploadFullDataFile)){
+    $formUploadFullData = json_decode(file_get_contents($formUploadFullDataFile),true);
+    if(!is_array($formUploadFullData)){
+        $formUploadFullData = [];
+    }
+}
+$isCategoryUploadFieldActive = cg1l_frontend_has_active_category_upload_field($formUploadFullData);
 
 if($isCGalleries){
     $galleriesOptions = cg_galleries_options($shortcode_name);
@@ -695,7 +707,7 @@ if($isCGalleries){
     }
 
     if($shouldUseAllowedRealIds){
-        $allowedRealIds = cg1l_frontend_get_allowed_real_ids($imagesFullData, $shortcode_name, $categoriesFullData, $options, $WpUserId);
+        $allowedRealIds = cg1l_frontend_get_allowed_real_ids($imagesFullData, $shortcode_name, $categoriesFullData, $options, $WpUserId, $formUploadFullData);
         $imagesFullData = cg1l_frontend_filter_id_keyed_data_by_allowed_ids($imagesFullData, $allowedRealIds);
         $queryDataArray = cg1l_frontend_filter_id_keyed_data_by_allowed_ids($queryDataArray, $allowedRealIds);
         $jsonCommentsData = cg1l_frontend_filter_id_keyed_data_by_allowed_ids($jsonCommentsData, $allowedRealIds);
@@ -866,7 +878,7 @@ if(!empty($entryId) && !empty($cgEntryId) && $entryId==$cgEntryId && empty($imag
     $entryLandingPageFilterReason = [];
     $categoriesFullDataForEntryLandingPage = (!empty($categoriesFullData) && is_array($categoriesFullData)) ? $categoriesFullData : [];
     if(!empty($entryFullDataBeforeAllowedFilter)){
-        $entryLandingPageFilterReason = cg1l_frontend_get_entry_filter_block_reason($shortcode_name, $entryFullDataBeforeAllowedFilter, $categoriesFullDataForEntryLandingPage, $options, $WpUserId);
+        $entryLandingPageFilterReason = cg1l_frontend_get_entry_filter_block_reason($shortcode_name, $entryFullDataBeforeAllowedFilter, $categoriesFullDataForEntryLandingPage, $options, $WpUserId, $formUploadFullData);
     }
 
     if(!empty($entryLandingPageFilterReason['type']) && $entryLandingPageFilterReason['type'] === 'category'){
@@ -1527,8 +1539,6 @@ if(!empty($isUserGallery) && empty($optionsFullData[$galeryIDuser])){
 }
 
 $singleViewOrderFullData = json_decode(file_get_contents($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$realGid.'/json/'.$realGid.'-single-view-order.json'),true);
-
-$formUploadFullData = json_decode(file_get_contents($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$realGid.'/json/'.$realGid.'-form-upload.json'),true);
 
 $singleViewOrderFullData = cg1l_frontend_normalize_single_view_order_data($singleViewOrderFullData,$formUploadFullData);
 

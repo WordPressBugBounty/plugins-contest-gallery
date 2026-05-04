@@ -76,6 +76,18 @@
         $variablesGallery['wpUserImageIds'] = $wpUserImageIdsArray;
     }
     $variablesGallery['galleryHash'] = cg_hash_function('---cngl1---'.$galeryIDuserForJs);
+    $variablesGallery['runtimeContextToken'] = cg1l_create_runtime_context_token([
+        'realGid' => $galeryID,
+        'gid' => $galeryIDuserForJs,
+        'shortcodeName' => $shortcode_name,
+        'entryId' => $entryId,
+        'isCGalleries' => $isCGalleries,
+        'hasGalleriesIds' => $hasGalleriesIds,
+        'isGalleriesMainPage' => $isGalleriesMainPage,
+        'galleryDataUseAllowedRealIds' => (!empty($shouldUseAllowedRealIds)) ? 1 : 0,
+        'galleriesIds' => $galleriesIds,
+    ]);
+    $variablesGallery['isCgRuntimeFresh'] = (!empty($isCgRuntimeFresh)) ? true : false;
     $variablesGallery['galleryDataUseAllowedRealIds'] = (!empty($shouldUseAllowedRealIds)) ? 1 : 0;
     $variablesGallery['galleryDataAccessHash'] = cg1l_get_gallery_data_access_hash(
         $galeryID,

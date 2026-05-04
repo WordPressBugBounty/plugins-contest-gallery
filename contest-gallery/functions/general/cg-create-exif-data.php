@@ -68,11 +68,11 @@ if(!function_exists('cg_create_exif_data')){
                 if(!empty($wpImageExifData['IFD0'])){
 
                     if(!empty($wpImageExifData['IFD0']['Model']) && !empty($wpImageExifData['IFD0']['Make'])){
-                        $exifDataForImage['MakeAndModel'] = cg1l_sanitize_method($wpImageExifData['IFD0']['Make']).' '.cg1l_sanitize_method($wpImageExifData['IFD0']['Model']);
+                        $exifDataForImage['MakeAndModel'] = cg1l_sanitize_method(cg1l_convert_mixed_value_to_string($wpImageExifData['IFD0']['Make'])).' '.cg1l_sanitize_method(cg1l_convert_mixed_value_to_string($wpImageExifData['IFD0']['Model']));
                     }
 
                     if(!empty($wpImageExifData['IFD0']['Model'])){
-                        $exifDataForImage['Model'] = cg1l_sanitize_method($wpImageExifData['IFD0']['Model']);
+                        $exifDataForImage['Model'] = cg1l_sanitize_method(cg1l_convert_mixed_value_to_string($wpImageExifData['IFD0']['Model']));
                     }
 
                     // future update eventually
@@ -84,24 +84,21 @@ if(!function_exists('cg_create_exif_data')){
 
                 if(!empty($wpImageExifData['COMPUTED'])){
                     if(!empty($wpImageExifData['COMPUTED']['ApertureFNumber'])){
-                        $exifDataForImage['ApertureFNumber'] = cg1l_sanitize_method($wpImageExifData['COMPUTED']['ApertureFNumber']);
+                        $exifDataForImage['ApertureFNumber'] = cg1l_sanitize_method(cg1l_convert_mixed_value_to_string($wpImageExifData['COMPUTED']['ApertureFNumber']));
                     }
                 }
 
                 if(!empty($wpImageExifData['EXIF'])){
                     if(!empty($wpImageExifData['EXIF']['ExposureTime'])){
-                        $exifDataForImage['ExposureTime'] = cg1l_sanitize_method($wpImageExifData['EXIF']['ExposureTime']);
+                        $exifDataForImage['ExposureTime'] = cg1l_sanitize_method(cg1l_convert_mixed_value_to_string($wpImageExifData['EXIF']['ExposureTime']));
                     }
                 }
 
                 if(!empty($wpImageExifData['EXIF'])){
                     if(!empty($wpImageExifData['EXIF']['ISOSpeedRatings'])){
-                        if(!empty($wpImageExifData['EXIF']['ISOSpeedRatings'][0])){
-                            $exifDataForImage['ISOSpeedRatings'] = cg1l_sanitize_method($wpImageExifData['EXIF']['ISOSpeedRatings'][0]);
-                        }elseif(!empty($wpImageExifData['EXIF']['ISOSpeedRatings'][1])){
-                            $exifDataForImage['ISOSpeedRatings'] = cg1l_sanitize_method($wpImageExifData['EXIF']['ISOSpeedRatings'][1]);
-                        }else{
-                            $exifDataForImage['ISOSpeedRatings'] = cg1l_sanitize_method($wpImageExifData['EXIF']['ISOSpeedRatings']);
+                        $isoSpeedRatings = cg1l_convert_mixed_value_to_string($wpImageExifData['EXIF']['ISOSpeedRatings']);
+                        if($isoSpeedRatings !== ''){
+                            $exifDataForImage['ISOSpeedRatings'] = cg1l_sanitize_method($isoSpeedRatings);
                         }
                     }
                 }
@@ -109,18 +106,21 @@ if(!function_exists('cg_create_exif_data')){
                 if(!empty($wpImageExifData['EXIF'])){
                     if(!empty($wpImageExifData['EXIF']['FocalLength'])){
 
-                        $focal_length = explode('/',$wpImageExifData["EXIF"]["FocalLength"]);
+                        $focalLengthRaw = cg1l_convert_mixed_value_to_string($wpImageExifData["EXIF"]["FocalLength"]);
+                        $focal_length = explode('/',$focalLengthRaw);
 
-                        if(count($focal_length)){
+                        if(count($focal_length) >= 2 && intval($focal_length[1]) !== 0){
                             $focal_length = intval($focal_length[0]/intval($focal_length[1]));
                             $exifDataForImage['FocalLength'] = cg1l_sanitize_method($focal_length).'mm';
+                        }elseif($focalLengthRaw !== ''){
+                            $exifDataForImage['FocalLength'] = cg1l_sanitize_method($focalLengthRaw);
                         }
                     }
                 }
 
                 if(!empty($wpImageExifData['EXIF'])){
                     if(!empty($wpImageExifData['EXIF']['DateTimeOriginal'])){
-                        $exifDataForImage['DateTimeOriginal'] = cg1l_sanitize_method($wpImageExifData['EXIF']['DateTimeOriginal']);
+                        $exifDataForImage['DateTimeOriginal'] = cg1l_sanitize_method(cg1l_convert_mixed_value_to_string($wpImageExifData['EXIF']['DateTimeOriginal']));
                     }
                 }
 

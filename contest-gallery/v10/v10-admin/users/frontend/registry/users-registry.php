@@ -124,7 +124,7 @@ if (!empty($_GET["cgkey"]) || !empty($cg_users_pin_from_email_check)) {// joins 
         echo "</div>";
     }
 
-    if ($pro_options->HideRegFormAfterLoginShowTextInstead == 1 && $HideRegFormAfterLogin == 1 && is_user_logged_in()) {
+    if (empty($isShowPinFormVotingUploading) && $pro_options->HideRegFormAfterLoginShowTextInstead == 1 && $HideRegFormAfterLogin == 1 && is_user_logged_in()) {
         $HideRegFormAfterLoginTextToShow = contest_gal1ery_convert_for_html_output_without_nl2br($pro_options->HideRegFormAfterLoginTextToShow);
         echo "<div id='cg_user_registry_div_hide_after_login'>";
         echo $HideRegFormAfterLoginTextToShow;

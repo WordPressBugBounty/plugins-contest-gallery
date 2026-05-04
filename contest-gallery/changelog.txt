@@ -1,5 +1,18 @@
 Contest Gallery
 
+= 30.0.0 =
+* NEW: Added Contest Gallery Network publishing workflow for gallery listings, including update handling for already published galleries.
+* NEW: Added Gallery ZIP export and import to transfer galleries between sites, including entries, media files, votes, comments and user assignment options.
+* IMPROVED: Large gallery transfer handling with progress UI, temporary file cleanup and safer ZIP download/import processing.
+* IMPROVED: Backend user entry filtering can now show user related entry counts instead of only technical user IDs.
+* IMPROVED: Modernized backend option controls for a cleaner and more readable administration experience.
+* FIXED: Mobile full window browser back and edge gesture handling for the compact blog slider popover.
+* FIXED: Imported galleries could fail to render when video data was incomplete.
+* FIXED: "Thank you for voting" translation was not applied in all frontend voting message contexts.
+* FIXED: Registry/PIN form helper content could appear on gallery pages where it should not be visible.
+* FIXED: Backend sale image preview could appear empty in the selling activation area.
+* FIXED: Small bugs.
+
 = 29.0.2 =
 * NEW: Added a compact backend gallery dashboard with activity stats, trend graph and improved AJAX refresh behavior.
 * NEW: New galleries can now track whether entries were added from the frontend or backend.

@@ -38,11 +38,67 @@ if(!isset($options['interval'])){
     $options['interval'] = [];
 }
 
+$shortcodeType = $_POST['shortcodeType'];
 
-$_POST[$_POST['shortcodeType']]['TextWhenShortcodeIntervalIsOn']  = contest_gal1ery_htmlentities_and_preg_replace($_POST[$_POST['shortcodeType']]['TextWhenShortcodeIntervalIsOn']);
-$_POST[$_POST['shortcodeType']]['TextWhenShortcodeIntervalIsOff']  = contest_gal1ery_htmlentities_and_preg_replace($_POST[$_POST['shortcodeType']]['TextWhenShortcodeIntervalIsOff']);
+if(empty($_POST[$shortcodeType]) || !is_array($_POST[$shortcodeType])){
+    echo 'Error: shortcode interval configuration is missing.';
+    die;
+}
 
-$options['interval'][$_POST['shortcodeType']] = $_POST[$_POST['shortcodeType']];
+if(!empty($_POST[$shortcodeType]['active']) && $_POST[$shortcodeType]['active']=='on'){
+
+    $activeYear = '';
+    if(!empty($_POST['shortcodeIntervalActiveYear'])){
+        $activeYear = preg_replace('/[^0-9]/','',$_POST['shortcodeIntervalActiveYear']);
+    }
+    if(empty($activeYear)){
+        $activeYear = date('Y');
+    }
+
+    $selectedIntervalType = 'monthly';
+    if(!empty($_POST[$shortcodeType][$activeYear]['selectedIntervalType'])){
+        $selectedIntervalType = sanitize_text_field($_POST[$shortcodeType][$activeYear]['selectedIntervalType']);
+    }
+    if(!in_array($selectedIntervalType,array('monthly','weekly','daily'),true)){
+        $selectedIntervalType = 'monthly';
+    }
+
+    $isValidIntervalConfiguration = true;
+
+    if($selectedIntervalType=='monthly'){
+        $isValidIntervalConfiguration = false;
+        if(!empty($_POST[$shortcodeType][$activeYear]['monthly']) && is_array($_POST[$shortcodeType][$activeYear]['monthly'])){
+            foreach($_POST[$shortcodeType][$activeYear]['monthly'] as $monthName => $monthConfiguration){
+                if(!empty($monthConfiguration['fromDate']) && !empty($monthConfiguration['toDate'])){
+                    $isValidIntervalConfiguration = true;
+                    break;
+                }
+            }
+        }
+        if(!$isValidIntervalConfiguration){
+            echo 'Please select at least one monthly date range before saving, or disable interval restriction.';
+            die;
+        }
+    }
+
+    if($selectedIntervalType=='weekly'){
+        $isValidIntervalConfiguration = false;
+        if(!empty($_POST[$shortcodeType][$activeYear]['weekly']['dayStart']) && !empty($_POST[$shortcodeType][$activeYear]['weekly']['dayEnd'])){
+            $isValidIntervalConfiguration = true;
+        }
+        if(!$isValidIntervalConfiguration){
+            echo 'Please select a weekly start day and end day before saving, or disable interval restriction.';
+            die;
+        }
+    }
+
+}
+
+
+$_POST[$shortcodeType]['TextWhenShortcodeIntervalIsOn']  = contest_gal1ery_htmlentities_and_preg_replace($_POST[$shortcodeType]['TextWhenShortcodeIntervalIsOn']);
+$_POST[$shortcodeType]['TextWhenShortcodeIntervalIsOff']  = contest_gal1ery_htmlentities_and_preg_replace($_POST[$shortcodeType]['TextWhenShortcodeIntervalIsOff']);
+
+$options['interval'][$shortcodeType] = $_POST[$shortcodeType];
 
 file_put_contents($optionsPath,json_encode($options));
 

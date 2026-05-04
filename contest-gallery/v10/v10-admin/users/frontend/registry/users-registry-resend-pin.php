@@ -10,7 +10,7 @@ $tablenameWpUserMeta = $wpdb->base_prefix . "usermeta";
 $tablenameProOptions = $wpdb->prefix . "contest_gal1ery_pro_options";
 $tablenameCreateUserEntries = $wpdb->prefix . "contest_gal1ery_create_user_entries";
 
-$cglPinRequestKeyResend = sanitize_text_field(wp_unslash($_POST["cglActivationKeyResend"]));
+$cglPinRequestKeyResend = isset($_POST["cglActivationKeyResend"]) ? sanitize_text_field(wp_unslash($_POST["cglActivationKeyResend"])) : '';
 $cglActivationKeyResend = get_transient('cg_pin_request_key_'.$cglPinRequestKeyResend);
 if(empty($cglActivationKeyResend)){
     $cglActivationKeyResend = '';
@@ -25,20 +25,52 @@ if (count($userAccountEntries)) {
 
     $cg_users_pin = 1;
     $cg_main_mail = '';
+    $oldPinHash = '';
+    $oldTstamp = !empty($userAccountEntries[0]->Tstamp) ? absint($userAccountEntries[0]->Tstamp) : 0;
 
     foreach ($userAccountEntries as $userAccountEntry) {
         if($userAccountEntry->Field_Type == 'main-mail') {
             $cg_main_mail = $userAccountEntry->Field_Content;
         }
+        if($userAccountEntry->Field_Type == 'activation-pin') {
+            $oldPinHash = $userAccountEntry->Field_Content;
+        }
     }
 
-    $activation_key_new = md5(time() . wp_generate_password( 32, true, true ));
+    if(empty($cg_main_mail) || empty($oldPinHash)){
+        ?>
+        <script  data-cg-processing="true" >
+            cgJsClass.gallery.vars.activationKey = '';
+            cgJsClass.gallery.vars.pinMessage = 'mail-not-found';
+        </script>
+        <?php
+        die;
+    }
+
+    $proOptions = $wpdb->get_row("SELECT * FROM $tablenameProOptions WHERE GeneralID = '1'");
+    $posPin = '$pin$';
+    $TextEmailConfirmation = contest_gal1ery_convert_for_html_output_without_nl2br($proOptions->TextPinConfirmation);
+    if(empty($TextEmailConfirmation)){// because of update 28.1.0, mighty be empty
+        $TextEmailConfirmation = 'Complete your registration by using the PIN below: <br/><br/> $pin$';
+    }
+    if (stripos($TextEmailConfirmation, $posPin) === false) {
+        ?>
+        <script  data-cg-processing="true" >
+            cgJsClass.gallery.vars.activationKey = '';
+            cgJsClass.gallery.vars.pinMessage = 'pin-placeholder-missing';
+        </script>
+        <?php
+        die;
+    }
+
+    $time = time();
+    $activation_key_new = md5($time . wp_generate_password( 32, true, true ));
 
     $wpdb->update(
         $tablenameCreateUserEntries,
-        ['activation_key' => $activation_key_new],
+        ['activation_key' => $activation_key_new,'Tstamp' => $time],
         ['activation_key' => $cglActivationKeyResend],
-        ['%s'],
+        ['%s','%d'],
         ['%s']
     );
 
@@ -53,15 +85,32 @@ if (count($userAccountEntries)) {
         ['%s','%s']
     );
 
-    $proOptions = $wpdb->get_row("SELECT * FROM $tablenameProOptions WHERE GeneralID = '1'");
-    $Subject = $proOptions->RegPinSubject;
-    $TextEmailConfirmation = contest_gal1ery_convert_for_html_output_without_nl2br($proOptions->TextPinConfirmation);
-    if(empty($TextEmailConfirmation)){// because of update 28.1.0, mighty be empty
-        $TextEmailConfirmation = 'Complete your registration by using the PIN below: <br/><br/> $pin$';
-    }
-    $posPin = '$pin$';
+    $Subject = str_ireplace($posPin, $pin, contest_gal1ery_convert_for_html_output_without_nl2br($proOptions->RegPinSubject));
 
     $wp_mail_result = cg1l_send_registration_mail($proOptions,0,$cg_users_pin,$cg_main_mail,$Subject, $TextEmailConfirmation, $activation_key_new, $posPin, $pin);
+    if (!$wp_mail_result) {
+        $wpdb->update(
+            $tablenameCreateUserEntries,
+            ['activation_key' => $cglActivationKeyResend,'Tstamp' => $oldTstamp],
+            ['activation_key' => $activation_key_new],
+            ['%s','%d'],
+            ['%s']
+        );
+        $wpdb->update(
+            $tablenameCreateUserEntries,
+            ['Field_Content' => $oldPinHash],
+            ['activation_key' => $cglActivationKeyResend,'Field_Type' => 'activation-pin'],
+            ['%s'],
+            ['%s','%s']
+        );
+        ?>
+        <script  data-cg-processing="true" >
+            cgJsClass.gallery.vars.activationKey = '';
+            cgJsClass.gallery.vars.pinMessage = 'mail-not-sent';
+        </script>
+        <?php
+        die;
+    }
 
     $cgPinRequestKey = wp_generate_password(48, false, false);
     set_transient('cg_pin_request_key_'.$cgPinRequestKey, $activation_key_new, DAY_IN_SECONDS);

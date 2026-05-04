@@ -316,6 +316,10 @@ if(!function_exists('cgDropTables')){
         delete_option("p_cgal1ery_pro_version_key_activation_time");
         delete_option("p_cgal1ery_pro_version_key_expiration_time");
         delete_option("CgEntriesOwnSlugName");
+        delete_option("cg_network_publish_state");
+        delete_option("cg_network_keypair_v1");
+        delete_option("cg_network_submit_url");
+        delete_option("cg_network_unpublish_url");
 
     }
 }

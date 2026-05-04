@@ -43,14 +43,16 @@ foreach ($selectFormInput as $value) {
 $rowCount = 2;// because first is image
 
 $emptyRowCols = [];
-function rowColsCheck($rowNumber,$rowCols,$selectFormInput,&$emptyRowCols)
-{
-    $emptyColsRowNumber[$rowCols] = [];
-    foreach ($selectFormInput as $key => $value) {
-            // check for 1
-            if($value->RowNumber==$rowNumber){
-                $emptyColsRowNumber[$rowCols] = $value->RowNumber;
-            }
+if(!function_exists('rowColsCheck')){
+    function rowColsCheck($rowNumber,$rowCols,$selectFormInput,&$emptyRowCols)
+    {
+        $emptyColsRowNumber[$rowCols] = [];
+        foreach ($selectFormInput as $key => $value) {
+                // check for 1
+                if($value->RowNumber==$rowNumber){
+                    $emptyColsRowNumber[$rowCols] = $value->RowNumber;
+                }
+        }
     }
 }
 
@@ -173,4 +175,3 @@ if(count($selectFormInput)==0){
 
 
 //echo '<div class="cg_row cg_add"></div>';
-

@@ -93,6 +93,7 @@ if(!function_exists('cg_shortcode_interval_configuration_container')){
         <input type='hidden' name='GalleryID' value='<?php echo $GalleryID;?>'>
         <input type='hidden' name='action' value='post_cg_shortcode_interval_conf'>
         <input type='hidden' class="shortcodeType" name='shortcodeType' value=''>
+        <input type='hidden' class="cg_shortcode_interval_active_year" name='shortcodeIntervalActiveYear' value=''>
 <?php
 
 echo "<div class='cg_shortcode_conf_title_container'  style='margin-top: 25px;margin-bottom: 15px;'>";
@@ -112,8 +113,8 @@ echo "<div class='cg_main_options' >";
         <div  class='cg_view_option cg_entry_page_description cg_view_option_100_percent cg_border_bottom_none $cgProFalse '>
             <div class='cg_view_option_title  cg_view_option_title_full_width'>
                 <p>
-                    Activate interval for <span class="cg_shortcode_conf_activate_type"></span><br>
-                    <span class="cg_view_option_title_note"><b>NOTE:</b> shortcode content will get displayed only in the selected time intervals</span>
+                    Enable interval restriction for <span class="cg_shortcode_conf_activate_type"></span><br>
+                    <span class="cg_view_option_title_note"><b>NOTE:</b> shortcode content is displayed only during the selected time intervals. Selected intervals are ignored while this option is disabled.</span>
                 </p>
             </div>
             <div class="cg_view_option_checkbox">
@@ -121,6 +122,7 @@ echo "<div class='cg_main_options' >";
             </div>
         </div>
     </div>
+    <div id="cgShortcodeIntervalConfigurationNotice" class="cg_shortcode_interval_notice cg_hide"></div>
 HEREDOC;
 echo "</div>";
 
@@ -218,7 +220,7 @@ if(!function_exists('cg_shortcode_interval_configuration_container_render_main_o
         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_bottom_none'>
                     <div class='cg_view_option_title'>
-                        <p>Select interval type</p>
+                        <p>Select interval type<br><span class="cg_view_option_title_note">When interval restriction is enabled, the selected type needs a valid time range before saving.</span></p>
                     </div>
                     <div class='cg_view_option_radio_multiple'>
                         <div class='cg_view_option_radio_multiple_container'>

@@ -314,6 +314,10 @@
             }
         }
 
+        if(!empty($options['visual']['BlogLookFullWindow']) && intval($options['visual']['BlogLookFullWindow']) === 1){
+            $cgGalleryForceEntryGuidLinksNewTab = false;
+        }
+
         $galleryMediaTargetAttr = '';
         if($isForwardToUrl && $isForwardToUrlNewTab){
             $galleryMediaTargetAttr = ' target="_blank" rel="noopener noreferrer"';

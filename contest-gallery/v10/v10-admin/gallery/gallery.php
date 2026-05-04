@@ -134,6 +134,10 @@ if($IsModernFiveStar==0 && (($AllowRating>=12 && $AllowRating<=20))){
 
 include("header-2.php");
 
+if(function_exists('cg_network_export_modal_container')){
+	cg_network_export_modal_container();
+}
+
 
 if($isAjaxCall){
 

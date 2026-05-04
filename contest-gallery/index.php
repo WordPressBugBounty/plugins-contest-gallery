@@ -2,7 +2,7 @@
 /*
 Plugin Name: Contest Gallery
 Description: Upload form, files, photos and videos upload contest gallery plugin for WordPress. Create upload forms for entries with or without file/image upload. Create user registration form. Create login form. Create responsive galleries and allow to vote for any kind of entries. Sell entries via PayPal or Stripe API. Create or edit images via OpenAI API.
-Version: 29.0.2
+Version: 30.0.0
 Author: Contest Gallery
 Plugin URI: https://www.contest-gallery.com
 Author URI: https://www.contest-gallery.com
@@ -78,6 +78,15 @@ if(!function_exists('cg_normal_version_register_activation_hook')){
 register_activation_hook( __FILE__, 'cg_normal_version_register_activation_hook' );
 /**###NORMAL-END###**/
 
+if(!function_exists('cg_network_free_deactivation_hook')){
+    function cg_network_free_deactivation_hook(){
+        if(function_exists('wp_clear_scheduled_hook')){
+            wp_clear_scheduled_hook('cg_network_auto_update_event');
+        }
+    }
+}
+register_deactivation_hook( __FILE__, 'cg_network_free_deactivation_hook' );
+
 if (!function_exists('cg_add_defer_to_cg_js_files')) {
     function cg_add_defer_to_cg_js_files($url)
     {
@@ -104,6 +113,7 @@ include('functions/general/cg-create-json-files-when-activating.php');
 include('functions/general/convert-values.php');
 include('functions/general/cg-hash.php');
 include('functions/general/cg-general-functions.php');
+include('functions/general/network/cg-network-export.php');
 include('functions/general/cgl1-texts.php');
 include('functions/general/cg-contest-gallery-plugin-page-functions.php');
 include('functions/frontend/render/cg1l-create-rating-comments-div.php');
@@ -446,6 +456,7 @@ include('functions/general/json-data/cg-actualize-all-images-data-sort-values-fi
 include('functions/general/json-data/cg-actualize-all-images-data-sort-values-file-set-array.php');
 include('functions/backend/render/cg-shortcode-interval-configuration-container.php');
 include('functions/backend/render/cg-preview-images-to-delete-container.php');
+include('functions/backend/render/cg-network-export-modal-container.php');
 include('functions/backend/render/cg-multiple-files-for-post-container.php');
 include('functions/backend/render/cg-social-containers.php');
 include('functions/backend/render/openai/cg-openai-containers.php');
@@ -572,6 +583,7 @@ if (!function_exists('contest_gallery_action')) {
             cg_backend_gallery_dynamic_message();
             cg_backend_background_drop();
             cg_backend_render_go_to_options();
+            cg_network_render_admin_notice();
             cg_index_scripts_and_functions();
         echo "</div>";
     }

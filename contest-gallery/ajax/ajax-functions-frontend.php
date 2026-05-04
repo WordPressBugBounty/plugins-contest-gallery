@@ -158,6 +158,452 @@ if (!function_exists('post_cg_set_frontend_cookie')) {
     }
 }
 
+if (!function_exists('cg1l_ajax_is_same_origin_request')) {
+    function cg1l_ajax_is_same_origin_request()
+    {
+        $site = parse_url(home_url('/'));
+        $siteHost = (!empty($site['host'])) ? strtolower($site['host']) : '';
+        $siteScheme = (!empty($site['scheme'])) ? strtolower($site['scheme']) : '';
+        $origin = (!empty($_SERVER['HTTP_ORIGIN'])) ? esc_url_raw(wp_unslash($_SERVER['HTTP_ORIGIN'])) : '';
+        $referer = (!empty($_SERVER['HTTP_REFERER'])) ? esc_url_raw(wp_unslash($_SERVER['HTTP_REFERER'])) : '';
+        $url = $origin ? $origin : $referer;
+
+        if (!$url) {
+            return true;
+        }
+
+        $request = parse_url($url);
+        $requestHost = (!empty($request['host'])) ? strtolower($request['host']) : '';
+        $requestScheme = (!empty($request['scheme'])) ? strtolower($request['scheme']) : '';
+
+        return ($siteHost && $siteHost === $requestHost && (!$siteScheme || !$requestScheme || $siteScheme === $requestScheme));
+    }
+}
+
+if (!function_exists('cg1l_ajax_reject_bad_origin')) {
+    function cg1l_ajax_reject_bad_origin()
+    {
+        if (!cg1l_ajax_is_same_origin_request()) {
+            cg1l_ajax_frontend_response(false, ['message' => 'cg_invalid_origin', 'code' => 'cg_invalid_origin']);
+        }
+    }
+}
+
+if (!function_exists('cg1l_get_runtime_voted_user_pids')) {
+    function cg1l_get_runtime_voted_user_pids($realGid, $options)
+    {
+        global $wpdb;
+
+        $realGid = absint($realGid);
+        $votedUserPids = [];
+        $allowRating = (!empty($options['general']['AllowRating'])) ? absint($options['general']['AllowRating']) : 0;
+        $checkLogin = (!empty($options['general']['CheckLogin'])) ? 1 : 0;
+        $checkCookie = (!empty($options['general']['CheckCookie'])) ? 1 : 0;
+        $checkIp = (!empty($options['general']['CheckIp'])) ? 1 : 0;
+        $viewerUserId = is_user_logged_in() ? get_current_user_id() : 0;
+        $cookieId = '';
+        $userIp = '';
+        $rows = [];
+        $tablenameIp = $wpdb->prefix . 'contest_gal1ery_ip';
+
+        if (empty($realGid) || !($allowRating === 1 || $allowRating === 2 || $allowRating >= 12)) {
+            return $votedUserPids;
+        }
+
+        if ($checkCookie) {
+            $cookieName = 'contest-gal1ery-' . $realGid . '-voting';
+            if (!empty($_COOKIE[$cookieName])) {
+                $cookieCandidate = wp_unslash($_COOKIE[$cookieName]);
+                if (function_exists('cg_is_valid_frontend_cookie_value') && cg_is_valid_frontend_cookie_value($cookieCandidate)) {
+                    $cookieId = $cookieCandidate;
+                }
+            }
+        }
+
+        if ($checkIp) {
+            $userIp = cg1l_sanitize_method(cg_get_user_ip());
+            if (empty($userIp) || $userIp === 'unknown') {
+                return $votedUserPids;
+            }
+        }
+
+        if ($allowRating === 2) {
+            if ($checkLogin && $viewerUserId) {
+                $rows = $wpdb->get_results($wpdb->prepare(
+                    "SELECT pid FROM $tablenameIp WHERE GalleryID = %d AND WpUserId = %d AND RatingS = %d",
+                    $realGid,
+                    $viewerUserId,
+                    1
+                ));
+            } elseif ($checkCookie && !$checkIp && $cookieId !== '') {
+                $rows = $wpdb->get_results($wpdb->prepare(
+                    "SELECT pid FROM $tablenameIp WHERE GalleryID = %d AND CookieId = %s AND RatingS = %d",
+                    $realGid,
+                    $cookieId,
+                    1
+                ));
+            } elseif ($checkIp && !$checkCookie) {
+                $rows = $wpdb->get_results($wpdb->prepare(
+                    "SELECT pid FROM $tablenameIp WHERE GalleryID = %d AND IP = %s AND RatingS = %d",
+                    $realGid,
+                    $userIp,
+                    1
+                ));
+            } elseif ($checkIp && $checkCookie && $cookieId !== '') {
+                $rows = $wpdb->get_results($wpdb->prepare(
+                    "SELECT pid FROM $tablenameIp WHERE GalleryID = %d AND IP = %s AND CookieId = %s AND RatingS = %d",
+                    $realGid,
+                    $userIp,
+                    $cookieId,
+                    1
+                ));
+            }
+
+            if (!empty($rows)) {
+                foreach ($rows as $row) {
+                    $votedUserPids[] = intval($row->pid);
+                }
+            }
+
+            return $votedUserPids;
+        }
+
+        $allowRatingMax = ($allowRating === 1) ? 5 : ($allowRating - 10);
+        if ($allowRatingMax < 1) {
+            return $votedUserPids;
+        }
+
+        if ($checkLogin && $viewerUserId) {
+            $rows = $wpdb->get_results($wpdb->prepare(
+                "SELECT pid, Rating FROM $tablenameIp WHERE GalleryID = %d AND WpUserId = %d AND Rating >= %d AND Rating <= %d",
+                $realGid,
+                $viewerUserId,
+                1,
+                $allowRatingMax
+            ));
+        } elseif ($checkCookie && !$checkIp && $cookieId !== '') {
+            $rows = $wpdb->get_results($wpdb->prepare(
+                "SELECT pid, Rating FROM $tablenameIp WHERE GalleryID = %d AND CookieId = %s AND Rating >= %d AND Rating <= %d",
+                $realGid,
+                $cookieId,
+                1,
+                $allowRatingMax
+            ));
+        } elseif ($checkIp && !$checkCookie) {
+            $rows = $wpdb->get_results($wpdb->prepare(
+                "SELECT pid, Rating FROM $tablenameIp WHERE GalleryID = %d AND IP = %s AND Rating >= %d AND Rating <= %d",
+                $realGid,
+                $userIp,
+                1,
+                $allowRatingMax
+            ));
+        } elseif ($checkIp && $checkCookie && $cookieId !== '') {
+            $rows = $wpdb->get_results($wpdb->prepare(
+                "SELECT pid, Rating FROM $tablenameIp WHERE GalleryID = %d AND IP = %s AND CookieId = %s AND Rating >= %d AND Rating <= %d",
+                $realGid,
+                $userIp,
+                $cookieId,
+                1,
+                $allowRatingMax
+            ));
+        }
+
+        if (!empty($rows)) {
+            foreach ($rows as $row) {
+                $pid = intval($row->pid);
+                if (!isset($votedUserPids[$pid])) {
+                    $votedUserPids[$pid] = [];
+                }
+                $votedUserPids[$pid][] = intval($row->Rating);
+            }
+        }
+
+        return $votedUserPids;
+    }
+}
+
+if (!function_exists('cg1l_get_runtime_instance_state')) {
+    function cg1l_get_runtime_instance_state($context)
+    {
+        $wp_upload_dir = wp_upload_dir();
+        $realGid = absint($context['realGid']);
+        $shortcodeName = sanitize_key($context['shortcodeName']);
+        $viewerUserId = is_user_logged_in() ? get_current_user_id() : 0;
+        $isGalleriesMainPage = !empty($context['isGalleriesMainPage']);
+        $hasGalleriesIds = !empty($context['hasGalleriesIds']);
+        $galleriesIds = (!empty($context['galleriesIds'])) ? $context['galleriesIds'] : [];
+        $useAllowedRealIds = !empty($context['galleryDataUseAllowedRealIds']);
+        $allowedRealIds = [];
+        $wpUserImageIds = [];
+        $formUploadFullData = [];
+        $uploadState = [
+            'UploadedUserFilesAmount' => 0,
+            'UploadedUserFilesAmountPerCategoryArray' => [],
+            'CookieId' => '',
+        ];
+
+        $state = [
+            'gid' => $context['gid'],
+            'realGid' => $realGid,
+            'shortcodeName' => $shortcodeName,
+            'galleryDataAccessHash' => cg1l_get_gallery_data_access_hash($realGid, $shortcodeName, $viewerUserId, $useAllowedRealIds ? 1 : 0),
+            'galleriesDataAccessHash' => cg1l_get_galleries_data_access_hash($shortcodeName, $viewerUserId, $isGalleriesMainPage, $galleriesIds, $hasGalleriesIds),
+            'allowedRealIds' => [],
+            'options' => [],
+            'formUploadFullData' => [],
+            'votedUserPids' => [],
+            'upload' => $uploadState,
+        ];
+
+        if (empty($realGid)) {
+            return $state;
+        }
+
+        $optionsFile = $wp_upload_dir['basedir'] . '/contest-gallery/gallery-id-' . $realGid . '/json/' . $realGid . '-options.json';
+        if (!file_exists($optionsFile)) {
+            return $state;
+        }
+
+        $optionsFull = json_decode(file_get_contents($optionsFile), true);
+        if (empty($optionsFull) || !is_array($optionsFull)) {
+            return $state;
+        }
+        $optionsKey = $realGid;
+        if ($shortcodeName === 'cg_gallery_user') {
+            $optionsKey = $realGid . '-u';
+        } elseif ($shortcodeName === 'cg_gallery_no_voting') {
+            $optionsKey = $realGid . '-nv';
+        } elseif ($shortcodeName === 'cg_gallery_winner') {
+            $optionsKey = $realGid . '-w';
+        } elseif ($shortcodeName === 'cg_gallery_ecommerce') {
+            $optionsKey = $realGid . '-ec';
+        }
+        if (!empty($optionsFull[$optionsKey]) && is_array($optionsFull[$optionsKey])) {
+            $options = $optionsFull[$optionsKey];
+        } elseif (!empty($optionsFull[$realGid]) && is_array($optionsFull[$realGid])) {
+            $options = $optionsFull[$realGid];
+        } else {
+            $options = $optionsFull;
+        }
+        if (empty($options) || !is_array($options)) {
+            return $state;
+        }
+
+        $formUploadFile = $wp_upload_dir['basedir'] . '/contest-gallery/gallery-id-' . $realGid . '/json/' . $realGid . '-form-upload.json';
+        if (file_exists($formUploadFile)) {
+            $formUploadFullData = json_decode(file_get_contents($formUploadFile), true);
+            if (!is_array($formUploadFullData)) {
+                $formUploadFullData = [];
+            }
+        }
+
+        if ($useAllowedRealIds && $shortcodeName !== 'cg_users_upload') {
+            $categoriesFullData = [];
+            $categoriesFile = $wp_upload_dir['basedir'] . '/contest-gallery/gallery-id-' . $realGid . '/json/' . $realGid . '-categories.json';
+            if (file_exists($categoriesFile)) {
+                $categoriesFullData = json_decode(file_get_contents($categoriesFile), true);
+                if (!is_array($categoriesFullData)) {
+                    $categoriesFullData = [];
+                }
+            }
+            $imagesFullData = cg1l_build_images_main_data_gzip($realGid, true);
+            if (is_array($imagesFullData)) {
+                $allowedRealIds = cg1l_frontend_get_allowed_real_ids($imagesFullData, $shortcodeName, $categoriesFullData, $options, $viewerUserId, $formUploadFullData);
+            }
+        }
+
+        if ($shortcodeName === 'cg_gallery_user' && $viewerUserId) {
+            global $wpdb;
+            $tablename = $wpdb->prefix . 'contest_gal1ery';
+            $rows = $wpdb->get_results($wpdb->prepare(
+                "SELECT id FROM $tablename WHERE GalleryID = %d AND WpUserId = %d ORDER BY id DESC",
+                $realGid,
+                $viewerUserId
+            ));
+            if (!empty($rows)) {
+                foreach ($rows as $row) {
+                    $wpUserImageIds[] = intval($row->id);
+                }
+            }
+        }
+
+        if ($shortcodeName === 'cg_users_upload') {
+            global $wpdb;
+            $tablename = $wpdb->prefix . 'contest_gal1ery';
+
+            if (!empty($options['pro']['RegUserUploadOnly']) && !empty($options['pro']['RegUserMaxUpload'])) {
+                if (intval($options['pro']['RegUserUploadOnly']) === 1 && $viewerUserId) {
+                    $uploadState['UploadedUserFilesAmount'] = intval($wpdb->get_var($wpdb->prepare(
+                        "SELECT COUNT(*) FROM $tablename WHERE WpUserId = %d AND GalleryID = %d",
+                        $viewerUserId,
+                        $realGid
+                    )));
+                } elseif (intval($options['pro']['RegUserUploadOnly']) === 2) {
+                    $uploadState['CookieId'] = cg_get_valid_frontend_cookie($realGid, 'upload', true);
+                    if (!empty($uploadState['CookieId'])) {
+                        $uploadState['UploadedUserFilesAmount'] = intval($wpdb->get_var($wpdb->prepare(
+                            "SELECT COUNT(*) FROM $tablename WHERE CookieId = %s AND GalleryID = %d",
+                            $uploadState['CookieId'],
+                            $realGid
+                        )));
+                    }
+                }
+            }
+        }
+
+        $state['allowedRealIds'] = $allowedRealIds;
+        $state['options'] = $options;
+        $state['formUploadFullData'] = $formUploadFullData;
+        if ($shortcodeName !== 'cg_users_upload') {
+            $state['votedUserPids'] = cg1l_get_runtime_voted_user_pids($realGid, $options);
+        }
+        if ($shortcodeName === 'cg_gallery_user') {
+            $state['wpUserImageIds'] = $wpUserImageIds;
+        }
+        $state['upload'] = $uploadState;
+
+        return $state;
+    }
+}
+
+add_action('wp_ajax_nopriv_post_cg1l_frontend_runtime_bootstrap', 'post_cg1l_frontend_runtime_bootstrap');
+add_action('wp_ajax_post_cg1l_frontend_runtime_bootstrap', 'post_cg1l_frontend_runtime_bootstrap');
+if (!function_exists('post_cg1l_frontend_runtime_bootstrap')) {
+    function post_cg1l_frontend_runtime_bootstrap()
+    {
+        if (!(defined('DOING_AJAX') && DOING_AJAX)) {
+            exit();
+        }
+
+        nocache_headers();
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        cg1l_ajax_reject_bad_origin();
+        if (!cg1l_is_cache_compatibility_active()) {
+            cg1l_ajax_frontend_response(false, ['message' => 'cg_cache_compatibility_inactive', 'code' => 'cg_cache_compatibility_inactive']);
+        }
+        cg1l_get_or_create_frontend_session_id(true);
+
+        $instances = (!empty($_POST['instances']) && is_array($_POST['instances'])) ? $_POST['instances'] : [];
+        $instances = array_slice($instances, 0, 20);
+        $allowedShortcodes = [
+            'cg_gallery' => true,
+            'cg_gallery_user' => true,
+            'cg_gallery_no_voting' => true,
+            'cg_gallery_winner' => true,
+            'cg_gallery_ecommerce' => true,
+            'cg_users_upload' => true,
+        ];
+        $instanceStates = [];
+
+        foreach ($instances as $instance) {
+            if (empty($instance['runtimeContextToken'])) {
+                continue;
+            }
+
+            $context = cg1l_verify_runtime_context_token($instance['runtimeContextToken']);
+            if (empty($context) || empty($allowedShortcodes[$context['shortcodeName']])) {
+                continue;
+            }
+
+            $instanceStates[$context['gid']] = cg1l_get_runtime_instance_state($context);
+        }
+
+        if (empty($instanceStates)) {
+            cg1l_ajax_frontend_response(false, ['message' => 'cg_invalid_runtime_context', 'code' => 'cg_invalid_runtime_context']);
+        }
+
+        cg1l_ajax_frontend_response(true, [
+            'nonce' => wp_create_nonce('cg1l_action'),
+            'isLoggedIn' => is_user_logged_in() ? 1 : 0,
+            'wpUserId' => is_user_logged_in() ? get_current_user_id() : 0,
+            'wpNickname' => is_user_logged_in() ? wp_get_current_user()->display_name : '',
+            'WpUserEmail' => is_user_logged_in() ? wp_get_current_user()->user_email : '',
+            'cacheCompatibilityActive' => cg1l_is_cache_compatibility_active() ? 1 : 0,
+            'cacheCompatibilityMode' => cg1l_get_cache_compatibility_mode(),
+            'instances' => $instanceStates,
+        ]);
+    }
+}
+
+add_action('wp_ajax_nopriv_post_cg1l_auth_runtime_bootstrap', 'post_cg1l_auth_runtime_bootstrap');
+add_action('wp_ajax_post_cg1l_auth_runtime_bootstrap', 'post_cg1l_auth_runtime_bootstrap');
+if (!function_exists('post_cg1l_auth_runtime_bootstrap')) {
+    function post_cg1l_auth_runtime_bootstrap()
+    {
+        if (!(defined('DOING_AJAX') && DOING_AJAX)) {
+            exit();
+        }
+
+        nocache_headers();
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        cg1l_ajax_reject_bad_origin();
+        cg1l_get_or_create_frontend_session_id(true);
+
+        cg1l_ajax_frontend_response(true, [
+            'nonce' => wp_create_nonce('cg1l_action'),
+            'isLoggedIn' => is_user_logged_in() ? 1 : 0,
+            'wpUserId' => is_user_logged_in() ? get_current_user_id() : 0,
+            'wpNickname' => is_user_logged_in() ? wp_get_current_user()->display_name : '',
+            'WpUserEmail' => is_user_logged_in() ? wp_get_current_user()->user_email : '',
+            'cacheCompatibilityActive' => cg1l_is_cache_compatibility_active() ? 1 : 0,
+            'cacheCompatibilityMode' => cg1l_get_cache_compatibility_mode(),
+            'instances' => [],
+        ]);
+    }
+}
+
+add_action('wp_ajax_nopriv_post_cg1l_get_fresh_frontend_shortcode', 'post_cg1l_get_fresh_frontend_shortcode');
+add_action('wp_ajax_post_cg1l_get_fresh_frontend_shortcode', 'post_cg1l_get_fresh_frontend_shortcode');
+if (!function_exists('post_cg1l_get_fresh_frontend_shortcode')) {
+    function post_cg1l_get_fresh_frontend_shortcode()
+    {
+        if (!(defined('DOING_AJAX') && DOING_AJAX)) {
+            exit();
+        }
+
+        nocache_headers();
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        cg1l_ajax_reject_bad_origin();
+        if (!cg1l_is_cache_compatibility_active()) {
+            cg1l_ajax_frontend_response(false, ['message' => 'cg_cache_compatibility_inactive', 'code' => 'cg_cache_compatibility_inactive']);
+        }
+
+        $runtimeContextToken = (!empty($_POST['runtimeContextToken'])) ? sanitize_text_field(wp_unslash($_POST['runtimeContextToken'])) : '';
+        $context = cg1l_verify_runtime_context_token($runtimeContextToken);
+
+        if (empty($context) || $context['shortcodeName'] !== 'cg_users_upload') {
+            status_header(403);
+            exit('cg_invalid_runtime_context');
+        }
+
+        $galeryID = absint($context['realGid']);
+        if (empty($galeryID)) {
+            status_header(400);
+            exit('cg_missing_gallery_id');
+        }
+
+        $wp_upload_dir = wp_upload_dir();
+        $optionsFile = $wp_upload_dir['basedir'] . '/contest-gallery/gallery-id-' . $galeryID . '/json/' . $galeryID . '-options.json';
+
+        if (!file_exists($optionsFile)) {
+            status_header(404);
+            exit('cg_options_missing');
+        }
+
+        $shortcode_name = 'cg_users_upload';
+        $entryId = 0;
+        $frontend_gallery = '';
+        $isReallyUploadForm = true;
+        $isCgRuntimeFresh = true;
+        $options = json_decode(file_get_contents($optionsFile), true);
+
+        include(__DIR__ . '/../v10/include-scripts-v10.php');
+
+        echo $frontend_gallery;
+        exit();
+    }
+}
+
 
 
 add_action('wp_ajax_nopriv_post_cg_rate_v10_oneStar', 'post_cg_rate_v10_oneStar');
@@ -758,6 +1204,7 @@ if(!function_exists('post_cg1l_get_gallery_data')){
             $base_dir = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$gid.'/json/segments';
             $optionsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$gid.'/json/'.$gid.'-options.json';
             $categoriesFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$gid.'/json/'.$gid.'-categories.json';
+            $formUploadFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$gid.'/json/'.$gid.'-form-upload.json';
 
             $allowedShortcodes = [
                 'cg_gallery' => true,
@@ -798,6 +1245,14 @@ if(!function_exists('post_cg1l_get_gallery_data')){
                 }
             }
 
+            $formUploadFullData = [];
+            if(file_exists($formUploadFile)){
+                $formUploadFullData = json_decode(file_get_contents($formUploadFile), true);
+                if(empty($formUploadFullData) || !is_array($formUploadFullData)){
+                    $formUploadFullData = [];
+                }
+            }
+
             cg1l_migrate_image_stats_to_folder($gid, true);// correct first if needs to correct
 
             $imagesFullData = cg1l_build_images_main_data_gzip($gid, true);
@@ -807,7 +1262,7 @@ if(!function_exists('post_cg1l_get_gallery_data')){
 
             $allowedRealIds = [];
             if(!empty($galleryDataUseAllowedRealIds)){
-                $allowedRealIds = cg1l_frontend_get_allowed_real_ids($imagesFullData, $shortcode_name, $categoriesFullData, $options, $viewerUserId);
+                $allowedRealIds = cg1l_frontend_get_allowed_real_ids($imagesFullData, $shortcode_name, $categoriesFullData, $options, $viewerUserId, $formUploadFullData);
             }
 
             $typeMap = [
@@ -870,6 +1325,55 @@ if(!function_exists('post_cg1l_get_gallery_data')){
             // Decompress to plain JSON
             $json = gzdecode($gzData);
             if ($json === false) { status_header(500); exit('Decode failed'); }
+
+            if(($type === 'images-stats-data' || $type === 'images-comments-data') && function_exists('cg1l_get_recent_json_by_ids')){
+                $payloadData = json_decode($json, true);
+                if(!is_array($payloadData)){
+                    $payloadData = [];
+                }
+
+                if($type === 'images-stats-data'){
+                    $recentPayloadData = cg1l_get_recent_json_by_ids(
+                        $gid,
+                        'image-stats-data-last-update',
+                        'image-stats',
+                        'image-stats-'
+                    );
+                    foreach ($recentPayloadData as $recentId => $recentData) {
+                        $recentId = preg_replace('/[^0-9]/', '', (string)$recentId);
+                        if($recentId === '' || !is_array($recentData)){
+                            continue;
+                        }
+                        if(isset($recentData['id'])){
+                            unset($recentData['id']);
+                        }
+                        $payloadData[$recentId] = $recentData;
+                    }
+                }else{
+                    $recentPayloadData = cg1l_get_recent_json_by_ids(
+                        $gid,
+                        'image-comments-data-last-update',
+                        'image-comments',
+                        'image-comments-'
+                    );
+                    if(function_exists('cg1l_get_comments_user_ids')){
+                        $recentPayloadData = cg1l_get_comments_user_ids($gid, $recentPayloadData);
+                    }
+                    foreach ($recentPayloadData as $recentId => $recentData) {
+                        $recentId = preg_replace('/[^0-9]/', '', (string)$recentId);
+                        if($recentId === '' || !is_array($recentData)){
+                            continue;
+                        }
+                        $payloadData[$recentId] = $recentData;
+                    }
+                }
+
+                $json = wp_json_encode($payloadData);
+                if($json === false){
+                    status_header(500);
+                    exit('Encode failed');
+                }
+            }
 
             if(!empty($galleryDataUseAllowedRealIds)){
                 $payloadData = json_decode($json, true);
