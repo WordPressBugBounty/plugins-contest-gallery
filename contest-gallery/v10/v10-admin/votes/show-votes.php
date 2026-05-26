@@ -320,7 +320,7 @@ echo "<div id='cgVotesImage'>";
             echo '</a>';
         }elseif(cg_is_is_image($ImgType)){
             echo '<div id="cgVotesImageVisualContent">';
-                echo '<a href="'.$sourceOriginalImgShow.'" target="_blank" title="Show full size"><div class="cg_backend_image cg_backend_image_stage"><img class="cg_backend_image_preview cg'.$rThumb.'degree" src="'.$imageThumb.'" alt="Show full size"></div></a>';
+                echo '<a href="'.$sourceOriginalImgShow.'" target="_blank" title="Show full size"><div class="cg'.$rThumb.'degree cg_backend_image" style="background: url('.$imageThumb.') center center no-repeat;"></div></a>';
             echo "</div>";
         }elseif($ImgType=='ytb'){
 	        echo '<div id="cgVotesImageVisualContent">';

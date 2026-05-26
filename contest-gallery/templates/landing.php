@@ -944,11 +944,59 @@ if($isEntryLandingPage){
         echo $HeaderWpPageEntry;
 
     if(class_exists( 'QM_Plugin' )){
+        $wpScripts = wp_scripts();
+
+        $jqueryCoreSrc = includes_url('js/jquery/jquery.min.js');
+        $jqueryCoreVer = '';
+        if(!empty($wpScripts->registered['jquery-core'])){
+            $jqueryCore = $wpScripts->registered['jquery-core'];
+            $jqueryCoreVer = $jqueryCore->ver;
+            if(!empty($jqueryCore->src)){
+                $jqueryCoreSrc = $jqueryCore->src;
+                if(strpos($jqueryCoreSrc,'http://') !== 0 && strpos($jqueryCoreSrc,'https://') !== 0 && strpos($jqueryCoreSrc,'//') !== 0){
+                    $jqueryCoreSrc = (strpos($jqueryCoreSrc,'/') === 0) ? site_url($jqueryCoreSrc) : includes_url($jqueryCoreSrc);
+                }
+            }
+        }
+        if($jqueryCoreVer !== null && $jqueryCoreVer !== ''){
+            $jqueryCoreSrc = add_query_arg('ver',$jqueryCoreVer,$jqueryCoreSrc);
+        }
+
+        $jqueryMigrateSrc = includes_url('js/jquery/jquery-migrate.min.js');
+        $jqueryMigrateVer = '';
+        if(!empty($wpScripts->registered['jquery-migrate'])){
+            $jqueryMigrate = $wpScripts->registered['jquery-migrate'];
+            $jqueryMigrateVer = $jqueryMigrate->ver;
+            if(!empty($jqueryMigrate->src)){
+                $jqueryMigrateSrc = $jqueryMigrate->src;
+                if(strpos($jqueryMigrateSrc,'http://') !== 0 && strpos($jqueryMigrateSrc,'https://') !== 0 && strpos($jqueryMigrateSrc,'//') !== 0){
+                    $jqueryMigrateSrc = (strpos($jqueryMigrateSrc,'/') === 0) ? site_url($jqueryMigrateSrc) : includes_url($jqueryMigrateSrc);
+                }
+            }
+        }
+        if($jqueryMigrateVer !== null && $jqueryMigrateVer !== ''){
+            $jqueryMigrateSrc = add_query_arg('ver',$jqueryMigrateVer,$jqueryMigrateSrc);
+        }
+
+        $queryMonitorVersion = (defined('QM_VERSION')) ? QM_VERSION : '';
+        $queryMonitorCssSrc = plugins_url('assets/query-monitor.css', WP_PLUGIN_DIR . '/query-monitor/query-monitor.php');
+        $queryMonitorJsSrc = plugins_url('assets/query-monitor.js', WP_PLUGIN_DIR . '/query-monitor/query-monitor.php');
+        if(class_exists('QueryMonitor') && method_exists('QueryMonitor','init')){
+            $queryMonitor = QueryMonitor::init();
+            if(is_object($queryMonitor) && !empty($queryMonitor->file) && method_exists($queryMonitor,'plugin_url')){
+                $queryMonitorCssSrc = $queryMonitor->plugin_url('assets/query-monitor.css');
+                $queryMonitorJsSrc = $queryMonitor->plugin_url('assets/query-monitor.js');
+            }
+        }
+        if($queryMonitorVersion !== ''){
+            $queryMonitorCssSrc = add_query_arg('ver',$queryMonitorVersion,$queryMonitorCssSrc);
+            $queryMonitorJsSrc = add_query_arg('ver',$queryMonitorVersion,$queryMonitorJsSrc);
+        }
         ?>
-        <script type='text/javascript' src='<?php echo get_bloginfo('wpurl'); ?>/wp-includes/js/jquery/jquery.min.js?ver=3.6.1' id='jquery-core-js'></script>
-        <script type='text/javascript' src='<?php echo get_bloginfo('wpurl'); ?>/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.3.2' id='jquery-migrate-js'></script>
-        <link rel='stylesheet' id='query-monitor-css' href='<?php echo get_bloginfo('wpurl'); ?>/wp-content/plugins/query-monitor/assets/query-monitor.css?ver=1673467028' type='text/css' media='all' />
-        <script type='text/javascript' src='<?php echo get_bloginfo('wpurl'); ?>/wp-content/plugins/query-monitor/assets/query-monitor.js?ver=1673467028' id='query-monitor-js'></script>
+        <script type='text/javascript' src='<?php echo esc_url($jqueryCoreSrc); ?>' id='jquery-core-js'></script>
+        <script type='text/javascript' src='<?php echo esc_url($jqueryMigrateSrc); ?>' id='jquery-migrate-js'></script>
+        <link rel='stylesheet' id='query-monitor-css' href='<?php echo esc_url($queryMonitorCssSrc); ?>' type='text/css' media='all' />
+        <script type='text/javascript' src='<?php echo esc_url($queryMonitorJsSrc); ?>' id='query-monitor-js'></script>
         <?php
     }
     ?>

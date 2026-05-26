@@ -445,7 +445,7 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
 	                <?php
                 }else{
                 echo '<div id="cgVotesImageVisualContent">';
-                echo '<a href="'.$sourceOriginalImgShow.'" target="_blank" title="Show full size"><img class="cg'.$rThumb.'degree" src="'.$imageThumb.'" style="'.$padding.';position: absolute !important;max-width:none !important;" width="'.$WidthThumbPic.'"></a>';
+                echo '<a href="'.$sourceOriginalImgShow.'" target="_blank" title="Show full size"><div class="cg'.$rThumb.'degree cg_backend_image" style="background: url('.$imageThumb.') center center no-repeat;"></div></a>';
                 //echo '<a href="'.$sourceOriginalImgShow.'" target="_blank" title="Show full size" alt="Show full size"><img src="'.$WPdestination.$value->Timestamp.'_'.$value->NamePic.'-300width.'.$value->ImgType.'" style="'.$padding.';position: absolute !important;max-width:none !important;" width="'.$WidthThumbPic.'"></a>';
                 echo "</div>";
                 }

@@ -435,11 +435,15 @@ if (!function_exists('cg1l_frontend_apply_current_multiple_file_to_entry')) {
         }
 
         $fieldMap = [
+            'thumbnail' => 'thumbnail',
             'WpUpload' => 'WpUpload',
             'post_title' => 'post_title',
             'post_name' => 'post_name',
             'post_content' => 'post_content',
             'post_excerpt' => 'post_excerpt',
+            'post_alt' => 'post_alt',
+            'post_caption' => 'post_caption',
+            'post_date' => 'post_date',
             'post_mime_type' => 'post_mime_type',
             'medium' => 'medium',
             'large' => 'large',
@@ -478,6 +482,7 @@ if (!function_exists('cg1l_frontend_apply_current_multiple_file_to_entry')) {
 
         $normalizedData = $fullData;
         $normalizedData['selectedOrder'] = $selectedOrder;
+        $normalizedData['MultipleFiles'] = $multipleFiles;
 
         if (empty($selectedFileData['isRealIdSource'])) {
             foreach ($fieldMap as $targetKey => $sourceKey) {

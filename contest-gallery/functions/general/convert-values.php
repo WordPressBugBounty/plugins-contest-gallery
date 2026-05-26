@@ -115,6 +115,40 @@ if(!function_exists('cg1l_convert_mixed_value_to_string')){
     }
 }
 
+if(!function_exists('cg1l_decode_nested_entities_for_plain_text')){
+    function cg1l_decode_nested_entities_for_plain_text($content){
+        $content = cg1l_convert_mixed_value_to_string($content);
+
+        if($content===''){
+            return '';
+        }
+
+        $content = trim($content);
+        $content = str_replace(array('&zwj;','&#8205;','&#x200d;'), '', $content);
+        $content = str_replace(html_entity_decode('&#8205;', ENT_QUOTES, 'UTF-8'), '', $content);
+
+        for($i=0;$i<3;$i++){
+            $decoded = html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            if($decoded===$content){
+                break;
+            }
+            $content = $decoded;
+        }
+
+        if(function_exists('wp_strip_all_tags')){
+            $content = wp_strip_all_tags($content,true);
+        }else{
+            $content = strip_tags($content);
+        }
+
+        $content = preg_replace('/\\\\/', '', $content);
+        $content = preg_replace('/[\x00-\x1F\x7F]+/', ' ', $content);
+        $content = preg_replace('/\s+/', ' ', $content);
+
+        return trim($content);
+    }
+}
+
 if(!function_exists('cg_stripslashes_recursively')){
     function cg_stripslashes_recursively ($content){
         if(!empty($content)){

@@ -2,13 +2,20 @@
 if (!function_exists('cg1l_get_entry_query_data')) {
     function cg1l_get_entry_query_data($entryId)
     {
+        $entryId = absint($entryId);
+        if (empty($entryId)) {
+            return [];
+        }
+
         global $wpdb;
         $tablename = $wpdb->prefix . "contest_gal1ery";
-        $queryData = $wpdb->get_results(
+        $queryData = $wpdb->get_results($wpdb->prepare(
             "SELECT id, Exif, MultipleFiles
          FROM $tablename
-         WHERE (id = $entryId AND Active = '1' AND Exif != '' AND Exif != '0' AND Exif IS NOT NULL)
-            OR (id = $entryId AND Active = '1' AND MultipleFiles != '')");
+         WHERE id = %d AND Active = '1' AND ((Exif != '' AND Exif != '0' AND Exif IS NOT NULL)
+            OR MultipleFiles != '')",
+            $entryId
+        ));
 
         $queryDataArray = [];
         if (!empty($queryData)) {
@@ -32,6 +39,13 @@ if (!function_exists('cg1l_get_entry_query_data')) {
 
 if (!function_exists('cg1l_build_images_query_data_gzip')) {
     function cg1l_build_images_query_data_gzip($gid, $getDataOnly = false, $getRecentIds = []) {
+
+        $gid = absint($gid);
+        if(!empty($getRecentIds) && is_array($getRecentIds)){
+            $getRecentIds = array_values(array_unique(array_filter(array_map('absint', $getRecentIds))));
+        }else{
+            $getRecentIds = [];
+        }
 
         $wp_upload_dir = wp_upload_dir();
 
@@ -74,27 +88,24 @@ if (!function_exists('cg1l_build_images_query_data_gzip')) {
             $tablename = $wpdb->prefix . "contest_gal1ery";
 
             if(!empty($getRecentIds)){
-                $collected = '';
-                foreach($getRecentIds as $id) {
-                    if(!$collected){
-                        $collected .= "id = $id";
-                    }else{
-                        $collected .= " OR id = $id";
-                    }
-                }
+                $placeholders = implode(',', array_fill(0, count($getRecentIds), '%d'));
                 $queryData = $wpdb->get_results(
+                    $wpdb->prepare(
                     "SELECT id, Exif, MultipleFiles
          FROM $tablename
-         WHERE (($collected) AND Active = '1' AND Exif != '' AND Exif != '0' AND Exif IS NOT NULL)
-            OR (($collected) AND Active = '1' AND MultipleFiles != '')"
+         WHERE id IN ($placeholders) AND Active = '1' AND ((Exif != '' AND Exif != '0' AND Exif IS NOT NULL)
+            OR MultipleFiles != '')",
+                        $getRecentIds
+                    )
                 );
             }else{
-                $queryData = $wpdb->get_results(
+                $queryData = $wpdb->get_results($wpdb->prepare(
                     "SELECT id, Exif, MultipleFiles
          FROM $tablename
-         WHERE (GalleryID = '$gid' AND Active = '1' AND Exif != '' AND Exif != '0' AND Exif IS NOT NULL)
-            OR (GalleryID = '$gid' AND Active = '1' AND MultipleFiles != '')"
-                );
+         WHERE GalleryID = %d AND Active = '1' AND ((Exif != '' AND Exif != '0' AND Exif IS NOT NULL)
+            OR MultipleFiles != '')",
+                    $gid
+                ));
             }
 
             $queryDataArray = [];
@@ -160,4 +171,3 @@ if (!function_exists('cg1l_build_images_query_data_gzip')) {
         }
     }
 }
-

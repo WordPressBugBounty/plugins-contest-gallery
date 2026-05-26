@@ -12,6 +12,11 @@ if (!function_exists('cg1l_get_shortcode_entry_url_map')) {
 }
 if (!function_exists('cg1l_get_entry_urls_data')) {
     function cg1l_get_entry_urls_data($entryId,$recentMainData,$shortcode_name) {
+        $entryId = absint($entryId);
+        if(empty($entryId)){
+            return [];
+        }
+
         $map = cg1l_get_shortcode_entry_url_map();
         if(empty($map[$shortcode_name])){
             return $recentMainData;

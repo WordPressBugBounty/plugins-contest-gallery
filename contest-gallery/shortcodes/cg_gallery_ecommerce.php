@@ -21,12 +21,12 @@ if(!function_exists('contest_gal1ery_frontend_gallery_ecommerce')){
 
 	    $galeryID = 0;
 	    if(!empty($atts['id'])){
-		    $galeryID = trim($atts['id']);
+		    $galeryID = absint($atts['id']);
 	    }
 
         $entryId = 0;
         if(!empty($atts['entry_id'])){
-            $entryId = $atts['entry_id'];
+            $entryId = absint($atts['entry_id']);
         }
 
         $frontend_gallery = '';

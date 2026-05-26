@@ -1443,6 +1443,15 @@ if(!$isManipulated){
                 }
 
                 $post_title_to_insert = (($WpPageTitle) ? $WpPageTitle : $post_title);
+                if(function_exists('cg1l_decode_nested_entities_for_plain_text')){
+                    $post_title_to_insert = cg1l_decode_nested_entities_for_plain_text($post_title_to_insert);
+                    if(empty($post_title_to_insert)){
+                        $post_title_to_insert = cg1l_decode_nested_entities_for_plain_text($post_title);
+                    }
+                }
+                if(empty($post_title_to_insert)){
+                    $post_title_to_insert = 'entry';
+                }
                 $post_title_to_insert = substr($post_title_to_insert,0,100);
 
                 if(!empty($selectSQL1->WpPageParent)){

@@ -373,6 +373,9 @@ if(!function_exists('cg_pre_process_name_for_url_name')){
 		$name = preg_replace('/_+/', '_', $name);
         $name = cg_remove_emoji($name);
         return strtolower($name);// mysql statements are caseinsensitive by default*/
+        if(function_exists('cg1l_decode_nested_entities_for_plain_text')){
+	        $name = cg1l_decode_nested_entities_for_plain_text($name);
+        }
         $name = cg_remove_emoji( $name );
         return sanitize_title($name);
 	}

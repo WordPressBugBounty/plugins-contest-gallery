@@ -1,5 +1,18 @@
 Contest Gallery
 
+= 30.0.1 =
+* IMPROVED: iOS Safari/WebKit compatibility for mobile full-window galleries, including more stable viewport, keyboard input, comments, overlays, and image zoom behavior.
+* IMPROVED: Mobile shopping cart scrolling and close handling when opened from full-window galleries.
+* IMPROVED: Security hardening.
+* FIXED: User gallery delete controls could disappear after uploading a new entry until the page was reloaded.
+* FIXED: Multiple-star rating details in user galleries now open read-only for own entries and show the correct own-gallery voting message.
+* FIXED: Multiple-star rating detail rows now match the displayed total when "Show only user votes" or manual vote corrections are used.
+* FIXED: Entry page URLs are cleaner for upload titles containing apostrophes or encoded characters.
+* FIXED: Upload field values with apostrophes are displayed correctly in frontend views.
+* FIXED: Potential security vulnerability.
+* FIXED: Small bugs.
+
+
 = 30.0.0 =
 * NEW: Added Contest Gallery Network publishing workflow for gallery listings, including update handling for already published galleries.
 * NEW: Added Gallery ZIP export and import to transfer galleries between sites, including entries, media files, votes, comments and user assignment options.

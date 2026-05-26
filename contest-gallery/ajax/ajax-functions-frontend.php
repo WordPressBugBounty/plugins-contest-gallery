@@ -42,12 +42,22 @@ if(!function_exists('post_cg_galleries_show_cg_gallery')){
 			$galleriesIds = [];
 			$hasGalleriesIds = false;
 
-			if(!empty($_POST['cgIds'])){
-				$galleriesIds = [];
-				foreach ($_POST['cgIds'] as $idToSet){
-					$galleriesIds[] = intval($idToSet);
-				}
+			if(!empty($_POST['cgIds']) && is_array($_POST['cgIds'])){
+				$galleriesIds = cg1l_normalize_positive_int_id_list($_POST['cgIds']);
 				$hasGalleriesIds = true;
+			}
+			$hasGalleriesIds = (!empty($hasGalleriesIds) && !empty($galleriesIds));
+
+			$isGalleriesMainPage = false;
+			if(array_key_exists('isGalleriesMainPage', $_POST)){
+				$isGalleriesMainPage = cg1l_parse_bool_value($_POST['isGalleriesMainPage']);
+			}
+
+			if(array_key_exists('hasGalleriesIds', $_POST)){
+				$hasGalleriesIds = (
+					cg1l_parse_bool_value($_POST['hasGalleriesIds']) &&
+					!empty($galleriesIds)
+				);
 			}
 
 			$cgFromGalleriesUrl = '';
@@ -78,6 +88,21 @@ if(!function_exists('post_cg_galleries_show_cg_gallery')){
 				'cg_gallery_ecommerce' => true
 			];
 			if(empty($allowedShortcodes[$shortcode_name])){
+				cg1l_ajax_frontend_response(false, ['message' => $galleryRequestErrorMessage, 'code' => 'cg_invalid_gallery_request']);
+			}
+
+			$galleriesDataAccessHash = (!empty($_POST['galleriesDataAccessHash'])) ? sanitize_text_field($_POST['galleriesDataAccessHash']) : '';
+			$viewerUserId = (is_user_logged_in()) ? get_current_user_id() : 0;
+			$expectedGalleriesDataAccessHash = cg1l_get_galleries_data_access_hash($shortcode_name,$viewerUserId,$isGalleriesMainPage,$galleriesIds,$hasGalleriesIds);
+			if(
+				empty($galleriesDataAccessHash) ||
+				empty($expectedGalleriesDataAccessHash) ||
+				!hash_equals((string)$expectedGalleriesDataAccessHash, (string)$galleriesDataAccessHash)
+			){
+				cg1l_ajax_frontend_response(false, ['message' => $galleryRequestErrorMessage, 'code' => 'cg_invalid_gallery_request']);
+			}
+
+			if($hasGalleriesIds && $requestedGalleryId !== 9999999 && !in_array($requestedGalleryId, $galleriesIds, true)){
 				cg1l_ajax_frontend_response(false, ['message' => $galleryRequestErrorMessage, 'code' => 'cg_invalid_gallery_request']);
 			}
 

@@ -127,6 +127,7 @@ $tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entrie
 if(!isset($entryId)){
     $entryId = 0;
 }
+$entryId = absint($entryId);
 
 if(empty($isFromOrderSummary)){// to go sure is initiated
 	$isFromOrderSummary = false;

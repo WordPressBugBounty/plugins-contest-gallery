@@ -381,12 +381,27 @@
                 '.$cg_gallery_info.'
               </figure>';
         }elseif(cg_is_is_image($ImgType)){
+            if($rThumb === ' cg90degree' || $rThumb === ' cg270degree'){
+                $rotatedContainerRatioWidth = ($naturalHeight > 0) ? $naturalHeight : 1;
+                $rotatedContainerRatioHeight = ($naturalWidth > 0) ? $naturalWidth : 1;
+                $rotatedImageWidthPercent = ($naturalHeight > 0) ? round(($naturalWidth / $naturalHeight) * 100, 4) : 100;
+                $rotatedImageHeightPercent = ($naturalWidth > 0) ? round(($naturalHeight / $naturalWidth) * 100, 4) : 100;
+                $imageContent = '<div class="cg_append_container cg_rotated_image_container" style="width:100%; aspect-ratio: '.(int)$rotatedContainerRatioWidth.' / '.(int)$rotatedContainerRatioHeight.'; overflow:hidden;">
+                    <div
+                        role="img"
+                        aria-label="'.esc_attr($altAttr).'"
+                        class="cg_append cg_rotated_image_background skip-lazy'.$rThumb.'"
+                        itemprop="contentUrl"
+                        style="background: url('.esc_url($imgSrcLarge).') center center no-repeat; background-size: contain !important; width:'.$rotatedImageWidthPercent.'%; height:'.$rotatedImageHeightPercent.'%;" ></div>
+                </div>';
+            }else{
             $imageContent = '<img
                     src="'.$imgSrcLarge.'" '.$WidthAttribute.' '.$HeightAttribute.'
                     alt="'.esc_attr($altAttr).'"
                     loading="lazy"
                     class="'.$rThumb.'" 
                     itemprop="contentUrl" '.$imgStyle.' >';
+            }
             $figure = '<figure class="cg_figure" itemscope itemtype="https://schema.org/'.$itemTypeObject.'Object">
                 '.$meta.'
                 '.$metaComment.'

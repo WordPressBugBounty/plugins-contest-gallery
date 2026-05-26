@@ -2337,6 +2337,7 @@ debugger
         var $cg_backend_info_container = $(this).closest('.cg_backend_info_container');
         var realId = $cg_backend_info_container.attr('data-cg-real-id');
         var $cg_backend_image = $cg_backend_info_container.find('.cg_backend_image');
+        $cg_backend_info_container.find('.cg_backend_image_preview').removeClass('cg0degree cg90degree cg180degree cg270degree');
         if(!$(this).attr('data-cg-rThumb') || $(this).attr('data-cg-rThumb')==0){
             $cg_backend_image.removeClass('cg180degree  cg270degree').addClass('cg90degree');
             $(this).attr('data-cg-rThumb',90);

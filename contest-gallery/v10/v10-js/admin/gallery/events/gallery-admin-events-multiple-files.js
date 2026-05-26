@@ -37,6 +37,7 @@ jQuery(document).ready(function ($) {
         }
 
         if(order==1){
+            cgJsClassAdmin.gallery.vars.$cg_backend_info_container.find('.cg_backend_image_preview').removeClass('cg0degree cg90degree cg180degree cg270degree');
             cgJsClassAdmin.gallery.vars.$cg_backend_info_container.find('.cg_backend_image').removeClass('cg0degree cg90degree cg180degree  cg270degree').addClass('cg'+$(this).attr('data-cg-rThumb')+'degree');
         }
 

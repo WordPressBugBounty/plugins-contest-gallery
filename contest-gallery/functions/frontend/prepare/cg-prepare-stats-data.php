@@ -1,6 +1,12 @@
 <?php
 if (!function_exists('cg1l_get_entry_stats_data')) {
     function cg1l_get_entry_stats_data($gid,$entryId) {
+        $gid = absint($gid);
+        $entryId = absint($entryId);
+        if(empty($gid) || empty($entryId)){
+            return [];
+        }
+
         $wp_upload_dir = wp_upload_dir();
         $jsonFile = $wp_upload_dir['basedir'] . '/contest-gallery/gallery-id-' . $gid . '/json/image-stats/image-stats-'.$entryId.'.json';
 

@@ -1191,7 +1191,7 @@ if($isAjaxCall){
                 $PdfPreviewImage = $anotherFirstMultipleFilePdfPreviewImage;
             }
             echo '<a href="'.$sourceOriginalImgShow.'?time='.time().'" target="_blank" title="'.$title.'" alt="'.$title.'">
-                <div class="cg_backend_image cg_backend_image_stage"><img class="cg0degree cg_backend_image_preview" src="'.($PdfPreviewImage.'?time='.time()).'" alt="'.$title.'" ></div></a>';
+                <div class="cg0degree cg_backend_image cg_backend_image_stage"><img class="cg_backend_image_preview" src="'.($PdfPreviewImage.'?time='.time()).'" alt="'.$title.'" ></div></a>';
         }elseif(empty($allWpPostsByWpUploadIdArray[$WpUpload]) && $ImgTypeToShow!='con'){
 			echo '<div class="cg_backend_image_full_size_target_empty" >';
 			echo "</div>";
@@ -1250,7 +1250,7 @@ if($isAjaxCall){
 			<?php
 		}else{
 			echo '<a href="'.$sourceOriginalImgShow.'?time='.time().'" target="_blank" title="Show full size" alt="Show full size">
-                <div class="cg_backend_image cg_backend_image_stage"><img class="cg'.$rThumbToShow.'degree cg_backend_image_preview" src="'.($imgSrcLargeToShow.'?time='.time()).'" width="'.absint($imgSrcFullWidth).'" height="'.absint($imgSrcFullHeight).'" alt="Show full size" ></div></a>';
+                <div class="cg'.$rThumbToShow.'degree cg_backend_image" style="background: url('.($imgSrcLargeToShow.'?time='.time()).') center center no-repeat;"></div></a>';
 		}
 		echo "</div>";
 
