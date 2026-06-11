@@ -30,6 +30,14 @@ if(!function_exists('cg_delete_images')){
 	    $imageArray = [];
         $shouldDeleteOriginalImageSource = ((!empty($_POST['cgDeleteOriginalImageSourceAlso']) || $DeleteFromStorageIfDeletedInFrontend) && !$isConsecutiveDeletionOfDeletedWpUploads);
 
+        if(function_exists('cg_entry_watermark_collect_wp_upload_ids_for_gallery')){
+            $watermarkWpUploadIds = cg_entry_watermark_collect_wp_upload_ids_for_gallery($GalleryID,$deleteValuesArray);
+            if(!empty($watermarkWpUploadIds)){
+                $watermarkMode = ($shouldDeleteOriginalImageSource || $isConsecutiveDeletionOfDeletedWpUploads) ? 'cleanup_only' : 'restore_public';
+                cg_entry_watermark_restore_wp_upload_ids($watermarkWpUploadIds,$watermarkMode);
+            }
+        }
+
         // Frontend polling watches these marker files to detect added or removed
         // entries without rebuilding the complete gallery immediately.
         if(!is_dir($upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/frontend-added-or-removed-images')){

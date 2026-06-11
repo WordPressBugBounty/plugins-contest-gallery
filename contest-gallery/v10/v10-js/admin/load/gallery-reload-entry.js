@@ -1,3 +1,117 @@
+cgJsClassAdmin.gallery.functions = cgJsClassAdmin.gallery.functions || {};
+
+if(!cgJsClassAdmin.gallery.functions.renderWatermarkImage){
+    cgJsClassAdmin.gallery.functions.renderWatermarkImage = function(backgroundUrl,text,position,pxSize,color,opacity){
+        return new Promise(function(resolve,reject){
+            var sourceImage = new Image();
+            var link = document.createElement('a');
+
+            if(!backgroundUrl){
+                reject();
+                return;
+            }
+
+            link.href = backgroundUrl;
+            if(backgroundUrl.indexOf('data:') !== 0 && (link.protocol+'//'+link.host) !== (window.location.protocol+'//'+window.location.host)){
+                sourceImage.crossOrigin = 'anonymous';
+            }
+
+            sourceImage.onload = function(){
+                try{
+                    var canvas = document.createElement('canvas');
+                    var width = sourceImage.naturalWidth || sourceImage.width;
+                    var height = sourceImage.naturalHeight || sourceImage.height;
+                    var context = canvas.getContext('2d');
+                    var fontSize = parseInt(pxSize, 10);
+                    var textToDraw = text || 'Contest Gallery';
+                    var positionToUse = position || 'center';
+                    var minFontSize = 8;
+                    var textSize;
+                    var margin;
+                    var x;
+                    var y;
+                    var renderedImage;
+
+                    if(!fontSize){
+                        fontSize = 64;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    context.drawImage(sourceImage, 0, 0, width, height);
+
+                    fontSize = Math.max(minFontSize, Math.min(512, fontSize));
+
+                    var getTextSize = function(size){
+                        var metrics;
+                        var minX;
+                        var maxX;
+                        var minY;
+                        var maxY;
+                        context.font = size+'px serif';
+                        metrics = context.measureText(textToDraw);
+                        minX = (typeof metrics.actualBoundingBoxLeft === 'number') ? -metrics.actualBoundingBoxLeft : 0;
+                        maxX = (typeof metrics.actualBoundingBoxRight === 'number') ? metrics.actualBoundingBoxRight : metrics.width;
+                        minY = (typeof metrics.actualBoundingBoxAscent === 'number') ? -metrics.actualBoundingBoxAscent : -size;
+                        maxY = (typeof metrics.actualBoundingBoxDescent === 'number') ? metrics.actualBoundingBoxDescent : Math.ceil(size * 0.25);
+                        return {
+                            width: Math.ceil(maxX - minX),
+                            height: Math.ceil(maxY - minY),
+                            drawX: -minX,
+                            drawY: -minY
+                        };
+                    };
+
+                    var getMargin = function(size){
+                        return Math.max(10, Math.floor(size * 0.08));
+                    };
+
+                    textSize = getTextSize(fontSize);
+                    margin = getMargin(fontSize);
+                    if(positionToUse === 'upperLeft'){
+                        x = margin;
+                        y = margin;
+                    }else if(positionToUse === 'upperRight'){
+                        x = width - textSize.width - margin;
+                        y = margin;
+                    }else if(positionToUse === 'lowerRight'){
+                        x = width - textSize.width - margin;
+                        y = height - textSize.height - margin;
+                    }else if(positionToUse === 'lowerLeft'){
+                        x = margin;
+                        y = height - textSize.height - margin;
+                    }else{
+                        x = Math.floor((width - textSize.width) / 2);
+                        y = Math.floor((height - textSize.height) / 2);
+                    }
+
+                    context.save();
+                    context.globalAlpha = (opacity === 0 || opacity) ? opacity : 0.5;
+                    context.fillStyle = color || '#fff';
+                    context.font = fontSize+'px serif';
+                    context.textBaseline = 'alphabetic';
+                    context.translate(x, y);
+                    context.fillText(textToDraw, textSize.drawX, textSize.drawY);
+                    context.restore();
+
+                    renderedImage = new Image();
+                    renderedImage.alt = '';
+                    renderedImage.src = canvas.toDataURL('image/png');
+                    resolve(renderedImage);
+                }catch(e){
+                    reject(e);
+                }
+            };
+
+            sourceImage.onerror = function(){
+                reject();
+            };
+
+            sourceImage.src = backgroundUrl;
+        });
+    };
+}
+
 cgJsClassAdmin.gallery.reload = {
     entry: function (id,isWithSaveChanges,isReloadAfterSaleSettingsSave,NewWpUploadWhichReplace,WpUploadToReplace,newImgType,isAfterWatermark,$cg_backend_info_container,callback,callbackParams,isReloadAfterSaveChangesOrCallback,customMessage,closeEverything) {
 
@@ -38,7 +152,8 @@ cgJsClassAdmin.gallery.reload = {
 
                         if(cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUploadToReplace] && cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUploadToReplace]['WatermarkSize']){
                             title = cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUploadToReplace]['WatermarkTitle'];
-                            pxSizeExtraToSet = cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUploadToReplace]['WatermarkSize'];
+                            pxSize = cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUploadToReplace]['WatermarkSize'];
+                            pxSizeExtraToSet = pxSize;
                             position = cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUploadToReplace]['WatermarkPosition'];
                             delete cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUploadToReplace];
                         }
@@ -68,8 +183,7 @@ cgJsClassAdmin.gallery.reload = {
                         debugger
                         if(cgJsClassAdmin.index.functions.isImageType(newImgType)){
                             debugger
-                            watermark([cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][orderNewWpUpload]['large']])
-                                .image(watermark.text[position](title, pxSize+'px serif', '#fff', 0.5, pxSizeExtraToSet))
+                            cgJsClassAdmin.gallery.functions.renderWatermarkImage(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][orderNewWpUpload]['large'], title, position, pxSize, '#fff', 0.5)
                                 .then(function (img) {
                                     debugger
                                     var base64src = jQuery(img).attr('src');

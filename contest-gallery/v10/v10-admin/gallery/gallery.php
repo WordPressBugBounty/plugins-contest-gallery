@@ -92,6 +92,10 @@ if(empty($isAjaxCall)){
 
 
 include("get-data.php");
+$cgEntryWatermarkedWpUploadIdsSet = array();
+if(function_exists('cg_entry_watermark_collect_wp_upload_ids_from_rows') && !empty($selectSQL)){
+	$cgEntryWatermarkedWpUploadIdsSet = cg_entry_watermark_get_watermarked_wp_upload_ids(cg_entry_watermark_collect_wp_upload_ids_from_rows($selectSQL));
+}
 echo '<input type="hidden"  id="cgGalleryID" value="'. $GalleryID .'">';
 include(dirname(__FILE__) . "/../nav-gallery.php");
 include("header-1.php");
@@ -508,6 +512,38 @@ if($isAjaxCall){
 			$cg_is_for_sale = '';
 			$cg_ecom_not_ecom = 'cg_not_ecom';
 		}
+
+		$cgEntryWatermarkedWpUploadsArray = [];
+		$cgEntryHasWatermarkableImage = false;
+		if(function_exists('cg_entry_watermark_supported_type')){
+			if(!empty($MultipleFiles)){
+				foreach($MultipleFiles as $MultipleFile){
+					if(!empty($MultipleFile['isRealIdSource'])){
+						$cgEntryWatermarkWpUpload = $WpUpload;
+						$cgEntryWatermarkImgType = $ImgType;
+						$cgEntryWatermarkPdfPreview = $PdfPreview;
+					}else{
+						$cgEntryWatermarkWpUpload = !empty($MultipleFile['WpUpload']) ? $MultipleFile['WpUpload'] : 0;
+						$cgEntryWatermarkImgType = !empty($MultipleFile['ImgType']) ? $MultipleFile['ImgType'] : '';
+						$cgEntryWatermarkPdfPreview = !empty($MultipleFile['PdfPreview']) ? $MultipleFile['PdfPreview'] : 0;
+					}
+					if(!empty($cgEntryWatermarkWpUpload) && cg_entry_watermark_supported_type($cgEntryWatermarkImgType) && empty($cgEntryWatermarkPdfPreview)){
+						$cgEntryHasWatermarkableImage = true;
+						if(!empty($cgEntryWatermarkedWpUploadIdsSet[absint($cgEntryWatermarkWpUpload)])){
+							$cgEntryWatermarkedWpUploadsArray[] = absint($cgEntryWatermarkWpUpload);
+						}
+					}
+				}
+			}else{
+				if(!empty($WpUpload) && cg_entry_watermark_supported_type($ImgType) && empty($PdfPreview)){
+					$cgEntryHasWatermarkableImage = true;
+					if(!empty($cgEntryWatermarkedWpUploadIdsSet[absint($WpUpload)])){
+						$cgEntryWatermarkedWpUploadsArray[] = absint($WpUpload);
+					}
+				}
+			}
+		}
+		$cgEntryWatermarkedWpUploads = json_encode(array_values(array_unique($cgEntryWatermarkedWpUploadsArray)));
 
 		echo "<li id='div$id' data-cg-real-id='$id' class='cgSortableDiv cg_sortable_div $cg_is_for_sale $cg_sortable_div_status'>";
 
@@ -1029,12 +1065,19 @@ if($isAjaxCall){
 		echo "<input type='hidden' class='cg_disabled_send cg_multiple_files_for_post cg_input_vars_count' name='cg_multiple_files_for_post[$id]' value='$MultipleFilesString' >";
 		echo "<input type='hidden' class='cg_disabled_send cg_input_vars_count cg_rThumb' name='cg_rThumb[$id]' value='$rThumb' >";
 
+		$cgEntryActionButtons = '';
 		if($ImgType!='con'){
 			if($ImgType=='ytb' || $ImgType=='twt' || $ImgType=='inst' || $ImgType=='tkt'){
 				$ytbHintText = $ImgType;
 				//$ytbHint = '<br><span class="cg_ytb_hint">Not available for '.$socialTypeName.' type entry so far</span>';
 			}
-			echo "<div class='cg_action_button cg_manage_multiple_files $ytbDisabled' >Add / manage / replace</div>";
+			$cgEntryActionButtons .= "<div class='cg_action_button cg_manage_multiple_files $ytbDisabled' >Add / manage / replace</div>";
+		}
+		if($cgEntryHasWatermarkableImage){
+			$cgEntryActionButtons .= "<div class='cg_action_button cg_entry_watermark'>Watermark</div>";
+		}
+		if(!empty($cgEntryActionButtons)){
+			echo "<div class='cg_entry_action_buttons_container'>$cgEntryActionButtons</div>";
 		}
 
 		// Add additional files released in v18 and available for all galleries copied or created since v17
@@ -1162,6 +1205,7 @@ if($isAjaxCall){
 		echo "<input type='hidden' class='CurrencyPosition' value='$CurrencyPosition'>";
 		echo "<input type='hidden' class='PriceDivider' value='$PriceDivider'>";
 		echo "<input type='hidden' class='WatermarkSettings' value='$WatermarkSettings'>";
+		echo "<input type='hidden' class='cgEntryWatermarkWpUploads' value='$cgEntryWatermarkedWpUploads'>";
 		echo "<input type='hidden' class='WpUploadFilesForSale' value='$WpUploadFilesForSale'>";
 		echo "<input type='hidden' class='SaleTitle' value='$SaleTitle'>";
 		echo "<input type='hidden' class='AllUploadsUsedText' value='$AllUploadsUsedText'>";
@@ -1281,13 +1325,13 @@ if($isAjaxCall){
 		if($isEcommerceEntryAndDownload){
 			if(!empty($value->MultipleFiles) && $value->MultipleFiles!='""' && count($EcommerceEntryAndWpUploadIds)){
 				echo '<a class="cg_image_action_href cg_download_multiple_files_zip" href="?page='.cg_get_version().'/index.php&option_id='.$GalleryID.'&cg_download_original_source_for_ecommerce_sale=true&cg_real_id='.$id.'&cg_download_cookie=cg_download_cookie_'.$id.'" data-cg-download-cookie="cg_download_cookie_'.$id.'" >';
-				echo '<div class="cg_image_action_span" style="width: fit-content; padding: 5px;margin: 5px auto;font-size: 12px;">';
+				echo '<div class="cg_image_action_span" style="width: fit-content; padding: 5px 10px;margin: 5px auto;font-size: 12px;">';
 				echo 'Download<br>originals';
 				echo "</div>";
 				echo "</a>";
 			}else{
 				echo '<a class="cg_image_action_href" href="?page='.cg_get_version().'/index.php&option_id='.$GalleryID.'&cg_download_original_source_for_ecommerce_sale=true&cg_real_id='.$id.'" >';
-				echo '<div class="cg_image_action_span" style="width: fit-content; padding: 5px;margin: 5px auto;font-size: 12px;">';
+				echo '<div class="cg_image_action_span" style="width: fit-content; padding: 5px 10px;margin: 5px auto;font-size: 12px;">';
 				echo 'Download<br>original';
 				echo "</div>";
 				echo "</a>";

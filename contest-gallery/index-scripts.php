@@ -49,6 +49,7 @@ cg_ecommerce_include_javascript_admin('cg_gallery_admin_currency_input_events','
 cg_ecommerce_include_javascript_admin('cg_gallery_admin_currency_input_functions','admin/gallery/gallery-admin-currency-input-functions.js');
 cg_ecommerce_include_javascript_admin('cg_gallery_admin_watermark','admin/gallery/gallery-admin-watermark.js');
 
+wp_enqueue_script( 'cg_gallery_admin_entry_watermark', plugins_url( '/v10/v10-js/admin/gallery/gallery-admin-watermark-entry.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 
 wp_enqueue_script( 'cg_check_wp_admin_upload_v10', plugins_url( '/v10/v10-js/admin/gallery/cg_check_wp_admin_upload.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_style( 'cg_backend_gallery', plugins_url('/v10/v10-css/backend/cg_backend_gallery.css', __FILE__), false, cg_get_version_for_scripts() );

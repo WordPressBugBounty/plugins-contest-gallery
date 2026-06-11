@@ -20,6 +20,8 @@ $tablename_ecommerce_orders_items = $wpdb->prefix . "contest_gal1ery_ecommerce_o
 $tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
 
 $isNewGallery = false;
+$selectSQL = array();
+$countSelectSQL = 0;
 
 $thumbSizesWp = array();
 $thumbSizesWp['thumbnail_size_w'] = get_option("thumbnail_size_w");
@@ -270,45 +272,57 @@ if(empty($cgGalleryDashboardDbVersion) && !empty($optionsSQL->Version)){
     }
 }
 
-$cgGalleryDashboardStatsRow = $wpdb->get_row($wpdb->prepare(
-    "SELECT COUNT(*) AS UploadsTotal,
-        SUM(CASE WHEN Active = 1 THEN 1 ELSE 0 END) AS ActiveUploads,
-        SUM(CASE WHEN Active = 0 THEN 1 ELSE 0 END) AS InactiveUploads,
-        SUM(CountC) AS CommentsTotal,
-        SUM(CountCtoReview) AS CommentsToReview
-    FROM $tablename
-    WHERE GalleryID = %d",
-    [$GalleryID]
-));
+$cgGalleryDashboardIsFreshNewGallery = (!empty($isNewGalleryCreated));
 
-$cgGalleryDashboardUploadsTotal = (!empty($cgGalleryDashboardStatsRow->UploadsTotal)) ? intval($cgGalleryDashboardStatsRow->UploadsTotal) : 0;
-$cgGalleryDashboardActiveUploads = (!empty($cgGalleryDashboardStatsRow->ActiveUploads)) ? intval($cgGalleryDashboardStatsRow->ActiveUploads) : 0;
-$cgGalleryDashboardInactiveUploads = (!empty($cgGalleryDashboardStatsRow->InactiveUploads)) ? intval($cgGalleryDashboardStatsRow->InactiveUploads) : 0;
-$cgGalleryDashboardCommentsTotal = (!empty($cgGalleryDashboardStatsRow->CommentsTotal)) ? intval($cgGalleryDashboardStatsRow->CommentsTotal) : 0;
-$cgGalleryDashboardCommentsToReview = (!empty($cgGalleryDashboardStatsRow->CommentsToReview)) ? intval($cgGalleryDashboardStatsRow->CommentsToReview) : 0;
-$cgGalleryDashboardVotesTotal = intval($wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $tablenameIP WHERE GalleryID = %d",[$GalleryID])));
+if($cgGalleryDashboardIsFreshNewGallery){
+    $cgGalleryDashboardUploadsTotal = 0;
+    $cgGalleryDashboardActiveUploads = 0;
+    $cgGalleryDashboardInactiveUploads = 0;
+    $cgGalleryDashboardCommentsTotal = 0;
+    $cgGalleryDashboardCommentsToReview = 0;
+    $cgGalleryDashboardVotesTotal = 0;
+    $cgGalleryDashboardActiveShown = 0;
+}else{
+    $cgGalleryDashboardStatsRow = $wpdb->get_row($wpdb->prepare(
+        "SELECT COUNT(*) AS UploadsTotal,
+            SUM(CASE WHEN Active = 1 THEN 1 ELSE 0 END) AS ActiveUploads,
+            SUM(CASE WHEN Active = 0 THEN 1 ELSE 0 END) AS InactiveUploads,
+            SUM(CountC) AS CommentsTotal,
+            SUM(CountCtoReview) AS CommentsToReview
+        FROM $tablename
+        WHERE GalleryID = %d",
+        [$GalleryID]
+    ));
 
-$cgGalleryDashboardActiveShown = $cgGalleryDashboardActiveUploads;
-if(!empty($categories)){
-    $cgGalleryDashboardCategoryIds = [];
-    foreach($categories as $category){
-        if(!empty($category->Active)){
-            $cgGalleryDashboardCategoryIds[] = absint($category->id);
+    $cgGalleryDashboardUploadsTotal = (!empty($cgGalleryDashboardStatsRow->UploadsTotal)) ? intval($cgGalleryDashboardStatsRow->UploadsTotal) : 0;
+    $cgGalleryDashboardActiveUploads = (!empty($cgGalleryDashboardStatsRow->ActiveUploads)) ? intval($cgGalleryDashboardStatsRow->ActiveUploads) : 0;
+    $cgGalleryDashboardInactiveUploads = (!empty($cgGalleryDashboardStatsRow->InactiveUploads)) ? intval($cgGalleryDashboardStatsRow->InactiveUploads) : 0;
+    $cgGalleryDashboardCommentsTotal = (!empty($cgGalleryDashboardStatsRow->CommentsTotal)) ? intval($cgGalleryDashboardStatsRow->CommentsTotal) : 0;
+    $cgGalleryDashboardCommentsToReview = (!empty($cgGalleryDashboardStatsRow->CommentsToReview)) ? intval($cgGalleryDashboardStatsRow->CommentsToReview) : 0;
+    $cgGalleryDashboardVotesTotal = intval($wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $tablenameIP WHERE GalleryID = %d",[$GalleryID])));
+
+    $cgGalleryDashboardActiveShown = $cgGalleryDashboardActiveUploads;
+    if(!empty($categories)){
+        $cgGalleryDashboardCategoryIds = [];
+        foreach($categories as $category){
+            if(!empty($category->Active)){
+                $cgGalleryDashboardCategoryIds[] = absint($category->id);
+            }
         }
-    }
-    if(!empty($ShowOther)){
-        $cgGalleryDashboardCategoryIds[] = 0;
-    }
-    $cgGalleryDashboardCategoryIds = array_values(array_unique($cgGalleryDashboardCategoryIds));
-    if(!empty($cgGalleryDashboardCategoryIds)){
-        $cgGalleryDashboardCategoryPlaceholders = implode(',',array_fill(0,count($cgGalleryDashboardCategoryIds),'%d'));
-        $cgGalleryDashboardCategoryArgs = array_merge([$GalleryID],$cgGalleryDashboardCategoryIds);
-        $cgGalleryDashboardActiveShown = intval($wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) FROM $tablename WHERE GalleryID = %d AND Active = 1 AND Category IN ($cgGalleryDashboardCategoryPlaceholders)",
-            $cgGalleryDashboardCategoryArgs
-        )));
-    }else{
-        $cgGalleryDashboardActiveShown = 0;
+        if(!empty($ShowOther)){
+            $cgGalleryDashboardCategoryIds[] = 0;
+        }
+        $cgGalleryDashboardCategoryIds = array_values(array_unique($cgGalleryDashboardCategoryIds));
+        if(!empty($cgGalleryDashboardCategoryIds)){
+            $cgGalleryDashboardCategoryPlaceholders = implode(',',array_fill(0,count($cgGalleryDashboardCategoryIds),'%d'));
+            $cgGalleryDashboardCategoryArgs = array_merge([$GalleryID],$cgGalleryDashboardCategoryIds);
+            $cgGalleryDashboardActiveShown = intval($wpdb->get_var($wpdb->prepare(
+                "SELECT COUNT(*) FROM $tablename WHERE GalleryID = %d AND Active = 1 AND Category IN ($cgGalleryDashboardCategoryPlaceholders)",
+                $cgGalleryDashboardCategoryArgs
+            )));
+        }else{
+            $cgGalleryDashboardActiveShown = 0;
+        }
     }
 }
 
@@ -328,11 +342,11 @@ $cgGalleryDashboardStats = [
 ];
 
 $cgGalleryDashboardFrontendUploadColumnExists = false;
-if($cgGalleryDashboardDbVersion >= 29.02){
+if(!$cgGalleryDashboardIsFreshNewGallery && $cgGalleryDashboardDbVersion >= 29.02){
     $cgGalleryDashboardFrontendUploadColumnExists = $wpdb->get_var("SHOW COLUMNS FROM $tablename LIKE 'FrontendUpload'");
 }
 
-if($cgGalleryDashboardDbVersion >= 29.02 && !empty($cgGalleryDashboardFrontendUploadColumnExists)){
+if(!$cgGalleryDashboardIsFreshNewGallery && $cgGalleryDashboardDbVersion >= 29.02 && !empty($cgGalleryDashboardFrontendUploadColumnExists)){
     $cgGalleryDashboardSourceStats = $wpdb->get_row($wpdb->prepare(
         "SELECT
             SUM(CASE WHEN FrontendUpload = 1 THEN 1 ELSE 0 END) AS FrontendUploads,
@@ -356,34 +370,37 @@ $cgGalleryDashboardTrendTodayDayIndex = intval(floor((time() + $cgGalleryDashboa
 $cgGalleryDashboardTrendStartDayIndex = $cgGalleryDashboardTrendTodayDayIndex - ($cgGalleryDashboardTrendDaysCount - 1);
 $cgGalleryDashboardTrendStartTimestamp = ($cgGalleryDashboardTrendStartDayIndex * 86400) - $cgGalleryDashboardTrendOffsetSeconds;
 
-$cgGalleryDashboardTrendRows = $wpdb->get_results($wpdb->prepare(
-    "SELECT DayIndex, SUM(ActivityCount) AS ActivityCount
-    FROM (
-        SELECT FLOOR((Timestamp + %d) / 86400) AS DayIndex, COUNT(*) AS ActivityCount
-        FROM $tablename
-        WHERE GalleryID = %d AND Timestamp >= %d
+$cgGalleryDashboardTrendRows = [];
+if(!$cgGalleryDashboardIsFreshNewGallery){
+    $cgGalleryDashboardTrendRows = $wpdb->get_results($wpdb->prepare(
+        "SELECT DayIndex, SUM(ActivityCount) AS ActivityCount
+        FROM (
+            SELECT FLOOR((Timestamp + %d) / 86400) AS DayIndex, COUNT(*) AS ActivityCount
+            FROM $tablename
+            WHERE GalleryID = %d AND Timestamp >= %d
+            GROUP BY DayIndex
+            UNION ALL
+            SELECT FLOOR((Tstamp + %d) / 86400) AS DayIndex, COUNT(*) AS ActivityCount
+            FROM $tablenameIP
+            WHERE GalleryID = %d AND Tstamp >= %d
+            GROUP BY DayIndex
+            UNION ALL
+            SELECT FLOOR((CAST(Timestamp AS UNSIGNED) + %d) / 86400) AS DayIndex, COUNT(*) AS ActivityCount
+            FROM $tablenameComments
+            WHERE GalleryID = %d AND Timestamp REGEXP '^[0-9]+$' AND CAST(Timestamp AS UNSIGNED) >= %d
+            GROUP BY DayIndex
+        ) AS cgDashboardActivity
+        WHERE DayIndex >= %d AND DayIndex <= %d
         GROUP BY DayIndex
-        UNION ALL
-        SELECT FLOOR((Tstamp + %d) / 86400) AS DayIndex, COUNT(*) AS ActivityCount
-        FROM $tablenameIP
-        WHERE GalleryID = %d AND Tstamp >= %d
-        GROUP BY DayIndex
-        UNION ALL
-        SELECT FLOOR((CAST(Timestamp AS UNSIGNED) + %d) / 86400) AS DayIndex, COUNT(*) AS ActivityCount
-        FROM $tablenameComments
-        WHERE GalleryID = %d AND Timestamp REGEXP '^[0-9]+$' AND CAST(Timestamp AS UNSIGNED) >= %d
-        GROUP BY DayIndex
-    ) AS cgDashboardActivity
-    WHERE DayIndex >= %d AND DayIndex <= %d
-    GROUP BY DayIndex
-    ORDER BY DayIndex ASC",
-    [
-        $cgGalleryDashboardTrendOffsetSeconds,$GalleryID,$cgGalleryDashboardTrendStartTimestamp,
-        $cgGalleryDashboardTrendOffsetSeconds,$GalleryID,$cgGalleryDashboardTrendStartTimestamp,
-        $cgGalleryDashboardTrendOffsetSeconds,$GalleryID,$cgGalleryDashboardTrendStartTimestamp,
-        $cgGalleryDashboardTrendStartDayIndex,$cgGalleryDashboardTrendTodayDayIndex
-    ]
-));
+        ORDER BY DayIndex ASC",
+        [
+            $cgGalleryDashboardTrendOffsetSeconds,$GalleryID,$cgGalleryDashboardTrendStartTimestamp,
+            $cgGalleryDashboardTrendOffsetSeconds,$GalleryID,$cgGalleryDashboardTrendStartTimestamp,
+            $cgGalleryDashboardTrendOffsetSeconds,$GalleryID,$cgGalleryDashboardTrendStartTimestamp,
+            $cgGalleryDashboardTrendStartDayIndex,$cgGalleryDashboardTrendTodayDayIndex
+        ]
+    ));
+}
 
 $cgGalleryDashboardTrendByDay = [];
 foreach($cgGalleryDashboardTrendRows as $cgGalleryDashboardTrendRow){
@@ -480,9 +497,16 @@ if(!empty($selectSQL)){
 }
 // check if an tablename ip entry exists
 // seems to be fastest query https://stackoverflow.com/questions/1676551/best-way-to-test-if-a-row-exists-in-a-mysql-table#answer-10688065
-$checkTablenameIPentries = count($wpdb->get_results( "SELECT 1 FROM $tablenameIP WHERE id >0 LIMIT 1" ));
+$checkTablenameIPentries = 0;
+if(!$cgGalleryDashboardIsFreshNewGallery){
+    $checkTablenameIPentries = count($wpdb->get_results( "SELECT 1 FROM $tablenameIP WHERE id >0 LIMIT 1" ));
+}
 
-if($search===''){
+if($cgGalleryDashboardIsFreshNewGallery){
+
+    $rows = 0;
+
+}elseif($search===''){
 
     $selectWinnersOnly = '';
     if(!empty($_POST['cg_show_only_winners'])){
@@ -514,9 +538,12 @@ if($search===''){
 
 // Pr�fen ob ein bestimmtes input Feld als Forward URL dienen soll
 
-$Use_as_URL_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM $tablename_f_input WHERE GalleryID = %d AND Use_as_URL = '1' " ,[
-    $GalleryID
-]));
+$Use_as_URL_id = 0;
+if(!$cgGalleryDashboardIsFreshNewGallery){
+    $Use_as_URL_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM $tablename_f_input WHERE GalleryID = %d AND Use_as_URL = '1' " ,[
+        $GalleryID
+    ]));
+}
 
 // Pr�fen ob ein bestimmtes input Feld als Forward URL dienen soll --- ENDE
 

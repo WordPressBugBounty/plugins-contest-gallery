@@ -123,7 +123,7 @@ jQuery(document).ready(function ($) {
     });
 
     $(document).on('click','#cgRightSide .cg_upl_add',function (e) {
-        $(this).closest('#cgRightSide').find('.cg_upl_add').removeClass('cg_clicked');
+        $(this).closest('#cgRightSide').find('.cg_upl_add,.cg_row.cg_add_row,.cg_add_col').removeClass('cg_clicked');
         $(this).addClass('cg_clicked');
         if($(this).closest('#cg_registry_form_container_parent').length){
             cgJsClassAdmin.gallery.functions.showModal('#cgAddRegField');
@@ -151,12 +151,8 @@ jQuery(document).ready(function ($) {
                     $div.find('.cg_remove').click();
                 },100);
             }else if($div.find('.cg_remove_new').length){
-                var $row = $(this).closest('.cg_row');
-                $(this).closest('.cg_row_col.cg_el').replaceWith($(cgJsClassAdmin.createUpload.functions.getAddElCol()));
+                cgJsClassAdmin.createUpload.functions.removeRightSideFieldElement($,$col);
                 $div.find('.cg_remove_new').click();
-                if(!$row.find('.cg_row_col.cg_el').length){
-               //     $row.find('.cg_del_row').removeClass('cg_hide');
-                }
             }
         }else{
             $col.closest('.cg_row').find('.cg_add_col').removeClass('cg_hide');
@@ -172,13 +168,16 @@ jQuery(document).ready(function ($) {
 
     $(document).on('click','#cgRightSide .cg_row .cg_add_col',function (e) {
         var $row = $(this).closest('.cg_row');
-        if($row.find('.cg_row_col').length<3){
-            $row.append($(cgJsClassAdmin.createUpload.functions.getAddElCol()));
-        }
         if($row.find('.cg_row_col').length>=3){
-            $row.find('.cg_add_col').addClass('cg_hide');
+            return;
         }
-        cgJsClassAdmin.createUpload.functions.addRightFieldOrderAndAddRowsAndColumns($);
+        $(this).closest('#cgRightSide').find('.cg_upl_add,.cg_row.cg_add_row,.cg_add_col').removeClass('cg_clicked');
+        $(this).addClass('cg_clicked');
+        if($(this).closest('#cg_registry_form_container_parent').length){
+            cgJsClassAdmin.gallery.functions.showModal('#cgAddRegField');
+        }else{
+            cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+        }
     });
 
     $(document).on('click','#cgRightSide .cg_row_col.cg_el',function (e) {
@@ -213,17 +212,13 @@ jQuery(document).ready(function ($) {
     });
 
     $(document).on('click', '.cg_row.cg_add_row',function (e) {
-        var $newRow = $(row);
-        var $clone = $(this).clone();
-        $newRow.append($(cgJsClassAdmin.createUpload.functions.getAddElCol()));
-        if ($(this).prev().hasClass('cg_image')) {
-            $newRow.insertAfter($(this));
-            $clone.insertAfter($newRow);
-        } else {
-            $newRow.insertBefore($(this));
-            $clone.insertBefore($newRow);
+        $(this).closest('#cgRightSide').find('.cg_upl_add,.cg_row.cg_add_row,.cg_add_col').removeClass('cg_clicked');
+        $(this).addClass('cg_clicked');
+        if($(this).closest('#cg_registry_form_container_parent').length){
+            cgJsClassAdmin.gallery.functions.showModal('#cgAddRegField');
+        }else{
+            cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
         }
-        cgJsClassAdmin.createUpload.functions.addRightFieldOrderAndAddRowsAndColumns(jQuery);
     });
 
     $(document).on('input', '#ausgabe1 .cg_view_option_input_field_title',function (e) {

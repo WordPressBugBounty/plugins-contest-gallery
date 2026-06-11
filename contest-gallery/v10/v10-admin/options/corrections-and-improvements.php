@@ -116,9 +116,17 @@ $correctStatusTextFull4 = 'All required columns available!';
 if(!function_exists('cg_corrections_database_issue_status')){
 	function cg_corrections_database_issue_status($tableName,$columnData,$errorsArray,$isRepairResult){
 		$columnName = (!empty($columnData['ColumnName'])) ? $columnData['ColumnName'] : '';
+		$indexName = (!empty($columnData['IndexName'])) ? $columnData['IndexName'] : '';
 		$errorKeyFull = $tableName.'.'.$columnName;
+		$errorIndexKeyFull = $tableName.'.'.$indexName;
+		if($indexName && !empty($errorsArray[$errorIndexKeyFull])){
+			return $errorsArray[$errorIndexKeyFull];
+		}
 		if(!empty($errorsArray[$errorKeyFull])){
 			return $errorsArray[$errorKeyFull];
+		}
+		if($indexName && !empty($errorsArray[$indexName])){
+			return $errorsArray[$indexName];
 		}
 		if(!empty($errorsArray[$columnName])){
 			return $errorsArray[$columnName];
@@ -128,6 +136,10 @@ if(!function_exists('cg_corrections_database_issue_status')){
 		}
 		if(isset($columnData['IsNoColumn'])){
 			return (!empty($isRepairResult)) ? 'Still not created' : 'Not created';
+		}
+		if(isset($columnData['IsIndexMissing'])){
+			$prefix = (!empty($isRepairResult)) ? 'Still not created' : 'Not created';
+			return $prefix.': index for '.$columnData['ColumnTypeRequired'];
 		}
 		if(isset($columnData['IsCollationCouldNotBeModified'])){
 			$prefix = (!empty($isRepairResult)) ? 'Still different' : 'Modify';
@@ -164,7 +176,7 @@ if(!function_exists('cg_corrections_render_database_issues')){
 		foreach($columnsToRepairArray as $tableName => $tableData){
 			$correctStatusTextFull .= "<span class=\"cg_database_improve_table_name\">Table: $tableName</span><br>";
 			$correctStatusTextFull .= "<table><tbody>";
-			$correctStatusTextFull .= "<tr><th>Column</th><th>Status</th></tr>";
+			$correctStatusTextFull .= "<tr><th>Column / Index</th><th>Status</th></tr>";
 			foreach($tableData as $columnData){
 				$statusText = cg_corrections_database_issue_status($tableName,$columnData,$errorsArray,$isRepairResult);
 				$correctStatusTextFull .= "<tr><td>".$columnData['ColumnName']."</td><td>$statusText</td></tr>";

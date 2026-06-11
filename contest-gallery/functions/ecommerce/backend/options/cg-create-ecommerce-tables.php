@@ -1,6 +1,32 @@
 <?php
+if(!function_exists('cg_contest_gallery_create_table_get_existing_tables')){
+    function cg_contest_gallery_create_table_get_existing_tables($tablePrefix){
+        global $wpdb;
+
+        $existingTables = array();
+        $tableLike = $wpdb->esc_like($tablePrefix).'%';
+        $tableRows = $wpdb->get_col($wpdb->prepare("SHOW TABLES LIKE %s",$tableLike));
+
+        if(empty($tableRows)){
+            return $existingTables;
+        }
+
+        foreach($tableRows as $tableName){
+            $existingTables[$tableName] = true;
+        }
+
+        return $existingTables;
+    }
+}
+
+if(!function_exists('cg_contest_gallery_create_table_needs_creation')){
+    function cg_contest_gallery_create_table_needs_creation($tableName,$existingTables){
+        return empty($existingTables[$tableName]);
+    }
+}
+
 if(!function_exists('cg_create_ecommerce_tables')){
-    function cg_create_ecommerce_tables($i,$isShowError = false, & $lastError = '', $charset_collate = ''){
+    function cg_create_ecommerce_tables($i,$isShowError = false, & $lastError = '', $charset_collate = '', $existingContestGalleryTables = false){
 
         global $wpdb;
 
@@ -10,8 +36,12 @@ if(!function_exists('cg_create_ecommerce_tables')){
         $tablename_ecommerce_orders = $wpdb->base_prefix . "$i"."contest_gal1ery_ecommerce_orders";
         $tablename_ecommerce_orders_items = $wpdb->base_prefix . "$i"."contest_gal1ery_ecommerce_orders_items";
 
+        if(!is_array($existingContestGalleryTables)){
+            $existingContestGalleryTables = cg_contest_gallery_create_table_get_existing_tables($wpdb->base_prefix . "$i"."contest_gal1ery");
+        }
+
         // ecommerce entries
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_ecommerce_entries'") != $tablename_ecommerce_entries){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_ecommerce_entries,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_ecommerce_entries (
     		id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
             pid INT(11) DEFAULT 0,
@@ -38,7 +68,9 @@ if(!function_exists('cg_create_ecommerce_tables')){
             ServiceKeysCsvName TEXT DEFAULT '',
             UploadGallery INT(11) DEFAULT 0,
             MaxUploads TEXT DEFAULT '',
-            AllUploadsUsedText TEXT DEFAULT ''
+            AllUploadsUsedText TEXT DEFAULT '',
+            INDEX pid_index (pid),
+            INDEX GalleryID_pid_index (GalleryID, pid)
             ) $charset_collate";
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -46,7 +78,7 @@ if(!function_exists('cg_create_ecommerce_tables')){
         }
 
         // ecommerce options
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_ecommerce_options'") != $tablename_ecommerce_options){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_ecommerce_options,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_ecommerce_options (
     		id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     		GeneralID TINYINT DEFAULT 0,
@@ -100,7 +132,7 @@ if(!function_exists('cg_create_ecommerce_tables')){
         }
 
         // ecommerce invoice options
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_ecommerce_invoice_options'") != $tablename_ecommerce_invoice_options){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_ecommerce_invoice_options,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_ecommerce_invoice_options (
     		id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
             GeneralID TINYINT DEFAULT 0,
@@ -123,7 +155,7 @@ if(!function_exists('cg_create_ecommerce_tables')){
         }
 
         // ecommerce sales
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_ecommerce_orders'") != $tablename_ecommerce_orders){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_ecommerce_orders,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_ecommerce_orders (
     		id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
             GalleryID INT(11) DEFAULT 0,
@@ -199,7 +231,10 @@ if(!function_exists('cg_create_ecommerce_tables')){
 			CreatedDateWP DateTime DEFAULT '0000-00-00 00:00:00',
 		    OrderNumber TEXT DEFAULT '',
 		    OrderIdHash TEXT DEFAULT '',
-		    PayerEmail TEXT DEFAULT ''
+		    PayerEmail TEXT DEFAULT '',
+            INDEX OrderIdHash_index (OrderIdHash(64)),
+            INDEX IsTest_id_index (IsTest, id),
+            INDEX WpUserId_id_index (WpUserId, id)
             ) $charset_collate";
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -207,7 +242,7 @@ if(!function_exists('cg_create_ecommerce_tables')){
         }
 
         // ecommerce sales subs
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_ecommerce_orders_items'") != $tablename_ecommerce_orders_items){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_ecommerce_orders_items,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_ecommerce_orders_items (
     		id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
             pid INT(11) DEFAULT 0,
@@ -236,7 +271,10 @@ if(!function_exists('cg_create_ecommerce_tables')){
             WpUploads TEXT DEFAULT '',
             RawData TEXT DEFAULT '',
             WpUploadFilesForSale TEXT DEFAULT '',
-            Uploaded INT(11) DEFAULT 0
+            Uploaded INT(11) DEFAULT 0,
+            INDEX ParentOrder_index (ParentOrder),
+            INDEX pid_ParentOrder_index (pid, ParentOrder),
+            INDEX GalleryID_ParentOrder_index (GalleryID, ParentOrder)
             ) $charset_collate";
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);

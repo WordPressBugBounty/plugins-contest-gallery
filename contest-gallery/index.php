@@ -2,7 +2,7 @@
 /*
 Plugin Name: Contest Gallery
 Description: Upload form, files, photos and videos upload contest gallery plugin for WordPress. Create upload forms for entries with or without file/image upload. Create user registration form. Create login form. Create responsive galleries and allow to vote for any kind of entries. Sell entries via PayPal or Stripe API. Create or edit images via OpenAI API.
-Version: 30.0.1
+Version: 30.0.2
 Author: Contest Gallery
 Plugin URI: https://www.contest-gallery.com
 Author URI: https://www.contest-gallery.com
@@ -135,6 +135,8 @@ include('functions/frontend/cg-get-data-for-frontend.php');
 include('functions/frontend/cg-general-frontend.php');
 include('functions/frontend/cg-shortcode-interval-check.php');
 include('functions/google/cg-create-get-google-options.php');
+include('functions/google/cg-google-sign-lib-checks.php');
+include('functions/google/cg-create-wp-user-from-google-user.php');
 include('functions/frontend/cg-google-sign-in-verification.php');
 include('functions/general/registry/cg-registry-functions.php');
 include('functions/general/registry/cg-registry-add-profile-image.php');
@@ -328,6 +330,8 @@ add_shortcode('cg_entry_on_off', 'contest_gal1ery_entry_on_off');
 include(__DIR__ . '/shortcodes/cg_entry_on_off.php');
 add_shortcode('cg_order_summary', 'contest_gal1ery_order_summary');
 include(__DIR__ . '/shortcodes/cg_order_summary.php');
+add_shortcode('cg_google_sign_in', 'contest_gal1ery_google_sign_in');
+include(__DIR__ . '/shortcodes/cg_google_sign_in.php');
 
 include('functions/general/sql/contest-gallery-create-tables.php');
 
@@ -451,13 +455,16 @@ include('functions/general/cg-deactivate-images.php');
 include('functions/general/cg-plugin-mce-css-to-add.php');
 include('functions/general/cg-remove-folder-recursively.php');
 include('functions/general/cg-user-functions.php');
+include_once('functions/backend/gallery/cg-entry-watermark.php');
 include('functions/general/json-data/cg-actualize-all-images-data-deleted-images.php');
 include('functions/general/json-data/cg-actualize-all-images-data-sort-values-file.php');
 include('functions/general/json-data/cg-actualize-all-images-data-sort-values-file-set-array.php');
 include('functions/backend/render/cg-shortcode-interval-configuration-container.php');
 include('functions/backend/render/cg-preview-images-to-delete-container.php');
 include('functions/backend/render/cg-network-export-modal-container.php');
+include('functions/backend/render/cg-delete-gallery-confirm-container.php');
 include('functions/backend/render/cg-multiple-files-for-post-container.php');
+include('functions/backend/render/cg-entry-watermark-container.php');
 include('functions/backend/render/cg-social-containers.php');
 include('functions/backend/render/openai/cg-openai-containers.php');
 include('functions/backend/render/cg-attach-to-another-user-container.php');

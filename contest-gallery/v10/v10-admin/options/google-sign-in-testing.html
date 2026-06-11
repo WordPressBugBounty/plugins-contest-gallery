@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contest Gallery - Google Sign-In</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 24px;
+            color: #202124;
+            background: #f8f9fa;
+        }
+
+        .cg-box {
+            max-width: 640px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            padding: 20px;
+        }
+
+        .cg-row {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eceff1;
+        }
+
+        .cg-label {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        #cgGoogleSignIn {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        #cgGoogleSignInError {
+            display: none;
+            color: #b3261e;
+            margin-top: 16px;
+            font-weight: bold;
+        }
+
+        #cgGoogleSignInSuccess {
+            display: none;
+            color: #137333;
+            margin-top: 16px;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        var clientId = '';
+
+        function cgParseHash() {
+            var hash = location.hash ? location.hash.substring(1) : '';
+            var params = {};
+            var parts = hash.split('&');
+            var hasClientIdParam = false;
+            var i;
+            var pair;
+            var key;
+
+            for (i = 0; i < parts.length; i++) {
+                pair = parts[i].split('=');
+                if (pair.length === 2) {
+                    key = decodeURIComponent(pair[0]);
+                    params[key] = decodeURIComponent(pair[1]);
+                    if (key === 'clientId') {
+                        hasClientIdParam = true;
+                    }
+                }
+            }
+
+            clientId = hasClientIdParam ? params.clientId : (hash || '');
+
+            document.getElementById('cgGoogleClientId').textContent = clientId || 'No client id set';
+            document.getElementById('cgGoogleVerifier').textContent = params.libVersion || params.verifierVersion || 'built-in verifier';
+            document.getElementById('cgGoogleOpenSslStatus').textContent = params.opensslStatus || 'OpenSSL status was not provided.';
+            document.getElementById('cgGoogleDomain').textContent = location.origin;
+        }
+
+        function cgShowError(text) {
+            var error = document.getElementById('cgGoogleSignInError');
+            error.textContent = text;
+            error.style.display = 'block';
+        }
+
+        function cgDecodeJwtPayload(token) {
+            var parts = token.split('.');
+            var payload;
+
+            if (parts.length !== 3) {
+                return null;
+            }
+
+            payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+            while (payload.length % 4) {
+                payload += '=';
+            }
+
+            try {
+                return JSON.parse(decodeURIComponent(escape(window.atob(payload))));
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function cgOnGoogleCredentialResponse(response) {
+            var payload;
+            var success = document.getElementById('cgGoogleSignInSuccess');
+
+            if (!response || !response.credential) {
+                cgShowError('No credential received from Google.');
+                return;
+            }
+
+            payload = cgDecodeJwtPayload(response.credential);
+            if (!payload) {
+                cgShowError('Could not decode Google ID token.');
+                return;
+            }
+
+            success.textContent = 'Google sign in test succeeded for ' + (payload.email || payload.sub || 'this client id') + '.';
+            success.style.display = 'block';
+        }
+
+        function cgInitGoogleSignIn() {
+            if (!clientId) {
+                cgShowError('No Google client id provided.');
+                return;
+            }
+
+            google.accounts.id.initialize({
+                client_id: clientId,
+                callback: cgOnGoogleCredentialResponse,
+                ux_mode: 'popup'
+            });
+
+            google.accounts.id.renderButton(document.getElementById('cgGoogleSignIn'), {
+                theme: 'outline',
+                shape: 'pill',
+                size: 'large',
+                text: 'continue_with',
+                width: 280
+            });
+        }
+
+        window.onload = function () {
+            var script;
+
+            cgParseHash();
+
+            script = document.createElement('script');
+            script.src = 'https://accounts.google.com/gsi/client';
+            script.async = true;
+            script.defer = true;
+            script.onload = cgInitGoogleSignIn;
+            document.head.appendChild(script);
+        };
+    </script>
+</head>
+<body>
+    <div class="cg-box">
+        <h1>Contest Gallery Google Sign-In Test</h1>
+        <div class="cg-row">
+            <div class="cg-label">Your client id</div>
+            <div id="cgGoogleClientId"></div>
+        </div>
+        <div class="cg-row">
+            <div class="cg-label">Your domain</div>
+            <div id="cgGoogleDomain"></div>
+        </div>
+        <div class="cg-row">
+            <div class="cg-label">Your Google sign in verifier</div>
+            <div id="cgGoogleVerifier"></div>
+        </div>
+        <div class="cg-row">
+            <div class="cg-label">Server verification</div>
+            <div id="cgGoogleOpenSslStatus"></div>
+        </div>
+        <div id="cgGoogleSignIn"></div>
+        <div id="cgGoogleSignInSuccess"></div>
+        <div id="cgGoogleSignInError"></div>
+    </div>
+</body>
+</html>

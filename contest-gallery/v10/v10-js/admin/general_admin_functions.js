@@ -77,6 +77,71 @@ jQuery(document).ready(function($){
     });
 
 
+    var cgCopyTextToClipboard = function(text, done, failed){
+        var textarea;
+
+        if(navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(text).then(done, failed);
+            return;
+        }
+
+        textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly', 'readonly');
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+
+        try{
+            if(document.execCommand('copy')){
+                done();
+            }else{
+                failed();
+            }
+        }catch(e){
+            failed();
+        }
+
+        document.body.removeChild(textarea);
+    };
+
+    $(document).on('click', '.cg_nginx_protection_toggle', function(){
+        var $button = $(this);
+        var $notice = $button.closest('.cg_nginx_protection_notice');
+        var $details = $notice.find('.cg_nginx_protection_details').first();
+        var isOpen = $details.hasClass('cg_hide');
+
+        $details.toggleClass('cg_hide', !isOpen);
+        $button.attr('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    $(document).on('click', '.cg_nginx_protection_copy_rule', function(e){
+        var $button = $(this);
+        var $notice = $button.closest('.cg_nginx_protection_notice');
+        var $status = $notice.find('.cg_nginx_protection_copy_status').first();
+        var originalText = $button.text();
+        var rule = $notice.find('.cg_nginx_protection_rule').first().text();
+
+        e.preventDefault();
+        $button.prop('disabled', true).text('Copying...');
+        $status.text('');
+
+        cgCopyTextToClipboard(rule, function(){
+            $button.text('Copied');
+            $status.text('Nginx rule copied');
+            setTimeout(function(){
+                $button.prop('disabled', false).text(originalText);
+                $status.text('');
+            }, 1400);
+        }, function(){
+            $button.prop('disabled', false).text(originalText);
+            $status.text('Copy failed');
+        });
+    });
+
+
     // show cg-info
 
     $(document).on('mouseenter','.cg-info-icon',function () {

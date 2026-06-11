@@ -29,7 +29,11 @@ if (!function_exists('cg1l_get_entry_query_data')) {
                     }
                 }
                 if (!empty($rowObject->MultipleFiles) && $rowObject->MultipleFiles != '""') {
-                    $queryDataArray[$rowObject->id]['MultipleFiles'] = unserialize($rowObject->MultipleFiles);
+                    $multipleFiles = unserialize($rowObject->MultipleFiles);
+                    if(function_exists('cg_entry_watermark_append_url_version_to_multiple_files')){
+                        $multipleFiles = cg_entry_watermark_append_url_version_to_multiple_files($multipleFiles);
+                    }
+                    $queryDataArray[$rowObject->id]['MultipleFiles'] = $multipleFiles;
                 }
             }
         }
@@ -120,7 +124,11 @@ if (!function_exists('cg1l_build_images_query_data_gzip')) {
                         }
                     }
                     if(!empty($rowObject->MultipleFiles) && $rowObject->MultipleFiles!='""'){
-                        $queryDataArray[$rowObject->id]['MultipleFiles'] = unserialize($rowObject->MultipleFiles);
+                        $multipleFiles = unserialize($rowObject->MultipleFiles);
+                        if(function_exists('cg_entry_watermark_append_url_version_to_multiple_files')){
+                            $multipleFiles = cg_entry_watermark_append_url_version_to_multiple_files($multipleFiles);
+                        }
+                        $queryDataArray[$rowObject->id]['MultipleFiles'] = $multipleFiles;
                     }
                 }
             }

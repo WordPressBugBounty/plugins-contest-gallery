@@ -247,6 +247,7 @@ $VotesPerCategory = 0;
 
 $BorderRadius = 1;
 $BorderRadiusUpload = 1;
+$UploadRealWatermarkSettings = '';
 $BorderRadiusRegistry = 1;
 $BorderRadiusLogin = 1;
 $CopyImageLink = 1;

@@ -26,12 +26,13 @@ cgJsClassAdmin.gallery.functions.initWatermarkSettings = function($,$cgSellConta
             }
             var WpUpload = cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order]['WpUpload'];
             var ImgType = cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order]['ImgType'];
+            var isWatermarkSupported = cgJsClassAdmin.gallery.functions.isWatermarkSellSupportedType(ImgType);
             if(cgJsClassAdmin.gallery.functions.isEmbed(ImgType)){
                 continue;
             }
 
             cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload] = {};
-            if(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].type=='image') {
+            if(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].type=='image' && isWatermarkSupported) {
                 if(WatermarkSettings[WpUpload]){
                     cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['WatermarkTitle'] = WatermarkSettings[WpUpload]['WatermarkTitle'];
                     cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['WatermarkSize'] = WatermarkSettings[WpUpload]['WatermarkSize'];
@@ -47,17 +48,18 @@ cgJsClassAdmin.gallery.functions.initWatermarkSettings = function($,$cgSellConta
         }
     }else{
         var WpUpload = parseInt($sortableDiv.find('.cg_wp_upload_id').val());
-        var ImgType = parseInt($sortableDiv.find('.cg_image_type_to_show').val());
+        var ImgType = $sortableDiv.find('.cg_image_type_to_show').val();
+        var isWatermarkSupported = cgJsClassAdmin.gallery.functions.isWatermarkSellSupportedType(ImgType);
         if(cgJsClassAdmin.gallery.functions.isEmbed(ImgType)){
             return;
         }
         cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload] = {};
-        if(WatermarkSettings[WpUpload]){
+        if(WatermarkSettings[WpUpload] && isWatermarkSupported){
                 cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['WatermarkTitle'] = WatermarkSettings[WpUpload]['WatermarkTitle'];
                 cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['WatermarkSize'] = WatermarkSettings[WpUpload]['WatermarkSize'];
                 cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['WatermarkPosition'] = WatermarkSettings[WpUpload]['WatermarkPosition'];
                 cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['on'] = true;
-        }else {
+        }else if(isWatermarkSupported) {
             // will be set when cg_file_container click
             cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['WatermarkTitle'] =WatermarkTitleDefault;
             cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['WatermarkSize'] = WatermarkSizeDefault;
@@ -132,8 +134,7 @@ cgJsClassAdmin.gallery.watermarkMultipleFiles =  function (backgroundUrl,positio
     cgJsClassAdmin.gallery.vars.cgSellContainer.find('#cgSellArrowRight').addClass('cg_hide');
     // https://brianium.github.io/watermarkjs/docs.html
     debugger
-    watermark([backgroundUrl])
-        .image(watermark.text[position](text, pxSize+'px serif', '#fff', 0.5, pxSizeExtraToSet))
+    cgJsClassAdmin.gallery.functions.renderWatermarkImage(backgroundUrl, text, position, pxSize, '#fff', 0.5)
         .then(function (img) {
             var base64src = jQuery(img).attr('src');
             debugger
@@ -268,7 +269,7 @@ cgJsClassAdmin.gallery.watermark =  function (backgroundUrl,position,text,pxSize
         // check how many files are image
         for(var order in cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId]){
             if(!cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId].hasOwnProperty(order)){break;}
-            if(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].type=='image') {
+            if(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].type=='image' && !(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].PdfPreview > 0) && cgJsClassAdmin.gallery.functions.isWatermarkSellSupportedType(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order]['ImgType'])) {
                 imagesTotal++;
             }
         }
@@ -296,7 +297,7 @@ cgJsClassAdmin.gallery.watermark =  function (backgroundUrl,position,text,pxSize
                 }
 
 
-                if(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].type=='image' && !(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].PdfPreview > 0)) {// has to be tested that way: .PdfPreview > 0
+                if(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].type=='image' && cgJsClassAdmin.gallery.functions.isWatermarkSellSupportedType(fileType) && !(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].PdfPreview > 0)) {// has to be tested that way: .PdfPreview > 0
 
                     if(!counterImage){
                         cgJsClassAdmin.gallery.vars.cgSellContainer.find('#cgSellArrowRight').addClass('cg_hide').attr('data-cg-real-id',realId);
@@ -341,12 +342,17 @@ cgJsClassAdmin.gallery.watermark =  function (backgroundUrl,position,text,pxSize
             }
         }
 
+        if(!counterImage){
+            cgJsClassAdmin.gallery.vars.cgSellContainer.find('#cgSellPreviewContainerLoader').addClass('cg_hide');
+            cgJsClassAdmin.gallery.vars.cgSellContainer.find('#cgSellWatermarkPreview').addClass('cg_hide');
+        }
+
     }else{
 
         var WpUploadId = parseInt($sortableDiv.find('.cg_wp_upload_id').val());
         var fileType = $cg_backend_info_container.attr('data-cg-type-short');
 
-        if($cg_backend_info_container.attr('data-cg-type')=='image'){
+        if($cg_backend_info_container.attr('data-cg-type')=='image' && cgJsClassAdmin.gallery.functions.isWatermarkSellSupportedType(fileType)){
             var timestamp = Math.floor(new Date().getTime()/1000);
             if(cgJsClassAdmin.gallery.vars.addedEcommerceImageForDownload[realId] && cgJsClassAdmin.gallery.vars.addedEcommerceImageForDownload[realId][WpUploadId]){
 
@@ -368,8 +374,7 @@ cgJsClassAdmin.gallery.watermark =  function (backgroundUrl,position,text,pxSize
             cgJsClassAdmin.gallery.vars.cgSellContainer.find('#cgSellWatermarkPreview').removeClass('cg_hide');
             // https://brianium.github.io/watermarkjs/docs.html
             debugger
-            watermark([backgroundUrl])
-                .image(watermark.text[position](text, pxSize+'px serif', '#fff', 0.5, pxSizeExtraToSet))
+            cgJsClassAdmin.gallery.functions.renderWatermarkImage(backgroundUrl, text, position, pxSize, '#fff', 0.5)
                 .then(function (img) {
                     debugger
                     var base64src = jQuery(img).attr('src');
@@ -404,6 +409,8 @@ cgJsClassAdmin.gallery.watermark =  function (backgroundUrl,position,text,pxSize
             // watermarkedFiles contains also simple full guid of not images, they are of course no kind of watermarked
             cgJsClassAdmin.gallery.vars.base64andAltFileValues[realId][WpUploadId] = $cg_backend_info_container.attr('data-cg-original-source');
             cgJsClassAdmin.gallery.vars.base64andAltFileTypes[realId][WpUploadId] = fileType;
+            cgJsClassAdmin.gallery.vars.cgSellContainer.find('#cgSellPreviewContainerLoader').addClass('cg_hide');
+            cgJsClassAdmin.gallery.vars.cgSellContainer.find('#cgSellWatermarkPreview').addClass('cg_hide');
         }
 
     }

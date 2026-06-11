@@ -91,6 +91,7 @@ $jsonOptions['visual']['ImageViewFullWindow'] = $ImageViewFullWindow;
 $jsonOptions['visual']['ImageViewFullScreen'] = $ImageViewFullScreen;
 $jsonOptions['visual']['SliderThumbNav'] = $SliderThumbNav;
 $jsonOptions['visual']['BorderRadiusUpload'] = $BorderRadiusUpload;
+$jsonOptions['visual']['UploadRealWatermarkSettings'] = (function_exists('cg_upload_options_real_watermark_get_json_value')) ? cg_upload_options_real_watermark_get_json_value($UploadRealWatermarkSettings) : '';
 $jsonOptions['visual']['BorderRadiusRegistry'] = $BorderRadiusRegistry;
 $jsonOptions['visual']['BorderRadiusLogin'] = $BorderRadiusLogin;
 $jsonOptions['visual']['CopyImageLink'] = $CopyImageLink;

@@ -7,11 +7,17 @@ $isJustCheck = (!empty($isJustCheck)) ? true : false;
 $tablename = $wpdb->base_prefix . "$i"."contest_gal1ery";
 $tablename_ip = $wpdb->base_prefix . "$i"."contest_gal1ery_ip";
 $tablename_comments = $wpdb->base_prefix . "$i"."contest_gal1ery_comments";
+$tablename_comments_notification_options = $wpdb->base_prefix . "$i"."contest_gal1ery_comments_notification_options";
 $tablename_options = $wpdb->base_prefix . "$i"."contest_gal1ery_options";
 $tablename_options_input = $wpdb->base_prefix . "$i"."contest_gal1ery_options_input";
 $tablename_options_visual = $wpdb->base_prefix . "$i"."contest_gal1ery_options_visual";
 $tablename_email = $wpdb->base_prefix . "$i"."contest_gal1ery_mail";
 $tablename_email_admin = $wpdb->base_prefix . "$i"."contest_gal1ery_mail_admin";
+$tablename_mail_user_upload = $wpdb->base_prefix . "$i"."contest_gal1ery_mail_user_upload";
+$tablename_mail_user_comment = $wpdb->base_prefix . "$i"."contest_gal1ery_mail_user_comment";
+$tablename_mail_user_vote = $wpdb->base_prefix . "$i"."contest_gal1ery_mail_user_vote";
+$tablename_user_comment_mails = $wpdb->base_prefix . "$i"."contest_gal1ery_user_comment_mails";
+$tablename_user_vote_mails = $wpdb->base_prefix . "$i"."contest_gal1ery_user_vote_mails";
 $tablename_entries = $wpdb->base_prefix . "$i"."contest_gal1ery_entries";
 $tablename_create_user_entries = $wpdb->base_prefix . "$i"."contest_gal1ery_create_user_entries";
 $tablename_pro_options = $wpdb->base_prefix . "$i"."contest_gal1ery_pro_options";
@@ -20,6 +26,7 @@ $tablename_form_input = $wpdb->base_prefix . "$i"."contest_gal1ery_f_input";
 $tablename_form_output = $wpdb->base_prefix . "$i"."contest_gal1ery_f_output";
 //  $tablename_mail_gallery = $wpdb->base_prefix . "$i"."contest_gal1ery_mail_gallery";
 //  $tablename_mail_gallery_users_history = $wpdb->base_prefix . "$i"."contest_gal1ery_mail_gallery_users_history";
+$tablename_mails = $wpdb->base_prefix . "$i"."contest_gal1ery_mails";
 $tablename_mails_collected = $wpdb->base_prefix . "$i"."contest_gal1ery_mails_collected";
 $tablename_mail_confirmation = $wpdb->base_prefix . "$i"."contest_gal1ery_mail_confirmation";
 $tablename_categories = $wpdb->base_prefix . "$i"."contest_gal1ery_categories";
@@ -31,10 +38,13 @@ $tablename_ecommerce_invoice_options = $wpdb->base_prefix . "$i"."contest_gal1er
 $tablename_ecommerce_options = $wpdb->base_prefix . "$i"."contest_gal1ery_ecommerce_options";
 $tablename_ecommerce_orders = $wpdb->base_prefix . "$i"."contest_gal1ery_ecommerce_orders";
 $tablename_ecommerce_orders_items = $wpdb->base_prefix . "$i"."contest_gal1ery_ecommerce_orders_items";
+$tablename_wp_pages = $wpdb->base_prefix . "$i"."contest_gal1ery_wp_pages";
+$tablename_wp_pdf_previews = $wpdb->base_prefix . "$i"."contest_gal1ery_pdf_previews";
 
 $columnsToRepairArray = array();
 
 $updateArray = include('update-conf.php');
+$updateIndexArray = include('update-index-conf.php');
 $isField1IdFullWindowBlogViewAdded = false;
 
 if(!isset($errorsArray)){
@@ -79,6 +89,229 @@ if(!function_exists('cg_update_check_new_handle_collation')){
                     ob_start();
                     $wpdb->print_error();
                     $errorsArray[$tableName.'.Table collation'] = ob_get_clean();
+                }
+            }
+        }
+    }
+}
+
+if(!function_exists('cg_update_check_new_normalize_column_type_for_compare')){
+    function cg_update_check_new_normalize_column_type_for_compare($columnType){
+        $columnType = trim(strtolower($columnType));
+        $columnType = preg_replace('/\s+/', ' ', $columnType);
+        $columnType = preg_replace('/\s*,\s*/', ',', $columnType);
+        $columnType = preg_replace('/\binteger\s*\(\s*\d+\s*\)/', 'int', $columnType);
+        $columnType = preg_replace('/\binteger\b/', 'int', $columnType);
+        $columnType = preg_replace('/\b(tinyint|smallint|mediumint|int|bigint)\s*\(\s*\d+\s*\)/', '$1', $columnType);
+
+        return $columnType;
+    }
+}
+
+if(!function_exists('cg_update_check_new_column_types_equal')){
+    function cg_update_check_new_column_types_equal($requiredColumnType,$currentColumnType){
+        return cg_update_check_new_normalize_column_type_for_compare($requiredColumnType) == cg_update_check_new_normalize_column_type_for_compare($currentColumnType);
+    }
+}
+
+if(!function_exists('cg_update_check_new_quote_identifier')){
+    function cg_update_check_new_quote_identifier($identifier){
+        return '`'.str_replace('`','``',$identifier).'`';
+    }
+}
+
+if(!function_exists('cg_update_check_new_table_exists')){
+    function cg_update_check_new_table_exists($tableName){
+        global $wpdb;
+
+        return $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s",$wpdb->esc_like($tableName))) == $tableName;
+    }
+}
+
+if(!function_exists('cg_update_check_new_get_table_columns')){
+    function cg_update_check_new_get_table_columns($tableName,$dtacaoo){
+        global $wpdb;
+        $columns = array();
+        $tableColumns = array();
+
+        if(isset($dtacaoo[$tableName]) && is_array($dtacaoo[$tableName])){
+            $tableColumns = $dtacaoo[$tableName];
+        }else{
+            if(!cg_update_check_new_table_exists($tableName)){
+                return $columns;
+            }
+            $tableColumns = $wpdb->get_results("SHOW COLUMNS FROM ".cg_update_check_new_quote_identifier($tableName));
+        }
+
+        foreach($tableColumns as $tableColumn){
+            if(!empty($tableColumn->Field)){
+                $columns[$tableColumn->Field] = true;
+            }
+        }
+
+        return $columns;
+    }
+}
+
+if(!function_exists('cg_update_check_new_get_table_indexes')){
+    function cg_update_check_new_get_table_indexes($tableName){
+        global $wpdb;
+        $indexes = array();
+
+        if(!cg_update_check_new_table_exists($tableName)){
+            return $indexes;
+        }
+
+        $indexObjects = $wpdb->get_results("SHOW INDEX FROM ".cg_update_check_new_quote_identifier($tableName));
+
+        foreach($indexObjects as $indexObject){
+            if(!empty($indexObject->Key_name)){
+                $indexes[$indexObject->Key_name] = true;
+            }
+        }
+
+        return $indexes;
+    }
+}
+
+if(!function_exists('cg_update_check_new_get_index_column_data')){
+    function cg_update_check_new_get_index_column_data($columnData){
+        $columnName = '';
+        $columnLength = 0;
+
+        if(is_array($columnData)){
+            if(!empty($columnData['name'])){
+                $columnName = trim($columnData['name']);
+            }
+            if(!empty($columnData['length'])){
+                $columnLength = intval($columnData['length']);
+            }
+        }else{
+            $columnName = trim($columnData);
+        }
+
+        if($columnLength < 0){
+            $columnLength = 0;
+        }
+
+        return array(
+            'name' => $columnName,
+            'length' => $columnLength
+        );
+    }
+}
+
+if(!function_exists('cg_update_check_new_get_index_columns_label')){
+    function cg_update_check_new_get_index_columns_label($indexData){
+        $indexColumns = array();
+
+        if(empty($indexData['columns']) || !is_array($indexData['columns'])){
+            return '';
+        }
+
+        foreach($indexData['columns'] as $columnData){
+            $indexColumnData = cg_update_check_new_get_index_column_data($columnData);
+            if($indexColumnData['name']===''){
+                continue;
+            }
+            $indexColumns[] = $indexColumnData['name'].(($indexColumnData['length'] > 0) ? '('.$indexColumnData['length'].')' : '');
+        }
+
+        return implode(', ',$indexColumns);
+    }
+}
+
+if(!function_exists('cg_update_check_new_get_index_columns_sql')){
+    function cg_update_check_new_get_index_columns_sql($indexData){
+        $indexColumns = array();
+        $indexColumnSqlParts = array();
+
+        if(empty($indexData['columns']) || !is_array($indexData['columns'])){
+            return '';
+        }
+
+        foreach($indexData['columns'] as $columnData){
+            $indexColumnData = cg_update_check_new_get_index_column_data($columnData);
+            $columnName = $indexColumnData['name'];
+            if($columnName===''){
+                continue;
+            }
+            $indexColumns[] = $columnName;
+            $indexColumnSqlPart = cg_update_check_new_quote_identifier($columnName);
+            if($indexColumnData['length'] > 0){
+                $indexColumnSqlPart .= '('.$indexColumnData['length'].')';
+            }
+            $indexColumnSqlParts[] = $indexColumnSqlPart;
+        }
+
+        if(empty($indexColumns)){
+            return '';
+        }
+
+        return implode(', ',$indexColumnSqlParts);
+    }
+}
+
+if(!function_exists('cg_update_check_new_handle_indexes')){
+    function cg_update_check_new_handle_indexes($updateIndexArray,$dtacaoo,$isJustCheck,&$columnsToRepairArray,&$errorsArray){
+        global $wpdb;
+
+        foreach($updateIndexArray as $tableName => $tableIndexes){
+            if(empty($tableIndexes) || !is_array($tableIndexes)){
+                continue;
+            }
+
+            if(!cg_update_check_new_table_exists($tableName)){
+                continue;
+            }
+
+            $availableColumns = cg_update_check_new_get_table_columns($tableName,empty($isJustCheck) ? array() : $dtacaoo);
+            $availableIndexes = cg_update_check_new_get_table_indexes($tableName);
+
+            foreach($tableIndexes as $indexName => $indexData){
+                $indexColumnsSql = cg_update_check_new_get_index_columns_sql($indexData);
+                $hasAllColumns = true;
+
+                if($indexColumnsSql===''){
+                    continue;
+                }
+
+                foreach($indexData['columns'] as $columnData){
+                    $indexColumnData = cg_update_check_new_get_index_column_data($columnData);
+                    $columnName = $indexColumnData['name'];
+                    if(empty($availableColumns[$columnName])){
+                        $hasAllColumns = false;
+                        break;
+                    }
+                }
+
+                if(!$hasAllColumns){
+                    continue;
+                }
+
+                if(!empty($availableIndexes[$indexName])){
+                    continue;
+                }
+
+                if(!empty($isJustCheck)){
+                    cg_update_check_new_add_issue(
+                        $columnsToRepairArray,
+                        $tableName,
+                        array(
+                            'ColumnName' => 'Index '.$indexName,
+                            'IndexName' => $indexName,
+                            'IsIndexMissing' => true,
+                            'ColumnTypeRequired' => cg_update_check_new_get_index_columns_label($indexData)
+                        )
+                    );
+                }else{
+                    $query = "ALTER TABLE ".cg_update_check_new_quote_identifier($tableName)." ADD INDEX ".cg_update_check_new_quote_identifier($indexName)." ($indexColumnsSql)";
+                    if(!$wpdb->query($query)){
+                        $wpdb->show_errors();
+                        ob_start();
+                        $wpdb->print_error();
+                        $errorsArray[$tableName.'.'.$indexName] = ob_get_clean();
+                    }
                 }
             }
         }
@@ -185,32 +418,19 @@ foreach($updateArray as $tableName => $tableData){
             $columnType = trim(strtolower($columnData['COLUMN_TYPE']));
             $columnTypeToCompare = trim(strtolower($availableTableObjectsData->Type));
 
-            $isBothTinyInt = false;
-
-            if(strpos($columnType,'tinyint') !== false && strpos($columnTypeToCompare,'tinyint') !== false){
-                $isBothTinyInt = true;
-            }
-
-            // if both tinyint then no changes needed
-            if($columnType!=$columnTypeToCompare && !$isBothTinyInt){
+            if(!cg_update_check_new_column_types_equal($columnType,$columnTypeToCompare)){
                 if(!empty($isJustCheck)){
-                    if($columnTypeToCompare=='int' && strpos($columnType,'int')!==false){// for new mysql 8 always simply int will be created not int(11) for example
-                    }elseif($columnTypeToCompare=='bigint' && strpos($columnType,'bigint')!==false){// for new mysql 8 always simply bigint will be created not bigint(20) for example
-                    }else{
-                        cg_update_check_new_add_issue($columnsToRepairArray,$tableName,array('ColumnName' => $columnName, 'IsColumnCouldNotBeModified' => true, 'ColumnTypeCurrent' => $columnTypeToCompare, 'ColumnTypeRequired' => $columnType));
-                    }
+                    cg_update_check_new_add_issue($columnsToRepairArray,$tableName,array('ColumnName' => $columnName, 'IsColumnCouldNotBeModified' => true, 'ColumnTypeCurrent' => $columnTypeToCompare, 'ColumnTypeRequired' => $columnType));
                 }else{
                     // check if type is same
                     // if not then modify
-                    if($columnType != trim(strtolower($availableTableObjectsData->Type))){
-                        $DEFAULT = "DEFAULT ".$columnData['DEFAULT'];
-                        $query = "ALTER TABLE $tableName MODIFY COLUMN $columnName $columnType $DEFAULT";
-                        if(!$wpdb->query($query)){
-                            $wpdb->show_errors();
-                            ob_start();
-                            $wpdb->print_error();
-                            $errorsArray[$columnName] = ob_get_clean();
-                        }
+                    $DEFAULT = "DEFAULT ".$columnData['DEFAULT'];
+                    $query = "ALTER TABLE $tableName MODIFY COLUMN $columnName $columnType $DEFAULT";
+                    if(!$wpdb->query($query)){
+                        $wpdb->show_errors();
+                        ob_start();
+                        $wpdb->print_error();
+                        $errorsArray[$columnName] = ob_get_clean();
                     }
                 }
             }
@@ -220,6 +440,8 @@ foreach($updateArray as $tableName => $tableData){
     }
 
 }
+
+cg_update_check_new_handle_indexes($updateIndexArray,$dtacaoo,$isJustCheck,$columnsToRepairArray,$errorsArray);
 
 if($isField1IdFullWindowBlogViewAdded && empty($isJustCheck)){
 

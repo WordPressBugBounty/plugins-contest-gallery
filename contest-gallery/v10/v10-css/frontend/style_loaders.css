@@ -324,6 +324,171 @@ body > .mainCGdivHelperParent .mainCGdiv .mainCGallery .cgCenterDiv.cgCenterDivL
     box-sizing: border-box;
 }
 
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit {
+    width: 100%;
+    padding: 14px 0;
+    transform: translateY(12px);
+}
+
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_panel {
+    width: 100%;
+    min-width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 16px 0;
+    box-sizing: border-box;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+}
+
+.mainCGdivUploadForm.cg_border_radius_controls_and_containers .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_panel,
+.mainCGdivUploadForm.cg_border_radius_controls_and_containers .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_file {
+    border-radius: 8px;
+}
+
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_file {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    box-sizing: border-box;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid #242424;
+}
+
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_file_lines {
+    display: flex;
+    flex: 1;
+    flex-flow: column;
+    gap: 10px;
+    min-width: 0;
+}
+
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_progress {
+    margin-top: 14px;
+}
+
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_title,
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_badge,
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_icon,
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_line,
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_progress_bar,
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_progress_meta {
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    border-radius: 8px;
+    background-color: #333;
+}
+
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_title {
+    width: 45%;
+    max-width: 260px;
+    height: 18px;
+}
+
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_badge {
+    width: 92px;
+    height: 18px;
+    border-radius: 999px;
+}
+
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_icon {
+    flex: 0 0 56px;
+    width: 56px;
+    height: 56px;
+}
+
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_line {
+    width: 52%;
+    height: 14px;
+}
+
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_line_wide {
+    width: 88%;
+}
+
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_progress_bar {
+    width: 100%;
+    height: 10px;
+    border-radius: 999px;
+}
+
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_progress_meta {
+    width: 38%;
+    max-width: 170px;
+    height: 12px;
+    margin: 10px auto 0;
+}
+
+.mainCGdivUploadForm.cg_fe_controls_style_white .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_panel {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+}
+
+.mainCGdivUploadForm.cg_fe_controls_style_white .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_file {
+    background: #f8fafc;
+    border-color: #e6ebf1;
+}
+
+.mainCGdivUploadForm.cg_fe_controls_style_white .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_title,
+.mainCGdivUploadForm.cg_fe_controls_style_white .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_badge,
+.mainCGdivUploadForm.cg_fe_controls_style_white .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_icon,
+.mainCGdivUploadForm.cg_fe_controls_style_white .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_line,
+.mainCGdivUploadForm.cg_fe_controls_style_white .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_progress_bar,
+.mainCGdivUploadForm.cg_fe_controls_style_white .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_progress_meta {
+    background-color: #dfe4ea;
+}
+
+.mainCGdivUploadForm.cg_fe_controls_style_black .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_panel {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+}
+
+.mainCGdivUploadForm.cg_fe_controls_style_black .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_file {
+    background: rgba(255,255,255,0.05);
+    border-color: #242424;
+}
+
+@media screen and (max-width: 480px) {
+    .mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit {
+        padding: 10px 0;
+    }
+
+    .mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_panel {
+        padding: 12px 0;
+    }
+
+    .mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_header {
+        gap: 10px;
+    }
+
+    .mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_title {
+        width: 58%;
+    }
+
+    .mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_badge {
+        width: 72px;
+    }
+
+    .mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_icon {
+        flex-basis: 46px;
+        width: 46px;
+        height: 46px;
+    }
+}
+
 
 .mainCGdiv .mainCGallery .cg_show.cg_skeleton_loader .cg_gallery_info  {
     display: none;

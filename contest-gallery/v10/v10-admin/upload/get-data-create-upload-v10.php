@@ -15,6 +15,8 @@ $GalleryID = absint($_GET['option_id']);
 
 global $wpdb;
 
+require_once(__DIR__.'/cg-upload-real-watermark-functions.php');
+
 // Tabellennamen bestimmen
 
 $tablename = $wpdb->prefix . "contest_gal1ery";
@@ -92,6 +94,8 @@ if (!empty($_POST['upload'])) {
     $optionsFileData = json_decode(fread($fp, filesize($optionsFile)), true);
     fclose($fp);
 
+    $realWatermarkSelectedUploadKey = cg_upload_form_real_watermark_get_selected_upload_key($_POST['upload'], $dbGalleryVersion);
+    $legacyWatermarkSelectedUploadKey = cg_upload_form_legacy_watermark_get_selected_upload_key($_POST['upload'], $dbGalleryVersion, $realWatermarkSelectedUploadKey);
 
     $infoInSliderId = null;
     $infoInGalleryId = null;
@@ -324,6 +328,8 @@ if (!empty($_POST['upload'])) {
                 continue;
             }
 
+            $realWatermarkUploadKey = (string)$id;
+
             if (strpos($id, 'new-') !== false) {
                 $id = 'new';
                 $field['new'] = 'true';
@@ -534,11 +540,10 @@ if (!empty($_POST['upload'])) {
                 $nfFieldsArray['min-char'] = absint($field['min-char']);
                 $nfFieldsArray['max-char'] = absint($field['max-char']);
 
-                if (!empty($field['watermarkChecked'])) {
-                    $WatermarkPosition = $field['watermarkPosition'];
-                    $WatermarkPositionForVisualOptions = $field['watermarkPosition'];
-                } else {
-                    $WatermarkPosition = '';
+                $RealWatermarkSettings = cg_upload_form_real_watermark_prepare_for_storage($field, $dbGalleryVersion, $realWatermarkUploadKey, $realWatermarkSelectedUploadKey);
+                $WatermarkPosition = cg_upload_form_legacy_watermark_position_from_field($field, $dbGalleryVersion, $realWatermarkUploadKey, $legacyWatermarkSelectedUploadKey);
+                if($WatermarkPosition!==''){
+                    $WatermarkPositionForVisualOptions = $WatermarkPosition;
                 }
 
                 if (!empty($field['WpAttachmentDetailsType'])) {
@@ -647,6 +652,7 @@ if (!empty($_POST['upload'])) {
                         array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%d'),
                         array('%d')
                     );
+                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $id, $RealWatermarkSettings);
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $id;
                     }
@@ -687,6 +693,7 @@ if (!empty($_POST['upload'])) {
                             ",
                         '', $GalleryID, $fieldType, $order, $nfFieldsArray, $Show_Slider, $active, $WatermarkPosition, $IsForWpPageTitle, $IsForWpPageDescription, $SubTitle, $ThirdTitle, $EcommerceTitle, $EcommerceDescription, $WpAttachmentDetailsType, $FieldTitleGallery, $RowNumber, $ColNumber, $RowCols
                     ));
+                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $wpdb->insert_id, $RealWatermarkSettings);
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $wpdb->insert_id;
                     }
@@ -1389,11 +1396,10 @@ if (!empty($_POST['upload'])) {
                 $seFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
                 $seFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
 
-                if (!empty($field['watermarkChecked'])) {
-                    $WatermarkPosition = $field['watermarkPosition'];
-                    $WatermarkPositionForVisualOptions = $field['watermarkPosition'];
-                } else {
-                    $WatermarkPosition = '';
+                $RealWatermarkSettings = cg_upload_form_real_watermark_prepare_for_storage($field, $dbGalleryVersion, $realWatermarkUploadKey, $realWatermarkSelectedUploadKey);
+                $WatermarkPosition = cg_upload_form_legacy_watermark_position_from_field($field, $dbGalleryVersion, $realWatermarkUploadKey, $legacyWatermarkSelectedUploadKey);
+                if($WatermarkPosition!==''){
+                    $WatermarkPositionForVisualOptions = $WatermarkPosition;
                 }
 
                 if (!empty($field['infoInSlider'])) {
@@ -1449,6 +1455,7 @@ if (!empty($_POST['upload'])) {
                         array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d', '%d', '%d'),
                         array('%d')
                     );
+                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $id, $RealWatermarkSettings);
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $id;
                     }
@@ -1475,6 +1482,7 @@ if (!empty($_POST['upload'])) {
                             ",
                         '', $GalleryID, 'chk-f', $order, $seFieldsArray, $Show_Slider, $active, $WatermarkPosition, $SubTitle, $ThirdTitle, $FieldTitleGallery, $RowNumber, $ColNumber, $RowCols
                     ));
+                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $wpdb->insert_id, $RealWatermarkSettings);
 
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $wpdb->insert_id;
@@ -1506,11 +1514,10 @@ if (!empty($_POST['upload'])) {
                 $seFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
                 $seFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
 
-                if (!empty($field['watermarkChecked'])) {
-                    $WatermarkPosition = $field['watermarkPosition'];
-                    $WatermarkPositionForVisualOptions = $field['watermarkPosition'];
-                } else {
-                    $WatermarkPosition = '';
+                $RealWatermarkSettings = cg_upload_form_real_watermark_prepare_for_storage($field, $dbGalleryVersion, $realWatermarkUploadKey, $realWatermarkSelectedUploadKey);
+                $WatermarkPosition = cg_upload_form_legacy_watermark_position_from_field($field, $dbGalleryVersion, $realWatermarkUploadKey, $legacyWatermarkSelectedUploadKey);
+                if($WatermarkPosition!==''){
+                    $WatermarkPositionForVisualOptions = $WatermarkPosition;
                 }
 
                 if (!empty($field['infoInSlider'])) {
@@ -1558,6 +1565,7 @@ if (!empty($_POST['upload'])) {
                         array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d', '%d', '%d'),
                         array('%d')
                     );
+                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $id, $RealWatermarkSettings);
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $id;
                     }
@@ -1584,6 +1592,7 @@ if (!empty($_POST['upload'])) {
                             ",
                         '', $GalleryID, 'radio-f', $order, $seFieldsArray, $Show_Slider, $active, $WatermarkPosition, $SubTitle, $ThirdTitle, $FieldTitleGallery, $RowNumber, $ColNumber, $RowCols
                     ));
+                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $wpdb->insert_id, $RealWatermarkSettings);
 
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $wpdb->insert_id;
@@ -1615,11 +1624,10 @@ if (!empty($_POST['upload'])) {
                 $seFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
                 $seFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
 
-                if (!empty($field['watermarkChecked'])) {
-                    $WatermarkPosition = $field['watermarkPosition'];
-                    $WatermarkPositionForVisualOptions = $field['watermarkPosition'];
-                } else {
-                    $WatermarkPosition = '';
+                $RealWatermarkSettings = cg_upload_form_real_watermark_prepare_for_storage($field, $dbGalleryVersion, $realWatermarkUploadKey, $realWatermarkSelectedUploadKey);
+                $WatermarkPosition = cg_upload_form_legacy_watermark_position_from_field($field, $dbGalleryVersion, $realWatermarkUploadKey, $legacyWatermarkSelectedUploadKey);
+                if($WatermarkPosition!==''){
+                    $WatermarkPositionForVisualOptions = $WatermarkPosition;
                 }
 
                 if (!empty($field['infoInSlider'])) {
@@ -1675,6 +1683,7 @@ if (!empty($_POST['upload'])) {
                         array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d', '%d', '%d'),
                         array('%d')
                     );
+                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $id, $RealWatermarkSettings);
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $id;
                     }
@@ -1698,6 +1707,7 @@ if (!empty($_POST['upload'])) {
                             ",
                         '', $GalleryID, 'select-f', $order, $seFieldsArray, $Show_Slider, $active, $WatermarkPosition, $SubTitle, $ThirdTitle, $FieldTitleGallery, $RowNumber, $ColNumber, $RowCols
                     ));
+                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $wpdb->insert_id, $RealWatermarkSettings);
 
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $wpdb->insert_id;
@@ -1725,11 +1735,10 @@ if (!empty($_POST['upload'])) {
                 $secFieldsArray = array();
                 $secFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
 
-                if (!empty($field['watermarkChecked'])) {
-                    $WatermarkPosition = $field['watermarkPosition'];
-                    $WatermarkPositionForVisualOptions = $field['watermarkPosition'];
-                } else {
-                    $WatermarkPosition = '';
+                $RealWatermarkSettings = cg_upload_form_real_watermark_prepare_for_storage($field, $dbGalleryVersion, $realWatermarkUploadKey, $realWatermarkSelectedUploadKey);
+                $WatermarkPosition = cg_upload_form_legacy_watermark_position_from_field($field, $dbGalleryVersion, $realWatermarkUploadKey, $legacyWatermarkSelectedUploadKey);
+                if($WatermarkPosition!==''){
+                    $WatermarkPositionForVisualOptions = $WatermarkPosition;
                 }
 
                 if (!empty($field['infoInSlider'])) {
@@ -1785,6 +1794,7 @@ if (!empty($_POST['upload'])) {
                         array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d', '%d', '%d'),
                         array('%d')
                     );
+                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $id, $RealWatermarkSettings);
 
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $id;
@@ -1812,6 +1822,7 @@ if (!empty($_POST['upload'])) {
                       VALUES ( %s,%d,%s,%d,%s,%d,%d,%s,%d,%d,%s,%d,%d,%d )",
                         '', $GalleryID, 'selectc-f', $order, $secFieldsArray, $Show_Slider, $active, $WatermarkPosition, $SubTitle, $ThirdTitle, $FieldTitleGallery, $RowNumber, $ColNumber, $RowCols
                     ));
+                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $wpdb->insert_id, $RealWatermarkSettings);
 
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $wpdb->insert_id;

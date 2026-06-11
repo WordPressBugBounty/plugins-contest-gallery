@@ -395,11 +395,11 @@
                         style="background: url('.esc_url($imgSrcLarge).') center center no-repeat; background-size: contain !important; width:'.$rotatedImageWidthPercent.'%; height:'.$rotatedImageHeightPercent.'%;" ></div>
                 </div>';
             }else{
-            $imageContent = '<img
+                $imageContent = '<img
                     src="'.$imgSrcLarge.'" '.$WidthAttribute.' '.$HeightAttribute.'
                     alt="'.esc_attr($altAttr).'"
                     loading="lazy"
-                    class="'.$rThumb.'" 
+                    class="'.$rThumb.'"
                     itemprop="contentUrl" '.$imgStyle.' >';
             }
             $figure = '<figure class="cg_figure" itemscope itemtype="https://schema.org/'.$itemTypeObject.'Object">

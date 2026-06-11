@@ -142,7 +142,7 @@ jQuery(document).ready(function ($) {
                 if(!cgJsClassAdmin.gallery.vars.base64andAltFileValues[realId].hasOwnProperty(WpUploadId)){break;}
                 firstBase64OrFile = cgJsClassAdmin.gallery.vars.base64andAltFileValues[realId][WpUploadId];
                 firstBase64OrFileType  = cgJsClassAdmin.gallery.vars.base64andAltFileTypes[realId][WpUploadId];
-                if(cgJsClassAdmin.index.functions.isImageType(firstBase64OrFileType)){
+                if(cgJsClassAdmin.gallery.functions.isWatermarkSellSupportedType(firstBase64OrFileType)){
                     formPostData.append('cgSellContainer[base64WatermarkedAndAltFiles]['+WpUploadId+']', cgJsClassAdmin.gallery.vars.base64andAltFileValues[realId][WpUploadId]);
                     formPostData.append('cgSellContainer[base64WatermarkedAndAltFileTypes]['+WpUploadId+']', firstBase64OrFileType);
                 }
@@ -154,9 +154,10 @@ jQuery(document).ready(function ($) {
                     break;
                 }
                 var WpUpload = cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].WpUpload;
+                var fileType = cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].ImgType;
                 // removedWpUploadIdsFromSale if images should not be watermarked anymore
-                if(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].type=='image') {
-                    if(cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['on'] ){
+                if(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].type=='image' && cgJsClassAdmin.gallery.functions.isWatermarkSellSupportedType(fileType)) {
+                    if(cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload] && cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['on'] ){
                         formPostData.append('cgSellContainer[WatermarkSettings]['+WpUpload+'][WatermarkTitle]', cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['WatermarkTitle']);
                         formPostData.append('cgSellContainer[WatermarkSettings]['+WpUpload+'][WatermarkPosition]', cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['WatermarkPosition']);
                         formPostData.append('cgSellContainer[WatermarkSettings]['+WpUpload+'][WatermarkSize]', cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['WatermarkSize']);
@@ -172,7 +173,8 @@ jQuery(document).ready(function ($) {
             if($form.find('.SaleType_download').prop('checked') && $form.find('#cgActivateSale').prop('checked')){
                 var WpUploadId = parseInt(cgJsClassAdmin.gallery.vars.$sortableDiv.find('.cg_wp_upload_id').val());
                 debugger
-                if(cgJsClassAdmin.gallery.vars.$sortableDiv.find('.cg_backend_info_container').attr('data-cg-type')=='image' && cgJsClassAdmin.gallery.vars.$sortableDiv.find('.cg_backend_info_container').attr('data-cg-pdf-preview') == 0){
+                var fileType = cgJsClassAdmin.gallery.vars.$sortableDiv.find('.cg_backend_info_container').attr('data-cg-type-short');
+                if(cgJsClassAdmin.gallery.vars.$sortableDiv.find('.cg_backend_info_container').attr('data-cg-type')=='image' && cgJsClassAdmin.gallery.vars.$sortableDiv.find('.cg_backend_info_container').attr('data-cg-pdf-preview') == 0 && cgJsClassAdmin.gallery.functions.isWatermarkSellSupportedType(fileType)){
                     formPostData.append('cgSellContainer[base64WatermarkedAndAltFiles]['+WpUploadId+']', cgJsClassAdmin.gallery.vars.base64andAltFileValues[realId][WpUploadId]);
                     formPostData.append('cgSellContainer[base64WatermarkedAndAltFileTypes]['+WpUploadId+']', cgJsClassAdmin.gallery.vars.base64andAltFileTypes[realId][WpUploadId]);
                     formPostData.append('cgSellContainer[WatermarkSettings]['+WpUploadId+'][WatermarkTitle]', cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUploadId]['WatermarkTitle']);

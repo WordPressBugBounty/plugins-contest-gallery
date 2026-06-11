@@ -19,30 +19,57 @@ jQuery(document).ready(function ($) {
 
     // check watermark
     $(document).on('click', '.cg_view_option_watermark', function () {
+        var $formField = $(this).closest('.formField');
+        var isRealWatermark = $(this).hasClass('cg_view_option_real_watermark');
+        var clickedWatermark = this;
         if($(this).find('.cg_view_option_checkbox input').prop('checked')){
-            $(this).closest('.formField').find('.cg_view_option_watermark_position').removeClass('cg_disabled  cg_disabled_watermark');
+            if(isRealWatermark){
+                $formField.find('.cg_view_option_real_watermark_settings').removeClass('cg_disabled cg_disabled_watermark');
+                $formField.find('.cg_view_option_watermark_position').addClass('cg_disabled cg_disabled_watermark');
+            }else{
+                $formField.find('.cg_view_option_watermark_position').removeClass('cg_disabled  cg_disabled_watermark');
+                $formField.find('.cg_view_option_real_watermark_settings').addClass('cg_disabled cg_disabled_watermark');
+            }
             // remove cg_disabled has to be done additionally because might be done after load
         }else{
-            $(this).closest('.formField').find('.cg_view_option_watermark_position').addClass('cg_disabled_watermark');
+            if(isRealWatermark){
+                $formField.find('.cg_view_option_real_watermark_settings').addClass('cg_disabled cg_disabled_watermark');
+            }else{
+                $formField.find('.cg_view_option_watermark_position').addClass('cg_disabled cg_disabled_watermark');
+            }
         }
-        var id = $(this).closest('.formField').attr('id');
         $("#cgCreateUploadSortableArea .cg_view_option_watermark").each(function () {
-            var idToCompare = $(this).closest('.formField').attr('id');
-            if(id != idToCompare){
+            if(this !== clickedWatermark){
                 $(this).find('.cg_view_option_checkbox').removeClass("cg_view_option_checked").addClass('cg_view_option_unchecked');
                 $(this).find('.cg_view_option_checkbox input').prop("checked", false);
             }
         });
         $("#cgCreateUploadSortableArea .cg_view_option_watermark_position").each(function () {
-            var idToCompare = $(this).closest('.formField').attr('id');
-            if(id != idToCompare){
-                $(this).addClass('cg_disabled');
+            if($(this).closest('.formField').get(0) !== $formField.get(0) || isRealWatermark){
+                $(this).addClass('cg_disabled cg_disabled_watermark');
+            }
+        });
+        $("#cgCreateUploadSortableArea .cg_view_option_real_watermark_settings").each(function () {
+            if($(this).closest('.formField').get(0) !== $formField.get(0) || !isRealWatermark){
+                $(this).addClass('cg_disabled cg_disabled_watermark');
             }
         });
     });
 
     $(document).on('change', '.cg_watermark_position', function () {
         $(this).closest('.formField').find('.cg_watermark_check').val($(this).val());
+    });
+
+    $(document).on('change', '.cg_real_watermark_position', function () {
+        if($('#cgProFalseCheck').val() && $(this).val() !== 'center'){
+            $(this).val('center');
+        }
+    });
+
+    $(document).on('change', '.cg_real_watermark_size', function () {
+        if($('#cgProFalseCheck').val() && $(this).val() !== '512' && $(this).val() !== '256'){
+            $(this).val('512');
+        }
     });
     // check watermark --- END
 

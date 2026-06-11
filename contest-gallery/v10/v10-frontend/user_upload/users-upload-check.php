@@ -277,6 +277,10 @@ if(!$isManipulated){
     $tablename_f_input = $wpdb->prefix . "contest_gal1ery_f_input";
     $tablename_options_visual = $wpdb->prefix . "contest_gal1ery_options_visual";
     $optionsVisual = $wpdb->get_row( "SELECT * FROM $tablename_options_visual WHERE GalleryID = '$galeryID'" );
+    $cgFrontendUploadWatermarkSettings = false;
+    if(function_exists('cg_entry_watermark_get_frontend_upload_settings')){
+        $cgFrontendUploadWatermarkSettings = cg_entry_watermark_get_frontend_upload_settings($galeryID,$optionsVisual);
+    }
     $GalleryName = $selectSQL1->GalleryName;
 
     $tablenameentries = $wpdb->prefix . "contest_gal1ery_entries";
@@ -528,6 +532,11 @@ if(!$isManipulated){
     $AdditionalFilesMainRealId = 0;
     $WpUploadBefore = 0;
     $realIdBefore = 0;
+    $cgCreatedEntryIds = array();
+    $cgUploadedWpUploadIds = array();
+    $cgAdditionalFilesExifByWpUpload = array();
+    $cgPendingEntryActivations = array();
+    $cgFrontendUploadWatermarkPending = array();
 	$domain = get_bloginfo('wpurl');
 	$CgEntriesOwnSlugName = cg_get_gallery_slug_name();
 
@@ -709,6 +718,7 @@ if(!$isManipulated){
                     } else {
                         //echo "The image was uploaded successfully!";
                         //var_dump($attachment_id);
+                        $cgUploadedWpUploadIds[] = absint($attach_id);
                     }
 
                 }
@@ -869,6 +879,14 @@ if(!$isManipulated){
                                 $AdditionalFilesArray[($processedFilesCounter+1)] = [
                                     'WpUpload' => $wp_image_id,
                                 ];
+                                if(!empty($cgFrontendUploadWatermarkSettings) && function_exists('cg_entry_watermark_apply_frontend_upload')){
+                                    $cgFrontendUploadWatermarkPending[] = array(
+                                        'realId' => $AdditionalFilesMainRealId,
+                                        'WpUpload' => $wp_image_id,
+                                        'type' => $post_type,
+                                        'isAdditionalFile' => true
+                                    );
+                                }
                                 if($fileType=='application/pdf' && !empty($proOptions->PdfPreviewFrontend) && !empty($_POST['PdfPreview'][$key])){
                                //     var_dump('add pdfPreview first');
                                     if(!empty($nextId) && !isset($PdfPreviews[$nextId])){
@@ -914,6 +932,7 @@ if(!$isManipulated){
                 ) );
 
                 $nextId = $wpdb->insert_id;
+                $cgCreatedEntryIds[] = $nextId;
 
             //    var_dump('$fileType');
                 //     var_dump($fileType);
@@ -948,6 +967,15 @@ if(!$isManipulated){
                     $ExifDataByRealIds[$nextId] = '';
                 }else{
                     $ExifDataByRealIds[$nextId] = cg_create_exif_data_and_add_to_database($nextId,$wp_image_id);// then create only exif data for backend
+                }
+
+                if(!$isOnlyContactEntry && !empty($cgFrontendUploadWatermarkSettings) && function_exists('cg_entry_watermark_apply_frontend_upload')){
+                    $cgFrontendUploadWatermarkPending[] = array(
+                        'realId' => $nextId,
+                        'WpUpload' => $wp_image_id,
+                        'type' => $post_type,
+                        'isAdditionalFile' => false
+                    );
                 }
 
                 if($collect==''){
@@ -1489,17 +1517,11 @@ if(!$isManipulated){
 
                 if($ActivateUpload==1){
 
-                    $wpdb->update(
-                        "$tablename1",
-                        array('Active' => '1'),
-                        array('id' => $nextId),
-                        array('%d'),
-                        array('%d')
+                    $cgPendingEntryActivations[$nextId] = array(
+                        'nextId' => $nextId,
+                        'userMail' => $userMail,
+                        'post_title' => $post_title
                     );
-
-                    if(!empty($userMail) && $InformUsers == 1){
-                        include(plugin_dir_path(__FILE__).'mail_image_activation.php');
-                    }
 
                 }
 
@@ -1615,6 +1637,35 @@ if(!$isManipulated){
 
         }
 
+        if(!$isOnlyContactEntry && !empty($cgFrontendUploadWatermarkPending) && !empty($cgFrontendUploadWatermarkSettings) && function_exists('cg_entry_watermark_apply_frontend_upload')){
+            foreach($cgFrontendUploadWatermarkPending as $cgFrontendUploadWatermarkFile){
+                $cgFrontendUploadWatermarkRealId = absint($cgFrontendUploadWatermarkFile['realId']);
+                $cgFrontendUploadWatermarkWpUpload = absint($cgFrontendUploadWatermarkFile['WpUpload']);
+                if(empty($cgFrontendUploadWatermarkRealId) || empty($cgFrontendUploadWatermarkWpUpload)){
+                    continue;
+                }
+
+                $cgFrontendUploadWatermarkType = $cgFrontendUploadWatermarkFile['type'];
+                if(function_exists('cg_entry_watermark_get_attachment_type')){
+                    $cgFrontendUploadWatermarkType = cg_entry_watermark_get_attachment_type($cgFrontendUploadWatermarkWpUpload,$cgFrontendUploadWatermarkType);
+                }
+
+                if(!empty($cgFrontendUploadWatermarkFile['isAdditionalFile']) && function_exists('cg_create_exif_data') && function_exists('cg_entry_watermark_supported_type') && cg_entry_watermark_supported_type($cgFrontendUploadWatermarkType) && empty($cgAdditionalFilesExifByWpUpload[$cgFrontendUploadWatermarkWpUpload])){
+                    $cgAdditionalFilesExifByWpUpload[$cgFrontendUploadWatermarkWpUpload] = cg_create_exif_data($cgFrontendUploadWatermarkWpUpload);
+                }
+
+                $cgFrontendUploadWatermarkSettingsToApply = $cgFrontendUploadWatermarkSettings;
+                if(function_exists('cg_entry_watermark_resolve_frontend_upload_settings')){
+                    $cgFrontendUploadWatermarkSettingsToApply = cg_entry_watermark_resolve_frontend_upload_settings($galeryID,$cgFrontendUploadWatermarkRealId,$cgFrontendUploadWatermarkSettingsToApply);
+                }
+
+                $cgFrontendUploadWatermarkResult = cg_entry_watermark_apply_frontend_upload($galeryID,$cgFrontendUploadWatermarkRealId,$cgFrontendUploadWatermarkWpUpload,$cgFrontendUploadWatermarkType,$cgFrontendUploadWatermarkSettingsToApply);
+                if(is_wp_error($cgFrontendUploadWatermarkResult)){
+                    cg_entry_watermark_frontend_upload_fail($galeryID,$galeryIDuser,$cgFrontendUploadWatermarkResult->get_error_message(),$cgCreatedEntryIds,$cgUploadedWpUploadIds);
+                }
+            }
+        }
+
         if(!empty($OrderItem)){
 
 	        $Uploaded = $wpdb->get_var( "SELECT Uploaded FROM $tablename_ecommerce_orders_items WHERE id = '$OrderItem' LIMIT 1" );
@@ -1667,7 +1718,11 @@ if(!$isManipulated){
                                     $Width=$imgSrcFull[1];
                                     $Height=$imgSrcFull[2];
                                     $AdditionalFilesArray[$key]['IsExifDataChecked'] = true;
-                                    $AdditionalFilesArray[$key]['Exif'] = cg_create_exif_data($AdditionalFileArray['WpUpload']);
+                                    if(isset($cgAdditionalFilesExifByWpUpload[$AdditionalFileArray['WpUpload']])){
+                                        $AdditionalFilesArray[$key]['Exif'] = $cgAdditionalFilesExifByWpUpload[$AdditionalFileArray['WpUpload']];
+                                    }else{
+                                        $AdditionalFilesArray[$key]['Exif'] = cg_create_exif_data($AdditionalFileArray['WpUpload']);
+                                    }
                                 }elseif(cg_is_alternative_file_type_video($ImgType)){// added since version 18.0.0
                                     $fileData = wp_get_attachment_metadata($AdditionalFileArray['WpUpload']);
                                     $Width = (!empty($fileData['width'])) ? $fileData['width'] : 0;
@@ -1731,9 +1786,29 @@ if(!$isManipulated){
             $AdditionalFilesArray = unserialize($wpdb->get_var( "SELECT MultipleFiles FROM $tablename1 WHERE id = '$AdditionalFilesMainRealId'" ));
         }
 
+        if($ActivateUpload==1 && !empty($cgPendingEntryActivations)){
+            foreach($cgPendingEntryActivations as $cgPendingEntryActivation){
+                $nextId = $cgPendingEntryActivation['nextId'];
+                $userMail = $cgPendingEntryActivation['userMail'];
+                $post_title = $cgPendingEntryActivation['post_title'];
+
+                $wpdb->update(
+                    "$tablename1",
+                    array('Active' => '1'),
+                    array('id' => $nextId),
+                    array('%d'),
+                    array('%d')
+                );
+
+                if(!empty($userMail) && $InformUsers == 1){
+                    include(plugin_dir_path(__FILE__).'mail_image_activation.php');
+                }
+            }
+        }
+
         if($ActivateUpload==1){
             // create json File if instant upload activation is on!!!
-            $picsSQL = $wpdb->get_results( "SELECT DISTINCT $table_posts.*, $tablename1.* FROM $table_posts, $tablename1 WHERE 
+            $picsSQL = $wpdb->get_results( "SELECT DISTINCT $table_posts.*, $tablename1.* FROM $table_posts, $tablename1 WHERE
                                               (($collect) AND $tablename1.GalleryID='$galeryID' AND $tablename1.Active='1' and $table_posts.ID = $tablename1.WpUpload) 
                                              OR (($collect) AND $tablename1.GalleryID='$GalleryID' AND $tablename1.Active='1' AND $tablename1.WpUpload = 0) 
                             GROUP BY $tablename1.id ORDER BY $tablename1.id DESC");

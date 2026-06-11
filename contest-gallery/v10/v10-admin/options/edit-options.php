@@ -13,6 +13,9 @@ $editTranslationLink = '?page='.cg_get_version().'/index.php&edit_options=true&o
 
 
 $isEditOptions = true;
+$isEditTranslationsOnly = (!empty($_POST['cg_edit_translations']) || !empty($_GET['cg_edit_translations'])) ? true : false;
+$isEditEcommerceOnly = (!empty($_POST['cg_edit_ecommerce']) || !empty($_GET['cg_edit_ecommerce'])) ? true : false;
+$isEditOptionsOnly = (!$isEditTranslationsOnly && !$isEditEcommerceOnly) ? true : false;
 
 $replyMailNote = '<br><b>(Note for testing: mail is send to and "Reply e-mail" can not be the same)</b>';
 
@@ -32,6 +35,8 @@ $tablename_pro_options = $wpdb->prefix . "contest_gal1ery_pro_options";
 $tablename_mail_confirmation = $wpdb->prefix . "contest_gal1ery_mail_confirmation";
 $tablename_comments_notification_options = $wpdb->prefix . "contest_gal1ery_comments_notification_options";
 $tablename_registry_and_login_options = $wpdb->prefix . "contest_gal1ery_registry_and_login_options";
+
+require_once(__DIR__ . '/../upload/cg-upload-real-watermark-functions.php');
 
 /*$tinymceStyle = '<style type="text/css">
 				   .switch-tmce {display:inline;}
@@ -116,7 +121,7 @@ if($ButtonStyle=='dark'){
 
 $commentsNotificationOptions = $wpdb->get_results($wpdb->prepare( "SELECT * FROM $tablename_comments_notification_options WHERE GalleryID = %d",[$GalleryID]));
 
-if(floatval($galleryDbVersion)>=22){
+if(floatval($galleryDbVersion)>=22 && $isEditEcommerceOnly){
 
     $selectSQLecommerceOptions = cg_get_ecommerce_options();
 	$PayPalApiActive = ($selectSQLecommerceOptions->PayPalApiActive==2) ? '' : 'checked';
@@ -729,6 +734,8 @@ foreach($selectSQL3 as $value3){
     $SliderThumbNav = ($value3->SliderThumbNav==1) ? 'checked' : '';
     $BorderRadius = ($value3->BorderRadius==1) ? 'checked' : '';
     $BorderRadiusUpload = ($value3->BorderRadiusUpload==1) ? 'checked' : '';
+    $UploadRealWatermarkSettings = cg_upload_options_real_watermark_get_settings($value3);
+    $UploadRealWatermarkChecked = cg_upload_options_real_watermark_is_active($value3->UploadRealWatermarkSettings) ? 'checked' : '';
     $BorderRadiusRegistry = ($value3->BorderRadiusRegistry==1) ? 'checked' : '';
     $BorderRadiusLogin = ($value3->BorderRadiusLogin==1) ? 'checked' : '';
     $CopyImageLink = ($value3->CopyImageLink==1) ? 'checked' : '';
@@ -997,7 +1004,9 @@ $mailExceptions = '';
 $fileName = md5(wp_salt( 'auth').'---cnglog---'.$GalleryID);
 $fileMailExceptions = $uploadFolder['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/logs/errors/mail-'.$fileName.'.log';
 if(file_exists($fileMailExceptions)){
-    $mailExceptions = file_get_contents($fileMailExceptions);
+    if($isEditOptionsOnly || $isEditTranslationsOnly){
+        $mailExceptions = file_get_contents($fileMailExceptions);
+    }
 }
 // get mail exception logs --- END
 
@@ -1006,7 +1015,9 @@ $mailExceptionsGeneral = '';
 $fileName = md5(wp_salt( 'auth').'---cnglog---'.'0');// gallery id 0 is for general id
 $fileMailExceptionsGeneral = $uploadFolder['basedir'].'/contest-gallery/gallery-general/logs/errors/mail-'.$fileName.'.log';
 if(file_exists($fileMailExceptionsGeneral)){
-    $mailExceptionsGeneral = file_get_contents($fileMailExceptionsGeneral);
+    if($isEditEcommerceOnly){
+        $mailExceptionsGeneral = file_get_contents($fileMailExceptionsGeneral);
+    }
 }
 // get mail exception logs general --- END
 
@@ -1039,7 +1050,12 @@ $galleriesOptions = cg_get_galleries_options_all();
 require_once(dirname(__FILE__) . "/../nav-menu.php");
 
 $cgPHPversionClient = phpversion();
-$cgGoogleSignInLibVersionClient = 'not installed';// is set because of normal version
+$cgGoogleSignInLibVersionClient = 'built-in verifier';// legacy variable name for Google sign in test page
+
+$cgGoogleSignInLibStatus = cg_google_sign_in_lib_checks();
+$cgGoogleSignInLibData = cg_google_sign_in_lib_get_data();
+$cgPHPversionClient = $cgGoogleSignInLibData['cgPHPversionClient'];
+$cgGoogleSignInLibVersionClient = $cgGoogleSignInLibData['cgGoogleSignInLibVersionClient'];
 
 $cg_edit_general = '';
 

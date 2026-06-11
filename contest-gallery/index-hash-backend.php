@@ -1,6 +1,8 @@
 <?php
 global $wp_version;
 
+$cgVersion = isset($cgVersion) ? $cgVersion : cg_get_version_for_scripts();
+
 $cgBackendHashPosted = '';
 
 if (!empty($_POST['cgBackendHash'])) {

@@ -78,6 +78,17 @@ echo "<option value=''>No role</option>";
 
 $roles = get_editable_roles();
 
+if(intval($galleryDbVersion)>=14 && empty($roles['contest_gallery_user_since_v14'])){
+    if(function_exists('cg_create_contest_gallery_user_role')){
+        cg_create_contest_gallery_user_role();
+        $roles = get_editable_roles();
+    }
+
+    if(empty($roles['contest_gallery_user_since_v14'])){
+        $roles = array('contest_gallery_user_since_v14' => array('name' => 'Contest Gallery User since v14')) + $roles;
+    }
+}
+
 
 
 // show as last!!!!
@@ -163,7 +174,7 @@ $beforeSinceV14Explanation
 HEREDOC;
 
 $rolesNewArray = [];
-$rolesNewArray['contest_gallery_user_since_v14'] = $roles['contest_gallery_user_since_v14'];
+$rolesNewArray['contest_gallery_user_since_v14'] = (!empty($roles['contest_gallery_user_since_v14'])) ? $roles['contest_gallery_user_since_v14'] : array('name' => 'Contest Gallery User since v14');
 
 foreach($roles as $keyOfRole => $roleValues){
     if($keyOfRole=='contest_gallery_user' OR $keyOfRole=='contest_gallery_user_since_v14'){// not selectable if gallery created after v14
@@ -186,6 +197,8 @@ foreach($rolesNewArray as $keyOfRole => $roleValues){
 
     if(!empty($roleValues['name'])){
         $roleName = $roleValues['name'];
+    }else{
+        $roleName = '';
     }
 
     $cg_border_right_none = 'cg_border_right_none';
@@ -217,9 +230,9 @@ foreach($rolesNewArray as $keyOfRole => $roleValues){
 HEREDOC;
     }else{
 
-        $checked = (array_key_exists($keyOfRole,$EditProfileGroups) !== false) ? 'checked' : '';
-
         if(!empty($roleValues)){
+            $checked = (array_key_exists($keyOfRole,$EditProfileGroups) !== false) ? 'checked' : '';
+
             echo <<<HEREDOC
     <div  class='cg_view_option cg_view_option_25_percent $cg_border_top_bottom_none $cg_border_left_none $cg_border_right_none $beforeSinceV14Disabled'>
         <div class='cg_view_option_title'>
@@ -230,7 +243,7 @@ HEREDOC;
         </div>
     </div>
 HEREDOC;
-        }else{// then must be placeholder
+        }else{
             echo <<<HEREDOC
     <div  class='cg_view_option cg_view_option_25_percent $cg_border_top_bottom_none $cg_border_left_none $cg_border_right_none cg_pointer_events_none $beforeSinceV14Disabled'>
         <div class='cg_view_option_title'>
@@ -552,5 +565,3 @@ HEREDOC;
 echo <<<HEREDOC
 </div>
 HEREDOC;
-
-

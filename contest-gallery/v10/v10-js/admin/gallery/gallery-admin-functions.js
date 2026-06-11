@@ -1148,7 +1148,14 @@ cgJsClassAdmin.gallery.functions = {
                     ImgType = 'ytb';
                 }
             } else {
-                var ImgType = attachment[i].url.split('.')[attachment[i].url.split('.').length - 1].toLowerCase()// short version of type (subtype in wordpress), relevant for classes search
+                var cleanAttachmentUrl = attachment[i].url ? attachment[i].url.split('#')[0].split('?')[0] : '';
+                var ImgType = (cleanAttachmentUrl.indexOf('.') > -1) ? cleanAttachmentUrl.split('.')[cleanAttachmentUrl.split('.').length - 1].toLowerCase() : '';// short version of type (subtype in wordpress), relevant for classes search
+                if (!ImgType && attachment[i].subtype) {
+                    ImgType = attachment[i].subtype.toLowerCase();
+                }
+                if (!ImgType && attachment[i].mime && attachment[i].mime.indexOf('/') > -1) {
+                    ImgType = attachment[i].mime.split('/')[1].toLowerCase();
+                }
             }
 
             if (cgJsClassAdmin.gallery.vars.allowedFileEndings.indexOf(ImgType) == -1) {

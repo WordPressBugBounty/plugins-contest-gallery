@@ -18,7 +18,11 @@ if(!function_exists('cg_is_fresh_install_before_create_table')){
 }
 
 if(!function_exists('cg_run_update_check_after_create_table')){
-    function cg_run_update_check_after_create_table($i,$p_cgal1ery_db_installed_ver){
+    function cg_run_update_check_after_create_table($i,$p_cgal1ery_db_installed_ver,$p_cgal1ery_db_new_version){
+
+        if(cg_contest_gallery_db_check_was_run($i,$p_cgal1ery_db_new_version)){
+            return;
+        }
 
         $isFreshInstall = cg_is_fresh_install_before_create_table($i,$p_cgal1ery_db_installed_ver);
 
@@ -28,6 +32,22 @@ if(!function_exists('cg_run_update_check_after_create_table')){
             include(__DIR__."/../../update/update-check-new.php");
         }
 
+    }
+}
+
+if(!function_exists('cg_contest_gallery_db_check_was_run')){
+    function cg_contest_gallery_db_check_was_run($i,$p_cgal1ery_db_new_version){
+        static $checked = array();
+
+        $key = $i.'|'.$p_cgal1ery_db_new_version;
+
+        if(!empty($checked[$key])){
+            return true;
+        }
+
+        $checked[$key] = true;
+
+        return false;
     }
 }
 
@@ -66,7 +86,7 @@ if(!function_exists('contest_gal1ery_db_check')){
                                     $i=$value1."_";
                                 }
                                 // create tables and run update check then for each site when required
-                                cg_run_update_check_after_create_table($i,$p_cgal1ery_db_installed_ver);
+                                cg_run_update_check_after_create_table($i,$p_cgal1ery_db_installed_ver,$p_cgal1ery_db_new_version);
                             }
                         }
                     }
@@ -79,14 +99,14 @@ if(!function_exists('contest_gal1ery_db_check')){
                         }
 
                         // create tables and run update check when required
-                        cg_run_update_check_after_create_table($i,$p_cgal1ery_db_installed_ver);
+                        cg_run_update_check_after_create_table($i,$p_cgal1ery_db_installed_ver,$p_cgal1ery_db_new_version);
                     }
 
                 }
                 else{
                     $i='';
                     // create tables and run update check when required
-                    cg_run_update_check_after_create_table($i,$p_cgal1ery_db_installed_ver);
+                    cg_run_update_check_after_create_table($i,$p_cgal1ery_db_installed_ver,$p_cgal1ery_db_new_version);
                 }
 
 

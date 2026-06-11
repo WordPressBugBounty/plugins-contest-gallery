@@ -106,10 +106,14 @@ cgJsClassAdmin.gallery.load.changeViewByControl = function ($,$cgStep,$cgStart,i
                 eval(script);
             });
 
-            if(isFormSubmit){
-                $('#cgGalleryFormSubmit').prop('disabled',false);
-                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Changes saved',true);
-            }
+			if(isFormSubmit){
+					$('#cgGalleryFormSubmit').prop('disabled',false);
+					var saveMessage = 'Changes saved';
+					if(cgJsClassAdmin.gallery.entryWatermark && cgJsClassAdmin.gallery.entryWatermark.state && cgJsClassAdmin.gallery.entryWatermark.state.bulkAfterSave){
+						saveMessage = cgJsClassAdmin.gallery.entryWatermark.state.bulkAfterSave.mode === 'restore' ? 'Changes saved<br>unwatermark prepared' : 'Changes saved<br>watermark prepared';
+					}
+					cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage(saveMessage,true);
+				}
 
 
             if(cgJsClassAdmin.gallery.functions.missingRights($,response)){return;}
@@ -190,6 +194,10 @@ cgJsClassAdmin.gallery.load.changeViewByControl = function ($,$cgStep,$cgStart,i
             cgJsClassAdmin.index.functions.setCgNonce($);
 
             cgJsClassAdmin.gallery.functions.loadBlockquote($);
+
+            if(cgJsClassAdmin.gallery.entryWatermark && cgJsClassAdmin.gallery.entryWatermark.openPendingBulkAfterSave){
+                cgJsClassAdmin.gallery.entryWatermark.openPendingBulkAfterSave();
+            }
 
         }).fail(function(xhr, status, error) {
 

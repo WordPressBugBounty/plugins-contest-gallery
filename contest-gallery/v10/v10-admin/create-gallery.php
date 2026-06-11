@@ -196,7 +196,7 @@ if(!empty($_POST['cg_create'])){
                     TextBeforeWpPageEntry,TextAfterWpPageEntry,ForwardToWpPageEntry,ForwardToWpPageEntryInNewTab,
                     ShowBackToGalleryButton,BackToGalleryButtonText,TextDeactivatedEntry,
                     ShowBackToGalleriesButton,ShowPinFormVoting,ShowPinFormUploading,AllowedUsersToVote,
-                    FeVotingIconType
+                    FeVotingIconType,UploadRealWatermarkSettings
 					 )
 					VALUES ( %s,%d,%s,%s,
 					%s,%s,%s,%s,%s,%s,
@@ -213,7 +213,7 @@ if(!empty($_POST['cg_create'])){
 					%s,%s,%d,%d,
 					%d,%s,%s,
 					%d,%d,%d,%s,
-					%s
+					%s,%s
 					)
 				",
         '',$nextIDgallery,$CommentsAlignGallery,$RatingAlignGallery,
@@ -231,7 +231,7 @@ if(!empty($_POST['cg_create'])){
         $TextBeforeWpPageEntry,$TextAfterWpPageEntry,$ForwardToWpPageEntry,$ForwardToWpPageEntryInNewTab,
         $ShowBackToGalleryButton,$BackToGalleryButtonText,$TextDeactivatedEntry,
         $ShowBackToGalleriesButton,$ShowPinFormVoting,$ShowPinFormUploading,$AllowedUsersToVote,
-        $FeVotingIconType
+        $FeVotingIconType,''
     ) );
 
     // $wpdb->insert( $tablename_options_input, array( 'id' => '', 'Forward' => 0, 'Forward_URL' => '', 'Confirmation_Text' => "$confirmationText" ));

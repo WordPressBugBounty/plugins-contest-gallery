@@ -11,6 +11,15 @@ echo <<<HEREDOC
 </p>
 HEREDOC;
 
+if(function_exists('cg_render_nginx_upload_protection_notice') && function_exists('cg_get_nginx_upload_deny_rule')){
+    cg_render_nginx_upload_protection_notice(
+        'Using Nginx? Add this server rule to protect ecommerce files.',
+        'Ecommerce invoices, logs, sold downloads and ecommerce data are only protected on Nginx when the server configuration blocks this path. Ask your server admin to add this rule inside the matching server block and reload Nginx.',
+        cg_get_nginx_upload_deny_rule('contest-gallery/ecommerce'),
+        'cg_ecommerce_nginx_notice cg_ecommerce_options_nginx_notice'
+    );
+}
+
 echo "<div class='cg_view_options_row'>";
 echo <<<HEREDOC
             <div class="cg_view_option cg_border_border_top_right_radius_unset  cg_border_right_none cg_view_option_flex_flow_column " id="CurrencyShortContainer">

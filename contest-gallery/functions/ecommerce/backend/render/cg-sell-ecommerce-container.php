@@ -120,15 +120,24 @@ HEREDOC;
         echo "<input type='hidden' id='CurrencyShort' value='$CurrencyShort' >";
         echo "<input type='hidden' id='CurrencySymbol' value='$CurrencySymbol' >";
         echo "<input type='hidden' id='cgCurrencySelectPosition' value='$CurrencyPosition' >";
-        echo "<input type='hidden' id='cgCurrencySymbol' value='$CurrencySymbol' >";
-        echo "<input type='hidden' id='cgPriceDivider' value='$PriceDivider' >";
-        echo "<input type='hidden' id='CurrencyPosition' value='$CurrencyPosition' >";
+	        echo "<input type='hidden' id='cgCurrencySymbol' value='$CurrencySymbol' >";
+	        echo "<input type='hidden' id='cgPriceDivider' value='$PriceDivider' >";
+	        echo "<input type='hidden' id='CurrencyPosition' value='$CurrencyPosition' >";
 
-        echo <<<HEREDOC
-    <div class='cg_view_options_row' >
-        <div  class='cg_sale_conf cg_view_option cg_entry_page_description cg_view_option_full_width cg_border_bottom_none '>
-            <div class='cg_view_option_title  cg_view_option_title_full_width'>
-                <p>
+			if(function_exists('cg_render_nginx_upload_protection_notice') && function_exists('cg_get_nginx_upload_deny_rule')){
+				cg_render_nginx_upload_protection_notice(
+					'Using Nginx? Add this server rule to protect ecommerce files.',
+					'Selling works without this rule, but on Nginx invoices, logs, sold downloads and ecommerce data are only protected when the server configuration blocks this path. Ask your server admin to add this rule inside the matching server block and reload Nginx.',
+					cg_get_nginx_upload_deny_rule('contest-gallery/ecommerce'),
+					'cg_ecommerce_nginx_notice cg_ecommerce_global_nginx_notice'
+				);
+			}
+
+	        echo <<<HEREDOC
+	    <div class='cg_view_options_row' >
+	        <div  class='cg_sale_conf cg_view_option cg_entry_page_description cg_view_option_full_width cg_border_bottom_none '>
+	            <div class='cg_view_option_title  cg_view_option_title_full_width'>
+	                <p>
                     Currency configuration<br>
                     <span class="cg_view_option_title_note">
                         <span style="margin-right:10px;"><b>Price decimal separator:</b> $PriceDivider</span>
@@ -399,12 +408,28 @@ echo <<<HEREDOC
         </div>
 HEREDOC;
 echo <<<HEREDOC
-        <div id='cgSellSelectFilesForSale' class='cg_hide cg_sale_conf cg_download_sale $cgProFalse'>
-                <div class='cg_sell_title' id='cgSellTitlePreview'>Select download files for selling</div>
-                <p style="margin:10px auto -10px;"><b>NOTE:</b> images can be watermarked</p>
-                <p style="margin:10px auto;"><b>NOTE:</b> selected files will be moved to inaccessible folder in <br><b>.../wp-content/uploads/contest-gallery/...</b><br> after purchase a customer will be able to download selected files for sale</p>
-                     <p style="margin:10px auto;max-width: 600px;"><b class="cg_color_red">NOTE:</b> if this entry was sold the selected download files for selling will be downloadable for the customer on the order summary page. This entry will be connected to purchased order.<br>If you remove this entry after purchase then customers will  not be able to download the files on the order summary page. If you add further files to this entry the customers will be able to download the further files on order sammary page. <br><b>In short:</b> this entry and all connected files to this entry will be connected to the purchased orders of this entry.</p>
-                <div id='cgSellSelectFilesForSaleSelectContainer'>
+	        <div id='cgSellSelectFilesForSale' class='cg_hide cg_sale_conf cg_download_sale $cgProFalse'>
+	                <div class='cg_sell_title' id='cgSellTitlePreview'>Select download files for selling</div>
+	                <p style="margin:10px auto -10px;"><b>NOTE:</b> images will be watermarked</p>
+	                <div id='cgSellEntryWatermarkConflictNotice' class='cg_entry_watermark_ecommerce_conflict_notice cg_hide'>
+	                    <div class='cg_entry_watermark_ecommerce_conflict_text'><b>NOTE:</b> Some files are already watermarked. Unwatermark first to watermark for selling.</div>
+	                    <input type='button' id='cgSellEntryWatermarkConflictButton' class='cg_action_button' value='Unwatermark first'>
+	                </div>
+HEREDOC;
+
+	if(function_exists('cg_render_nginx_upload_protection_notice') && function_exists('cg_get_nginx_upload_deny_rule')){
+		cg_render_nginx_upload_protection_notice(
+			'Using Nginx? Add this server rule to protect selling download files.',
+			'Selling download files are moved into this gallery ecommerce folder. On Nginx they are only protected when the server configuration blocks this path. Ask your server admin to add this rule inside the matching server block and reload Nginx.',
+			cg_get_nginx_upload_deny_rule('contest-gallery/gallery-id-'.absint($GalleryID).'/ecommerce'),
+			'cg_ecommerce_nginx_notice cg_sell_files_nginx_notice'
+		);
+	}
+
+	echo <<<HEREDOC
+	                <p style="margin:10px auto;"><b>NOTE:</b> selected files will be moved to inaccessible folder in <br><b>.../wp-content/uploads/contest-gallery/...</b><br> after purchase a customer will be able to download selected files for sale</p>
+	                     <p style="margin:10px auto;max-width: 600px;"><b class="cg_color_red">NOTE:</b> if this entry was sold the selected download files for selling will be downloadable for the customer on the order summary page. This entry will be connected to purchased order.<br>If you remove this entry after purchase then customers will  not be able to download the files on the order summary page. If you add further files to this entry the customers will be able to download the further files on order summary page. <br><b>In short:</b> this entry and all connected files to this entry will be connected to the purchased orders of this entry.</p>
+	                <div id='cgSellSelectFilesForSaleSelectContainer'>
 				</div>
         </div>
 HEREDOC;
@@ -462,25 +487,26 @@ HEREDOC;
                 <p style="text-align:left;">Watermark title</p>
             </div>
             <div  style="justify-content:left;" class='cg_view_option_input'>
-                <input id="cgWatermarkInputTitle" type="text" name="cgSellContainer[WatermarkTitle]" value="Contest Gallery" maxlength="40" style="width: 100%;" >
+                <input id="cgWatermarkInputTitle" type="text" name="cgSellContainer[WatermarkTitle]" value="Contest Gallery" maxlength="256" style="width: 100%;" >
             </div>
         </div>
     <div class="cg_view_option cg_sale_conf  cg_view_option_flex_flow_column cg_border_none">
             <div class="cg_view_option_title cg_view_option_title_full_width">
                 <p style="text-align: left;">Watermark size</p>
             </div>
-            <div class="cg_view_option_select" style="justify-content: left;">
-                <select name='cgSellContainer[WatermarkSize]' id='cgWatermarkSelectSize' style="width: 100%;" >
-                    <option value='8' >XXS</option>
-                    <option value='16' >XS</option>
-                    <option value='32' >S</option>
-                    <option value='64' >M</option>
-                    <option value='128' >L</option>
-                    <option value='256' >XL</option>
-                    <option value='512' >XXL</option>
-                </select>
-            </div>
-        </div>
+	            <div class="cg_view_option_select" style="justify-content: left;">
+	                <select name='cgSellContainer[WatermarkSize]' id='cgWatermarkSelectSize' style="width: 100%;" >
+HEREDOC;
+
+		foreach(array(512,256,128,64,32,16,8) as $size){
+			$sizeLabel = function_exists('cg_get_watermark_size_label') ? cg_get_watermark_size_label($size) : $size;
+			echo "<option value='".esc_attr($size)."'>".esc_html($sizeLabel)."</option>";
+		}
+
+		echo <<<HEREDOC
+	                </select>
+	            </div>
+	        </div>
 HEREDOC;
         echo <<<HEREDOC
         </div>

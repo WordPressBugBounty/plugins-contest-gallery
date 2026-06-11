@@ -17,13 +17,15 @@ if (!function_exists('contest_gal1ery_user_vote_mail_prepare')) {
         if (!empty($options['pro']['InformUserVote'])) {
             $InformUserVoteMailInterval = $options['pro']['InformUserVoteMailInterval'];
 
-            $rowObject = $wpdb->get_row("SELECT * FROM $tablename WHERE id = '$pictureID'  ORDER BY id DESC LIMIT 1");
-            $wpUserIdOfVotedImage = $rowObject->WpUserId;
-            $WpPage = $rowObject->WpPage;
+            $rowObject = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename WHERE id = %d  ORDER BY id DESC LIMIT 1", $pictureID));
+            if (empty($rowObject)) {
+                return;
+            }
+            $wpUserIdOfVotedImage = intval($rowObject->WpUserId);
 
             if (!empty($wpUserIdOfVotedImage)) {
 
-                $lastTstampFor = $wpdb->get_var("SELECT Tstamp FROM $tablename_user_vote_mails WHERE WpUserId = $wpUserIdOfVotedImage  AND GalleryID = $galeryID ORDER BY id DESC LIMIT 1");
+                $lastTstampFor = $wpdb->get_var($wpdb->prepare("SELECT Tstamp FROM $tablename_user_vote_mails WHERE WpUserId = %d  AND GalleryID = %d ORDER BY id DESC LIMIT 1", $wpUserIdOfVotedImage, $galeryID));
                 $tstampToCompare = 1 * 60 * 60;
                 if ($InformUserVoteMailInterval == '1m') {
                     $tstampToCompare = 1 * 60;
@@ -54,7 +56,7 @@ if (!function_exists('contest_gal1ery_user_vote_mail_prepare')) {
                     if (empty($lastTstampFor)) {
                         $lastTstampFor = time() - $tstampToCompare;
                     }
-                    $selectSQLemailUserVote = $wpdb->get_row("SELECT * FROM $tablename_mail_user_vote WHERE GalleryID = '$galeryID'");
+                    $selectSQLemailUserVote = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_mail_user_vote WHERE GalleryID = %d", $galeryID));
                     $InformUserContent = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserVote->Content);
 
                     // insert first to reduce chance of multiple processing
@@ -74,51 +76,57 @@ if (!function_exists('contest_gal1ery_user_vote_mail_prepare')) {
                     $posUserInfo = "\$info\$";
 
                     if ($isMultipleStars) {
-                        $sumCountR = "SUM(";
-
-                        for ($iR = 1; $iR <= 15 - 10; $iR++) {
-                            if ($iR == 1) {
-                                $sumCountR .= "CASE WHEN $tablenameIP.pid > 0 AND $tablenameIP.Rating = '$iR' AND $tablename.id = $tablenameIP.pid THEN $iR ELSE 0 END";
-                            } else {
-                                $sumCountR .= " + CASE WHEN $tablenameIP.pid > 0 AND $tablenameIP.Rating = '$iR' AND $tablename.id = $tablenameIP.pid THEN $iR ELSE 0 END";
+                        $multipleStarsMaxRating = 5;
+                        if (!empty($options['general']['AllowRating'])) {
+                            $multipleStarsAllowRating = intval($options['general']['AllowRating']);
+                            if ($multipleStarsAllowRating >= 12) {
+                                $multipleStarsMaxRating = $multipleStarsAllowRating - 10;
                             }
                         }
+                        if ($multipleStarsMaxRating < 1) {
+                            $multipleStarsMaxRating = 5;
+                        } elseif ($multipleStarsMaxRating > 10) {
+                            $multipleStarsMaxRating = 10;
+                        }
 
-                        $sumCountR .= ") AS CountRtotalSum";
-
-                        $userVotes = $wpdb->get_results("SELECT NamePic, CountRtotalSum, id  from (SELECT DISTINCT $tablename.*, $tablenameIP.pid, $sumCountR,
-                  (
-                   CASE WHEN NOT EXISTS(SELECT NULL FROM $tablenameIP WHERE $tablename.id = $tablenameIP.pid)
-                      THEN 1
-                      ELSE 0
-                   END 
-                  ) AS CountRnotExists
-                        FROM $tablenameIP, $tablename WHERE 
-                        ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = $galeryID AND $tablename.Active = 1 AND $tablenameIP.Rating > 0 AND $tablenameIP.Tstamp > $lastTstampFor)
-                        GROUP BY $tablename.id) AS CountRtotalDataCollect 
-                    GROUP BY id ORDER BY CountRtotalSum DESC LIMIT 10
-                        ");
+                        $userVotes = $wpdb->get_results($wpdb->prepare(
+                            "SELECT $tablename.NamePic, SUM($tablenameIP.Rating) AS CountRtotalSum, $tablename.id, $tablename.WpPage
+                            FROM $tablenameIP
+                            INNER JOIN $tablename ON $tablename.id = $tablenameIP.pid
+                            WHERE $tablename.GalleryID = %d
+                                AND $tablenameIP.GalleryID = %d
+                                AND $tablename.WpUserId = %d
+                                AND $tablename.Active = 1
+                                AND $tablenameIP.Rating > 0
+                                AND $tablenameIP.Rating <= %d
+                                AND $tablenameIP.Tstamp > %d
+                            GROUP BY $tablename.id, $tablename.NamePic, $tablename.WpPage
+                            ORDER BY CountRtotalSum DESC
+                            LIMIT 10",
+                            $galeryID, $galeryID, $wpUserIdOfVotedImage, $multipleStarsMaxRating, $lastTstampFor
+                        ));
 
                     } else {
 
-                        $sumCountS = "SUM( CASE WHEN $tablenameIP.pid > 0 AND $tablenameIP.RatingS = '1' AND $tablename.id = $tablenameIP.pid THEN 1 ELSE 0 END) AS CountStotalCount";
-
-                        $userVotes = $wpdb->get_results("SELECT NamePic, CountStotalCount, id  from (SELECT DISTINCT $tablename.id, $tablenameIP.pid, $tablename.NamePic, $sumCountS,
-                              (
-                               CASE WHEN NOT EXISTS(SELECT NULL FROM $tablenameIP WHERE $tablename.id = $tablenameIP.pid)
-                                  THEN 1
-                                  ELSE 0
-                               END 
-                              ) AS CountSnotExists
-                                    FROM $tablenameIP, $tablename WHERE 
-                                    ($tablename.id = $tablenameIP.pid AND $tablename.GalleryID = $galeryID  AND $tablename.Active = 1 AND $tablenameIP.RatingS = 1 AND $tablenameIP.Tstamp > $lastTstampFor)
-                                    GROUP BY $tablename.id) AS CountStotalDataCollect 
-                                    GROUP BY id ORDER BY CountStotalCount DESC LIMIT 10
-                                    ");
+                        $userVotes = $wpdb->get_results($wpdb->prepare(
+                            "SELECT $tablename.NamePic, COUNT($tablenameIP.id) AS CountStotalCount, $tablename.id, $tablename.WpPage
+                            FROM $tablenameIP
+                            INNER JOIN $tablename ON $tablename.id = $tablenameIP.pid
+                            WHERE $tablename.GalleryID = %d
+                                AND $tablenameIP.GalleryID = %d
+                                AND $tablename.WpUserId = %d
+                                AND $tablename.Active = 1
+                                AND $tablenameIP.RatingS = 1
+                                AND $tablenameIP.Tstamp > %d
+                            GROUP BY $tablename.id, $tablename.NamePic, $tablename.WpPage
+                            ORDER BY CountStotalCount DESC
+                            LIMIT 10",
+                            $galeryID, $galeryID, $wpUserIdOfVotedImage, $lastTstampFor
+                        ));
 
                     }
 
-                    $to = $wpdb->get_var("SELECT user_email FROM $wp_users WHERE ID = $wpUserIdOfVotedImage");
+                    $to = $wpdb->get_var($wpdb->prepare("SELECT user_email FROM $wp_users WHERE ID = %d", $wpUserIdOfVotedImage));
 
                     if (stripos($InformUserContent, $posUserInfo) !== false) {
 
@@ -126,15 +134,17 @@ if (!function_exists('contest_gal1ery_user_vote_mail_prepare')) {
 
                         $UserEntries = '';
                         foreach ($userVotes as $userVotesData) {
-                            if ($isMultipleStars) {
-                                $UserEntries .= '(<b>+' . $userVotesData->CountRtotalSum . '</b>) '.$userVotesData->NamePic . '<br/>';
-                            }else{
-                                $UserEntries .= '(<b>+' . $userVotesData->CountStotalCount . '</b>) '.$userVotesData->NamePic . '<br/>';
+                            $entryVoteCount = ($isMultipleStars) ? intval($userVotesData->CountRtotalSum) : intval($userVotesData->CountStotalCount);
+                            if ($entryVoteCount <= 0) {
+                                continue;
                             }
 
-                            if(!empty($WpPage)){
-                                $WpPagePermalink = get_permalink($WpPage);
-                                $UserEntries .= '<a href="' . $WpPagePermalink . '" target="_blank">' . $WpPagePermalink . '</a><br/><br/>';
+                            $UserEntries .= '(<b>+' . $entryVoteCount . '</b>) '.$userVotesData->NamePic . '<br/>';
+
+                            $entryWpPage = (!empty($userVotesData->WpPage)) ? intval($userVotesData->WpPage) : 0;
+                            $entryWpPagePermalink = (!empty($entryWpPage)) ? get_permalink($entryWpPage) : '';
+                            if(!empty($entryWpPagePermalink)){
+                                $UserEntries .= '<a href="' . $entryWpPagePermalink . '" target="_blank">' . $entryWpPagePermalink . '</a><br/><br/>';
                             }else{
                                 if (!empty($selectSQLemailUserVote->URL)) {
                                     $UserEntries .= '<a href="' . $selectSQLemailUserVote->URL . "#!gallery/$galeryID/file/" . $userVotesData->id . "/" . $userVotesData->NamePic . '" target="_blank">' . $selectSQLemailUserVote->URL . "#!gallery/$galeryID/file/" . $userVotesData->id . "/" . $userVotesData->NamePic . '</a><br/><br/>';

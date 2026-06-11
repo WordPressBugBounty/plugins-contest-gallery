@@ -25,7 +25,7 @@ if(!$isOnlyPlaceHolder){
     $RowCols = 1;
 }
 
-$valueFieldTitle = 'Title';
+$valueFieldTitle = 'Title new';
 $FieldTitleGallery = '';
 
 
@@ -428,33 +428,9 @@ echo <<<HEREDOC
     </div>
 HEREDOC;
 
-echo <<<HEREDOC
-     <div class='cg_view_option cg_view_option_100_percent cg_border_bottom_none cg_border_left_none cg_view_option_watermark $cgProFalse'>
-        <div class='cg_view_option_title '>
-            <p>Use as watermark for gallery images:<br>(only 1 allowed)<br>
-                <span class="cg_view_option_title_note"><b>NOTE:</b> CSS based, original image source will be not watermarked</span>
-            </p>
-        </div>
-        <div class="cg_view_option_checkbox">
-              <input type="checkbox" name="upload[$id][watermarkChecked]" $checkedWatermark>
-        </div>
-    </div>
-     <div  class='cg_view_option cg_view_option_100_percent cg_border_bottom_none cg_border_left_none cg_view_option_not_disable  cg_view_option_watermark_position cg_view_option_flex_flow_column $cgProFalse $watermarkPositionDisabled'>
-        <div class='cg_view_option_title cg_border_left_none  cg_view_option_title_full_width '>
-            <p>Watermark position</p>
-        </div>
-          <div class="cg_view_option_select cg_view_option_input_full_width">
-                <select class='cg_watermark_position' name='upload[$id][watermarkPosition]'>
-                    <option value='top-left' $watermarkPositionTopLeftChecked>Top Left</option>
-                    <option value='top-right' $watermarkPositionTopRightChecked>Top Right</option>
-                    <option value='bottom-left' $watermarkPositionBottomLeftChecked>Bottom Left</option>
-                    <option value='bottom-right' $watermarkPositionBottomRightChecked>Bottom Right</option>
-                    <option value='center' $watermarkPositionCenterChecked>Center</option>
-                </select>
-        </div>
-     </div>
-</div>
-HEREDOC;
+echo "</div>";
+
+cg_upload_form_render_watermark_option($id, $value, $dbGalleryVersion, $cgProFalse, true);
 
 
 echo "</div>";

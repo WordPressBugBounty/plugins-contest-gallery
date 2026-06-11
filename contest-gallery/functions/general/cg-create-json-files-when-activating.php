@@ -109,6 +109,14 @@ if(!function_exists('cg_create_json_files_when_activating')){
 
 		}
 
+		if(function_exists('cg_entry_watermark_append_url_version') && !empty($rowObject->WpUpload)){
+			$imgSrcThumb = cg_entry_watermark_append_url_version($imgSrcThumb, $rowObject->WpUpload);
+			$imgSrcMedium = cg_entry_watermark_append_url_version($imgSrcMedium, $rowObject->WpUpload);
+			$imgSrcLarge = cg_entry_watermark_append_url_version($imgSrcLarge, $rowObject->WpUpload);
+			$imgSrcFull = cg_entry_watermark_append_url_version($imgSrcFull, $rowObject->WpUpload);
+			$guid = cg_entry_watermark_append_url_version($guid, $rowObject->WpUpload);
+		}
+
 		/*        $imagesDataArray[$rowObject->id]['thumbnail_size_w'] = $thumbSizesWp['thumbnail_size_w'];
 				$imagesDataArray[$rowObject->id]['medium_size_w'] = $thumbSizesWp['medium_size_w'];
 				$imagesDataArray[$rowObject->id]['large_size_w'] = $thumbSizesWp['large_size_w'];*/

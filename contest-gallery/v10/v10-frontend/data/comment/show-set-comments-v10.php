@@ -332,7 +332,23 @@ if(!empty($options['pro']['CommNoteActive'])){
 
     include(__DIR__ ."/../../../../check-language.php");
 
-    $checkCommentsNotificationOptions = $wpdb->get_row("SELECT * FROM $tablename_comments_notification_options WHERE GalleryID = '$galeryID'");
+    $checkCommentsNotificationOptions = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_comments_notification_options WHERE GalleryID = %d", $galeryID));
+
+    global $cgMailAction;
+    global $cgMailGalleryId;
+    $cgMailAction = "User comment notification e-mail";
+    $cgMailGalleryId = $galeryID;
+
+    if (empty($checkCommentsNotificationOptions)) {
+        if (function_exists('cg_on_wp_mail_error') && class_exists('WP_Error')) {
+            cg_on_wp_mail_error(new WP_Error('wp_mail_failed', 'Missing comment notification settings row', array(
+                'to' => '',
+                'subject' => '',
+                'headers' => array()
+            )));
+        }
+        return;
+    }
 
     $CommNoteAddressor = contest_gal1ery_convert_for_html_output_without_nl2br($checkCommentsNotificationOptions->CommNoteAddressor);
     $CommNoteAdminMail = contest_gal1ery_convert_for_html_output_without_nl2br($checkCommentsNotificationOptions->CommNoteAdminMail);
@@ -343,10 +359,35 @@ if(!empty($options['pro']['CommNoteActive'])){
     $CommNoteContent = contest_gal1ery_convert_for_html_output_without_nl2br($checkCommentsNotificationOptions->CommNoteContent);
 
     $headers = array();
-    $headers[] = "From: " . html_entity_decode(strip_tags($CommNoteAddressor)) . " <" . strip_tags($CommNoteReply) . ">";
-    $headers[] = "Reply-To: " . strip_tags($CommNoteReply) . "";
-    $headers[] = "MIME-Version: 1.0";
-    $headers[] = "Content-Type: text/html; charset=utf-8";
+    $headers[] = "From: " . html_entity_decode(strip_tags($CommNoteAddressor)) . " <" . strip_tags($CommNoteReply) . ">\r\n";
+    $headers[] = "Reply-To: " . strip_tags($CommNoteReply) . "\r\n";
+
+    if(strpos($CommNoteCC,';')){
+        $CommNoteCC = explode(';',$CommNoteCC);
+        foreach($CommNoteCC as $CommNoteCCValue){
+            $CommNoteCCValue = trim($CommNoteCCValue);
+            if(!empty($CommNoteCCValue)){
+                $headers[] = "CC: $CommNoteCCValue\r\n";
+            }
+        }
+    }elseif(!empty($CommNoteCC)){
+        $headers[] = "CC: $CommNoteCC\r\n";
+    }
+
+    if(strpos($CommNoteBCC,';')){
+        $CommNoteBCC = explode(';',$CommNoteBCC);
+        foreach($CommNoteBCC as $CommNoteBCCValue){
+            $CommNoteBCCValue = trim($CommNoteBCCValue);
+            if(!empty($CommNoteBCCValue)){
+                $headers[] = "BCC: $CommNoteBCCValue\r\n";
+            }
+        }
+    }elseif(!empty($CommNoteBCC)){
+        $headers[] = "BCC: $CommNoteBCC\r\n";
+    }
+
+    $headers[] = "MIME-Version: 1.0\r\n";
+    $headers[] = "Content-Type: text/html; charset=utf-8\r\n";
 
     $NameForMail = contest_gal1ery_convert_for_html_output_without_nl2br($Name);
     $NameForMail = preg_replace("/&amp;amp;#x/","&#x",$NameForMail);// do both to go sure
@@ -370,7 +411,7 @@ if(!empty($options['pro']['CommNoteActive'])){
     $adminUrl = get_site_url()."/wp-admin/admin.php";
     $post_title = $imageData['post_title'];
 
-    $WpPage = $wpdb->get_var("SELECT WpPage FROM $tablename WHERE id = '$pictureID'  ORDER BY id DESC LIMIT 1");
+    $WpPage = $wpdb->get_var($wpdb->prepare("SELECT WpPage FROM $tablename WHERE id = %d  ORDER BY id DESC LIMIT 1", $pictureID));
 
     if(!empty($WpPage)){
         $WpPagePermalink = get_permalink($WpPage);
@@ -393,15 +434,20 @@ if(!empty($options['pro']['CommNoteActive'])){
         $CommNoteContent = str_ireplace($posComment, $commentComplete, $CommNoteContent);
     }
 
-    global $cgMailAction;
-    global $cgMailGalleryId;
-    $cgMailAction = "User comment notification e-mail";
-    $cgMailGalleryId = $galeryID;
     add_action('wp_mail_failed', 'cg_on_wp_mail_error', 10, 1);
-    if (!wp_mail($CommNoteAdminMail, $CommNoteSubject, $CommNoteContent, $headers)) {
-        echo "Failed sending user comment mail, please contact administrator";
-        die;
+
+    if (empty($CommNoteAdminMail)) {
+        if (function_exists('cg_on_wp_mail_error') && class_exists('WP_Error')) {
+            cg_on_wp_mail_error(new WP_Error('wp_mail_failed', 'Missing admin recipient for user comment notification e-mail', array(
+                'to' => $CommNoteAdminMail,
+                'subject' => $CommNoteSubject,
+                'headers' => $headers
+            )));
     }
+        return;
+    }
+
+    wp_mail($CommNoteAdminMail, $CommNoteSubject, $CommNoteContent, $headers);
 
 
 }

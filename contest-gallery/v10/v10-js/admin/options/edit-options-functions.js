@@ -136,7 +136,7 @@ cgJsClassAdmin.options.functions = {
 
         cgJsClassAdmin.options.functions.setVars($);
 
-        cgJsClassAdmin.index.functions.setEditors($,$response.find('#cg_main_options_content .cg-wp-editor-template'));
+        cgJsClassAdmin.index.functions.setEditorsLazy($,$response.find('#cg_main_options_content .cg-wp-editor-template'));
 
         cgJsClassAdmin.options.functions.initOptionsClickEvents();
 
@@ -461,20 +461,6 @@ cgJsClassAdmin.options.functions = {
             reloadUrl = reloadUrl.replace(/reset_admin_votes2/gi,'reset_admin_votes2_done');
         }
 
-        if (reloadUrl.indexOf("&cgGoogleSignInLib=downloaded") >= 0){
-            reloadUrl = reloadUrl.replace(/&cgGoogleSignInLib=downloaded/gi,'');
-            setTimeout(function () {
-                var $cgGoogleSignInLibDownloadMessage = $('#cgGoogleSignInLibDownloadMessage');
-                $cgGoogleSignInLibDownloadMessage
-                    .children(':not(.cg_message_close)')
-                    .remove();
-                $('#cgSignInOptionsTabLink').click();
-                $cgGoogleSignInLibDownloadMessage.append($('#cgGoogleSignInLibDownloadedOptionsHaveToBeConfigured').removeClass('cg_hide'));
-                $cgGoogleSignInLibDownloadMessage.removeClass('cg_hide');
-                $('#cgGoogleSignInLibDownloadMessageBackground').removeClass('cg_hide');
-            },50);
-        }
-
         history.replaceState(null,null,reloadUrl);
 
         // replace reset votes --- ENDE
@@ -609,14 +595,20 @@ cgJsClassAdmin.options.functions = {
         }
 
         if($element.find('.cg_view_option_checkbox').length){
-            if($element.find('.cg_view_option_checkbox input[type="checkbox"]').prop('checked')){
-                $element.find('.cg_view_option_checkbox input[type="checkbox"]').prop('checked',false);
-                $element.find('.cg_view_option_checkbox').addClass('cg_view_option_unchecked');
-                $element.find('.cg_view_option_checkbox').removeClass('cg_view_option_checked');
-            }else{
-                $element.find('.cg_view_option_checkbox input[type="checkbox"]').prop('checked',true);
+            var $checkboxInput = $element.find('.cg_view_option_checkbox input[type="checkbox"]');
+            var isDirectCheckboxClick = $(e.target).is('input[type="checkbox"]') && $(e.target).closest('.cg_view_option_checkbox').length;
+            if(!isDirectCheckboxClick){
+                $checkboxInput.prop('checked',!$checkboxInput.prop('checked'));
+            }
+
+            if($checkboxInput.prop('checked')){
+                $checkboxInput.prop('checked',true);
                 $element.find('.cg_view_option_checkbox').addClass('cg_view_option_checked');
                 $element.find('.cg_view_option_checkbox').removeClass('cg_view_option_unchecked');
+            }else{
+                $checkboxInput.prop('checked',false);
+                $element.find('.cg_view_option_checkbox').addClass('cg_view_option_unchecked');
+                $element.find('.cg_view_option_checkbox').removeClass('cg_view_option_checked');
             }
             cgJsClassAdmin.options.functions.cgShortcodeCheckboxProcessing($element);
             return;

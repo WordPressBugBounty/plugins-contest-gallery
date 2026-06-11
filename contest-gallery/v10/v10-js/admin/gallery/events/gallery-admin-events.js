@@ -357,6 +357,13 @@ debugger
         e.preventDefault();
         cgJsClassAdmin.gallery.functions.abortRequest();
         jQuery('body').removeClass('cg_no_scroll');
+        if(cgJsClassAdmin.gallery.entryWatermark && cgJsClassAdmin.gallery.entryWatermark.prepareBulkAfterSave){
+            if($('#cgViewControl .cg_image_checkbox_watermark_all').hasClass('cg_active')){
+                cgJsClassAdmin.gallery.entryWatermark.prepareBulkAfterSave('watermark');
+            }else if($('#cgViewControl .cg_image_checkbox_unwatermark_all').hasClass('cg_active')){
+                cgJsClassAdmin.gallery.entryWatermark.prepareBulkAfterSave('restore');
+            }
+        }
         $('#cgViewControl .cg_image_checkbox').removeClass('cg_active');
         // disable all fields which were not changed!!!!
         $(cgChangedAndSearchedValueSelector).not(".cg_value_changed").prop('disabled', true);
@@ -1354,7 +1361,7 @@ debugger
 
         $(this).closest('.informdiv').find('.cg_image_checkbox_checkbox').prop('disabled', true);
 
-        $('.cg_image_checkbox_deactivate_all, .cg_image_checkbox_delete_all, .cg_image_checkbox_move_all').removeClass('cg_active');
+        $('.cg_image_checkbox_deactivate_all, .cg_image_checkbox_delete_all, .cg_image_checkbox_move_all, .cg_image_checkbox_watermark_all, .cg_image_checkbox_unwatermark_all').removeClass('cg_active');
         $(this).closest('.informdiv').find('.cg_image_checkbox_deactivate, .cg_image_checkbox_delete, .cg_image_checkbox_move').removeClass('cg_active');
 
         cgJsClassAdmin.gallery.vars.selectChanged = true;
@@ -1386,6 +1393,28 @@ debugger
             if(!$('#cgSortable .cg_image_checkbox_move.cg_active').length){
                 $('#cgMoveSelect').addClass('cg_hide').find('select').prop('disabled',true);
             }
+
+        }
+
+    });
+
+    $(document).on('click', '.cg_image_checkbox_watermark_all, .cg_image_checkbox_unwatermark_all', function () {
+
+        var $cgGalleryBackendContainer = $('#cgGalleryBackendContainer');
+
+        if (!$(this).hasClass('cg_active')) {
+
+            $(this).parent().find('.cg_image_checkbox').removeClass('cg_active');
+            $(this).addClass('cg_active');
+
+            $cgGalleryBackendContainer.find('.informdiv').find('.cg_image_checkbox_checkbox').prop('disabled', true);
+            $cgGalleryBackendContainer.find('.informdiv').find('.cg_image_checkbox_activate, .cg_image_checkbox_deactivate, .cg_image_checkbox_delete, .cg_image_checkbox_move').removeClass('cg_active');
+            $cgGalleryBackendContainer.find('.cgSortableDiv').removeClass('highlightedActivate highlightedDeactivate highlightedRemoveable highlightedMoveable');
+            $('#cgMoveSelect').addClass('cg_hide').find('select').prop('disabled',true);
+
+        } else {
+
+            $(this).removeClass('cg_active');
 
         }
 
@@ -1445,7 +1474,7 @@ debugger
 
         $(this).closest('.informdiv').find('.cg_image_checkbox_checkbox').prop('disabled', true);
 
-        $('.cg_image_checkbox_activate_all, .cg_image_checkbox_delete_all, .cg_image_checkbox_move_all').removeClass('cg_active');
+        $('.cg_image_checkbox_activate_all, .cg_image_checkbox_delete_all, .cg_image_checkbox_move_all, .cg_image_checkbox_watermark_all, .cg_image_checkbox_unwatermark_all').removeClass('cg_active');
         $(this).closest('.informdiv').find('.cg_image_checkbox_activate, .cg_image_checkbox_delete, .cg_image_checkbox_move').removeClass('cg_active');
 
 
@@ -1689,7 +1718,7 @@ debugger
 
         $(this).closest('.informdiv').find('.cg_image_checkbox_checkbox').prop('disabled', true);
 
-        $('.cg_image_checkbox_activate_all, .cg_image_checkbox_deactivate_all, .cg_image_checkbox_move_all').removeClass('cg_active');
+        $('.cg_image_checkbox_activate_all, .cg_image_checkbox_deactivate_all, .cg_image_checkbox_move_all, .cg_image_checkbox_watermark_all, .cg_image_checkbox_unwatermark_all').removeClass('cg_active');
         $(this).closest('.informdiv').find('.cg_image_checkbox_activate, .cg_image_checkbox_deactivate, .cg_image_checkbox_move').removeClass('cg_active');
 
         cgJsClassAdmin.gallery.vars.selectChanged = true;
@@ -1787,7 +1816,7 @@ debugger
 
         $(this).closest('.informdiv').find('.cg_image_checkbox_checkbox').prop('disabled', true);
 
-        $('.cg_image_checkbox_activate_all, .cg_image_checkbox_deactivate_all, .cg_image_checkbox_delete_all').removeClass('cg_active');
+        $('.cg_image_checkbox_activate_all, .cg_image_checkbox_deactivate_all, .cg_image_checkbox_delete_all, .cg_image_checkbox_watermark_all, .cg_image_checkbox_unwatermark_all').removeClass('cg_active');
         $(this).closest('.informdiv').find('.cg_image_checkbox_activate, .cg_image_checkbox_deactivate, .cg_image_checkbox_delete').removeClass('cg_active');
 
         cgJsClassAdmin.gallery.vars.selectChanged = true;

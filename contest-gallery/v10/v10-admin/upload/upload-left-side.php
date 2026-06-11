@@ -1,5 +1,7 @@
 <?php
 
+require_once(__DIR__.'/cg-upload-real-watermark-functions.php');
+
 // IDs of the div boxes
 $nfCount = 10;
 $kfCount = 20;
@@ -105,6 +107,7 @@ if(true){
     $value->ReCaLang = 'en';
     $value->Version = $dbGalleryVersion;
     $value->WatermarkPosition = '';
+    $value->RealWatermarkSettings = '';
     $value->WpAttachmentDetailsType = '';
     $id = $value->id; // Unique ID des Form Feldes
 

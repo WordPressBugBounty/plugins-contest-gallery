@@ -636,4 +636,3 @@ if($votingDataLength>=1) {
 
 
 echo "</div>";
-

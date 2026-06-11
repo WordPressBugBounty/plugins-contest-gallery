@@ -16,7 +16,9 @@ cgJsClassAdmin.index.vars = {
     isShortcodeIntervalConfActive: {},
     cg_nonce: {},
     cg_nonce_check_active: false,
-    cgNextGalleryId: 0
+    cgNextGalleryId: 0,
+    lazyEditorIds: [],
+    lazyEditorScrollTimer: null
 };
 
 cgJsClassAdmin.index.functions = {
@@ -77,21 +79,63 @@ cgJsClassAdmin.index.functions = {
         }
 
         if(!$cg_main_container.find('#cgBackendLoader').length){
-            var $cgBackendLoader = "<div id='cgBackendLoader' class='cg-skeleton-box-container'>"+
-                "<div class='cg-skeleton-box' style='height:50px;'></div>"+
-                "<div class='cg-skeleton-box' style='height:100px;'></div>"+
-                "<div class='cg-skeleton-box' style='height:100px;'></div>"+
-                "<div class='cg-skeleton-box' style='height:100px;'></div>"+
-                "<div class='cg-skeleton-box' style='height:100px;'></div>"+
-                "<div class='cg-skeleton-box' style='height:100px;'></div>"+
-                "<div class='cg-skeleton-box' style='height:100px;'></div>"+
-                "<div class='cg-skeleton-box' style='height:100px;'></div>"+
-                "<div class='cg-skeleton-box' style='height:100px;'></div>"+
-                "<div class='cg-skeleton-box' style='height:100px;'></div>"+
-                "<div class='cg-skeleton-box' style='height:100px;'></div>"+
-                "<div class='cg-skeleton-box' style='height:100px;'></div>"+
-                "<div class='cg-skeleton-box' style='height:100px;'></div>"+
-                "</div>";
+            var $cgBackendLoader = "<div id='cgBackendLoader' class='cg-skeleton-box-container cg-backend-loader' role='status' aria-live='polite' aria-label='Loading'>"+
+                "<div class='cg-backend-loader-head'>"+
+                    "<div class='cg-skeleton-box cg-backend-loader-title'></div>"+
+                    "<div class='cg-backend-loader-actions'>"+
+                        "<div class='cg-skeleton-box cg-backend-loader-action'></div>"+
+                        "<div class='cg-skeleton-box cg-backend-loader-action'></div>"+
+                        "<div class='cg-skeleton-box cg-backend-loader-action cg-backend-loader-action-short'></div>"+
+                    "</div>"+
+                "</div>"+
+                "<div class='cg-backend-loader-toolbar'>"+
+                    "<div class='cg-skeleton-box cg-backend-loader-filter cg-backend-loader-filter-wide'></div>"+
+                    "<div class='cg-skeleton-box cg-backend-loader-filter'></div>"+
+                    "<div class='cg-skeleton-box cg-backend-loader-filter cg-backend-loader-filter-short'></div>"+
+                "</div>"+
+                "<div class='cg-backend-loader-list'>"+
+                    "<div class='cg-backend-loader-row'>"+
+                        "<div class='cg-skeleton-box cg-backend-loader-thumb'></div>"+
+                        "<div class='cg-backend-loader-lines'>"+
+                            "<div class='cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-main'></div>"+
+                            "<div class='cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-small'></div>"+
+                        "</div>"+
+                        "<div class='cg-skeleton-box cg-backend-loader-row-action'></div>"+
+                    "</div>"+
+                    "<div class='cg-backend-loader-row'>"+
+                        "<div class='cg-skeleton-box cg-backend-loader-thumb'></div>"+
+                        "<div class='cg-backend-loader-lines'>"+
+                            "<div class='cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-main cg-backend-loader-line-medium'></div>"+
+                            "<div class='cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-small cg-backend-loader-line-short'></div>"+
+                        "</div>"+
+                        "<div class='cg-skeleton-box cg-backend-loader-row-action'></div>"+
+                    "</div>"+
+                    "<div class='cg-backend-loader-row'>"+
+                        "<div class='cg-skeleton-box cg-backend-loader-thumb'></div>"+
+                        "<div class='cg-backend-loader-lines'>"+
+                            "<div class='cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-main cg-backend-loader-line-wide'></div>"+
+                            "<div class='cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-small'></div>"+
+                        "</div>"+
+                        "<div class='cg-skeleton-box cg-backend-loader-row-action'></div>"+
+                    "</div>"+
+                    "<div class='cg-backend-loader-row'>"+
+                        "<div class='cg-skeleton-box cg-backend-loader-thumb'></div>"+
+                        "<div class='cg-backend-loader-lines'>"+
+                            "<div class='cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-main'></div>"+
+                            "<div class='cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-small cg-backend-loader-line-short'></div>"+
+                        "</div>"+
+                        "<div class='cg-skeleton-box cg-backend-loader-row-action'></div>"+
+                    "</div>"+
+                    "<div class='cg-backend-loader-row cg-backend-loader-row-last'>"+
+                        "<div class='cg-skeleton-box cg-backend-loader-thumb'></div>"+
+                        "<div class='cg-backend-loader-lines'>"+
+                            "<div class='cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-main cg-backend-loader-line-medium'></div>"+
+                            "<div class='cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-small'></div>"+
+                        "</div>"+
+                        "<div class='cg-skeleton-box cg-backend-loader-row-action'></div>"+
+                    "</div>"+
+                "</div>"+
+            "</div>";
             $cg_main_container.append($cgBackendLoader);
             jQuery('#cgBackendLoader').get(0).scrollIntoView();
         }
@@ -145,7 +189,17 @@ cgJsClassAdmin.index.functions = {
 
         var formPostData;
 
+        if($formLinkObject.is('form') && $formLinkObject.hasClass('cg_load_backend_create_gallery')){
+            if($formLinkObject.data('cg-create-gallery-submitting')){
+                return;
+            }
+            $formLinkObject.data('cg-create-gallery-submitting',true);
+            $formLinkObject.find('button[type="submit"], input[type="submit"]').prop('disabled',true).addClass('disabled');
+        }
+
         if($formLinkObject.is('form')){
+            cgJsClassAdmin.index.functions.triggerEditorSave();
+
             if($formLinkObject.find('.cg_edit_ecommerce').length){
                 var $Tax = jQuery('#TaxPercentageDefault');
                 if($Tax.length){
@@ -387,21 +441,47 @@ cgJsClassAdmin.index.functions = {
         return wpVersionInt;
 
     },
+    clearLazyEditors: function(){
+        if(cgJsClassAdmin.index.vars.lazyEditorScrollTimer){
+            clearTimeout(cgJsClassAdmin.index.vars.lazyEditorScrollTimer);
+            cgJsClassAdmin.index.vars.lazyEditorScrollTimer = null;
+        }
+        cgJsClassAdmin.index.vars.lazyEditorIds = [];
+        jQuery(window).off('scroll.cgLazyEditors resize.cgLazyEditors');
+        jQuery(document).off('focus.cgLazyEditors mouseenter.cgLazyEditors touchstart.cgLazyEditors click.cgLazyEditors');
+    },
+    triggerEditorSave: function(){
+        try{
+            if(typeof tinymce !== 'undefined' && tinymce.triggerSave){
+                tinymce.triggerSave();
+            }else if(typeof tinyMCE !== 'undefined' && tinyMCE.triggerSave){
+                tinyMCE.triggerSave();
+            }
+        }catch(e){}
+    },
     initializeEditor: function(id,notResize){
-  /*      console.trace();
-        debugger*/
-        debugger
+        if(!id){
+            return;
+        }
+
+        var $textarea = jQuery('#'+id);
+        if(!$textarea.length || $textarea.data('cg_editor_initialized')){
+            return;
+        }
+
+        $textarea.data('cg_editor_initialized',true).attr('data-cg-editor-initialized','true');
+
         if(cgJsClassAdmin.index.functions.getWpVersionAsInteger()){
             if(cgJsClassAdmin.index.functions.getWpVersionAsInteger()>=cgJsClassAdmin.index.vars.wpVersionForTinyMCE){// then tinymce can be initialized
 
-                if(wp.editor.hasOwnProperty('remove') && wp.editor.hasOwnProperty('initialize')){
+                if(typeof wp !== 'undefined' && wp.editor && wp.editor.hasOwnProperty('remove') && wp.editor.hasOwnProperty('initialize')){
                     wp.editor.remove(id);
                     wp.editor.initialize(id, {
                         tinymce: true,
                         quicktags: true
                     });
 
-                }else{
+                }else if(typeof wp !== 'undefined' && wp.oldEditor && wp.oldEditor.hasOwnProperty('remove') && wp.oldEditor.hasOwnProperty('initialize')){
                     wp.oldEditor.remove(id);
                     wp.oldEditor.initialize(id, {
                         tinymce: true,
@@ -410,10 +490,10 @@ cgJsClassAdmin.index.functions = {
                 }
 
             }else{
-                // setTimeout(function () {
-                jQuery(cgJsClassAdmin.index.functions.versionToLowForTinymce).insertAfter('#'+id);// have to be id, does not work with object!
-                // debugger
-                // },100);
+                if(!$textarea.data('cg_editor_version_notice_added')){
+                    jQuery(cgJsClassAdmin.index.functions.versionToLowForTinymce).insertAfter('#'+id);// have to be id, does not work with object!
+                    $textarea.data('cg_editor_version_notice_added',true);
+                }
             }
             setTimeout(function (){
                 if(!notResize){
@@ -423,35 +503,105 @@ cgJsClassAdmin.index.functions = {
         }
 
     },
+    initializeEditorsNearViewport: function(buffer){
+        var ids = cgJsClassAdmin.index.vars.lazyEditorIds || [];
+        var remainingIds = [];
+        var $window = jQuery(window);
+        var windowTop = $window.scrollTop();
+        var windowBottom = windowTop+$window.height()+(buffer || 900);
+        var windowTopBuffered = windowTop-(buffer || 900);
+
+        for(var i=0; i<ids.length; i++){
+            var id = ids[i];
+            var $textarea = jQuery('#'+id);
+
+            if(!$textarea.length || $textarea.data('cg_editor_initialized')){
+                continue;
+            }
+
+            if(!$textarea.is(':visible')){
+                remainingIds.push(id);
+                continue;
+            }
+
+            var offsetTop = $textarea.offset().top;
+            if(offsetTop >= windowTopBuffered && offsetTop <= windowBottom){
+                cgJsClassAdmin.index.functions.initializeEditor(id);
+            }else{
+                remainingIds.push(id);
+            }
+        }
+
+        cgJsClassAdmin.index.vars.lazyEditorIds = remainingIds;
+    },
+    setEditorsLazy: function($, $textareas){
+        cgJsClassAdmin.index.functions.clearLazyEditors();
+
+        if(!$textareas || !$textareas.length){
+            return;
+        }
+
+        if(cgJsClassAdmin.index.functions.getWpVersionAsInteger()<cgJsClassAdmin.index.vars.wpVersionForTinyMCE){
+            cgJsClassAdmin.index.functions.setEditors($,$textareas);
+            return;
+        }
+
+        $textareas.each(function () {
+            var id = $(this).attr('id');
+            var $textarea = $('#'+id);
+
+            if(id && $textarea.length){
+                $textarea.addClass('cg-wp-editor-lazy');
+                cgJsClassAdmin.index.vars.lazyEditorIds.push(id);
+            }
+        });
+
+        var initializeNearViewport = function(){
+            cgJsClassAdmin.index.functions.initializeEditorsNearViewport(900);
+        };
+
+        setTimeout(initializeNearViewport,50);
+        setTimeout(initializeNearViewport,250);
+
+        jQuery(window).on('scroll.cgLazyEditors resize.cgLazyEditors',function(){
+            if(cgJsClassAdmin.index.vars.lazyEditorScrollTimer){
+                clearTimeout(cgJsClassAdmin.index.vars.lazyEditorScrollTimer);
+            }
+            cgJsClassAdmin.index.vars.lazyEditorScrollTimer = setTimeout(initializeNearViewport,120);
+        });
+
+        jQuery(document).on('focus.cgLazyEditors mouseenter.cgLazyEditors touchstart.cgLazyEditors','.cg-wp-editor-lazy',function(){
+            cgJsClassAdmin.index.functions.initializeEditor(jQuery(this).attr('id'));
+        });
+
+        jQuery(document).on('click.cgLazyEditors','#cg_main_options_tab .cg_view_select',function(){
+            setTimeout(initializeNearViewport,120);
+            setTimeout(initializeNearViewport,350);
+        });
+    },
     setEditors: function($, $textareas){
+        cgJsClassAdmin.index.functions.clearLazyEditors();
 
         if(cgJsClassAdmin.index.functions.getWpVersionAsInteger()>=cgJsClassAdmin.index.vars.wpVersionForTinyMCE){// then tinymce can be initialized
 
             var i = 0;
-            $textareas.each(function () {// do only for visible first
+            $textareas.each(function () {
                 var $element = $(this);
                 setTimeout(function (){
                     cgJsClassAdmin.index.functions.initializeEditor($element.attr('id'));
-                },i)
+                },i);
                 i++;
             });
 
-            console.log('textareas');
-            console.log(i);
-
         }else{// let textarea as textarea and show message
 
-            $textareas.each(function () {// do only for visible first
+            $textareas.each(function () {
 
-                $(cgJsClassAdmin.index.functions.versionToLowForTinymce).insertAfter('#'+$(this).attr('id'));// have to be id, does not work with object!
+                cgJsClassAdmin.index.functions.initializeEditor($(this).attr('id'));// have to be id, does not work with object!
 
             });
 
         }
-
-        /*        setTimeout(function (){
-                    jQuery('.wp-editor-wrap').find('iframe').css('height','100px');
-                },100);*/
 
     },
     checkIfIsIE: function () {

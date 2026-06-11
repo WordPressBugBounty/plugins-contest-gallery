@@ -5,27 +5,44 @@ jQuery(document).ready(function ($) {
         $cgSellContainer.find('#cgContactFormShortcodeConfigurationAreaLink').attr('href',$cgSellContainer.find('#cgContactFormShortcodeConfigurationAreaLinkPart').attr('href')+'&option_id='+$(this).val());
     });
 
-    $(document).on('click','.cg_file_container',function (e) {
+    $(document).on('click','#cgSellEntryWatermarkConflictButton',function (e) {
+        e.preventDefault();
+
+        var $sortableDiv = cgJsClassAdmin.gallery.vars.$sortableDiv;
+        $('#cgSellContainerFadeBackground').addClass('cg_hide').removeClass('cg_active');
+        $('#cgSellContainer').addClass('cg_hide');
+
+        if($sortableDiv && $sortableDiv.length){
+            if(cgJsClassAdmin.gallery.entryWatermark && cgJsClassAdmin.gallery.entryWatermark.open){
+                cgJsClassAdmin.gallery.entryWatermark.open($sortableDiv);
+            }else{
+                $sortableDiv.find('.cg_entry_watermark').first().click();
+            }
+        }
+    });
+
+    $(document).on('click','#cgSellContainer .cg_file_container',function (e) {
         e.preventDefault();
         debugger
-        if($(this).hasClass('cg_is_embed')){
+        if($(this).hasClass('cg_is_embed') || $(this).hasClass('cg_is_entry_watermarked')){
             return;
         }
 
         var WpUpload = parseInt($(this).attr('data-cg-wp-upload'));
         var realId = parseInt($(this).attr('data-cg-real-id'));
         var order = parseInt($(this).attr('data-cg-order'));
+        var isWatermarkSupported = ($(this).attr('data-cg-watermark-supported') == '1');
         var $form = $(this).closest('form');
         var visibleWatermarkedImageOrder = $form.find('#cgSellPreview').attr('data-cg-order');
 
         debugger
         // order!=visibleWatermarkedImageOrder >>> was clicked first time, then not uncheck show first
         if(
-            ($(this).find('.cg_checked').length && order==visibleWatermarkedImageOrder) ||
+            ($(this).find('.cg_checked').length && (!isWatermarkSupported || order==visibleWatermarkedImageOrder)) ||
             ($(this).find('.cg_checked').length && !$(this).hasClass('cg_file_img_container'))
         ){// then unset
             $(this).find('.cg_checked').removeClass('cg_checked').addClass('cg_unchecked');
-            if($(this).attr('data-cg-type')=='image' || $(this).attr('data-cg-is-image')=='1'){
+            if(($(this).attr('data-cg-type')=='image' || $(this).attr('data-cg-is-image')=='1') && isWatermarkSupported){
                 delete cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['on'];
                 delete cgJsClassAdmin.gallery.vars.base64andAltFileValues[realId][WpUpload];
                 delete cgJsClassAdmin.gallery.vars.base64andAltFileTypes[realId][WpUpload];
@@ -39,15 +56,15 @@ jQuery(document).ready(function ($) {
                 cgJsClassAdmin.gallery.vars.WpUploadFilesForSaleArrayNew.splice(cgJsClassAdmin.gallery.vars.WpUploadFilesForSaleArrayNew.indexOf(WpUpload), 1);
             }
 
-            if($form.find('.cg_file_img_container .cg_checked').length){
-                $form.find('.cg_file_img_container .cg_checked').first().removeClass('cg_checked').closest('.cg_file_img_container').click();
+            if($form.find('.cg_file_img_container[data-cg-watermark-supported="1"] .cg_checked').length){
+                $form.find('.cg_file_img_container[data-cg-watermark-supported="1"] .cg_checked').first().removeClass('cg_checked').closest('.cg_file_img_container').click();
             }else{
                 $form.find('#cgSellWatermarkPreview').addClass('cg_hide');
             }
 
         }else{// then set
             $(this).find('.cg_file_checkbox').removeClass('cg_unchecked').addClass('cg_checked');
-            if($(this).attr('data-cg-type')=='image' || $(this).attr('data-cg-is-image')=='1'){
+            if(($(this).attr('data-cg-type')=='image' || $(this).attr('data-cg-is-image')=='1') && isWatermarkSupported){
                 cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['on'] = true;
                 $form.find('#cgWatermarkSelectPosition').val(cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['WatermarkPosition']);
                 $form.find('#cgWatermarkSelectSize').val(cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['WatermarkSize']);
@@ -69,7 +86,7 @@ jQuery(document).ready(function ($) {
             }
         }
         debugger
-        if(!$form.find('.cg_file_container[data-cg-type="image"] .cg_checked,.cg_file_container[data-cg-is-image="1"] .cg_checked').length){
+        if(!$form.find('.cg_file_container[data-cg-watermark-supported="1"] .cg_checked').length){
             $form.find('#cgSellWatermarkPreview').addClass('cg_hide');
         }
     });

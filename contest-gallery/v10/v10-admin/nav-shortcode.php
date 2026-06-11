@@ -29,7 +29,7 @@ echo "</div>";
 
 echo "<div class='td_gallery_info_content td_gallery_info_content_secondary'>";
 
-echo "<div class='td_gallery_info_shortcode $cgProFalse' >
+echo "<div class='td_gallery_info_shortcode' >
     <div>
       <div class='td_gallery_info_name_title'>Google sign in button</div>
       <div class='td_gallery_info_name_span cg_shortcode_copy cg_tooltip'>[cg_google_sign_in]</div>

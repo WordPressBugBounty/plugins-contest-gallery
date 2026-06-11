@@ -350,7 +350,37 @@ cgJsClassAdmin.createUpload.functions = {
         var $clone = $clones.find('[data-cg-field="'+fieldType+'"]').clone();
         $clone.attr('id','right'+newId);
         var $div = $('#cgRightSide .cg_row_col.cg_upl_add.cg_clicked');
-        $div.replaceWith($clone);
+        var $addRow = $('#cgRightSide .cg_row.cg_add_row.cg_clicked').first();
+        var $addCol = $('#cgRightSide .cg_row .cg_add_col.cg_clicked').first();
+        if($div.length){
+            $div.replaceWith($clone);
+        }else if($addRow.length){
+            var $newRow = $('<div class="cg_row"><div class="cg_add_col" title="Add column"></div></div>');
+            var $addRowClone = $addRow.clone().removeClass('cg_clicked');
+            $newRow.append($clone);
+            if($addRow.prev().hasClass('cg_image')){
+                $newRow.insertAfter($addRow);
+                $addRowClone.insertAfter($newRow);
+            }else{
+                $newRow.insertBefore($addRow);
+                $addRowClone.insertBefore($newRow);
+            }
+        }else if($addCol.length){
+            var $row = $addCol.closest('.cg_row');
+            if($row.find('.cg_row_col').length>=3){
+                $addCol.addClass('cg_hide');
+                $('#cgCreateUploadSortableArea').find('#'+newId).remove();
+                return;
+            }
+            $row.append($clone);
+            if($row.find('.cg_row_col').length>=3){
+                $addCol.addClass('cg_hide');
+            }
+        }else{
+            $('#cgCreateUploadSortableArea').find('#'+newId).remove();
+            return;
+        }
+        $('#cgRightSide').find('.cg_upl_add,.cg_row.cg_add_row,.cg_add_col').removeClass('cg_clicked');
         $clone.click();
         cgJsClassAdmin.createUpload.functions.addRightFieldOrderAndAddRowsAndColumns($);
         setTimeout(function (){
@@ -395,9 +425,30 @@ cgJsClassAdmin.createUpload.functions = {
             }
         });
     },
+    removeRightSideFieldElement: function ($,$el) {
+        var $row = $el.closest('.cg_row');
+        var $remainingFieldCols;
+
+        $remainingFieldCols = $row.find('.cg_row_col.cg_el,.cg_row_col[id]:not(.cg_upl_add)').not($el);
+
+        if(!$remainingFieldCols.length){
+            $el.remove();
+            $row.remove();
+            cgJsClassAdmin.createUpload.functions.removeAddRows($);
+            return;
+        }
+
+        $el.replaceWith($(cgJsClassAdmin.createUpload.functions.getAddElCol()));
+
+        if($row.find('.cg_row_col').length<3){
+            $row.find('.cg_add_col').removeClass('cg_hide');
+        }else{
+            $row.find('.cg_add_col').addClass('cg_hide');
+        }
+    },
     removeFieldRightSide: function ($,fieldContainerId) {
         var $el = $('#cgRightSide').find('#right'+fieldContainerId);
-        $el.replaceWith(cgJsClassAdmin.createUpload.functions.getAddElCol());
+        cgJsClassAdmin.createUpload.functions.removeRightSideFieldElement($,$el);
         cgJsClassAdmin.createUpload.functions.addRightFieldOrderAndAddRowsAndColumns($);
     }
 };

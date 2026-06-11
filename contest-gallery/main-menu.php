@@ -569,5 +569,8 @@ echo "<h2>In progress ...</h2>";
 echo "<p><strong>Do not cancel</strong></p>";
 echo "</div>";
 
+if(function_exists('cg_delete_gallery_confirm_container')){
+	cg_delete_gallery_confirm_container();
+}
 
 ?>

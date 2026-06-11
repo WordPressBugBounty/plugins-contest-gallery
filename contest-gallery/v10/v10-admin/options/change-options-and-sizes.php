@@ -114,6 +114,8 @@ if(!empty($_POST['cg_edit_translations'])){
     $tablenameEcommerceOptions = $wpdb->prefix . "contest_gal1ery_ecommerce_options";
     $tablename_registry_and_login_options = $wpdb->prefix . "contest_gal1ery_registry_and_login_options";
 
+    require_once(__DIR__ . '/../upload/cg-upload-real-watermark-functions.php');
+
     $optionsForGeneralIDsinceV14 = [];
 
 $wp_upload_dir = wp_upload_dir();
@@ -893,6 +895,7 @@ $wp_upload_dir = wp_upload_dir();
         $ImageViewFullScreen = (!empty($_POST['ImageViewFullScreen'])) ? 1 : 0;
         $SliderThumbNav = (!empty($_POST['SliderThumbNav'])) ? 1 : 0;
         $BorderRadiusUpload = (!empty($_POST['BorderRadiusUpload'])) ? 1 : 0;
+        $UploadRealWatermarkSettings = cg_upload_options_real_watermark_prepare_for_storage($_POST);
         $BorderRadiusRegistry = (!empty($_POST['BorderRadiusRegistry'])) ? 1 : 0;// will be also saved for general options in cg_update_registry_and_login_options_v14
         $BorderRadiusLogin = (!empty($_POST['BorderRadiusLogin'])) ? 1 : 0;// will be also saved for general options in cg_update_registry_and_login_options_v14
         $ThankVote = (!empty($_POST['ThankVote'])) ? 1 : 0;
@@ -961,7 +964,7 @@ $wp_upload_dir = wp_upload_dir();
                 'ForwardToWpPageEntry' => $ForwardToWpPageEntry, 'ForwardToWpPageEntryInNewTab' => $ForwardToWpPageEntryInNewTab,'TextBeforeWpPageEntry' => $TextBeforeWpPageEntry,'TextAfterWpPageEntry' => $TextAfterWpPageEntry,
                 'ShowBackToGalleryButton' => $ShowBackToGalleryButton, 'BackToGalleryButtonText' => $BackToGalleryButtonText, 'TextDeactivatedEntry' => $TextDeactivatedEntry,
                 'ShowBackToGalleriesButton' => $ShowBackToGalleriesButton,'ShowPinFormVoting' => $ShowPinFormVoting,'ShowPinFormUploading' => $ShowPinFormUploading, 'AllowedUsersToVote' => $AllowedUsersToVote,
-                'FeVotingIconType' => $FeVotingIconType
+                'FeVotingIconType' => $FeVotingIconType, 'UploadRealWatermarkSettings' => $UploadRealWatermarkSettings
             ),
             array('GalleryID' => $id),
             array('%d', '%d',
@@ -983,7 +986,7 @@ $wp_upload_dir = wp_upload_dir();
                 '%d', '%d', '%s', '%s',
                 '%d', '%s', '%s',
                 '%d', '%d', '%d', '%s',
-                '%s'
+                '%s', '%s'
             ),
             array('%d')
         );

@@ -29,7 +29,7 @@ if(!$isOnlyPlaceHolder){
     $RowCols = 1;
 }
 
-$valueFieldTitle = 'Description';
+$valueFieldTitle = 'Description new';
 
 // Anfang des Formularteils
 echo "<div id='$kfCount'  class='formField textareaField cg_hide'><input type='hidden' name='upload[$id][type]' value='kf'>";

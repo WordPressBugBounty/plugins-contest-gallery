@@ -23,6 +23,11 @@ echo <<<HEREDOC
                 </div>
             </div>
         </div>
+HEREDOC;
+
+cg_upload_options_real_watermark_render($UploadRealWatermarkSettings, $UploadRealWatermarkChecked);
+
+echo <<<HEREDOC
     <div class='cg_view_options_rows_container' id="cgInGalleryUploadFormConfiguration">
         <p class='cg_view_options_rows_container_title'><span class="cg_font_weight_bold">"In gallery upload form"</span> text configuration
         <br><span class="cg_view_options_rows_container_title_note"><span class="cg_font_weight_bold">NOTE:</span> to place text before and after <span class="cg_font_weight_bold">cg_users_upload</span> shortcode simply use common WordPress editor blocks</span>
@@ -871,4 +876,3 @@ HEREDOC;
 echo <<<HEREDOC
 </div>
 HEREDOC;
-

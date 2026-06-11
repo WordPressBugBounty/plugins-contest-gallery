@@ -30,6 +30,13 @@ if (!empty($_GET['option_id']) AND !empty($_POST['cg_delete_gallery'])) {
     $tablename_wp_pages = $wpdb->prefix . "contest_gal1ery_wp_pages";
 	$tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
 
+	if(function_exists('cg_entry_watermark_collect_wp_upload_ids_for_gallery')){
+		$watermarkWpUploadIds = cg_entry_watermark_collect_wp_upload_ids_for_gallery($optionID);
+		if(!empty($watermarkWpUploadIds)){
+			cg_entry_watermark_restore_wp_upload_ids($watermarkWpUploadIds,'restore_public');
+		}
+	}
+
 	$EcommerceDownloadEntries = $wpdb->get_results("SELECT * FROM $tablename_ecommerce_entries WHERE GalleryID = '$optionID' AND IsDownload='1' ");
 
 	foreach($EcommerceDownloadEntries as $EcommerceEntry){

@@ -12,6 +12,27 @@ jQuery(document).ready(function($){
         cgJsClassAdmin.options.vars.focusedInputField = null;
     });
 
+    $(document).on('click', '.cg_view_option_upload_options_real_watermark', function () {
+        var $settings = $('.cg_view_option_upload_options_real_watermark_settings');
+        if($(this).find('.cg_view_option_checkbox input').prop('checked')){
+            $settings.removeClass('cg_disabled cg_disabled_watermark');
+        }else{
+            $settings.addClass('cg_disabled_watermark');
+        }
+    });
+
+    $(document).on('change', '.cg_upload_options_real_watermark_position', function () {
+        if($(this).closest('.cg_upload_real_watermark_settings_panel').attr('data-cg-is-pro') === '0' && $(this).val() !== 'center'){
+            $(this).val('center');
+        }
+    });
+
+    $(document).on('change', '.cg_upload_options_real_watermark_size', function () {
+        if($(this).closest('.cg_upload_real_watermark_settings_panel').attr('data-cg-is-pro') === '0' && $(this).val() !== '512'){
+            $(this).val('512');
+        }
+    });
+
     // Only numbers allowed
     $(document).on('input','.PicsPerSite,#HeightLookHeight,#HeightViewSpaceWidth,#HeightViewSpaceHeight,#WidthThumb,#HeightThumb,#DistancePics,#DistancePicsV' +
         '#PicsInRow,#RowViewSpaceWidth,#RowViewSpaceHeight,#InvoiceNumberLogicCustomNumberTest,#InvoiceNumberLogicCustomNumberLive',function () {
@@ -2108,211 +2129,52 @@ $(document).on('click','#RatingVisibleForGalleryEcommerceOption',function (e) {
 
 // Check ShowDate --- END
 
-// CheckGoogleContainer
-
-    var cgShowDownloadGoogleSignInLib = function (){
-        jQuery('#cgGoogleSignInLibDownloadErrorMessage').addClass('cg_hide');
-        jQuery('#cgGoogleSignInLibDownloadSuccessMessage').addClass('cg_hide');
-        jQuery('#cgGoogleSignInLibDownloadMessage').removeClass('cg_hide');
-        jQuery('#cgGoogleSignInLibDownloadMessageBackground').removeClass('cg_hide');
-        jQuery('#cgGoogleSignInLibDownloadButtonContainer').removeClass('cg_hide');
-        jQuery('#cgGoogleSignInLibDownloadConfirmCheckboxContainer').removeClass('cg_hide');
-        jQuery('#cgGoogleSignInLibDownloadConfirmCheckbox').prop('checked',false);
-    }
-
-    $(document).on('click',"#CheckGoogleContainer,#CheckGoogleUploadContainer,.GoogleSignInLibModificationRequired",function (e) {
-
-        e.preventDefault();
-        if(jQuery('#cgGoogleSignInLibAvailable').val()=='0' || jQuery(this).hasClass('GoogleSignInLibModificationRequired')){
-            cgShowDownloadGoogleSignInLib();
-        }
-    });
-
-    $(document).on('click', '#cgGoogleSignInLibDownloadMessageBackground', function (e) {
-
-        if ($(e.target).closest('#cgGoogleSignInLibDownloadMessage').length || $(e.target).is('#cgGoogleSignInLibDownloadMessage')) {
-
-        } else {
-            jQuery('#cgGoogleSignInLibDownloadMessage').addClass('cg_hide');
-            jQuery('#cgGoogleSignInLibDownloadMessageBackground').addClass('cg_hide');
-            jQuery('#cgGoogleSignInTestClientIdForDomainMessage').addClass('cg_hide');
-        }
-
-    });
-
-// CheckGoogleContainer --- END
-
-// GoogleSignInLibDownloadButton
-
-    $(document).on('click',"#cgGoogleSignInLibDownloadButton",function (e) {
-        if(!jQuery('#cgGoogleSignInLibDownloadConfirmCheckbox').prop('checked')){
-                jQuery('#cgGoogleSignInLibDownloadConfirmCheckboxErrorMessage').removeClass('cg_hide');
-        }else{
-
-            var $cgGoogleSignInLibDownloadMessage = jQuery('#cgGoogleSignInLibDownloadMessage');
-
-            $cgGoogleSignInLibDownloadMessage.find('#cgGoogleSignInLibDownloadButtonContainer').addClass('cg_hide');
-            $cgGoogleSignInLibDownloadMessage.find('#cgGoogleSignInLibDownloadConfirmCheckboxContainer').addClass('cg_hide');
-            $cgGoogleSignInLibDownloadMessage.find('#cgSaveCategoriesLoader').removeClass('cg_hide');// might be added when first time tried and there was error and then have to be added again
-            $cgGoogleSignInLibDownloadMessage.find('#cgSaveCategoriesLoaderContainer').removeClass('cg_hide');
-            jQuery('#cgGoogleSignInLibDownloadMessageBackground').addClass('cg_pointer_events_none');
-
-            var form = document.getElementById('cgGetGoogleSignInLibForm');
-            var formPostData = new FormData(form);
-
-            $.ajax({
-                url: 'admin-ajax.php',
-                method: 'post',
-                data: formPostData,
-                dataType: null,
-                contentType: false,
-                processData: false
-            }).done(function (response) {
-
-
-                $cgGoogleSignInLibDownloadMessage.find('#cgSaveCategoriesLoaderMessage').addClass('cg_hide');
-                $cgGoogleSignInLibDownloadMessage.find('#cgSaveCategoriesLoader').addClass('cg_hide');
-
-                console.log('success');
-                console.log(response);
-
-                if(response.indexOf('successfull-installed') >= 0){
-
-                    if(jQuery('#cg_main_options').length){// then must be edit options
-
-                        jQuery('#cgGoogleSignInLibAvailable').val(1);
-                        jQuery('#cgGoogleSignInLibDownloadSuccessMessage').html(response).removeClass('cg_hide');
-
-                        setTimeout(function (){
-                            cgJsClassAdmin.gallery.vars.isHashJustChanged = true;
-                            location.hash = location.hash+'&cgGoogleSignInLib=downloaded';
-                            $('#cgSaveOptionsButton').click();
-                        },5000);
-
-                    }else{
-
-                        jQuery('#GoogleSignInLibModificationRequiredParent').css('padding','0');
-                        jQuery('#GoogleSignInLibModificationRequiredParent .cg_pro_version_info_container').css({
-                            'border':'none',
-                            'padding':'0'
-                        });
-                        jQuery('.GoogleSignInLibModificationRequired').addClass('cg_hide');
-                        // then must be from main-menu.php
-                        if(jQuery('#GoogleSignInLibModificationRequiredLink').hasClass('cg-google-sign-in-is-update-only')){
-                            jQuery('#cgGoogleSignInLibDownloadSuccessMessage').html('Google sign in authentication library successfully updated.').removeClass('cg_hide');
-                        }else{
-                            jQuery('#cgGoogleSignInLibDownloadSuccessMessage').html('Google sign in authentication library successfully installed.' +
-                                '<br>You can now use Google sign in button.' +
-                                '<br>Please check your Login via Google options.').removeClass('cg_hide');
-                        }
-
-                        setTimeout(function (){
-                            jQuery('#cgGoogleSignInLibDownloadMessageBackground').removeClass('cg_pointer_events_none');
-                        },2000);
-
-                    }
-
-                    jQuery('#GoogleSignInLibModificationRequiredContainer').addClass('cg_hide');
-                }else{
-
-                    jQuery('#cgGoogleSignInLibDownloadErrorMessage').html(response).removeClass('cg_hide');
-                    jQuery('#cgGoogleSignInLibDownloadMessageBackground').removeClass('cg_pointer_events_none');
-
-                }
-
-            }).fail(function (xhr, status, error) {
-
-                $cgGoogleSignInLibDownloadMessage.find('#cgSaveCategoriesLoaderMessage').addClass('cg_hide');
-                $cgGoogleSignInLibDownloadMessage.find('#cgSaveCategoriesLoader').addClass('cg_hide');
-
-                console.log('fail');
-
-            }).always(function () {
-
-            });
-
-        }
-    });
-
-    $(document).on('change',"#cgGoogleSignInLibDownloadConfirmCheckbox",function (e) {
-        if(jQuery(this).prop('checked')){
-                jQuery('#cgGoogleSignInLibDownloadConfirmCheckboxErrorMessage').addClass('cg_hide');
-        }else{
-                jQuery('#cgGoogleSignInLibDownloadConfirmCheckboxErrorMessage').removeClass('cg_hide');
-        }
-    });
-
-    $(document).on('click',"#cgGoogleSignInLibDownloadMessage .cg_message_close",function (e) {
-        debugger
-        jQuery('#cgGoogleSignInLibDownloadMessage').addClass('cg_hide');
-        jQuery('#cgGoogleSignInLibDownloadMessageBackground').addClass('cg_hide');
-        jQuery('#cgGoogleSignInTestClientIdForDomainMessage').addClass('cg_hide');
-    });
-
-// GoogleSignInLibDownloadButton --- END
-
-
 // cgGoogleSignInTestClientIdForDomain
-
-
-    // MIGHT BE REQUIRED IN FUTURE - DO NOT DELETE IN THE MOMENT
-
-    var cgGoogleSignInTestUri;
-
-    $(document).on('click',"#cgGoogleSignInTestClientIdForDomain",function (e) {
-
-        return;
-
-        jQuery('#cgGoogleSignInTestClientIdForDomainMessage').removeClass('cg_hide');
-        jQuery('#cgGoogleSignInLibDownloadMessageBackground').removeClass('cg_hide');
-
-        $('#cgGoogleClientIdDomainMessage').text($('#GoogleClientId').val());
-
-        var cgGoogleSignInDomain = $('#cgGoogleSignInDomain').text();
-
-        if(cgGoogleSignInDomain.split('//')[1].indexOf('/') > -1){
-
-            var part1 = cgGoogleSignInDomain.split('//')[0];
-            var part2 = cgGoogleSignInDomain.split('//')[1].split('/')[0];
-
-            cgGoogleSignInDomain = part1+'//'+part2;
-        }
-
-        $('#cgGoogleSignInDomainMessage').text(cgGoogleSignInDomain);
-
-        cgGoogleSignInTestUri = 'https://accounts.google.com/o/oauth2/auth?client_id='+$('#GoogleClientId').val()+'&response_type=token&redirect_uri='+encodeURIComponent(cgGoogleSignInDomain)+'&scope=openid%20profile%20email&time='+new Date().getTime();
-
-    });
-
-    $(document).on('click',"#cgGoogleSignInTestClientIdForDomainButton",function (e) {
-
-        return;
-
-        window.open(cgGoogleSignInTestUri,'MyWindow','width=600,height=300');
-
-    });
-
-    // MIGHT BE REQUIRED IN FUTURE - DO NOT DELETE IN THE MOMENT --- END
-
-    $(document).on('change',"#GoogleClientId",function (e) {
+    $(document).on('input change',"#GoogleClientId",function (e) {
 
         var $cgGoogleSignInTestClientIdForDomain = $('#cgGoogleSignInTestClientIdForDomain');
+        var cgGoogleSignInTestUri = $cgGoogleSignInTestClientIdForDomain.attr('href');
+        var cgGoogleSignInTestUriBase;
+        var cgGoogleSignInTestUriHash;
+        var cgGoogleSignInTestUriHashParts;
+        var cgGoogleSignInTestUriHashData = {};
+        var cgGoogleSignInTestUriHashNew = [];
 
-        var cgGoogleSignInTestUri = $cgGoogleSignInTestClientIdForDomain.attr('href').split('#')[0];
-            console.log(cgGoogleSignInTestUri)
-        $cgGoogleSignInTestClientIdForDomain.attr('href',cgGoogleSignInTestUri+'#'+$(this).val().trim())
+        if(!cgGoogleSignInTestUri){
+            return;
+        }
+
+        cgGoogleSignInTestUriBase = cgGoogleSignInTestUri.split('#')[0];
+        cgGoogleSignInTestUriHash = cgGoogleSignInTestUri.split('#')[1] || '';
+        cgGoogleSignInTestUriHashParts = cgGoogleSignInTestUriHash.split('&');
+
+        cgGoogleSignInTestUriHashParts.forEach(function (part) {
+            var pair = part.split('=');
+            if(pair[0]){
+                cgGoogleSignInTestUriHashData[pair[0]] = pair[1] || '';
+            }
+        });
+
+        cgGoogleSignInTestUriHashData.clientId = encodeURIComponent($(this).val().trim());
+        cgGoogleSignInTestUriHashNew.push('clientId=' + cgGoogleSignInTestUriHashData.clientId);
+
+        if(cgGoogleSignInTestUriHashData.libVersion){
+            cgGoogleSignInTestUriHashNew.push('libVersion=' + cgGoogleSignInTestUriHashData.libVersion);
+        }
+
+        if(cgGoogleSignInTestUriHashData.opensslStatus){
+            cgGoogleSignInTestUriHashNew.push('opensslStatus=' + cgGoogleSignInTestUriHashData.opensslStatus);
+        }
+
+        $cgGoogleSignInTestClientIdForDomain.attr('href',cgGoogleSignInTestUriBase+'#'+cgGoogleSignInTestUriHashNew.join('&'));
 
     });
 
 // cgGoogleSignInTestClientIdForDomain --- END
-
-    // MIGHT BE REQUIRED IN FUTURE - DO NOT DELETE IN THE MOMENT --- END
 
     $(document).on('click',"#LostPasswordMailActiveContainer",function (e) {
         cgJsClassAdmin.options.functions.cg_LostPasswordMailActiveCheck($);
     });
-
-// cgGoogleSignInTestClientIdForDomain --- END
 
     // save last multiple options
 

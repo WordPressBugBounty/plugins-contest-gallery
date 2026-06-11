@@ -357,6 +357,8 @@ cg_sell_ecommerce_entry_can_not_be_moved();
 
 cg_sell_ecommerce_download_can_not_be_removed();
 
+cg_entry_watermark_container($GalleryID);
+
 cg_sell_ecommerce_container($GalleryID, $ecommerceOptions,$cgProFalse);
 
 cg_download_ecommerce_form($GalleryID, $ecommerceOptions);
@@ -861,6 +863,16 @@ echo "<div class='cg_image_checkbox_container_view_control '>
 
 <div class=\"cg_hover_effect cg_image_action_href cg_image_checkbox cg_image_checkbox_not_winner_all\">
 <div class=\"cg_image_checkbox_action\">Not winner all</div>
+<div class=\"cg_image_checkbox_icon\"></div>
+</div>
+
+<div class=\"cg_hover_effect cg_image_action_href cg_image_checkbox cg_image_checkbox_watermark_all\">
+<div class=\"cg_image_checkbox_action\">Watermark all</div>
+<div class=\"cg_image_checkbox_icon\"></div>
+</div>
+
+<div class=\"cg_hover_effect cg_image_action_href cg_image_checkbox cg_image_checkbox_unwatermark_all\">
+<div class=\"cg_image_checkbox_action\">Unwatermark all</div>
 <div class=\"cg_image_checkbox_icon\"></div>
 </div>
 

@@ -1095,6 +1095,26 @@ if(!function_exists('post_cg1l_resend_unconfirmed_mail_frontend')){
     }
 }
 
+add_action( 'wp_ajax_nopriv_post_cg_google_sign_in_add_user', 'post_cg_google_sign_in_add_user' );
+if(!function_exists('post_cg_google_sign_in_add_user')){
+
+    function post_cg_google_sign_in_add_user() {
+
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+
+            cg_check_frontend_nonce();
+
+            include(__DIR__.'/../v10/v10-frontend/google/google-sign-in-add-user.php');
+            exit();
+
+        }
+        else {
+            exit();
+        }
+    }
+
+}
+
 add_action( 'wp_ajax_nopriv_post_cg1l_verify_pin', 'post_cg1l_verify_pin' );
 if(!function_exists('post_cg1l_verify_pin')){
 

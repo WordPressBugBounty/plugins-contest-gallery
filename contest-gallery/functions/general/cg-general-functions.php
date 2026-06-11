@@ -74,6 +74,114 @@ if(!function_exists('cg_insert_into_contest_gal1ery_wp_pages')){
 	}
 }
 
+if(!function_exists('cg_is_nginx_server')){
+	function cg_is_nginx_server(){
+		$software = '';
+
+		if(!empty($_SERVER['SERVER_SOFTWARE'])){
+			$software .= ' ' . $_SERVER['SERVER_SOFTWARE'];
+		}
+
+		if(function_exists('getenv')){
+			$envSoftware = getenv('SERVER_SOFTWARE');
+			if(!empty($envSoftware)){
+				$software .= ' ' . $envSoftware;
+			}
+		}
+
+		$software = strtolower($software);
+		$isNginx = (strpos($software, 'nginx') !== false || strpos($software, 'openresty') !== false) ? true : false;
+
+		return apply_filters('cg_is_nginx_server', $isNginx, $software);
+	}
+}
+
+if(!function_exists('cg_get_upload_baseurl_path')){
+	function cg_get_upload_baseurl_path(){
+		$wp_upload_dir = wp_upload_dir();
+		$baseUrl = isset($wp_upload_dir['baseurl']) ? $wp_upload_dir['baseurl'] : '';
+		$path = parse_url($baseUrl, PHP_URL_PATH);
+
+		if(empty($path)){
+			$path = '/wp-content/uploads';
+		}
+
+		$path = '/' . trim($path, '/') . '/';
+
+		return preg_replace('#/+#', '/', $path);
+	}
+}
+
+if(!function_exists('cg_get_nginx_upload_deny_rule')){
+	function cg_get_nginx_upload_deny_rule($relativePath){
+		$relativePath = str_replace('\\', '/', (string)$relativePath);
+		$relativePath = trim($relativePath, '/');
+		$relativePathParts = array();
+
+		foreach(explode('/', $relativePath) as $part){
+			if($part === '' || $part === '.' || $part === '..'){
+				continue;
+			}
+			$relativePathParts[] = $part;
+		}
+
+		$uri = cg_get_upload_baseurl_path();
+		if(!empty($relativePathParts)){
+			$uri .= implode('/', $relativePathParts) . '/';
+		}
+
+		$uri = preg_replace('#/+#', '/', $uri);
+
+		return "location ^~ " . $uri . " {\n    deny all;\n}";
+	}
+}
+
+if(!function_exists('cg_render_nginx_upload_protection_notice')){
+	function cg_render_nginx_upload_protection_notice($title, $description, $rule, $additionalClass = ''){
+		if(!function_exists('cg_is_nginx_server') || !cg_is_nginx_server()){
+			return;
+		}
+
+		if(empty($rule)){
+			return;
+		}
+
+		$additionalClass = (!empty($additionalClass)) ? ' ' . $additionalClass : '';
+
+		echo "<div class='cg_nginx_protection_notice".esc_attr($additionalClass)."'>";
+		echo "<button type='button' class='cg_nginx_protection_toggle' aria-expanded='false'>".esc_html($title)."</button>";
+		echo "<div class='cg_nginx_protection_details cg_hide'>";
+		echo "<p>".esc_html($description)."</p>";
+		echo "<pre class='cg_nginx_protection_rule'>".esc_html($rule)."</pre>";
+		echo "<button type='button' class='cg_action_button cg_nginx_protection_copy_rule'>Copy Nginx rule</button>";
+		echo "<span class='cg_nginx_protection_copy_status' aria-live='polite'></span>";
+		echo "</div>";
+		echo "</div>";
+	}
+}
+
+if(!function_exists('cg_get_watermark_size_labels')){
+	function cg_get_watermark_size_labels(){
+		return array(
+			'512' => 'XXL',
+			'256' => 'XL',
+			'128' => 'L',
+			'64' => 'M',
+			'32' => 'S',
+			'16' => 'XS',
+			'8' => 'XXS'
+		);
+	}
+}
+
+if(!function_exists('cg_get_watermark_size_label')){
+	function cg_get_watermark_size_label($size){
+		$size = (string)$size;
+		$labels = cg_get_watermark_size_labels();
+		return isset($labels[$size]) ? $labels[$size] : $size;
+	}
+}
+
 if(!function_exists('cg_get_filename_clean_from_url_or_url_part')){
 	function cg_get_filename_clean_from_url_or_url_part($url){
 		if(strpos($url,'/')!==false){

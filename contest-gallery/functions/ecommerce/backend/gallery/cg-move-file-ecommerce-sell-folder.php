@@ -321,30 +321,27 @@ HEREDOC;
         if(!empty($_POST['cgSellContainer']['base64WatermarkedAndAltFiles'])){
             foreach ($_POST['cgSellContainer']['base64WatermarkedAndAltFiles'] as $base64WatermarkedAndAltFilesWpUploadId => $base64WatermarkedAndAltFile){
 
-                $type = $_POST['cgSellContainer']['base64WatermarkedAndAltFileTypes'][$base64WatermarkedAndAltFilesWpUploadId];
+                $type = strtolower(sanitize_text_field($_POST['cgSellContainer']['base64WatermarkedAndAltFileTypes'][$base64WatermarkedAndAltFilesWpUploadId]));
 
                 // handling for watermarked images
-                if(cg_is_is_image($type)){
+                if(in_array($type, array('jpg','jpeg','png'), true)){
                     // set watermark file as original guid now after guid has been moved
                     // overwrite original file first
                     $content = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64WatermarkedAndAltFile));
                     $formImage = imagecreatefromstring($content);
 
-	                if($_POST['cgSellContainer']['base64WatermarkedAndAltFileTypes'][$base64WatermarkedAndAltFilesWpUploadId]=='png'){
+	                if($type=='png'){
 		                imagesavealpha($formImage,true);// required for png images... otherwise background black
 	                }
 
-                    if($_POST['cgSellContainer']['base64WatermarkedAndAltFileTypes'][$base64WatermarkedAndAltFilesWpUploadId]=='jpg' || $_POST['cgSellContainer']['base64WatermarkedAndAltFileTypes'][$base64WatermarkedAndAltFilesWpUploadId]=='jpeg'){
+                    if($type=='jpg' || $type=='jpeg'){
 	                    //     echo "<br>";
 	                    //    var_dump('dasdfasdf');
 	                    //   var_dump($WpUploadFilesPostBaseUrls[$base64WatermarkedAndAltFilesWpUploadId]);
 	                    //   echo "<br>";
                         imagejpeg($formImage,$WpUploadFilesPostBaseUrls[$base64WatermarkedAndAltFilesWpUploadId]);
                     }
-                    if($_POST['cgSellContainer']['base64WatermarkedAndAltFileTypes'][$base64WatermarkedAndAltFilesWpUploadId]=='gif'){
-                        imagegif($formImage,$WpUploadFilesPostBaseUrls[$base64WatermarkedAndAltFilesWpUploadId]);
-                    }
-                    if($_POST['cgSellContainer']['base64WatermarkedAndAltFileTypes'][$base64WatermarkedAndAltFilesWpUploadId]=='png'){
+                    if($type=='png'){
                         imagepng($formImage,$WpUploadFilesPostBaseUrls[$base64WatermarkedAndAltFilesWpUploadId]);
                     }
 
@@ -353,17 +350,14 @@ HEREDOC;
                             // now check if converted smaller filesizes exists to be replaced with watermarked
                             if(!empty($WpUploadFilePostMeta['_wp_attachment_metadata']['sizes'])){
                                 foreach ($WpUploadFilePostMeta['_wp_attachment_metadata']['sizes'] as $sizeName => $sizeArray){
-                                    if($_POST['cgSellContainer']['base64WatermarkedAndAltFileTypes'][$base64WatermarkedAndAltFilesWpUploadId]=='jpg' || $_POST['cgSellContainer']['base64WatermarkedAndAltFileTypes'][$base64WatermarkedAndAltFilesWpUploadId]=='jpeg'){
+                                    if($type=='jpg' || $type=='jpeg'){
 	                                    //   echo "<br>";
 	                                    //      var_dump('5645rtretert');
 	                                    //      var_dump($WpUploadFilesPostBaseDirs[$base64WatermarkedAndAltFilesWpUploadId].'/'.$sizeArray['file']);
 	                                    //     echo "<br>";
                                         imagejpeg($formImage,$WpUploadFilesPostBaseDirs[$base64WatermarkedAndAltFilesWpUploadId].'/'.$sizeArray['file']);
                                     }
-                                    if($_POST['cgSellContainer']['base64WatermarkedAndAltFileTypes'][$base64WatermarkedAndAltFilesWpUploadId]=='gif'){
-                                        imagegif($formImage,$WpUploadFilesPostBaseDirs[$base64WatermarkedAndAltFilesWpUploadId].'/'.$sizeArray['file']);
-                                    }
-                                    if($_POST['cgSellContainer']['base64WatermarkedAndAltFileTypes'][$base64WatermarkedAndAltFilesWpUploadId]=='png'){
+                                    if($type=='png'){
                                         imagepng($formImage,$WpUploadFilesPostBaseDirs[$base64WatermarkedAndAltFilesWpUploadId].'/'.$sizeArray['file']);
                                     }
                                 }

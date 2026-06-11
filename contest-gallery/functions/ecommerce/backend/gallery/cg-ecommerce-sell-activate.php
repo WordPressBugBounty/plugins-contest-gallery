@@ -163,6 +163,19 @@ HEREDOC;
         if($SaleType=='service'){ $IsService = true;  }
         if($SaleType=='upload'){ $IsUpload = true;  }
 
+		if($IsDownload && !empty($_POST['cgSellContainer']['WpUploadFilesForSale'])){
+			foreach($_POST['cgSellContainer']['WpUploadFilesForSale'] as $cgWpUploadForSale){
+				$cgWpUploadForSale = absint($cgWpUploadForSale);
+				if(!empty($cgWpUploadForSale) && function_exists('cg_entry_watermark_meta_key') && get_post_meta($cgWpUploadForSale, cg_entry_watermark_meta_key(), true)){
+					if(function_exists('cg_backend_ajax_error_json')){
+						cg_backend_ajax_error_json('Unwatermark first to watermark for selling.', 400, 'cg_entry_watermark_ecommerce_conflict');
+					}
+					echo 'Unwatermark first to watermark for selling.';
+					die;
+				}
+			}
+		}
+
 		$UploadGallery  = 0;
 	    $MaxUploads  = '';
         if($IsUpload){

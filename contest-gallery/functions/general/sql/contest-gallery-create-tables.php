@@ -1,5 +1,31 @@
 <?php
 
+if(!function_exists('cg_contest_gallery_create_table_get_existing_tables')){
+    function cg_contest_gallery_create_table_get_existing_tables($tablePrefix){
+        global $wpdb;
+
+        $existingTables = array();
+        $tableLike = $wpdb->esc_like($tablePrefix).'%';
+        $tableRows = $wpdb->get_col($wpdb->prepare("SHOW TABLES LIKE %s",$tableLike));
+
+        if(empty($tableRows)){
+            return $existingTables;
+        }
+
+        foreach($tableRows as $tableName){
+            $existingTables[$tableName] = true;
+        }
+
+        return $existingTables;
+    }
+}
+
+if(!function_exists('cg_contest_gallery_create_table_needs_creation')){
+    function cg_contest_gallery_create_table_needs_creation($tableName,$existingTables){
+        return empty($existingTables[$tableName]);
+    }
+}
+
 if(!function_exists('contest_gal1ery_create_table')){
     function contest_gal1ery_create_table($i,$isShowError = false){
 
@@ -41,14 +67,17 @@ if(!function_exists('contest_gal1ery_create_table')){
         //  $tablename_general = $wpdb->base_prefix . "$i"."contest_gal1ery_general";
 
         $charset_collate = $wpdb->get_charset_collate();
+        $existingContestGalleryTables = cg_contest_gallery_create_table_get_existing_tables($wpdb->base_prefix . "$i"."contest_gal1ery");
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_categories'") != $tablename_categories){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_categories,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_categories (
 		id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		GalleryID INT(20),
 	    Name VARCHAR(1000),
 	    Field_Order INT(3),
-        Active TINYINT
+        Active TINYINT,
+        INDEX GalleryID_Field_Order_id_index (GalleryID, Field_Order, id),
+        INDEX GalleryID_Active_Field_Order_index (GalleryID, Active, Field_Order)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -58,7 +87,7 @@ if(!function_exists('contest_gal1ery_create_table')){
         // WpUpload DEFAULT 0 was added 13.09.2020
         // WpUserId DEFAULT 0 was added 13.09.2020
         // IP VARCHAR 256 instead of 99 since 10.04.2023 PayPal update
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename'") != $tablename){
+        if(cg_contest_gallery_create_table_needs_creation($tablename,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename (
 		id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		rowid INT(20),
@@ -125,9 +154,15 @@ if(!function_exists('contest_gal1ery_create_table')){
 		OrderItem INT(11) DEFAULT 0,
 		PdfPreview BIGINT(20) DEFAULT 0,
 		Mails INT(11) DEFAULT 0,
+        INDEX WpUpload_index (WpUpload),
         INDEX WpUserId_index (WpUserId),
         INDEX GalleryID_index (GalleryID),
-        INDEX PdfPreview_index (PdfPreview)
+        INDEX PdfPreview_index (PdfPreview),
+        INDEX GalleryID_id_index (GalleryID, id),
+        INDEX GalleryID_Active_id_index (GalleryID, Active, id),
+        INDEX GalleryID_WpUserId_id_index (GalleryID, WpUserId, id),
+        INDEX GalleryID_PositionNumber_id_index (GalleryID, PositionNumber, id),
+        INDEX GalleryID_Active_Category_index (GalleryID, Active, Category)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -135,7 +170,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 
         }
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_ip'") != $tablename_ip){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_ip,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_ip (
 		id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		pid INT(20),
@@ -152,13 +187,18 @@ if(!function_exists('contest_gal1ery_create_table')){
         CategoriesOn TINYINT DEFAULT 0,
         INDEX pid_index (pid),
         INDEX WpUserId_index (WpUserId),
-        INDEX GalleryID_index (GalleryID)
+        INDEX GalleryID_index (GalleryID),
+        INDEX GalleryID_pid_id_index (GalleryID, pid, id),
+        INDEX GalleryID_WpUserId_pid_id_index (GalleryID, WpUserId, pid, id),
+        INDEX GalleryID_CookieId_pid_id_index (GalleryID, CookieId(64), pid, id),
+        INDEX GalleryID_IP_CookieId_pid_id_index (GalleryID, IP(64), CookieId(64), pid, id),
+        INDEX GalleryID_Tstamp_index (GalleryID, Tstamp)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
         }
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_comments'") != $tablename_comments){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_comments,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_comments (
 		id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		pid INT(20) DEFAULT 0,
@@ -174,7 +214,10 @@ if(!function_exists('contest_gal1ery_create_table')){
         INDEX pid_index (pid),
         INDEX WpUserId_index (WpUserId),
         INDEX Active_index (Active),
-        INDEX GalleryID_index (GalleryID)
+        INDEX GalleryID_index (GalleryID),
+        INDEX GalleryID_pid_id_index (GalleryID, pid, id),
+        INDEX GalleryID_WpUserId_id_index (GalleryID, WpUserId, id),
+        INDEX GalleryID_Active_pid_index (GalleryID, Active, pid)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -182,7 +225,7 @@ if(!function_exists('contest_gal1ery_create_table')){
         }
 
         //URL VARCHAR(2000) erst ab Version 3.06 vorhanden
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_email'") != $tablename_email){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_email,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_email (
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		GalleryID INT(20),
@@ -192,7 +235,8 @@ if(!function_exists('contest_gal1ery_create_table')){
 		CC VARCHAR(200),
 		BCC VARCHAR(200),
 		URL VARCHAR(2000),
-		Content TEXT
+		Content TEXT,
+        INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -200,7 +244,7 @@ if(!function_exists('contest_gal1ery_create_table')){
         }
 
         $tableOptionsHasToBeCreated = false;
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_options'") != $tablename_options){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_options,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_options(
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		GalleryName VARCHAR(200) NOT NULL,
@@ -211,9 +255,9 @@ if(!function_exists('contest_gal1ery_create_table')){
 		HeightGallery INT(5) DEFAULT 0,
 		DistancePics INT(5) DEFAULT 0,
 		DistancePicsV INT(5) DEFAULT 0,
-        MinResJPGon INT(1) DEFAULT 0,
-		MinResPNGon INT(1) DEFAULT 0,
-		MinResGIFon INT(1) DEFAULT 0,
+        MinResJPGon TINYINT DEFAULT 0,
+		MinResPNGon TINYINT DEFAULT 0,
+		MinResGIFon TINYINT DEFAULT 0,
         MinResJPGwidth INT(20) DEFAULT 0,
 		MinResJPGheight INT(20) DEFAULT 0,
 		MinResPNGwidth INT(20) DEFAULT 0,
@@ -333,7 +377,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 
 
         //URL VARCHAR(2000) erst ab Version 3.06 vorhanden
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_email_admin'") != $tablename_email_admin){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_email_admin,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_email_admin (
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		GalleryID INT(20),
@@ -344,7 +388,8 @@ if(!function_exists('contest_gal1ery_create_table')){
 		CC VARCHAR(200),
 		BCC VARCHAR(200),
 		URL TEXT,
-		Content TEXT
+		Content TEXT,
+        INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -381,7 +426,7 @@ if(!function_exists('contest_gal1ery_create_table')){
             }
         }
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_mail_user_upload'") != $tablename_mail_user_upload){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_mail_user_upload,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_mail_user_upload (
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		GalleryID INT(11) DEFAULT 0,
@@ -392,7 +437,8 @@ if(!function_exists('contest_gal1ery_create_table')){
 		CC TEXT NOT NULL,
 		BCC TEXT NOT NULL,
 		Content TEXT NOT NULL,
-		ContentInfoWithoutFileSource TINYINT DEFAULT 0
+		ContentInfoWithoutFileSource TINYINT DEFAULT 0,
+        INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -428,7 +474,7 @@ if(!function_exists('contest_gal1ery_create_table')){
             }
         }
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_mail_user_comment'") != $tablename_mail_user_comment){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_mail_user_comment,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_mail_user_comment (
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		GalleryID INT(11) DEFAULT 0,
@@ -440,7 +486,8 @@ if(!function_exists('contest_gal1ery_create_table')){
 		BCC TEXT NOT NULL,
 		Content TEXT NOT NULL,
 		URL TEXT NOT NULL,
-		MailInterval VARCHAR(30) NOT NULL
+		MailInterval VARCHAR(30) NOT NULL,
+        INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -476,7 +523,7 @@ if(!function_exists('contest_gal1ery_create_table')){
             }
         }
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_mail_user_vote'") != $tablename_mail_user_vote){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_mail_user_vote,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_mail_user_vote (
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		GalleryID INT(11) DEFAULT 0,
@@ -488,7 +535,8 @@ if(!function_exists('contest_gal1ery_create_table')){
 		BCC TEXT NOT NULL,
 		Content TEXT NOT NULL,
 		URL TEXT NOT NULL,
-		MailInterval VARCHAR(30) NOT NULL
+		MailInterval VARCHAR(30) NOT NULL,
+        INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -524,26 +572,28 @@ if(!function_exists('contest_gal1ery_create_table')){
             }
         }
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_user_comment_mails'") != $tablename_user_comment_mails){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_user_comment_mails,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_user_comment_mails (
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		GalleryID INT(11) DEFAULT 0,
 		Tstamp INT(11) DEFAULT 0,
 		WpUserId INT(11) DEFAULT 0,
-		Content TEXT NOT NULL
+		Content TEXT NOT NULL,
+        INDEX WpUserId_GalleryID_id_index (WpUserId, GalleryID, id)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
             cg_echo_last_sql_error($isShowError,$lastError);
         }
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_user_vote_mails'") != $tablename_user_vote_mails){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_user_vote_mails,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_user_vote_mails (
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		GalleryID INT(11) DEFAULT 0,
 		Tstamp INT(11) DEFAULT 0,
 		WpUserId INT(11) DEFAULT 0,
-		Content TEXT NOT NULL
+		Content TEXT NOT NULL,
+        INDEX WpUserId_GalleryID_id_index (WpUserId, GalleryID, id)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -553,7 +603,7 @@ if(!function_exists('contest_gal1ery_create_table')){
         // created 14.08.2021
         // VARCHAR(1000) fields are max-length="200" in frontend because other fields of this type are VARCHAR(200) with max-length:200 also
         // Might be required VARCHAR(1000) with max-length="1000" in future everywhere
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_comments_notification_options'") != $tablename_comments_notification_options){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_comments_notification_options,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_comments_notification_options (
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		GalleryID INT(11),
@@ -563,7 +613,8 @@ if(!function_exists('contest_gal1ery_create_table')){
 		CommNoteBCC TEXT,
 		CommNoteReply TEXT,
 		CommNoteSubject TEXT,
-		CommNoteContent TEXT
+		CommNoteContent TEXT,
+        INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -576,7 +627,7 @@ if(!function_exists('contest_gal1ery_create_table')){
         }
 
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_options_visual'") != $tablename_options_visual){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_options_visual,$existingContestGalleryTables)){
             //IF(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "$tablename_options_visual" LIMIT 1){
             $sql = "CREATE TABLE $tablename_options_visual(
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -654,6 +705,7 @@ if(!function_exists('contest_gal1ery_create_table')){
         ShowPinFormUploading TINYINT DEFAULT 0,
         AllowedUsersToVote TEXT NOT NULL,
 		FeVotingIconType VARCHAR(20) NOT NULL,
+		UploadRealWatermarkSettings TEXT NOT NULL,
         INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
 
@@ -684,7 +736,8 @@ if(!function_exists('contest_gal1ery_create_table')){
 								 CopyOriginalFileLink,ForwardOriginalFile,ShareButtons,
 								 TextBeforeWpPageEntry,TextAfterWpPageEntry,ForwardToWpPageEntry,ForwardToWpPageEntryInNewTab,
 								 ShowBackToGalleryButton,BackToGalleryButtonText,TextDeactivatedEntry,
-								 ShowBackToGalleriesButton,ShowPinFormVoting,ShowPinFormUploading,AllowedUsersToVote
+								 ShowBackToGalleriesButton,ShowPinFormVoting,ShowPinFormUploading,AllowedUsersToVote,
+								 UploadRealWatermarkSettings
 								 )
 								VALUES ( %s,%d,%s,%s,
 								%s,%s,%s,%s,%s,%s,
@@ -700,7 +753,8 @@ if(!function_exists('contest_gal1ery_create_table')){
 								%d,%d,%s,
 								%s,%s,%d,%d,
 							    %d,%s,%s,
-							    %d,%d,%d,%s
+							    %d,%d,%d,%s,
+							    %s
 								)
 							",
                         '',$value,'left','left',
@@ -717,7 +771,8 @@ if(!function_exists('contest_gal1ery_create_table')){
                         1,1,'',
                         '','',0,0,
                         1,'','',
-                        1,0,0,''
+                        1,0,0,'',
+                        ''
                     ) );
 
                 }
@@ -728,14 +783,15 @@ if(!function_exists('contest_gal1ery_create_table')){
 
         //if($wpdb->get_var('SHOW TABLES LIKE ' . $tablename_options_visual) == $tablename_options_visual){}
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_options_input'") != $tablename_options_input){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_options_input,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_options_input(
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		GalleryID INT(20),
 		Forward TINYINT,
 		Forward_URL VARCHAR(999),
 		Confirmation_Text TEXT,
-		ShowFormAfterUpload TINYINT DEFAULT 0
+		ShowFormAfterUpload TINYINT DEFAULT 0,
+        INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -743,7 +799,7 @@ if(!function_exists('contest_gal1ery_create_table')){
         }
 
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_entries'") != $tablename_entries){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_entries,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_entries (
 		id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		pid INT(20),
@@ -758,7 +814,10 @@ if(!function_exists('contest_gal1ery_create_table')){
 		InputDate DateTime DEFAULT '0000-00-00 00:00:00',
 		Tstamp INT(11) DEFAULT 0,
         INDEX pid_index (pid),
-        INDEX GalleryID_index (GalleryID)
+        INDEX GalleryID_index (GalleryID),
+        INDEX GalleryID_pid_id_index (GalleryID, pid, id),
+        INDEX pid_f_input_id_index (pid, f_input_id),
+        INDEX GalleryID_f_input_id_pid_index (GalleryID, f_input_id, pid)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -767,7 +826,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 
         cg_create_contest_gallery_user_role();
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_pro_options'") != $tablename_pro_options){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_pro_options,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_pro_options (
 			id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 			GalleryID INT(20),
@@ -1020,7 +1079,7 @@ HEREDOC;
             }
         }
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_create_user_entries'") != $tablename_create_user_entries){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_create_user_entries,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_create_user_entries (
 			id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 			GalleryID INT(20) DEFAULT 0,
@@ -1033,14 +1092,19 @@ HEREDOC;
 			Version VARCHAR(20) NOT NULL,
 			GeneralID TINYINT DEFAULT 0,
             Tstamp INT(11) DEFAULT 0,
-            INDEX Field_Type_index (Field_Type)
+            INDEX Field_Type_index (Field_Type),
+            INDEX activation_key_index (activation_key),
+            INDEX wp_user_id_index (wp_user_id),
+            INDEX f_input_id_wp_user_id_index (f_input_id, wp_user_id),
+            INDEX GalleryID_f_input_id_index (GalleryID, f_input_id),
+            INDEX Field_Type_Tstamp_index (Field_Type, Tstamp)
 			) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
             cg_echo_last_sql_error($isShowError,$lastError);
         }
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_create_user_form'") != $tablename_create_user_form){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_create_user_form,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_create_user_form (
 			id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 			GalleryID INT(20),
@@ -1058,7 +1122,11 @@ HEREDOC;
             RowNumber INT(11) DEFAULT 0,
             ColNumber INT(11) DEFAULT 0,
             RowCols INT(11) DEFAULT 0,
-		    PinField TINYINT DEFAULT 0
+		    PinField TINYINT DEFAULT 0,
+            INDEX GeneralID_Active_Field_Order_index (GeneralID, Active, Field_Order),
+            INDEX GeneralID_Field_Type_Field_Order_index (GeneralID, Field_Type, Field_Order),
+            INDEX GalleryID_Active_Field_Order_index (GalleryID, Active, Field_Order),
+            INDEX GalleryID_Field_Type_Field_Order_index (GalleryID, Field_Type, Field_Order)
 			) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -1139,7 +1207,7 @@ HEREDOC;
 
 
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_form_input'") != $tablename_form_input){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_form_input,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_form_input (
 		id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		GalleryID INT(20) DEFAULT 0,
@@ -1154,6 +1222,7 @@ HEREDOC;
 		ReCaLang VARCHAR(20) NOT NULL,
 		Version VARCHAR(20) NOT NULL,
 		WatermarkPosition VARCHAR(99) NOT NULL,
+		RealWatermarkSettings TEXT NOT NULL,
 		IsForWpPageTitle TINYINT DEFAULT 0,
 		IsForWpPageDescription TINYINT DEFAULT 0,
 		SubTitle TINYINT DEFAULT 0,
@@ -1165,7 +1234,10 @@ HEREDOC;
 		WpAttachmentDetailsType VARCHAR(20) DEFAULT '',
 		RowNumber INT(11) DEFAULT 0,
 		ColNumber INT(11) DEFAULT 0,
-		RowCols INT(11) DEFAULT 0
+		RowCols INT(11) DEFAULT 0,
+        INDEX GalleryID_Field_Order_id_index (GalleryID, Field_Order, id),
+        INDEX GalleryID_Field_Type_index (GalleryID, Field_Type),
+        INDEX GalleryID_Active_Field_Order_index (GalleryID, Active, Field_Order)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -1173,14 +1245,16 @@ HEREDOC;
         }
 
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_form_output'") != $tablename_form_output){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_form_output,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_form_output (
 		id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		f_input_id INT(20),
 		GalleryID INT(20),
 		Field_Type VARCHAR(10),
 		Field_Order INT(3),
-		Field_Content TEXT
+		Field_Content TEXT,
+        INDEX GalleryID_Field_Order_id_index (GalleryID, Field_Order, id),
+        INDEX GalleryID_f_input_id_index (GalleryID, f_input_id)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -1188,7 +1262,7 @@ HEREDOC;
         }
 
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_mail_confirmation'") != $tablename_mail_confirmation){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_mail_confirmation,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_mail_confirmation (
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		GalleryID INT(20),
@@ -1200,7 +1274,8 @@ HEREDOC;
 		Content TEXT,
 		SendConfirm TINYINT,
 		ConfirmationText TEXT,
-		URL VARCHAR(999)
+		URL VARCHAR(999),
+        INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -1321,7 +1396,7 @@ HEREDOC;
 
         */
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_mails_collected'") != $tablename_mails_collected){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_mails_collected,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_mails_collected (
 		id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		GalleryID INT(20),
@@ -1336,7 +1411,7 @@ HEREDOC;
             cg_echo_last_sql_error($isShowError,$lastError);
         }
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_registry_and_login_options'") != $tablename_registry_and_login_options){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_registry_and_login_options,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_registry_and_login_options (
             id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
             GalleryID INT(20) DEFAULT 0,
@@ -1363,7 +1438,7 @@ HEREDOC;
             cg_echo_last_sql_error($isShowError,$lastError);
         }
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_google_options'") != $tablename_google_options){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_google_options,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_google_options (
     		id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
             GeneralID TINYINT DEFAULT 0,
@@ -1383,7 +1458,7 @@ HEREDOC;
         // best way to do it right here, when first time a gallery will be created or db version will be checked
         cg_create_google_options($i);
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_google_users'") != $tablename_google_users){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_google_users,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_google_users (
             id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
             GoogleId VARCHAR(1000) NOT NULL,
@@ -1392,17 +1467,19 @@ HEREDOC;
             GivenName VARCHAR(1000) NOT NULL,
             FamilyName VARCHAR(1000) NOT NULL,
             ImageUrl VARCHAR(1000) NOT NULL,
-            WpUserId INT(11) DEFAULT 0
+            WpUserId INT(11) DEFAULT 0,
+            INDEX GoogleId_index (GoogleId(191)),
+            INDEX WpUserId_index (WpUserId)
             ) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
             cg_echo_last_sql_error($isShowError,$lastError);
         }
 
-        cg_create_ecommerce_tables($i,$isShowError,$lastError,$charset_collate);
+        cg_create_ecommerce_tables($i,$isShowError,$lastError,$charset_collate,$existingContestGalleryTables);
 
         // in all found examples index name is another then colum name
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_wp_pdf_previews'") != $tablename_wp_pdf_previews){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_wp_pdf_previews,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_wp_pdf_previews (
             id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
             WpUpload BIGINT(20) DEFAULT 0,
@@ -1416,7 +1493,7 @@ HEREDOC;
         }
 
         // in all found examples index name is another then colum name
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_wp_pages'") != $tablename_wp_pages){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_wp_pages,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_wp_pages (
             id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
             WpPage BIGINT(20) DEFAULT 0,
@@ -1427,7 +1504,7 @@ HEREDOC;
             cg_echo_last_sql_error($isShowError,$lastError);
         }
 
-        if($wpdb->get_var("SHOW TABLES LIKE '$tablename_ai_prompts'") != $tablename_ai_prompts){
+        if(cg_contest_gallery_create_table_needs_creation($tablename_ai_prompts,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_ai_prompts (
 		id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
         Prompt TEXT NOT NULL,

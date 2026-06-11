@@ -598,27 +598,105 @@ HEREDOC;
 	}
 }
 
+if (!function_exists('cg_backend_render_backend_loader')) {
+    function cg_backend_render_backend_loader()
+    {
+        echo <<<HEREDOC
+<div id="cgBackendLoader" class="cg-skeleton-box-container cg-backend-loader cg_do_not_remove_when_ajax_load" role="status" aria-live="polite" aria-label="Loading">
+    <div class="cg-backend-loader-head">
+        <div class="cg-skeleton-box cg-backend-loader-title"></div>
+        <div class="cg-backend-loader-actions">
+            <div class="cg-skeleton-box cg-backend-loader-action"></div>
+            <div class="cg-skeleton-box cg-backend-loader-action"></div>
+            <div class="cg-skeleton-box cg-backend-loader-action cg-backend-loader-action-short"></div>
+        </div>
+    </div>
+    <div class="cg-backend-loader-toolbar">
+        <div class="cg-skeleton-box cg-backend-loader-filter cg-backend-loader-filter-wide"></div>
+        <div class="cg-skeleton-box cg-backend-loader-filter"></div>
+        <div class="cg-skeleton-box cg-backend-loader-filter cg-backend-loader-filter-short"></div>
+    </div>
+    <div class="cg-backend-loader-list">
+        <div class="cg-backend-loader-row">
+            <div class="cg-skeleton-box cg-backend-loader-thumb"></div>
+            <div class="cg-backend-loader-lines">
+                <div class="cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-main"></div>
+                <div class="cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-small"></div>
+            </div>
+            <div class="cg-skeleton-box cg-backend-loader-row-action"></div>
+        </div>
+        <div class="cg-backend-loader-row">
+            <div class="cg-skeleton-box cg-backend-loader-thumb"></div>
+            <div class="cg-backend-loader-lines">
+                <div class="cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-main cg-backend-loader-line-medium"></div>
+                <div class="cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-small cg-backend-loader-line-short"></div>
+            </div>
+            <div class="cg-skeleton-box cg-backend-loader-row-action"></div>
+        </div>
+        <div class="cg-backend-loader-row">
+            <div class="cg-skeleton-box cg-backend-loader-thumb"></div>
+            <div class="cg-backend-loader-lines">
+                <div class="cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-main cg-backend-loader-line-wide"></div>
+                <div class="cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-small"></div>
+            </div>
+            <div class="cg-skeleton-box cg-backend-loader-row-action"></div>
+        </div>
+        <div class="cg-backend-loader-row">
+            <div class="cg-skeleton-box cg-backend-loader-thumb"></div>
+            <div class="cg-backend-loader-lines">
+                <div class="cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-main"></div>
+                <div class="cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-small cg-backend-loader-line-short"></div>
+            </div>
+            <div class="cg-skeleton-box cg-backend-loader-row-action"></div>
+        </div>
+        <div class="cg-backend-loader-row cg-backend-loader-row-last">
+            <div class="cg-skeleton-box cg-backend-loader-thumb"></div>
+            <div class="cg-backend-loader-lines">
+                <div class="cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-main cg-backend-loader-line-medium"></div>
+                <div class="cg-skeleton-box cg-backend-loader-line cg-backend-loader-line-small"></div>
+            </div>
+            <div class="cg-skeleton-box cg-backend-loader-row-action"></div>
+        </div>
+    </div>
+</div>
+HEREDOC;
+    }
+}
+
 if (!function_exists('cg_backend_gallery_render_reload_entry_loader')) {
     function cg_backend_gallery_render_reload_entry_loader()
     {
         echo <<<HEREDOC
- <div id="cgReloadEntryLoader"
-     class="cgReloadEntryLoader cg_skeleton_loader_on_page_load_div cg_skeleton_loader_on_page_load_div_thumb_view cg_hide">
-    <div class="cg_skeleton_loader_on_page_load_container" 
-         style="width:162px;height:398px;margin-bottom:20px;margin-left:5px;">
-        <div class="cg_skeleton_loader_on_page_load" style="width:100%;height:100%;"></div>
+<div id="cgReloadEntryLoader" class="cgReloadEntryLoader cg_reload_entry_loader cg_hide" role="status" aria-live="polite" aria-label="Reloading entry">
+    <div class="cg_reload_entry_status_column">
+        <div class="cg_skeleton_loader_on_page_load cg_reload_entry_status_badge"></div>
+        <div class="cg_skeleton_loader_on_page_load cg_reload_entry_status_action"></div>
+        <div class="cg_skeleton_loader_on_page_load cg_reload_entry_status_action cg_reload_entry_status_action_short"></div>
+        <div class="cg_skeleton_loader_on_page_load cg_reload_entry_status_action"></div>
     </div>
-    <div class="cg_skeleton_loader_on_page_load_container"
-         style="margin-left:25px;margin-right:20px;display: flex; flex-flow: column; align-items: start;flex-grow:1;justify-content: start;">
-        <div class="cg_skeleton_loader_on_page_load" style="width:20%;height:30px;margin-bottom:16px;"></div>
-        <div class="cg_skeleton_loader_on_page_load" style="width:40%;height:30px;margin-bottom:16px;"></div>
-        <div class="cg_skeleton_loader_on_page_load" style="width:50%;height:30px;margin-bottom:16px;"></div>
-        <div class="cg_skeleton_loader_on_page_load" style="width:50%;height:30px;margin-bottom:16px;"></div>
-        <div class="cg_skeleton_loader_on_page_load" style="width:60%;height:30px;margin-bottom:16px;"></div>
-        <div class="cg_skeleton_loader_on_page_load" style="width:70%;height:30px;margin-bottom:16px;"></div>
-        <div class="cg_skeleton_loader_on_page_load" style="width:80%;height:30px;margin-bottom:16px;"></div>
-        <div class="cg_skeleton_loader_on_page_load" style="width:90%;height:30px;margin-bottom:16px;"></div>
-        <div class="cg_skeleton_loader_on_page_load" style="width:100%;height:30px;margin-bottom:16px;"></div>
+    <div class="cg_reload_entry_card">
+        <div class="cg_reload_entry_top_actions">
+            <div class="cg_skeleton_loader_on_page_load cg_reload_entry_action_button"></div>
+            <div class="cg_skeleton_loader_on_page_load cg_reload_entry_action_button cg_reload_entry_action_button_short"></div>
+        </div>
+        <div class="cg_reload_entry_main">
+            <div class="cg_reload_entry_meta_panel">
+                <div class="cg_skeleton_loader_on_page_load cg_reload_entry_meta_line cg_reload_entry_meta_line_main"></div>
+                <div class="cg_skeleton_loader_on_page_load cg_reload_entry_meta_line"></div>
+                <div class="cg_skeleton_loader_on_page_load cg_reload_entry_meta_textarea"></div>
+                <div class="cg_reload_entry_meta_split">
+                    <div class="cg_skeleton_loader_on_page_load cg_reload_entry_meta_pill"></div>
+                    <div class="cg_skeleton_loader_on_page_load cg_reload_entry_meta_pill cg_reload_entry_meta_pill_short"></div>
+                </div>
+                <div class="cg_skeleton_loader_on_page_load cg_reload_entry_meta_textarea cg_reload_entry_meta_textarea_short"></div>
+                <div class="cg_skeleton_loader_on_page_load cg_reload_entry_meta_line cg_reload_entry_meta_line_wide"></div>
+            </div>
+        </div>
+        <div class="cg_reload_entry_fields">
+            <div class="cg_skeleton_loader_on_page_load cg_reload_entry_field_line cg_reload_entry_field_line_wide"></div>
+            <div class="cg_skeleton_loader_on_page_load cg_reload_entry_field_line"></div>
+            <div class="cg_skeleton_loader_on_page_load cg_reload_entry_field_line cg_reload_entry_field_line_short"></div>
+        </div>
     </div>
 </div>
 HEREDOC;

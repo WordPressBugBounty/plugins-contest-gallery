@@ -10,12 +10,22 @@ if (!function_exists('contest_gal1ery_user_comment_mail_prepare'))   {
         $tablename_user_comment_mails = $wpdb->prefix . "contest_gal1ery_user_comment_mails";
         $wp_users = $wpdb->prefix . "users";
 
-        $InformUserCommentMailInterval = $options['pro']['InformUserCommentMailInterval'];
-        $rowObject = $wpdb->get_row("SELECT * FROM $tablename WHERE id = '$pictureID'  ORDER BY id DESC LIMIT 1");
-        $wpUserIdOfCommentedFile = $rowObject->WpUserId;
-        $WpPage = $rowObject->WpPage;
+        if (empty($options['pro']['InformUserComment'])) {
+            return;
+        }
 
-        $lastTstampFor = $wpdb->get_var("SELECT Tstamp FROM $tablename_user_comment_mails WHERE WpUserId = $wpUserIdOfCommentedFile  AND GalleryID = $galeryID ORDER BY id DESC LIMIT 1");
+        $InformUserCommentMailInterval = (!empty($options['pro']['InformUserCommentMailInterval'])) ? $options['pro']['InformUserCommentMailInterval'] : '24h';
+        $rowObject = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename WHERE id = %d  ORDER BY id DESC LIMIT 1", $pictureID));
+        if (empty($rowObject)) {
+            return;
+        }
+        $wpUserIdOfCommentedFile = intval($rowObject->WpUserId);
+
+        if (empty($wpUserIdOfCommentedFile)) {
+            return;
+        }
+
+        $lastTstampFor = $wpdb->get_var($wpdb->prepare("SELECT Tstamp FROM $tablename_user_comment_mails WHERE WpUserId = %d  AND GalleryID = %d ORDER BY id DESC LIMIT 1", $wpUserIdOfCommentedFile, $galeryID));
         $tstampToCompare=1*60*60;
         if($InformUserCommentMailInterval=='1m'){$tstampToCompare=1*60;}// for testing
         elseif($InformUserCommentMailInterval=='2m'){$tstampToCompare=1*120;}// for testing
@@ -32,8 +42,15 @@ if (!function_exists('contest_gal1ery_user_comment_mail_prepare'))   {
         if(empty($lastTstampFor) OR (time()-$tstampToCompare)>$lastTstampFor){
             if(empty($lastTstampFor)){$lastTstampFor = time()-$tstampToCompare;}
 
-            $selectSQLemailUserComment = $wpdb->get_row( "SELECT * FROM $tablename_mail_user_comment WHERE GalleryID = '$galeryID'" );
+            $selectSQLemailUserComment = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_mail_user_comment WHERE GalleryID = %d", $galeryID));
+            if (empty($selectSQLemailUserComment)) {
+                return;
+            }
             $InformUserContent = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserComment->Content);
+            $to = $wpdb->get_var($wpdb->prepare("SELECT user_email FROM $wp_users WHERE ID = %d", $wpUserIdOfCommentedFile));
+            if (empty($to)) {
+                return;
+            }
 
             // insert first to reduce chance of multiple processing
             $wpdb->query( $wpdb->prepare(
@@ -48,7 +65,7 @@ if (!function_exists('contest_gal1ery_user_comment_mail_prepare'))   {
 
             $posUserInfo = "\$info\$";
 
-            $filesFromUserOfCommentedFile = $wpdb->get_results( "SELECT id, NamePic FROM $tablename WHERE WpUserId = $wpUserIdOfCommentedFile AND Active = 1 AND GalleryID = $galeryID");
+            $filesFromUserOfCommentedFile = $wpdb->get_results($wpdb->prepare("SELECT id, NamePic, WpPage FROM $tablename WHERE WpUserId = %d AND Active = 1 AND GalleryID = %d", $wpUserIdOfCommentedFile, $galeryID));
             $filesAndCommentsCounterSinceTstampArray = [];
 
             if(count($filesFromUserOfCommentedFile)){
@@ -56,16 +73,19 @@ if (!function_exists('contest_gal1ery_user_comment_mail_prepare'))   {
                     $commentsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/image-comments/image-comments-'.$file->id.'.json';
                     if(is_file($commentsFile)){
                         $comments = json_decode(file_get_contents($commentsFile),true);
+                        if (empty($comments) || !is_array($comments)) {
+                            continue;
+                        }
                         $counter = 0;
                         foreach ($comments as $comment){
                             if(isset($comment['timestamp']) && $comment['timestamp'] > $lastTstampFor && isset($comment['Active']) && $comment['Active'] != 2){
                                 if(empty($filesAndCommentsCounterSinceTstampArray[$file->id])){$filesAndCommentsCounterSinceTstampArray[$file->id] = [];}
                                 $counter++;
-                                $filesAndCommentsCounterSinceTstampArray[$file->id] = ['counter' => $counter,'NamePic' => $file->NamePic,'id' => $file->id];
+                                $filesAndCommentsCounterSinceTstampArray[$file->id] = ['counter' => $counter,'NamePic' => $file->NamePic,'id' => $file->id,'WpPage' => $file->WpPage];
                             }elseif(!empty($comment['ReviewTstamp']) && $comment['ReviewTstamp'] > $lastTstampFor && isset($comment['Active']) && $comment['Active'] != 2){// if was reviewd later
                                 if(empty($filesAndCommentsCounterSinceTstampArray[$file->id])){$filesAndCommentsCounterSinceTstampArray[$file->id] = [];}
                                 $counter++;
-                                $filesAndCommentsCounterSinceTstampArray[$file->id] = ['counter' => $counter,'NamePic' => $file->NamePic,'id' => $file->id];
+                                $filesAndCommentsCounterSinceTstampArray[$file->id] = ['counter' => $counter,'NamePic' => $file->NamePic,'id' => $file->id,'WpPage' => $file->WpPage];
                             }
                         }
                     }
@@ -78,18 +98,22 @@ if (!function_exists('contest_gal1ery_user_comment_mail_prepare'))   {
                     });
 
                     $filesAndCommentsCounterSinceTstampArray = array_reverse($filesAndCommentsCounterSinceTstampArray);
-                    $to = $wpdb->get_var("SELECT user_email FROM $wp_users WHERE ID = $wpUserIdOfCommentedFile");
-
                     if(stripos($InformUserContent,$posUserInfo)!==false){
 
                         $UserEntries = '';
 
                         $counter = 0;
                         foreach ($filesAndCommentsCounterSinceTstampArray as $fileId => $fileCommentCounterArray){
-                            $UserEntries .= '(<b>+'.$fileCommentCounterArray['counter'].'</b>) '.$fileCommentCounterArray['NamePic'].'<br/>';
-                            if(!empty($WpPage)){
-                                $WpPagePermalink = get_permalink($WpPage);
-                                $UserEntries .= '<a href="' . $WpPagePermalink . '" target="_blank">' . $WpPagePermalink . '</a><br/><br/>';
+                            $fileCommentCounter = intval($fileCommentCounterArray['counter']);
+                            if ($fileCommentCounter <= 0) {
+                                continue;
+                            }
+
+                            $UserEntries .= '(<b>+'.$fileCommentCounter.'</b>) '.$fileCommentCounterArray['NamePic'].'<br/>';
+                            $entryWpPage = (!empty($fileCommentCounterArray['WpPage'])) ? intval($fileCommentCounterArray['WpPage']) : 0;
+                            $entryWpPagePermalink = (!empty($entryWpPage)) ? get_permalink($entryWpPage) : '';
+                            if(!empty($entryWpPagePermalink)){
+                                $UserEntries .= '<a href="' . $entryWpPagePermalink . '" target="_blank">' . $entryWpPagePermalink . '</a><br/><br/>';
                             }else{
                                 if(!empty($selectSQLemailUserComment->URL)){
                                     $UserEntries .= '<a href="'.$selectSQLemailUserComment->URL."#!gallery/$galeryID/file/".$fileCommentCounterArray['id']."/".$fileCommentCounterArray['NamePic'].'" target="_blank">'.$selectSQLemailUserComment->URL."#!gallery/$galeryID/file/".$fileCommentCounterArray['id']."/".$fileCommentCounterArray['NamePic'].'</a><br/><br/>';

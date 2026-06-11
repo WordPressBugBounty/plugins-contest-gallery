@@ -14,6 +14,7 @@ include('functions/general/option/cg-delete-blog-option.php');
 include('functions/general/cg-remove-folder-recursively.php');
 include('functions/general/cg-general-functions.php');
 include('functions/ecommerce/backend/gallery/cg-move-file-from-ecommerce-sell-folder.php');
+include_once('functions/backend/gallery/cg-entry-watermark.php');
 
 if(include('uninstall-check.php')){return;}
 
@@ -91,6 +92,16 @@ if(!function_exists('cgRestoreEcommerceDownloadFilesBeforeUninstall')){
     }
 }
 
+if(!function_exists('cgRestoreEntryWatermarksBeforeUninstall')){
+    function cgRestoreEntryWatermarksBeforeUninstall(){
+
+        if(function_exists('cg_entry_watermark_restore_all')){
+            cg_entry_watermark_restore_all();
+        }
+
+    }
+}
+
 if(!function_exists('cgRemoveBlogFiles')){
     // Achtung! Löschen eines Plugins wird bei Multisite immer der Hauptinstanz 'network/admin' ausgeführt.
     function cgRemoveBlogFiles(){
@@ -106,7 +117,10 @@ if(!function_exists('cgRemoveBlogFiles')){
 if(!function_exists('cgRemoveGlobalPluginFiles')){
     function cgRemoveGlobalPluginFiles(){
 
-		/**###SOME-PRO-CODE-HERE-IN-THE-MOMENT###**/
+        $dir = plugin_dir_path( __FILE__ );
+        if(is_dir($dir.'../contest-gallery-google-sign-in-library')){
+            cg_remove_folder_recursively($dir.'../contest-gallery-google-sign-in-library');
+        }
 
     }
 }
@@ -344,6 +358,7 @@ if (is_multisite()) {
 
             switch_to_blog($blogId);
 
+            cgRestoreEntryWatermarksBeforeUninstall();
             cgRestoreEcommerceDownloadFilesBeforeUninstall();
             cgDropTables();
             cgRemoveBlogFiles();
@@ -358,6 +373,7 @@ else{
     if(include('uninstall-check.php')){return;}
 
 	// move entry files to original folder
+    cgRestoreEntryWatermarksBeforeUninstall();
     cgRestoreEcommerceDownloadFilesBeforeUninstall();
     cgDropTables();
     cgRemoveBlogFiles();

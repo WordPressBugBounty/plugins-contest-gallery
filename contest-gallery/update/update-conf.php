@@ -215,6 +215,7 @@ return array(
         'ShowPinFormUploading' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 25.11.2025
         'AllowedUsersToVote' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 25.11.2025
         'FeVotingIconType' => array('COLUMN_TYPE' => 'VARCHAR(20)','DEFAULT' => '""'),// Update ab 21.12.2025
+        'UploadRealWatermarkSettings' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 06.06.2026
         'Field1IdFullWindowBlogView' => array('COLUMN_TYPE' => 'INT(20)','DEFAULT' => 0),// Update ab 05.04.2026
     ),
     $tablename_form_input => array(
@@ -226,6 +227,7 @@ return array(
         'Active' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 1),// Update ab 23.06.2019 <<< Feld aber schon länger vorhanden
         'Version' => array('COLUMN_TYPE' => 'VARCHAR(20)','DEFAULT' => '""'),// Update ab 27.04.2020
         'WatermarkPosition' => array('COLUMN_TYPE' => 'VARCHAR(99)','DEFAULT' => '""'),// Update ab 02.01.2022
+        'RealWatermarkSettings' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 06.06.2026
         'IsForWpPageTitle' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 01.01.2023
         'IsForWpPageDescription' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 01.01.2023
         'SubTitle' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 17.01.2023
