@@ -13,6 +13,10 @@ die;*/
 //echo 'This request contained ' . count( $_POST, COUNT_RECURSIVE ) . ' POST vars, ' . count( $_GET ) . ' GET vars, and ' . count( $_COOKIE ) . ' Cookies.';
 //die;
 
+if(!is_user_logged_in() || !current_user_can('publish_posts') || !cg_user_has_backend_access()){
+    cg_die_missing_backend_access();
+}
+
 check_admin_referer('cg_admin');
 
 $id = absint($_GET['option_id']);
@@ -1236,10 +1240,24 @@ $wp_upload_dir = wp_upload_dir();
         $CheckCookieAlertMessage = (isset($_POST['CheckCookieAlertMessage'])) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['CheckCookieAlertMessage']) : $CheckCookieAlertMessage;
 
         if($dbVersion>=14){// for new galleries after 14
-            $RegistryUserRole = '';
-            $RegistryUserRoleForRegistryAndLoginOptions = sanitize_text_field(htmlentities((isset($_POST['RegistryUserRole'])) ? $_POST['RegistryUserRole'] : ''));
+            $currentRegistryUserRole = $wpdb->get_var( "SELECT RegistryUserRole FROM $tablename_registry_and_login_options WHERE GeneralID = 1");
         }else{// for older galleries before 14
-            $RegistryUserRole = sanitize_text_field(htmlentities((isset($_POST['RegistryUserRole'])) ? $_POST['RegistryUserRole'] : ''));
+            $currentRegistryUserRole = $unsavingValues->RegistryUserRole;
+        }
+        $currentRegistryUserRole = cg_get_safe_registry_user_role($currentRegistryUserRole,$dbVersion);
+
+        if(current_user_can('manage_options')){
+            $postedRegistryUserRole = (isset($_POST['RegistryUserRole'])) ? $_POST['RegistryUserRole'] : $currentRegistryUserRole;
+            $safeRegistryUserRole = cg_get_safe_registry_user_role($postedRegistryUserRole,$dbVersion);
+        }else{
+            $safeRegistryUserRole = $currentRegistryUserRole;
+        }
+
+        if($dbVersion>=14){// for new galleries after 14
+            $RegistryUserRole = '';
+            $RegistryUserRoleForRegistryAndLoginOptions = $safeRegistryUserRole;
+        }else{// for older galleries before 14
+            $RegistryUserRole = $safeRegistryUserRole;
             $RegistryUserRoleForRegistryAndLoginOptions = '';
         }
 

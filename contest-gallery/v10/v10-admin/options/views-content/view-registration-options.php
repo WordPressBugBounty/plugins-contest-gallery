@@ -39,6 +39,15 @@ if(intval($galleryDbVersion)>=14){
                             </span>';
 }
 
+$RegistryUserRoleRaw = $RegistryUserRole;
+$RegistryUserRole = cg_get_safe_registry_user_role($RegistryUserRole,$galleryDbVersion);
+$cgRegistryUserRoleSelectDisabled = (!current_user_can('manage_options')) ? 'disabled' : '';
+$cgRegistryUserRoleSecurityNote = '<br><span class="cg_view_option_title_note"><b>This role setting can only be changed by administrators.</b></span><br><span class="cg_view_option_title_note">Only No role, Subscriber and Contest Gallery frontend roles are available for frontend registrations and Google sign in.</span>';
+
+if($RegistryUserRoleRaw !== '' && sanitize_key($RegistryUserRoleRaw) !== $RegistryUserRole){
+    $cgRegistryUserRoleSecurityNote .= '<br><span class="cg_view_option_title_note cg_color_red"><b>The previously saved role is not allowed anymore and will be replaced by a safe role on the next administrator save.</b></span>';
+}
+
 echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class="cg_view_option cg_view_option_100_percent cg_border_bottom_none" >
@@ -69,12 +78,14 @@ echo <<<HEREDOC
                         <br>
                         or Contest Gallery Google sign in button
                         $cgV14UserGroupRoleNote
+                        $cgRegistryUserRoleSecurityNote
                     </p>
                 </div>
                 <div class="cg_view_option_select">
-                    <select name='RegistryUserRole'>
+                    <select name='RegistryUserRole' $cgRegistryUserRoleSelectDisabled>
 HEREDOC;
-echo "<option value=''>No role</option>";
+$cgNoRegistryUserRoleSelected = ($RegistryUserRole === '') ? 'selected' : '';
+echo "<option value='' $cgNoRegistryUserRoleSelected>No role</option>";
 
 $roles = get_editable_roles();
 
@@ -87,19 +98,6 @@ if(intval($galleryDbVersion)>=14 && empty($roles['contest_gallery_user_since_v14
     if(empty($roles['contest_gallery_user_since_v14'])){
         $roles = array('contest_gallery_user_since_v14' => array('name' => 'Contest Gallery User since v14')) + $roles;
     }
-}
-
-
-
-// show as last!!!!
-if(intval($galleryDbVersion)>=14){
-    $wordPressRolesAndContestGalleryRoleKeys = ["contest_gallery_user_since_v14","subscriber", "contributor", "editor", "author", "administrator"];
-    //$cgRegistryUserRoleSelected = ($RegistryUserRole=='contest_gallery_user_since_v14') ? 'selected' : '';
-    //echo "<option value='contest_gallery_user_since_v14' $cgRegistryUserRoleSelected>Contest Gallery User since v14</option>";
-}else{
-    $wordPressRolesAndContestGalleryRoleKeys = ["contest_gallery_user","subscriber", "contributor", "editor", "author", "administrator"];
-    //$cgRegistryUserRoleSelected = ($RegistryUserRole=='contest_gallery_user') ? 'selected' : '';
-    //echo "<option value='contest_gallery_user' $cgRegistryUserRoleSelected>Contest Gallery User</option>";
 }
 
 foreach($roles as $keyOfRole => $roleValues){
@@ -115,33 +113,12 @@ foreach($roles as $keyOfRole => $roleValues){
    // if(in_array($keyOfRole,$wordPressRolesAndContestGalleryRoleKeys)){
        // continue;
    // }
+    if(!cg_is_safe_registry_user_role($keyOfRole,$galleryDbVersion,false)){
+        continue;
+    }
     $otherRegistryUserRoleSelected = ($RegistryUserRole==$keyOfRole) ? 'selected' : '';
-    echo "<option value='$keyOfRole' $otherRegistryUserRoleSelected>".$roleValues['name']."</option>";
-    // subscriber, contributor, editor, author, administrator
+    echo "<option value='".esc_attr($keyOfRole)."' $otherRegistryUserRoleSelected>".esc_html($roleValues['name'])."</option>";
 }
-
-/*
-$subscriberRegistryUserRoleSelected = ($RegistryUserRole=='subscriber') ? 'selected' : '';
-echo "<option value='subscriber' $subscriberRegistryUserRoleSelected>Subscriber</option>";
-$contributorRegistryUserRoleSelected = ($RegistryUserRole=='contributor') ? 'selected' : '';
-echo "<option value='contributor' $contributorRegistryUserRoleSelected>Contributor</option>";
-$editorRegistryUserRoleSelected = ($RegistryUserRole=='editor') ? 'selected' : '';
-echo "<option value='editor' $editorRegistryUserRoleSelected>Editor</option>";
-$authorRegistryUserRoleSelected = ($RegistryUserRole=='author') ? 'selected' : '';
-echo "<option value='author' $authorRegistryUserRoleSelected>Author</option>";
-$administratorRegistryUserRoleSelected = ($RegistryUserRole=='administrator') ? 'selected' : '';
-echo "<option value='administrator' $administratorRegistryUserRoleSelected>Administrator</option>";
-
-if(empty($cgRegistryUserRoleSelected) and
-    empty($otherRegistryUserRoleSelected) and
-    empty($subscriberRegistryUserRoleSelected) and
-    empty($contributorRegistryUserRoleSelected) and
-    empty($editorRegistryUserRoleSelected) and
-    empty($authorRegistryUserRoleSelected) and
-    empty($administratorRegistryUserRoleSelected)
-){
-    echo "<option value='' selected>No role</option>";
-}*/
 
 echo <<<HEREDOC
                     </select>

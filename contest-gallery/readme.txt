@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, openai
 Requires at least: 5.6
-Stable tag: 30.0.2
+Stable tag: 30.0.3
 Tested up to: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -16,8 +16,13 @@ Photo contest and other file types voting plugin supporting: **JPG, PNG, GIF, PD
 
 Create galleries (material, modern, responsive) and allow users to vote and comment on files, photos, or embed social posts from **YouTube, TikTok, X (Twitter)** and more.
 
+== Real Watermark Protection ==
+
+Protect your image entries with real watermarks that are written into the public image files. Contest Gallery keeps the original files safely protected from direct public access, so you can present, share and sell your images with more confidence.
+
 == Key Features ==
 * **Flexible Uploads:** Create custom upload forms and add additional files to every entry.
+* **Real Watermark Protection:** Show watermarked public images while keeping the original files safely protected.
 * **User Management:** Includes user registration, login forms, and a **"Google Sign-In button"** for easy access.
 * **Monetization:** Sell entries or digital content directly via **PayPal or Stripe API**.
 * **Social Reach:** Built-in Social Media Share Buttons to boost your contest's visibility.
@@ -269,6 +274,10 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= 30.0.3 =
+* FIXED: Security issue related to user role handling.
+* IMPROVED: Security hardening for frontend registration and Google Sign-In.
 
 = 30.0.2 =
 * NEW: Google Sign-In is now available in the free version.

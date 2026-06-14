@@ -661,6 +661,93 @@ if(!function_exists('cg_require_backend_access')){
 	}
 }
 
+if(!function_exists('cg_get_default_registry_user_role')){
+	function cg_get_default_registry_user_role($galleryDbVersion = 14){
+		return (intval($galleryDbVersion) >= 14) ? 'contest_gallery_user_since_v14' : 'contest_gallery_user';
+	}
+}
+
+if(!function_exists('cg_get_allowed_registry_user_roles')){
+	function cg_get_allowed_registry_user_roles($galleryDbVersion = 14,$allowEmpty = true){
+		$roles = array(
+			'subscriber' => true
+		);
+
+		if($allowEmpty){
+			$roles[''] = true;
+		}
+
+		if(intval($galleryDbVersion) >= 14){
+			$roles['contest_gallery_user_since_v14'] = true;
+		}else{
+			$roles['contest_gallery_user'] = true;
+		}
+
+		return $roles;
+	}
+}
+
+if(!function_exists('cg_registry_user_role_object_exists')){
+	function cg_registry_user_role_object_exists($role){
+		if($role === 'contest_gallery_user_since_v14' && !get_role($role) && function_exists('cg_create_contest_gallery_user_role')){
+			cg_create_contest_gallery_user_role();
+		}
+
+		return get_role($role);
+	}
+}
+
+if(!function_exists('cg_is_safe_registry_user_role')){
+	function cg_is_safe_registry_user_role($role,$galleryDbVersion = 14,$allowEmpty = true){
+		$role = sanitize_key($role);
+		$allowedRoles = cg_get_allowed_registry_user_roles($galleryDbVersion,$allowEmpty);
+
+		if(!isset($allowedRoles[$role])){
+			return false;
+		}
+
+		if($role === ''){
+			return true;
+		}
+
+		if($role === 'subscriber'){
+			return true;
+		}
+
+		$roleObject = cg_registry_user_role_object_exists($role);
+		return (!empty($roleObject));
+	}
+}
+
+if(!function_exists('cg_get_safe_registry_user_role')){
+	function cg_get_safe_registry_user_role($role,$galleryDbVersion = 14,$allowEmpty = true){
+		$role = sanitize_key($role);
+
+		if(cg_is_safe_registry_user_role($role,$galleryDbVersion,$allowEmpty)){
+			return $role;
+		}
+
+		$fallbackRole = cg_get_default_registry_user_role($galleryDbVersion);
+		if(cg_is_safe_registry_user_role($fallbackRole,$galleryDbVersion,false)){
+			return $fallbackRole;
+		}
+
+		if(cg_is_safe_registry_user_role('subscriber',$galleryDbVersion,false)){
+			return 'subscriber';
+		}
+
+		return '';
+	}
+}
+
+if(!function_exists('cg_wp_update_user_with_safe_registry_role')){
+	function cg_wp_update_user_with_safe_registry_role($userData,$registryUserRole,$galleryDbVersion = 14){
+		$registryUserRole = cg_get_safe_registry_user_role($registryUserRole,$galleryDbVersion);
+		$userData['role'] = $registryUserRole;
+		return wp_update_user($userData);
+	}
+}
+
 if(!function_exists('cg_ecommerce_order_has_owner')){
 	function cg_ecommerce_order_has_owner($Order){
 		return (!empty($Order) && !empty($Order->WpUserId) && absint($Order->WpUserId) > 0);

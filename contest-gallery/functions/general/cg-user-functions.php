@@ -77,7 +77,7 @@ if(!function_exists('cg1l_wp_insert_user')){
             'user_email'         => $user_email,
             'user_registered'    => $user_registered,
             //'user_activation_key'=> $activation_key_for_wp_users_table, will be set later with an update because will be removed
-            // through wp_update_user( array( 'ID' => $newWpId, 'role' => $RegistryUserRole ) ); which will be set later
+            // through safe registry role handling which will be set later
             // and requires to be set so wp_set_auth_cookie is working
             'user_status'        => 0,
             'display_name'       => $display_name,

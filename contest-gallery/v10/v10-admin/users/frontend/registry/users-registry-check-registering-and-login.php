@@ -28,6 +28,7 @@ if (!defined('ABSPATH')) {
     }else{
         $RegistryUserRole = $wpdb->get_var($wpdb->prepare("SELECT RegistryUserRole FROM $tablename_options WHERE id=%d",[$GalleryID]));
     }
+    $RegistryUserRole = cg_get_safe_registry_user_role($RegistryUserRole,$galleryDbVersion);
 
     include(__DIR__ . "/../../../../../check-language.php");
 
@@ -293,11 +294,10 @@ if (!defined('ABSPATH')) {
         if (!is_wp_error($newWpId) && !empty($newWpId) && is_numeric($newWpId) && (int)$newWpId > 0) {// important to check, otherwise unpredicted handling
 
             // set role and nickname here, then update with already hashed password
-            wp_update_user([
+            cg_wp_update_user_with_safe_registry_role(array(
                 'ID' => $newWpId,
-                'role' => $RegistryUserRole,
                 'nickname' => $display_name
-            ]);
+            ),$RegistryUserRole,$galleryDbVersion);
 
             // has to be done here, because unhashed dummy password has to be set before, do not wp_update_user user after that
             // wp_set_password expects plain password, but already not available here anymore

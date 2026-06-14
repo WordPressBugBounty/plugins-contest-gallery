@@ -104,6 +104,9 @@ if(!function_exists('cg_update_registry_and_login_options_v14')){
         $tablename_options_visual = $wpdb->prefix . "contest_gal1ery_options_visual";
         $tablename_options_pro_options  = $wpdb->prefix . "contest_gal1ery_pro_options";
         $tablename_registry_and_login_options = $wpdb->prefix . "contest_gal1ery_registry_and_login_options";
+        $registryUserRoleGalleryDbVersion = (!empty($GalleryID)) ? 10 : 14;
+        $registryUserRole = (isset($options['registry-login']['RegistryUserRole'])) ? $options['registry-login']['RegistryUserRole'] : '';
+        $options['registry-login']['RegistryUserRole'] = cg_get_safe_registry_user_role($registryUserRole,$registryUserRoleGalleryDbVersion);
 
         $wpdb->update(
             "$tablename_registry_and_login_options",

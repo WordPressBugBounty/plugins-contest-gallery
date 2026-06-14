@@ -331,11 +331,11 @@ if (count($userAccountEntries)) {
            // var_dump($user_pass);
 
             // set role and nickname here, then update with already hashed password
-            wp_update_user([
+            $RegistryUserRole = cg_get_safe_registry_user_role($RegistryUserRole,$galleryDbVersion);
+            cg_wp_update_user_with_safe_registry_role(array(
                 'ID' => $newWpId,
-                'role' => $RegistryUserRole,
                 'nickname' => $display_name
-            ]);
+            ),$RegistryUserRole,$galleryDbVersion);
 
             // has to be done here, because unhashed dummy password has to be set before, do not wp_update_user user after that
             // wp_set_password expects plain password, but already not available here anymore

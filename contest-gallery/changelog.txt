@@ -1,5 +1,9 @@
 Contest Gallery
 
+= 30.0.3 =
+* FIXED: Security issue related to user role handling.
+* IMPROVED: Security hardening for frontend registration and Google Sign-In.
+
 = 30.0.2 =
 * NEW: Google Sign-In is now available in the free version.
 * NEW: Added real watermarking for gallery images, including protected original storage, restore/unwatermark handling, frontend cache refresh and support for multiple files per entry.

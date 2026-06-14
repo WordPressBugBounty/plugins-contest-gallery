@@ -101,6 +101,7 @@ if(!function_exists('cg_create_wp_user_from_google_user')){
             cg_create_registry_and_login_options();
         }
         $RegistryUserRole = $wpdb->get_var( "SELECT RegistryUserRole FROM $tablename_registry_and_login_options WHERE GeneralID = 1");
+        $RegistryUserRole = cg_get_safe_registry_user_role($RegistryUserRole,14);
 
         $cg_main_user_name = '';
 
@@ -166,7 +167,7 @@ if(!function_exists('cg_create_wp_user_from_google_user')){
                 ]
             );
 
-            wp_update_user( array( 'ID' => $WpUserId, 'role' => $RegistryUserRole ) );
+            cg_wp_update_user_with_safe_registry_role(array('ID' => $WpUserId),$RegistryUserRole,14);
 
             $wpdb->update(
                 $wpdb->users,
