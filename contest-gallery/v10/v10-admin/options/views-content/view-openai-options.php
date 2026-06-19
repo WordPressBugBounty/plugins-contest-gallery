@@ -14,7 +14,7 @@ HEREDOC;
 echo <<<HEREDOC
 <div class='cg_view_options_rows_container'>
 <p class="cg_view_options_rows_container_title">
-    <strong>NOTE:</strong> OpenAI options are valid for all galleries.<br>
+    <strong class="cg_note_label">NOTE:</strong> <span class="cg_note_text">OpenAI options are valid for all galleries.</span><br>
 </p>
 </div>
 HEREDOC;
@@ -27,7 +27,7 @@ echo <<<HEREDOC
                             <div class='cg_view_option_title'>
                                 <p>OpenAI API key
                                 <br>
-                                <span class="cg_view_option_title_note"><b>NOTE:</b> get your API key from OpenAI within minutes:<br><a href="https://platform.openai.com/api-keys" target="_blank" >...openai.com/api-keys</a></span>
+                                <span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">get your API key from OpenAI within minutes:<br><a href="https://platform.openai.com/api-keys" target="_blank" >...openai.com/api-keys</a></span></span>
                                 </p>
                             </div>
                             <div class='cg_view_option_input'>
@@ -50,5 +50,3 @@ HEREDOC;
 echo <<<HEREDOC
 </div>
 HEREDOC;
-
-

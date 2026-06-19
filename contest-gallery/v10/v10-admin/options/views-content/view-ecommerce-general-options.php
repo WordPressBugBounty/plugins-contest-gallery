@@ -7,7 +7,7 @@ $cg_get_version = cg_get_version();
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
 <p class="cg_view_options_rows_container_title ">
-        <strong>* NOTE:</strong> Ecommerce options are general and valid for all galleries.<br>
+        <strong class="cg_note_label">* NOTE:</strong> <span class="cg_note_text">Ecommerce options are general and valid for all galleries.</span><br>
 </p>
 HEREDOC;
 
@@ -143,7 +143,7 @@ echo <<<HEREDOC
             <div class='cg_view_option_title'>
                 <p>Checkout note top
                     <br><span class="cg_view_option_title_note">
-                    <span style="font-weight:bold;">NOTE: </span> appears above the agreements</span>
+                    <span class="cg_note_label">NOTE:</span> <span class="cg_note_text">appears above the agreements</span>
                     </span>
                 </p>
             </div>
@@ -157,7 +157,7 @@ echo <<<HEREDOC
             <div class='cg_view_option_title'>
                 <p>First checkout agreement
                     <br><span class="cg_view_option_title_note">
-                    <span style="font-weight:bold;">NOTE: </span> if empty then no checkbox for agreement will be shown</span>
+                    <span class="cg_note_label">NOTE:</span> <span class="cg_note_text">if empty then no checkbox for agreement will be shown</span>
                     </span>
                 </p>
             </div>
@@ -171,7 +171,7 @@ echo <<<HEREDOC
             <div class='cg_view_option_title'>
                 <p>Second checkout agreement
                     <br><span class="cg_view_option_title_note">
-                    <span style="font-weight:bold;">NOTE: </span> if empty then no checkbox for agreement will be shown</span>
+                    <span class="cg_note_label">NOTE:</span> <span class="cg_note_text">if empty then no checkbox for agreement will be shown</span>
                     </span>
                 </p>
             </div>
@@ -185,7 +185,7 @@ echo <<<HEREDOC
             <div class='cg_view_option_title'>
                 <p>Third checkout agreement
                     <br><span class="cg_view_option_title_note">
-                    <span style="font-weight:bold;">NOTE: </span> if empty then no checkbox for agreement will be shown</span>
+                    <span class="cg_note_label">NOTE:</span> <span class="cg_note_text">if empty then no checkbox for agreement will be shown</span>
                     </span>
                 </p>
             </div>
@@ -199,7 +199,7 @@ echo <<<HEREDOC
             <div class='cg_view_option_title'>
                 <p>Checkout note bottom
                     <br><span class="cg_view_option_title_note">
-                    <span style="font-weight:bold;">NOTE: </span> appears under the agreements</span>
+                    <span class="cg_note_label">NOTE:</span> <span class="cg_note_text">appears under the agreements</span>
                     </span>
                 </p>
             </div>
@@ -220,7 +220,7 @@ echo <<<HEREDOC
         Allowed shipping countries
 <span class="cg_view_options_rows_container_title_note cg_hide_override">
 <br>
-	<span class="cg_font_weight_bold">Note:</span> generates a string of allowed countries which is visible in checkout if a shipping product is selected<br>
+	<span class="cg_note_label">NOTE:</span> <span class="cg_note_text">generates a string of allowed countries which is visible in checkout if a shipping product is selected</span><br>
 	<span class="cg_font_weight_bold">Example:</span> Shipping only possible for the following countries: USA, Canada<br>
 	<u>Shipping only possible for the following countries</u> can be translated  <a 
                       href="?page=$cg_get_version/index.php&edit_options=true&cg_edit_translations=true&option_id=$GalleryID&cg_go_to=cgTranslationShippingPossible" target="_blank">here...</a>
@@ -298,7 +298,7 @@ echo <<<HEREDOC
     </div>
     <div class='cg_view_option_title cg_view_option_title_full_width'>
     <p>Create translations of the countries for the selected installed language<br><span class="cg_view_option_title_note">
-    <span class="cg_font_weight_bold">NOTE:</span> otherwise the country names will be displayed in English language
+    <span class="cg_note_label">NOTE:</span> <span class="cg_note_text">otherwise the country names will be displayed in English language</span>
 </span></p>
     </div>
     <div class='cg_view_option_select' >
@@ -334,7 +334,7 @@ echo <<<HEREDOC
 <div class='cg_view_options_row'>
     <div class='cg_view_option  cg_view_option_full_width   cg_border_border_top_right_radius_8_px cg_border_border_top_left_radius_8_px' id="ForwardAfterPurchaseUrlContainer" >
         <div class='cg_view_option_title'>
-            <p>Forward to order summary URL after purchase<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE: </span> has to start with <span class="cg_font_weight_500">http://</span> or <span class="cg_font_weight_500">https://</span>, like https://www.example.com<br><span class="cg_font_weight_bold">Place this shortcode on the order summary page:</span><br>
+            <p>Forward to order summary URL after purchase<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE: </span> <span class="cg_note_text">has to start with <span class="cg_font_weight_500">http://</span> or <span class="cg_font_weight_500">https://</span>, like https://www.example.com</span><br><span class="cg_font_weight_bold">Place this shortcode on the order summary page:</span><br>
                  <span class='cg_shortcode_parent'><span class='cg_shortcode_copy_text cg_font_weight_bold' style="position:relative;">[cg_order_summary]<span class='cg_shortcode_copy cg_shortcode_copy_mail_confirm cg_tooltip'></span></span><br>Order overview, with downloads if purchased, and invoice download will appear</span>
             </span></p>
         </div>
@@ -351,7 +351,7 @@ echo <<<HEREDOC
             <div class='cg_view_option_title'>
                 <p>
                     <span class="cg_view_option_title_note">
-                        <span style="font-weight:bold;">NOTE: </span> place this shortcode on the order summary page<br>
+                        <span class="cg_note_label">NOTE:</span> <span class="cg_note_text">place this shortcode on the order summary page</span><br>
                         <span class='cg_shortcode_parent'><span class='cg_shortcode_copy_text' style="position:relative;">[cg_order_summary]<span class='cg_shortcode_copy cg_shortcode_copy_mail_confirm cg_tooltip'></span></span>
                         </span>
                         </span>
@@ -505,9 +505,9 @@ echo <<<HEREDOC
             <div class='cg_view_option_title'>
                 <p>Order summary page URL
                     <br><span class="cg_view_option_title_note">
-<span style="font-weight:bold;">NOTE: </span> has to start with <span class="cg_font_weight_500">http://</span> or <span class="cg_font_weight_500">https://</span>, like https://www.example.com<br>
-                    <span style="font-weight:bold;">NOTE: </span>  the page where cg_order_summary shortcode is placed<br>
-                <span style="font-weight:bold;">NOTE: </span>  place this shortcode on the order summary page<br>
+<span class="cg_note_label">NOTE:</span> <span class="cg_note_text">has to start with <span class="cg_font_weight_500">http://</span> or <span class="cg_font_weight_500">https://</span>, like https://www.example.com</span><br>
+                    <span class="cg_note_label">NOTE:</span> <span class="cg_note_text">the page where cg_order_summary shortcode is placed</span><br>
+                <span class="cg_note_label">NOTE:</span> <span class="cg_note_text">place this shortcode on the order summary page</span><br>
                 <span class='cg_shortcode_parent'><span class='cg_shortcode_copy cg_shortcode_copy_mail_confirm cg_tooltip'></span><span class='cg_shortcode_copy_text'>[cg_order_summary]</span></span>
                 </span>
                 </p>

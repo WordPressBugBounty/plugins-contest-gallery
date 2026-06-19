@@ -27,3 +27,12 @@ if(!function_exists('cg_hash_function')){
 
     }
 }
+
+if(!function_exists('cg_hash_equals')){
+    function cg_hash_equals($knownString,$userString){
+        if(function_exists('hash_equals')){
+            return hash_equals($knownString,$userString);
+        }
+        return $knownString === $userString;
+    }
+}

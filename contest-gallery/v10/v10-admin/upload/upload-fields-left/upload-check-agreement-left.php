@@ -123,13 +123,13 @@ echo <<<HEREDOC
     <div  class='cg_view_option cg_pointer_events_none cg_view_option_50_percent cg_border_right_none'>
         <div class='cg_view_option_title cg_view_option_title_full_width '>
             <p>Required<br>
-                  <span class="cg_view_option_title_note"><b>NOTE:</b> Check agreement is always required</span>
+                  <span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">Check agreement is always required</span></span>
             </p>
         </div>
     </div>
      <div class='cg_view_option cg_view_option_hide_upload_field cg_view_option_50_percent '>
         <div class='cg_view_option_title cg_view_option_title_full_width'>
-            <p>Hide<br><span class="cg_view_option_title_note"><b>NOTE:</b> will not be visible in upload form</span></p>
+            <p>Hide<br><span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">will not be visible in upload form</span></span></p>
         </div>
         <div class="cg_view_option_checkbox" >
               <input type="checkbox" name="upload[$id][hide]" $hideChecked>

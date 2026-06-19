@@ -55,6 +55,34 @@ if (!function_exists('contest_gal1ery_mail_admin'))   {
 
 add_action('contest_gal1ery_mail_admin', 'contest_gal1ery_mail_admin',2,3);
 
+if(!function_exists('cg_mail_admin_get_entry_on_off_links')){
+    function cg_mail_admin_get_entry_on_off_links($InformAdminActivationURL,$galeryID,$imageID){
+        $InformAdminActivationURL = trim(html_entity_decode(strip_tags($InformAdminActivationURL),ENT_QUOTES,'UTF-8'));
+
+        if($InformAdminActivationURL === ''){
+            return '<br><strong>Activate/deactivate entry:</strong><br>Option "Page URL for activation/deactivation of an entry" is not configured.';
+        }
+
+        if(!cg_entry_on_off_url_has_shortcode($InformAdminActivationURL,$galeryID)){
+            return '<br><strong>Activate/deactivate entry:</strong><br>The configured page URL does not contain the required shortcode [cg_entry_on_off id="'.absint($galeryID).'"].<br>Configured page URL:<br>'.esc_html($InformAdminActivationURL);
+        }
+
+        $linkOn = cg_entry_on_off_build_action_url($InformAdminActivationURL,$galeryID,$imageID,'activate');
+        $linkOff = cg_entry_on_off_build_action_url($InformAdminActivationURL,$galeryID,$imageID,'deactivate');
+
+        if(empty($linkOn) || empty($linkOff)){
+            return '<br><strong>Activate/deactivate entry:</strong><br>Option "Page URL for activation/deactivation of an entry" is not configured.';
+        }
+
+        $links = '<br><strong>Activate entry:</strong><br>';
+        $links .= '<a href="'.esc_url($linkOn).'" >'.esc_html($linkOn).'</a>';
+        $links .= '<br><br><strong>Deactivate entry:</strong><br>';
+        $links .= '<a href="'.esc_url($linkOff).'" >'.esc_html($linkOff).'</a>';
+
+        return $links;
+    }
+}
+
 $tablename_mail_admin = $wpdb->prefix . "contest_gal1ery_mail_admin";
 $selectSQLemailAdmin = $wpdb->get_row( "SELECT * FROM $tablename_mail_admin WHERE GalleryID = '$galeryID'" );
 
@@ -313,17 +341,7 @@ foreach($collectImageIDs as $key => $imageID){
         }
 
         if($proOptions->InformAdminAllowActivateDeactivate){
-            if(empty(trim($proOptions->InformAdminActivationURL))){
-                $Msg.= '<br>No "Page URL for activation/deactivation of an entry" configured';
-            }else{
-                $hash = cg_hash_function('---cngl1---'.$imageID);
-                $Msg.= '<br><strong>Activate entry:</strong><br>';
-                $linkOn = trim($proOptions->InformAdminActivationURL).'?cg_on_id='.$imageID.'&cg_hash='.$hash;
-                $Msg.= "<a href='$linkOn' >$linkOn</a>";
-                $Msg.= '<br><br><strong>Deactivate entry:</strong><br>';
-                $linkOff = trim($proOptions->InformAdminActivationURL).'?cg_off_id='.$imageID.'&cg_hash='.$hash;
-                $Msg.= "<a href='$linkOff' >$linkOff</a>";
-            }
+            $Msg .= cg_mail_admin_get_entry_on_off_links($proOptions->InformAdminActivationURL,$galeryID,$imageID);
         }
 
         do_action( 'contest_gal1ery_mail_admin', $selectSQLemailAdmin,$Msg,$galeryID);
@@ -332,17 +350,7 @@ foreach($collectImageIDs as $key => $imageID){
         $Msg = $contentMail;
 
         if($proOptions->InformAdminAllowActivateDeactivate){
-            if(empty(trim($proOptions->InformAdminActivationURL))){
-                $Msg.= '<br>No "Page URL for activation/deactivation of an entry" configured';
-            }else{
-                $hash = cg_hash_function('---cngl1---'.$imageID);
-                $Msg.= '<br><strong>Activate entry:</strong><br>';
-                $linkOn = trim($proOptions->InformAdminActivationURL).'?cg_on_id='.$imageID.'&cg_hash='.$hash;
-                $Msg.= "<a href='$linkOn' >$linkOn</a>";
-                $Msg.= '<br><br><strong>Deactivate entry:</strong><br>';
-                $linkOff = trim($proOptions->InformAdminActivationURL).'?cg_off_id='.$imageID.'&cg_hash='.$hash;
-                $Msg.= "<a href='$linkOff' >$linkOff</a>";
-            }
+            $Msg .= cg_mail_admin_get_entry_on_off_links($proOptions->InformAdminActivationURL,$galeryID,$imageID);
         }
 
         do_action( 'contest_gal1ery_mail_admin', $selectSQLemailAdmin,$Msg,$galeryID);

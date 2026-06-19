@@ -143,7 +143,7 @@ echo <<<HEREDOC
                 <p>Google reCAPTCHA<br>I am not a robot</p>
             </div>
             <div class="cg_view_option_title" style="justify-content: center;padding-bottom: 0;">
-                  <span class="cg_view_option_title_note"><b>NOTE:</b> (can be rendered only 1 time on a page)</span>
+                  <span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">(can be rendered only 1 time on a page)</span></span>
             </div>
         </div>
 </div>
@@ -183,13 +183,13 @@ echo <<<HEREDOC
     <div  class='cg_view_option cg_pointer_events_none cg_view_option_50_percent cg_border_right_none'>
         <div class='cg_view_option_title cg_view_option_title_full_width '>
             <p>Required<br>
-                  <span class="cg_view_option_title_note"><b>NOTE:</b> Google reCAPTCHA is always required</span>
+                  <span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">Google reCAPTCHA is always required</span></span>
             </p>
         </div>
     </div>
      <div class='cg_view_option cg_view_option_hide_upload_field cg_view_option_50_percent '>
         <div class='cg_view_option_title cg_view_option_title_full_width'>
-            <p>Hide<br><span class="cg_view_option_title_note"><b>NOTE:</b> will not be visible in upload form</span></p>
+            <p>Hide<br><span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">will not be visible in upload form</span></span></p>
         </div>
         <div class="cg_view_option_checkbox" >
               <input type="checkbox" name="upload[$id][hide]" $hideChecked>

@@ -1,5 +1,8 @@
 Contest Gallery
 
+= 30.0.4 =
+* FIXED: Social share icon selections in Entry view options were not always saved and displayed correctly for all gallery shortcode types.
+
 = 30.0.3 =
 * FIXED: Security issue related to user role handling.
 * IMPROVED: Security hardening for frontend registration and Google Sign-In.

@@ -192,7 +192,7 @@ if($isEditOptionsOnly){
 
 <div class="cg_short_code_multiple_pics_configuration_note" >
 <div class="cg_arrow_up"></div>
-<b>NOTE:</b> "Gallery view options" can be configured for every gallery shortcode</div>
+<b>NOTE:</b> <span class="cg_note_text">"Gallery view options" can be configured for every gallery shortcode</span></div>
 HEREDOC;
 
     include(__DIR__.'/shortcodes-configuration/shortcodes-configuration-multiple-pics/shortcode-multiple-pics-cg-gallery.php');
@@ -220,7 +220,7 @@ HEREDOC;
                     
 <div class="cg_short_code_single_pic_configuration_note">
 <div class="cg_arrow_up"></div>
-<b>NOTE:</b> "Entry view options" can be configured for every gallery shortcode</div>               
+<b>NOTE:</b> <span class="cg_note_text">"Entry view options" can be configured for every gallery shortcode</span></div>
 
 HEREDOC;
 
@@ -455,7 +455,7 @@ HEREDOC;
 </div>
 <div class="cg_short_code_galleries_configuration_note" >
 <div class="cg_arrow_up"></div>
-<b>NOTE:</b> "Gallery view options" can be configured for every gallery shortcode</div>
+<b>NOTE:</b> <span class="cg_note_text">"Gallery view options" can be configured for every gallery shortcode</span></div>
 HEREDOC;
 
 	    include(__DIR__.'/shortcodes-configuration/shortcodes-galleries/shortcode-cg-galleries.php');

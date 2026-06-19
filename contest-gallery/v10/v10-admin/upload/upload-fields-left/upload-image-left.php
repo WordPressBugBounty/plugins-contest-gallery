@@ -274,7 +274,7 @@ foreach($fieldContent as $key => $valueFieldContent){
         <div class="cg_view_options_row_marker cg_hide"><div class="cg_view_options_row_marker_title">Title</div><div class="cg_view_options_row_marker_content"></div></div>
             <div class="cg_view_option cg_border_top_none cg_view_option_not_disable cg_border_bottom_none cg_border_left_none  cg_view_option_100_percent">
                 <div class="cg_view_option_title cg_view_option_title_header">
-                    <p>File upload field<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE:</span> file upload field always at the top of the form<br><span class="cg_font_weight_500">NOTE:</span> hide this field if you like to use the form as simple upload form</span></p>
+                    <p>File upload field<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE:</span> <span class="cg_note_text">file upload field always at the top of the form</span><br><span class="cg_font_weight_500">NOTE:</span> <span class="cg_note_text">hide this field if you like to use the form as simple upload form</span></span></p>
                 </div>
             </div>
 </div>
@@ -331,7 +331,7 @@ HEREDOC;
 <div class='cg_view_options_row'>
     <div  class='cg_view_option cg_view_option_image_required cg_view_option_100_percent  cg_border_bottom_none '>
         <div class='cg_view_option_title cg_view_option_title_full_width '>
-            <p>Required<br><span class="cg_view_option_title_note"><b>NOTE:</b> if not required then form appears always uncollapsed</span></p>
+            <p>Required<br><span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">if not required then form appears always uncollapsed</span></span></p>
         </div>
         <div class="cg_view_option_checkbox">
               <input type="checkbox" name="upload[$id][required]" $requiredChecked>
@@ -341,7 +341,7 @@ HEREDOC;
 <div class='cg_view_options_row'>
     <div  class='cg_view_option cg_view_option_100_percent  cg_border_bottom_none '>
         <div class='cg_view_option_title cg_view_option_title_full_width '>
-            <p>Show collapsed if required<br><span class="cg_view_option_title_note"><b>NOTE:</b> Form appears collapsed.<br>Only upload form button is visible first,<br>after adding/dropping file,<br>form will be uncollapsed.</span></p>
+            <p>Show collapsed if required<br><span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">Form appears collapsed.<br>Only upload form button is visible first,<br>after adding/dropping file,<br>form will be uncollapsed.</span></span></p>
         </div>
         <div class="cg_view_option_checkbox">
               <input type="checkbox" name="upload[$id][collapsed]" $collapsedChecked>
@@ -351,7 +351,7 @@ HEREDOC;
 <div class='cg_view_options_row'>
     <div class='cg_view_option cg_view_option_100_percent  cg_border_bottom_none'>
         <div class='cg_view_option_title cg_view_option_title_full_width'>
-            <p>Hide<br><span class="cg_view_option_title_note"><b>NOTE:</b> will not be visible in upload form<br><b>use this form as normal upload form<br>without file upload</b></span></p>
+            <p>Hide<br><span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">will not be visible in upload form<br><b>use this form as normal upload form<br>without file upload</b></span></span></p>
         </div>
         <div class="cg_view_option_checkbox">
               <input type="checkbox" name="upload[$id][hide]" $hideChecked>

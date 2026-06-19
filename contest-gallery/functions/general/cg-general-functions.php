@@ -748,6 +748,313 @@ if(!function_exists('cg_wp_update_user_with_safe_registry_role')){
 	}
 }
 
+if(!function_exists('cg_entry_on_off_get_action_hash')){
+	function cg_entry_on_off_get_action_hash($GalleryID,$entryID,$action,$forwardedHash = ''){
+		$GalleryID = absint($GalleryID);
+		$entryID = absint($entryID);
+		$action = sanitize_key($action);
+		return cg_hash_function('---cgEntryOnOff---'.$GalleryID.'---'.$entryID.'---'.$action,$forwardedHash);
+	}
+}
+
+if(!function_exists('cg_entry_on_off_get_legacy_hash')){
+	function cg_entry_on_off_get_legacy_hash($entryID,$forwardedHash = ''){
+		$entryID = absint($entryID);
+		return cg_hash_function('---cngl1---'.$entryID,$forwardedHash);
+	}
+}
+
+if(!function_exists('cg_entry_on_off_build_action_url')){
+	function cg_entry_on_off_build_action_url($baseUrl,$GalleryID,$entryID,$action){
+		$GalleryID = absint($GalleryID);
+		$entryID = absint($entryID);
+		$action = sanitize_key($action);
+
+		if($action !== 'activate' && $action !== 'deactivate'){
+			return '';
+		}
+
+		$baseUrl = trim($baseUrl);
+		if($baseUrl === ''){
+			return '';
+		}
+
+		$baseUrl = remove_query_arg(array(
+			'cg_entry_action',
+			'cg_entry_id',
+			'cg_gallery_id',
+			'cg_hash',
+			'cg_on_id',
+			'cg_off_id'
+		),$baseUrl);
+
+		return add_query_arg(array(
+			'cg_entry_action' => $action,
+			'cg_entry_id' => $entryID,
+			'cg_gallery_id' => $GalleryID,
+			'cg_hash' => cg_entry_on_off_get_action_hash($GalleryID,$entryID,$action)
+		),$baseUrl);
+	}
+}
+
+if(!function_exists('cg_entry_on_off_url_has_shortcode')){
+	function cg_entry_on_off_url_has_shortcode($baseUrl,$GalleryID){
+		$GalleryID = absint($GalleryID);
+		$baseUrl = trim(html_entity_decode(strip_tags($baseUrl),ENT_QUOTES,'UTF-8'));
+
+		if(empty($GalleryID) || $baseUrl === ''){
+			return false;
+		}
+
+		$baseUrl = remove_query_arg(array(
+			'cg_entry_action',
+			'cg_entry_id',
+			'cg_gallery_id',
+			'cg_hash',
+			'cg_on_id',
+			'cg_off_id'
+		),$baseUrl);
+
+		$postId = url_to_postid($baseUrl);
+		if(empty($postId)){
+			return false;
+		}
+
+		$post = get_post($postId);
+		if(empty($post) || empty($post->post_content) || stripos($post->post_content,'[cg_entry_on_off') === false){
+			return false;
+		}
+
+		if(!preg_match_all('/\[cg_entry_on_off\b([^\]]*)\]/i',$post->post_content,$matches)){
+			return false;
+		}
+
+		foreach($matches[1] as $shortcodeAttributes){
+			$shortcodeAttributes = shortcode_parse_atts($shortcodeAttributes);
+			if(is_array($shortcodeAttributes) && !empty($shortcodeAttributes['id']) && absint($shortcodeAttributes['id']) == $GalleryID){
+				return true;
+			}
+		}
+
+		return false;
+	}
+}
+
+if(!function_exists('cg_entry_on_off_get_entry_row')){
+	function cg_entry_on_off_get_entry_row($GalleryID,$entryID){
+		global $wpdb;
+
+		$GalleryID = absint($GalleryID);
+		$entryID = absint($entryID);
+
+		if(empty($GalleryID) || empty($entryID)){
+			return null;
+		}
+
+		$tablename = $wpdb->prefix . "contest_gal1ery";
+		$table_posts = $wpdb->prefix . "posts";
+
+		return $wpdb->get_row($wpdb->prepare(
+			"
+				SELECT $table_posts.*, $tablename.*
+				FROM $tablename
+				LEFT JOIN $table_posts ON $table_posts.ID = $tablename.WpUpload
+				WHERE $tablename.GalleryID = %d AND $tablename.id = %d
+				GROUP BY $tablename.id
+				LIMIT 1
+			",
+			$GalleryID,$entryID
+		));
+	}
+}
+
+if(!function_exists('cg_entry_on_off_get_activation_mail_recipient')){
+	function cg_entry_on_off_get_activation_mail_recipient($GalleryID,$entryRow){
+		global $wpdb;
+
+		$recipient = '';
+		$GalleryID = absint($GalleryID);
+
+		if(!empty($entryRow->WpUserId)){
+			$wpUserEmail = $wpdb->get_var($wpdb->prepare("SELECT user_email FROM $wpdb->users WHERE ID = %d",$entryRow->WpUserId));
+			if(is_email($wpUserEmail)){
+				return $wpUserEmail;
+			}
+		}
+
+		$tablename_form_input = $wpdb->prefix . "contest_gal1ery_f_input";
+		$tablename_entries = $wpdb->prefix . "contest_gal1ery_entries";
+
+		$emailFields = $wpdb->get_results($wpdb->prepare(
+			"SELECT id FROM $tablename_form_input WHERE GalleryID = %d AND Field_Type = %s ORDER BY Field_Order ASC",
+			$GalleryID,'email-f'
+		));
+
+		if(!empty($emailFields)){
+			foreach($emailFields as $emailField){
+				$entryMail = $wpdb->get_var($wpdb->prepare(
+					"SELECT Short_Text FROM $tablename_entries WHERE pid = %d AND f_input_id = %d LIMIT 1",
+					$entryRow->id,$emailField->id
+				));
+				$entryMail = html_entity_decode(stripslashes($entryMail));
+				if(is_email($entryMail)){
+					$recipient = $entryMail;
+					break;
+				}
+			}
+		}
+
+		return $recipient;
+	}
+}
+
+if(!function_exists('cg_entry_on_off_send_activation_mail_if_needed')){
+	function cg_entry_on_off_send_activation_mail_if_needed($GalleryID,$entryID,$entryRow = null,$source = 'admin-mail-link'){
+		global $wpdb;
+
+		$GalleryID = absint($GalleryID);
+		$entryID = absint($entryID);
+
+		$result = array(
+			'status' => 'not_sent',
+			'message' => ''
+		);
+
+		if(empty($GalleryID) || empty($entryID)){
+			$result['status'] = 'invalid_entry';
+			$result['message'] = 'Activation e-mail was not sent because the entry could not be determined.';
+			return $result;
+		}
+
+		if(empty($entryRow)){
+			$entryRow = cg_entry_on_off_get_entry_row($GalleryID,$entryID);
+		}
+
+		if(empty($entryRow)){
+			$result['status'] = 'entry_not_found';
+			$result['message'] = 'Activation e-mail was not sent because the entry was not found.';
+			return $result;
+		}
+
+		if(!empty($entryRow->Informed)){
+			$result['status'] = 'already_informed';
+			$result['message'] = 'Activation e-mail was not sent because the participant was already informed.';
+			return $result;
+		}
+
+		$tablename = $wpdb->prefix . "contest_gal1ery";
+		$tablename_options = $wpdb->prefix . "contest_gal1ery_options";
+		$tablenameemail = $wpdb->prefix . "contest_gal1ery_mail";
+
+		$galeryrow = $wpdb->get_row($wpdb->prepare("SELECT Inform, WpPageParent FROM $tablename_options WHERE id = %d",$GalleryID));
+		if(empty($galeryrow) || intval($galeryrow->Inform) !== 1){
+			$result['status'] = 'activation_mail_disabled';
+			$result['message'] = 'Activation e-mail was not sent because the activation e-mail option is disabled.';
+			return $result;
+		}
+
+		$To = cg_entry_on_off_get_activation_mail_recipient($GalleryID,$entryRow);
+		if(!is_email($To)){
+			$result['status'] = 'missing_recipient';
+			$result['message'] = 'Activation e-mail was not sent because no valid participant e-mail was found.';
+			return $result;
+		}
+
+		$selectSQLemail = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablenameemail WHERE GalleryID = %d",$GalleryID));
+		if(empty($selectSQLemail)){
+			$result['status'] = 'missing_mail_configuration';
+			$result['message'] = 'Activation e-mail was not sent because the mail configuration was not found.';
+			return $result;
+		}
+
+		$Subject = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemail->Header);
+		$Admin = $selectSQLemail->Admin;
+		$Reply = $selectSQLemail->Reply;
+		$cc = $selectSQLemail->CC;
+		$bcc = $selectSQLemail->BCC;
+		$ccPlain = $selectSQLemail->CC;
+		$bccPlain = $selectSQLemail->BCC;
+		$contentMail = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemail->Content);
+		$Msg = $contentMail;
+		$url = trim(sanitize_text_field($selectSQLemail->URL));
+		$post_title = (!empty($entryRow->NamePic)) ? $entryRow->NamePic : 'entry';
+
+		if(stripos($contentMail,'$url$')!==false){
+			if(!empty($galeryrow->WpPageParent)){
+				$url1 = get_permalink($entryRow->WpPage);
+			}else{
+				$url1 = $url."#!gallery/$GalleryID/image/$entryID/$post_title";
+			}
+			$Msg = str_ireplace('$url$',$url1,$contentMail);
+		}
+
+		$headers = array();
+		$headers[] = "From: $Admin <". html_entity_decode(strip_tags($Reply)) . ">\r\n";
+		$headers[] = "Reply-To: ". strip_tags($Reply) . "\r\n";
+
+		if(strpos($cc,';')){
+			$cc = explode(';',$cc);
+			foreach($cc as $ccValue){
+				$ccValue = trim($ccValue);
+				$headers[] = "CC: $ccValue\r\n";
+			}
+		}else{
+			$headers[] = "CC: $cc\r\n";
+		}
+
+		if(strpos($bcc,';')){
+			$bcc = explode(';',$bcc);
+			foreach($bcc as $bccValue){
+				$bccValue = trim($bccValue);
+				$headers[] = "BCC: $bccValue\r\n";
+			}
+		}else{
+			$headers[] = "BCC: $bcc\r\n";
+		}
+
+		$headers[] = "MIME-Version: 1.0\r\n";
+		$headers[] = "Content-Type: text/html; charset=utf-8\r\n";
+
+		$informedUpdated = $wpdb->query($wpdb->prepare(
+			"UPDATE $tablename SET Informed = 1 WHERE id = %d AND GalleryID = %d AND Informed != 1",
+			$entryID,$GalleryID
+		));
+
+		if(empty($informedUpdated)){
+			$result['status'] = 'already_informed';
+			$result['message'] = 'Activation e-mail was not sent because the participant was already informed.';
+			return $result;
+		}
+
+		global $cgMailAction;
+		global $cgMailGalleryId;
+		$cgMailAction = "File activation e-mail backend";
+		$cgMailGalleryId = $GalleryID;
+		add_action('wp_mail_failed', 'cg_on_wp_mail_error', 10, 1);
+
+		$mailSent = wp_mail($To, $Subject, $Msg, $headers);
+
+		if($mailSent && function_exists('cg_save_sent_mail')){
+			$WpUserId = (!empty($entryRow->WpUserId)) ? $entryRow->WpUserId : 0;
+			$ReplyMail = $Reply;
+			$FromMail = $Reply;
+			$ReplyName = $Admin;
+			$FromName = $Admin;
+			cg_save_sent_mail($GalleryID,$entryID,$WpUserId,$To,$ReplyName,$ReplyMail,$FromName,$FromMail,$ccPlain,$bccPlain,$Subject,$Msg,'entry-backend-inform-image-activation');
+		}
+
+		if($mailSent){
+			$result['status'] = 'sent';
+			$result['message'] = 'Activation e-mail was sent to the participant.';
+		}else{
+			$result['status'] = 'attempted';
+			$result['message'] = 'Activation e-mail was attempted and will not be sent again automatically.';
+		}
+
+		return $result;
+	}
+}
+
 if(!function_exists('cg_ecommerce_order_has_owner')){
 	function cg_ecommerce_order_has_owner($Order){
 		return (!empty($Order) && !empty($Order->WpUserId) && absint($Order->WpUserId) > 0);

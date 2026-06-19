@@ -579,7 +579,7 @@ HEREDOC;
         <div class='cg_view_option cg_view_option_full_width  cg_border_top_none '>
             <div class='cg_view_option_title '>
                 <p>Back to galleries button custom URL on gallery landing page
-                <br><span class="cg_view_option_title_note"><a href="$WpPageParentUserPermalink" target="_blank">$WpPageParentUserPermalink</a><br><span class="cg_view_option_title_note">If not set then parent site<br><a target="_blank"  href="$pageGalleries">$pageGalleries</a><br>URL will be used<br><span class="cg_font_weight_500">NOTE: </span> has to start with <span class="cg_font_weight_500">http://</span> or <span class="cg_font_weight_500">https://</span>, like https://www.example.com</span></p>
+                <br><span class="cg_view_option_title_note"><a href="$WpPageParentUserPermalink" target="_blank">$WpPageParentUserPermalink</a><br><span class="cg_view_option_title_note">If not set then parent site<br><a target="_blank"  href="$pageGalleries">$pageGalleries</a><br>URL will be used<br><span class="cg_font_weight_500">NOTE: </span> <span class="cg_note_text">has to start with <span class="cg_font_weight_500">http://</span> or <span class="cg_font_weight_500">https://</span>, like https://www.example.com</span></span></p>
             </div>
             <div class='cg_view_option_input '>
                 <input type="text" name="multiple-pics[cg_gallery_user][pro][BackToGalleriesButtonURL]" class="BackToGalleriesButtonURL"  value="{$jsonOptions[$GalleryID.'-u']['pro']['BackToGalleriesButtonURL']}"   >
@@ -599,7 +599,7 @@ HEREDOC;
     <div class='cg_view_options_row'>
         <div class='cg_view_option cg_view_option_full_width cg_border_top_none  '>
             <div class='cg_view_option_title '>
-                <p>Redirect URL for parent site of Contest Gallery entries<br><span class="cg_view_option_title_note">The gallery page for cg_gallery_user id="$GalleryID" shortcode is<br><a target="_blank"  href="$WpPageParentUserPermalink">$WpPageParentUserPermalink</a><br>(But you can place the shortcode also on any other page)<br>If Redirect URL is set, then HTTP 301 redirect will be executed if the above URL gets called<br><span class="cg_font_weight_500">NOTE: </span> has to start with <span class="cg_font_weight_500">http://</span> or <span class="cg_font_weight_500">https://</span>, like https://www.example.com</span></p>
+                <p>Redirect URL for parent site of Contest Gallery entries<br><span class="cg_view_option_title_note">The gallery page for cg_gallery_user id="$GalleryID" shortcode is<br><a target="_blank"  href="$WpPageParentUserPermalink">$WpPageParentUserPermalink</a><br>(But you can place the shortcode also on any other page)<br>If Redirect URL is set, then HTTP 301 redirect will be executed if the above URL gets called<br><span class="cg_font_weight_500">NOTE: </span> <span class="cg_note_text">has to start with <span class="cg_font_weight_500">http://</span> or <span class="cg_font_weight_500">https://</span>, like https://www.example.com</span></span></p>
             </div>
             <div class='cg_view_option_input '>
                 <input type="text" name='multiple-pics[cg_gallery_user][pro][WpPageParentRedirectURL]' class="WpPageParentRedirectURL"  value="{$jsonOptions[$GalleryID.'-u']['pro']['WpPageParentRedirectURL']}"  >
@@ -659,7 +659,7 @@ HEREDOC;
 <div class='cg_view_options_row'>
     <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="wp-TextBeforeWpPageParentUser-wrap-Container">
         <div class='cg_view_option_title'>
-            <p>General text on gallery landing page before gallery<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of gallery landing page.<br><span class="cg_font_weight_500">NOTE: </span>appears only on gallery landing page, not if cg_gallery... shortcode is used on another page.</span></p>
+            <p>General text on gallery landing page before gallery<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of gallery landing page.<br><span class="cg_font_weight_500">NOTE: </span> <span class="cg_note_text">appears only on gallery landing page, not if cg_gallery... shortcode is used on another page.</span></span></p>
         </div>
         <div class='cg_view_option_html'>
             <textarea class='cg-wp-editor-template' name='multiple-pics[cg_gallery_user][visual][TextBeforeWpPageParent]'  id='TextBeforeWpPageParentUser'>$TextBeforeWpPageParent</textarea>
@@ -679,7 +679,7 @@ HEREDOC;
 <div class='cg_view_options_row'>
     <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="wp-TextAfterWpPageParentUser-wrap-Container">
         <div class='cg_view_option_title'>
-            <p>General text on gallery landing page after gallery<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of gallery landing page.<br><span class="cg_font_weight_500">NOTE: </span>appears only on gallery landing page, not if cg_gallery... shortcode is used on another page.</span></p>
+            <p>General text on gallery landing page after gallery<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of gallery landing page.<br><span class="cg_font_weight_500">NOTE: </span> <span class="cg_note_text">appears only on gallery landing page, not if cg_gallery... shortcode is used on another page.</span></span></p>
         </div>
         <div class='cg_view_option_html'>
             <textarea class='cg-wp-editor-template' name='multiple-pics[cg_gallery_user][visual][TextAfterWpPageParent]'  id='TextAfterWpPageParentUser'>$TextAfterWpPageParent</textarea>
@@ -750,7 +750,7 @@ echo <<<HEREDOC
             <div class='cg_view_option_title '>
                 <p>Third title cg_galleries_user view
                 <br>
-                <span class="cg_view_option_title_note"><b>NOTE:</b> perfect to use as description, 20 text rows will be displayed as preview in masonry galleries view</span></p>
+                <span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">perfect to use as description, 20 text rows will be displayed as preview in masonry galleries view</span></span></p>
             </div>
             <div class='cg_view_option_input '>
                 <textarea type="text" name='multiple-pics[cg_gallery_user][pro][ThirdTitleGalleriesView]' class="ThirdTitleGalleriesView"  rows="5" style="width:100%;"  >$ThirdTitleGalleriesView</textarea>

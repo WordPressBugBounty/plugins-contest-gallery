@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, openai
 Requires at least: 5.6
-Stable tag: 30.0.3
+Stable tag: 30.0.4
 Tested up to: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -275,6 +275,9 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 
 == Changelog ==
 
+= 30.0.4 =
+* FIXED: Social share icon selections in Entry view options were not always saved and displayed correctly for all gallery shortcode types.
+
 = 30.0.3 =
 * FIXED: Security issue related to user role handling.
 * IMPROVED: Security hardening for frontend registration and Google Sign-In.
@@ -284,7 +287,7 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 * NEW: Added real watermarking for gallery images, including protected original storage, restore/unwatermark handling, frontend cache refresh and support for multiple files per entry.
 * NEW: Added backend bulk actions to watermark and unwatermark visible entries with progress display.
 * NEW: Added real watermark options for upload forms and upload options so uploaded images can be watermarked automatically.
-* IMPROVED: Improved upload form builder workflow with faster field selection, clearer drag-and-drop targets and better preservation of empty layout columns.
+ * IMPROVED: Improved upload form builder workflow with faster field selection, clearer drag-and-drop targets and better preservation of empty layout columns.
 * IMPROVED: Real watermarking supports GIF files when server GD GIF support is available and shows clearer GD capability notices.
 * IMPROVED: Improved watermark compatibility with selling downloads, unified watermark size labels and added clearer admin notices.
 * IMPROVED: Hardened watermark handling with safer path validation, field whitelisting, permission handling, GD capability checks and Apache/IIS/Nginx protection guidance.

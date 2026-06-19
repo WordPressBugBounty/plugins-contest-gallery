@@ -86,8 +86,8 @@ echo <<<HEREDOC
             <div class="cg_view_option_title cg_view_option_title_header" style="flex-flow:column;">
                 <p>Email
                     <div class="cg_view_option_title_note" style="margin-top: 10px;">
-                        <span class="cg_color_red cg_font_weight_bold">NOTE:</span> This field does not appear in frontend if user is already registered and logged in.<br>
-                        Because email provided then already.<br>
+                        <span class="cg_color_red cg_note_label">NOTE:</span> <span class="cg_note_text">This field does not appear in frontend if user is already registered and logged in.<br>
+                        Because email provided then already.</span><br>
                         <span class="cg_font_weight_bold">So you as registered and logged in admin will not see this field.</span>
                         <br>To see this field logout or test in incognito mode of your browser or in another browser.
                     </div>
@@ -134,7 +134,7 @@ echo <<<HEREDOC
     </div>
       <div class='cg_view_option  cg_view_option_hide_upload_field cg_view_option_50_percent '>
         <div class='cg_view_option_title cg_view_option_title_full_width'>
-            <p>Hide<br><span class="cg_view_option_title_note"><b>NOTE:</b> will not be visible in upload form</span></p>
+            <p>Hide<br><span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">will not be visible in upload form</span></span></p>
         </div>
         <div class="cg_view_option_checkbox">
               <input type="checkbox" name="upload[$id][hide]" $hideChecked>
@@ -148,4 +148,3 @@ echo "</div>";
 echo "</div>";
 
 
-            

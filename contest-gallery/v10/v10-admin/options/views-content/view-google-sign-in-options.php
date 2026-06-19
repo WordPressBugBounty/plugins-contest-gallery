@@ -5,7 +5,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_rows_container' id="cgGoogleOptionsRowsContainer">
 
 <p class="cg_view_options_rows_container_title ">
-        <strong>* NOTE:</strong> Login via Google options are general and valid for all galleries.<br>
+        <strong class="cg_note_label">* NOTE:</strong> <span class="cg_note_text">Login via Google options are general and valid for all galleries.</span><br>
 </p>
 HEREDOC;
 
@@ -61,13 +61,13 @@ if(isset($cgGoogleSignInLibStatus['error']) && $cgGoogleSignInLibStatus['code'] 
     $cgIsGoogleSignLibraryMissingStyle = 'opacity: 0.6 !important;';
 
     $cgIsGoogleSignLibraryMissingNote = <<<HEREDOC
-<br><span class="cg_view_option_title_note"><span class="cg_color_red">NOTE:</span> Enable PHP OpenSSL support to test and use Google sign in</span>
+<br><span class="cg_view_option_title_note"><span class="cg_color_red">NOTE:</span> <span class="cg_note_text">Enable PHP OpenSSL support to test and use Google sign in</span></span>
 HEREDOC;
     $cgIsGoogleSignLibraryMissingClass = 'cg_disabled';
 
     echo <<<HEREDOC
 <p class="cg_view_options_rows_container_title" id="GoogleSignInOpenSslRequiredContainer">
-        <strong><span class="cg_color_red" >NOTE:</span> PHP OpenSSL support is required for Google sign in token verification.</strong><br>
+        <strong><span class="cg_color_red cg_note_label">NOTE:</span> <span class="cg_note_text">PHP OpenSSL support is required for Google sign in token verification.</span></strong><br>
         <span>$cgGoogleSignInOpenSslStatusText</span>
 </p>
 HEREDOC;
@@ -136,7 +136,7 @@ echo <<<HEREDOC
 <div class='cg_view_options_row'>
     <div class="cg_view_option cg_view_option_100_percent cg_border_top_none">
         <div class="cg_view_option_title">
-            <p>Create @googlemail Google Sign In users as @gmail WordPress users in the database<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE:</span> older Google users from certain<br> countries might have @googlemail as official address,<br>but using @gmail everywhere for registration and login. This users can be created as @gmail users,<br>so they can login with @gmail as WordPress user without using Google Sign In.<br>Google handles @googlemail and @gmail as same e-mail address.</span></span></p>
+            <p>Create @googlemail Google Sign In users as @gmail WordPress users in the database<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE:</span> <span class="cg_note_text"> </span><span class="cg_note_text">older Google users from certain<br> countries might have @googlemail as official address,<br>but using @gmail everywhere for registration and login. This users can be created as @gmail users,<br>so they can login with @gmail as WordPress user without using Google Sign In.<br>Google handles @googlemail and @gmail as same e-mail address.</span></span></p>
         </div>
         <div class="cg_view_option_checkbox">
             <input type="checkbox" name="GooglemailConvert" id="GooglemailConvert" value="1" $GooglemailConvert >

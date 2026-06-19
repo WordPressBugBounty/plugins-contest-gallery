@@ -38,7 +38,7 @@ if($PinField){
                 //echo "<input class='cg_upl_placeholder' placeholder='$fieldPlaceholder' type='text' >";
                 echo "<select><option>Please select</option></select>";
             echo "</div>";
-            echo "<div class='cg_upl_content_note' ><b>NOTE:</b> Translation for \"Please select\" can be found in \"Edit translations\"</div>";
+            echo "<div class='cg_upl_content_note' ><b>NOTE:</b> <span class='cg_note_text'>Translation for \"Please select\" can be found in \"Edit translations\"</span></div>";
             echo "<div class='cg_upl_del' title='Delete field' >";
             echo "</div>";
     echo "</div>";

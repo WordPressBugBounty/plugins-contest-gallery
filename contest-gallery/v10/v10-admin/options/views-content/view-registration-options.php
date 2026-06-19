@@ -11,15 +11,15 @@ HEREDOC;
 if($cgBeforeSinceV14ExplanationRequired){
     echo <<<HEREDOC
         <p class="cg_view_options_rows_container_title ">
-                <strong>NOTE:</strong> For galleries created or copied in plugin version 14 or higher
-                 "Registration options"  are general<br>and valid for all galleries created or copied in plugin version 14 or higher.<br>
+                <strong class="cg_note_label">NOTE:</strong> <span class="cg_note_text">For galleries created or copied in plugin version 14 or higher
+                 "Registration options"  are general<br>and valid for all galleries created or copied in plugin version 14 or higher.</span><br>
         </p>
 HEREDOC;
 }else{
     if(intval($galleryDbVersion)>=14){// only if higher then 14 then this explanation required!
         echo <<<HEREDOC
         <p class="cg_view_options_rows_container_title ">
-                <strong>NOTE:</strong> Registration options are valid for all galleries.<br>
+                <strong class="cg_note_label">NOTE:</strong> <span class="cg_note_text">Registration options are valid for all galleries.</span><br>
         </p>
 HEREDOC;
     }
@@ -133,7 +133,7 @@ $beforeSinceV14Disabled = '';
 
 if(intval($galleryDbVersion)<14){
     $beforeSinceV14Disabled = 'cg_disabled';
-    $beforeSinceV14Explanation = '<br><span class="cg_view_option_title_note"><span class="cg_color_red">NOTE: </span> Available only for galleries created or copied in plugin version 14 or higher</span>';
+    $beforeSinceV14Explanation = '<br><span class="cg_view_option_title_note"><span class="cg_color_red">NOTE: </span> <span class="cg_note_text">Available only for galleries created or copied in plugin version 14 or higher</span></span>';
 }
 
 

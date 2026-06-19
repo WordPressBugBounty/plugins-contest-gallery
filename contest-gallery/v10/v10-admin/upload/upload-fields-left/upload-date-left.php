@@ -200,7 +200,7 @@ echo <<<HEREDOC
     </div>
      <div class='cg_view_option cg_view_option_hide_upload_field cg_view_option_50_percent '>
         <div class='cg_view_option_title cg_view_option_title_full_width'>
-            <p>Hide<br><span class="cg_view_option_title_note"><b>NOTE:</b> will not be visible in upload form</span></p>
+            <p>Hide<br><span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">will not be visible in upload form</span></span></p>
         </div>
         <div class="cg_view_option_checkbox">
               <input type="checkbox" name="upload[$id][hide]" $hideChecked>
@@ -213,7 +213,7 @@ echo <<<HEREDOC
 <div class='cg_view_options_row'>
      <div class='cg_view_option cg_view_option_100_percent cg_border_top_none cg_border_bottom_none  cg_info_show_gallery'>
         <div class='cg_view_option_title cg_view_option_title_full_width '>
-            <p>Show as main title in gallery view<br>(only 1 allowed)<br><span class="cg_view_option_title_note"><b>NOTE:</b> will be also displayed in single entry view instead of file if entry was done without file upload</span></p>
+            <p>Show as main title in gallery view<br>(only 1 allowed)<br><span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">will be also displayed in single entry view instead of file if entry was done without file upload</span></span></p>
         </div>
         <div class="cg_view_option_checkbox">
               <input type="checkbox" name="upload[$id][infoInGallery]" $checked>
@@ -226,7 +226,7 @@ echo <<<HEREDOC
 <div class='cg_view_options_row'>
   <div class='$cgProFalse  cg_view_option $cg_disabled_sub_and_third_title cg_view_option_100_percent cg_border_bottom_none  cg_info_show_gallery_sub_title'>
         <div class='cg_view_option_title cg_view_option_title_full_width'>
-            <p>Show as sub title in gallery view<br>(only 1 allowed)<br><span class="cg_view_option_title_note"><b>NOTE:</b> modern design, sub title will be displayed above main title in smaller font size</span></p>
+            <p>Show as sub title in gallery view<br>(only 1 allowed)<br><span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">modern design, sub title will be displayed above main title in smaller font size</span></span></p>
         </div>
         <div class="cg_view_option_checkbox">
               <input type="checkbox" name="upload[$id][SubTitle]" $checkedSubTitle>
@@ -239,7 +239,7 @@ echo <<<HEREDOC
 <div class='cg_view_options_row'>
     <div class=' cg_view_option $cg_disabled_sub_and_third_title cg_view_option_100_percent cg_border_bottom_none  cg_info_show_gallery_third_title'>
         <div class='cg_view_option_title cg_view_option_title_full_width'>
-            <p>Show as third title (description) in gallery view<br>(only 1 allowed)<br><span class="cg_view_option_title_note"><b>NOTE:</b> perfect to use as description, 20 text rows will be displayed as preview in masonry gallery view</span></p>
+            <p>Show as third title (description) in gallery view<br>(only 1 allowed)<br><span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">perfect to use as description, 20 text rows will be displayed as preview in masonry gallery view</span></span></p>
         </div>
         <div class="cg_view_option_checkbox">
               <input type="checkbox" name="upload[$id][ThirdTitle]" $checkedThirdTitle>
@@ -252,7 +252,7 @@ echo <<<HEREDOC
 <div class='cg_view_options_row'>
      <div  class='cg_view_option cg_view_option_100_percent cg_border_bottom_none cg_tag_in_gallery  '>
         <div class='cg_view_option_title cg_view_option_title_full_width'>
-            <p>Use as media description (SEO)<br>(only 1 allowed)<br><span class="cg_view_option_title_note"><b>NOTE:</b> used as image ALT text and for video/audio accessibility</span></p>
+            <p>Use as media description (SEO)<br>(only 1 allowed)<br><span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">used as image ALT text and for video/audio accessibility</span></span></p>
         </div>
         <div class="cg_view_option_checkbox">
               <input type="checkbox" name="upload[$id][tagInGallery]" $checkedShowTag>

@@ -6,8 +6,8 @@ HEREDOC;
 
 $cgNoteLoginFormNotVisible = <<<HEREDOC
 <p class="cg_view_options_rows_container_title">
-        <strong><span class="cg_color_red">NOTE:</span> Login form is not visible If user is already logged in.</strong><br>
-Use another browser where you are not logged in to test login form.<br>
+        <strong><span class="cg_color_red">NOTE:</span> <span class="cg_note_text">Login form is not visible If user is already logged in.</span></strong><br>
+<span class="cg_note_text">Use another browser where you are not logged in to test login form.</span><br>
 </p>
 HEREDOC;
 
@@ -15,8 +15,8 @@ if($cgBeforeSinceV14ExplanationRequired){
     echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
         <p class="cg_view_options_rows_container_title ">
-                <strong>NOTE:</strong> For galleries created or copied in plugin version 14 or higher "Login options" are general<br>and valid for all galleries  
-                created or copied in plugin version 14 or higher.<br>
+                <strong class="cg_note_label">NOTE:</strong> <span class="cg_note_text">For galleries created or copied in plugin version 14 or higher "Login options" are general<br>and valid for all galleries
+                created or copied in plugin version 14 or higher.</span><br>
         </p>
         $cgNoteLoginFormNotVisible
     </div>
@@ -26,7 +26,7 @@ HEREDOC;
         echo <<<HEREDOC
         <div class='cg_view_options_rows_container' id="cgGoogleOptionsRowsContainer">
             <p class="cg_view_options_rows_container_title ">
-                    <strong>NOTE:</strong> Login options are general and valid for all galleries.<br>
+                    <strong class="cg_note_label">NOTE:</strong> <span class="cg_note_text">Login options are general and valid for all galleries.</span><br>
             </p>
             $cgNoteLoginFormNotVisible
         </div>
@@ -274,5 +274,3 @@ HEREDOC;
 echo <<<HEREDOC
 </div>
 HEREDOC;
-
-

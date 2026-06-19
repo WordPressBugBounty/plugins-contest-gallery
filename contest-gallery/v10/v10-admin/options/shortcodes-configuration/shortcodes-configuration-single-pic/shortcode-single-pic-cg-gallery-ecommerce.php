@@ -13,7 +13,7 @@ $gallerySlideOutDeprecated = '';
 
 if(floatval($galleryDbVersion)<15.05){
 
-    $gallerySlideOutDeprecated = '<br><span class="cg_view_option_title_note"><span class="cg_color_red">NOTE:</span> deprecated,<br>not available in future galleries</span>';
+    $gallerySlideOutDeprecated = '<br><span class="cg_view_option_title_note"><span class="cg_color_red">NOTE:</span> <span class="cg_note_text">deprecated,<br>not available in future galleries</span></span>';
 
     echo <<<HEREDOC
 <div class='cg_view_options_rows_container'>
@@ -221,7 +221,7 @@ echo <<<HEREDOC
                         <span class="cg_view_option_title_note">
                         Only comment textarea will be visible and required to enter<br>Comment form translations (for name, comment etc.)<br>can be found
 <a class=" cg_no_outline_and_shadow_on_focus" href="{$editTranslationLink}TranslationsCommentFormArea"   target="_blank">here</a>
-<br><strong><span class="cg_color_red">NOTE:</span> If logged in user comment then "Nickname" (WordPress profile field)<br>and "Profile image" (available in "Edit registration form") will be shown</strong>
+<br><strong><span class="cg_color_red cg_note_label">NOTE:</span> <span class="cg_note_text">If logged in user comment then "Nickname" (WordPress profile field)<br>and "Profile image" (available in "Edit registration form") will be shown</span></strong>
 </span></p>
                     </div>
                     <div class="cg_view_option_checkbox cg_view_option_checked">
@@ -314,6 +314,9 @@ HEREDOC;
 
 if(!isset($jsonOptions[$GalleryID.'-ec']['visual']['ShareButtons'])){
     $jsonOptions[$GalleryID.'-ec']['visual']['ShareButtons'] = $ShareButtons;
+}
+if($jsonOptions[$GalleryID.'-ec']['visual']['ShareButtons'] === '0' || $jsonOptions[$GalleryID.'-ec']['visual']['ShareButtons'] === 0){
+    $jsonOptions[$GalleryID.'-ec']['visual']['ShareButtons'] = '';
 }
 
 echo <<<HEREDOC
@@ -549,7 +552,7 @@ echo <<<HEREDOC
     <div class='cg_view_options_row'>
         <div class='cg_view_option  cg_view_option_50_percent cg_border_right_none  cg_border_bottom_none  CopyOriginalFileLinkContainer'>
             <div class='cg_view_option_title cg_view_option_title_full_width'>
-                <p>Copy original file source link button<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE: </span>not available for cg_gallery_ecommerce shortcode</span></p>
+                <p>Copy original file source link button<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE: </span> <span class="cg_note_text"> </span><span class="cg_note_text">not available for cg_gallery_ecommerce shortcode</span></span></p>
             </div>
             <div class='cg_view_option_checkbox cg_hide'>
                 <input type="checkbox" name="multiple-pics[cg_gallery_ecommerce][visual][CopyOriginalFileLink]" checked="{$jsonOptions[$GalleryID.'-ec']['visual']['CopyOriginalFileLink']}" class="cg_shortcode_checkbox CopyOriginalFileLink"   />
@@ -557,7 +560,7 @@ echo <<<HEREDOC
         </div>
         <div class='cg_view_option  cg_view_option_50_percent  cg_border_bottom_none ForwardOriginalFileContainer'>
             <div class='cg_view_option_title cg_view_option_title_full_width'>
-                <p>Forward to original file source button<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE: </span>not available for cg_gallery_ecommerce shortcode</span></p>
+                <p>Forward to original file source button<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE: </span> <span class="cg_note_text"> </span><span class="cg_note_text">not available for cg_gallery_ecommerce shortcode</span></span></p>
             </div>
             <div class='cg_view_option_checkbox cg_hide'>
                 <input type="checkbox" name="multiple-pics[cg_gallery_ecommerce][visual][ForwardOriginalFile]" checked="{$jsonOptions[$GalleryID.'-ec']['visual']['ForwardOriginalFile']}" class="cg_shortcode_checkbox ForwardOriginalFile"   />
@@ -570,7 +573,7 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option   cg_view_option_50_percent cg_border_right_none  OriginalSourceLinkInSliderContainer'>
                     <div class='cg_view_option_title cg_view_option_title_full_width'>
-                        <p>Download original file button<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE: </span>not available for cg_gallery_ecommerce shortcode</span></p>
+                        <p>Download original file button<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE: </span> <span class="cg_note_text"> </span><span class="cg_note_text">not available for cg_gallery_ecommerce shortcode</span></span></p>
                     </div>
                     <div class='cg_view_option_checkbox cg_hide'>
                         <input type="checkbox" name="multiple-pics[cg_gallery_ecommerce][visual][OriginalSourceLinkInSlider]" checked="{$jsonOptions[$GalleryID.'-ec']['visual']['OriginalSourceLinkInSlider']}" class="cg_shortcode_checkbox OriginalSourceLinkInSlider">
@@ -623,7 +626,7 @@ HEREDOC;
 $showExifDateTimeRepairFrontendNote = '';
 
 if(floatval($galleryDbVersion)<floatval(cg_get_db_version())){
-    $showExifDateTimeRepairFrontendNote = '<br><strong>NOTE:</strong> to display original date of images added before 12.2.3 version<br>please use "Status, repair ...." button at the top and click "Repair frontend".<br>Original image date will be added to activated images if EXIF data contains some.';
+    $showExifDateTimeRepairFrontendNote = '<br><span class="cg_note_label">NOTE:</span> <span class="cg_note_text">to display original date of images added before 12.2.3 version<br>please use "Status, repair ...." button at the top and click "Repair frontend".<br>Original image date will be added to activated images if EXIF data contains some.</span>';
 }
 
 
@@ -832,7 +835,7 @@ HEREDOC;
 <div class='cg_view_options_row'>
     <div class='cg_view_option  cg_view_option_full_width cg_border_top_none   '>
         <div class='cg_view_option_title '>
-            <p>Back to gallery button custom URL<br><span class="cg_view_option_title_note">If not set then parent site URL will be used<br><span class="cg_font_weight_500">NOTE: </span> has to start with <span class="cg_font_weight_500">http://</span> or <span class="cg_font_weight_500">https://</span>, like https://www.example.com</span></p>
+            <p>Back to gallery button custom URL<br><span class="cg_view_option_title_note">If not set then parent site URL will be used<br><span class="cg_font_weight_500">NOTE: </span> <span class="cg_note_text">has to start with <span class="cg_font_weight_500">http://</span> or <span class="cg_font_weight_500">https://</span>, like https://www.example.com</span></span></p>
         </div>
         <div class='cg_view_option_input '>
             <input type="text" name="multiple-pics[cg_gallery_ecommerce][pro][BackToGalleryButtonURL]" class="BackToGalleryButtonURL"  value="{$jsonOptions[$GalleryID.'-ec']['pro']['BackToGalleryButtonURL']}"   >
@@ -866,7 +869,7 @@ HEREDOC;
     <div class='cg_view_option  cg_view_option_full_width cg_border_top_none' id="wp-TextBeforeWpPageEntryEcommerce-wrap-Container">
         <div class='cg_view_option_title'>
             <p>General text on entry landing page before an activated entry
-            <br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of entry landing pages.<br><span class="cg_font_weight_500">NOTE: </span>appears only on entry landing page, not if cg_gallery... shortcode with entry_id is used on another page.</span>
+            <br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of entry landing pages.<br><span class="cg_font_weight_500">NOTE: </span> <span class="cg_note_text">appears only on entry landing page, not if cg_gallery... shortcode with entry_id is used on another page.</span></span>
             </p>
         </div>
         <div class='cg_view_option_html'>
@@ -881,7 +884,7 @@ HEREDOC;
     <div class='cg_view_option  cg_view_option_full_width cg_border_top_none' id="wp-TextAfterWpPageEntryEcommerce-wrap-Container">
         <div class='cg_view_option_title'>
             <p>General text on entry landing page after an activated entry
-            <br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of entry landing pages.<br><span class="cg_font_weight_500">NOTE: </span>appears only on entry landing page, not if cg_gallery... shortcode with entry_id is used on another page.</span>
+            <br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of entry landing pages.<br><span class="cg_font_weight_500">NOTE: </span> <span class="cg_note_text">appears only on entry landing page, not if cg_gallery... shortcode with entry_id is used on another page.</span></span>
             </p>
         </div>
         <div class='cg_view_option_html'>
@@ -895,7 +898,7 @@ HEREDOC;
 <div class='cg_view_options_row'>
     <div class='cg_view_option  cg_view_option_full_width cg_border_top_none' id="wp-TextDeactivatedEntryEcommerce-wrap-Container">
         <div class='cg_view_option_title'>
-            <p>Text on entry landing page if entry is deactivated<br>The code will be inserted inside the &lt;body&gt; section of entry landing pages.<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br><span class="cg_font_weight_500">NOTE: </span>appears only on entry landing page, not if cg_gallery... shortcode with entry_id is used on another page.</span></p>
+            <p>Text on entry landing page if entry is deactivated<br>The code will be inserted inside the &lt;body&gt; section of entry landing pages.<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br><span class="cg_font_weight_500">NOTE: </span> <span class="cg_note_text">appears only on entry landing page, not if cg_gallery... shortcode with entry_id is used on another page.</span></span></p>
         </div>
         <div class='cg_view_option_html'>
             <textarea class='cg-wp-editor-template' name='multiple-pics[cg_gallery_ecommerce][visual][TextDeactivatedEntry]'  id='TextDeactivatedEntryEcommerce'>{$jsonOptions[$GalleryID.'-ec']['visual']['TextDeactivatedEntry']}</textarea>
@@ -972,7 +975,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
             <div class='cg_view_option  cg_view_option_100_percent FullSizeImageOutGalleryContainer'>
                 <div class='cg_view_option_title'>
-                    <p>Forward directly to original source after clicking an entry from in a gallery<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE: </span>not available for cg_gallery_ecommerce shortcode</span></p>
+                    <p>Forward directly to original source after clicking an entry from in a gallery<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE: </span> <span class="cg_note_text"> </span><span class="cg_note_text">not available for cg_gallery_ecommerce shortcode</span></span></p>
                 </div>
                 <div class='cg_view_option_radio cg_margin_top_5 cg_hide'>
                     <input type="radio" name="multiple-pics[cg_gallery_ecommerce][general][FullSizeImageOutGallery]" checked="{$jsonOptions[$GalleryID.'-ec']['general']['FullSizeImageOutGallery']}" class="FullSizeImageOutGallery">
@@ -989,7 +992,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
             <div class='cg_view_option  cg_view_option_100_percent OnlyGalleryViewContainer'>
                 <div class='cg_view_option_title'>
-                    <p>Make entries unclickable<br>Good for displaying entries only<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE: </span>not available for cg_gallery_ecommerce shortcode</span></p>
+                    <p>Make entries unclickable<br>Good for displaying entries only<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE: </span> <span class="cg_note_text"> </span><span class="cg_note_text">not available for cg_gallery_ecommerce shortcode</span></span></p>
                 </div>
                 <div class='cg_view_option_radio cg_margin_top_5 cg_hide'>
                        <input type="radio" name="multiple-pics[cg_gallery_ecommerce][general][OnlyGalleryView]" checked="{$jsonOptions[$GalleryID.'-ec']['general']['OnlyGalleryView']}" class="OnlyGalleryView">

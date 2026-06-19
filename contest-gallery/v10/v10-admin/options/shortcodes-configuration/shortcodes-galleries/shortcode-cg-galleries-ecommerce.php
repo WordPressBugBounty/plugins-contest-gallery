@@ -146,7 +146,7 @@ if($galleryDbVersion>=24){
     <div class='cg_view_options_row'>
         <div class='cg_view_option cg_view_option_full_width cg_border_top_none  '>
             <div class='cg_view_option_title '>
-                <p>Redirect URL for cg_galleries_ecommerce page of Contest Gallery<br><span class="cg_view_option_title_note">The galleries page for cg_galleries_ecommerce shortcode is<br><a target="_blank"  href="$pageGalleries">$pageGalleries</a><br>(But you can place the shortcode also on any other page)<br>If Redirect URL is set, then HTTP 301 redirect will be executed if the above URL gets called<br><span class="cg_font_weight_500">NOTE: </span> has to start with <span class="cg_font_weight_500">http://</span> or <span class="cg_font_weight_500">https://</span>, like https://www.example.com</span></p>
+                <p>Redirect URL for cg_galleries_ecommerce page of Contest Gallery<br><span class="cg_view_option_title_note">The galleries page for cg_galleries_ecommerce shortcode is<br><a target="_blank"  href="$pageGalleries">$pageGalleries</a><br>(But you can place the shortcode also on any other page)<br>If Redirect URL is set, then HTTP 301 redirect will be executed if the above URL gets called<br><span class="cg_font_weight_500">NOTE: </span> <span class="cg_note_text">has to start with <span class="cg_font_weight_500">http://</span> or <span class="cg_font_weight_500">https://</span>, like https://www.example.com</span></span></p>
             </div>
             <div class='cg_view_option_input '>
                 <input type="text" name='cg_galleries[ec][GalleriesPageRedirectURL]' class="GalleriesPageRedirectURL"  value="{$galleriesOptions['ec']['GalleriesPageRedirectURL']}"  >
@@ -187,7 +187,7 @@ echo <<<HEREDOC
 <div class='cg_view_options_row'>
     <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="wp-TextBeforeWpPageGalleriesEcommerce-wrap-Container">
         <div class='cg_view_option_title'>
-            <p>General text on galleries landing page before galleries<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of gallery landing page.<br><span class="cg_font_weight_500">NOTE: </span>appears only on gallery landing page, not if cg_galleries... shortcode is used on another page.</span></p>
+            <p>General text on galleries landing page before galleries<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of gallery landing page.<br><span class="cg_font_weight_500">NOTE: </span> <span class="cg_note_text">appears only on gallery landing page, not if cg_galleries... shortcode is used on another page.</span></span></p>
         </div>
         <div class='cg_view_option_html'>
             <textarea class='cg-wp-editor-template' name='cg_galleries[ec][TextBeforeWpPageGalleries]'  id='TextBeforeWpPageGalleriesEcommerce'>$TextBeforeWpPageGalleries</textarea>
@@ -207,7 +207,7 @@ echo <<<HEREDOC
 <div class='cg_view_options_row'>
     <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="wp-TextAfterWpPageGalleriesEcommerce-wrap-Container">
         <div class='cg_view_option_title'>
-            <p>General text on galleries landing page after galleries<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of gallery landing page.<br><span class="cg_font_weight_500">NOTE: </span>appears only on gallery landing page, not if cg_galleries... shortcode is used on another page.</span></p>
+            <p>General text on galleries landing page after galleries<br><span class="cg_view_option_title_note">Add general text or tracking code. &lt;noscript&gt; tags are also supported.<br>The code will be inserted inside the &lt;body&gt; section of gallery landing page.<br><span class="cg_font_weight_500">NOTE: </span> <span class="cg_note_text">appears only on gallery landing page, not if cg_galleries... shortcode is used on another page.</span></span></p>
         </div>
         <div class='cg_view_option_html'>
             <textarea class='cg-wp-editor-template' name='cg_galleries[ec][TextAfterWpPageGalleries]'  id='TextAfterWpPageGalleriesEcommerce'>$TextAfterWpPageGalleries</textarea>
@@ -254,7 +254,7 @@ echo <<<HEREDOC
                 <div class="cg_view_option_title">
                     <p style="margin-right: -30px;">
                     	Allow search engines like Google to follow links on the /contest-galleries... pages and subpages
-                    	<br><span class="cg_view_option_title_note"><b>NOTE:</b> if unchecked ...meta name="robots" content="nofollow"... is set<br><b>NOTE:</b> nofollow tells a robot not follow links on a page</span>
+                    <br><span class="cg_view_option_title_note"><span class="cg_note_label">NOTE:</span> <span class="cg_note_text">if unchecked ...meta name="robots" content="nofollow"... is set</span><br><span class="cg_note_label">NOTE:</span> <span class="cg_note_text">nofollow tells a robot not follow links on a page</span></span>
                     </p>
                 </div>
                 <div class="cg_view_option_checkbox cg_view_option_checked">

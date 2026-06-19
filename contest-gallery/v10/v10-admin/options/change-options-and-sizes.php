@@ -22,6 +22,32 @@ check_admin_referer('cg_admin');
 $id = absint($_GET['option_id']);
 
 $wp_upload_dir = wp_upload_dir();
+
+if(!function_exists('cg_normalize_share_buttons_value')){
+    function cg_normalize_share_buttons_value($shareButtons){
+        if(is_array($shareButtons)){
+            $shareButtons = implode(',', $shareButtons);
+        }
+        $shareButtons = sanitize_text_field((string)$shareButtons);
+        if($shareButtons === '0'){
+            return '';
+        }
+        $allowedShareButtons = array('email','sms','gmail','yahoo','evernote','facebook','whatsapp','twitter','skype','telegram','pinterest','reddit','xing','linkedin','vk','okru','qzone','weibo','douban','renren');
+        $normalizedShareButtons = array();
+        $shareButtonsParts = explode(',', $shareButtons);
+        foreach($shareButtonsParts as $shareButton){
+            $shareButton = trim($shareButton);
+            if($shareButton === '' || $shareButton === '0'){
+                continue;
+            }
+            if(in_array($shareButton,$allowedShareButtons,true) && !in_array($shareButton,$normalizedShareButtons,true)){
+                $normalizedShareButtons[] = $shareButton;
+            }
+        }
+        return implode(',', $normalizedShareButtons);
+    }
+}
+
 if(!empty($_POST['cg_edit_translations'])){
 
 // Save translations
@@ -925,7 +951,7 @@ $wp_upload_dir = wp_upload_dir();
         if(!in_array($CommentsDateFormat,$CommentsDateFormatAllowedValues,true)){
             $CommentsDateFormat = 'modern';
         }
-        $ShareButtons = sanitize_text_field($_POST['ShareButtons']);
+        $ShareButtons = cg_normalize_share_buttons_value((isset($_POST['ShareButtons'])) ? $_POST['ShareButtons'] : '');
 
         $optionsForGeneralIDsinceV14['visual'] = [];
         $optionsForGeneralIDsinceV14['visual']['BorderRadiusRegistry'] = $BorderRadiusRegistry;
@@ -986,7 +1012,7 @@ $wp_upload_dir = wp_upload_dir();
                 '%s', '%s',
                 '%s', '%s', '%s',
                 '%d', '%d', '%d', '%d',
-                '%d', '%d', '%s',
+                '%d', '%s', '%s',
                 '%d', '%d', '%s', '%s',
                 '%d', '%s', '%s',
                 '%d', '%d', '%d', '%s',
@@ -2319,15 +2345,21 @@ $wp_upload_dir = wp_upload_dir();
         $HeaderWpPageEntry = '';// since 28.0.4
         $HeaderWpPageParent = '';// since 28.0.5
 
-        if(!empty($WpPageParent)){
+        $cgShareButtonsShortcodeTypes = array('cg_gallery','cg_gallery_user','cg_gallery_no_voting','cg_gallery_winner');
+        if($dbVersion>=22){
+            $cgShareButtonsShortcodeTypes[] = 'cg_gallery_ecommerce';
+        }
+        foreach($cgShareButtonsShortcodeTypes as $cgShareButtonsShortcodeType){
+            $cgShareButtonsValue = '';
+            if($cgShareButtonsShortcodeType == 'cg_gallery'){
+                $cgShareButtonsValue = $ShareButtons;
+            }else if(isset($_POST['multiple-pics'][$cgShareButtonsShortcodeType]['visual']['ShareButtons'])){
+                $cgShareButtonsValue = $_POST['multiple-pics'][$cgShareButtonsShortcodeType]['visual']['ShareButtons'];
+            }
+            $_POST['multiple-pics'][$cgShareButtonsShortcodeType]['visual']['ShareButtons'] = cg_normalize_share_buttons_value($cgShareButtonsValue);
+        }
 
-            $_POST['multiple-pics']['cg_gallery']['visual']['ShareButtons'] = $ShareButtons;
-            $_POST['multiple-pics']['cg_gallery_user']['visual']['ShareButtons'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_user']['visual']['ShareButtons']);
-            $_POST['multiple-pics']['cg_gallery_no_voting']['visual']['ShareButtons'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_no_voting']['visual']['ShareButtons']);
-            $_POST['multiple-pics']['cg_gallery_winner']['visual']['ShareButtons'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_winner']['visual']['ShareButtons']);
-	        if($dbVersion>=22){
-		        $_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['ShareButtons'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_ecommerce']['visual']['ShareButtons']);
-	        }
+        if(!empty($WpPageParent)){
 
             $_POST['multiple-pics']['cg_gallery']['visual']['TextBeforeWpPageEntry'] = $TextBeforeWpPageEntry;
             $_POST['multiple-pics']['cg_gallery_user']['visual']['TextBeforeWpPageEntry'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_user']['visual']['TextBeforeWpPageEntry']);
@@ -2774,7 +2806,9 @@ $wp_upload_dir = wp_upload_dir();
         // $type >>> general, input, visual, pro
         foreach ($jsonOptions as $type => $option) {
             foreach ($option as $key => $value) {
-                if (!empty($_POST['multiple-pics']['cg_gallery_user'][$type][$key])) {
+                if ($key == 'ShareButtons' && isset($_POST['multiple-pics']['cg_gallery_user'][$type][$key])) {
+                    $jsonOptionsAllGalleryVariants[$GalleryID . '-u'][$type][$key] = cg_normalize_share_buttons_value($_POST['multiple-pics']['cg_gallery_user'][$type][$key]);
+                } elseif (!empty($_POST['multiple-pics']['cg_gallery_user'][$type][$key])) {
                     if ($_POST['multiple-pics']['cg_gallery_user'][$type][$key] == 'on') {
                         $jsonOptionsAllGalleryVariants[$GalleryID . '-u'][$type][$key] = 1;
                     } else {
@@ -2801,7 +2835,9 @@ $wp_upload_dir = wp_upload_dir();
         // $type >>> general, input, visual, pro
         foreach ($jsonOptions as $type => $option) {
             foreach ($option as $key => $value) {
-                if (!empty($_POST['multiple-pics']['cg_gallery_no_voting'][$type][$key])) {
+                if ($key == 'ShareButtons' && isset($_POST['multiple-pics']['cg_gallery_no_voting'][$type][$key])) {
+                    $jsonOptionsAllGalleryVariants[$GalleryID . '-nv'][$type][$key] = cg_normalize_share_buttons_value($_POST['multiple-pics']['cg_gallery_no_voting'][$type][$key]);
+                } elseif (!empty($_POST['multiple-pics']['cg_gallery_no_voting'][$type][$key])) {
                     if ($_POST['multiple-pics']['cg_gallery_no_voting'][$type][$key] == 'on') {
                         $jsonOptionsAllGalleryVariants[$GalleryID . '-nv'][$type][$key] = 1;
                     } else {
@@ -2824,7 +2860,9 @@ $wp_upload_dir = wp_upload_dir();
         // $type >>> general, input, visual, pro
         foreach ($jsonOptions as $type => $option) {
             foreach ($option as $key => $value) {
-                if (!empty($_POST['multiple-pics']['cg_gallery_winner'][$type][$key])) {
+                if ($key == 'ShareButtons' && isset($_POST['multiple-pics']['cg_gallery_winner'][$type][$key])) {
+                    $jsonOptionsAllGalleryVariants[$GalleryID . '-w'][$type][$key] = cg_normalize_share_buttons_value($_POST['multiple-pics']['cg_gallery_winner'][$type][$key]);
+                } elseif (!empty($_POST['multiple-pics']['cg_gallery_winner'][$type][$key])) {
                     if ($_POST['multiple-pics']['cg_gallery_winner'][$type][$key] == 'on') {
                         $jsonOptionsAllGalleryVariants[$GalleryID . '-w'][$type][$key] = 1;
                     } else {
@@ -2847,7 +2885,9 @@ $wp_upload_dir = wp_upload_dir();
         // $type >>> general, input, visual, pro
         foreach ($jsonOptions as $type => $option) {
             foreach ($option as $key => $value) {
-                if (!empty($_POST['multiple-pics']['cg_gallery_ecommerce'][$type][$key])) {
+                if ($key == 'ShareButtons' && isset($_POST['multiple-pics']['cg_gallery_ecommerce'][$type][$key])) {
+                    $jsonOptionsAllGalleryVariants[$GalleryID . '-ec'][$type][$key] = cg_normalize_share_buttons_value($_POST['multiple-pics']['cg_gallery_ecommerce'][$type][$key]);
+                } elseif (!empty($_POST['multiple-pics']['cg_gallery_ecommerce'][$type][$key])) {
                     if ($_POST['multiple-pics']['cg_gallery_ecommerce'][$type][$key] == 'on') {
                         $jsonOptionsAllGalleryVariants[$GalleryID . '-ec'][$type][$key] = 1;
                     } else {

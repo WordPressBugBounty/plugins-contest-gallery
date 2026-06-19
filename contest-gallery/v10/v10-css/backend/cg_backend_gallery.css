@@ -7825,22 +7825,80 @@ div#cgUnconfirmedSearchReset{
 
 #cgSortable li.cg_sortable_div .cg-center-image-exif-data {
     display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-    align-items: baseline;
+    justify-content: flex-start;
+    margin-top: 12px;
+    align-items: center;
     flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px;
+    background: #f8fafc;
+    border: thin solid #d8dde4;
+    border-radius: 8px;
+    box-shadow: 0 8px 18px rgba(15,23,42,.04);
+    box-sizing: border-box;
 }
 
 #cgSortable li.cg_sortable_div .cg-exif {
-    margin-right: 15px;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    align-content: center;
-    justify-items: center;
-    display: flex;
-    flex-flow: column;
-    flex-wrap: wrap;
-    max-width: 200px;
+    display: inline-flex;
+    flex-flow: row nowrap;
+    gap: 6px;
+    min-height: 32px;
+    max-width: 210px;
+    padding: 5px 9px;
+    background: #fff;
+    border: thin solid #d8dde4;
+    border-radius: 999px;
+    box-shadow: 0 2px 6px rgba(15,23,42,.04);
+    box-sizing: border-box;
+    color: #1f2933;
+}
+
+#cgSortable li.cg_sortable_div .cg-center-image-exif-no-data,
+#cgSortable li.cg_sortable_div .cg-center-image-exif-data-not-checked {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    max-width: 100%;
+    padding: 6px 10px;
+    background: #fff;
+    border: thin solid #d8dde4;
+    border-radius: 8px;
+    box-sizing: border-box;
+    color: #3b4a5a;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 18px;
+}
+
+#cgSortable li.cg_sortable_div .cg-center-image-exif-no-data:before,
+#cgSortable li.cg_sortable_div .cg-center-image-exif-data-not-checked:before {
+    content: "i";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    margin-right: 7px;
+    background: #e8eef5;
+    border-radius: 999px;
+    color: #4b6075;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+#cgSortable li.cg_sortable_div .cg-center-image-exif-data-not-checked {
+    background: #fff8e6;
+    border-color: #f1d48b;
+    color: #6b4e08;
+}
+
+#cgSortable li.cg_sortable_div .cg-center-image-exif-data-not-checked:before {
+    background: #f1d48b;
+    color: #553a00;
 }
 
 #cgSortable li.cg_sortable_div .cg_sell {
@@ -7913,12 +7971,12 @@ div#cgUnconfirmedSearchReset{
 }
 
 #cgSortable li.cg_sortable_div .cg-exif.cg-pro-false {
-    padding: 3px;
     background-color: var(--cg-pro-surface, #fff4dc);
-    border: thin solid var(--cg-pro-border, #e7cf9c);
+    border-color: var(--cg-pro-border, #e7cf9c);
     position: relative;
-    border-radius: 10px;
+    overflow: visible;
     color: var(--cg-pro-text, #6e4a07);
+    box-shadow: 0 2px 6px rgba(173,115,18,.08);
 }
 
 #cgGalleryBackendDataManagement .cg_gallery_backend_file_type_pill{
@@ -7994,19 +8052,50 @@ div#cgUnconfirmedSearchReset{
 }
 
 #cgSortable li.cg_sortable_div .cg-exif .cg-exif-img {
-    margin-bottom: 3px;
+    flex: 0 0 auto;
+    margin-bottom: 0;
+    opacity: .72;
+}
+
+#cgSortable li.cg_sortable_div .cg-exif .cg-exif-text {
+    min-width: 0;
+    max-width: 150px;
+    overflow: hidden;
+    color: #1f2933;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 18px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#cgSortable li.cg_sortable_div .cg-exif-model .cg-exif-text {
+    max-width: 185px;
 }
 
 #cgSortable li.cg_sortable_div .cg-exif .cg-exif-date-time-original-text{
-    padding: 0 3px;
-    text-align: center;
-    max-width: 180px;
+    padding: 0;
+    text-align: left;
+    max-width: 120px;
     word-break: normal;
 }
 
 @media screen and (max-width:450px) {
+    #cgSortable li.cg_sortable_div .cg-center-image-exif-data {
+        gap: 6px;
+        padding: 7px;
+    }
+
     #cgSortable li.cg_sortable_div .cg-exif {
-        max-width: 80px;
+        max-width: 100%;
+    }
+
+    #cgSortable li.cg_sortable_div .cg-exif .cg-exif-text {
+        max-width: 110px;
+    }
+
+    #cgSortable li.cg_sortable_div .cg-exif-model .cg-exif-text {
+        max-width: 150px;
     }
 }
 

@@ -297,7 +297,7 @@ if(!function_exists('cg_upload_form_render_legacy_watermark_option')){
 
         echo "<div class='cg_view_options_row'>";
         echo "<div class='cg_view_option $cgProFalse cg_view_option_100_percent cg_view_option_watermark cg_border_bottom_none$borderLeftNone'>";
-        echo "<div class='cg_view_option_title'><p>Use as watermark for gallery images:<br>(only 1 allowed)<br><span class='cg_view_option_title_note'><b>NOTE:</b> CSS based, original image source will be not watermarked</span></p></div>";
+        echo "<div class='cg_view_option_title'><p>Use as watermark for gallery images:<br>(only 1 allowed)<br><span class='cg_view_option_title_note'><b>NOTE:</b> <span class='cg_note_text'>CSS based, original image source will be not watermarked</span></span></p></div>";
         echo "<div class='cg_view_option_checkbox'><input type='checkbox' name='upload[$id][watermarkChecked]' $checkedWatermark></div>";
         echo "</div>";
         echo "</div>";
@@ -328,7 +328,7 @@ if(!function_exists('cg_upload_form_render_real_watermark_option')){
 
         echo "<div class='cg_view_options_row'>";
         echo "<div class='cg_view_option cg_view_option_100_percent cg_border_bottom_none$borderLeftNone cg_view_option_watermark cg_view_option_real_watermark cg_view_option_checkbox_container'>";
-        echo "<div class='cg_view_option_title'><p>Use as real watermark for gallery images:<br>(only 1 allowed)<br><span class='cg_view_option_title_note'><b>NOTE:</b> Uses the submitted value of this field as watermark text. Will overwrite \"Upload options watermark settings\"</span></p></div>";
+        echo "<div class='cg_view_option_title'><p>Use as real watermark for gallery images:<br>(only 1 allowed)<br><span class='cg_view_option_title_note'><b>NOTE:</b> <span class='cg_note_text'>Uses the submitted value of this field as watermark text. Will overwrite \"Upload options watermark settings\"</span></span></p></div>";
         echo "<div class='cg_view_option_checkbox $checkboxClass'><input type='checkbox' name='upload[$id][realWatermarkChecked]' $checkedWatermark></div>";
         echo "</div>";
         echo "</div>";
@@ -380,7 +380,7 @@ if(!function_exists('cg_upload_options_real_watermark_render')){
         $isProData = $isProVersion ? '1' : '0';
 
         echo "<div class='cg_view_options_rows_container'>";
-        echo "<p class='cg_view_options_rows_container_title'>Real watermark for frontend uploads<br><span class='cg_view_options_rows_container_title_note'><span class='cg_font_weight_bold'>NOTE:</span> Default settings for uploaded gallery images. Upload form field watermark settings overwrite these upload option watermark settings.</span></p>";
+        echo "<p class='cg_view_options_rows_container_title'>Real watermark for frontend uploads<br><span class='cg_view_options_rows_container_title_note'><span class='cg_note_label'>NOTE:</span> <span class='cg_note_text'>Default settings for uploaded gallery images. Upload form field watermark settings overwrite these upload option watermark settings.</span></span></p>";
         echo "<div class='cg_view_options_row'>";
         echo "<div class='cg_view_option cg_view_option_100_percent cg_border_bottom_none cg_view_option_upload_options_real_watermark cg_view_option_checkbox_container'>";
         echo "<div class='cg_view_option_title'><p>Use real watermark for uploaded gallery images</p></div>";

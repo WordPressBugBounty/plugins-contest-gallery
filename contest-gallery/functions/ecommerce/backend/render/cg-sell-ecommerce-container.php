@@ -303,7 +303,7 @@ echo <<<HEREDOC
                 </div>
                 <div class='cg_view_option $cgProFalse cg_view_option_full_width cg_border_top_none' id="wp-cgAllUploadsUsedText-wrap-Container">
 		            <div class='cg_view_option_title'>
-		                <p>Text if all uploads were used<br><span class="cg_view_option_title_note"><b>NOTE:</b> "Confirmation text after upload" or "Forward to another URL after upload"<br>are still valid if configured for cg_users_upload shortcode form<br><b>NOTE:</b> If all uploads were used this text will be shown instead of "Confirmation after upload" configuration of upload form</span></p>
+		                <p>Text if all uploads were used<br><span class="cg_view_option_title_note"><span class="cg_note_label">NOTE:</span> <span class="cg_note_text">"Confirmation text after upload" or "Forward to another URL after upload"<br>are still valid if configured for cg_users_upload shortcode form</span><br><span class="cg_note_label">NOTE:</span> <span class="cg_note_text">If all uploads were used this text will be shown instead of "Confirmation after upload" configuration of upload form</span></span></p>
 		            </div>
 		            <div class='cg_view_option_html cg_view_option_input_full_width' >
 		                 <div class='cg-wp-editor-container' data-wp-editor-id="cgAllUploadsUsedText"  >

@@ -17,7 +17,7 @@ $isEditTranslationsOnly = (!empty($_POST['cg_edit_translations']) || !empty($_GE
 $isEditEcommerceOnly = (!empty($_POST['cg_edit_ecommerce']) || !empty($_GET['cg_edit_ecommerce'])) ? true : false;
 $isEditOptionsOnly = (!$isEditTranslationsOnly && !$isEditEcommerceOnly) ? true : false;
 
-$replyMailNote = '<br><b>(Note for testing: mail is send to and "Reply e-mail" can not be the same)</b>';
+$replyMailNote = '<br><span class="cg_note_label">NOTE FOR TESTING:</span> <span class="cg_note_text">mail is send to and "Reply e-mail" can not be the same</span>';
 
 $tablenameOptions = $wpdb->prefix . "contest_gal1ery_options";
 $tablenameGoogleOptions = $wpdb->prefix . "contest_gal1ery_google_options";

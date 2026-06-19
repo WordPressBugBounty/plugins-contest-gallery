@@ -119,7 +119,7 @@ echo <<<HEREDOC
                 <div class="cg_view_option_title">
                     <p>Allow to activate/deactivate new frontend entry direct from admin email without being logged in
                         <br><span class="cg_view_option_title_note">
-                        <span style="font-weight:bold;">Note: </span> you have to place the cg_entry_on_off shortcode at the configured page URL, see next option
+                        <span class="cg_note_label">NOTE:</span> <span class="cg_note_text">you have to place the cg_entry_on_off shortcode at the configured page URL, see next option</span>
                         </span>
                     </p>
                 </div>
@@ -133,7 +133,7 @@ echo <<<HEREDOC
                     <div class='cg_view_option_title'>
                         <p>Page URL for activation/deactivation of an entry
                             <br><span class="cg_view_option_title_note">
-                        <span style="font-weight:bold;">NOTE: </span> place following shortcode at the page which you use for activation deactivation of entry<br>
+                        <span class="cg_note_label">NOTE:</span> <span class="cg_note_text">place following shortcode at the page which you use for activation deactivation of entry</span><br>
                         <span class='cg_shortcode_parent'><span class='cg_shortcode_copy cg_shortcode_copy_mail_confirm cg_tooltip'></span><span class='cg_shortcode_copy_text'>[cg_entry_on_off id="$GalleryID"]</span></span>
                         </span>
                         </p>
@@ -149,4 +149,3 @@ HEREDOC;
 echo <<<HEREDOC
 </div>
 HEREDOC;
-

@@ -10,7 +10,7 @@ HEREDOC;
 
 echo <<<HEREDOC
 <p class="cg_view_options_rows_container_title">
-    <strong>NOTE:</strong> Galleries options are valid for all galleries.<br>
+    <strong class="cg_note_label">NOTE:</strong> <span class="cg_note_text">Galleries options are valid for all galleries.</span><br>
 </p>
 HEREDOC;
 
@@ -217,5 +217,3 @@ HEREDOC;
 echo <<<HEREDOC
 </div>
 HEREDOC;
-
-

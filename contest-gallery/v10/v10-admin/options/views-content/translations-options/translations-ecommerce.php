@@ -6,7 +6,7 @@ $beforeSinceV22Explanation = '';
 if(intval($galleryDbVersion)<22){
     $beforeSinceV22Disabled = 'cg_disabled';
     $beforeSinceV22Explanation =  <<<HEREDOC
-        <br><br><strong><span class="cg_color_red">NOTE:</span> available only for galleries created or copied in plugin version 22 or higher</strong>
+        <br><br><strong><span class="cg_color_red cg_note_label">NOTE:</span> <span class="cg_note_text">available only for galleries created or copied in plugin version 22 or higher</span></strong>
 HEREDOC;
 }
 

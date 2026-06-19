@@ -8,7 +8,7 @@ HEREDOC;
 echo <<<HEREDOC
 <div class='cg_view_options_rows_container'>
          <p class='cg_view_options_rows_container_title'>Generally all frontend icons are base64 encoded and placed via CSS. Most important can be changed here. Others can be changed via CSS. CSS support service will be not provided.
-<br><span class="cg_view_options_rows_container_title_note" style="padding-top: 10px; display: inline-block;"><span class="cg_font_weight_bold">NOTE:</span> Maximum 64px width and height and less then 10kb</span></p>
+<br><span class="cg_view_options_rows_container_title_note" style="padding-top: 10px; display: inline-block;"><span class="cg_note_label">NOTE:</span> <span class="cg_note_text">Maximum 64px width and height and less then 10kb</span></span></p>
 HEREDOC;
 
 $base64Value = '';
@@ -952,5 +952,4 @@ HEREDOC;
 echo <<<HEREDOC
 </div>
 HEREDOC;
-
 

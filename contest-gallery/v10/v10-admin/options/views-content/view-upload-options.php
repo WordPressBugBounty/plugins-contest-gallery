@@ -30,7 +30,7 @@ cg_upload_options_real_watermark_render($UploadRealWatermarkSettings, $UploadRea
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container' id="cgInGalleryUploadFormConfiguration">
         <p class='cg_view_options_rows_container_title'><span class="cg_font_weight_bold">"In gallery upload form"</span> text configuration
-        <br><span class="cg_view_options_rows_container_title_note"><span class="cg_font_weight_bold">NOTE:</span> to place text before and after <span class="cg_font_weight_bold">cg_users_upload</span> shortcode simply use common WordPress editor blocks</span>
+        <br><span class="cg_view_options_rows_container_title_note"><span class="cg_note_label">NOTE:</span> <span class="cg_note_text">to place text before and after <span class="cg_font_weight_bold">cg_users_upload</span> shortcode simply use common WordPress editor blocks</span></span>
         </p>
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width' >
@@ -142,7 +142,7 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' id="forward_urlContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Forward to URL<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE: </span> has to start with <span class="cg_font_weight_500">http://</span> or <span class="cg_font_weight_500">https://</span>, like https://www.example.com</span></p>
+                        <p>Forward to URL<br><span class="cg_view_option_title_note"><span class="cg_font_weight_500">NOTE: </span> <span class="cg_note_text">has to start with <span class="cg_font_weight_500">http://</span> or <span class="cg_font_weight_500">https://</span>, like https://www.example.com</span></span></p>
                     </div>
                     <div class='cg_view_option_input'>
                         <input id="forward_url" type="text" name="forward_url" maxlength="999" value="$Forward_URL" />
@@ -264,8 +264,8 @@ echo <<<HEREDOC
                 <div class='cg_view_option  cg_border_border_top_right_radius_unset  cg_border_right_none cg_border_bottom_none $cgProFalseActivateBulkUpload' id="ActivateBulkUploadContainer">
                     <div class='cg_view_option_title'>
                         <p>Activate bulk (multiple files) upload in frontend
-                        <br><span class="cg_view_option_title_note"><span class="cg_color_red">NOTE:</span> adding additional files per file upload is not available for bulk upload</span>
-                        <br><span class="cg_view_option_title_note"><span class="cg_color_red">NOTE:</span> multiple files upload is always <b>required</b> and <b>collapsed</b> at the beginning</span>
+                        <br><span class="cg_view_option_title_note"><span class="cg_color_red">NOTE:</span> <span class="cg_note_text">adding additional files per file upload is not available for bulk upload</span></span>
+                        <br><span class="cg_view_option_title_note"><span class="cg_color_red">NOTE:</span> <span class="cg_note_text">multiple files upload is always <b>required</b> and <b>collapsed</b> at the beginning</span></span>
                         </p>
                     </div>
                     <div class='cg_view_option_checkbox'>
@@ -433,7 +433,7 @@ HEREDOC;
 
 $AllowUploadPNGproVersionRequiredMessage = '';
 if(!empty($cgProFalse)){
-    $AllowUploadPNGproVersionRequiredMessage = '<br><span class="cg_view_option_title_note"><b>NOTE:</b> since version 16.1.0 PNG file type only available in PRO version</span>';
+    $AllowUploadPNGproVersionRequiredMessage = '<br><span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">since version 16.1.0 PNG file type only available in PRO version</span></span>';
 }
 
 echo <<<HEREDOC
@@ -516,7 +516,7 @@ HEREDOC;
 
 $AllowUploadGIFproVersionRequiredMessage = '';
 if(!empty($cgProFalse)){
-    $AllowUploadGIFproVersionRequiredMessage = '<br><span class="cg_view_option_title_note"><b>NOTE:</b> since version 16.1.0 GIF file type only available in PRO version</span>';
+    $AllowUploadGIFproVersionRequiredMessage = '<br><span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">since version 16.1.0 GIF file type only available in PRO version</span></span>';
 }
 
 echo <<<HEREDOC

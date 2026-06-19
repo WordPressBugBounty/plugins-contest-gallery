@@ -14,7 +14,7 @@ echo <<<HEREDOC
                     <div class='cg_view_option_title'>
                         <p>Stripe environment<br><span class="cg_font_weight_normal">Create secret and live Client IDs for sandbox and live environment documentation can be found here:<br><a href="https://www.contest-gallery.com/stripe-environment-documentation/" target="_blank">Stripe environment documentation</a><br><br></span>
                         <span class="cg_view_option_title_note">
-                                <span style="font-weight:bold;">NOTE: </span> if you like to use <b>cg_gallery_ecommerce</b> shortcode in <b>test environment</b><br> then add <b>test="true"</b> to the shortcode<br>
+                                <span class="cg_note_label">NOTE:</span> <span class="cg_note_text">if you like to use <b>cg_gallery_ecommerce</b> shortcode in <b>test environment</b><br> then add <b>test="true"</b> to the shortcode</span><br>
                                 <span class='cg_shortcode_parent'><span class='cg_shortcode_copy_text' style="position:relative;">Example: <b>[cg_gallery_ecommerce id="$GalleryID" test="true"]</b><span class='cg_shortcode_copy cg_shortcode_copy_mail_confirm cg_tooltip'></span></span>
                                 <br>or add <b>?test=true</b> to as parameter to your page<br>
                                 Example: <b>$get_site_url/ecommerce-gallery/?test=true</b>
@@ -98,7 +98,7 @@ echo <<<HEREDOC
 				    <div class='cg_border_radius_unset  cg_border_top_none cg_view_option cg_border_bottom_none cg_view_option_100_percent cg_border_right_none' id="StripeTestActiveOption">
 				        <div class='cg_view_option_title'  style="width: 75%;">
 				            <p>Enable Stripe Sandbox Testing<br>
-				                <span class="cg_view_option_title_note"><b>NOTE:</b> Disable this option after testing is finished. Otherwise not desired test purchases might happen if somebody knows the logic and use official credit card numbers for testing from Stripe.</span>
+				                <span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">Disable this option after testing is finished. Otherwise not desired test purchases might happen if somebody knows the logic and use official credit card numbers for testing from Stripe.</span></span>
 				            </p>
 				        </div>
 				        <div class='cg_view_option_checkbox'>
@@ -138,4 +138,3 @@ echo <<<HEREDOC
 HEREDOC;
 
 echo "</div>";// $cgProFalse close
-

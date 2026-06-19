@@ -8,7 +8,7 @@ if(intval($galleryDbVersion)>=14){
     echo <<<HEREDOC
     <div class='cg_view_options_rows_container'> 
         <p class="cg_view_options_rows_container_title ">
-                <strong><span class="cg_color_red cg_v14_note_caret">NOTE:</span> E-mail confirmation e-mail options are <u>deprecated</u> and can not be used for galleries created or copied in plugin version 14 or higher.</strong><br>
+                <strong><span class="cg_color_red cg_v14_note_caret cg_note_label">NOTE:</span> <span class="cg_note_text">E-mail confirmation e-mail options are <u>deprecated</u> and can not be used for galleries created or copied in plugin version 14 or higher.</span></strong><br>
         </p>
     </div>
 HEREDOC;
@@ -134,5 +134,4 @@ HEREDOC;
 echo <<<HEREDOC
 </div>
 HEREDOC;
-
 

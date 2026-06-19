@@ -7,7 +7,7 @@ HEREDOC;
 echo <<<HEREDOC
 <div class='cg_view_options_rows_container'>
 	<p class="cg_view_options_rows_container_title">
-	    <strong>NOTE:</strong> Since version <strong>22.0.0</strong> all translations are general and valid for all galleries.<br>
+	    <strong class="cg_note_label">NOTE:</strong> <span class="cg_note_text">Since version <strong>22.0.0</strong> all translations are general and valid for all galleries.</span><br>
 	</p>
      <p class='cg_view_options_rows_container_title' style="line-height:25px;"><strong>Translations here will replace language files translations.</strong><br>HTML tags can not be used in translations.</p>
 </div>
@@ -33,5 +33,3 @@ include(__DIR__.'/translations-options/translations-menu-bar-edit-profile-area.p
 echo <<<HEREDOC
 </div>
 HEREDOC;
-
-

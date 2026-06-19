@@ -3,7 +3,7 @@
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
 <p class="cg_view_options_rows_container_title ">
-        <strong>* NOTE:</strong> Invoice options are general and valid for all galleries.<br>
+        <strong class="cg_note_label">* NOTE:</strong> <span class="cg_note_text">Invoice options are general and valid for all galleries.</span><br>
 </p>
 HEREDOC;
 
@@ -30,7 +30,7 @@ echo <<<HEREDOC
                 <div class="cg_view_options_row">
                     <div class="cg_view_option cg_view_option_100_percent cg_border_top_none $cg_invoice_disabled" id="SendInvoiceOption">
                         <div class="cg_view_option_title">
-                            <p style="margin-right: -30px;">Attach invoice to "Order confirmation email"<br><span class="cg_view_option_title_note"><b>NOTE:</b> Invoice will be attached at "Order confirmation email" if "Send order confirmation email after purchase" is activated</span></p>
+                            <p style="margin-right: -30px;">Attach invoice to "Order confirmation email"<br><span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">Invoice will be attached at "Order confirmation email" if "Send order confirmation email after purchase" is activated</span></span></p>
                         </div>
                         <div class="cg_view_option_checkbox cg_view_option_checked">
                             <input type="checkbox" name="SendInvoice" id="SendInvoice" $SendInvoice>
@@ -97,7 +97,7 @@ echo <<<HEREDOC
              <div class='cg_view_options_row'>
                     <div style="padding-top:15px;" class='cg_view_option cg_view_option_full_width cg_border_top_none ' id="InvoicerHeaderDataContainer" >
                         <div class='cg_view_option_title'>
-                            <p>Invoicer Header Data<br><span class='cg_view_option_title_note'><b>NOTE:</b> appears top right on an invoice</span></p>
+                            <p>Invoicer Header Data<br><span class='cg_view_option_title_note'><b>NOTE:</b> <span class="cg_note_text">appears top right on an invoice</span></span></p>
                         </div>
                         <div class="cg_view_option_input">
                             <textarea name="InvoicerHeaderData" class="InvoicerHeaderData" data-cg-country="default" maxlength="1000" placeholder="Your contact data"  rows="5"  style="width:600px;" >$InvoicerHeaderData</textarea>
@@ -189,7 +189,7 @@ echo <<<HEREDOC
                 </div>
                 <div class='cg_view_option cg_view_option_flex_flow_column cg_view_option_50_percent cg_border_top_none cg_border_border_bottom_left_radius_unset cg_border_left_none cg_border_border_bottom_right_radius_8_px' id="InvoiceNoteContainer" >
                     <div class='cg_view_option_title cg_view_option_title_full_width'>
-                        <p>InvoiceNote<br><span class="cg_view_option_title_note"><b>NOTE:</b> if empty for a country then default will be taken<br>No tags allowed<br>Appears at the bottom of an invoice</span></p>
+                        <p>InvoiceNote<br><span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">if empty for a country then default will be taken<br>No tags allowed<br>Appears at the bottom of an invoice</span></span></p>
                     </div>
                     <div class='cg_view_option_input'>
 <textarea name="InvoiceNote[default]" class="InvoiceNote" data-cg-country="default" maxlength="1000" rows="5" placeholder="Place your default note" >$InvoiceNoteDefault</textarea>

@@ -2209,7 +2209,10 @@ $(document).on('click','#RatingVisibleForGalleryEcommerceOption',function (e) {
 
     // cg_share_button
     $(document).on('click','.cg_share_button_option',function (e) {
-        var $cg_view = $(this).closest('.cg_view');
+        var $cg_view = $(this).closest('.cg_short_code_single_pic_configuration_container');
+        if(!$cg_view.length){
+            $cg_view = $(this).closest('.cg_view');
+        }
         var ShareButtonsHiddenInput = '';
         $cg_view.find('.cg_share_button').each(function (){
                 if($(this).prop('checked')){
@@ -2220,7 +2223,7 @@ $(document).on('click','#RatingVisibleForGalleryEcommerceOption',function (e) {
                     }
                 }
         });
-        $cg_view.find('.ShareButtonsHiddenInput').val(ShareButtonsHiddenInput);
+        $cg_view.find('.ShareButtonsHiddenInput').first().val(ShareButtonsHiddenInput);
     });
 
     // cg_disable_funding

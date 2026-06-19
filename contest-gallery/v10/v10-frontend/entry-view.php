@@ -66,6 +66,12 @@ if(!function_exists('cg1l_render_single_entry_view')){
         $imgFull   = esc_url($fullData['guid']);
         $img683x   = esc_url($d['img_src_683x']);
         $dlName    = esc_attr($fullData['NamePic'].'.'.strtolower($ImgType));
+        $originalFileHref = $imgFull;
+        $originalFileDownloadName = $dlName;
+        if(!empty($fullData['PdfPreview']) && !empty($fullData['PdfOriginal'])){
+            $originalFileHref = esc_url($fullData['PdfOriginal']);
+            $originalFileDownloadName = esc_attr($fullData['NamePic'].'.pdf');
+        }
         $title1    = esc_html($d['title_1']);
         $category  = esc_html($d['category']);
         $title2    = esc_html($d['title_2']);
@@ -400,13 +406,13 @@ if(!function_exists('cg1l_render_single_entry_view')){
         $forwardOriginalFileLink = '';
 
         if (isset($options['visual']['ForwardOriginalFile']) && $options['visual']['ForwardOriginalFile'] == '1' && $fullData['ImgType'] != 'con' &&  $shortcode_name != 'cg_gallery_ecommerce') {
-            $forwardOriginalFileLink = '<a href="'.$imgFull.'" target="_blank"><div class="cg-forward-original-file" data-cg-tooltip="'.esc_attr($languageNames['gallery']['OpenOriginalFileInNewTab']).'" title="'.esc_attr($languageNames['gallery']['OpenOriginalFileInNewTab']).'"></div></a>';
+            $forwardOriginalFileLink = '<a href="'.$originalFileHref.'" target="_blank"><div class="cg-forward-original-file" data-cg-tooltip="'.esc_attr($languageNames['gallery']['OpenOriginalFileInNewTab']).'" title="'.esc_attr($languageNames['gallery']['OpenOriginalFileInNewTab']).'"></div></a>';
         }
 
         $downloadOriginalFileLink = '';
 
         if (isset($options['visual']['OriginalSourceLinkInSlider']) && $options['visual']['OriginalSourceLinkInSlider'] == '1' && $fullData['ImgType'] != 'con' &&  $shortcode_name != 'cg_gallery_ecommerce') {
-            $downloadOriginalFileLink = '<a href="'.$imgFull.'" class="cg-center-image-download-link" download="'.$dlName.'" target="_blank"><div class="cg-center-image-download" data-cg-tooltip="'.esc_attr($languageNames['gallery']['DownloadOriginalFile']).'" title="'.esc_attr($languageNames['gallery']['DownloadOriginalFile']).'"></div></a>';
+            $downloadOriginalFileLink = '<a href="'.$originalFileHref.'" class="cg-center-image-download-link" download="'.$originalFileDownloadName.'" target="_blank"><div class="cg-center-image-download" data-cg-tooltip="'.esc_attr($languageNames['gallery']['DownloadOriginalFile']).'" title="'.esc_attr($languageNames['gallery']['DownloadOriginalFile']).'"></div></a>';
         }
 
         $copyImageHref = '';
