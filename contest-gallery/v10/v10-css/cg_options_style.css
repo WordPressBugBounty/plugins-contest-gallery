@@ -3877,6 +3877,7 @@ td input, td input:focus, td input:hover{
 #cgVotes .cg-votes-row-container{
 	display: grid;
 	grid-template-columns: repeat(13, calc(100% / 13));
+	align-items: center;
 	gap: 0; /* optional: Abstand zwischen den "Zellen" */
 	border-bottom: thin solid black;
 	width: 100%;
@@ -3928,7 +3929,7 @@ td input, td input:focus, td input:hover{
 #cgOptionsSaveButton{
 	text-align:center;
 	width:231px;
-	font-size:18px;
+	font-size:16px;
 	margin-top: 20px;
 	margin-left: auto;
 }

@@ -128,14 +128,49 @@ Date.prototype.cgFormat = function (mask, utc) {
 
 jQuery(document).ready(function($){
 
-    $(document).on('click', '#cgVotesSelectAll', function(e){
-
-        if($(this).prop('checked')){
-            $('.cg-votes-remove-vote-checkbox').prop('checked',true);
-        }else{
-            $('.cg-votes-remove-vote-checkbox').prop('checked',false);
+    var cgSyncVoteActionStates = function ($context) {
+        if (!$context || !$context.length) {
+            return;
         }
 
+        $context.find('.cg_vote_action input[type="checkbox"]').each(function () {
+            var $input = $(this);
+            $input.closest('.cg_vote_action').toggleClass('cg_vote_action_checked', $input.prop('checked'));
+        });
+    };
+
+    var cgUpdateVoteSelectAllState = function ($context) {
+        var $removeVoteCheckboxes;
+        var checkedCount;
+
+        if (!$context || !$context.length) {
+            return;
+        }
+
+        $removeVoteCheckboxes = $context.find('.cg-votes-remove-vote-checkbox');
+        checkedCount = $removeVoteCheckboxes.filter(':checked').length;
+
+        $context.find('#cgVotesSelectAll').prop('checked', $removeVoteCheckboxes.length > 0 && checkedCount === $removeVoteCheckboxes.length);
+    };
+
+    cgSyncVoteActionStates($('#cgVotesContent'));
+
+    $(document).on('click', '#cgVotesSelectAll', function(e){
+        var $cgVotesContent = $(this).closest('#cgVotesContent');
+
+        if($(this).prop('checked')){
+            $cgVotesContent.find('.cg-votes-remove-vote-checkbox').prop('checked',true);
+        }else{
+            $cgVotesContent.find('.cg-votes-remove-vote-checkbox').prop('checked',false);
+        }
+
+        cgSyncVoteActionStates($cgVotesContent);
+    });
+
+    $(document).on('click', '#cgVotesContent .cg-votes-remove-vote-checkbox', function(){
+        var $cgVotesContent = $(this).closest('#cgVotesContent');
+        cgUpdateVoteSelectAllState($cgVotesContent);
+        cgSyncVoteActionStates($cgVotesContent);
     });
 
 

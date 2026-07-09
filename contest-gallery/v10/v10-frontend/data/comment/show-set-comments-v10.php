@@ -216,6 +216,7 @@ $ratingCommentsData = cg1l_get_stats_for_update($galeryID, $pictureID, $lockFp);
 // count active comments correctly
 $countActiveComments = 0;
 $countCountCtoReview = 0;
+$countHiddenCommentsForFrontend = 0;
 
 // process rating comments data file --- ENDE
 
@@ -248,8 +249,18 @@ $fileImageCommentsDirCount = count($dirImageCommentsFiles);
 
 foreach ($dirImageCommentsFiles as $dirImageCommentsFile){
     $dirImageCommentsFileData = json_decode(file_get_contents($dirImageCommentsFile),true);
-    if(!empty($dirImageCommentsFileData[key($dirImageCommentsFileData)]['Active']) && $dirImageCommentsFileData[key($dirImageCommentsFileData)]['Active']==2 && empty($dirImageCommentsFileData[key($dirImageCommentsFileData)]['ReviewTstamp'])){
+    if(!empty($dirImageCommentsFileData) && is_array($dirImageCommentsFileData)){
+        $commentKey = key($dirImageCommentsFileData);
+        if(isset($dirImageCommentsFileData[$commentKey]) && is_array($dirImageCommentsFileData[$commentKey])){
+            if(!empty($dirImageCommentsFileData[$commentKey]['Active']) && $dirImageCommentsFileData[$commentKey]['Active']==2){
+                $countHiddenCommentsForFrontend++;
+                if(empty($dirImageCommentsFileData[$commentKey]['ReviewTstamp'])){
         $countCountCtoReview++;
+    }
+            }else{
+                $countActiveComments++;
+            }
+        }
     }
 }
 
@@ -257,6 +268,7 @@ foreach ($dirImageCommentsFiles as $dirImageCommentsFile){
 $countCommentsTotal = $countCommentsSQL + $fileImageCommentsDirCount;
 
 $ratingCommentsData['CountC'] = $countCommentsTotal;
+$ratingCommentsData['CountCtoReview'] = $countHiddenCommentsForFrontend;
 
 // the rest will be done in cg_actualize_all_images_data_sort_values_file
 // $countCommentsSQL condition above if(floatval($options['general']['Version'])<16){ since  28.1.2.2

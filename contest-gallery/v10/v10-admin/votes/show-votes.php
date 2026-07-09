@@ -72,6 +72,20 @@ if(!empty($_POST['cg_remove_votes'])){
     $imageData = $wpdb->get_row("SELECT * FROM $tablename WHERE id = '$imageId'"); // weil sich erneuert hat hier nochmal einfügen
 }
 
+if(!function_exists('cg1l_render_admin_vote_action_checkbox')){
+    function cg1l_render_admin_vote_action_checkbox($label, $id, $inputClass, $name, $value, $actionClass){
+        $inputClassAttr = ($inputClass) ? ' class="'.esc_attr($inputClass).'"' : '';
+        $nameAttr = ($name !== '') ? ' name="'.esc_attr($name).'"' : '';
+        $valueAttr = ($value !== '') ? ' value="'.esc_attr($value).'"' : '';
+
+        return '<label class="cg_vote_action cg_vote_action_'.esc_attr($actionClass).'" for="'.esc_attr($id).'">'.
+            '<input id="'.esc_attr($id).'"'.$inputClassAttr.' type="checkbox"'.$nameAttr.$valueAttr.'>'.
+            '<span class="cg_vote_action_text">'.esc_html($label).'</span>'.
+            '<span class="cg_vote_action_icon" aria-hidden="true"></span>'.
+        '</label>';
+    }
+}
+
 $multipleRatingQueryString = '';
 
 //if($AllowRatingMax){// all stars should be always visible
@@ -576,7 +590,10 @@ if($votingDataLength>50){
             echo "<div class='cg-votes-header'>WordPress<br>user name</div>";
             echo "<div class='cg-votes-header'>WordPress<br>user email</div>";
             echo "<div class='cg-votes-header'>Vote date</div>";
-            echo "<div class='cg-votes-header'>Select all <br/><input type='checkbox' id='cgVotesSelectAll'><br/><br/>Remove vote</div>";
+            echo "<div class='cg-votes-header cg-votes-action-header'>".
+                cg1l_render_admin_vote_action_checkbox('Select all','cgVotesSelectAll','','','','select_all').
+                "<span class='cg_votes_action_header_caption'>Remove vote</span>".
+            "</div>";
         echo "</div>";
 
         // Rows
@@ -616,7 +633,10 @@ if($votingDataLength>50){
             echo "<div class='cg-votes-row'>".cg_get_time_based_on_wp_timezone_conf($row->Tstamp,'d-M-Y H:i:s')."</div>";
                 $ratingVariant = ($row->RatingS>0) ? 'RatingS' : 'Rating';
                 $ratingHeight = ($row->RatingS>0) ? $row->RatingS : $row->Rating;
-                echo "<div class='cg-votes-row'><input type='checkbox' class='cg-votes-remove-vote-checkbox' name='ipId[$row->id][$ratingVariant]' value='$ratingHeight'></div>";
+                $voteActionInputId = 'cgVoteRemove'.preg_replace('/[^A-Za-z0-9_-]/','_', $row->id.'_'.$ratingVariant);
+                echo "<div class='cg-votes-row cg-votes-action-row'>".
+                    cg1l_render_admin_vote_action_checkbox('Remove',$voteActionInputId,'cg-votes-remove-vote-checkbox','ipId['.$row->id.']['.$ratingVariant.']',$ratingHeight,'remove').
+                "</div>";
             echo "</div>";
         }
         echo "</div>";

@@ -54,6 +54,102 @@ if(!empty($options[$galeryNR])){
     $options = $options[$galeryNR];
 }
 
+if(!function_exists('cg1l_admin_count_comments_to_review')){
+    function cg1l_admin_count_comments_to_review($dirImageComments){
+        $countCtoReview = 0;
+
+        if(is_dir($dirImageComments)){
+            $dirImageCommentsFiles = glob($dirImageComments.'/*.json');
+            if(!empty($dirImageCommentsFiles)){
+                foreach ($dirImageCommentsFiles as $dirImageCommentsFile){
+                    $dirImageCommentsFileData = json_decode(file_get_contents($dirImageCommentsFile),true);
+                    if(!empty($dirImageCommentsFileData) && is_array($dirImageCommentsFileData)){
+                        $commentKey = key($dirImageCommentsFileData);
+                        if(isset($dirImageCommentsFileData[$commentKey]) && is_array($dirImageCommentsFileData[$commentKey]) && !empty($dirImageCommentsFileData[$commentKey]['Active']) && $dirImageCommentsFileData[$commentKey]['Active']==2 && empty($dirImageCommentsFileData[$commentKey]['ReviewTstamp'])){
+                            $countCtoReview++;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $countCtoReview;
+    }
+}
+
+if(!function_exists('cg1l_admin_count_hidden_comments_for_frontend')){
+    function cg1l_admin_count_hidden_comments_for_frontend($dirImageComments){
+        $countHiddenComments = 0;
+
+        if(is_dir($dirImageComments)){
+            $dirImageCommentsFiles = glob($dirImageComments.'/*.json');
+            if(!empty($dirImageCommentsFiles)){
+                foreach ($dirImageCommentsFiles as $dirImageCommentsFile){
+                    $dirImageCommentsFileData = json_decode(file_get_contents($dirImageCommentsFile),true);
+                    if(!empty($dirImageCommentsFileData) && is_array($dirImageCommentsFileData)){
+                        $commentKey = key($dirImageCommentsFileData);
+                        if(isset($dirImageCommentsFileData[$commentKey]) && is_array($dirImageCommentsFileData[$commentKey]) && !empty($dirImageCommentsFileData[$commentKey]['Active']) && $dirImageCommentsFileData[$commentKey]['Active']==2){
+                            $countHiddenComments++;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $countHiddenComments;
+    }
+}
+
+if(!function_exists('cg1l_admin_refresh_comment_frontend_data')){
+    function cg1l_admin_refresh_comment_frontend_data($galeryNR, $pid, $countCommentsTotal, $countHiddenCommentsForFrontend){
+        $galeryNR = absint($galeryNR);
+        $pid = absint($pid);
+
+        if(empty($galeryNR) || empty($pid)){
+            return;
+        }
+
+        if(function_exists('cg1l_get_stats_for_update') && function_exists('cg1l_set_stats_with_lock')){
+            $lockFp = false;
+            $ratingFileData = cg1l_get_stats_for_update($galeryNR, $pid, $lockFp);
+            if(is_array($ratingFileData)){
+                $ratingFileData['CountC'] = intval($countCommentsTotal);
+                $ratingFileData['CountCtoReview'] = intval($countHiddenCommentsForFrontend);
+                cg1l_set_stats_with_lock($galeryNR, $pid, $ratingFileData, $lockFp);
+            }else if(function_exists('cg1l_release_stats_lock')){
+                cg1l_release_stats_lock($lockFp);
+            }
+        }
+
+        if(function_exists('cg1l_push_recent_id_file')){
+            cg1l_push_recent_id_file($galeryNR,$pid,'image-comments-data-last-update');
+            cg1l_push_recent_id_file($galeryNR,$pid,'image-stats-data-last-update');
+        }
+
+        if(function_exists('cg1l_create_last_updated_time_file')){
+            cg1l_create_last_updated_time_file($galeryNR,'image-comments-data-last-update');
+            cg1l_create_last_updated_time_file($galeryNR,'image-stats-data-last-update');
+        }
+    }
+}
+
+if(!function_exists('cg1l_render_admin_comment_action_checkbox')){
+    function cg1l_render_admin_comment_action_checkbox($label, $id, $inputClass, $name, $value, $disabled, $actionClass, $extraClass){
+        $inputClassAttr = ($inputClass) ? ' class="'.esc_attr($inputClass).'"' : '';
+        $nameAttr = ($name !== '') ? ' name="'.esc_attr($name).'"' : '';
+        $valueAttr = ($value !== '') ? ' value="'.esc_attr($value).'"' : '';
+        $disabledAttr = ($disabled) ? ' disabled' : '';
+        $disabledClass = ($disabled) ? ' cg_comment_action_disabled' : '';
+        $extraClassAttr = ($extraClass) ? ' '.esc_attr($extraClass) : '';
+
+        return '<label class="cg_comment_action cg_comment_action_'.esc_attr($actionClass).$extraClassAttr.$disabledClass.'" for="'.esc_attr($id).'">'.
+            '<input id="'.esc_attr($id).'"'.$inputClassAttr.' type="checkbox"'.$nameAttr.$valueAttr.$disabledAttr.'>'.
+            '<span class="cg_comment_action_text">'.esc_html($label).'</span>'.
+            '<span class="cg_comment_action_icon" aria-hidden="true"></span>'.
+        '</label>';
+    }
+}
+
 // SQL zum Ermitteln von allen Komments mit gesendeter picture id
 // DATEN Löschen und exit
 
@@ -67,17 +163,6 @@ if(!empty($options[$galeryNR])){
             fclose($fp);
 
             $countCtoReview = 0;
-
-            // save comments for future repair eventually
-            if(is_dir($dirImageComments)){
-                $dirImageCommentsFiles = glob($dirImageComments.'/*.json');
-                foreach ($dirImageCommentsFiles as $dirImageCommentsFile){
-                    $dirImageCommentsFileData = json_decode(file_get_contents($dirImageCommentsFile),true);
-                    if(!empty($dirImageCommentsFileData[key($dirImageCommentsFileData)]['Active']) && $dirImageCommentsFileData[key($dirImageCommentsFileData)]['Active']==2 && empty($dirImageCommentsFileData[key($dirImageCommentsFileData)]['ReviewTstamp'])){
-                        $countCtoReview++;
-                    }
-                }
-            }
 
             /*
 		var_dump("delete-comment");
@@ -142,7 +227,7 @@ if(!empty($options[$galeryNR])){
 
             $unix = time();
 
-            if (!empty($_POST['activate-comment'])) {// @toDo CountCtoReview noch updaten
+            if (!empty($_POST['activate-comment'])) {
 
                 foreach($_POST['activate-comment'] as $key => $commentId){
                     // if old comment then still might be in the database, this why update
@@ -168,7 +253,6 @@ if(!empty($options[$galeryNR])){
                         if(empty($fileImageCommentArray[key($fileImageCommentArray)]['ReviewTstamp'])){
                             $fileImageCommentArray[key($fileImageCommentArray)]['ReviewTstamp'] = $unix;
                             $commentsArray[$commentId]['ReviewTstamp'] = $unix;
-                            $countCtoReview--;
                         }
 
                         file_put_contents($fileImageComment,json_encode($fileImageCommentArray));
@@ -178,7 +262,7 @@ if(!empty($options[$galeryNR])){
 
             }
 
-            if (!empty($_POST['deactivate-comment'])) {// @toDo CountCtoReview noch updaten
+            if (!empty($_POST['deactivate-comment'])) {
                 foreach($_POST['deactivate-comment'] as $key => $commentId){
                     $wpdb->update(
                         "$tablename_comments",
@@ -192,7 +276,10 @@ if(!empty($options[$galeryNR])){
                     if(file_exists($fileImageComment)){
                         $fileImageCommentArray = json_decode(file_get_contents($fileImageComment),true);
                         if(empty($fileImageCommentArray[key($fileImageCommentArray)]['ReviewTstamp'])){// so never appear again as for review!
-                            $fileImageCommentArray[key($fileImageCommentArray)]['ReviewTstamp'] = time();
+                            $fileImageCommentArray[key($fileImageCommentArray)]['ReviewTstamp'] = $unix;
+                        }
+                        if(empty($commentsArray[$commentId]['ReviewTstamp'])){
+                            $commentsArray[$commentId]['ReviewTstamp'] = $unix;
                         }
                         $fileImageCommentArray[key($fileImageCommentArray)]['Active'] = 2;
                         file_put_contents($fileImageComment,json_encode($fileImageCommentArray));
@@ -246,26 +333,18 @@ if(!empty($options[$galeryNR])){
             }
 
             $countCommentsTotal = $countCommentsSQL+$fileImageCommentsDirCount;
+            $countCtoReview = cg1l_admin_count_comments_to_review($dirImageComments);
+            $countHiddenCommentsForFrontend = cg1l_admin_count_hidden_comments_for_frontend($dirImageComments);
 
             $wpdb->update(
             "$tablename",
                 array('CountC' => $countCommentsTotal, 'CountCtoReview' => $countCtoReview),
                 array('id' => $pid),
-                array('%d'),
+                array('%d','%d'),
                 array('%d')
             );
 
-        if (!empty($_POST['delete-comment'])){
-            $lockFp = false;
-            $ratingFileData = cg1l_get_stats_for_update($galeryNR, $pid, $lockFp);
-            $ratingFileData['CountC'] = $countCommentsTotal;
-            $ratingFileData = cg1l_set_stats_with_lock($galeryNR, $pid, $ratingFileData, $lockFp);
-            cg1l_release_stats_lock($lockFp);
-            cg1l_push_recent_id_file($galeryNR,$pid,'image-comments-data-last-update');
-            cg1l_create_last_updated_time_file($galeryNR,'image-comments-data-last-update');
-            cg1l_push_recent_id_file($galeryNR,$pid,'image-stats-data-last-update');
-            cg1l_create_last_updated_time_file($galeryNR,'image-stats-data-last-update');
-        }
+        cg1l_admin_refresh_comment_frontend_data($galeryNR, $pid, $countCommentsTotal, $countHiddenCommentsForFrontend);
 
     }
 
@@ -578,16 +657,10 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
         echo "<div id='cgShowComments' class='cg_border_top_none' >";
 
         if(count($select_comments)){
-            echo "<div style='display: flex;justify-content: end;margin-bottom: 20px;margin-top: 5px;'>";
-              echo "<div style='margin-right: 13px;'>";
-                echo "Deactivate all: <input type='checkbox' id='cgCommentsDeactivateAll'>";
-              echo "</div>";
-              echo "<div style='margin-right: 14px;'>";
-                echo "Activate all: <input type='checkbox' id='cgCommentsActivateAll'>";
-              echo "</div>";
-              echo "<div style='margin-right: 6px;'>";
-                echo "Delete all: <input type='checkbox' id='cgCommentsDeleteAll'>";
-              echo "</div>";
+            echo "<div class='cg_comment_bulk_actions'>";
+                echo cg1l_render_admin_comment_action_checkbox('Deactivate all','cgCommentsDeactivateAll','','','',false,'deactivate','cg_comment_action_bulk');
+                echo cg1l_render_admin_comment_action_checkbox('Activate all','cgCommentsActivateAll','','','',false,'activate','cg_comment_action_bulk');
+                echo cg1l_render_admin_comment_action_checkbox('Delete all','cgCommentsDeleteAll','','','',false,'delete','cg_comment_action_bulk');
             echo "</div>";
         }
 
@@ -653,12 +726,12 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
         echo "<div style='width: 70%;'>";
 		if(!empty($value['Active']) && $value['Active']==2){
             if(!empty($countCtoReviewArray[$id])){
-                echo "<span style='color:orange;font-weight: bold;'>Not Active - Not Reviewed</span>";
+                echo "<span class='cg_comment_status cg_comment_status_review'>Not Active - Not Reviewed</span>";
             }else{
-                echo "<span style='color:orange;font-weight: bold;'>Not Active</span>";
+                echo "<span class='cg_comment_status cg_comment_status_inactive'>Not Active</span>";
             }
         }else{
-            echo "<span style='color:green;font-weight: bold;'>Active</span>";
+            echo "<span class='cg_comment_status cg_comment_status_active'>Active</span>";
         }
         if(!empty($value['userIP'])){
             $userIP = contest_gal1ery_convert_for_html_output_without_nl2br($value['userIP']);
@@ -684,10 +757,11 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
         echo "</div>";
         echo "</div>";
 
-            echo "<div style='margin-left: auto;'>";
-		echo "<div style='display:inline;float:right;margin-right:5px;'>Delete: <input  class='cg_comment_delete'  type='checkbox' name='delete-comment[]' value='$id'></div>";
-		echo "<div style='display:inline;float:right;margin-right:30px;'>Activate: <input class='cg_comment_activate' ".((!empty($value['Active']) && $value['Active']==2) ? "" : "disabled")." type='checkbox' name='activate-comment[]' value='$id'></div>";
-		echo "<div style='display:inline;float:right;margin-right:30px;'>Deactivate: <input class='cg_comment_deactivate' ".((!empty($value['Active']) && $value['Active']==2) ? "disabled" : "")." type='checkbox' name='deactivate-comment[]' value='$id'></div>";
+            $commentActionInputId = preg_replace('/[^A-Za-z0-9_-]/','_', $id);
+            echo "<div class='cg_comment_actions'>";
+		echo cg1l_render_admin_comment_action_checkbox('Delete','cgCommentDelete'.$commentActionInputId,'cg_comment_delete','delete-comment[]',$id,false,'delete','');
+		echo cg1l_render_admin_comment_action_checkbox('Activate','cgCommentActivate'.$commentActionInputId,'cg_comment_activate','activate-comment[]',$id,((!empty($value['Active']) && $value['Active']==2) ? false : true),'activate','');
+		echo cg1l_render_admin_comment_action_checkbox('Deactivate','cgCommentDeactivate'.$commentActionInputId,'cg_comment_deactivate','deactivate-comment[]',$id,((!empty($value['Active']) && $value['Active']==2) ? true : false),'deactivate','');
             echo "</div>";
 
 		echo "</div>";

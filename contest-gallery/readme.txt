@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, openai
 Requires at least: 5.6
-Stable tag: 30.0.4
+Stable tag: 30.0.5
 Tested up to: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -274,6 +274,13 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= 30.0.5 =
+* FIXED: Reviewed comments now update frontend comment data, stats, recent markers and last-update files consistently after backend activation, deactivation or deletion.
+* FIXED: Pending review comments no longer increase the visible frontend comment counter or appear in the initial entry page comment render before activation.
+* IMPROVED: Backend comment review actions and status labels now use modern pill and badge controls.
+* IMPROVED: Backend vote removal and select-all checkboxes now use modern pill controls with synchronized selection states.
+* IMPROVED: Video gallery previews now use a later preview frame to reduce black thumbnails while keeping real video playback starting at the beginning.
 
 = 30.0.4 =
 * FIXED: Social share icon selections in Entry view options were not always saved and displayed correctly for all gallery shortcode types.

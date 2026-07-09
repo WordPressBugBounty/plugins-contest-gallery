@@ -20,6 +20,10 @@ if(!function_exists('cg1l_render_center_div_reload_comment_icon')){
 if(!function_exists('cg1l_render_center_div_reload_comment_div')){
     function cg1l_render_center_div_reload_comment_div($comment,$WpUserIdsData,$visibleDate = '')
     {
+        if(isset($comment['Active']) && $comment['Active'] == 2){
+            return '';
+        }
+
         #toDo name
         $WpUserId = 0;
         if(!empty($comment['insert_id']) && !empty($WpUserIdsData['commentsWpUserIdsArray'][$comment['insert_id']])){

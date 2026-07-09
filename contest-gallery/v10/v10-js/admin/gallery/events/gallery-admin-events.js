@@ -1,21 +1,39 @@
 jQuery(document).ready(function ($) {
 
+    var cgSyncCommentActionStates = function ($context) {
+        if (!$context || !$context.length) {
+            return;
+        }
+
+        $context.find('.cg_comment_action input[type="checkbox"]').each(function () {
+            var $input = $(this);
+            $input.closest('.cg_comment_action')
+                .toggleClass('cg_comment_action_checked', $input.prop('checked'))
+                .toggleClass('cg_comment_action_disabled', $input.prop('disabled'));
+        });
+    };
+
+    cgSyncCommentActionStates($('#cgShowComments'));
+
     $(document).on('click', '#cgShowComments .cg_comment_delete', function(){
         if($(this).prop('checked')){
             $(this).closest('.cg_comment').find('.cg_comment_activate,.cg_comment_deactivate').prop('checked',false);
         }
+        cgSyncCommentActionStates($(this).closest('#cgShowComments'));
     });
 
     $(document).on('click', '#cgShowComments .cg_comment_activate', function(){
         if($(this).prop('checked')){
             $(this).closest('.cg_comment').find('.cg_comment_delete,.cg_comment_deactivate').prop('checked',false);
         }
+        cgSyncCommentActionStates($(this).closest('#cgShowComments'));
     });
 
     $(document).on('click', '#cgShowComments .cg_comment_deactivate', function(){
         if($(this).prop('checked')){
             $(this).closest('.cg_comment').find('.cg_comment_delete,.cg_comment_activate').prop('checked',false);
         }
+        cgSyncCommentActionStates($(this).closest('#cgShowComments'));
     });
 
 
@@ -2626,6 +2644,7 @@ debugger
         }else{
             $cgShowComments.find('.cg_comment_deactivate:not(:disabled)').prop('checked',false);
         }
+        cgSyncCommentActionStates($cgShowComments);
     });
 
     $(document).on('change','#cgCommentsActivateAll',function (e) {
@@ -2639,6 +2658,7 @@ debugger
         }else{
             $cgShowComments.find('.cg_comment_activate:not(:disabled)').prop('checked',false);
         }
+        cgSyncCommentActionStates($cgShowComments);
     });
 
     $(document).on('change','#cgCommentsDeleteAll',function (e) {
@@ -2652,6 +2672,7 @@ debugger
         }else{
             $cgShowComments.find('.cg_comment_delete:not(:disabled)').prop('checked',false);
         }
+        cgSyncCommentActionStates($cgShowComments);
     });
 
 });

@@ -70,6 +70,21 @@
         return '<div class="'.esc_attr($classes).'">'.$content.'</div>';
     };
 
+    $cg_get_gallery_video_preview_url = function($urlValue){
+        $urlValue = (string)$urlValue;
+
+        if($urlValue === ''){
+            return '';
+        }
+
+        $hashPosition = strpos($urlValue,'#');
+        if($hashPosition !== false){
+            $urlValue = substr($urlValue,0,$hashPosition);
+        }
+
+        return $urlValue.'#t=1';
+    };
+
     $cg_resolve_cgalleries_target_gallery_id = function($fullData){
         if(empty($fullData) || !is_array($fullData)){
             return 0;
@@ -414,6 +429,7 @@
             if($isOnlyGalleryView){
                 $controls = 'controls';
             }
+            $videoSource = ($isOnlyGalleryView) ? $fullData['guid'] : $cg_get_gallery_video_preview_url($fullData['guid']);
             $videoContent = '<video id="cg_append'.$id.'" 
                     class="cg_append cg_append_alternative_file_type_video"
                     '.$controls.'
@@ -422,7 +438,7 @@
                     height="'.$fullData['Height'].'"
                     '.$mediaDescriptionAttribute.'
                   >
-                    <source src="'.$fullData['guid'].'" type="video/'.strtolower($ImgType).'">
+                    <source src="'.esc_url($videoSource).'" type="video/'.strtolower($ImgType).'">
                     <!-- Fallback text -->
                     Sorry, your browser doesn’t support embedded videos.
                   </video>';

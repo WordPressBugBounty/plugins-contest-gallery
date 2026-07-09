@@ -322,6 +322,9 @@ if(!function_exists('cg1l_render_single_entry_view')){
             die;*/
             if($commentsCount >= 1){
                 foreach ($jsonCommentsData[$realId] as $comment){
+                    if(isset($comment['Active']) && $comment['Active'] == 2){
+                        continue;
+                    }
                     $commentVisibleDate = $formatConfiguredDate((!empty($comment['timestamp']) ? $comment['timestamp'] : 0), $commentsDateFormat);
                     $userCommments .= cg1l_render_center_div_reload_comment_div($comment,$WpUserIdsData,$commentVisibleDate);
                 }
