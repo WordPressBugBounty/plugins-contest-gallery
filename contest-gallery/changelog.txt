@@ -1,5 +1,9 @@
 Contest Gallery
 
+= 30.0.6 =
+* IMPROVED: CSS improvements frontend.
+* FIXED: Security issue.
+
 = 30.0.5 =
 * FIXED: Reviewed comments now update frontend comment data, stats, recent markers and last-update files consistently after backend activation, deactivation or deletion.
 * FIXED: Pending review comments no longer increase the visible frontend comment counter or appear in the initial entry page comment render before activation.

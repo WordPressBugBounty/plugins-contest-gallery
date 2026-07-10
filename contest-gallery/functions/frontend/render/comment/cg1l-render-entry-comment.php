@@ -40,7 +40,7 @@ if(!function_exists('cg1l_render_center_div_reload_comment_div')){
         if($preferredProfileImageUrl || $nickname){
             $backgroundImage = '';
             $avatar = '';
-            $name = contest_gal1ery_convert_for_html_output_without_nl2br($nickname);
+            $name = esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($nickname));
 
             if(!empty($preferredProfileImageUrl)){
                 $profileImageUrl = esc_url_raw($preferredProfileImageUrl);
@@ -55,15 +55,15 @@ if(!function_exists('cg1l_render_center_div_reload_comment_div')){
             <div class="cg-center-image-comments-nickname-text">'.$name.'</div>
             </div>';
         }else{
-            $name = contest_gal1ery_convert_for_html_output_without_nl2br($comment['name']);
+            $name = esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($comment['name']));
             $nameContainer = '<div class="cg-center-image-comments-name-date-container '.($name ? '' : 'cg_hide').'">
                 <p class="cg-center-image-comments-name-content">'.$name.'</p>
             </div>';
         }
 
         $timestamp = absint( isset( $comment['timestamp'] ) ? $comment['timestamp'] : 0 );
-        $commentText = contest_gal1ery_convert_for_html_output_without_nl2br($comment['comment']);
-        $visibleDate = contest_gal1ery_convert_for_html_output_without_nl2br($visibleDate);
+        $commentText = esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($comment['comment']));
+        $visibleDate = esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($visibleDate));
 
         return '<div class="cg-center-image-comments-div">
         '.$nameContainer.'

@@ -3,8 +3,8 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, openai
 Requires at least: 5.6
-Stable tag: 30.0.5
-Tested up to: 7.0
+Stable tag: 30.0.6
+Tested up to: 7.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -274,6 +274,10 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= 30.0.6 =
+* IMPROVED: CSS improvements frontend.
+* FIXED: Security issue.
 
 = 30.0.5 =
 * FIXED: Reviewed comments now update frontend comment data, stats, recent markers and last-update files consistently after backend activation, deactivation or deletion.
