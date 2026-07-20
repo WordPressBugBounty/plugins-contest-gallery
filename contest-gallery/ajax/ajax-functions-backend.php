@@ -1056,46 +1056,48 @@ add_action('wp_ajax_post_cg_youtube_delete_from_library', 'post_cg_youtube_delet
 if (!function_exists('post_cg_youtube_delete_from_library')) {
     function post_cg_youtube_delete_from_library()
     {
+	    cg_require_backend_access();
+
 	    contest_gal1ery_db_check();
 
 	    $_POST = cg1l_sanitize_post($_POST);
 
-	    $isBackendCall = true;
-	    $isAjaxCall = true;
-
-	    $isAjaxCategoriesCall = true;
-
-	    global $wp_version;
-	    $sanitize_textarea_field = ($wp_version < 4.7) ? 'sanitize_text_field' : 'sanitize_textarea_field';
-
 	    if (defined('DOING_AJAX') && DOING_AJAX) {
+		    $cg_wp_upload_ids = (!empty($_POST['cg_wp_post_ids']) && is_array($_POST['cg_wp_post_ids'])) ? $_POST['cg_wp_post_ids'] : array();
+		    $allowed_mime_types = array(
+			    'contest-gallery-youtube',
+			    'contest-gallery-twitter',
+			    'contest-gallery-instagram',
+			    'contest-gallery-tiktok',
+		    );
+		    $posts_to_delete = array();
 
-		    $user = wp_get_current_user();
+		    foreach ($cg_wp_upload_ids as $WpUpload) {
+			    $wp_upload_id = absint($WpUpload);
+			    $post = ($wp_upload_id > 0) ? get_post($wp_upload_id) : false;
 
-		    if (
-			    is_super_admin($user->ID) ||
-			    in_array('administrator', (array)$user->roles) ||
-			    in_array('editor', (array)$user->roles) ||
-			    in_array('author', (array)$user->roles)
-		    ) {
+			    if (
+				    empty($post) ||
+				    $post->post_type !== 'contest-gallery' ||
+				    !in_array($post->post_mime_type, $allowed_mime_types, true) ||
+				    !current_user_can('delete_post', $wp_upload_id)
+			    ) {
+				    cg_die_missing_backend_access();
+			    }
 
-			    $cg_wp_upload_ids = $_POST['cg_wp_post_ids'];
+			    $posts_to_delete[$wp_upload_id] = $wp_upload_id;
+		    }
 
-			    global $wpdb;
-			    $tablename_posts = $wpdb->prefix . "posts";
+		    if (empty($posts_to_delete)) {
+			    status_header(400);
+			    die('No valid social platform posts selected.');
+		    }
 
-			    foreach ($cg_wp_upload_ids as $WpUpload){
-				    $wpdb->query($wpdb->prepare(
-					    "
-				DELETE FROM $tablename_posts WHERE ID = %d
-			",
-					    $WpUpload
-				    ));
-				}
-
-		    } else {
-			    echo "<div id='cgSaveCategoriesCouldNotBeChanged'><h2>MISSINGRIGHTS<br>This area can be edited only as administrator, editor or author.</h2></div>";
-			    exit();
+		    foreach ($posts_to_delete as $wp_upload_id) {
+			    if (!wp_delete_post($wp_upload_id, true)) {
+				    status_header(500);
+				    die('Social platform post could not be deleted.');
+			    }
 		    }
 
 		    exit();

@@ -364,7 +364,7 @@ if($isAjaxCall){
 					$exifData = '';
 				}
 				if(!empty($exifData)){
-					$exifDataStringForInput = json_encode($exifData);
+					$exifDataStringForInput = wp_json_encode($exifData);
 				}
 			}else{
 				$exifData = false;
@@ -486,7 +486,7 @@ if($isAjaxCall){
 
 			if(function_exists('exif_read_data')){
 				if(!empty($exifData)){
-					$exifDataStringForInput = json_encode($exifData);
+					$exifDataStringForInput = wp_json_encode($exifData);
 				}else{
 					$exifData = false;
 				}
@@ -1032,11 +1032,13 @@ if($isAjaxCall){
             $post_mime_type_fist_part = 'image';
         }
 
+		$exifDataStringForAttribute = esc_attr($exifDataStringForInput);
+
 		echo "<div class='cg_backend_info_container $cg_ecom_not_ecom' data-cg-real-id='$id' data-cg-post_name='$post_name'  data-cg-post_title='$post_title' 
              data-cg-post_content='$post_description'  data-cg-post_excerpt='$post_excerpt'   data-cg-post_mime_type='$post_mime_type'  
              data-cg-original-source='$image_url' data-cg-type-short='$ImgType'  data-cg-type='$post_mime_type_fist_part'
              data-cg-url-image-large='$imgSrcLargeRealIdSrc'  data-cg-url-image-medium='$imgSrcMediumRealIdSrc'  
-             data-cg-file-height='$fileHeight' data-cg-file-width='$fileWidth'  data-cg-exif='$exifDataStringForInput'  data-cg-pdf-preview='".$value->PdfPreview."' data-cg-pdf-original='".$image_url."'   data-cg-pdf-preview-image='$PdfPreviewImage' data-cg-pdf-preview-image-large='$PdfPreviewImageLarge' data-cg-wp-upload='$WpUpload' 
+             data-cg-file-height='$fileHeight' data-cg-file-width='$fileWidth'  data-cg-exif='$exifDataStringForAttribute'  data-cg-pdf-preview='".$value->PdfPreview."' data-cg-pdf-original='".$image_url."'   data-cg-pdf-preview-image='$PdfPreviewImage' data-cg-pdf-preview-image-large='$PdfPreviewImageLarge' data-cg-wp-upload='$WpUpload'
             >";
 
         $cg_sent_mails_hide = 'cg_hide';
@@ -2287,7 +2289,7 @@ if($isAjaxCall){
 					$DateTimeOriginal = str_replace(':','-',$DateTimeOriginal);
 				}
 
-				echo '<div class="'.((!empty($exifData['DateTimeOriginal'])) ? '' : 'cg_hide').' cg-exif cg-exif-date-time-original cg-exif '.$cgProFalse.'"><span class="cg-exif-date-time-original-img cg-exif-img"></span><span class="cg-exif-date-time-original-text cg-exif-text">'.contest_gal1ery_convert_for_html_output_without_nl2br($DateTimeOriginal).'</span></div>';
+				echo '<div class="'.((!empty($exifData['DateTimeOriginal'])) ? '' : 'cg_hide').' cg-exif cg-exif-date-time-original cg-exif '.$cgProFalse.'"><span class="cg-exif-date-time-original-img cg-exif-img"></span><span class="cg-exif-date-time-original-text cg-exif-text">'.esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($DateTimeOriginal)).'</span></div>';
 
 				$MakeAndModel = '';
 				if(!empty($exifData['MakeAndModel'])){// Make And Model or only Model might be available
@@ -2296,16 +2298,16 @@ if($isAjaxCall){
 					$MakeAndModel = cg_backend_gallery_exif_value_to_string($exifData['Model']);
 				}
 
-				echo '<div class="'.((!empty($exifData['MakeAndModel'])) ? '' : 'cg_hide').' cg-exif cg-exif-model"><span class="cg-exif-model-img cg-exif-img"></span><span class="cg-exif-model-text cg-exif-text">'.contest_gal1ery_convert_for_html_output_without_nl2br($MakeAndModel).'</span></div>';
+				echo '<div class="'.((!empty($exifData['MakeAndModel'])) ? '' : 'cg_hide').' cg-exif cg-exif-model"><span class="cg-exif-model-img cg-exif-img"></span><span class="cg-exif-model-text cg-exif-text">'.esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($MakeAndModel)).'</span></div>';
 
 				$ApertureFNumber = (!empty($exifData['ApertureFNumber'])) ? cg_backend_gallery_exif_value_to_string($exifData['ApertureFNumber']) : '';
 				$ExposureTime = (!empty($exifData['ExposureTime'])) ? cg_backend_gallery_exif_value_to_string($exifData['ExposureTime']) : '';
 				$ISOSpeedRatings = (!empty($exifData['ISOSpeedRatings'])) ? cg_backend_gallery_exif_value_to_string($exifData['ISOSpeedRatings']) : '';
 				$FocalLength = (!empty($exifData['FocalLength'])) ? cg_backend_gallery_exif_value_to_string($exifData['FocalLength']) : '';
-				echo '<div class="'.((!empty($ApertureFNumber)) ? '' : 'cg_hide').' cg-exif cg-exif-aperturefnumber cg-exif"><span class="cg-exif-aperturefnumber-img cg-exif-img"></span><span class="cg-exif-aperturefnumber-text cg-exif-text">'.contest_gal1ery_convert_for_html_output_without_nl2br($ApertureFNumber).'</span></div>';
-				echo '<div class="'.((!empty($ExposureTime)) ? '' : 'cg_hide').' cg-exif cg-exif-exposuretime cg-exif"><span class="cg-exif-exposuretime-img cg-exif-img"></span><span class="cg-exif-exposuretime-text cg-exif-text">'.contest_gal1ery_convert_for_html_output_without_nl2br($ExposureTime).'</span></div>';
-				echo '<div class="'.((!empty($ISOSpeedRatings)) ? '' : 'cg_hide').' cg-exif cg-exif-isospeedratings cg-exif"><span class="cg-exif-isospeedratings-img cg-exif-img"></span><span class="cg-exif-isospeedratings-text cg-exif-text">'.contest_gal1ery_convert_for_html_output_without_nl2br($ISOSpeedRatings).'</span></div>';
-				echo '<div class="'.((!empty($FocalLength)) ? '' : 'cg_hide').' cg-exif cg-exif-focallength cg-exif"><span class="cg-exif-focallength-img cg-exif-img"></span><span class="cg-exif-focallength-text cg-exif-text">'.contest_gal1ery_convert_for_html_output_without_nl2br($FocalLength).'</span></div>';
+				echo '<div class="'.((!empty($ApertureFNumber)) ? '' : 'cg_hide').' cg-exif cg-exif-aperturefnumber cg-exif"><span class="cg-exif-aperturefnumber-img cg-exif-img"></span><span class="cg-exif-aperturefnumber-text cg-exif-text">'.esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($ApertureFNumber)).'</span></div>';
+				echo '<div class="'.((!empty($ExposureTime)) ? '' : 'cg_hide').' cg-exif cg-exif-exposuretime cg-exif"><span class="cg-exif-exposuretime-img cg-exif-img"></span><span class="cg-exif-exposuretime-text cg-exif-text">'.esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($ExposureTime)).'</span></div>';
+				echo '<div class="'.((!empty($ISOSpeedRatings)) ? '' : 'cg_hide').' cg-exif cg-exif-isospeedratings cg-exif"><span class="cg-exif-isospeedratings-img cg-exif-img"></span><span class="cg-exif-isospeedratings-text cg-exif-text">'.esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($ISOSpeedRatings)).'</span></div>';
+				echo '<div class="'.((!empty($FocalLength)) ? '' : 'cg_hide').' cg-exif cg-exif-focallength cg-exif"><span class="cg-exif-focallength-img cg-exif-img"></span><span class="cg-exif-focallength-text cg-exif-text">'.esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($FocalLength)).'</span></div>';
 				echo '</div>';
 
 				echo '</div>';

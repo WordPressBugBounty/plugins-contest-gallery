@@ -62,94 +62,59 @@ if(!defined('ABSPATH')){exit;}
                 return;
             }
 
-		$tablenameWpUsers = $wpdb->base_prefix . "users";
         $tablename_options = $wpdb->prefix."contest_gal1ery_options";
         $tablename_pro_options = $wpdb->prefix."contest_gal1ery_pro_options";
 
-		$cg_login_name_mail = sanitize_text_field($_REQUEST['action1']);
+		$cg_login_name_mail = (isset($_REQUEST['action1']) && is_string($_REQUEST['action1'])) ? sanitize_text_field(wp_unslash($_REQUEST['action1'])) : '';
+		$cg_login_password = (isset($_REQUEST['action2']) && is_string($_REQUEST['action2'])) ? wp_unslash($_REQUEST['action2']) : '';
+		$cg_auth_login = $cg_login_name_mail;
 
-		$cg_user_email = false;
-		$cg_user_login = false;
-        $cgPwHash = false;
-
-		//Check name or email
-			if(is_email($cg_login_name_mail)){
-        $cgWpData = $wpdb->get_row($wpdb->prepare(
-                "SELECT ID, user_login, user_pass 
-        FROM $tablenameWpUsers 
-        WHERE user_email = %s",
-                $cg_login_name_mail
-        ));
-			}else{
-        $cgWpData = $wpdb->get_row($wpdb->prepare(
-                "SELECT ID, user_email, user_pass 
-        FROM $tablenameWpUsers 
-        WHERE user_login = %s",
-                $cg_login_name_mail
-        ));
-            }
-
-		if(empty($cgWpData)){
-
-?>
-<script data-cg-processing="true">
-var cg_language_LoginAndPasswordDoNotMatch = document.getElementById("cg_language_LoginAndPasswordDoNotMatch").value;
-
-var cg_check_mail_name_value_for_login = document.getElementById('cg_check_mail_name_value_for_login');
-cg_check_mail_name_value_for_login.value = 1;
-
-var cg_append_login_and_password_do_not_match = document.getElementById('cg_append_login_and_password_do_not_match');
-cg_append_login_and_password_do_not_match.innerHTML = cg_append_login_and_password_do_not_match.innerHTML + cg_language_LoginAndPasswordDoNotMatch;
-cg_append_login_and_password_do_not_match.classList.remove('cg_hide');
-
-// Password Feld leer machen
-//var cg_login_password = document.getElementById('cg_login_password');
-//cg_login_password.value = '';
-
-</script>
-<?php
-		return false;
-
-		}
-		else{
-
-			$cg_login_password = sanitize_text_field($_REQUEST['action2']);
-
-			require_once(ABSPATH ."wp-load.php");
-			$cgCheckPw = (wp_check_password($cg_login_password, $cgWpData->user_pass));
-
-			if($cgCheckPw==false){
-
-?>
-<script data-cg-processing="true">
-var cg_language_LoginAndPasswordDoNotMatch = document.getElementById("cg_language_LoginAndPasswordDoNotMatch").value;
-
-var cg_check_mail_name_value_for_login = document.getElementById('cg_check_mail_name_value_for_login');
-cg_check_mail_name_value_for_login.value = 1;
-
-var cg_append_login_and_password_do_not_match = document.getElementById('cg_append_login_and_password_do_not_match');
-cg_append_login_and_password_do_not_match.innerHTML = cg_append_login_and_password_do_not_match.innerHTML + cg_language_LoginAndPasswordDoNotMatch;
-cg_append_login_and_password_do_not_match.classList.remove('cg_hide');
-
-// Password Feld leer machen
-//var cg_login_password = document.getElementById('cg_login_password');
-//cg_login_password.value = '';
-
-</script>
-<?php
+		if(is_email($cg_login_name_mail)){
+			$cg_user_by_email = get_user_by('email', $cg_login_name_mail);
+			if(!empty($cg_user_by_email)){
+				$cg_auth_login = $cg_user_by_email->user_login;
 			}
-			else{
-					// Anzahl Login Versuche beginnt von Vorne
-					//$_SESSION["cg_login_count"]=1;
-/*					$creds = array();
-					$creds['user_login'] = $cgWpData->user_login;
-					$creds['user_password'] = $cg_login_password;
-					$creds['remember'] = true;
-					$user = wp_signon( $creds, true );*/
-                // works better (more reliable on different systems and cases) then wp_signon!
-                wp_set_auth_cookie( $cgWpData->ID,true );
+		}
 
-				$galleryDbVersion = 100;
+		if(cg1l_is_login_rate_limited($cg_login_name_mail)){
+			$cg_user = new WP_Error('cg_login_rate_limited');
+		}else{
+			$creds = array();
+			$creds['user_login'] = $cg_auth_login;
+			$creds['user_password'] = $cg_login_password;
+			$creds['remember'] = true;
+			$cg_user = wp_signon($creds, is_ssl());
+
+			if(is_wp_error($cg_user)){
+				cg1l_record_login_failure($cg_login_name_mail);
+			}else{
+				cg1l_clear_login_failures($cg_login_name_mail);
+			}
+		}
+
+		if(is_wp_error($cg_user)){
+
+?>
+<script data-cg-processing="true">
+var cg_language_LoginAndPasswordDoNotMatch = document.getElementById("cg_language_LoginAndPasswordDoNotMatch").value;
+
+var cg_check_mail_name_value_for_login = document.getElementById('cg_check_mail_name_value_for_login');
+cg_check_mail_name_value_for_login.value = 1;
+
+var cg_append_login_and_password_do_not_match = document.getElementById('cg_append_login_and_password_do_not_match');
+cg_append_login_and_password_do_not_match.innerHTML = cg_append_login_and_password_do_not_match.innerHTML + cg_language_LoginAndPasswordDoNotMatch;
+cg_append_login_and_password_do_not_match.classList.remove('cg_hide');
+
+// Password Feld leer machen
+//var cg_login_password = document.getElementById('cg_login_password');
+//cg_login_password.value = '';
+
+</script>
+<?php
+			return false;
+		}
+
+		$galleryDbVersion = 100;
                 if(!empty($GalleryID)){
 	                $galleryDbVersion = $wpdb->get_var( "SELECT Version FROM $tablename_options WHERE id='$GalleryID'");
                 }
@@ -183,9 +148,6 @@ cg_append_login_and_password_do_not_match.classList.remove('cg_hide');
                     </script>
                     <?php
                     die();
-			}
-
-		}
 
 		}
 		else{

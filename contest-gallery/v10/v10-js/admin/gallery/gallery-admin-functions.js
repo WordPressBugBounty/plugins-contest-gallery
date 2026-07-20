@@ -1696,6 +1696,7 @@ cgJsClassAdmin.gallery.functions = {
                 cg_start = 0;
             }
             data['cg_start'] = cg_start;
+            data['cg_nonce'] = CG1LBackendNonce.nonce;
 
             $.ajax({
                 url: 'admin-ajax.php',

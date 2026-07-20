@@ -491,7 +491,7 @@
                 }else if($ImgType=='inst' && $options['pro']['ConsentInstagram']=='1'){
                     $cg_append = cg1l_get_consent_inst($galeryIDuserForJs,$id,$fullData,$languageNames);
                 }else{
-                    $cg_append = '<div class="cg_append_container">'.$cg_append_overlay.'<iframe class="cg_append cg_append_social cg_append_'.$ImgType.'"  src="'.$fullData['guid'].'"  ></iframe></div>'.$embedHiddenLink;
+                    $cg_append = '<div class="cg_append_container">'.$cg_append_overlay.'<iframe class="cg_append cg_append_social cg_append_'.$ImgType.' skip-lazy" loading="lazy" data-skip-lazy="1" src="'.$fullData['guid'].'"  ></iframe></div>'.$embedHiddenLink;
                 }
             }
             //$blockquote = '';

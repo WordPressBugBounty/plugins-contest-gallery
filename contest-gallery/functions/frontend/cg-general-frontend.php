@@ -19,6 +19,52 @@ if (!function_exists('cg_check_frontend_nonce')) {
     }
 }
 
+if (!function_exists('cg1l_get_login_rate_limit_key')) {
+    function cg1l_get_login_rate_limit_key($login)
+    {
+        $remoteAddress = (!empty($_SERVER['REMOTE_ADDR'])) ? trim((string)$_SERVER['REMOTE_ADDR']) : '';
+        $normalizedLogin = strtolower(trim((string)$login));
+
+        if (empty($remoteAddress) || empty($normalizedLogin)) {
+            return '';
+        }
+
+        return 'cg1l_login_fail_' . md5($remoteAddress . '|' . $normalizedLogin);
+    }
+}
+
+if (!function_exists('cg1l_is_login_rate_limited')) {
+    function cg1l_is_login_rate_limited($login)
+    {
+        $key = cg1l_get_login_rate_limit_key($login);
+
+        return !empty($key) && intval(get_transient($key)) >= 15;
+    }
+}
+
+if (!function_exists('cg1l_record_login_failure')) {
+    function cg1l_record_login_failure($login)
+    {
+        $key = cg1l_get_login_rate_limit_key($login);
+        if (empty($key)) {
+            return;
+        }
+
+        $attempts = intval(get_transient($key)) + 1;
+        set_transient($key, $attempts, 10 * MINUTE_IN_SECONDS);
+    }
+}
+
+if (!function_exists('cg1l_clear_login_failures')) {
+    function cg1l_clear_login_failures($login)
+    {
+        $key = cg1l_get_login_rate_limit_key($login);
+        if (!empty($key)) {
+            delete_transient($key);
+        }
+    }
+}
+
 if (!function_exists('cg1l_hash_equals')) {
     function cg1l_hash_equals($knownString, $userString)
     {

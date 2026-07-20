@@ -68,11 +68,13 @@ if(!function_exists('cg_create_exif_data')){
                 if(!empty($wpImageExifData['IFD0'])){
 
                     if(!empty($wpImageExifData['IFD0']['Model']) && !empty($wpImageExifData['IFD0']['Make'])){
-                        $exifDataForImage['MakeAndModel'] = cg1l_sanitize_method(cg1l_convert_mixed_value_to_string($wpImageExifData['IFD0']['Make'])).' '.cg1l_sanitize_method(cg1l_convert_mixed_value_to_string($wpImageExifData['IFD0']['Model']));
+                        $exifMake = cg1l_decode_nested_entities_for_plain_text($wpImageExifData['IFD0']['Make']);
+                        $exifModel = cg1l_decode_nested_entities_for_plain_text($wpImageExifData['IFD0']['Model']);
+                        $exifDataForImage['MakeAndModel'] = trim($exifMake.' '.$exifModel);
                     }
 
                     if(!empty($wpImageExifData['IFD0']['Model'])){
-                        $exifDataForImage['Model'] = cg1l_sanitize_method(cg1l_convert_mixed_value_to_string($wpImageExifData['IFD0']['Model']));
+                        $exifDataForImage['Model'] = cg1l_decode_nested_entities_for_plain_text($wpImageExifData['IFD0']['Model']);
                     }
 
                     // future update eventually
@@ -84,13 +86,13 @@ if(!function_exists('cg_create_exif_data')){
 
                 if(!empty($wpImageExifData['COMPUTED'])){
                     if(!empty($wpImageExifData['COMPUTED']['ApertureFNumber'])){
-                        $exifDataForImage['ApertureFNumber'] = cg1l_sanitize_method(cg1l_convert_mixed_value_to_string($wpImageExifData['COMPUTED']['ApertureFNumber']));
+                        $exifDataForImage['ApertureFNumber'] = cg1l_decode_nested_entities_for_plain_text($wpImageExifData['COMPUTED']['ApertureFNumber']);
                     }
                 }
 
                 if(!empty($wpImageExifData['EXIF'])){
                     if(!empty($wpImageExifData['EXIF']['ExposureTime'])){
-                        $exifDataForImage['ExposureTime'] = cg1l_sanitize_method(cg1l_convert_mixed_value_to_string($wpImageExifData['EXIF']['ExposureTime']));
+                        $exifDataForImage['ExposureTime'] = cg1l_decode_nested_entities_for_plain_text($wpImageExifData['EXIF']['ExposureTime']);
                     }
                 }
 
@@ -98,7 +100,7 @@ if(!function_exists('cg_create_exif_data')){
                     if(!empty($wpImageExifData['EXIF']['ISOSpeedRatings'])){
                         $isoSpeedRatings = cg1l_convert_mixed_value_to_string($wpImageExifData['EXIF']['ISOSpeedRatings']);
                         if($isoSpeedRatings !== ''){
-                            $exifDataForImage['ISOSpeedRatings'] = cg1l_sanitize_method($isoSpeedRatings);
+                            $exifDataForImage['ISOSpeedRatings'] = cg1l_decode_nested_entities_for_plain_text($isoSpeedRatings);
                         }
                     }
                 }
@@ -111,16 +113,16 @@ if(!function_exists('cg_create_exif_data')){
 
                         if(count($focal_length) >= 2 && intval($focal_length[1]) !== 0){
                             $focal_length = intval($focal_length[0]/intval($focal_length[1]));
-                            $exifDataForImage['FocalLength'] = cg1l_sanitize_method($focal_length).'mm';
+                            $exifDataForImage['FocalLength'] = cg1l_decode_nested_entities_for_plain_text($focal_length).'mm';
                         }elseif($focalLengthRaw !== ''){
-                            $exifDataForImage['FocalLength'] = cg1l_sanitize_method($focalLengthRaw);
+                            $exifDataForImage['FocalLength'] = cg1l_decode_nested_entities_for_plain_text($focalLengthRaw);
                         }
                     }
                 }
 
                 if(!empty($wpImageExifData['EXIF'])){
                     if(!empty($wpImageExifData['EXIF']['DateTimeOriginal'])){
-                        $exifDataForImage['DateTimeOriginal'] = cg1l_sanitize_method(cg1l_convert_mixed_value_to_string($wpImageExifData['EXIF']['DateTimeOriginal']));
+                        $exifDataForImage['DateTimeOriginal'] = cg1l_decode_nested_entities_for_plain_text($wpImageExifData['EXIF']['DateTimeOriginal']);
                     }
                 }
 

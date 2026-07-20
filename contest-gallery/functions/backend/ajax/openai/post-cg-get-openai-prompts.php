@@ -5,6 +5,8 @@ add_action('wp_ajax_post_cg_get_openai_prompts', 'post_cg_get_openai_prompts');
 if (!function_exists('post_cg_get_openai_prompts')) {
     function post_cg_get_openai_prompts() {
 
+        cg_require_backend_access();
+
         global $wpdb;
         $tablename_ai_prompts = $wpdb->prefix . "contest_gal1ery_ai_prompts";
 

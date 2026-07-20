@@ -748,6 +748,7 @@ jQuery(document).ready(function ($) {
         var data = {};
         data['action'] = 'post_cg_youtube_delete_from_library';
         data['action2'] = $(this).closest('.media-frame-content').find('#cgYoutubeLibraryContainer').attr('data-cg-gid');
+        data['cg_nonce'] = CG1LBackendNonce.nonce;
         data['cg_wp_post_ids'] = [];
         $mediaFrame.find('.cg_ytb_media_container').addClass('cg_hide');
         $mediaFrame.find('#cgYoutubeLibraryLoader').removeClass('cg_hide');

@@ -1,5 +1,8 @@
 Contest Gallery
 
+= 30.0.7 =
+* FIXED: Security issues reported by the security community. Thanks to Muni Nitish Kumar Yaddala, Sai Praneeth Koti, Meher Sudhakar Abbireddi, and Jayant Kamble.
+
 = 30.0.6 =
 * IMPROVED: CSS improvements frontend.
 * FIXED: Security issue.

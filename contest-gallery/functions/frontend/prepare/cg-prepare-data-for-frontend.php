@@ -1626,26 +1626,42 @@ if (!function_exists('cg1l_get_data_images_full_data_sorted')) {
 }
 
 if (!function_exists('cg1l_get_consent_ytb')) {
-    function cg1l_get_consent_ytb($galeryIDuserForJs,$id,$fullData,$languageNames){
-        return '<div class="cg_append_ytb_overlay_consent cg_append_social_overlay_consent cg_append cg_append_social" data-ytb-src="'.$fullData['guid'].'" data-cg-gid="'.$galeryIDuserForJs.'" data-cg-real-id="'.$id.'" id="cg_append'.$id.'" ><span class="cg_ytb_logo cg_social_logo"></span><span>YouTube '.$languageNames['general']['contentBlocked'].'.</span><span><a href="https://policies.google.com/privacy" target="_blank" class="cg_extern_privacy_policy">'.$languageNames['general']['ToViewTheContentYouMustAgreePrivacyPolicy'].'</a>.</span><span class="cg_ytb_consent_agree cg_social_consent_agree" data-cg-gid="'.$galeryIDuserForJs.'" data-cg-real-id="'.$id.'">'.$languageNames['general']['IAgree'].'</span><span>'.$languageNames['general']['ByAgreeingAllContentUnblocked'].' (YouTube '.$languageNames['general']['content'].'). </span></div>';
+    function cg1l_get_consent_ytb($galeryIDuserForJs,$id,$fullData,$languageNames,$cgCenterDivWidth = '',$cgCenterDivHeight = ''){
+        $centerDivSizeAttributes = '';
+        if($cgCenterDivWidth !== '' && $cgCenterDivHeight !== ''){
+            $centerDivSizeAttributes = ' data-cg-center-div-width="'.esc_attr($cgCenterDivWidth).'" data-cg-center-div-height="'.esc_attr($cgCenterDivHeight).'"';
+        }
+        return '<div class="cg_append_ytb_overlay_consent cg_append_social_overlay_consent cg_append cg_append_social" data-ytb-src="'.$fullData['guid'].'" data-cg-gid="'.$galeryIDuserForJs.'" data-cg-real-id="'.$id.'" id="cg_append'.$id.'"'.$centerDivSizeAttributes.' ><span class="cg_ytb_logo cg_social_logo"></span><span>YouTube '.$languageNames['general']['contentBlocked'].'.</span><span><a href="https://policies.google.com/privacy" target="_blank" class="cg_extern_privacy_policy">'.$languageNames['general']['ToViewTheContentYouMustAgreePrivacyPolicy'].'</a>.</span><span class="cg_ytb_consent_agree cg_social_consent_agree" data-cg-gid="'.$galeryIDuserForJs.'" data-cg-real-id="'.$id.'">'.$languageNames['general']['IAgree'].'</span><span>'.$languageNames['general']['ByAgreeingAllContentUnblocked'].' (YouTube '.$languageNames['general']['content'].'). </span></div>';
     }
 }
 
 if (!function_exists('cg1l_get_consent_inst')) {
-    function cg1l_get_consent_inst($galeryIDuserForJs,$id,$fullData,$languageNames){
-        return '<div class="cg_append_inst_overlay_consent cg_append_social_overlay_consent cg_append cg_append_social cg_append_inst" data-inst-src="'.$fullData['guid'].'" data-cg-gid="'.$galeryIDuserForJs.'" data-cg-real-id="'.$id.'" id="cg_append'.$id.'"><span class="cg_inst_logo cg_social_logo"></span><span>Instagram '.$languageNames['general']['contentBlocked'].'.</span><span><a href="https://privacycenter.instagram.com/policy" target="_blank" class="cg_extern_privacy_policy">'.$languageNames['general']['ToViewTheContentYouMustAgreePrivacyPolicy'].' (Instagram)</a>.</span><span class="cg_inst_consent_agree cg_social_consent_agree" data-cg-gid="'.$galeryIDuserForJs.'" data-cg-real-id="'.$id.'">'.$languageNames['general']['IAgree'].'</span><span>'.$languageNames['general']['ByAgreeingAllContentUnblocked'].' (Instagram '.$languageNames['general']['content'].'). </span></div>';
+    function cg1l_get_consent_inst($galeryIDuserForJs,$id,$fullData,$languageNames,$cgCenterDivWidth = '',$cgCenterDivHeight = ''){
+        $centerDivSizeAttributes = '';
+        if($cgCenterDivWidth !== '' && $cgCenterDivHeight !== ''){
+            $centerDivSizeAttributes = ' data-cg-center-div-width="'.esc_attr($cgCenterDivWidth).'" data-cg-center-div-height="'.esc_attr($cgCenterDivHeight).'"';
+        }
+        return '<div class="cg_append_inst_overlay_consent cg_append_social_overlay_consent cg_append cg_append_social cg_append_inst" data-inst-src="'.$fullData['guid'].'" data-cg-gid="'.$galeryIDuserForJs.'" data-cg-real-id="'.$id.'" id="cg_append'.$id.'"'.$centerDivSizeAttributes.'><span class="cg_inst_logo cg_social_logo"></span><span>Instagram '.$languageNames['general']['contentBlocked'].'.</span><span><a href="https://privacycenter.instagram.com/policy" target="_blank" class="cg_extern_privacy_policy">'.$languageNames['general']['ToViewTheContentYouMustAgreePrivacyPolicy'].' (Instagram)</a>.</span><span class="cg_inst_consent_agree cg_social_consent_agree" data-cg-gid="'.$galeryIDuserForJs.'" data-cg-real-id="'.$id.'">'.$languageNames['general']['IAgree'].'</span><span>'.$languageNames['general']['ByAgreeingAllContentUnblocked'].' (Instagram '.$languageNames['general']['content'].'). </span></div>';
     }
 }
 
 if (!function_exists('cg1l_get_consent_tkt')) {
-    function cg1l_get_consent_tkt($galeryIDuserForJs,$id,$fullData,$languageNames){
-        return '<div class="cg_append_tkt_overlay_consent cg_append_social_overlay_consent cg_append cg_append_tkt cg_append_social" data-tkt-src="'.$fullData['guid'].'" data-cg-gid="'.$galeryIDuserForJs.'" data-cg-real-id="'.$id.'" id="cg_append'.$id.'" ><span class="cg_tkt_logo cg_social_logo"></span><span>TikTok '.$languageNames['general']['contentBlocked'].'.</span><span><a href="https://www.tiktok.com/legal/privacy-policy-row" target="_blank" class="cg_extern_privacy_policy">'.$languageNames['general']['ToViewTheContentYouMustAgreePrivacyPolicy'].' (TikTok)</a>.</span><span class="cg_tkt_consent_agree cg_social_consent_agree" data-cg-gid="'.$galeryIDuserForJs.'" data-cg-real-id="'.$id.'">I Agree</span><span>'.$languageNames['general']['ByAgreeingAllContentUnblocked'].' (TikTok '.$languageNames['general']['content'].'). </span></div>';
+    function cg1l_get_consent_tkt($galeryIDuserForJs,$id,$fullData,$languageNames,$cgCenterDivWidth = '',$cgCenterDivHeight = ''){
+        $centerDivSizeAttributes = '';
+        if($cgCenterDivWidth !== '' && $cgCenterDivHeight !== ''){
+            $centerDivSizeAttributes = ' data-cg-center-div-width="'.esc_attr($cgCenterDivWidth).'" data-cg-center-div-height="'.esc_attr($cgCenterDivHeight).'"';
+        }
+        return '<div class="cg_append_tkt_overlay_consent cg_append_social_overlay_consent cg_append cg_append_tkt cg_append_social" data-tkt-src="'.$fullData['guid'].'" data-cg-gid="'.$galeryIDuserForJs.'" data-cg-real-id="'.$id.'" id="cg_append'.$id.'"'.$centerDivSizeAttributes.' ><span class="cg_tkt_logo cg_social_logo"></span><span>TikTok '.$languageNames['general']['contentBlocked'].'.</span><span><a href="https://www.tiktok.com/legal/privacy-policy-row" target="_blank" class="cg_extern_privacy_policy">'.$languageNames['general']['ToViewTheContentYouMustAgreePrivacyPolicy'].' (TikTok)</a>.</span><span class="cg_tkt_consent_agree cg_social_consent_agree" data-cg-gid="'.$galeryIDuserForJs.'" data-cg-real-id="'.$id.'">I Agree</span><span>'.$languageNames['general']['ByAgreeingAllContentUnblocked'].' (TikTok '.$languageNames['general']['content'].'). </span></div>';
     }
 }
 
 if (!function_exists('cg1l_get_consent_twt')) {
-    function cg1l_get_consent_twt($galeryIDuserForJs,$id,$fullData,$languageNames){
-        return '<div class="cg_append_twt_overlay_consent cg_append_social_overlay_consent cg_append cg_append_twt cg_append_social" data-twt-src="'.$fullData['guid'].'" data-cg-gid="'.$galeryIDuserForJs.'" data-cg-real-id="'.$id.'" id="cg_append'.$id.'" ><span class="cg_twt_logo cg_social_logo"></span><span>X '.$languageNames['general']['contentBlocked'].'.</span><span><a href="https://x.com/privacy" target="_blank" class="cg_extern_privacy_policy">'.$languageNames['general']['ToViewTheContentYouMustAgreePrivacyPolicy'].' (X)</a>.</span><span class="cg_twt_consent_agree cg_social_consent_agree" data-cg-gid="'.$galeryIDuserForJs.'" data-cg-real-id="'.$id.'">I Agree</span><span>'.$languageNames['general']['ByAgreeingAllContentUnblocked'].' (X '.$languageNames['general']['content'].').</span></div>';
+    function cg1l_get_consent_twt($galeryIDuserForJs,$id,$fullData,$languageNames,$cgCenterDivWidth = '',$cgCenterDivHeight = ''){
+        $centerDivSizeAttributes = '';
+        if($cgCenterDivWidth !== '' && $cgCenterDivHeight !== ''){
+            $centerDivSizeAttributes = ' data-cg-center-div-width="'.esc_attr($cgCenterDivWidth).'" data-cg-center-div-height="'.esc_attr($cgCenterDivHeight).'"';
+        }
+        return '<div class="cg_append_twt_overlay_consent cg_append_social_overlay_consent cg_append cg_append_twt cg_append_social" data-twt-src="'.$fullData['guid'].'" data-cg-gid="'.$galeryIDuserForJs.'" data-cg-real-id="'.$id.'" id="cg_append'.$id.'"'.$centerDivSizeAttributes.' ><span class="cg_twt_logo cg_social_logo"></span><span>X '.$languageNames['general']['contentBlocked'].'.</span><span><a href="https://x.com/privacy" target="_blank" class="cg_extern_privacy_policy">'.$languageNames['general']['ToViewTheContentYouMustAgreePrivacyPolicy'].' (X)</a>.</span><span class="cg_twt_consent_agree cg_social_consent_agree" data-cg-gid="'.$galeryIDuserForJs.'" data-cg-real-id="'.$id.'">I Agree</span><span>'.$languageNames['general']['ByAgreeingAllContentUnblocked'].' (X '.$languageNames['general']['content'].').</span></div>';
     }
 }
 

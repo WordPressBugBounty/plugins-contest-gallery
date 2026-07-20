@@ -548,12 +548,12 @@ if(!function_exists('cg1l_render_single_entry_view')){
             );
 
             $exifRows = '';
-            $exifRows .= '<div class="cg-exif cg-exif-date-time-original'.(empty($exifDateTimeOriginal) ? ' cg_hide' : '').'"><span class="cg-exif-date-time-original-img"></span><span class="cg-exif-date-time-original-text">'.contest_gal1ery_convert_for_html_output_without_nl2br($exifDateTimeOriginal).'</span></div>';
-            $exifRows .= '<div class="cg-exif cg-exif-model'.(empty($exifModel) ? ' cg_hide' : '').'"><span class="cg-exif-model-img"></span><span class="cg-exif-model-text">'.contest_gal1ery_convert_for_html_output_without_nl2br($exifModel).'</span></div>';
-            $exifRows .= '<div class="cg-exif cg-exif-aperturefnumber cg-exif'.(empty($exifApertureFNumber) ? ' cg_hide' : '').'"><span class="cg-exif-aperturefnumber-img"></span><span class="cg-exif-aperturefnumber-text">'.contest_gal1ery_convert_for_html_output_without_nl2br($exifApertureFNumber).'</span></div>';
-            $exifRows .= '<div class="cg-exif cg-exif-exposuretime cg-exif'.(empty($exifExposureTime) ? ' cg_hide' : '').'"><span class="cg-exif-exposuretime-img"></span><span class="cg-exif-exposuretime-text">'.contest_gal1ery_convert_for_html_output_without_nl2br($exifExposureTime).'</span></div>';
-            $exifRows .= '<div class="cg-exif cg-exif-isospeedratings cg-exif'.(empty($exifISOSpeedRatings) ? ' cg_hide' : '').'"><span class="cg-exif-isospeedratings-img"></span><span class="cg-exif-isospeedratings-text">'.contest_gal1ery_convert_for_html_output_without_nl2br($exifISOSpeedRatings).'</span></div>';
-            $exifRows .= '<div class="cg-exif cg-exif-focallength cg-exif'.(empty($exifFocalLength) ? ' cg_hide' : '').'"><span class="cg-exif-focallength-img"></span><span class="cg-exif-focallength-text">'.contest_gal1ery_convert_for_html_output_without_nl2br($exifFocalLength).'</span></div>';
+            $exifRows .= '<div class="cg-exif cg-exif-date-time-original'.(empty($exifDateTimeOriginal) ? ' cg_hide' : '').'"><span class="cg-exif-date-time-original-img"></span><span class="cg-exif-date-time-original-text">'.esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($exifDateTimeOriginal)).'</span></div>';
+            $exifRows .= '<div class="cg-exif cg-exif-model'.(empty($exifModel) ? ' cg_hide' : '').'"><span class="cg-exif-model-img"></span><span class="cg-exif-model-text">'.esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($exifModel)).'</span></div>';
+            $exifRows .= '<div class="cg-exif cg-exif-aperturefnumber cg-exif'.(empty($exifApertureFNumber) ? ' cg_hide' : '').'"><span class="cg-exif-aperturefnumber-img"></span><span class="cg-exif-aperturefnumber-text">'.esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($exifApertureFNumber)).'</span></div>';
+            $exifRows .= '<div class="cg-exif cg-exif-exposuretime cg-exif'.(empty($exifExposureTime) ? ' cg_hide' : '').'"><span class="cg-exif-exposuretime-img"></span><span class="cg-exif-exposuretime-text">'.esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($exifExposureTime)).'</span></div>';
+            $exifRows .= '<div class="cg-exif cg-exif-isospeedratings cg-exif'.(empty($exifISOSpeedRatings) ? ' cg_hide' : '').'"><span class="cg-exif-isospeedratings-img"></span><span class="cg-exif-isospeedratings-text">'.esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($exifISOSpeedRatings)).'</span></div>';
+            $exifRows .= '<div class="cg-exif cg-exif-focallength cg-exif'.(empty($exifFocalLength) ? ' cg_hide' : '').'"><span class="cg-exif-focallength-img"></span><span class="cg-exif-focallength-text">'.esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($exifFocalLength)).'</span></div>';
 
             $exifInfoContent = '<div id="'.esc_attr($exifId).'" class="cg-center-image-exif-data'.($hasExifRows ? '' : ' cg_hide').'">
                     <div id="'.esc_attr($exifSubId).'" class="cg-center-image-exif-data-sub">
@@ -621,6 +621,7 @@ if(!function_exists('cg1l_render_single_entry_view')){
         }
 
         $centerImage = '';
+        $socialConsentRequired = false;
         if(cg_is_is_image($ImgType)){
             $centerImage = '<div id="'.$imgId.'" data-cg-size-width="'.absint($fullData['Width']).'" class="cg-center-image cg_translateX cg_transition" data-cg-image-src-onload="'.esc_attr($imgSrcLarge).'" data-cg-real-id="'.$rid.'">
                     <img
@@ -671,29 +672,57 @@ if(!function_exists('cg1l_render_single_entry_view')){
             </div>';
         }elseif(cgl_check_if_embeded($ImgType)){
             if($ImgType == 'ytb'){
+                $socialEmbedContent = '';
+                if(!empty($options['pro']['ConsentYoutube'])){
+                    $socialConsentRequired = true;
+                    $socialEmbedContent = cg1l_get_consent_ytb($gidJs,$rid,$fullData,$languageNames,'100%',400);
+                }else{
+                    $socialEmbedContent = '<iframe class="cg-center-image-ytb-entry-content skip-lazy" loading="lazy" data-skip-lazy="1" src="'.$fullData['guid'].'" ></iframe>';
+                }
                 $centerImage = '<div id="'.$imgId.'" class="cg-center-image cg_translateX cg_transition cg_background_unset cg-center-image-social-entry cg-center-image-ytb-entry" data-cg-real-id="'.$rid.'" 
                     aria-describedby="'.$ariaDescribedby.'">
-                    <iframe class="cg-center-image-ytb-entry-content"  src="'.$fullData['guid'].'" ></iframe>
+                    '.$socialEmbedContent.'
             </div>';
             }
             if($ImgType == 'inst'){
+                $socialEmbedContent = '';
+                if(!empty($options['pro']['ConsentInstagram'])){
+                    $socialConsentRequired = true;
+                    $socialEmbedContent = cg1l_get_consent_inst($gidJs,$rid,$fullData,$languageNames,'100%',740);
+                }else{
+                    $socialEmbedContent = '<iframe class="cg-center-image-inst-entry-content skip-lazy" loading="lazy" data-skip-lazy="1" src="'.$fullData['guid'].'" ></iframe>';
+                }
                 $centerImage = '<div id="'.$imgId.'" class="cg-center-image cg_translateX cg_transition cg_background_unset cg-center-image-social-entry cg-center-image-inst-entry" data-cg-real-id="'.$rid.'" 
                     aria-describedby="'.$ariaDescribedby.'">
-                    <iframe class="cg-center-image-inst-entry-content"  src="'.$fullData['guid'].'" ></iframe>
+                    '.$socialEmbedContent.'
             </div>';
             }
             if($ImgType == 'twt'){
-                $blockquote = cg_get_blockquote_post_content_php_rendering($fullData['post_content']);
+                $socialEmbedContent = '';
+                if(!empty($options['pro']['ConsentTwitter'])){
+                    $socialConsentRequired = true;
+                    $socialEmbedContent = cg1l_get_consent_twt($gidJs,$rid,$fullData,$languageNames,'100%',550);
+                }else{
+                    $blockquote = cg_get_blockquote_post_content_php_rendering($fullData['post_content']);
+                    $socialEmbedContent = '<div class="cg-center-image-twt-entry-content" >'.$blockquote.'</div>';
+                }
                 $centerImage = '<div id="'.$imgId.'" class="cg-center-image cg_translateX cg_transition cg_background_unset cg-center-image-twt-entry cg-center-image-social-entry" data-cg-real-id="'.$rid.'" 
                     aria-describedby="'.$ariaDescribedby.'">
-                    <div class="cg-center-image-twt-entry-content" >'.$blockquote.'</div>
+                    '.$socialEmbedContent.'
             </div>';
             }
             if($ImgType == 'tkt'){
-                $blockquote = cg_get_blockquote_post_content_php_rendering($fullData['post_content']);
+                $socialEmbedContent = '';
+                if(!empty($options['pro']['ConsentTikTok'])){
+                    $socialConsentRequired = true;
+                    $socialEmbedContent = cg1l_get_consent_tkt($gidJs,$rid,$fullData,$languageNames,'100%',550);
+                }else{
+                    $blockquote = cg_get_blockquote_post_content_php_rendering($fullData['post_content']);
+                    $socialEmbedContent = '<div class="cg-center-image-tkt-entry-content" >'.$blockquote.'</div>';
+                }
                 $centerImage = '<div id="'.$imgId.'" class="cg-center-image cg_translateX cg_transition cg_background_unset cg-center-image-tkt-entry cg-center-image-social-entry" data-cg-real-id="'.$rid.'" 
                     aria-describedby="'.$ariaDescribedby.'">
-                    <div class="cg-center-image-tkt-entry-content" >'.$blockquote.'</div>
+                    '.$socialEmbedContent.'
             </div>';
             }
         }
@@ -854,8 +883,9 @@ if(!function_exists('cg1l_render_single_entry_view')){
         }
 
         $centerColorClass = (!empty($options['visual']['FeControlsStyle']) && $options['visual']['FeControlsStyle'] === 'black') ? 'cg_center_black' : 'cg_center_white';
+        $socialConsentRequiredClass = ($socialConsentRequired) ? ' cg_social_consent_required' : '';
 
-        return '<article id="'.$centerDivId.'" class="cgCenterDiv cg_entry cgCenterDivForBlogView cg_border_top_unset_important cg_fade_in '.esc_attr($centerColorClass).' cgCenterDivPhpLoad" data-cg-gid="'.$gidJs.'" style="width: 100%; min-height: unset; height: unset; display: block;" data-cg-real-id="'.$rid.'" data-cg-gid-with-order="'.esc_attr("{$gidJs}{$ord}").'" data-cg-order="'.esc_attr($orderAttr).'" data-cg-gid-for-center-div-elements="'.esc_attr("{$gidJs}{$ord}").'" data-cg-cat-id="'.esc_attr($cat).'"
+        return '<article id="'.$centerDivId.'" class="cgCenterDiv cg_entry cgCenterDivForBlogView cg_border_top_unset_important cg_fade_in '.esc_attr($centerColorClass).$socialConsentRequiredClass.' cgCenterDivPhpLoad" data-cg-gid="'.$gidJs.'" style="width: 100%; min-height: unset; height: unset; display: block;" data-cg-real-id="'.$rid.'" data-cg-gid-with-order="'.esc_attr("{$gidJs}{$ord}").'" data-cg-order="'.esc_attr($orderAttr).'" data-cg-gid-for-center-div-elements="'.esc_attr("{$gidJs}{$ord}").'" data-cg-cat-id="'.esc_attr($cat).'"
          itemscope itemtype="https://schema.org/'.$itemTypeObject.'Object" >
     '.$meta.' 
     '.$metaComment.' 
