@@ -9,6 +9,20 @@ $tablename_mail_user_comment = $wpdb->prefix . "contest_gal1ery_mail_user_commen
 $tablename_user_comment_mails = $wpdb->prefix . "contest_gal1ery_user_comment_mails";
 $wp_users = $wpdb->prefix . "users";
 
+if(!function_exists('cg1l_comment_submit_storage_error')){
+    function cg1l_comment_submit_storage_error($galeryIDuser){
+        ?>
+        <script data-cg-processing="true">
+            var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
+            if(cgJsData[galeryIDuser] && cgJsData[galeryIDuser].vars){
+                cgJsData[galeryIDuser].vars.commentSubmitResponse = {status: 'storage_error'};
+            }
+        </script>
+        <?php
+        echo 'Comment could not be saved. Please try again.';
+    }
+}
+
 $_POST = cg1l_sanitize_post($_POST);
 
 $galeryID = intval($_POST['gid']);
@@ -66,6 +80,15 @@ if($options['general']['AllowComments']!=1){
 
 // set already here maybe required for blocked submit messages
 $pictureID = absint($_POST['pid']);
+$entryExists = $wpdb->get_var($wpdb->prepare(
+    "SELECT id FROM $tablename WHERE id = %d AND GalleryID = %d LIMIT 1",
+    $pictureID,
+    $galeryID
+));
+if(empty($entryExists)){
+    return;
+}
+
 $WpUserId = 0;
 $IsWpUser = 0;
 
@@ -147,6 +170,29 @@ if(!empty($options['pro']['ReviewComm'])){
 	$Active = 2;
 }
 
+$commentsLockFp = false;
+$commentsFile = cg1l_get_comments_lock_for_update($galeryID, $pictureID, $commentsLockFp);
+if(empty($commentsFile)){
+    cg1l_comment_submit_storage_error($galeryIDuser);
+    return;
+}
+
+$commentsFileData = array();
+if(file_exists($commentsFile)){
+    $commentsFileRaw = file_get_contents($commentsFile);
+    if($commentsFileRaw === false || $commentsFileRaw === ''){
+        cg1l_release_comment_lock($commentsLockFp);
+        cg1l_comment_submit_storage_error($galeryIDuser);
+        return;
+    }
+    $commentsFileData = json_decode($commentsFileRaw,true);
+    if(!is_array($commentsFileData)){
+        cg1l_release_comment_lock($commentsLockFp);
+        cg1l_comment_submit_storage_error($galeryIDuser);
+        return;
+    }
+}
+
 // reinserted in 23.1.3, after removed in 16 and higher
 $wpdb->query( $wpdb->prepare(
     "
@@ -158,21 +204,16 @@ $wpdb->query( $wpdb->prepare(
 ) );
 
 $insert_id = $wpdb->insert_id;
+if(empty($insert_id)){
+    cg1l_release_comment_lock($commentsLockFp);
+    cg1l_comment_submit_storage_error($galeryIDuser);
+    return;
+}
 
 //$lastCommentId = $wpdb->get_var("SELECT id FROM $tablenameComments WHERE pid = '$pictureID' ORDER BY id DESC LIMIT 0, 1");
 
 $randomAdder = md5(uniqid('cg-comment'));
 $lastCommentId = $unix.'-'.substr($randomAdder,0,6);
-
-// process comments File
-$commentsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/image-comments/image-comments-'.$pictureID.'.json';
-$fp = fopen($commentsFile, 'r');
-$commentsFileData =json_decode(fread($fp,filesize($commentsFile)),true);
-fclose($fp);
-
-if(empty($commentsFileData)){
-    $commentsFileData = array();
-}
 
 $commentsFileData[$lastCommentId] = array();
 $commentsFileData[$lastCommentId]['date'] = $date;
@@ -199,9 +240,31 @@ $commentsFileDataTheOnlyOneComment[$lastCommentId]['ReviewTstamp'] = '';
 $commentsFileDataTheOnlyOneComment[$lastCommentId]['Active'] = $Active;
 //$commentsFileDataTheOnlyOneComment[$lastCommentId]['userIP'] = $userIP;
 
-$fp = fopen($commentsFile, 'w');
-fwrite($fp,json_encode($commentsFileData));
-fclose($fp);
+$dirImageComments = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/image-comments/ids/'.$pictureID;
+if(!is_dir($dirImageComments) && !wp_mkdir_p($dirImageComments)){
+    $wpdb->delete($tablenameComments,array('id' => $insert_id,'pid' => $pictureID,'GalleryID' => $galeryID),array('%d','%d','%d'));
+    cg1l_release_comment_lock($commentsLockFp);
+    cg1l_comment_submit_storage_error($galeryIDuser);
+    return;
+}
+
+$singleCommentFile = $dirImageComments.'/'.$lastCommentId.'.json';
+$singleCommentPayload = json_encode($commentsFileDataTheOnlyOneComment);
+$commentsPayload = json_encode($commentsFileData);
+if(
+    $singleCommentPayload === false ||
+    $commentsPayload === false ||
+    !cg1l_write_atomic_file_payload($singleCommentFile,$singleCommentPayload) ||
+    !cg1l_write_atomic_file_payload($commentsFile,$commentsPayload)
+){
+    if(file_exists($singleCommentFile)){
+        unlink($singleCommentFile);
+    }
+    $wpdb->delete($tablenameComments,array('id' => $insert_id,'pid' => $pictureID,'GalleryID' => $galeryID),array('%d','%d','%d'));
+    cg1l_release_comment_lock($commentsLockFp);
+    cg1l_comment_submit_storage_error($galeryIDuser);
+    return;
+}
 
 // has to be set here after saving file
 $commentsFileData[$lastCommentId]['WpUserId'] = $WpUserId;
@@ -212,6 +275,7 @@ cg1l_migrate_image_stats_to_folder($galeryID, true);// correct first if needs to
 
 $lockFp = false;
 $ratingCommentsData = cg1l_get_stats_for_update($galeryID, $pictureID, $lockFp);
+$hasRatingCommentsData = is_array($ratingCommentsData);
 
 // count active comments correctly
 $countActiveComments = 0;
@@ -229,21 +293,18 @@ if(floatval($options['general']['Version'])<16){// this condition added later in
         "
                 SELECT COUNT(1)
                 FROM $tablenameComments 
-                WHERE pid = %d
+                WHERE pid = %d AND GalleryID = %d
             ",
-        $pictureID
+        $pictureID,
+        $galeryID
     ) );
 }
 
 
-// save comments for future repair eventually
-$dirImageComments = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/image-comments/ids/'.$pictureID;
-if(!is_dir($dirImageComments)){
-    mkdir($dirImageComments, 0755, true);
-}
-// file can be used for future repair
-file_put_contents($dirImageComments.'/'.$lastCommentId.'.json',json_encode($commentsFileDataTheOnlyOneComment));
 $dirImageCommentsFiles = glob($dirImageComments.'/*.json');
+if(!is_array($dirImageCommentsFiles)){
+    $dirImageCommentsFiles = array();
+}
 
 $fileImageCommentsDirCount = count($dirImageCommentsFiles);
 
@@ -267,17 +328,19 @@ foreach ($dirImageCommentsFiles as $dirImageCommentsFile){
 // $countCommentsSQL check if there were some database entries of before version 16
 $countCommentsTotal = $countCommentsSQL + $fileImageCommentsDirCount;
 
+if($hasRatingCommentsData){
 $ratingCommentsData['CountC'] = $countCommentsTotal;
 $ratingCommentsData['CountCtoReview'] = $countHiddenCommentsForFrontend;
+}
 
 // the rest will be done in cg_actualize_all_images_data_sort_values_file
 // $countCommentsSQL condition above if(floatval($options['general']['Version'])<16){ since  28.1.2.2
 $wpdb->update(
     "$tablename",
     array('CountC' => $countCommentsTotal, 'CountCtoReview' => $countCountCtoReview),
-    array('id' => $pictureID),
+    array('id' => $pictureID, 'GalleryID' => $galeryID),
     array('%d','%d'),
-    array('%d')
+    array('%d','%d')
 );
 
 //$ratingCommentsData = cg_check_and_repair_image_file_data($galeryID,$pictureID,$ratingCommentsData,false);
@@ -286,15 +349,23 @@ $wpdb->update(
     print_r($ratingCommentsData);
 echo "</pre>";*/
 
+if($hasRatingCommentsData){
 cg1l_set_stats_with_lock($galeryID, $pictureID, $ratingCommentsData, $lockFp);
+}else{
 cg1l_release_stats_lock($lockFp);
+}
 
 cg1l_push_recent_id_file($galeryID,$pictureID,'image-comments-data-last-update');
 cg1l_create_last_updated_time_file($galeryID,'image-comments-data-last-update');
 cg1l_push_recent_id_file($galeryID,$pictureID,'image-stats-data-last-update');
 cg1l_create_last_updated_time_file($galeryID,'image-stats-data-last-update');
 
+cg1l_release_comment_lock($commentsLockFp);
+
 $commentsDataJsonFiles = glob($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/image-comments/*.json');
+if(!is_array($commentsDataJsonFiles)){
+    $commentsDataJsonFiles = array();
+}
 $jsonCommentsData = [];
 foreach ($commentsDataJsonFiles as $jsonFile) {
     $jsonFileData = json_decode(file_get_contents($jsonFile),true);

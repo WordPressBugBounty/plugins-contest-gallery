@@ -7,7 +7,11 @@ if (!function_exists('cg_openai_container')) {
         $assetsPath = plugins_url() . "/" . cg_get_version() . "/v10/v10-css/backend/assets";
         $assign_fields_png = plugins_url('/../../../../v10/v10-css/assign-fields.png', __FILE__);
 
-        $enterOpenAiKey = '<a href="?page=' . cg_get_version() . '/index.php&option_id=' . $GalleryID . '&edit_options=true&cg_go_to=cgOpenAiKeyRowColumn">Enter OpenAI Api key</a>';
+        if(cg_user_can_manage_global_settings()){
+            $openAiKeySettingsMessage = '<a href="?page=' . cg_get_version() . '/index.php&option_id=' . absint($GalleryID) . '&edit_options=true&cg_go_to=cgOpenAiKeyRowColumn">Open the OpenAI settings</a>';
+        }else{
+            $openAiKeySettingsMessage = 'Please contact an administrator to configure the OpenAI API key.';
+        }
 
         echo "<div id='cgOpenAiContainer' class='cg_media_container cg_hide' data-cg-gid='$GalleryID'>";
         ?>
@@ -215,12 +219,8 @@ if (!function_exists('cg_openai_container')) {
                     <b>No OpenAI API key entered</b><br>
                     Get your API key from OpenAI within minutes:<br>
                     <a href="https://platform.openai.com/api-keys" target="_blank">...openai.com/api-keys</a>
-                    <br><br>Enter your API key in "Edit options" to connect to your OpenAI account:<br>
-                    <?php echo $enterOpenAiKey; ?>
-                </div>
-                <div class="cg_openai_button_container cg_hide">
-                    <input type='text' id='cgOpenAiKeyInput'' > <input type="button" id="cgOpenAiKeySubmit"
-                                                                       class="cg_disabled_one" value="Send">
+                    <br><br>
+                    <?php echo $openAiKeySettingsMessage; ?>
                 </div>
                 <div id="cgOpenAiKeyError" class="cg_hide">
                 </div>
@@ -262,11 +262,7 @@ if (!function_exists('cg_openai_container')) {
         <div id='cgOpenAiKeyNotValid' class='cg_openai_main cg_hide'>
             <div class="cg_openai_header">
                 <b>API key not valid</b><br>
-                Enter new API key to connect to your OpenAI account.
-            </div>
-            <div class="cg_openai_button_container">
-                <input type='text' id='cgOpenAiKeyInput'' > <input type="button" id="cgOpenAiKeySubmit"
-                                                                   class="cg_disabled_one" value="Send">
+                <?php echo $openAiKeySettingsMessage; ?>
             </div>
         </div>
         <input type='hidden' name='cgGalleryHash'

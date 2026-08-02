@@ -123,7 +123,7 @@ if(!$isOnlyPlaceHolder){
                             <option value='DD.MM.YYYY' $selected8>DD.MM.YYYY</option>
                             <option value='MM.DD.YYYY' $selected9>MM.DD.YYYY</option>
                             </select><br/>
-    HEREDOC;
+HEREDOC;
 
         }
 

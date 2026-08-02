@@ -52,7 +52,6 @@ if(empty($Order)){
 	$StripePiPaymentMethodConfDetailsId = '';
     $StripePiPaymentMethodId = '';
     $StripePiId = '';
-    $StripePiClientSecret = '';
 
 	foreach ($OrderItems as $OrderItem){
 		if(in_array($OrderItem->GalleryID,$GalleryIDs)===false){
@@ -147,7 +146,7 @@ if(empty($Order)){
 
 			$ch = curl_init();
 
-			curl_setopt($ch, CURLOPT_URL, 'https://api.stripe.com/v1/payment_intents/'.$Order->StripePiId);
+			curl_setopt($ch, CURLOPT_URL, 'https://api.stripe.com/v1/payment_intents/'.rawurlencode((string)$Order->StripePiId));
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
@@ -314,6 +313,8 @@ Payment type not set
 			$Order = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_orders WHERE id = '$OrderId' LIMIT 1");
 		}
 
+		$Order = cg_ecommerce_scrub_order_payment_secrets_for_output($Order,$LogForDatabase);
+
 		unset($ecommerceOptions['PayPalLiveSecret']);
 		unset($ecommerceOptions['PayPalSandboxSecret']);
         unset($ecommerceOptions['StripeLiveSecret']);
@@ -434,7 +435,6 @@ Payment type not set
 		$StripePiId = $Order->StripePiId;
 		$StripePiPaymentMethodId = $Order->StripePiPaymentMethodId;
 		$StripePiPaymentMethodConfDetailsId = $Order->StripePiPaymentMethodConfDetailsId;
-		$StripePiClientSecret = $Order->StripePiClientSecret;
 		$TransactionLabel = "Stripe Payment Intent ID$environment";
 		$TransactionValue = $StripePiId;
 	}
@@ -485,7 +485,6 @@ Payment type not set
         cgJsClass.gallery.vars.ecommerce.EUshortcodes = <?php echo json_encode(cg_get_eu_countries_shortcodes());?>;
         cgJsClass.gallery.vars.ecommerce.isShowSaleOrder = true;
         cgJsClass.gallery.vars.ecommerce.is_admin = <?php echo json_encode(is_admin()); ?>;
-        cgJsClass.gallery.vars.ecommerce.StripePiClientSecret = <?php echo json_encode($StripePiClientSecret);?>;
         cgJsClass.gallery.vars.ecommerce.StripePiId = <?php echo json_encode($StripePiId);?>;
         cgJsClass.gallery.vars.ecommerce.StripePiPaymentMethodId = <?php echo json_encode($StripePiPaymentMethodId);?>;
         cgJsClass.gallery.vars.ecommerce.StripePiPaymentMethodConfDetailsId = <?php echo json_encode($StripePiPaymentMethodConfDetailsId);?>;

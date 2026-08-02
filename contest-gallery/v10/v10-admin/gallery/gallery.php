@@ -233,17 +233,17 @@ if($isAjaxCall){
 		$rThumb = (empty($value->rThumb)) ? 0 : $value->rThumb;
 		$rThumbToShow = $rThumb;
 		$rSource = $value->rSource;
-		$addCountS = $value->addCountS;
-		$addCountR1 = $value->addCountR1;
-		$addCountR2 = $value->addCountR2;
-		$addCountR3 = $value->addCountR3;
-		$addCountR4 = $value->addCountR4;
-		$addCountR5 = $value->addCountR5;
-		$addCountR6 = $value->addCountR6;
-		$addCountR7 = $value->addCountR7;
-		$addCountR8 = $value->addCountR8;
-		$addCountR9 = $value->addCountR9;
-		$addCountR10 = $value->addCountR10;
+		$addCountS = max(0,min(9999999,intval($value->addCountS)));
+		$addCountR1 = max(0,min(9999999,intval($value->addCountR1)));
+		$addCountR2 = max(0,min(9999999,intval($value->addCountR2)));
+		$addCountR3 = max(0,min(9999999,intval($value->addCountR3)));
+		$addCountR4 = max(0,min(9999999,intval($value->addCountR4)));
+		$addCountR5 = max(0,min(9999999,intval($value->addCountR5)));
+		$addCountR6 = max(0,min(9999999,intval($value->addCountR6)));
+		$addCountR7 = max(0,min(9999999,intval($value->addCountR7)));
+		$addCountR8 = max(0,min(9999999,intval($value->addCountR8)));
+		$addCountR9 = max(0,min(9999999,intval($value->addCountR9)));
+		$addCountR10 = max(0,min(9999999,intval($value->addCountR10)));
 		$imageCategory = $value->Category;
 		$exifData = $value->Exif;
 		$exifDataStringForInput = '';
@@ -1455,7 +1455,8 @@ if($isAjaxCall){
 
 		if(($AllowRating>=12 && $AllowRating<=20)){
 
-			echo '<div class="cg_5_star_main_rating_container">';
+			$backendRatingMode = (!empty($AllowRatingAverage)) ? 'average' : 'cumulative';
+			echo '<div class="cg_5_star_main_rating_container" data-cg-rating-mode="'.$backendRatingMode.'">';
 
 			if($IsModernFiveStar==1){
 
@@ -1470,8 +1471,6 @@ if($isAjaxCall){
                                     ",
 					$GalleryID,1,$AllowRatingMax, $id
 				) );
-
-				$countR = count($RatingOverview) ;
 
 				$RatingOverviewArray = [];
 
@@ -1502,8 +1501,6 @@ if($isAjaxCall){
 					$GalleryID,1,$AllowRatingMax, $imageId
 				) );
 
-				$countR = count($RatingOverview) ;
-
 				$RatingOverviewArray = [];
 
 				if(count($RatingOverview)){
@@ -1532,31 +1529,21 @@ if($isAjaxCall){
 			}
 
 			$ratingCummulated = 0;
+			$ratingCummulatedReal = 0;
+			$countR = 0;
+			$countRtotalCheck = 0;
 
-			if($Manipulate==1){
+			for($iR=1;$iR<=$AllowRating-10;$iR++){
+				$countR = $countR+${'countR'.$iR.'origin'};
+				$ratingCummulatedReal = $ratingCummulatedReal+(${'countR'.$iR.'origin'}*$iR);
 
-				for($iR=1;$iR<=$AllowRating-10;$iR++){
-					${'ratingCummulated'.$iR} = ${'countR'.$iR}*$iR+(${'addCountR'.$iR}*$iR);
-					$ratingCummulated = $ratingCummulated + ${'ratingCummulated'.$iR};
-					${'countR'.$iR}  = ${'countR'.$iR}+${'addCountR'.$iR};
+				if($Manipulate==1){
+					${'countR'.$iR} = ${'countR'.$iR.'origin'}+${'addCountR'.$iR};
 				}
 
-			}else{
-				for($iR=1;$iR<=$AllowRating-10;$iR++){
-					${'ratingCummulated'.$iR} = ${'countR'.$iR}*$iR;
-					$ratingCummulated = $ratingCummulated + ${'ratingCummulated'.$iR};
-				}
-			}
-
-			if($Manipulate==1){
-				$countRtotalCheck = $countR;
-				for($iR=1;$iR<=$AllowRating-10;$iR++){
-					$countRtotalCheck = $countRtotalCheck+${'addCountR'.$iR};
-				}
-				//$countRtotalCheck = $countR+$addCountR1+$addCountR2+$addCountR3+$addCountR4+$addCountR5;
-			}
-			else{
-				$countRtotalCheck = $countR;
+				${'ratingCummulated'.$iR} = ${'countR'.$iR}*$iR;
+				$ratingCummulated = $ratingCummulated+${'ratingCummulated'.$iR};
+				$countRtotalCheck = $countRtotalCheck+${'countR'.$iR};
 			}
 
 			$countManipulateCummulated = 0;
@@ -1631,7 +1618,11 @@ if($isAjaxCall){
 				echo "<div class='cg_backend_star cg_backend_five_star cg_backend_five_stars_one_star cg_backend_star_off' ></div>";
 			}
 
-			echo "<div class='cg_rating_value_countR_div_cummulated' style='font-weight: bold;' title='sum'>$ratingCummulated</div>";
+			if($backendRatingMode=='average'){
+				echo "<div class='cg_rating_value_countR_div_average' style='font-weight: bold;' title='average'>$averageStarsRounded</div>";
+			}else{
+				echo "<div class='cg_rating_value_countR_div_cummulated' style='font-weight: bold;' title='sum'>$ratingCummulated</div>";
+			}
 
 			if($Manipulate==1){
 
@@ -1640,7 +1631,8 @@ if($isAjaxCall){
 					$countManipulateMultiplicatedHide = 'cg_hide';
 				}
 
-				echo "<div class='cg_rating_value_countR_additional_votes cg_rating_value_countR_additional_votes_total $countManipulateMultiplicatedHide'>".$countManipulateMultiplicated."</div>";
+				$countManipulateToShow = ($backendRatingMode=='average') ? $countManipulateCummulated : $countManipulateMultiplicated;
+				echo "<div class='cg_rating_value_countR_additional_votes cg_rating_value_countR_additional_votes_total $countManipulateMultiplicatedHide'>".$countManipulateToShow."</div>";
 			}
 
 			echo '</div>';
@@ -1755,7 +1747,7 @@ if($isAjaxCall){
 				$addCountS=0;
 			}
 
-			echo "<input type='number' max='9999999' min='-9999999' class='cg_manipulate_counts_input cg_manipulate_plus_value' value='$addCountS'>";
+			echo "<input type='number' max='9999999' min='0' class='cg_manipulate_counts_input cg_manipulate_plus_value' value='$addCountS'>";
 			echo "</div></div>";
 
 			echo '</div>';
@@ -1768,11 +1760,11 @@ if($isAjaxCall){
 
 
 			echo "<input type='hidden' class='cg_value_origin_5_star_count' value='$countR' >";
-			echo "<input type='hidden' class='cg_value_origin_5_star_rating' value='$rating' >";
+			echo "<input type='hidden' class='cg_value_origin_5_star_rating' value='$ratingCummulatedReal' >";
 			echo "<input type='hidden' class='cg_value_origin_5_star_countBeforeInput' value='$countR' >";
 
 			for($iR=$AllowRating-10;$iR>=1;$iR--){
-				echo "<input type='hidden' class='cg_value_origin_5_star_addCountR$iR cg_value_origin_5_star_to_cumulate cg_input_vars_count cg_disabled_send' value='".${'addCountR'.$iR}."' name='addCountR".$iR."[$id]' >";
+				echo "<input type='hidden' data-star='$iR' class='cg_value_origin_5_star_addCountR$iR cg_value_origin_5_star_to_cumulate cg_input_vars_count cg_disabled_send' value='".${'addCountR'.$iR}."' name='addCountR".$iR."[$id]' >";
 				echo "<input type='hidden' class='cg_value_origin_5_only_value_$iR' value='".${'countR'.$iR.'origin'}."' >";
 			}
 
@@ -1792,7 +1784,7 @@ if($isAjaxCall){
 				echo "<div class='cg_backend_star_number'>".$iR."</div>";
 				echo "<div class='cg_backend_star cg_backend_five_star cg_backend_star_on'></div>";
 
-				echo "<div class='cg_manipulate_5_star_input_div' ><input data-star='$iR' type='number' class='cg_manipulate_5_star_input cg_manipulate_".$iR."_star_number  cg_manipulate_plus_value' max='9999999' min='-9999999'   value='".${'addCountR'.$iR}."'  ></div>";
+				echo "<div class='cg_manipulate_5_star_input_div' ><input data-star='$iR' type='number' class='cg_manipulate_5_star_input cg_manipulate_".$iR."_star_number  cg_manipulate_plus_value' max='9999999' min='0' value='".${'addCountR'.$iR}."'  ></div>";
 				echo "</div>";
 			}
 

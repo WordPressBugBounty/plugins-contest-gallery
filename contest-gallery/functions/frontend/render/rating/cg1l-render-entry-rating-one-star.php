@@ -60,7 +60,7 @@ if(!function_exists('cg1l_render_rating_component_entry_one_star')){
         $ratingValue = floatval($d['rating_value']);
         $bestRating = floatval($d['best_rating']);
         $worstRating = floatval($d['worst_rating']);
-        $alreadyVoted = cg1l_has_current_user_voted_for_entry($fullData,$votedUserPids,$options);
+        $alreadyVoted = cg1l_has_current_user_voted_one_star($fullData,$votedUserPids);
         $starOn = !empty($d['star_on']);
         $ariaLabel = $d['aria_label'];
         $tooltipVoted = $d['tooltip_voted'];
@@ -72,8 +72,8 @@ if(!function_exists('cg1l_render_rating_component_entry_one_star')){
         $ratingDivId = 'cgCenterImageRatingDiv' . $gid . '-' . $order;
         $galleryRatingId = 'cg_gallery_rating_div' . $realId;
 
-        $ratingCount = cg1l_get_rating_count($fullData,$options,$votedUserPids);
-        if(!$alreadyVoted && $options['general']['HideUntilVote']==1){
+        $ratingCount = cg1l_get_one_star_rating_count($fullData,$options,$votedUserPids);
+        if(cg1l_should_hide_rating_until_user_vote($options,$alreadyVoted)){
             $ratingCount = 0;
         }
 
@@ -115,9 +115,10 @@ if(!function_exists('cg1l_render_center_div_reload_one_star')){
             $cgRateMinus = '<div data-cg_rate_star_id="' . esc_attr($realId) . '" class="cg_rate_minus" data-cg-gid="' . esc_attr($gid) . '"' . $undoTooltipAttr . '></div>';
         }
 
-        if(!$alreadyVoted && $options['general']['HideUntilVote']==1){
+        if(cg1l_should_hide_rating_until_user_vote($options,$alreadyVoted)){
             $ratingCount = '';
         }
+        $ratingCountFormatted = cg1l_format_voting_comment_number($ratingCount,$options,0);
 
         return '<div class="' . esc_attr($childClass) . '" id="' . esc_attr($galleryRatingChildId) . '" data-cg-gid="' . esc_attr($gid) . '" data-cg-real-id="' . esc_attr($realId) . '" data-cg-shortcode="' . esc_attr($shortcode_name) . '">
             <div class="cg_voted_confirm"' . $votedTooltipAttr . '></div>
@@ -129,7 +130,7 @@ if(!function_exists('cg1l_render_center_div_reload_one_star')){
                 class="' . esc_attr($starClass) . ' cgl_rating '.$starOnOff.'" data-cg-shortcode="' . esc_attr($shortcode_name) . '"
                 ' . $voteTooltipAttr . '>
             </div>
-            <div id="' . esc_attr($ratingCountId) . '" class="cg_gallery_rating_div_count" >' . $ratingCount . '</div>
+            <div id="' . esc_attr($ratingCountId) . '" class="cg_gallery_rating_div_count" data-cg-number-value="' . esc_attr($ratingCount) . '">' . esc_html($ratingCountFormatted) . '</div>
             ' . $cgRateMinus . '
         </div>';
 

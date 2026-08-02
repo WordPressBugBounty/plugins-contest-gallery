@@ -348,11 +348,16 @@ jQuery(document).ready(function($){
     $(document).on('click',"#AllowRatingContainer",function (e) {
         //cgViewOptionCheck(this,e);
 
-        if($('#AllowRating2').prop( "checked" )){
-            $("#AllowRating").prop( "checked", true);
+        if($('#AllowRating').prop( "checked" )){
+            if(!$(e.target).is('select') && !$(e.target).is('option')){
+                cgJsClassAdmin.options.functions.cgActivateAllowRatingMultipleStarsMode($,'multiple');
+            }
             $("#AllowRating2").prop( "checked", false);
             $("#AllowRating2Container").find('.cg_view_option_checkbox').removeClass('cg_view_option_checked').addClass('cg_view_option_unchecked');
+            $("#AllowRatingAverage").prop( "checked", false);
+            $("#AllowRatingAverageContainer").find('.cg_view_option_checkbox').removeClass('cg_view_option_checked').addClass('cg_view_option_unchecked');
             $("#AllowRating3").removeClass( "cg_disabled");
+            $("#AllowRatingAverage3").addClass( "cg_disabled");
         }
 
         if($('#AllowRating').prop( "checked" )){
@@ -369,17 +374,34 @@ jQuery(document).ready(function($){
     $(document).on('click',"#AllowRating2Container",function (e) {
         //cgViewOptionCheck(this,e);
 
-        if($('#AllowRating').prop( "checked" )){
-            $("#AllowRating2").prop( "checked", true);
+        if($('#AllowRating2').prop( "checked" )){
             $("#AllowRating").prop( "checked", false);
             $("#AllowRatingContainer").find('.cg_view_option_checkbox').removeClass('cg_view_option_checked').addClass('cg_view_option_unchecked');
+            $("#AllowRatingAverage").prop( "checked", false);
+            $("#AllowRatingAverageContainer").find('.cg_view_option_checkbox').removeClass('cg_view_option_checked').addClass('cg_view_option_unchecked');
             $("#AllowRating3").addClass( "cg_disabled");
+            $("#AllowRatingAverage3").addClass( "cg_disabled");
         }
 
-        if($('#AllowRating').prop( "checked" )){
-            $("#AllowRating3").removeClass( "cg_disabled");
-        }else{
+        cgJsClassAdmin.options.functions.cg_AllowRating($);
+
+    });
+
+    $(document).on('click',"#AllowRatingAverageContainer",function (e) {
+        //cgViewOptionCheck(this,e);
+
+        if($('#AllowRatingAverage').prop( "checked" )){
+            if(!$(e.target).is('select') && !$(e.target).is('option')){
+                cgJsClassAdmin.options.functions.cgActivateAllowRatingMultipleStarsMode($,'average');
+            }
+            $("#AllowRating").prop( "checked", false);
+            $("#AllowRatingContainer").find('.cg_view_option_checkbox').removeClass('cg_view_option_checked').addClass('cg_view_option_unchecked');
+            $("#AllowRating2").prop( "checked", false);
+            $("#AllowRating2Container").find('.cg_view_option_checkbox').removeClass('cg_view_option_checked').addClass('cg_view_option_unchecked');
             $("#AllowRating3").addClass( "cg_disabled");
+            $("#AllowRatingAverage3").removeClass( "cg_disabled");
+        }else{
+            $("#AllowRatingAverage3").addClass( "cg_disabled");
         }
 
         cgJsClassAdmin.options.functions.cg_AllowRating($);
@@ -1092,11 +1114,12 @@ jQuery(document).ready(function($){
 
     });
 
-    $(document).on('click', '#cg_reset_votes', function(e){
+    $(document).on('click', '#cg_reset_votes, #cg_reset_votes_average', function(e){
 
         //cgViewOptionCheck(this,e);
 
-        var confirmText = $('#cg_reset_votes_explanation').html().trim();
+        var explanationId = ($(this).attr('id') === 'cg_reset_votes_average') ? '#cg_reset_votes_average_explanation' : '#cg_reset_votes_explanation';
+        var confirmText = $(explanationId).html().trim();
         confirmText = confirmText.split("<br>").join("\r\n");
 
         if (confirm(confirmText)) {
@@ -1140,11 +1163,12 @@ jQuery(document).ready(function($){
 
     });
 
-    $(document).on('click', '#cg_reset_admin_votes', function(e){
+    $(document).on('click', '#cg_reset_admin_votes, #cg_reset_admin_votes_average', function(e){
 
         //cgViewOptionCheck(this,e);
 
-        var confirmText = $('#cg_reset_admin_votes_explanation').html().trim();
+        var explanationId = ($(this).attr('id') === 'cg_reset_admin_votes_average') ? '#cg_reset_admin_votes_average_explanation' : '#cg_reset_admin_votes_explanation';
+        var confirmText = $(explanationId).html().trim();
         confirmText = confirmText.split("<br>").join("\r\n");
 
         if (confirm(confirmText)) {
@@ -1508,6 +1532,10 @@ jQuery(document).ready(function($){
         //cgViewOptionCheck(this,e);
         $('#cg_reset_votes_explanation').toggle();
     });
+    $(document).on('hover','#cg_reset_votes_average',function (e) {
+        e.preventDefault();
+        $('#cg_reset_votes_average_explanation').toggle();
+    });
     $(document).on('hover','#cg_reset_users_votes',function (e) {
         e.preventDefault();
         //cgViewOptionCheck(this,e);
@@ -1517,6 +1545,10 @@ jQuery(document).ready(function($){
         e.preventDefault();
         //cgViewOptionCheck(this,e);
         $('#cg_reset_admin_votes_explanation').toggle();
+    });
+    $(document).on('hover','#cg_reset_admin_votes_average',function (e) {
+        e.preventDefault();
+        $('#cg_reset_admin_votes_average_explanation').toggle();
     });
 
     // reset votes show info --- END
@@ -2179,7 +2211,11 @@ $(document).on('click','#RatingVisibleForGalleryEcommerceOption',function (e) {
     // save last multiple options
 
     $(document).on('change',"#AllowRating3",function (e) {
-        localStorage.setItem('cg_AllowRating3_last_used_option_gallery_id_'+$(this).attr('data-cg-gid'),$(this).val());
+        cgJsClassAdmin.options.functions.cgRememberAllowRatingMultipleStarsValue($,'multiple',$(this).val());
+    });
+
+    $(document).on('change',"#AllowRatingAverage3",function (e) {
+        cgJsClassAdmin.options.functions.cgRememberAllowRatingMultipleStarsValue($,'average',$(this).val());
     });
 
     // save last multiple options --- END
@@ -2383,8 +2419,12 @@ $(document).on('click','#RatingVisibleForGalleryEcommerceOption',function (e) {
 
         $.ajax({
             url: 'admin-ajax.php',
-            method: 'get',
-            data: 'cgOpenAiKey='+cgOpenAiKey+'&action=post_cg_check_openai_key'
+            method: 'post',
+            data: {
+                action: 'post_cg_check_openai_key',
+                cgOpenAiKey: cgOpenAiKey,
+                cg_nonce: CG1LBackendNonce.nonce
+            }
         }).done(function (response) {
             if(response.indexOf('###cgkeytrue###')>-1){
                 cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Key is correct and will work<br>Don\'t forget to "Save options"');
@@ -2414,8 +2454,14 @@ $(document).on('click','#RatingVisibleForGalleryEcommerceOption',function (e) {
 
         $.ajax({
             url: 'admin-ajax.php',
-            method: 'get',
-            data: 'cg_test_env='+isTest+'&action=post_cg_test_ecom_keys&cg_client='+cg_client+'&cg_secret='+cg_secret
+            method: 'post',
+            data: {
+                action: 'post_cg_test_ecom_keys',
+                cg_test_env: isTest,
+                cg_client: cg_client,
+                cg_secret: cg_secret,
+                cg_nonce: CG1LBackendNonce.nonce
+            }
         }).done(function (response) {
             if(response.indexOf('###cgkeytrue###')>-1){
                 cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Keys are correct and will work<br>Don\'t forget to "Save options"');
@@ -2445,8 +2491,14 @@ $(document).on('click','#RatingVisibleForGalleryEcommerceOption',function (e) {
 
         $.ajax({
             url: 'admin-ajax.php',
-            method: 'get',
-            data: 'cg_test_env='+isTest+'&action=post_cg_test_stripe_keys&cg_client='+cg_client+'&cg_secret='+cg_secret
+            method: 'post',
+            data: {
+                action: 'post_cg_test_stripe_keys',
+                cg_test_env: isTest,
+                cg_client: cg_client,
+                cg_secret: cg_secret,
+                cg_nonce: CG1LBackendNonce.nonce
+            }
         }).done(function (response) {
 
             if(response.indexOf('###cgkeytrue###')>-1){

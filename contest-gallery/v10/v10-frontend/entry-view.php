@@ -281,7 +281,8 @@ if(!function_exists('cg1l_render_single_entry_view')){
         }
 
         if($shouldRenderRating){
-            if($allowRating === 2){
+            $ratingType = cg1l_get_rating_type($options);
+            if($ratingType === 'one-star'){
                 $ratingDiv = cg1l_render_rating_component_entry_one_star(['gid'=> $gidJs, 'real_id' => $rid, 'real_gid' => $realGid],$fullData,$options,$shortcode_name,$countSuserVotes,$votedUserPids);
             }else{
                 if($allowRating === 1){
@@ -292,21 +293,26 @@ if(!function_exists('cg1l_render_single_entry_view')){
 
                 $order = 0;
 
-                $ratingDiv = cg1l_render_rating_component_entry_multi_stars([
+                $ratingArgs = [
                     'gid' => $gidJs,
                     'order' => $order,
                     'real_id' => $rid,
                     'real_gid' => $realGid,
                     'already_voted' => true,
-                    'rating_distribution' => [1=>0,2=>0,3=>0,4=>0,5=>1,6=>0,7=>0],
-                ], $fullData, $options, $shortcode_name, $countSuserVotes, $AllowRating,$votedUserPids,$languageNames);
+                ];
+
+                if($ratingType === 'average'){
+                    $ratingDiv = cg1l_render_rating_component_entry_average($ratingArgs,$fullData,$options,$shortcode_name,$countSuserVotes,$AllowRating,$votedUserPids,$languageNames);
+                }else{
+                    $ratingDiv = cg1l_render_rating_component_entry_five_stars($ratingArgs,$fullData,$options,$shortcode_name,$countSuserVotes,$AllowRating,$votedUserPids,$languageNames);
+                }
             }
         }
 
         $commentsDiv = '';
 
         if($options['general']['AllowComments'] == 1 || $options['general']['AllowComments'] == 2){
-            $cg_gallery_comments_div_child = cg1l_render_center_div_reload_comment_icon($rid,$jsonCommentsData);
+            $cg_gallery_comments_div_child = cg1l_render_center_div_reload_comment_icon($rid,$jsonCommentsData,$options);
             $isLoggedIn = is_user_logged_in();
             $isCommentFormVisible = ($options['general']['AllowComments'] == 1);
             $hideCommentNameField = (!empty($options['general']['HideCommentNameField'])) ? intval($options['general']['HideCommentNameField']) : 0;

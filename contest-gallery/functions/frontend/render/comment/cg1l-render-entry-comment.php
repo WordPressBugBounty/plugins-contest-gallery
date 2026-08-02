@@ -1,9 +1,10 @@
 <?php
 
 if(!function_exists('cg1l_render_center_div_reload_comment_icon')){
-    function cg1l_render_center_div_reload_comment_icon($realId,$jsonCommentsData)
+    function cg1l_render_center_div_reload_comment_icon($realId,$jsonCommentsData,$options = array())
     {
         $comments = cg1l_count_comments($realId,$jsonCommentsData);
+        $commentsFormatted = cg1l_format_voting_comment_number($comments,$options,0);
         $commentsStat = 'cg_gallery_comments_div_icon_off';
         if($comments>=1){
             $commentsStat = 'cg_gallery_comments_div_icon_on';
@@ -11,7 +12,7 @@ if(!function_exists('cg1l_render_center_div_reload_comment_icon')){
 
         return '<div class="cg_gallery_comments_div_child">
             <div class="cg_gallery_comments_div_icon cgl_comment '.$commentsStat.' cg_gallery_comments_div_icon'.$realId.' cg_inside_center_div"></div>
-            <div class="cg_gallery_comments_div_count'.$realId.' cg_gallery_comments_div_count">'.$comments.'</div>
+            <div class="cg_gallery_comments_div_count'.$realId.' cg_gallery_comments_div_count" data-cg-number-value="'.esc_attr($comments).'">'.esc_html($commentsFormatted).'</div>
         </div>';
 
     }

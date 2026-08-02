@@ -1,7 +1,7 @@
 <?php
 
 if (!function_exists('contest_gal1ery_user_vote_mail_prepare')) {
-    function contest_gal1ery_user_vote_mail_prepare($options, $pictureID, $galeryID, $isMultipleStars = false)
+    function contest_gal1ery_user_vote_mail_prepare($options, $pictureID, $galeryID, $ratingType = 'one-star')
     {
 
         global $wpdb;
@@ -75,7 +75,7 @@ if (!function_exists('contest_gal1ery_user_vote_mail_prepare')) {
 
                     $posUserInfo = "\$info\$";
 
-                    if ($isMultipleStars) {
+                    if ($ratingType === 'five-stars' || $ratingType === 'average') {
                         $multipleStarsMaxRating = 5;
                         if (!empty($options['general']['AllowRating'])) {
                             $multipleStarsAllowRating = intval($options['general']['AllowRating']);
@@ -89,22 +89,41 @@ if (!function_exists('contest_gal1ery_user_vote_mail_prepare')) {
                             $multipleStarsMaxRating = 10;
                         }
 
-                        $userVotes = $wpdb->get_results($wpdb->prepare(
-                            "SELECT $tablename.NamePic, SUM($tablenameIP.Rating) AS CountRtotalSum, $tablename.id, $tablename.WpPage
-                            FROM $tablenameIP
-                            INNER JOIN $tablename ON $tablename.id = $tablenameIP.pid
-                            WHERE $tablename.GalleryID = %d
-                                AND $tablenameIP.GalleryID = %d
-                                AND $tablename.WpUserId = %d
-                                AND $tablename.Active = 1
-                                AND $tablenameIP.Rating > 0
-                                AND $tablenameIP.Rating <= %d
-                                AND $tablenameIP.Tstamp > %d
-                            GROUP BY $tablename.id, $tablename.NamePic, $tablename.WpPage
-                            ORDER BY CountRtotalSum DESC
-                            LIMIT 10",
-                            $galeryID, $galeryID, $wpUserIdOfVotedImage, $multipleStarsMaxRating, $lastTstampFor
-                        ));
+                        if ($ratingType === 'average') {
+                            $userVotes = $wpdb->get_results($wpdb->prepare(
+                                "SELECT $tablename.NamePic, AVG($tablenameIP.Rating) AS RatingAverage, COUNT($tablenameIP.id) AS RatingCount, $tablename.id, $tablename.WpPage
+                                FROM $tablenameIP
+                                INNER JOIN $tablename ON $tablename.id = $tablenameIP.pid
+                                WHERE $tablename.GalleryID = %d
+                                    AND $tablenameIP.GalleryID = %d
+                                    AND $tablename.WpUserId = %d
+                                    AND $tablename.Active = 1
+                                    AND $tablenameIP.Rating > 0
+                                    AND $tablenameIP.Rating <= %d
+                                    AND $tablenameIP.Tstamp > %d
+                                GROUP BY $tablename.id, $tablename.NamePic, $tablename.WpPage
+                                ORDER BY RatingAverage DESC, RatingCount DESC
+                                LIMIT 10",
+                                $galeryID, $galeryID, $wpUserIdOfVotedImage, $multipleStarsMaxRating, $lastTstampFor
+                            ));
+                        } else {
+                            $userVotes = $wpdb->get_results($wpdb->prepare(
+                                "SELECT $tablename.NamePic, SUM($tablenameIP.Rating) AS CountRtotalSum, $tablename.id, $tablename.WpPage
+                                FROM $tablenameIP
+                                INNER JOIN $tablename ON $tablename.id = $tablenameIP.pid
+                                WHERE $tablename.GalleryID = %d
+                                    AND $tablenameIP.GalleryID = %d
+                                    AND $tablename.WpUserId = %d
+                                    AND $tablename.Active = 1
+                                    AND $tablenameIP.Rating > 0
+                                    AND $tablenameIP.Rating <= %d
+                                    AND $tablenameIP.Tstamp > %d
+                                GROUP BY $tablename.id, $tablename.NamePic, $tablename.WpPage
+                                ORDER BY CountRtotalSum DESC
+                                LIMIT 10",
+                                $galeryID, $galeryID, $wpUserIdOfVotedImage, $multipleStarsMaxRating, $lastTstampFor
+                            ));
+                        }
 
                     } else {
 
@@ -134,12 +153,21 @@ if (!function_exists('contest_gal1ery_user_vote_mail_prepare')) {
 
                         $UserEntries = '';
                         foreach ($userVotes as $userVotesData) {
-                            $entryVoteCount = ($isMultipleStars) ? intval($userVotesData->CountRtotalSum) : intval($userVotesData->CountStotalCount);
+                            if ($ratingType === 'average') {
+                                $entryVoteCount = intval($userVotesData->RatingCount);
+                                $entryVoteInfo = 'Ø ' . number_format((float)$userVotesData->RatingAverage, 1, '.', '') . ' / ' . $entryVoteCount;
+                            } elseif ($ratingType === 'five-stars') {
+                                $entryVoteCount = intval($userVotesData->CountRtotalSum);
+                                $entryVoteInfo = '+' . $entryVoteCount;
+                            } else {
+                                $entryVoteCount = intval($userVotesData->CountStotalCount);
+                                $entryVoteInfo = '+' . $entryVoteCount;
+                            }
                             if ($entryVoteCount <= 0) {
                                 continue;
                             }
 
-                            $UserEntries .= '(<b>+' . $entryVoteCount . '</b>) '.$userVotesData->NamePic . '<br/>';
+                            $UserEntries .= '(<b>' . $entryVoteInfo . '</b>) '.$userVotesData->NamePic . '<br/>';
 
                             $entryWpPage = (!empty($userVotesData->WpPage)) ? intval($userVotesData->WpPage) : 0;
                             $entryWpPagePermalink = (!empty($entryWpPage)) ? get_permalink($entryWpPage) : '';

@@ -173,71 +173,106 @@ if ($_POST['contest_gal1ery_create_zip']==true or ($_POST['chooseAction1'] == 4 
 
     if(!empty($_POST['contest_gal1ery_create_zip'])){
 
-        $selectSQLall = $wpdb->get_results( "SELECT * FROM $tablename WHERE GalleryID = '$GalleryID' AND WpUpload>0 AND NOT (ImgType = 'ytb' OR ImgType = 'inst' OR ImgType = 'tkt' OR ImgType = 'twt')");
+        cg_check_nonce();
+
+        $selectSQLall = $wpdb->get_results($wpdb->prepare(
+            "SELECT id, WpUpload, MultipleFiles
+            FROM $tablename
+            WHERE GalleryID = %d
+                AND WpUpload > 0
+                AND ImgType NOT IN ('ytb','inst','tkt','twt')",
+            array($GalleryID)
+        ));
+
+        $attachmentIds = array();
+        $attachmentFallbackUrls = array();
+        $legacyImageUrls = array();
 
 	    foreach($selectSQLall as $value){
-                if(!empty($value->MultipleFiles) && $value->MultipleFiles!='""'){
-                    $MultipleFilesUnserialized = unserialize($value->MultipleFiles);
-                    if(!empty($MultipleFilesUnserialized)){//check for sure if really exists and unserialize went right, because might happen that "" was in database from earlier versions
-                        foreach($MultipleFilesUnserialized as $order => $MultipleFile){
-                            if($order==1 && empty($MultipleFile['isRealIdSource'])){
-                                $image_url = $MultipleFile['guid'];
-                            }else{
-                                if(!empty($MultipleFile['isRealIdSource'])){
-                                    $image_url = $wpdb->get_var("SELECT guid FROM $table_posts WHERE ID = '".$value->WpUpload."'");
-                                }else{
-                                    $image_url = $MultipleFile['guid'];
-                                }
-                            }
-                            if($is_ssl){
-                                if(strpos($image_url,'http://')===0){
-                                    $image_url = str_replace( 'http://', 'https://', $image_url );
-                                }
-                            }else{
-                                if(strpos($image_url,'https://')===0){
-                                    $image_url = str_replace( 'https://', 'http://', $image_url );
-                                }
-                            }
+            $multipleFiles = (!empty($value->MultipleFiles) && $value->MultipleFiles!=='""')
+                ? maybe_unserialize($value->MultipleFiles)
+                : array();
 
-                            $image_url_path = wp_parse_url($image_url, PHP_URL_PATH);
-                            $relative_image_path = '';
-                            if(!empty($image_url_path) && !empty($baseurlParsedPath) && strpos($image_url_path, $baseurlParsedPath) === 0){
-                                $relative_image_path = substr($image_url_path, strlen($baseurlParsedPath));
-                            }
-
-                            if($relative_image_path !== '' && $relative_image_path !== false){
-                                $dl_image_original = $pfad.$relative_image_path;
-                                $allPics[] = $dl_image_original;
-                            }
-                        }
-                    }
-                }else{
-
-                    $image_url = $wpdb->get_var("SELECT guid FROM $table_posts WHERE ID = '".$value->WpUpload."'");
-
-                    if($is_ssl){
-                        if(strpos($image_url,'http://')===0){
-                            $image_url = str_replace( 'http://', 'https://', $image_url );
-                        }
-                    }else{
-                        if(strpos($image_url,'https://')===0){
-                            $image_url = str_replace( 'https://', 'http://', $image_url );
-                        }
+            if(is_array($multipleFiles) && count($multipleFiles)){
+                foreach($multipleFiles as $multipleFile){
+                    $attachmentId = 0;
+                    if(!empty($multipleFile['isRealIdSource'])){
+                        $attachmentId = absint($value->WpUpload);
+                    }elseif(!empty($multipleFile['WpUpload'])){
+                        $attachmentId = absint($multipleFile['WpUpload']);
                     }
 
-                    $image_url_path = wp_parse_url($image_url, PHP_URL_PATH);
-                    $relative_image_path = '';
-                    if(!empty($image_url_path) && !empty($baseurlParsedPath) && strpos($image_url_path, $baseurlParsedPath) === 0){
-                        $relative_image_path = substr($image_url_path, strlen($baseurlParsedPath));
-                    }
-
-                    if($relative_image_path !== '' && $relative_image_path !== false){
-                        $dl_image_original = $pfad.$relative_image_path;
-                        $allPics[] = $dl_image_original;
+                    if($attachmentId){
+                        $attachmentIds[$attachmentId] = $attachmentId;
+                        if(!empty($multipleFile['guid'])){
+                            $attachmentFallbackUrls[$attachmentId] = $multipleFile['guid'];
+                        }
+                    }elseif(!empty($multipleFile['guid'])){
+                        $legacyImageUrls[] = $multipleFile['guid'];
                     }
                 }
-
+            }else{
+                $attachmentId = absint($value->WpUpload);
+                if($attachmentId){
+                    $attachmentIds[$attachmentId] = $attachmentId;
+                }
+            }
         }
+
+        if(count($attachmentIds)){
+            foreach(array_chunk(array_values($attachmentIds),500) as $attachmentIdChunk){
+                _prime_post_caches($attachmentIdChunk,false,true);
+            }
+        }
+
+        $uploadBaseRealPath = realpath($pfad);
+        foreach($attachmentIds as $attachmentId){
+            $attachedFile = get_attached_file($attachmentId);
+            $attachedFileRealPath = (!empty($attachedFile)) ? realpath($attachedFile) : false;
+
+            if(
+                $uploadBaseRealPath!==false &&
+                $attachedFileRealPath!==false &&
+                is_file($attachedFileRealPath) &&
+                strpos($attachedFileRealPath,$uploadBaseRealPath.DIRECTORY_SEPARATOR)===0
+            ){
+                $allPics[$attachedFileRealPath] = $attachedFileRealPath;
+                continue;
+            }
+
+            if(!empty($attachmentFallbackUrls[$attachmentId])){
+                $legacyImageUrls[] = $attachmentFallbackUrls[$attachmentId];
+            }else{
+                $attachmentGuid = get_post_field('guid',$attachmentId);
+                if(!empty($attachmentGuid)){
+                    $legacyImageUrls[] = $attachmentGuid;
+                }
+            }
+        }
+
+        foreach(array_unique($legacyImageUrls) as $image_url){
+            $image_url_path = wp_parse_url($image_url,PHP_URL_PATH);
+            if(empty($image_url_path) || empty($baseurlParsedPath) || strpos($image_url_path,$baseurlParsedPath)!==0){
+                continue;
+            }
+
+            $relative_image_path = substr($image_url_path,strlen($baseurlParsedPath));
+            if($relative_image_path==='' || $relative_image_path===false){
+                continue;
+            }
+
+            $legacyFileRealPath = realpath($pfad.rawurldecode($relative_image_path));
+            if(
+                $uploadBaseRealPath!==false &&
+                $legacyFileRealPath!==false &&
+                is_file($legacyFileRealPath) &&
+                strpos($legacyFileRealPath,$uploadBaseRealPath.DIRECTORY_SEPARATOR)===0
+            ){
+                $allPics[$legacyFileRealPath] = $legacyFileRealPath;
+            }
+        }
+
+        $allPics = array_values($allPics);
     }
 
 
@@ -285,9 +320,6 @@ if ($_POST['contest_gal1ery_create_zip']==true or ($_POST['chooseAction1'] == 4 
     }
     if(cg_action_create_zip($allPics,''.$pfad.'/contest-gallery/gallery-id-'.$GalleryID.'/'.$code.'_images_download.zip')==false){
         die;
-    }
-    else{
-        cg_action_create_zip($allPics,''.$pfad.'/contest-gallery/gallery-id-'.$GalleryID.'/'.$code.'_images_download.zip');
     }
 
     $downloadZipFileLink = $baseurl.'/contest-gallery/gallery-id-'.$GalleryID.'/'.$code.'_images_download.zip';

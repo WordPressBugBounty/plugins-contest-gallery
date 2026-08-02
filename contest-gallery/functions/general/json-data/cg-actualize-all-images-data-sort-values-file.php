@@ -1,58 +1,112 @@
 <?php
 
 if(!function_exists('cg_correct_entry_count')){
-    function cg_correct_entry_count($pid){
+    function cg_correct_entry_count($pid,$GalleryID = 0){
 
         global $wpdb;
         $tablename = $wpdb->prefix ."contest_gal1ery";
         $tablenameIP = $wpdb->prefix ."contest_gal1ery_ip";
 
-        $RatingOverview = $wpdb->get_results( $wpdb->prepare(
-            "
-                                    SELECT * 
-                                    FROM $tablenameIP
-                                    WHERE pid = %d AND (RatingS >=1 OR (Rating >= %d AND Rating <= %d))
-                                ",
-            $pid,1,10
-        ) );
+        $pid = absint($pid);
+        $GalleryID = absint($GalleryID);
 
-        $CountR = 0;
-        $CountR1 = 0;
-        $CountR2 = 0;
-        $CountR3 = 0;
-        $CountR4 = 0;
-        $CountR5 = 0;
-        $CountR6 = 0;
-        $CountR7 = 0;
-        $CountR8 = 0;
-        $CountR9 = 0;
-        $CountR10 = 0;
-        $Rating = 0;
-        $CountS = 0;
-        foreach($RatingOverview as $row){
-            if($row->RatingS == 1){
-                $CountS++;
-            }else{
-                if($row->Rating == 1){$CountR1++;}
-                if($row->Rating == 2){$CountR2++;}
-                if($row->Rating == 3){$CountR3++;}
-                if($row->Rating == 4){$CountR4++;}
-                if($row->Rating == 5){$CountR5++;}
-                if($row->Rating == 6){$CountR6++;}
-                if($row->Rating == 7){$CountR7++;}
-                if($row->Rating == 8){$CountR8++;}
-                if($row->Rating == 9){$CountR9++;}
-                if($row->Rating == 10){$CountR10++;}
-                $CountR++;
-                $Rating = $Rating + $row->Rating;
-            }
+        if(empty($pid)){
+            return false;
         }
 
-        $wpdb->query("UPDATE $tablename SET CountR=$CountR, CountS = $CountS, Rating = $Rating, 
-         CountR1 = $CountR1, CountR2 = $CountR2, CountR3 = $CountR3, CountR4=$CountR4, CountR5 = $CountR5,
-         CountR6 = $CountR6, CountR7=$CountR7, CountR8 = $CountR8, CountR9 = $CountR9, CountR10 = $CountR10 
-         WHERE id=$pid");
+        if(!empty($GalleryID)){
+            $entryExists = $wpdb->get_var($wpdb->prepare(
+                "SELECT id FROM $tablename WHERE id = %d AND GalleryID = %d LIMIT 1",
+                $pid,
+                $GalleryID
+            ));
+            if(empty($entryExists)){
+                return false;
+            }
 
+            $RatingOverview = $wpdb->get_results( $wpdb->prepare(
+                "
+                                        SELECT RatingS, Rating
+                                        FROM $tablenameIP
+                                        WHERE pid = %d AND GalleryID = %d AND (RatingS = %d OR (Rating >= %d AND Rating <= %d))
+                                    ",
+                $pid,$GalleryID,1,1,10
+            ) );
+        }else{
+            $entryExists = $wpdb->get_var($wpdb->prepare(
+                "SELECT id FROM $tablename WHERE id = %d LIMIT 1",
+                $pid
+            ));
+            if(empty($entryExists)){
+                return false;
+            }
+
+            $RatingOverview = $wpdb->get_results( $wpdb->prepare(
+                "
+                                        SELECT RatingS, Rating
+                                        FROM $tablenameIP
+                                        WHERE pid = %d AND (RatingS = %d OR (Rating >= %d AND Rating <= %d))
+                                    ",
+                $pid,1,1,10
+            ) );
+        }
+
+        if($RatingOverview === null){
+            return false;
+        }
+
+        $ratingCounts = array(
+            'CountR' => 0,
+            'CountS' => 0,
+            'Rating' => 0,
+            'CountR1' => 0,
+            'CountR2' => 0,
+            'CountR3' => 0,
+            'CountR4' => 0,
+            'CountR5' => 0,
+            'CountR6' => 0,
+            'CountR7' => 0,
+            'CountR8' => 0,
+            'CountR9' => 0,
+            'CountR10' => 0
+        );
+
+        foreach($RatingOverview as $row){
+            if(intval($row->RatingS) === 1){
+                $ratingCounts['CountS']++;
+                continue;
+            }
+
+            $ratingValue = intval($row->Rating);
+            if($ratingValue < 1 || $ratingValue > 10){
+                continue;
+            }
+
+            $ratingCounts['CountR'.$ratingValue]++;
+            $ratingCounts['CountR']++;
+            $ratingCounts['Rating'] += $ratingValue;
+        }
+
+        $where = array('id' => $pid);
+        $whereFormat = array('%d');
+        if(!empty($GalleryID)){
+            $where['GalleryID'] = $GalleryID;
+            $whereFormat[] = '%d';
+        }
+
+        $updated = $wpdb->update(
+            $tablename,
+            $ratingCounts,
+            $where,
+            array('%d','%d','%d','%d','%d','%d','%d','%d','%d','%d','%d','%d','%d'),
+            $whereFormat
+        );
+
+        if($updated === false){
+            return false;
+        }
+
+        return $ratingCounts;
     }
 }
 

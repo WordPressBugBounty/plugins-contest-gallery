@@ -172,6 +172,8 @@
 	cgJsClass.gallery.language[index].DataSaved = <?php echo json_encode($language_DataSaved); ?>;
 	cgJsClass.gallery.language[index].Sum = <?php echo json_encode($language_Sum); ?>;
 	cgJsClass.gallery.language[index].YourVote = <?php echo json_encode($language_YourVote); ?>;
+	cgJsClass.gallery.language[index].Rating = <?php echo json_encode($language_Rating); ?>;
+	cgJsClass.gallery.language[index].Ratings = <?php echo json_encode($language_Ratings); ?>;
 	cgJsClass.gallery.language[index].PleaseUseAvailableEmojis = <?php echo json_encode($language_PleaseUseAvailableEmojis); ?>;
 	cgJsClass.gallery.language[index].EmojisAreNotAllowed = <?php echo json_encode($language_EmojisAreNotAllowed); ?>;
 	cgJsClass.gallery.language[index].YouHaveToBeLoggedInToComment = <?php echo json_encode($language_YouHaveToBeLoggedInToComment); ?>;

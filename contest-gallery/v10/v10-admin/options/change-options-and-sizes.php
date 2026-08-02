@@ -112,6 +112,8 @@ if(!empty($_POST['cg_edit_translations'])){
 
 }elseif(!empty($_POST['cg_edit_ecommerce'])){
 
+    cg_require_global_settings_access();
+
     // Update ecommerce options
     if(floatval($_POST['cgDbVersion'])>=22){
         cg_ecommerce_change_options_and_sizes($id);
@@ -256,8 +258,10 @@ $wp_upload_dir = wp_upload_dir();
     $isResetVotes = false;
     $isResetVotesViaManipulationOneStar = false;
     $isResetVotesViaManipulationMultipleStars = false;
+    $isResetVotesAverageRequest = !empty($_GET['reset_votes_average']);
+    $isResetAdminVotesAverageRequest = !empty($_GET['reset_admin_votes_average']);
 
-    if (!empty($_GET['reset_votes'])) {
+    if (!empty($_GET['reset_votes']) || $isResetVotesAverageRequest) {
         $isResetVotes = true;
         $wpdb->query(
             $wpdb->prepare(
@@ -312,9 +316,13 @@ $wp_upload_dir = wp_upload_dir();
             cg1l_create_last_updated_time_file($id,'image-stats-data-last-update');
         }
 
+        $resetVotesSuccessMessage = $isResetVotesAverageRequest
+            ? "All average rating votes were completely deleted.\nFrontend needs to be reloaded.\nFrontend changes might require 30 seconds."
+            : "All multiple stars votes were completely deleted.\nFrontend needs to be reloaded.\nFrontend changes might require 30 seconds.";
+
         ?>
         <script>
-            alert('All multiple stars votes were completely deleted.\nFrontend needs to be reloaded.\nFrontend changes might require 30 seconds.');
+            alert(<?php echo wp_json_encode($resetVotesSuccessMessage); ?>);
         </script>
 
         <?php
@@ -367,7 +375,7 @@ $wp_upload_dir = wp_upload_dir();
 
     }
 
-    if (!empty($_GET['reset_admin_votes'])) {
+    if (!empty($_GET['reset_admin_votes']) || $isResetAdminVotesAverageRequest) {
         $isResetVotes = true;
         $isResetVotesViaManipulationMultipleStars = true;
         $wpdb->update(
@@ -411,9 +419,13 @@ $wp_upload_dir = wp_upload_dir();
 
         }
 
+        $resetAdminVotesSuccessMessage = $isResetAdminVotesAverageRequest
+            ? "All average rating votes added manually by the administrator were deleted.\nFrontend needs to be reloaded.\nFrontend changes might require 30 seconds."
+            : "All multiple stars by administrator manually (via manipulation) added votes were deleted.\nFrontend needs to be reloaded.\nFrontend changes might require 30 seconds.";
+
         ?>
         <script>
-            alert('All multiple stars by administrator manually (via manipulation) added votes were deleted.\nFrontend needs to be reloaded.\nFrontend changes might require 30 seconds.');
+            alert(<?php echo wp_json_encode($resetAdminVotesSuccessMessage); ?>);
         </script>
 
         <?php
@@ -853,6 +865,7 @@ $wp_upload_dir = wp_upload_dir();
         $FeControlsStyle = (!empty($_POST['FeControlsStyle'])) ? sanitize_text_field($_POST['FeControlsStyle']) : 'white';
         $GalleryStyle = (!empty($_POST['GalleryStyle'])) ? sanitize_text_field($_POST['GalleryStyle']) : 'center-black';
         $FeVotingIconType = (!empty($_POST['FeVotingIconType'])) ? sanitize_text_field($_POST['FeVotingIconType']) : 'star';
+        $VotingCommentNumberFormat = (!empty($_POST['VotingCommentNumberFormat']) && sanitize_text_field($_POST['VotingCommentNumberFormat']) === 'comma') ? 'comma' : 'dot';
 
         $FeControlsStyleUpload = (!empty($_POST['FeControlsStyleWhiteUpload'])) ? 'white' : 'black';
     $FeControlsStyleRegistry = (!empty($_POST['FeControlsStyleWhiteRegistry'])) ? 'white' : 'black';// will be also saved for general options in cg_update_registry_and_login_options_v14
@@ -994,7 +1007,7 @@ $wp_upload_dir = wp_upload_dir();
                 'ForwardToWpPageEntry' => $ForwardToWpPageEntry, 'ForwardToWpPageEntryInNewTab' => $ForwardToWpPageEntryInNewTab,'TextBeforeWpPageEntry' => $TextBeforeWpPageEntry,'TextAfterWpPageEntry' => $TextAfterWpPageEntry,
                 'ShowBackToGalleryButton' => $ShowBackToGalleryButton, 'BackToGalleryButtonText' => $BackToGalleryButtonText, 'TextDeactivatedEntry' => $TextDeactivatedEntry,
                 'ShowBackToGalleriesButton' => $ShowBackToGalleriesButton,'ShowPinFormVoting' => $ShowPinFormVoting,'ShowPinFormUploading' => $ShowPinFormUploading, 'AllowedUsersToVote' => $AllowedUsersToVote,
-                'FeVotingIconType' => $FeVotingIconType, 'UploadRealWatermarkSettings' => $UploadRealWatermarkSettings
+                'FeVotingIconType' => $FeVotingIconType, 'VotingCommentNumberFormat' => $VotingCommentNumberFormat, 'UploadRealWatermarkSettings' => $UploadRealWatermarkSettings
             ),
             array('GalleryID' => $id),
             array('%d', '%d',
@@ -1016,7 +1029,7 @@ $wp_upload_dir = wp_upload_dir();
                 '%d', '%d', '%s', '%s',
                 '%d', '%s', '%s',
                 '%d', '%d', '%d', '%s',
-                '%s', '%s'
+                '%s', '%s', '%s'
             ),
             array('%d')
         );
@@ -1211,11 +1224,18 @@ $wp_upload_dir = wp_upload_dir();
             $ShowAlways = (!empty($_POST['ShowAlways'])) ? 3 : 3;
         }
 
-        $AllowRating = (!empty($_POST['AllowRating'])) ? '1' : '0';
+        $AllowRating = 0;
+        $AllowRatingAverage = 0;
 
         //var_dump("allow rating 3 post");
         //var_dump($_POST['AllowRating3']);
-        if (!empty($_POST['AllowRating'])) {
+        if (!empty($_POST['AllowRatingAverage'])) {
+            $AllowRatingAverage = 1;
+            $AllowRating = (!empty($_POST['AllowRatingAverage3'])) ? intval($_POST['AllowRatingAverage3']) : 15;
+            if($AllowRating < 12 || $AllowRating > 20){
+                $AllowRating = 15;
+            }
+        } elseif (!empty($_POST['AllowRating'])) {
             //var_dump(1);
             $AllowRating = 1;
             if (!empty($_POST['AllowRating3'])) {
@@ -1423,7 +1443,7 @@ $wp_upload_dir = wp_upload_dir();
             'MinResPNGheight' => $MinResPNGheight, 'MinResGIFwidth' => $MinResGIFwidth, 'MinResGIFheight' => $MinResGIFheight,
                 'MaxResJPGwidth' => $MaxResJPGwidth, 'MaxResJPGheight' => $MaxResJPGheight, 'MaxResPNGwidth' => $MaxResPNGwidth, 'MaxResPNGheight' => $MaxResPNGheight, 'MaxResGIFwidth' => $MaxResGIFwidth, 'MaxResGIFheight' => $MaxResGIFheight,
                 'OnlyGalleryView' => $OnlyGalleryView, 'SinglePicView' => $SinglePicView, 'ScaleOnly' => $ScaleOnly, 'ScaleAndCut' => $ScaleAndCut, 'FullSize' => $FullSize, 'FullSizeGallery' => $FullSizeGallery, 'FullSizeSlideOutStart' => $FullSizeSlideOutStart, 'AllowSort' => $AllowSort, 'RandomSort' => $RandomSort, 'RandomSortButton' => $RandomSortButton, 'ShowAlways' => $ShowAlways,
-                'AllowComments' => $AllowComments, 'CommentsOutGallery' => $CommentsOutGallery, 'AllowRating' => $AllowRating, 'VotesPerUser' => $VotesPerUser, 'RatingOutGallery' => $RatingOutGallery, 'IpBlock' => $IpBlock,
+                'AllowComments' => $AllowComments, 'CommentsOutGallery' => $CommentsOutGallery, 'AllowRating' => $AllowRating, 'AllowRatingAverage' => $AllowRatingAverage, 'VotesPerUser' => $VotesPerUser, 'RatingOutGallery' => $RatingOutGallery, 'IpBlock' => $IpBlock,
                 'CheckLogin' => $CheckLogin, 'FbLike' => $FbLike, 'FbLikeGallery' => $FbLikeGallery, 'FbLikeGalleryVote' => $FbLikeGalleryVote,
                 'AllowGalleryScript' => $AllowGalleryScript, 'InfiniteScroll' => $InfiniteScroll, 'FullSizeImageOutGallery' => $FullSizeImageOutGallery, 'FullSizeImageOutGalleryNewTab' => $FullSizeImageOutGalleryNewTab,
                 'Inform' => $Inform, 'ShowAlwaysInfoSlider' => $ShowAlwaysInfoSlider, 'ThumbLook' => $ThumbLook, 'AdjustThumbLook' => $AdjustThumbLook, 'HeightLook' => $HeightLook, 'RowLook' => $RowLook,
@@ -1440,7 +1460,7 @@ $wp_upload_dir = wp_upload_dir();
             '%d', '%d', '%d',
             '%d', '%d', '%d',
             '%d', '%d', '%d',
-                '%d', '%d', '%d', '%d', '%d', '%d',
+                '%d', '%d', '%d', '%d', '%d', '%d', '%d',
                 '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d',
                 '%d', '%d', '%d', '%d', '%d', '%d',
                 '%d', '%d', '%d', '%d', '%d', '%d',
@@ -1757,6 +1777,11 @@ $wp_upload_dir = wp_upload_dir();
 
         $PdfPreviewBackend = (!empty($_POST['PdfPreviewBackend'])) ? '1' : '0';
         $PdfPreviewFrontend = (!empty($_POST['PdfPreviewFrontend'])) ? '1' : '0';
+
+        if(cg_get_version()=='contest-gallery'){
+            $PdfPreviewBackend = '0';
+            $PdfPreviewFrontend = '0';
+        }
 
         $AllowUploadJPG = (!empty($_POST['AllowUploadJPG'])) ? 1 : 0;
         $AllowUploadPNG = (!empty($_POST['AllowUploadPNG'])) ? 1 : 0;
@@ -2330,13 +2355,13 @@ $wp_upload_dir = wp_upload_dir();
         $_POST['multiple-pics']['cg_gallery']['pro']['PdfPreviewBackend'] = $PdfPreviewBackend;
         $_POST['multiple-pics']['cg_gallery_user']['pro']['PdfPreviewBackend'] = $PdfPreviewBackend; // inherited from the global PDF preview option
         $_POST['multiple-pics']['cg_gallery_no_voting']['pro']['PdfPreviewBackend'] = $PdfPreviewBackend;
-        $_POST['multiple-pics']['cg_gallery_winner']['pro']['PdfPreviewBackend'] = (!empty($_POST['multiple-pics']['cg_gallery_winner']['pro']['PdfPreviewBackend'])) ? 1 : 0;
+        $_POST['multiple-pics']['cg_gallery_winner']['pro']['PdfPreviewBackend'] = (cg_get_version()=='contest-gallery') ? 0 : ((!empty($_POST['multiple-pics']['cg_gallery_winner']['pro']['PdfPreviewBackend'])) ? 1 : 0);
         $_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['PdfPreviewBackend'] = $PdfPreviewBackend;
 
         $_POST['multiple-pics']['cg_gallery']['pro']['PdfPreviewFrontend'] = $PdfPreviewFrontend;
         $_POST['multiple-pics']['cg_gallery_user']['pro']['PdfPreviewFrontend'] = $PdfPreviewFrontend; // inherited from the global PDF preview option
         $_POST['multiple-pics']['cg_gallery_no_voting']['pro']['PdfPreviewFrontend'] = $PdfPreviewFrontend;
-        $_POST['multiple-pics']['cg_gallery_winner']['pro']['PdfPreviewFrontend'] = (!empty($_POST['multiple-pics']['cg_gallery_winner']['pro']['PdfPreviewFrontend'])) ? 1 : 0;
+        $_POST['multiple-pics']['cg_gallery_winner']['pro']['PdfPreviewFrontend'] = (cg_get_version()=='contest-gallery') ? 0 : ((!empty($_POST['multiple-pics']['cg_gallery_winner']['pro']['PdfPreviewFrontend'])) ? 1 : 0);
         $_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['PdfPreviewFrontend'] = $PdfPreviewFrontend;
 
         // has to be set here for json-options.php

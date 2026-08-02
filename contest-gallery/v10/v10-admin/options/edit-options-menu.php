@@ -18,6 +18,11 @@ if(intval($galleryDbVersion)>=22) {
     $cg_v22_caret = 'cg_v22_caret';
 }
 
+$cgOpenAiOptionsTab = '';
+if(cg_user_can_manage_global_settings()){
+    $cgOpenAiOptionsTab = '<div class="cg_view_select cg_after_v14 '.$cg_v14_note_caret.' '.$cg_v22_caret.'" cg-data-view="#view21" data-count="21"><a class="cg_view_select_link" cg-data-view="#view21" cg-data-href="cgViewHelper21" id="cgOpenAiTabLink">OpenAI</a></div>';
+}
+
 $isEditOptionsOnly = false;
 $isEditTranslationsOnly = false;
 $isEditEcommerceOnly = false;
@@ -61,7 +66,7 @@ HEREDOC;
 echo <<<HEREDOC
                        <div class='cg_view_select cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view15" data-count="15"><a class="cg_view_select_link" cg-data-view="#view15" cg-data-href="cgViewHelper15" id="cgSignInOptionsTabLink">Login Google</a></div>
 
-                       <div class='cg_view_select cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view21" data-count="21"><a class="cg_view_select_link" cg-data-view="#view21" cg-data-href="cgViewHelper21" id="cgOpenAiTabLink">OpenAI</a></div>
+                       $cgOpenAiOptionsTab
 
                       <div cg-data-view="#view17" data-count="17" id="cgSaveOptionsNavButton">
                         <span cg-data-view="#view17" cg-data-href="cgViewHelper17" class="cg_backend_button_gallery_action" ><strong>Save options</strong></span>
@@ -360,7 +365,7 @@ if(intval($galleryDbVersion)<14){
         echo <<<HEREDOC
                 <h4 id="view10" class="cg_view_header">E-mail confirmation e-mail</h4>
         <div class='cg_view cgEmailConfirmationEmail cgViewHelper10'>
-    HEREDOC;
+HEREDOC;
         include(__DIR__.'/views-content/view-email-confirmation-email-options.php');
         echo "</div>";
 
@@ -390,21 +395,21 @@ HEREDOC;
         echo <<<HEREDOC
                 <h4 id="view11" class="cg_view_header">Registration$cg_v14_general_options_title_string</h4>
         <div class="cg_view cgRegistrationOptions cgViewHelper11">
-    HEREDOC;
+HEREDOC;
         include(__DIR__.'/views-content/view-registration-options.php');
         echo "</div>";
 
         echo <<<HEREDOC
                 <h4 id="view12" class="cg_view_header">Login$cg_v14_general_options_title_string</h4>
     <div class="cg_view cgLoginOptions cgViewHelper12">
-    HEREDOC;
+HEREDOC;
         include(__DIR__.'/views-content/view-login-options.php');
         echo "</div>";
 
         echo <<<HEREDOC
                 <h4 id="view13" class="cg_view_header">Login via Google (general)</h4>
     <div class="cg_view cgGoogleSignInOptions cgViewHelper13">
-    HEREDOC;
+HEREDOC;
         include(__DIR__.'/views-content/view-google-sign-in-options.php');
         echo "</div>";
     }
@@ -512,7 +517,7 @@ HEREDOC;
         include(__DIR__.'/views-content/view-google-sign-in-options.php');
         echo "</div>";
 
-        if(intval($galleryDbVersion)>=14){
+        if(intval($galleryDbVersion)>=14 && cg_user_can_manage_global_settings()){
             echo <<<HEREDOC
             <h4 id="view21" class="cg_view_header">OpenAI</h4>
             <div class="cg_view cgViewHelper21" >
@@ -546,10 +551,11 @@ HEREDOC;
 <div class='cg_view_options_rows_container'>
 HEREDOC;
 	        include(__DIR__.'/views-content/view-ecommerce-invoice-options.php');
+	        // cg_save_all_options must have an extra div before it is placed.
 	        echo <<<HEREDOC
 </div>
 </div>
-HEREDOC;// cg_save_all_options must have extra div before placed
+HEREDOC;
 
         }else{
             echo <<<HEREDOC

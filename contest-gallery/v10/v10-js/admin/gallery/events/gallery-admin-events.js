@@ -425,7 +425,70 @@ debugger
 
     });
 
-    $(document).on('keypress', '#cgGalleryBackendContainer .cg_manipulate_plus_value .cg_manipulate_5_star_input', function (e) {
+    var cgBackendGetManipulationValue = function (input) {
+        var value = parseInt(input.value, 10);
+
+        if (isNaN(value)) {
+            return 0;
+        }
+
+        if (value < 0) {
+            value = 0;
+            input.value = value;
+        } else if (value > 9999999) {
+            value = 9999999;
+            input.value = value;
+        }
+
+        return value;
+    };
+
+    var cgBackendSetMultiStarRatingState = function ($cgSortableDiv, ratingCount) {
+        var $ratingStar = $cgSortableDiv.find('.cg_rating_5_star_img_div_container > .cg_backend_star.cg_backend_five_star');
+
+        if (ratingCount < 1) {
+            $ratingStar.removeClass('cg_backend_star_on').addClass('cg_backend_star_off');
+        } else {
+            $ratingStar.removeClass('cg_backend_star_off').addClass('cg_backend_star_on');
+        }
+    };
+
+    var cgBackendRenderCumulativeManipulation = function ($cgSortableDiv, ratingTotal, ratingCount, addedWeightedValue) {
+        var $infoContainer = $cgSortableDiv.find('.cg_backend_info_container');
+        var $additionalVotes = $infoContainer.find('.cg_rating_value_countR_additional_votes_total');
+
+        $infoContainer.find('.cg_rating_value_countR_div_cummulated').text(ratingTotal);
+
+        if (addedWeightedValue > 0) {
+            $additionalVotes.removeClass('cg_hide').text(addedWeightedValue);
+        } else {
+            $additionalVotes.addClass('cg_hide');
+        }
+
+        cgBackendSetMultiStarRatingState($cgSortableDiv, ratingCount);
+    };
+
+    var cgBackendRenderAverageManipulation = function ($cgSortableDiv, ratingTotal, ratingCount, addedCount) {
+        var $infoContainer = $cgSortableDiv.find('.cg_backend_info_container');
+        var $additionalVotes = $infoContainer.find('.cg_rating_value_countR_additional_votes_total');
+        var average = 0;
+
+        if (ratingCount > 0) {
+            average = Math.round((ratingTotal / ratingCount) * 10) / 10;
+        }
+
+        $infoContainer.find('.cg_rating_value_countR_div_average').text(average);
+
+        if (addedCount > 0) {
+            $additionalVotes.removeClass('cg_hide').text(addedCount);
+        } else {
+            $additionalVotes.addClass('cg_hide');
+        }
+
+        cgBackendSetMultiStarRatingState($cgSortableDiv, ratingCount);
+    };
+
+    $(document).on('keypress', '#cgGalleryBackendContainer .cg_manipulate_plus_value.cg_manipulate_5_star_input', function (e) {
         //if the letter is not digit then display error and don't type anything
         if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
             //display error message
@@ -437,30 +500,10 @@ debugger
 
     $(document).on('input', '#cgGalleryBackendContainer .cg_manipulate_counts_input', function (e) {
 
-        if (parseInt(this.value) < 0) {
-            this.value = 0;
-        }
-
         var cgSortableDiv = $(this).closest('.cgSortableDiv');
         var $cg_backend_info_container = $(this).closest('.cg_backend_info_container');
-
-
-        var cg_rating_value_text = cgSortableDiv.find('.cg_rating_value').text();
-        cg_rating_value_width = cg_rating_value_text.length * 8;
-
-        var originValue = parseInt(cgSortableDiv.find('.cg_value_origin').val());
-
-        if (this.value.length > 8) {
-            this.value = this.value.slice(0, 8);
-            var addValue = parseInt(this.value);
-        }
-        else {
-            var addValue = parseInt(this.value);
-        }
-
-        if (isNaN(addValue)) {
-            addValue = 0;
-        }
+        var originValue = parseInt(cgSortableDiv.find('.cg_value_origin').val(), 10);
+        var addValue = cgBackendGetManipulationValue(this);
 
         if (isNaN(originValue)) {
             originValue = 0;
@@ -490,448 +533,70 @@ debugger
 
     $(document).on('input', '#cgGalleryBackendContainer .cg_manipulate_5_star_input', function (e) {
 
-        if (parseInt(this.value) < 0) {
-            this.value = 0;
+        var $input = $(this);
+        var $cgSortableDiv = $input.closest('.cgSortableDiv');
+        var $ratingOverview = $cgSortableDiv.find('.cg_5_star_main_rating_container');
+        var dataStar = parseInt($input.attr('data-star'), 10);
+        var addValue = cgBackendGetManipulationValue(this);
+        var originCountR = parseInt($cgSortableDiv.find('.cg_value_origin_5_only_value_' + dataStar).val(), 10);
+        var originRatingCount = parseInt($cgSortableDiv.find('.cg_value_origin_5_star_count').val(), 10);
+        var originRatingTotal = parseInt($cgSortableDiv.find('.cg_value_origin_5_star_rating').val(), 10);
+        var addedCount = 0;
+        var addedWeightedValue = 0;
+        var $ratingRow;
+        var valueCountR;
+
+        if (isNaN(originCountR)) {
+            originCountR = 0;
+        }
+        if (isNaN(originRatingCount)) {
+            originRatingCount = 0;
+        }
+        if (isNaN(originRatingTotal)) {
+            originRatingTotal = 0;
         }
 
-        if (this.value.length > 7) {
-            this.value = this.value.slice(0, 7);
-            var addValue = this.value;
-        }
-        else {
-            var addValue = this.value;
-        }
-
-        if (isNaN(addValue)) {
-            addValue = 0;
-        }
-
-        $(this).removeClass('cg_disabled_send');
-
-        var cgSortableDiv = $(this).closest('.cgSortableDiv');
-        var $cg_backend_info_container = $(this).closest('.cg_backend_info_container');
-        var dataStar = $(this).attr('data-star');
-
-        var container = $(this).closest('.cgSortableDiv');
-        var countRbefore = container.find('.cg_value_origin_5_star_count').val();
-
-        var addedValue = 0;
-
-        var ratingRnew = container.find('.cg_value_origin_5_star_rating').val();
-
-        addValue = addValue.trim();
-
-        countRbefore = countRbefore.trim();
-        ratingRnew = ratingRnew.trim();
-
-        addValue = parseInt(addValue);
-
-        countRbefore = parseInt(countRbefore);
-        ratingRnew = parseInt(ratingRnew);
-
-
-        if ($(this).hasClass('cg_manipulate_1_star_number')) {
-
-            var originCountR = container.find('.cg_value_origin_5_only_value_1').val();
-            originCountR = originCountR.trim();
-            originCountR = parseInt(originCountR);
-
-            if (isNaN(originCountR)) {
-                originCountR = 0;
-            }
-
-            var valueCountR = originCountR + addValue;
-
-            if (valueCountR < 0) {
-
-                return false;
-
-            }
-
-            container.find('.cg_value_origin_5_star_addCountR1').val(addValue).removeClass('cg_disabled_send');
-
-            container.find('.cg_rating_value_countR1').text(valueCountR);
-            container.find('.cg_rating_value_countR1').next().next().text(valueCountR*1);
-        }
-
-
-        if ($(this).hasClass('cg_manipulate_2_star_number')) {
-
-            var originCountR = container.find('.cg_value_origin_5_only_value_2').val();
-            originCountR = originCountR.trim();
-            originCountR = parseInt(originCountR);
-
-            if (isNaN(originCountR)) {
-                originCountR = 0;
-            }
-
-            var valueCountR = originCountR + addValue;
-
-            if (valueCountR < 0) {
-
-                return false;
-
-            }
-
-            container.find('.cg_value_origin_5_star_addCountR2').val(addValue).removeClass('cg_disabled_send');
-
-            container.find('.cg_rating_value_countR2').text(valueCountR);
-            container.find('.cg_rating_value_countR2').next().next().text(valueCountR*2);
-
-        }
-
-
-        if ($(this).hasClass('cg_manipulate_3_star_number')) {
-
-            var originCountR = container.find('.cg_value_origin_5_only_value_3').val();
-            originCountR = originCountR.trim();
-            originCountR = parseInt(originCountR);
-
-            if (isNaN(originCountR)) {
-                originCountR = 0;
-            }
-
-            var valueCountR = originCountR + addValue;
-
-            if (valueCountR < 0) {
-
-                return false;
-
-            }
-
-            container.find('.cg_value_origin_5_star_addCountR3').val(addValue).removeClass('cg_disabled_send');
-
-            container.find('.cg_rating_value_countR3').text(valueCountR);
-            container.find('.cg_rating_value_countR3').next().next().text(valueCountR*3);
-
-        }
-
-
-        if ($(this).hasClass('cg_manipulate_4_star_number')) {
-
-            var originCountR = container.find('.cg_value_origin_5_only_value_4').val();
-            originCountR = originCountR.trim();
-            originCountR = parseInt(originCountR);
-
-            if (isNaN(originCountR)) {
-                originCountR = 0;
-            }
-
-            var valueCountR = originCountR + addValue;
-
-            if (valueCountR < 0) {
-
-                return false;
-
-            }
-
-            container.find('.cg_value_origin_5_star_addCountR4').val(addValue).removeClass('cg_disabled_send');
-
-            container.find('.cg_rating_value_countR4').text(valueCountR);
-            container.find('.cg_rating_value_countR4').next().next().text(valueCountR*4);
-
-        }
-
-
-        if ($(this).hasClass('cg_manipulate_5_star_number')) {
-
-            var originCountR = container.find('.cg_value_origin_5_only_value_5').val();
-            originCountR = originCountR.trim();
-            originCountR = parseInt(originCountR);
-
-            if (isNaN(originCountR)) {
-                originCountR = 0;
-            }
-
-            var valueCountR = originCountR + addValue;
-
-            if (valueCountR < 0) {
-
-                return false;
-
-            }
-
-            container.find('.cg_value_origin_5_star_addCountR5').val(addValue).removeClass('cg_disabled_send');
-
-            container.find('.cg_rating_value_countR5').text(valueCountR);
-            container.find('.cg_rating_value_countR5').next().next().text(valueCountR*5);
-
-        }
-
-
-        if ($(this).hasClass('cg_manipulate_6_star_number')) {
-
-            var originCountR = container.find('.cg_value_origin_5_only_value_6').val();
-            originCountR = originCountR.trim();
-            originCountR = parseInt(originCountR);
-
-            if (isNaN(originCountR)) {
-                originCountR = 0;
-            }
-
-            var valueCountR = originCountR + addValue;
-
-            if (valueCountR < 0) {
-
-                return false;
-
-            }
-
-            container.find('.cg_value_origin_5_star_addCountR6').val(addValue).removeClass('cg_disabled_send');
-
-            container.find('.cg_rating_value_countR6').text(valueCountR);
-            container.find('.cg_rating_value_countR6').next().next().text(valueCountR*6);
-
-        }
-
-
-        if ($(this).hasClass('cg_manipulate_7_star_number')) {
-
-            var originCountR = container.find('.cg_value_origin_5_only_value_7').val();
-            originCountR = originCountR.trim();
-            originCountR = parseInt(originCountR);
-
-            if (isNaN(originCountR)) {
-                originCountR = 0;
-            }
-
-            var valueCountR = originCountR + addValue;
-
-            if (valueCountR < 0) {
-
-                return false;
-
-            }
-
-            container.find('.cg_value_origin_5_star_addCountR7').val(addValue).removeClass('cg_disabled_send');
-
-            container.find('.cg_rating_value_countR7').text(valueCountR);
-            container.find('.cg_rating_value_countR7').next().next().text(valueCountR*7);
-
-        }
-
-
-        if ($(this).hasClass('cg_manipulate_8_star_number')) {
-
-            var originCountR = container.find('.cg_value_origin_5_only_value_8').val();
-            originCountR = originCountR.trim();
-            originCountR = parseInt(originCountR);
-
-            if (isNaN(originCountR)) {
-                originCountR = 0;
-            }
-
-            var valueCountR = originCountR + addValue;
-
-            if (valueCountR < 0) {
-
-                return false;
-
-            }
-
-            container.find('.cg_value_origin_5_star_addCountR8').val(addValue).removeClass('cg_disabled_send');
-
-            container.find('.cg_rating_value_countR8').text(valueCountR);
-            container.find('.cg_rating_value_countR8').next().next().text(valueCountR*8);
-
-        }
-
-
-        if ($(this).hasClass('cg_manipulate_9_star_number')) {
-
-            var originCountR = container.find('.cg_value_origin_5_only_value_9').val();
-            originCountR = originCountR.trim();
-            originCountR = parseInt(originCountR);
-
-            if (isNaN(originCountR)) {
-                originCountR = 0;
-            }
-
-            var valueCountR = originCountR + addValue;
-
-            if (valueCountR < 0) {
-
-                return false;
-
-            }
-
-            container.find('.cg_value_origin_5_star_addCountR9').val(addValue).removeClass('cg_disabled_send');
-
-            container.find('.cg_rating_value_countR9').text(valueCountR);
-            container.find('.cg_rating_value_countR9').next().next().text(valueCountR*9);
-
-        }
-
-
-        if ($(this).hasClass('cg_manipulate_10_star_number')) {
-
-            var originCountR = container.find('.cg_value_origin_5_only_value_10').val();
-            originCountR = originCountR.trim();
-            originCountR = parseInt(originCountR);
-
-            if (isNaN(originCountR)) {
-                originCountR = 0;
-            }
-
-            var valueCountR = originCountR + addValue;
-
-            if (valueCountR < 0) {
-
-                return false;
-
-            }
-
-            container.find('.cg_value_origin_5_star_addCountR10').val(addValue).removeClass('cg_disabled_send');
-
-            container.find('.cg_rating_value_countR10').text(valueCountR);
-            container.find('.cg_rating_value_countR10').next().next().text(valueCountR*10);
-
-        }
-
-        if (addValue >= 1) {
-            var addValueMultiplicated = addValue * dataStar;
-            $cg_backend_info_container.find('.cg_rating_value_countR_additional_votes_' + dataStar + '').text(addValueMultiplicated).removeClass('cg_hide');
+        valueCountR = originCountR + addValue;
+        $cgSortableDiv.find('.cg_value_origin_5_star_addCountR' + dataStar).val(addValue).removeClass('cg_disabled_send');
+
+        $ratingRow = $cgSortableDiv.find('.cg_rating_value_countR' + dataStar).closest('.cg_stars_overview');
+        $ratingRow.find('.cg_stars_overview_countR').text(valueCountR);
+        $ratingRow.find('.cg_stars_overview_rating_cummulated').text(valueCountR * dataStar);
+
+        if (addValue > 0) {
+            $ratingRow.find('.cg_rating_value_countR_additional_votes_' + dataStar).text(addValue * dataStar).removeClass('cg_hide');
         } else {
-            $cg_backend_info_container.find('.cg_rating_value_countR_additional_votes_' + dataStar + '').addClass('cg_hide');
+            $ratingRow.find('.cg_rating_value_countR_additional_votes_' + dataStar).addClass('cg_hide');
         }
 
+        $cgSortableDiv.find('.cg_value_origin_5_star_to_cumulate').each(function () {
+            var $hiddenInput = $(this);
+            var star = parseInt($hiddenInput.attr('data-star'), 10);
+            var value = parseInt($hiddenInput.val(), 10);
 
-        var addValue = 0;
-
-        //  console.log('ratingRnew: '+ratingRnew);
-
-        var addCountRtotal = 0;
-        container.find('.cg_stars_overview .cg_rating_value_countR_additional_votes').each(function (index) {
-            addCountRtotal = addCountRtotal + parseInt($(this).text());
-        });
-
-        /*        if (addCountRtotal > 0) {
-                    container.find('.cg_rating_value_countR_additional_votes_total').removeClass('cg_hide').text(addCountRtotal);
-                } else {
-                    container.find('.cg_rating_value_countR_additional_votes_total').removeClass('cg_hide').text(0);
-                }*/
-
-        var $cg_value_origin_5_star_to_cumulate = container.find('.cg_value_origin_5_star_to_cumulate');
-        var length = $cg_value_origin_5_star_to_cumulate.length;
-
-        $cg_value_origin_5_star_to_cumulate.each(function (index) {
-
-            var r = index + 1;
-
-            if ($(this).val() == '') {
-
-                var valueToAdd = 0;
-
-            }
-            else {
-
-                var valueToAdd = parseInt($(this).val());
-
-            }
-
-
-            if ($(this).hasClass('cg_value_origin_5_star_addCountR1')) {
-                //   console.log('ratingRnew1: '+valueToAdd);
-
-                ratingRnew = ratingRnew + valueToAdd * 1;
-                addedValue = addedValue + valueToAdd * 1;
-                //   console.log('ratingRnew1ratingRnew: '+ratingRnew);
-
-
-            }
-            if ($(this).hasClass('cg_value_origin_5_star_addCountR2')) {
-
-                ratingRnew = ratingRnew + valueToAdd * 2;
-                addedValue = addedValue + valueToAdd * 2;
-
-            }
-            if ($(this).hasClass('cg_value_origin_5_star_addCountR3')) {
-
-                ratingRnew = ratingRnew + valueToAdd * 3;
-                addedValue = addedValue + valueToAdd * 3;
-
-            }
-            if ($(this).hasClass('cg_value_origin_5_star_addCountR4')) {
-
-                ratingRnew = ratingRnew + valueToAdd * 4;
-                addedValue = addedValue + valueToAdd * 4;
-
-            }
-
-            if ($(this).hasClass('cg_value_origin_5_star_addCountR5')) {
-
-                ratingRnew = ratingRnew + valueToAdd * 5;
-                addedValue = addedValue + valueToAdd * 5;
-
-            }
-
-            if ($(this).hasClass('cg_value_origin_5_star_addCountR6')) {
-
-                ratingRnew = ratingRnew + valueToAdd * 6;
-                addedValue = addedValue + valueToAdd * 6;
-
-            }
-
-            if ($(this).hasClass('cg_value_origin_5_star_addCountR7')) {
-
-                ratingRnew = ratingRnew + valueToAdd * 7;
-                addedValue = addedValue + valueToAdd * 7;
-
-            }
-
-            if ($(this).hasClass('cg_value_origin_5_star_addCountR8')) {
-
-                ratingRnew = ratingRnew + valueToAdd * 8;
-                addedValue = addedValue + valueToAdd * 8;
-
-            }
-
-            if ($(this).hasClass('cg_value_origin_5_star_addCountR9')) {
-
-                ratingRnew = ratingRnew + valueToAdd * 9;
-                addedValue = addedValue + valueToAdd * 9;
-
-            }
-
-            if ($(this).hasClass('cg_value_origin_5_star_addCountR10')) {
-
-                ratingRnew = ratingRnew + valueToAdd * 10;
-                addedValue = addedValue + valueToAdd * 10;
-
-            }
-
-
-            if (valueToAdd >= 1 || valueToAdd <= 1) {
-                addValue = addValue + valueToAdd;
-            }
-
-            if (r == length) {
-
-                cgJsClassAdmin.gallery.vars.addValue = addValue;
-                cgJsClassAdmin.gallery.vars.ratingRnew = ratingRnew;
-
+            if (isNaN(star) || isNaN(value)) {
                 return;
             }
 
+            addedCount += value;
+            addedWeightedValue += value * star;
         });
 
-        var countRnew = countRbefore + parseInt(cgJsClassAdmin.gallery.vars.addValue);
-
-        $cg_backend_info_container.find('.cg_rating_value_countR_div_cummulated').text(cgJsClassAdmin.gallery.vars.ratingRnew)
-        if(addedValue){
-            $cg_backend_info_container.find('.cg_rating_value_countR_additional_votes_total').removeClass('cg_hide').text(addedValue);
-        }else{
-            $cg_backend_info_container.find('.cg_rating_value_countR_additional_votes_total').addClass('cg_hide');
-        }
-
-        if (countRnew < 1) {
-            cgSortableDiv.find('.cg_rating_5_star_img_div_container > .cg_backend_star.cg_backend_five_star').removeClass('cg_backend_star_on').addClass('cg_backend_star_off');
-            countRnew = 0;
+        if ($ratingOverview.attr('data-cg-rating-mode') === 'average') {
+            cgBackendRenderAverageManipulation(
+                $cgSortableDiv,
+                originRatingTotal + addedWeightedValue,
+                originRatingCount + addedCount,
+                addedCount
+            );
         } else {
-            cgSortableDiv.find('.cg_rating_5_star_img_div_container > .cg_backend_star.cg_backend_five_star').removeClass('cg_backend_star_off').addClass('cg_backend_star_on');
+            cgBackendRenderCumulativeManipulation(
+                $cgSortableDiv,
+                originRatingTotal + addedWeightedValue,
+                originRatingCount + addedCount,
+                addedWeightedValue
+            );
         }
-
-        container.find('.cg_rating_value_countR_content').text(countRnew);
 
     });
 

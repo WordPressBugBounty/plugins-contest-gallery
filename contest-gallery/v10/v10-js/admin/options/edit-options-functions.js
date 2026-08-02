@@ -436,30 +436,21 @@ cgJsClassAdmin.options.functions = {
         // replace reset votes
 
         var reloadUrl = window.location.href;
+        var resetVoteParameters = [
+            'reset_votes',
+            'reset_votes_average',
+            'reset_users_votes',
+            'reset_votes2',
+            'reset_users_votes2',
+            'reset_admin_votes',
+            'reset_admin_votes_average',
+            'reset_admin_votes2'
+        ];
 
-        if (reloadUrl.indexOf("reset_votes") >= 0){
-            reloadUrl = reloadUrl.replace(/reset_votes/gi,'reset_votes_done');
-        }
-
-        if (reloadUrl.indexOf("reset_users_votes") >= 0){
-            reloadUrl = reloadUrl.replace(/reset_users_votes/gi,'reset_users_votes_done');
-        }
-
-        if (reloadUrl.indexOf("reset_votes2") >= 0){
-            reloadUrl = reloadUrl.replace(/reset_votes2/gi,'reset_votes2_done');
-        }
-
-        if (reloadUrl.indexOf("reset_users_votes2") >= 0){
-            reloadUrl = reloadUrl.replace(/reset_users_votes2/gi,'reset_users_votes2_done');
-        }
-
-        if (reloadUrl.indexOf("reset_admin_votes") >= 0){
-            reloadUrl = reloadUrl.replace(/reset_admin_votes/gi,'reset_admin_votes_done');
-        }
-
-        if (reloadUrl.indexOf("reset_admin_votes2") >= 0){
-            reloadUrl = reloadUrl.replace(/reset_admin_votes2/gi,'reset_admin_votes2_done');
-        }
+        resetVoteParameters.forEach(function (resetVoteParameter) {
+            var resetVotePattern = new RegExp('([?&])' + resetVoteParameter + '(=)', 'gi');
+            reloadUrl = reloadUrl.replace(resetVotePattern, '$1' + resetVoteParameter + '_done$2');
+        });
 
         history.replaceState(null,null,reloadUrl);
 
@@ -481,15 +472,7 @@ cgJsClassAdmin.options.functions = {
 
         cgJsClassAdmin.options.functions.cg_ShowDateOnLoad($);
 
-        // show last selected multiple if one star is selected just for visual reason
-        if($('#AllowRating2').prop('checked')){
-            var $AllowRating3 = $('#AllowRating3');
-            var gid = $AllowRating3.attr('data-cg-gid');
-            var optionValue =  localStorage.getItem('cg_AllowRating3_last_used_option_gallery_id_'+gid);
-            if(optionValue){
-                $AllowRating3.val(optionValue);
-            }
-        }
+        cgJsClassAdmin.options.functions.cgInitializeAllowRatingMultipleStarsOptions($);
 
         var $Tax =$('#TaxPercentageDefault');
         if($Tax.length){
@@ -551,7 +534,7 @@ cgJsClassAdmin.options.functions = {
             return;
         }
 
-        if($(e.target).attr('id')=='AllowRating3'){
+        if($(e.target).attr('id')=='AllowRating3' || $(e.target).attr('id')=='AllowRatingAverage3'){
             return;
         }
 
@@ -783,11 +766,120 @@ cgJsClassAdmin.options.functions = {
         }
 
     },
+    cgNormalizeAllowRatingMultipleStarsValue: function(value){
+        var normalizedValue = parseInt(value,10);
+
+        if(isNaN(normalizedValue) || normalizedValue < 12 || normalizedValue > 20){
+            return '';
+        }
+
+        return String(normalizedValue);
+    },
+    cgGetAllowRatingMultipleStarsModeData: function($,mode){
+        var isAverage = mode === 'average';
+        var $select = isAverage ? $('#AllowRatingAverage3') : $('#AllowRating3');
+        var gid = $select.attr('data-cg-gid');
+
+        return {
+            $select: $select,
+            gid: gid,
+            storageKey: (isAverage ? 'cg_AllowRatingAverage3_last_used_option_gallery_id_' : 'cg_AllowRating3_last_used_option_gallery_id_')+gid
+        };
+    },
+    cgGetStoredAllowRatingMultipleStarsValue: function($,mode){
+        var modeData = cgJsClassAdmin.options.functions.cgGetAllowRatingMultipleStarsModeData($,mode);
+        var storedValue;
+        var normalizedValue;
+
+        if(!modeData.$select.length || !modeData.gid){
+            return '';
+        }
+
+        storedValue = localStorage.getItem(modeData.storageKey);
+        normalizedValue = cgJsClassAdmin.options.functions.cgNormalizeAllowRatingMultipleStarsValue(storedValue);
+
+        if(storedValue && !normalizedValue){
+            localStorage.removeItem(modeData.storageKey);
+        }
+
+        return normalizedValue;
+    },
+    cgStoreAllowRatingMultipleStarsValue: function($,mode,value){
+        var modeData = cgJsClassAdmin.options.functions.cgGetAllowRatingMultipleStarsModeData($,mode);
+        var normalizedValue = cgJsClassAdmin.options.functions.cgNormalizeAllowRatingMultipleStarsValue(value);
+
+        if(!modeData.$select.length || !modeData.gid || !normalizedValue){
+            return '';
+        }
+
+        modeData.$select.val(normalizedValue);
+        localStorage.setItem(modeData.storageKey,normalizedValue);
+
+        return normalizedValue;
+    },
+    cgInitializeAllowRatingMultipleStarsOptions: function($){
+        var $multipleSelect = $('#AllowRating3');
+        var $averageSelect = $('#AllowRatingAverage3');
+        var multipleStoredValue;
+        var averageStoredValue;
+        var multipleCurrentValue;
+        var averageCurrentValue;
+
+        if(!$multipleSelect.length || !$averageSelect.length){
+            return;
+        }
+
+        multipleStoredValue = cgJsClassAdmin.options.functions.cgGetStoredAllowRatingMultipleStarsValue($,'multiple');
+        averageStoredValue = cgJsClassAdmin.options.functions.cgGetStoredAllowRatingMultipleStarsValue($,'average');
+        multipleCurrentValue = cgJsClassAdmin.options.functions.cgNormalizeAllowRatingMultipleStarsValue($multipleSelect.val());
+        averageCurrentValue = cgJsClassAdmin.options.functions.cgNormalizeAllowRatingMultipleStarsValue($averageSelect.val());
+
+        if($('#AllowRating').prop('checked')){
+            multipleCurrentValue = cgJsClassAdmin.options.functions.cgStoreAllowRatingMultipleStarsValue($,'multiple',multipleCurrentValue);
+            if(averageStoredValue){
+                $averageSelect.val(averageStoredValue);
+            }else{
+                cgJsClassAdmin.options.functions.cgStoreAllowRatingMultipleStarsValue($,'average',averageCurrentValue);
+            }
+        }else if($('#AllowRatingAverage').prop('checked')){
+            averageCurrentValue = cgJsClassAdmin.options.functions.cgStoreAllowRatingMultipleStarsValue($,'average',averageCurrentValue);
+            if(multipleStoredValue){
+                $multipleSelect.val(multipleStoredValue);
+            }else{
+                cgJsClassAdmin.options.functions.cgStoreAllowRatingMultipleStarsValue($,'multiple',multipleCurrentValue);
+            }
+        }else{
+            if(multipleStoredValue){
+                $multipleSelect.val(multipleStoredValue);
+            }else{
+                cgJsClassAdmin.options.functions.cgStoreAllowRatingMultipleStarsValue($,'multiple',multipleCurrentValue);
+            }
+
+            if(averageStoredValue){
+                $averageSelect.val(averageStoredValue);
+            }else{
+                cgJsClassAdmin.options.functions.cgStoreAllowRatingMultipleStarsValue($,'average',averageCurrentValue);
+            }
+        }
+    },
+    cgActivateAllowRatingMultipleStarsMode: function($,mode){
+        var modeData = cgJsClassAdmin.options.functions.cgGetAllowRatingMultipleStarsModeData($,mode);
+        var value = cgJsClassAdmin.options.functions.cgGetStoredAllowRatingMultipleStarsValue($,mode);
+
+        if(!value){
+            value = cgJsClassAdmin.options.functions.cgNormalizeAllowRatingMultipleStarsValue(modeData.$select.val());
+        }
+
+        cgJsClassAdmin.options.functions.cgStoreAllowRatingMultipleStarsValue($,mode,value);
+    },
+    cgRememberAllowRatingMultipleStarsValue: function($,mode,value){
+        cgJsClassAdmin.options.functions.cgStoreAllowRatingMultipleStarsValue($,mode,value);
+    },
     cg_AllowRating: function($){
 
         var $cgVotingOptions = $('#cgVotingOptions');
 
-        if($("#AllowRating").prop( "checked" ) || $("#AllowRating2").prop( "checked" )){
+        if($("#AllowRating").prop( "checked" ) || $("#AllowRating2").prop( "checked" ) || $("#AllowRatingAverage").prop( "checked" )){
 
             $cgVotingOptions.find("#RatingOutGalleryContainer").removeClass("cg_disabled");
             $cgVotingOptions.find(".RatingPositionGalleryContainer").removeClass("cg_disabled");

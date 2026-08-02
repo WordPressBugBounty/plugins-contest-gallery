@@ -12,17 +12,19 @@ if(!function_exists('cg_paypal_get_access_token')){
 	    //curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Expect:') );
 	    //curl_setopt($ch, CURLOPT_FRESH_CONNECT, TRUE);// no-cache
         curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_SSLVERSION , 6); //NEW ADDITION
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_USERPWD, $clientId.":".$secret);
         curl_setopt($ch, CURLOPT_POSTFIELDS, "grant_type=client_credentials");
         $result = curl_exec($ch);
-	    curl_close($ch);
+	    $curlErrorNumber = curl_errno($ch);
 	    $error_msg = curl_error($ch);
-        if (curl_errno($ch)) {
-            $error_msg = curl_error($ch);
+	    curl_close($ch);
+        if ($curlErrorNumber) {
+            $result = false;
         }
      /*   echo "Error: <br>";
 

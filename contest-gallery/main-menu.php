@@ -353,6 +353,7 @@ $unix = time();
 		$Version        = $value->Version;
 		$FbLike         = $value->FbLike;
 		$AllowRating    = $value->AllowRating;
+		$AllowRatingAverage = (!empty($value->AllowRatingAverage)) ? 1 : 0;
 
 		$cgCopyForV14ExplanationRequired = 0;
 		if ( intval( $galleryDbVersion ) < 14 ) {
@@ -414,7 +415,7 @@ $unix = time();
 			}
 
         if($AllowRating==1 OR ($AllowRating>=12 && $AllowRating<=20)){
-				$VotingConfigurationString = 'via multiple stars';
+				$VotingConfigurationString = ($AllowRatingAverage) ? 'via average rating' : 'via multiple stars';
 			}
 
 			if ( $FbLike == 1 ) {

@@ -260,6 +260,10 @@ if(!function_exists('cg_modified_admin_bar_for_eventually_contest_gallery_profil
 if(!function_exists('cgHasUserGroupAllowedToEdit')){
     function cgHasUserGroupAllowedToEdit( $user ) {
 
+	    if(function_exists('cg_database_install_is_pending') && cg_database_install_is_pending()){
+		    return false;
+	    }
+
 	    global $wpdb;
         $tablename_registry_and_login_options = $wpdb->prefix . "contest_gal1ery_registry_and_login_options";
 

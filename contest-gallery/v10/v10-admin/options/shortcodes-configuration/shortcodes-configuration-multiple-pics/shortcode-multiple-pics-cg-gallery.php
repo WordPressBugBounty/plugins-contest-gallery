@@ -184,6 +184,8 @@ HEREDOC;
         $PreselectSort_date_ascend_selected = ($PreselectSort == 'date_ascend') ? 'selected' : '';
         $PreselectSort_rating_descend_selected = ($PreselectSort == 'rating_descend') ? 'selected' : '';
         $PreselectSort_rating_ascend_selected = ($PreselectSort == 'rating_ascend') ? 'selected' : '';
+        $PreselectSort_rating_desc_average_selected = ($PreselectSort == 'rating_desc_average') ? 'selected' : '';
+        $PreselectSort_rating_asc_average_selected = ($PreselectSort == 'rating_asc_average') ? 'selected' : '';
         $PreselectSort_rating_sum_descend_selected = ($PreselectSort == 'rating_sum_descend') ? 'selected' : '';
         $PreselectSort_rating_sum_ascend_selected = ($PreselectSort == 'rating_sum_ascend') ? 'selected' : '';
         $PreselectSort_comments_descend_selected = ($PreselectSort == 'comments_descend') ? 'selected' : '';
@@ -195,6 +197,8 @@ echo <<<HEREDOC
         <option value='date_ascend' $PreselectSort_date_ascend_selected>Date ascending</option>
         <option value='rating_descend' $PreselectSort_rating_descend_selected>Rating descending (for one star voting)</option>
         <option value='rating_ascend' $PreselectSort_rating_ascend_selected>Rating ascending (for one star voting)</option>
+        <option value='rating_desc_average' $PreselectSort_rating_desc_average_selected>Rating average descending (for average rating)</option>
+        <option value='rating_asc_average' $PreselectSort_rating_asc_average_selected>Rating average ascending (for average rating)</option>
         <option value='rating_sum_descend' $PreselectSort_rating_sum_descend_selected>Rating sum descending (for multiple stars voting)</option>
         <option value='rating_sum_ascend' $PreselectSort_rating_sum_ascend_selected>Rating sum ascending (for multiple stars voting)</option>
         <option value='comments_descend' $PreselectSort_comments_descend_selected>Comments descending</option>

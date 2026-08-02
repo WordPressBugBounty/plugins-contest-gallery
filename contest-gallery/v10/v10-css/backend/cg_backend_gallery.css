@@ -3689,6 +3689,183 @@ div#cg_main_container div.cgEcommerceCheckoutBodyContainer div.cg-ecommerce-uplo
     line-height: 1.4;
 }
 
+#cgUserDataExportModalContainer.cg_backend_action_container {
+    width: calc(100% - 40px);
+    max-width: 540px;
+    min-height: auto;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0;
+    text-align: left;
+    transform: translate(-50%, -50%);
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+#cgUserDataExportModalContainer .cg_message_close {
+    top: 14px;
+    right: 14px;
+    width: 28px;
+    height: 28px;
+    border: 1px solid #dcdcde;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,.12);
+    z-index: 2;
+    box-sizing: border-box;
+}
+
+#cgUserDataExportModalContainer .cg_message_close:before,
+#cgUserDataExportModalContainer .cg_message_close:after {
+    content: "";
+    position: absolute;
+    top: 7px;
+    left: 13px;
+    width: 2px;
+    height: 13px;
+    background: #1d2327;
+    border-radius: 2px;
+}
+
+#cgUserDataExportModalContainer .cg_message_close:before {
+    transform: rotate(45deg);
+}
+
+#cgUserDataExportModalContainer .cg_message_close:after {
+    transform: rotate(-45deg);
+}
+
+#cgUserDataExportModalContainer.cg-user-data-export-processing .cg_message_close {
+    opacity: .35;
+    pointer-events: none;
+}
+
+#cgUserDataExportModalContainer .cg-user-data-export-modal {
+    padding: 28px 30px 26px;
+    box-sizing: border-box;
+}
+
+#cgUserDataExportModalContainer .cg-user-data-export-kicker {
+    margin: 0 44px 8px 0;
+    color: #646970;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+#cgUserDataExportModalContainer h2 {
+    margin: 0 44px 10px 0;
+    color: #1d2327;
+    font-size: 22px;
+    line-height: 1.25;
+}
+
+#cgUserDataExportModalContainer p {
+    margin: 0 0 18px;
+    color: #3c434a;
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+#cgUserDataExportModalContainer .cg-user-data-export-progressbar {
+    height: 10px;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #e5e7eb;
+}
+
+#cgUserDataExportProgressBar {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: 8px;
+    background: #2271b1;
+    transition: width .2s ease;
+}
+
+#cgUserDataExportModalContainer .cg-user-data-export-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin: 16px 0 0;
+    padding: 12px;
+    border: 1px solid #dcdcde;
+    border-radius: 8px;
+    background: #f6f7f7;
+    color: #1d2327;
+    font-size: 13px;
+}
+
+#cgUserDataExportModalContainer .cg-user-data-export-result {
+    margin-top: 14px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+#cgUserDataExportModalContainer .cg-user-data-export-result-error {
+    border: 1px solid #d63638;
+    background: #fcf0f1;
+    color: #8a2424;
+}
+
+#cgUserDataExportModalContainer .cg-user-data-export-download-info {
+    margin-top: 14px;
+    color: #646970;
+    font-size: 12px;
+}
+
+#cgUserDataExportModalContainer .cg-user-data-export-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+#cgUserDataExportModalContainer .cg-user-data-export-button {
+    min-height: 36px;
+    padding: 7px 15px;
+    border-radius: 6px;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+#cgUserDataExportModalContainer .cg-user-data-export-button-primary {
+    border-color: #2271b1;
+    background: #2271b1;
+    color: #ffffff;
+}
+
+#cgUserDataExportModalContainer .cg-user-data-export-button-primary:hover {
+    border-color: #135e96;
+    background: #135e96;
+    color: #ffffff;
+}
+
+#cgUserDataExportModalContainer .cg-user-data-export-button-ghost {
+    border-color: #8c8f94;
+    background: #ffffff;
+    color: #2c3338;
+}
+
+@media screen and (max-width: 640px) {
+    #cgUserDataExportModalContainer .cg-user-data-export-modal {
+        padding: 24px 20px 22px;
+    }
+
+    #cgUserDataExportModalContainer .cg-user-data-export-actions {
+        flex-direction: column-reverse;
+    }
+
+    #cgUserDataExportModalContainer .cg-user-data-export-button {
+        width: 100%;
+        text-align: center;
+    }
+}
+
 #cgGalleryTransferExportModalContainer .cg-gallery-transfer-export-result-warning {
     border: 1px solid #dba617;
     background: #fff8e5;
@@ -6181,9 +6358,231 @@ div#cgUnconfirmedSearchReset{
 .cg_backend_action_container.cg_high_overlay{
     z-index: 999993;
 }
+
+.cg_database_installation_container{
+    box-sizing: border-box;
+    width: calc(100% - 72px);
+    min-height: 0;
+    max-width: 980px;
+    max-height: none;
+    padding: 0;
+    overflow: hidden;
+    transform: translate(-50%, -50%);
+    isolation: isolate;
+    text-align: left;
+    color: #14201f;
+    border: 1px solid rgba(15,118,110,.22);
+    border-radius: 30px;
+    background:
+        radial-gradient(circle at 15% 0%, rgba(255,230,184,.75), rgba(255,230,184,0) 34%),
+        radial-gradient(circle at 88% 14%, rgba(188,223,212,.86), rgba(188,223,212,0) 40%),
+        linear-gradient(135deg, #fffaf0 0%, #f7fbf6 52%, #e9f5ef 100%);
+    box-shadow: 0 30px 82px rgba(26,42,36,.18), 0 4px 14px rgba(26,42,36,.08);
+}
+
+#cg_main_container.cg_database_installation_active > :not(#cgBackendBackgroundDrop):not(#cgDatabaseInstallationContainer){
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+#cg_main_container.cg_database_installation_active > #cgBackendBackgroundDrop,
+#cg_main_container.cg_database_installation_active > #cgDatabaseInstallationContainer{
+    visibility: visible !important;
+}
+
+.cg_database_installation_container:before{
+    content: "";
+    position: absolute;
+    right: -120px;
+    top: -150px;
+    width: 320px;
+    height: 320px;
+    border: 34px solid rgba(15,118,110,.08);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.cg_database_installation_container:after{
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(255,255,255,.72);
+    border-radius: 24px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.cg_database_installation_content{
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 18px;
+    padding: 34px clamp(24px, 5vw, 58px);
+}
+
+.cg_database_installation_kicker{
+    width: fit-content;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.72);
+    border: 1px solid rgba(15,118,110,.18);
+    color: #0f766e;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+}
+
+.cg_database_installation_main{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+}
+
+.cg_database_installation_copy{
+    display: flex;
+    flex-flow: column;
+    gap: 10px;
+}
+
+.cg_database_installation_icon{
+    position: relative;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 82px;
+    height: 82px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #0f766e 0%, #14201f 100%);
+    box-shadow: 0 18px 36px rgba(15,118,110,.28);
+}
+
+.cg_database_installation_icon span{
+    box-sizing: border-box;
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(255,255,255,.38);
+    border-top-color: #fff6df;
+    border-radius: 50%;
+    animation: cgDatabaseInstallationSpin .9s infinite linear;
+}
+
+.cg_database_installation_container h2{
+    margin: 0;
+    color: #14201f;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(34px, 5vw, 58px);
+    line-height: .98;
+    font-weight: 800;
+    letter-spacing: -1.6px;
+}
+
+.cg_backend_action_container.cg_database_installation_container p{
+    margin: 0;
+    max-width: 650px;
+    color: rgba(20,32,31,.68);
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.55;
+}
+
+.cg_backend_action_container.cg_database_installation_container .cg_database_installation_redirect{
+    color: #0f766e;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.cg_database_installation_loader{
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    height: 10px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(15,118,110,.12);
+}
+
+.cg_database_installation_loader span{
+    position: absolute;
+    top: 0;
+    left: -42%;
+    width: 42%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #0f766e, #34a853, #0f766e);
+    animation: cgDatabaseInstallationProgress 1.35s infinite ease-in-out;
+}
+
+.cg_database_installation_chips{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.cg_database_installation_chips span{
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.76);
+    border: 1px solid rgba(20,32,31,.1);
+    color: rgba(20,32,31,.78);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.cg_backend_action_container.cg_database_installation_container .cg_database_installation_error{
+    color: #b32d2e !important;
+}
+
+#cgDatabaseInstallationReload{
+    margin-top: 18px;
+}
+
+@keyframes cgDatabaseInstallationProgress{
+    0%{left: -42%;}
+    55%{left: 58%;}
+    100%{left: 100%;}
+}
+
+@keyframes cgDatabaseInstallationSpin{
+    to{transform: rotate(360deg);}
+}
+
+@media (prefers-reduced-motion: reduce){
+    .cg_database_installation_icon span,
+    .cg_database_installation_loader span{
+        animation-duration: 3s;
+    }
+}
+
+@media screen and (max-width: 782px){
+    .cg_database_installation_container{
+        width: calc(100% - 28px);
+        border-radius: 24px;
+    }
+    .cg_database_installation_content{
+        padding: 28px 22px;
+    }
+    .cg_database_installation_main{
+        align-items: flex-start;
+        flex-flow: column;
+    }
+    .cg_database_installation_icon{
+        width: 66px;
+        height: 66px;
+        border-radius: 20px;
+    }
+    .cg_database_installation_icon span{
+        width: 26px;
+        height: 26px;
+    }
+}
 @media screen and (max-width: 960px){
     .cg_backend_action_container{
         left: 43%;
+    }
+    .cg_database_installation_container{
+        left: 50%;
     }
 }
 

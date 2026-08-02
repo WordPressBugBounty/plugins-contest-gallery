@@ -6,7 +6,7 @@ if(empty($_POST['chooseAction1'])){
     $_POST['chooseAction1'] = false;
 }
 
-if(!empty($_POST['changeSize']) OR !empty($_GET['reset_users_votes']) OR !empty($_GET['reset_users_votes2']) OR !empty($_GET['reset_votes']) OR !empty($_GET['reset_votes2']) OR !empty($_GET['reset_admin_votes']) OR !empty($_GET['reset_admin_votes2'])){
+if(!empty($_POST['changeSize']) OR !empty($_GET['reset_users_votes']) OR !empty($_GET['reset_users_votes2']) OR !empty($_GET['reset_votes']) OR !empty($_GET['reset_votes_average']) OR !empty($_GET['reset_votes2']) OR !empty($_GET['reset_admin_votes']) OR !empty($_GET['reset_admin_votes_average']) OR !empty($_GET['reset_admin_votes2'])){
     require_once('v10-admin/options/change-options-and-sizes.php');
 }
 

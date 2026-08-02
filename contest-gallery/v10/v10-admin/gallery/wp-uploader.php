@@ -69,6 +69,17 @@ if(!empty($image_url)){
     $fullFilePathEnd = end($fullFilePathExploded);
 }
 
+$pdfFileExtension = '';
+$attachedFilePath = get_attached_file($wp_image_id);
+if(!empty($attachedFilePath)){
+    $pdfFileExtension = strtolower(pathinfo($attachedFilePath, PATHINFO_EXTENSION));
+}elseif(!empty($image_url)){
+    $imageUrlPath = parse_url($image_url, PHP_URL_PATH);
+    if(!empty($imageUrlPath)){
+        $pdfFileExtension = strtolower(pathinfo($imageUrlPath, PATHINFO_EXTENSION));
+    }
+}
+
 // Notwendig: wird in convert-several-pics so verabeitet. Darf keine Sonderzeichen enthalten! Simple example only
 //$search = array(" ", "!", '"', "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "/", ":", ";", "=", "?", "@", "[","]","‘");
 //$post_title = str_replace($search,"_",$post_title);
@@ -86,7 +97,7 @@ $isOnlyProVersionFile = false;
     $file["type"]!='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' && $file["type"] != 'text/csv'
 
     */
-if($post_type=="application/pdf" && $cgProFalse){$isOnlyProVersionFile=true;}
+if(cg_get_version()=='contest-gallery' && ($post_type=="application/pdf" || $pdfFileExtension=="pdf")){$isOnlyProVersionFile=true;$doNotProcess=1;}
 elseif($post_type=="application/zip" && $cgProFalse){$isOnlyProVersionFile=true;}
 elseif($post_type=="audio/mpeg" && $fullFilePathEnd=='mp3' && $cgProFalse){$isOnlyProVersionFile=true;}
 elseif($post_type=="audio/wav" && $cgProFalse){$isOnlyProVersionFile=true;}

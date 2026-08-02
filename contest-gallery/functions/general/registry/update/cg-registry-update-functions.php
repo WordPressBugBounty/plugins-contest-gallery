@@ -153,7 +153,13 @@ if(!function_exists('cg_update_registry_and_login_options_v14')){
             array('%d')
         );
 
-        $OpenAiKey = (isset($_POST['OpenAiKey'])) ? sanitize_text_field($_POST['OpenAiKey']) : '';
+        $OpenAiKeyCurrent = $wpdb->get_var(
+            "SELECT OpenAiKey FROM $tablename_options_pro_options WHERE GeneralID = 1"
+        );
+        $OpenAiKey = cg_get_global_secret_post_value(
+            (string)$OpenAiKeyCurrent,
+            'OpenAiKey'
+        );
 
         $wpdb->update(
             "$tablename_options_pro_options",

@@ -93,7 +93,7 @@ if(!function_exists('cg1l_sanitize_files')){
                     $notAllowedFileType = 'gif';
                 }elseif(($type == 'image/x-icon' || $type == 'image/vnd.microsoft.icon' || $fileExtensionForTypeCheck == 'ico') && (!$frontendUploadImageUploadAllowed || empty($frontendUploadAllowUploadICO))){
                     $notAllowedFileType = 'ico';
-                }elseif(empty($frontendUploadFieldContent['alternative-file-type-pdf']) &&  $type == 'application/pdf'){
+                }elseif(($type == 'application/pdf' || $fileExtensionForTypeCheck == 'pdf') && (cg_get_version() == 'contest-gallery' || empty($frontendUploadFieldContent['alternative-file-type-pdf']))){
                     $notAllowedFileType = 'pdf';
                 }elseif(empty($frontendUploadFieldContent['alternative-file-type-zip']) &&  ($type == 'application/x-zip-compressed' || $type == 'application/zip')){
                     $notAllowedFileType = 'zip';
@@ -291,4 +291,3 @@ if(!function_exists('cg1l_sanitize_files')){
         return $FILES;
     }
 }
-

@@ -26,8 +26,74 @@ if(!function_exists('cg_contest_gallery_create_table_needs_creation')){
     }
 }
 
+if(!function_exists('cg_contest_gallery_get_required_table_names')){
+    function cg_contest_gallery_get_required_table_names($i){
+        global $wpdb;
+
+        $tablePrefix = $wpdb->base_prefix . "$i" . "contest_gal1ery";
+
+        return array(
+            $tablePrefix,
+            $tablePrefix . '_ip',
+            $tablePrefix . '_comments',
+            $tablePrefix . '_comments_notification_options',
+            $tablePrefix . '_options',
+            $tablePrefix . '_options_input',
+            $tablePrefix . '_options_visual',
+            $tablePrefix . '_mail',
+            $tablePrefix . '_mail_admin',
+            $tablePrefix . '_mail_user_upload',
+            $tablePrefix . '_mail_user_comment',
+            $tablePrefix . '_mail_user_vote',
+            $tablePrefix . '_user_comment_mails',
+            $tablePrefix . '_user_vote_mails',
+            $tablePrefix . '_entries',
+            $tablePrefix . '_create_user_entries',
+            $tablePrefix . '_pro_options',
+            $tablePrefix . '_create_user_form',
+            $tablePrefix . '_f_input',
+            $tablePrefix . '_f_output',
+            $tablePrefix . '_mails_collected',
+            $tablePrefix . '_mail_confirmation',
+            $tablePrefix . '_categories',
+            $tablePrefix . '_registry_and_login_options',
+            $tablePrefix . '_google_options',
+            $tablePrefix . '_google_users',
+            $tablePrefix . '_wp_pages',
+            $tablePrefix . '_pdf_previews',
+            $tablePrefix . '_ai_prompts',
+            $tablePrefix . '_ecommerce_entries',
+            $tablePrefix . '_ecommerce_options',
+            $tablePrefix . '_ecommerce_invoice_options',
+            $tablePrefix . '_ecommerce_orders',
+            $tablePrefix . '_ecommerce_orders_items'
+        );
+    }
+}
+
+if(!function_exists('cg_contest_gallery_required_tables_exist')){
+    function cg_contest_gallery_required_tables_exist($i,$coreOnly = false){
+        global $wpdb;
+
+        $requiredTables = cg_contest_gallery_get_required_table_names($i);
+        if($coreOnly){
+            $tablePrefix = $wpdb->base_prefix . "$i" . "contest_gal1ery";
+            $requiredTables = array($tablePrefix,$tablePrefix . '_options');
+        }
+
+        $existingTables = cg_contest_gallery_create_table_get_existing_tables($wpdb->base_prefix . "$i" . "contest_gal1ery");
+        foreach($requiredTables as $tableName){
+            if(empty($existingTables[$tableName])){
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
 if(!function_exists('contest_gal1ery_create_table')){
-    function contest_gal1ery_create_table($i,$isShowError = false){
+    function contest_gal1ery_create_table($i,$isShowError = false,$creationScope = 'all'){
 
         global $wpdb;
         $lastError = '';
@@ -68,6 +134,15 @@ if(!function_exists('contest_gal1ery_create_table')){
 
         $charset_collate = $wpdb->get_charset_collate();
         $existingContestGalleryTables = cg_contest_gallery_create_table_get_existing_tables($wpdb->base_prefix . "$i"."contest_gal1ery");
+
+        if($creationScope === 'core'){
+            $coreTables = array($tablename,$tablename_options);
+            foreach(cg_contest_gallery_get_required_table_names($i) as $requiredTableName){
+                if(!in_array($requiredTableName,$coreTables,true)){
+                    $existingContestGalleryTables[$requiredTableName] = true;
+                }
+            }
+        }
 
         if(cg_contest_gallery_create_table_needs_creation($tablename_categories,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_categories (
@@ -289,6 +364,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		AllowComments TINYINT DEFAULT 0,
 		CommentsOutGallery TINYINT DEFAULT 0,
 		AllowRating TINYINT DEFAULT 0,
+		AllowRatingAverage TINYINT DEFAULT 0,
 		VotesPerUser INT(5) DEFAULT 0,
 		RatingOutGallery TINYINT DEFAULT 0,
 		ShowAlways TINYINT DEFAULT 1,
@@ -705,6 +781,7 @@ if(!function_exists('contest_gal1ery_create_table')){
         ShowPinFormUploading TINYINT DEFAULT 0,
         AllowedUsersToVote TEXT NOT NULL,
 		FeVotingIconType VARCHAR(20) NOT NULL,
+		VotingCommentNumberFormat VARCHAR(10) NOT NULL DEFAULT 'dot',
 		UploadRealWatermarkSettings TEXT NOT NULL,
         INDEX GalleryID_index (GalleryID)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
@@ -824,7 +901,9 @@ if(!function_exists('contest_gal1ery_create_table')){
             cg_echo_last_sql_error($isShowError,$lastError);
         }
 
-        cg_create_contest_gallery_user_role();
+        if($creationScope !== 'core'){
+            cg_create_contest_gallery_user_role();
+        }
 
         if(cg_contest_gallery_create_table_needs_creation($tablename_pro_options,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_pro_options (
@@ -1456,7 +1535,9 @@ HEREDOC;
         }
 
         // best way to do it right here, when first time a gallery will be created or db version will be checked
-        cg_create_google_options($i);
+        if($creationScope !== 'core'){
+            cg_create_google_options($i);
+        }
 
         if(cg_contest_gallery_create_table_needs_creation($tablename_google_users,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_google_users (
@@ -1476,7 +1557,9 @@ HEREDOC;
             cg_echo_last_sql_error($isShowError,$lastError);
         }
 
-        cg_create_ecommerce_tables($i,$isShowError,$lastError,$charset_collate,$existingContestGalleryTables);
+        if($creationScope !== 'core'){
+            cg_create_ecommerce_tables($i,$isShowError,$lastError,$charset_collate,$existingContestGalleryTables);
+        }
 
         // in all found examples index name is another then colum name
         if(cg_contest_gallery_create_table_needs_creation($tablename_wp_pdf_previews,$existingContestGalleryTables)){

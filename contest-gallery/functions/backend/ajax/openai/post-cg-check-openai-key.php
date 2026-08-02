@@ -5,7 +5,17 @@ add_action('wp_ajax_post_cg_check_openai_key', 'post_cg_check_openai_key');
 if (!function_exists('post_cg_check_openai_key')) {
     function post_cg_check_openai_key() {
 
-        $apiKey = cg1l_sanitize_method($_GET['cgOpenAiKey']);
+        cg_require_global_settings_access();
+        cg_check_nonce();
+
+        $apiKey = '';
+        if(isset($_POST['cgOpenAiKey']) && !is_array($_POST['cgOpenAiKey'])){
+            $apiKey = trim(cg1l_sanitize_method(wp_unslash($_POST['cgOpenAiKey'])));
+        }
+        if($apiKey === ''){
+            return;
+        }
+
         $cgOpenAiKeyIsValid = false;
         $cgOpenAiKeyErrorMessage = '';
 

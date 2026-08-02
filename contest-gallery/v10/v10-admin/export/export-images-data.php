@@ -7,6 +7,8 @@ if(!function_exists('cg_images_data_csv_export')){
             echo "Logged in user have to be able to manage_options to export images.";die;
         }
 
+        cg_check_nonce();
+
         global $wpdb;
 
         $tablename = $wpdb->prefix . "contest_gal1ery";
@@ -35,15 +37,86 @@ if(!function_exists('cg_images_data_csv_export')){
 
         $IsModernFiveStar = $proOptions->IsModernFiveStar;
         $Manipulate = $proOptions->Manipulate;
-        $selectSQLall = $wpdb->get_results($wpdb->prepare( "SELECT * FROM $tablename WHERE GalleryID = %d ORDER BY id DESC",[$GalleryID]));
+        $selectSQLall = $wpdb->get_results($wpdb->prepare(
+            "SELECT
+                gallery.GalleryID,
+                gallery.id,
+                gallery.Timestamp,
+                gallery.NamePic,
+                gallery.WpUserId,
+                gallery.WpUpload,
+                gallery.Version,
+                gallery.CheckSet,
+                gallery.IP,
+                gallery.CookieId,
+                gallery.Active,
+                gallery.Winner,
+                gallery.Informed,
+                gallery.Exif,
+                gallery.Category,
+                gallery.addCountS,
+                gallery.addCountR1,
+                gallery.addCountR2,
+                gallery.addCountR3,
+                gallery.addCountR4,
+                gallery.addCountR5,
+                gallery.addCountR6,
+                gallery.addCountR7,
+                gallery.addCountR8,
+                gallery.addCountR9,
+                gallery.addCountR10,
+                posts.ID AS cg_wp_post_id,
+                posts.post_title AS cg_wp_post_title,
+                posts.post_content AS cg_wp_post_content,
+                posts.guid AS cg_wp_post_guid,
+                users.ID AS cg_wp_user_id,
+                users.user_nicename AS cg_wp_user_nicename,
+                users.user_email AS cg_wp_user_email
+            FROM $tablename AS gallery
+            LEFT JOIN $table_posts AS posts ON posts.ID = gallery.WpUpload
+            LEFT JOIN $wpUsers AS users ON users.ID = gallery.WpUserId
+            WHERE gallery.GalleryID = %d
+            ORDER BY gallery.id DESC",
+            array($GalleryID)
+        ));
 
         $selectFormInput = $wpdb->get_results($wpdb->prepare(  "SELECT id, Field_Type, Field_Order, Field_Content FROM $tablename_f_input WHERE GalleryID = %d AND (Field_Type = 'fbt-f' OR Field_Type = 'fbd-f' OR Field_Type = 'url-f' OR Field_Type = 'check-f' OR Field_Type = 'text-f' OR Field_Type = 'radio-f' OR Field_Type = 'chk-f' OR Field_Type = 'comment-f' OR Field_Type ='email-f' OR Field_Type ='select-f' OR Field_Type ='selectc-f' OR Field_Type ='url-f' OR Field_Type ='date-f') ORDER BY Field_Order ASC" ,[$GalleryID]));
 
+        $selectAllGalleryEntries = $wpdb->get_results($wpdb->prepare(
+            "SELECT entries.pid, entries.f_input_id, entries.Field_Type, entries.Short_Text, entries.Long_Text, entries.Checked, entries.InputDate
+            FROM $tablenameentries AS entries
+            INNER JOIN $tablename AS gallery ON gallery.id = entries.pid
+            WHERE gallery.GalleryID = %d
+            ORDER BY entries.pid DESC, entries.Field_Order ASC",
+            array($GalleryID)
+        ));
+
+        $galleryEntriesByPid = array();
+        foreach($selectAllGalleryEntries as $galleryEntry){
+            if(!isset($galleryEntriesByPid[$galleryEntry->pid])){
+                $galleryEntriesByPid[$galleryEntry->pid] = array();
+            }
+            $galleryEntriesByPid[$galleryEntry->pid][] = $galleryEntry;
+        }
+        unset($selectAllGalleryEntries);
+
         $selectAllGalleryVotes = $wpdb->get_results($wpdb->prepare( "
-                SELECT pid, Rating, RatingS
-                 FROM  $tablename_ip
-                 WHERE GalleryID = %d 
-				ORDER BY pid DESC
+                SELECT
+                    pid,
+                    SUM(CASE WHEN RatingS = 1 THEN 1 ELSE 0 END) AS OneStarCount,
+                    SUM(CASE WHEN (RatingS IS NULL OR RatingS <> 1) AND Rating = 1 THEN 1 ELSE 0 END) AS MultipleStarsOneStarCount,
+                    SUM(CASE WHEN (RatingS IS NULL OR RatingS <> 1) AND Rating = 2 THEN 1 ELSE 0 END) AS MultipleStarsTwoStarsCount,
+                    SUM(CASE WHEN (RatingS IS NULL OR RatingS <> 1) AND Rating = 3 THEN 1 ELSE 0 END) AS MultipleStarsThreeStarsCount,
+                    SUM(CASE WHEN (RatingS IS NULL OR RatingS <> 1) AND Rating = 4 THEN 1 ELSE 0 END) AS MultipleStarsFourStarsCount,
+                    SUM(CASE WHEN (RatingS IS NULL OR RatingS <> 1) AND Rating = 5 THEN 1 ELSE 0 END) AS MultipleStarsFiveStarsCount,
+                    SUM(CASE WHEN (RatingS IS NULL OR RatingS <> 1) AND Rating = 6 THEN 1 ELSE 0 END) AS MultipleStarsSixStarsCount,
+                    SUM(CASE WHEN (RatingS IS NULL OR RatingS <> 1) AND Rating = 7 THEN 1 ELSE 0 END) AS MultipleStarsSevenStarsCount,
+                    SUM(CASE WHEN (RatingS IS NULL OR RatingS <> 1) AND Rating = 8 THEN 1 ELSE 0 END) AS MultipleStarsEightStarsCount,
+                    SUM(CASE WHEN (RatingS IS NULL OR RatingS <> 1) AND Rating = 9 THEN 1 ELSE 0 END) AS MultipleStarsNineStarsCount,
+                    SUM(CASE WHEN (RatingS IS NULL OR RatingS <> 1) AND Rating = 10 THEN 1 ELSE 0 END) AS MultipleStarsTenStarsCount
+                FROM $tablename_ip
+                WHERE GalleryID = %d
+                GROUP BY pid
         ",[$GalleryID]));
 
 /*        $selectAllGalleryVotesSqlArray = [];
@@ -82,18 +155,6 @@ if(!function_exists('cg_images_data_csv_export')){
             foreach ($categories as $category) {
                 $categoriesUidsNames[$category->id] = $category->Name;
             }
-        }
-
-        if(count($categories)){
-
-            $categoriesUidsNames = array();
-            $categoriesUidsNames[0] = $language_Other;
-            foreach ($categories as $category) {
-
-                $categoriesUidsNames[$category->id] = $category->Name;
-
-            }
-
         }
 
         $selectContentFieldArray = array();
@@ -534,6 +595,24 @@ if(!function_exists('cg_images_data_csv_export')){
         $csvData[$i][$r]="MultipleStarsAverageInCaseTenStarsVotingIsActivated";
         $r++;
 
+        $filename = "cg-images-data-gallery-id-$GalleryID.csv";
+
+        nocache_headers();
+        header("Content-type: text/csv; charset=UTF-8");
+        header('Content-Disposition: attachment; filename="'.$filename.'"');
+
+        $fp = fopen("php://output",'w');
+        if($fp===false){
+            echo "CSV export could not be created.";
+            die;
+        }
+
+        fwrite($fp,chr(0xEF).chr(0xBB).chr(0xBF));
+        foreach($csvData as $fields){
+            fputcsv($fp,cg_neutralize_csv_array($fields),";");
+        }
+        $csvData = array();
+
         // Setting titles ended now starting setting values
         $getFormFieldNames++;
         // Bestimmung der Feld-Inhalte
@@ -557,11 +636,10 @@ if(!function_exists('cg_images_data_csv_export')){
             $post_title = '';
             $post_content = '';
             if($value->WpUpload!=NULL && $value->WpUpload>0){
-                $WpPostsData = $wpdb->get_row("SELECT ID, post_title, post_content, guid FROM $table_posts WHERE ID = '".$value->WpUpload."'");
-                $WpPostsID = $WpPostsData->ID;
-                $guid = $WpPostsData->guid;
-                $post_title = $WpPostsData->post_title;
-                $post_content = $WpPostsData->post_content;
+                $WpPostsID = (!empty($value->cg_wp_post_id)) ? $value->cg_wp_post_id : '';
+                $guid = (!empty($value->cg_wp_post_guid)) ? $value->cg_wp_post_guid : '';
+                $post_title = (!empty($value->cg_wp_post_title)) ? $value->cg_wp_post_title : '';
+                $post_content = (!empty($value->cg_wp_post_content)) ? $value->cg_wp_post_content : '';
                 $csvData[$i][$r]=$guid;
             }
             else{
@@ -575,21 +653,20 @@ if(!function_exists('cg_images_data_csv_export')){
             $r++;
             $csvData[$i][$r]= (!empty($value->CookieId)) ? $value->CookieId : '';
             $r++;
-            if($value->WpUserId!=NULL && $value->WpUserId>0){
-                $wpUserData=$wpdb->get_row("SELECT * FROM $wpUsers WHERE ID = '".$value->WpUserId."'");
-                $csvData[$i][$r]=$wpUserData->ID;
+            if($value->WpUserId!=NULL && $value->WpUserId>0 && !empty($value->cg_wp_user_id)){
+                $csvData[$i][$r]=$value->cg_wp_user_id;
             }else{
                 $csvData[$i][$r]='';
             }
             $r++;
-            if($value->WpUserId!=NULL && $value->WpUserId>0){
-                $csvData[$i][$r]=$wpUserData->user_nicename;
+            if($value->WpUserId!=NULL && $value->WpUserId>0 && !empty($value->cg_wp_user_id)){
+                $csvData[$i][$r]=$value->cg_wp_user_nicename;
             }else{
                 $csvData[$i][$r]='';
             }
             $r++;
-            if($value->WpUserId!=NULL && $value->WpUserId>0){
-                $csvData[$i][$r]=$wpUserData->user_email;
+            if($value->WpUserId!=NULL && $value->WpUserId>0 && !empty($value->cg_wp_user_id)){
+                $csvData[$i][$r]=$value->cg_wp_user_email;
             }else{
                 $csvData[$i][$r]='';
             }
@@ -701,7 +778,7 @@ if(!function_exists('cg_images_data_csv_export')){
 
             //       var_dump($r);
 
-            $selectSQLentries = $wpdb->get_results( "SELECT * FROM $tablenameentries WHERE pid = '$pidCSV' ORDER BY Field_Order ASC");
+            $selectSQLentries = (isset($galleryEntriesByPid[$pidCSV])) ? $galleryEntriesByPid[$pidCSV] : array();
 
             // ACHTUNG!!!! Leere Felder müssen gefüllt werden ansonsten erscheint der inhalt einfacher in der nächsten spalte und nicht in der richtigen
             // Schon ma vorab füllen!!!!
@@ -718,6 +795,7 @@ if(!function_exists('cg_images_data_csv_export')){
                 foreach($selectSQLentries as $value_entries){
 
                     $fieldType = $value_entries->Field_Type;
+                    $formFieldId = $value_entries->f_input_id;
                     //	echo $value_entries->Short_Text;
 
                     // $emailField = false;
@@ -732,16 +810,21 @@ if(!function_exists('cg_images_data_csv_export')){
                      //   var_dump('emailFieldCsvNumber');
                       //  var_dump($emailFieldCsvNumber);
                     //    var_dump($value_entries);
-                        $csvData[$i][$emailFieldCsvNumber]=$value_entries->Short_Text;
+                        if($emailFieldCsvNumber!==''){
+                            $csvData[$i][$emailFieldCsvNumber]=$value_entries->Short_Text;
+                        }
                     }
-                    elseif($fieldType=="comment-f"){$csvData[$i][$selectFormIdArrayAndRow[$value_entries->f_input_id]]=$value_entries->Long_Text;}
-                    elseif($fieldType=="check-f"){$csvData[$i][$selectFormIdArrayAndRow[$value_entries->f_input_id]]=($value_entries->Checked==1) ? 'checked' : 'not checked';}
+                    elseif(!isset($selectFormIdArrayAndRow[$formFieldId])){
+                        continue;
+                    }
+                    elseif($fieldType=="comment-f"){$csvData[$i][$selectFormIdArrayAndRow[$formFieldId]]=$value_entries->Long_Text;}
+                    elseif($fieldType=="check-f"){$csvData[$i][$selectFormIdArrayAndRow[$formFieldId]]=($value_entries->Checked==1) ? 'checked' : 'not checked';}
                     elseif($fieldType=="date-f"){
 
                         $newDateTimeString = '';
 
                         if(!empty($value_entries->InputDate) && $value_entries->InputDate!='0000-00-00 00:00:00'){
-                            $dtFormat = $inputDateFieldIdsAndFormatArray[$value_entries->f_input_id];
+                            $dtFormat = (isset($inputDateFieldIdsAndFormatArray[$formFieldId])) ? $inputDateFieldIdsAndFormatArray[$formFieldId] : 'YYYY-MM-DD';
                             $dtFormat = str_replace('YYYY','Y',$dtFormat);
                             $dtFormat = str_replace('MM','m',$dtFormat);
                             $dtFormat = str_replace('DD','d',$dtFormat);
@@ -762,7 +845,7 @@ if(!function_exists('cg_images_data_csv_export')){
                       //  echo $newDateTimeString;
 
 
-                        $csvData[$i][$selectFormIdArrayAndRow[$value_entries->f_input_id]] = " $newDateTimeString";
+                        $csvData[$i][$selectFormIdArrayAndRow[$formFieldId]] = " $newDateTimeString";
 
 
 
@@ -771,7 +854,7 @@ if(!function_exists('cg_images_data_csv_export')){
                       //  var_dump(3333);
                     //   var_dump($selectFormIdArrayAndRow[$value_entries->f_input_id]);
                         if($fieldType!="email-f"){
-                            $csvData[$i][$selectFormIdArrayAndRow[$value_entries->f_input_id]]=$value_entries->Short_Text;
+                            $csvData[$i][$selectFormIdArrayAndRow[$formFieldId]]=$value_entries->Short_Text;
                         }
 
                     }
@@ -791,7 +874,7 @@ if(!function_exists('cg_images_data_csv_export')){
 
             if(count($categories)){
                // $r++;
-               $csvData[$i][$categoryFieldCsvNumber] = $categoriesUidsNames[$value->Category];
+               $csvData[$i][$categoryFieldCsvNumber] = (isset($categoriesUidsNames[$value->Category])) ? $categoriesUidsNames[$value->Category] : '';
             }
             $r++;
             $csvData[$i][$r] = (!empty($allGalleryVotesArray[$value->id])) ? $allGalleryVotesArray[$value->id]['OneStarCount'] : 0;
@@ -891,6 +974,8 @@ if(!function_exists('cg_images_data_csv_export')){
             $csvData[$i][$r] = (!empty($allGalleryVotesArray[$value->id])) ? str_replace('.',',',$allGalleryVotesArray[$value->id]['MultipleStarsAverageInCaseTenStarsVotingIsActivated']) : 0;
 
             ksort($csvData[$i]);
+            fputcsv($fp,cg_neutralize_csv_array($csvData[$i]),";");
+            unset($csvData[$i]);
          //   var_dump($csvData);
       //      die;
             $i++;
@@ -914,24 +999,7 @@ if(!function_exists('cg_images_data_csv_export')){
 
         $filename = $code."_userdata.csv";*/
 
-        $csvData = cg_neutralize_csv_array($csvData);
-
-        $filename = "cg-images-data-gallery-id-$GalleryID.csv";
-
-        header("Content-type: text/csv");
-        header("Content-Disposition: attachment; filename=$filename");
-
-        ob_start();
-
-        $fp = fopen("php://output", 'w');
-        fputs($fp, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
-        foreach ($csvData as $fields) {
-            fputcsv($fp, $fields, ";");
-
-        }
         fclose($fp);
-        $masterReturn = ob_get_clean();
-        echo $masterReturn;
         die();
     }
 }

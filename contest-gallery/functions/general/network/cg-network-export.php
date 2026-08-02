@@ -482,14 +482,55 @@ if(!function_exists('cg_network_gallery_text_defaults')){
 	}
 }
 
+if(!function_exists('cg_network_get_rating_context')){
+	function cg_network_get_rating_context($galleryId,$optionsRow = null){
+		global $wpdb;
+		if(empty($optionsRow)){
+			$tableOptions = $wpdb->prefix.'contest_gal1ery_options';
+			$optionsRow = $wpdb->get_row($wpdb->prepare("SELECT AllowRating, AllowRatingAverage FROM $tableOptions WHERE id = %d",array($galleryId)));
+		}
+		$allowRating = (!empty($optionsRow->AllowRating)) ? intval($optionsRow->AllowRating) : 0;
+		$ratingMode = 'none';
+		if($allowRating===2){
+			$ratingMode = 'one-star';
+		}elseif($allowRating===1 || ($allowRating>=12 && $allowRating<=20)){
+			$ratingMode = (!empty($optionsRow->AllowRatingAverage)) ? 'average' : 'five-stars';
+		}
+		$tableProOptions = $wpdb->prefix.'contest_gal1ery_pro_options';
+		$manipulate = intval($wpdb->get_var($wpdb->prepare("SELECT Manipulate FROM $tableProOptions WHERE GalleryID = %d",array($galleryId))))===1 ? 1 : 0;
+		return array(
+			'mode' => $ratingMode,
+			'manipulate' => $manipulate,
+		);
+	}
+}
+
+if(!function_exists('cg_network_rating_votes_sql')){
+	function cg_network_rating_votes_sql($ratingContext){
+		$ratingMode = (!empty($ratingContext['mode'])) ? $ratingContext['mode'] : 'none';
+		$includeManipulation = !empty($ratingContext['manipulate']);
+		if($ratingMode==='one-star'){
+			return $includeManipulation ? '(CountS + addCountS)' : 'CountS';
+		}
+		if($ratingMode==='five-stars' || $ratingMode==='average'){
+			return $includeManipulation ? '(CountR + addCountR1 + addCountR2 + addCountR3 + addCountR4 + addCountR5 + addCountR6 + addCountR7 + addCountR8 + addCountR9 + addCountR10)' : 'CountR';
+		}
+		return '0';
+	}
+}
+
 if(!function_exists('cg_network_get_gallery_activity')){
-	function cg_network_get_gallery_activity($galleryId){
+	function cg_network_get_gallery_activity($galleryId,$ratingContext = array()){
 		global $wpdb;
 		$table = $wpdb->prefix.'contest_gal1ery';
+		if(empty($ratingContext)){
+			$ratingContext = cg_network_get_rating_context($galleryId);
+		}
+		$votesSql = cg_network_rating_votes_sql($ratingContext);
 		$row = $wpdb->get_row($wpdb->prepare("
 			SELECT COUNT(*) AS entries,
 				COALESCE(SUM(CountC),0) AS comments,
-				COALESCE(SUM(CountR + CountS + addCountS + addCountR1 + addCountR2 + addCountR3 + addCountR4 + addCountR5 + addCountR6 + addCountR7 + addCountR8 + addCountR9 + addCountR10),0) AS votes
+				COALESCE(SUM($votesSql),0) AS votes
 			FROM $table
 			WHERE GalleryID = %d AND Active = 1
 		",array($galleryId)));
@@ -602,14 +643,18 @@ if(!function_exists('cg_network_get_gallery_page_url')){
 }
 
 if(!function_exists('cg_network_get_preview_images')){
-	function cg_network_get_preview_images($galleryId){
+	function cg_network_get_preview_images($galleryId,$ratingContext = array()){
 		global $wpdb;
 		$table = $wpdb->prefix.'contest_gal1ery';
+		if(empty($ratingContext)){
+			$ratingContext = cg_network_get_rating_context($galleryId);
+		}
+		$votesSql = cg_network_rating_votes_sql($ratingContext);
 		$rows = $wpdb->get_results($wpdb->prepare("
-			SELECT id, WpUpload, NamePic, CountC, CountR, CountS, addCountS
+			SELECT id, WpUpload, NamePic
 			FROM $table
 			WHERE GalleryID = %d AND Active = 1 AND WpUpload > 0 AND ImgType IN ('jpg','jpeg','png','gif')
-			ORDER BY (CountC + CountR + CountS + addCountS) DESC, id DESC
+			ORDER BY (CountC + $votesSql) DESC, id DESC
 			LIMIT 4
 		",array($galleryId)));
 		$images = array();
@@ -641,12 +686,6 @@ if(!function_exists('cg_network_get_gallery_category_names')){
 			$categories[intval($row->id)] = cg_network_trim_text($row->Name,80);
 		}
 		return $categories;
-	}
-}
-
-if(!function_exists('cg_network_featured_entry_votes_sql')){
-	function cg_network_featured_entry_votes_sql(){
-		return '(CountR + CountS + addCountS + addCountR1 + addCountR2 + addCountR3 + addCountR4 + addCountR5 + addCountR6 + addCountR7 + addCountR8 + addCountR9 + addCountR10)';
 	}
 }
 
@@ -701,10 +740,13 @@ if(!function_exists('cg_network_featured_entry_from_row')){
 }
 
 if(!function_exists('cg_network_get_featured_entries')){
-	function cg_network_get_featured_entries($galleryId){
+	function cg_network_get_featured_entries($galleryId,$ratingContext = array()){
 		global $wpdb;
 		$table = $wpdb->prefix.'contest_gal1ery';
-		$votesSql = cg_network_featured_entry_votes_sql();
+		if(empty($ratingContext)){
+			$ratingContext = cg_network_get_rating_context($galleryId);
+		}
+		$votesSql = cg_network_rating_votes_sql($ratingContext);
 		$select = "SELECT id, GalleryID, WpUpload, WpPage, NamePic, CountC, Category, Timestamp, Winner, $votesSql AS Votes
 			FROM $table
 			WHERE GalleryID = %d AND Active = 1 AND WpUpload > 0 AND ImgType IN ('jpg','jpeg','png','gif')";
@@ -755,6 +797,7 @@ if(!function_exists('cg_network_build_gallery_payload')){
 		if(empty($optionsRow)){
 			return false;
 		}
+		$ratingContext = cg_network_get_rating_context($galleryId,$optionsRow);
 		$choices = cg_network_get_gallery_page_choices($optionsRow);
 		if(!count($choices)){
 			return false;
@@ -793,9 +836,9 @@ if(!function_exists('cg_network_build_gallery_payload')){
 			'description' => $description,
 			'tags' => cg_network_get_gallery_tags($galleryId,$title),
 			'contest_url' => $contestUrl,
-			'preview_images' => cg_network_get_preview_images($galleryId),
-			'featured_entries' => cg_network_get_featured_entries($galleryId),
-			'activity' => cg_network_get_gallery_activity($galleryId),
+			'preview_images' => cg_network_get_preview_images($galleryId,$ratingContext),
+			'featured_entries' => cg_network_get_featured_entries($galleryId,$ratingContext),
+			'activity' => cg_network_get_gallery_activity($galleryId,$ratingContext),
 			'source_mode' => (!empty($override['source_mode'])) ? cg_network_trim_text($override['source_mode'],60) : 'gallery_defaults',
 		);
 	}

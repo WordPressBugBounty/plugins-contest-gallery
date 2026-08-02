@@ -1,5 +1,9 @@
 <?php
 
+if(!cg_user_can_manage_global_settings()){
+    return;
+}
+
 echo <<<HEREDOC
 <br>
 <p class="cg_view_options_rows_container_title ">
@@ -58,7 +62,7 @@ echo <<<HEREDOC
                                 <p>Stripe Secret Key Live</p>
                             </div>
                             <div class='cg_view_option_input'>
-                                <input type="text" name="StripeLiveSecret" id="StripeLiveSecret" value="$StripeLiveSecret"  maxlength="1000" >
+                                <input type="text" name="StripeLiveSecret" id="StripeLiveSecret" value="$StripeLiveSecret" maxlength="1000">
                             </div>
                         </div>
                 </div>
@@ -90,7 +94,7 @@ echo <<<HEREDOC
                                 <p>Stripe Secret Key Sandbox</p>
                             </div>
                             <div class='cg_view_option_input'>
-                                <input type="text" name="StripeSandboxSecret" id="StripeSandboxSecret" value="$StripeSandboxSecret"  maxlength="1000" >
+                                <input type="text" name="StripeSandboxSecret" id="StripeSandboxSecret" value="$StripeSandboxSecret" maxlength="1000">
                             </div>
                         </div>
                 </div>

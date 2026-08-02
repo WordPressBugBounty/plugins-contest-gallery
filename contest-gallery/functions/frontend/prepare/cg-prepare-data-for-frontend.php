@@ -207,6 +207,40 @@ if (!function_exists('cg1l_frontend_sort_by')) {
                     $secondaryValA = ($valA > 0) ? ($weightedValA / $valA) : 0;
                     $secondaryValB = ($valB > 0) ? ($weightedValB / $valB) : 0;
 
+                } elseif ($specialSortType === 'CountRaverage' || $specialSortType === 'CountRaverageWithManipulation') {
+
+                    $ratingCountA = 0;
+                    $ratingCountB = 0;
+                    $weightedValA = 0;
+                    $weightedValB = 0;
+
+                    $i = 1;
+                    while ($i <= $CountRMax) {
+
+                        $keyBase = 'CountR' . $i;
+                        $keyAdd  = 'addCountR' . $i;
+
+                        $countA = isset($a[$keyBase]) ? (int) $a[$keyBase] : 0;
+                        $countB = isset($b[$keyBase]) ? (int) $b[$keyBase] : 0;
+
+                        if ($specialSortType === 'CountRaverageWithManipulation') {
+                            $countA += isset($a[$keyAdd]) ? (int) $a[$keyAdd] : 0;
+                            $countB += isset($b[$keyAdd]) ? (int) $b[$keyAdd] : 0;
+                        }
+
+                        $ratingCountA += $countA;
+                        $ratingCountB += $countB;
+                        $weightedValA += $countA * $i;
+                        $weightedValB += $countB * $i;
+
+                        $i++;
+                    }
+
+                    $valA = ($ratingCountA > 0) ? round($weightedValA / $ratingCountA, 1) : 0;
+                    $valB = ($ratingCountB > 0) ? round($weightedValB / $ratingCountB, 1) : 0;
+                    $secondaryValA = $ratingCountA;
+                    $secondaryValB = $ratingCountB;
+
                 } elseif ($specialSortType === 'CountR') {
 
                     $valA = 0;
@@ -1533,6 +1567,14 @@ if (!function_exists('cg1l_frontend_normalize_preselect_sort')) {
             'rating_sum_ascend' => 'rating_sum_ascend',
             'rating-asc-sum' => 'rating_sum_ascend',
             'rate-sum-asc' => 'rating_sum_ascend',
+            'rating_desc_average' => 'rating_average_descend',
+            'rating_average_descend' => 'rating_average_descend',
+            'rating-desc-average' => 'rating_average_descend',
+            'rate-average-desc' => 'rating_average_descend',
+            'rating_asc_average' => 'rating_average_ascend',
+            'rating_average_ascend' => 'rating_average_ascend',
+            'rating-asc-average' => 'rating_average_ascend',
+            'rate-average-asc' => 'rating_average_ascend',
             'random' => 'random'
         ];
 
@@ -1571,6 +1613,14 @@ if (!function_exists('cg1l_get_data_images_full_data_sorted')) {
 
         $preselectSort = cg1l_frontend_normalize_preselect_sort($preselectSort, $legacyRatingSort);
 
+        if(!empty($options['general']['AllowRatingAverage'])){
+            if($preselectSort === 'rating_sum_descend'){
+                $preselectSort = 'rating_average_descend';
+            }elseif($preselectSort === 'rating_sum_ascend'){
+                $preselectSort = 'rating_average_ascend';
+            }
+        }
+
         if($isCGalleries){
             $imagesFullDataArrays = cg1l_frontend_sort_by($imagesFullData,'gid',$picsPerSite,'DESC','',5,$isCGalleriesNoSorting);
         }elseif((!empty($options['general']['RandomSort']) && intval($options['general']['RandomSort']) === 1) || $preselectSort === 'random'){
@@ -1586,7 +1636,7 @@ if (!function_exists('cg1l_get_data_images_full_data_sorted')) {
                 $imagesFullDataArrays = cg1l_frontend_sort_by($imagesFullData,'CountC',$picsPerSite,'DESC');
             }elseif($preselectSort=='comments_ascend'){
                 $imagesFullDataArrays = cg1l_frontend_sort_by($imagesFullData,'CountC',$picsPerSite,'ASC');
-            }elseif($preselectSort=='rating_descend' || $preselectSort=='rating_ascend' || $preselectSort=='rating_sum_descend' || $preselectSort=='rating_sum_ascend'){
+            }elseif($preselectSort=='rating_descend' || $preselectSort=='rating_ascend' || $preselectSort=='rating_average_descend' || $preselectSort=='rating_average_ascend' || $preselectSort=='rating_sum_descend' || $preselectSort=='rating_sum_ascend'){
                 $sortDirection = (strpos($preselectSort, '_ascend') !== false) ? 'ASC' : 'DESC';
                 $allowRating = !empty($options['general']['AllowRating']) ? intval($options['general']['AllowRating']) : 0;
                 $isManipulationActive = (!empty($options['pro']['Manipulate']) && intval($options['pro']['Manipulate']) === 1);
@@ -1603,6 +1653,9 @@ if (!function_exists('cg1l_get_data_images_full_data_sorted')) {
                     if($preselectSort=='rating_descend' || $preselectSort=='rating_ascend'){
                         $specialSortType = ($isManipulationActive) ? 'CountRtotalWithManipulation' : 'CountRtotal';
                         $imagesFullDataArrays = cg1l_frontend_sort_by($imagesFullData,'CountRtotal',$picsPerSite,$sortDirection,$specialSortType,$AllowRatingMax);
+                    }elseif($preselectSort=='rating_average_descend' || $preselectSort=='rating_average_ascend'){
+                        $specialSortType = ($isManipulationActive) ? 'CountRaverageWithManipulation' : 'CountRaverage';
+                        $imagesFullDataArrays = cg1l_frontend_sort_by($imagesFullData,'RatingAverage',$picsPerSite,$sortDirection,$specialSortType,$AllowRatingMax);
                     }else{
                         $specialSortType = ($isManipulationActive) ? 'CountRWithManipulation' : 'CountR';
                         $imagesFullDataArrays = cg1l_frontend_sort_by($imagesFullData,'CountR',$picsPerSite,$sortDirection,$specialSortType,$AllowRatingMax);
@@ -1767,7 +1820,8 @@ if (!function_exists('cg1l_set_slider_data')) {
         }else{
             $thumbSource = $guid;
         }
-        $dataSlider[$id] = [$thumbSource,cg1l_get_rating_count($fullData,$options),$countUserVotes,$countC,$Width,$Height,$imgType,$namePic,$sliderPopoverFallbackBasename];
+        $ratingDisplayValue = cg1l_get_rating_display_value($fullData,$options,array(),true);
+        $dataSlider[$id] = [$thumbSource,$ratingDisplayValue,$countUserVotes,$countC,$Width,$Height,$imgType,$namePic,$sliderPopoverFallbackBasename];
         return $dataSlider;
     }
 }
@@ -1965,9 +2019,10 @@ if (!function_exists('cg1l_get_images_full_data_frontend_for_galleries')) {
         }
 
         if (!function_exists('cgGetHighestRating')) {
-            function cgGetHighestRating($a1, $a2, $AllowRating){
+            function cgGetHighestRating($a1, $a2, $options){
                 // $a1 == previous file
                 // $a2 == current file
+                $AllowRating = (!empty($options['general']['AllowRating'])) ? intval($options['general']['AllowRating']) : 0;
                 if($AllowRating=='2'){
                     if(empty($a1['addCountS'])){
                         $a1['addCountS'] = 0;
@@ -1977,6 +2032,11 @@ if (!function_exists('cg1l_get_images_full_data_frontend_for_galleries')) {
                     }
                     if (intval($a1['CountS'])+intval($a1['addCountS']) == intval($a2['CountS'])+intval($a2['addCountS'])) return $a1;// return previous always, which means higher id
                     return (intval($a1['CountS'])+intval($a1['addCountS']) > intval($a2['CountS'])+intval($a2['addCountS'])) ? $a1 : $a2;
+                }elseif(cg1l_get_rating_type($options) === 'average'){
+                    $averageMetricsA1 = cg1l_get_average_rating_metrics($a1,$options,array(),true);
+                    $averageMetricsA2 = cg1l_get_average_rating_metrics($a2,$options,array(),true);
+                    if ($averageMetricsA1['ratingValue'] == $averageMetricsA2['ratingValue']) return $a1;// return previous always, which means higher id
+                    return ($averageMetricsA1['ratingValue'] > $averageMetricsA2['ratingValue']) ? $a1 : $a2;
                 }elseif($AllowRating>='12'){
                     $array = [12,13,14,15,16,17,18,19,20];
                     $sumA1 = 0;
@@ -2151,7 +2211,7 @@ if (!function_exists('cg1l_get_images_full_data_frontend_for_galleries')) {
                                 if(!empty($previousHighestFileData)){
                                     $jsonFileData['id'] = $imageID;// for sure because of previous versions
                                     if($galleriesOptions['PreviewHighestRated']==1 ){
-                                        $jsonFileTemp = cgGetHighestRating($previousHighestFileData, $jsonFileData, $AllowRatingToCheck);
+                                        $jsonFileTemp = cgGetHighestRating($previousHighestFileData, $jsonFileData, $optionsToCheck);
                                     }elseif($galleriesOptions['PreviewMostCommented']==1){
                                         $jsonFileTemp = cgGetHighestComments($previousHighestFileData, $jsonFileData);
                                     }
@@ -2168,6 +2228,7 @@ if (!function_exists('cg1l_get_images_full_data_frontend_for_galleries')) {
 
                     $jsonFileData['GalleryIdToCheck'] = $galleryIdToCheck;
                     $jsonFileData['AllowRatingToCheck'] = $AllowRatingToCheck;
+                    $jsonFileData['AllowRatingAverageToCheck'] = (!empty($optionsToCheck['general']['AllowRatingAverage'])) ? 1 : 0;
                     $jsonFileData['PositionNumber'] = $PositionNumber;
 
                     if(!empty($optionsToCheck['pro']['MainTitleGalleriesView'])){

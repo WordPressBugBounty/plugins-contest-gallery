@@ -51,58 +51,44 @@ foreach ($selectSQLall as $row){
 
 foreach($selectAllGalleryVotes as $row){
 
-    if($row->RatingS==1){
-        if(empty($allGalleryVotesArray[$row->pid]['OneStarCount'])){
-            $allGalleryVotesArray[$row->pid]['OneStarCount'] = 0;
-        }
-        $allGalleryVotesArray[$row->pid]['OneStarCount']  = $allGalleryVotesArray[$row->pid]['OneStarCount']  + $row->RatingS;
+    if(!isset($allGalleryVotesArray[$row->pid])){
+        continue;
     }
-    elseif($row->Rating==1){
-        $allGalleryVotesArray[$row->pid]['MultipleStarsOneStarSum']  = $allGalleryVotesArray[$row->pid]['MultipleStarsOneStarSum']  + 1;
-        $allGalleryVotesArray[$row->pid]['MultipleStarsOneStarCount']++;
-    }
-    elseif($row->Rating==2){
-        $allGalleryVotesArray[$row->pid]['MultipleStarsTwoStarsSum']  = $allGalleryVotesArray[$row->pid]['MultipleStarsTwoStarsSum']  + 2;
-        $allGalleryVotesArray[$row->pid]['MultipleStarsTwoStarsCount']++;
-    }
-    elseif($row->Rating==3){
-        $allGalleryVotesArray[$row->pid]['MultipleStarsThreeStarsSum']  = $allGalleryVotesArray[$row->pid]['MultipleStarsThreeStarsSum']  + 3;
-        $allGalleryVotesArray[$row->pid]['MultipleStarsThreeStarsCount']++;
-    }
-    elseif($row->Rating==4){
-        $allGalleryVotesArray[$row->pid]['MultipleStarsFourStarsSum']  = $allGalleryVotesArray[$row->pid]['MultipleStarsFourStarsSum']  + 4;
-        $allGalleryVotesArray[$row->pid]['MultipleStarsFourStarsCount']++;
 
-    }
-    elseif($row->Rating==5){
-        $allGalleryVotesArray[$row->pid]['MultipleStarsFiveStarsSum']  = $allGalleryVotesArray[$row->pid]['MultipleStarsFiveStarsSum']  + 5;
-        $allGalleryVotesArray[$row->pid]['MultipleStarsFiveStarsCount']++;
+    $oneStarCount = intval($row->OneStarCount);
+    $multipleStarsOneStarCount = intval($row->MultipleStarsOneStarCount);
+    $multipleStarsTwoStarsCount = intval($row->MultipleStarsTwoStarsCount);
+    $multipleStarsThreeStarsCount = intval($row->MultipleStarsThreeStarsCount);
+    $multipleStarsFourStarsCount = intval($row->MultipleStarsFourStarsCount);
+    $multipleStarsFiveStarsCount = intval($row->MultipleStarsFiveStarsCount);
+    $multipleStarsSixStarsCount = intval($row->MultipleStarsSixStarsCount);
+    $multipleStarsSevenStarsCount = intval($row->MultipleStarsSevenStarsCount);
+    $multipleStarsEightStarsCount = intval($row->MultipleStarsEightStarsCount);
+    $multipleStarsNineStarsCount = intval($row->MultipleStarsNineStarsCount);
+    $multipleStarsTenStarsCount = intval($row->MultipleStarsTenStarsCount);
 
-    }
-    elseif($row->Rating==6){
-        $allGalleryVotesArray[$row->pid]['MultipleStarsSixStarsSum']  = $allGalleryVotesArray[$row->pid]['MultipleStarsSixStarsSum']  + 6;
-        $allGalleryVotesArray[$row->pid]['MultipleStarsSixStarsCount']++;
+    $allGalleryVotesArray[$row->pid]['OneStarCount'] += $oneStarCount;
+    $allGalleryVotesArray[$row->pid]['MultipleStarsOneStarCount'] += $multipleStarsOneStarCount;
+    $allGalleryVotesArray[$row->pid]['MultipleStarsTwoStarsCount'] += $multipleStarsTwoStarsCount;
+    $allGalleryVotesArray[$row->pid]['MultipleStarsThreeStarsCount'] += $multipleStarsThreeStarsCount;
+    $allGalleryVotesArray[$row->pid]['MultipleStarsFourStarsCount'] += $multipleStarsFourStarsCount;
+    $allGalleryVotesArray[$row->pid]['MultipleStarsFiveStarsCount'] += $multipleStarsFiveStarsCount;
+    $allGalleryVotesArray[$row->pid]['MultipleStarsSixStarsCount'] += $multipleStarsSixStarsCount;
+    $allGalleryVotesArray[$row->pid]['MultipleStarsSevenStarsCount'] += $multipleStarsSevenStarsCount;
+    $allGalleryVotesArray[$row->pid]['MultipleStarsEightStarsCount'] += $multipleStarsEightStarsCount;
+    $allGalleryVotesArray[$row->pid]['MultipleStarsNineStarsCount'] += $multipleStarsNineStarsCount;
+    $allGalleryVotesArray[$row->pid]['MultipleStarsTenStarsCount'] += $multipleStarsTenStarsCount;
 
-    }
-    elseif($row->Rating==7){
-        $allGalleryVotesArray[$row->pid]['MultipleStarsSevenStarsSum']  = $allGalleryVotesArray[$row->pid]['MultipleStarsSevenStarsSum']  + 7;
-        $allGalleryVotesArray[$row->pid]['MultipleStarsSevenStarsCount']++;
-
-    }
-    elseif($row->Rating==8){
-        $allGalleryVotesArray[$row->pid]['MultipleStarsEightStarsSum']  = $allGalleryVotesArray[$row->pid]['MultipleStarsEightStarsSum']  + 8;
-        $allGalleryVotesArray[$row->pid]['MultipleStarsEightStarsCount']++;
-
-    }
-    elseif($row->Rating==9){
-        $allGalleryVotesArray[$row->pid]['MultipleStarsNineStarsSum']  = $allGalleryVotesArray[$row->pid]['MultipleStarsNineStarsSum']  + 9;
-        $allGalleryVotesArray[$row->pid]['MultipleStarsNineStarsCount']++;
-
-    }
-    elseif($row->Rating==10){
-        $allGalleryVotesArray[$row->pid]['MultipleStarsTenStarsSum']  = $allGalleryVotesArray[$row->pid]['MultipleStarsTenStarsSum']  + 10;
-        $allGalleryVotesArray[$row->pid]['MultipleStarsTenStarsCount']++;
-    }
+    $allGalleryVotesArray[$row->pid]['MultipleStarsOneStarSum'] += $multipleStarsOneStarCount;
+    $allGalleryVotesArray[$row->pid]['MultipleStarsTwoStarsSum'] += $multipleStarsTwoStarsCount * 2;
+    $allGalleryVotesArray[$row->pid]['MultipleStarsThreeStarsSum'] += $multipleStarsThreeStarsCount * 3;
+    $allGalleryVotesArray[$row->pid]['MultipleStarsFourStarsSum'] += $multipleStarsFourStarsCount * 4;
+    $allGalleryVotesArray[$row->pid]['MultipleStarsFiveStarsSum'] += $multipleStarsFiveStarsCount * 5;
+    $allGalleryVotesArray[$row->pid]['MultipleStarsSixStarsSum'] += $multipleStarsSixStarsCount * 6;
+    $allGalleryVotesArray[$row->pid]['MultipleStarsSevenStarsSum'] += $multipleStarsSevenStarsCount * 7;
+    $allGalleryVotesArray[$row->pid]['MultipleStarsEightStarsSum'] += $multipleStarsEightStarsCount * 8;
+    $allGalleryVotesArray[$row->pid]['MultipleStarsNineStarsSum'] += $multipleStarsNineStarsCount * 9;
+    $allGalleryVotesArray[$row->pid]['MultipleStarsTenStarsSum'] += $multipleStarsTenStarsCount * 10;
 }
 
 foreach($allGalleryVotesArray as $key => $row){

@@ -171,27 +171,27 @@ HEREDOC;
                     <div class='cg_view_option_title cg_hide'>
                     <p>Sale type</p>
                     </div>
-                    <div class='cg_view_option_radio_multiple cg_align_items_baseline'>
-                        <div class='cg_view_option_radio_multiple_container cg_one_third_width cg_flex_flow_column' id="SaleType_shipping_option_container">
-                            <div class='cg_view_option_radio_multiple_title' id="SaleType_shipping_option">
-                                <b>Shipping</b><p style="height:10px;">&nbsp;</p>
+                    <div class='cg_view_option_radio_multiple cg_sale_type_options'>
+                        <div class='cg_view_option_radio_multiple_container cg_sale_type_option cg_flex_flow_column' id="SaleType_shipping_option_container">
+                            <div class='cg_view_option_radio_multiple_title cg_sale_type_option_heading' id="SaleType_shipping_option">
+                                <b>Shipping</b>
                             </div>
                             <div class='cg_view_option_radio_multiple_input'>
                                 <input type="radio" name="cgSellContainer[SaleType]" class="SaleType SaleType_shipping cg_view_option_radio_multiple_input_field"  value="shipping">
                             </div>
-                            <div class='cg_view_option_radio_multiple_title' id="SaleType_shipping_option">
-                                <p style="height:10px;">&nbsp;</p><span class="cg_view_option_title_note"><b>NOTE:</b> the default shipping<br>which is set in ecommerce options<br>is currently <span id="defaultShippingPriceText" style="font-weight: bold;" ></span> <input type="text" id="defaultShippingPriceInput" class="cg_hide"  /> </span>
+                            <div class='cg_view_option_radio_multiple_title cg_sale_type_option_note' id="SaleType_shipping_option">
+                                <span class="cg_view_option_title_note"><b>NOTE:</b> the default shipping<br>which is set in ecommerce options<br>is currently <span id="defaultShippingPriceText" style="font-weight: bold;" ></span> <input type="text" id="defaultShippingPriceInput" class="cg_hide"  /> </span>
                             </div>
                         </div>
-                        <div class='cg_view_option_radio_multiple_container cg_one_third_width cg_flex_flow_column' id="SaleType_download_option_container" style="height:100%;">
-                            <div class='cg_view_option_radio_multiple_title' id="SaleType_download_option">
-                                <b>Download</b><p style="height:10px;">&nbsp;</p>
+                        <div class='cg_view_option_radio_multiple_container cg_sale_type_option cg_flex_flow_column' id="SaleType_download_option_container">
+                            <div class='cg_view_option_radio_multiple_title cg_sale_type_option_heading' id="SaleType_download_option">
+                                <b>Download</b>
                             </div>
                             <div class='cg_view_option_radio_multiple_input'>
                                 <input type="radio" name="cgSellContainer[SaleType]" class="SaleType SaleType_download cg_view_option_radio_multiple_input_field"  value="download"/>
                             </div>
-                            <div class='cg_view_option_radio_multiple_title' id="SaleType_download_option">
-                                <p style="height:10px;">&nbsp;</p><span class="cg_view_option_title_note" style="visibility: hidden;"><b>NOTE:</b> required placeholder</span><br><span class="cg_view_option_title_note cg_hide" id="cgDownloadKeysFileRemoveNote">
+                            <div class='cg_view_option_radio_multiple_title cg_sale_type_option_note' id="SaleType_download_option">
+                                <span class="cg_view_option_title_note" style="visibility: hidden;"><b>NOTE:</b> required placeholder</span><br><span class="cg_view_option_title_note cg_hide" id="cgDownloadKeysFileRemoveNote">
                                 <a  id="cgRemoveDownloadKeysFile" href="" class="cg_event_link">Remove</a>
                                 uploaded file<br><a href="" id="cgShowDownloadKeysFile"  class="cg_event_link" >filename</a>
                                 <input type="hidden" id="cgRemoveDownloadKeysFileInput" name="cgSellContainer[RemoveDownloadKeysFile]" value="0" />
@@ -202,15 +202,15 @@ HEREDOC;
                                 </span>
                             </div>
                         </div>
-                        <div class='cg_view_option_radio_multiple_container cg_one_third_width cg_flex_flow_column cg_flex_flow_column' id="SaleType_service_option_container" style="height:100%;" >
-                            <div class='cg_view_option_radio_multiple_title' id="SaleType_service_option">
-                                <b>Service</b><p style="height:10px;">&nbsp;</p>
+                        <div class='cg_view_option_radio_multiple_container cg_sale_type_option cg_flex_flow_column' id="SaleType_service_option_container">
+                            <div class='cg_view_option_radio_multiple_title cg_sale_type_option_heading' id="SaleType_service_option">
+                                <b>Service</b>
                             </div>
                             <div class='cg_view_option_radio_multiple_input'>
                                 <input type="radio" name="cgSellContainer[SaleType]" class="SaleType SaleType_service cg_view_option_radio_multiple_input_field"  value="service">
                             </div>
-                            <div class='cg_view_option_radio_multiple_title' id="SaleType_service_option">
-                                <p style="height:10px;">&nbsp;</p><span class="cg_view_option_title_note"><b>NOTE:</b> some service you can describe</span><br>
+                            <div class='cg_view_option_radio_multiple_title cg_sale_type_option_note' id="SaleType_service_option">
+                                <span class="cg_view_option_title_note"><b>NOTE:</b> some service you can describe</span><br>
                                 <span class="cg_view_option_title_note cg_hide" id="cgServiceKeysFileRemoveNote">
                                 <a  id="cgRemoveServiceKeysFile" href="" class="cg_event_link">Remove</a> uploaded file<br><a href="" id="cgShowServiceKeysFile"  class="cg_event_link" >filename</a>
                                 <input type="hidden" id="cgRemoveServiceKeysFileInput" name="cgSellContainer[RemoveServiceKeysFile]" value="0" />
@@ -221,15 +221,15 @@ HEREDOC;
                                 </span>
                             </div>
                         </div>
-                        <div class='cg_view_option_radio_multiple_container cg_one_third_width cg_flex_flow_column' id="SaleType_upload_option_container" style="height:100%;" >
-                            <div class='cg_view_option_radio_multiple_title' id="SaleType_upload_option">
-                                <b>Upload</b><p style="height:10px;">&nbsp;</p>
+                        <div class='cg_view_option_radio_multiple_container cg_sale_type_option cg_flex_flow_column' id="SaleType_upload_option_container">
+                            <div class='cg_view_option_radio_multiple_title cg_sale_type_option_heading' id="SaleType_upload_option">
+                                <b>Upload</b>
                             </div>
                             <div class='cg_view_option_radio_multiple_input'>
                                 <input type="radio" name="cgSellContainer[SaleType]" class="SaleType SaleType_upload cg_view_option_radio_multiple_input_field"  value="upload">
                             </div>
-                            <div class='cg_view_option_radio_multiple_title' id="SaleType_upload_option">
-                                <p style="height:10px;">&nbsp;</p><span class="cg_view_option_title_note"><b>NOTE:</b> charge users for upload</span>
+                            <div class='cg_view_option_radio_multiple_title cg_sale_type_option_note' id="SaleType_upload_option">
+                                <span class="cg_view_option_title_note"><b>NOTE:</b> charge users for upload</span>
                             </div>
                         </div>
                 </div>

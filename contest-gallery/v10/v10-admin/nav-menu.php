@@ -43,7 +43,9 @@ include("nav-shortcode.php");
     echo "<div class='cg_nav_menu_row'>";
         echo "<div><a id='cgEditOptionsButton' href='?page=".cg_get_version()."/index.php&edit_options=true&option_id=$GalleryID' class='cg_load_backend_link'><input type='submit' class='cg_backend_button cg_backend_button_general' value='Edit options'  /></a><br/></div>";
         echo "<div><a  id='cgNavMenuEditTranslations'  href='?page=".cg_get_version()."/index.php&edit_options=true&option_id=$GalleryID&cg_edit_translations=true' class='cg_load_backend_link cg_edit_translations'><input type='submit' class='cg_backend_button cg_backend_button_general ' value='Edit translations'  /></a><br/></div>";
-        echo "<div><a  id='cgNavMenuEditEcommerce'   href='?page=".cg_get_version()."/index.php&edit_options=true&option_id=$GalleryID&cg_edit_ecommerce=true' class='cg_load_backend_link cg_edit_ecommerce'><input type='submit' class='cg_backend_button cg_backend_button_general ' value='Edit ecommerce'  /></a><br/></div>";
+        if(cg_user_can_manage_global_settings()){
+            echo "<div><a  id='cgNavMenuEditEcommerce'   href='?page=".cg_get_version()."/index.php&edit_options=true&option_id=$GalleryID&cg_edit_ecommerce=true' class='cg_load_backend_link cg_edit_ecommerce'><input type='submit' class='cg_backend_button cg_backend_button_general ' value='Edit ecommerce'  /></a><br/></div>";
+        }
         echo "<div><a  id='cgNavMenuEcommerceOrders'   href='?page=".cg_get_version()."/index.php&option_id=$GalleryID&cg_orders=true' class='cg_load_backend_link'><input type='submit' class='cg_backend_button cg_backend_button_general ' value='Ecommerce orders'  /></a><br/></div>";
 	    echo "</div>";
 

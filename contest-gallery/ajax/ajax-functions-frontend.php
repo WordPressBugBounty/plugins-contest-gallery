@@ -671,6 +671,26 @@ if (!function_exists('post_cg_rate_v10_fiveStar')) {
     }
 }
 
+add_action('wp_ajax_nopriv_post_cg_rate_v10_average', 'post_cg_rate_v10_average');
+add_action('wp_ajax_post_cg_rate_v10_average', 'post_cg_rate_v10_average');
+if (!function_exists('post_cg_rate_v10_average')) {
+
+    function post_cg_rate_v10_average()
+    {
+
+        if (defined('DOING_AJAX') && DOING_AJAX) {
+
+            cg_check_frontend_nonce();
+
+            require_once(__DIR__.'/../v10/v10-frontend/data/rating/rate-picture-average.php');
+
+            exit();
+        } else {
+            exit();
+        }
+    }
+}
+
 add_action('wp_ajax_nopriv_post_cg1l_current_frontend_nonce', 'post_cg1l_current_frontend_nonce');
 add_action('wp_ajax_post_cg1l_current_frontend_nonce', 'post_cg1l_current_frontend_nonce');// has to run also for logged in users
 if (!function_exists('post_cg1l_current_frontend_nonce')) {

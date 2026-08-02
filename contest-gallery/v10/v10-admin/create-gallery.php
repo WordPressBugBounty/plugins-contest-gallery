@@ -86,6 +86,7 @@ if(!empty($_POST['cg_create'])){
     $RegMailReply = get_option('admin_email');
     $RegMailSubject = 'Please complete your registration';
     $FeVotingIconType = 'star';
+    $VotingCommentNumberFormat = 'dot';
 
     include('json-values.php');
     include('create-options.php');

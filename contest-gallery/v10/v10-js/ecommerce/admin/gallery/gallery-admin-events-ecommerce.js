@@ -287,6 +287,7 @@ jQuery(document).ready(function ($) {
             data : {
                 action : 'post_cg_show_paypal_api_response',
                 cg_order_id : cgJsClass.gallery.vars.ecommerce.OrderId,
+                cg_nonce : CG1LBackendNonce.nonce
             },
         }).done(function (response) {
 

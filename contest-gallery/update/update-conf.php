@@ -98,6 +98,7 @@ return array(
         'CheckLogin' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),
         'CommentsOutGallery' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 01.01.2016
         'RatingOutGallery' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),
+        'AllowRatingAverage' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 21.07.2026
         'ForwardToURL' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 1),//  Update ab 05.02.2016
         'ForwardFrom' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 1),
         'ForwardType' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),
@@ -215,6 +216,7 @@ return array(
         'ShowPinFormUploading' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 25.11.2025
         'AllowedUsersToVote' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 25.11.2025
         'FeVotingIconType' => array('COLUMN_TYPE' => 'VARCHAR(20)','DEFAULT' => '""'),// Update ab 21.12.2025
+        'VotingCommentNumberFormat' => array('COLUMN_TYPE' => 'VARCHAR(10)','DEFAULT' => '"dot"'),// Update ab 01.08.2026
         'UploadRealWatermarkSettings' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 06.06.2026
         'Field1IdFullWindowBlogView' => array('COLUMN_TYPE' => 'INT(20)','DEFAULT' => 0),// Update ab 05.04.2026
     ),

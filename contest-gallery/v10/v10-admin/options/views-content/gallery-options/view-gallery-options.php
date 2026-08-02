@@ -36,6 +36,32 @@ echo <<<HEREDOC
             </div>
         </div>
         $cgStartAndEndTimeNote
+    <div class='cg_view_options_rows_container'>
+        <p class='cg_view_options_rows_container_title'>Voting and comments number format</p>
+        <div class='cg_view_options_row cg_margin_bottom_30'>
+            <div class='cg_view_option cg_view_option_full_width cg_border_radius_8_px'>
+                <div class='cg_view_option_title'>
+                    <p>Decimal and thousands separators<br>
+                        <span class='cg_view_option_title_note'>Applies to visible rating and comment numbers in all frontend views.</span>
+                    </p>
+                </div>
+                <div class='cg_view_option_radio_multiple'>
+                    <div class='cg_view_option_radio_multiple_container'>
+                        <div class='cg_view_option_radio_multiple_title'>Decimal point<br><span class='cg_view_option_title_note'>1,234.5</span></div>
+                        <div class='cg_view_option_radio_multiple_input'>
+                            <input type='radio' name='VotingCommentNumberFormat' class='VotingCommentNumberFormat cg_view_option_radio_multiple_input_field' value='dot' $VotingCommentNumberFormatDotChecked>
+                        </div>
+                    </div>
+                    <div class='cg_view_option_radio_multiple_container'>
+                        <div class='cg_view_option_radio_multiple_title'>Decimal comma<br><span class='cg_view_option_title_note'>1.234,5</span></div>
+                        <div class='cg_view_option_radio_multiple_input'>
+                            <input type='radio' name='VotingCommentNumberFormat' class='VotingCommentNumberFormat cg_view_option_radio_multiple_input_field' value='comma' $VotingCommentNumberFormatCommaChecked>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class='cg_view_options_rows_container $cgHideStartEndTime'>
         <p class='cg_view_options_rows_container_title'>Contest start options for voting and uploading</p>
             <div class='cg_view_options_row'>

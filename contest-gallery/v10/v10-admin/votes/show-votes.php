@@ -1,8 +1,8 @@
 <?php
 
-$imageId = $_GET['image_id'];
-$GalleryID = $_GET['option_id'];
-$gid = $_GET['option_id'];
+$imageId = (!empty($_GET['image_id'])) ? absint($_GET['image_id']) : 0;
+$GalleryID = (!empty($_GET['option_id'])) ? absint($_GET['option_id']) : 0;
+$gid = $GalleryID;
 
 
 // Tabellennamen ermitteln, GalleryID wurde als Shortcode bereits �bermittelt.
@@ -25,12 +25,28 @@ $table_posts = $wpdb->prefix."posts";
 $table_wp_users = $wpdb->base_prefix."users";
 $tablename_google_users = $wpdb->base_prefix."contest_gal1ery_google_users";
 
-$imageData = $wpdb->get_row("SELECT * FROM $tablename WHERE id = '$imageId'");
+$imageData = $wpdb->get_row($wpdb->prepare(
+    "SELECT * FROM $tablename WHERE id = %d AND GalleryID = %d LIMIT 1",
+    $imageId,
+    $GalleryID
+));
+
+if(empty($imageData)){
+    echo '<div id="cgVotes"><p style="text-align:center;font-weight:bold;">This entry does not belong to the selected gallery.</p></div>';
+    return;
+}
+
 $WpUserId = $imageData->WpUserId;
 $ImgType = $imageData->ImgType;
-$user_login = $wpdb->get_var("SELECT user_login  FROM $table_wp_users WHERE ID = $WpUserId ORDER BY ID ASC");
+$user_login = $wpdb->get_var($wpdb->prepare(
+    "SELECT user_login FROM $table_wp_users WHERE ID = %d ORDER BY ID ASC",
+    $WpUserId
+));
 
-$categories = $wpdb->get_results( "SELECT * FROM $tablename_categories WHERE GalleryID = '$GalleryID' ORDER BY Field_Order DESC");
+$categories = $wpdb->get_results($wpdb->prepare(
+    "SELECT * FROM $tablename_categories WHERE GalleryID = %d ORDER BY Field_Order DESC",
+    $GalleryID
+));
 
 $galeryID = $GalleryID;
 
@@ -53,8 +69,13 @@ if(count($categories)){
 
 }
 
-$generalOptions = $wpdb->get_row("SELECT * FROM $tablename_options WHERE id = '$GalleryID'");
+$generalOptions = $wpdb->get_row($wpdb->prepare(
+    "SELECT * FROM $tablename_options WHERE id = %d",
+    $GalleryID
+));
 $AllowRating = $generalOptions->AllowRating;
+$isAverageRating = false;
+$isAverageRating = (!empty($generalOptions->AllowRatingAverage) && intval($generalOptions->AllowRatingAverage) === 1);
 if($AllowRating==1){
     $AllowRating = 15;
 }
@@ -69,7 +90,11 @@ $IsModernFiveStar = (!empty($proOptions->IsModernFiveStar)) ? true : false;
 
 if(!empty($_POST['cg_remove_votes'])){
     include('remove-votes-and-correct-gallery.php');
-    $imageData = $wpdb->get_row("SELECT * FROM $tablename WHERE id = '$imageId'"); // weil sich erneuert hat hier nochmal einfügen
+    $imageData = $wpdb->get_row($wpdb->prepare(
+        "SELECT * FROM $tablename WHERE id = %d AND GalleryID = %d LIMIT 1",
+        $imageId,
+        $GalleryID
+    )); // weil sich erneuert hat hier nochmal einfügen
 }
 
 if(!function_exists('cg1l_render_admin_vote_action_checkbox')){
@@ -92,9 +117,18 @@ $multipleRatingQueryString = '';
     //$multipleRatingQueryString = " OR (Rating>=1 AND Rating<=$AllowRatingMax)";
     $multipleRatingQueryString = " OR (Rating>=1 AND Rating<=10)";
 //}
-$votingData = $wpdb->get_results("SELECT * FROM $tablename_ip WHERE pid = '$imageId' AND (RatingS = 1$multipleRatingQueryString)  ORDER BY id DESC LIMIT $start, 50");
+$votingData = $wpdb->get_results($wpdb->prepare(
+    "SELECT * FROM $tablename_ip WHERE pid = %d AND GalleryID = %d AND (RatingS = 1$multipleRatingQueryString) ORDER BY id DESC LIMIT %d, 50",
+    $imageId,
+    $GalleryID,
+    $start
+));
 
-$votingDataLength = $wpdb->get_var("SELECT COUNT(*) FROM $tablename_ip WHERE pid = '$imageId' AND (RatingS = 1$multipleRatingQueryString)");
+$votingDataLength = $wpdb->get_var($wpdb->prepare(
+    "SELECT COUNT(*) FROM $tablename_ip WHERE pid = %d AND GalleryID = %d AND (RatingS = 1$multipleRatingQueryString)",
+    $imageId,
+    $GalleryID
+));
 
 $upload_folder = wp_upload_dir();
 $upload_folder_url = $upload_folder['baseurl']; // Pfad zum Bilderordner angeben
@@ -105,28 +139,25 @@ if(count($votingData)){
     foreach($votingData as $row){
 
         if(!empty($row->WpUserId)){
-            $wpUserIdsArray[$row->WpUserId] = true;
+            $wpUserIdsArray[$row->WpUserId] = array(
+                'user_login' => '',
+                'user_email' => ''
+            );
         }
 
     }
 }
 
-$userIdsSelectString = '';
-
 if(count($wpUserIdsArray)){
+    $wpUserIds = array_keys($wpUserIdsArray);
+    $wpUserIdsPlaceholders = implode(',', array_fill(0, count($wpUserIds), '%d'));
 
-    foreach($wpUserIdsArray as $id => $bool){
-        if(empty($userIdsSelectString)){
-            $userIdsSelectString .= "ID = $id";
-        }else{
-            $userIdsSelectString .= " OR ID = $id";
-        }
-    }
-
-    $wpUsersData = $wpdb->get_results("SELECT ID, user_login, user_email FROM $table_wp_users WHERE $userIdsSelectString ORDER BY ID ASC");
+    $wpUsersData = $wpdb->get_results($wpdb->prepare(
+        "SELECT ID, user_login, user_email FROM $table_wp_users WHERE ID IN ($wpUserIdsPlaceholders) ORDER BY ID ASC",
+        $wpUserIds
+    ));
 
     foreach($wpUsersData as $row){
-        $wpUserIdsArray[$row->ID] = array();
         $wpUserIdsArray[$row->ID]['user_login'] = $row->user_login;
         $wpUserIdsArray[$row->ID]['user_email'] = $row->user_email;
     }
@@ -136,18 +167,16 @@ if(count($wpUserIdsArray)){
 // select google users
 $googleUsersArray = [];
 
-$selectGoogleUsersQuery = "SELECT DISTINCT WpUserId, Email FROM $tablename_google_users WHERE";
+if(count($wpUserIdsArray)){
+    $googleUsers = $wpdb->get_results($wpdb->prepare(
+        "SELECT DISTINCT WpUserId, Email FROM $tablename_google_users WHERE WpUserId IN ($wpUserIdsPlaceholders)",
+        $wpUserIds
+    ));
 
-foreach ($wpUserIdsArray as $wpUserId => $wpUserData){
-    $selectGoogleUsersQuery .= " WpUserId = $wpUserId OR ";
-}
-
-$selectGoogleUsersQuery = substr($selectGoogleUsersQuery,0,-3);
-$googleUsers = $wpdb->get_results($selectGoogleUsersQuery);
-
-foreach ($googleUsers as $googleUser){
-    $googleUsersArray[$googleUser->WpUserId] = [];
-    $googleUsersArray[$googleUser->WpUserId]['Email'] = $googleUser->Email;
+    foreach ($googleUsers as $googleUser){
+        $googleUsersArray[$googleUser->WpUserId] = [];
+        $googleUsersArray[$googleUser->WpUserId]['Email'] = $googleUser->Email;
+    }
 }
 // select google users --- END
 
@@ -175,75 +204,84 @@ if(!empty($imageData->MultipleFiles) && $imageData->MultipleFiles!='""'){
 
 $status = ($imageData->Active>0) ? 'activated' : 'deactivated';
 
-if($ImgType=='con'){
-    $image_url = '';
-    $post_title = '';
-    $post_description = '';
-    $post_excerpt = '';
-    $post_type = '';
-    $wp_image_id = '';
-    $sourceOriginalImgShow = '';
-}else{
-    $wp_image_info = $wpdb->get_row("SELECT * FROM $table_posts WHERE ID = '$WpUpload'");
-    $image_url = $wp_image_info->guid;
-    $post_title = $wp_image_info->post_title;
-    $post_description = $wp_image_info->post_content;
-    $post_excerpt = $wp_image_info->post_excerpt;
-    $post_type = $wp_image_info->post_mime_type;
-    $wp_image_id = $wp_image_info->ID;
-    $sourceOriginalImgShow = $image_url;
+$image_url = '';
+$post_title = '';
+$post_description = '';
+$post_excerpt = '';
+$post_type = '';
+$wp_image_id = '';
+$sourceOriginalImgShow = '';
+$imageThumb = '';
+
+if($ImgType!='con' && !empty($WpUpload)){
+    $wp_image_info = $wpdb->get_row($wpdb->prepare(
+        "SELECT * FROM $table_posts WHERE ID = %d LIMIT 1",
+        $WpUpload
+    ));
+    if(!empty($wp_image_info)){
+        $image_url = $wp_image_info->guid;
+        $post_title = $wp_image_info->post_title;
+        $post_description = $wp_image_info->post_content;
+        $post_excerpt = $wp_image_info->post_excerpt;
+        $post_type = $wp_image_info->post_mime_type;
+        $wp_image_id = $wp_image_info->ID;
+        $sourceOriginalImgShow = $image_url;
+    }
 }
 
-if(cg_is_is_image($ImgType)){
+if(cg_is_is_image($ImgType) && !empty($WpUpload) && $widthOriginalImg>0 && $heightOriginalImg>0){
+    $imageThumbData = wp_get_attachment_image_src($WpUpload, 'large');
+    if(!empty($imageThumbData[0])){
+        $imageThumb = $imageThumbData[0];
 
-$imageThumb = wp_get_attachment_image_src($WpUpload, 'large');
-$imageThumb = $imageThumb[0];
+        $WidthThumb = 300;
+        $HeightThumb = 200;
 
-$WidthThumb = 300;
-$HeightThumb = 200;
+        // Ermittlung der Höhe nach Skalierung. Falls unter der eingestellten Höhe, dann nächstgrößeres Bild nehmen.
+        $heightScaledThumb = $WidthThumb*$heightOriginalImg/$widthOriginalImg;
 
-// Ermittlung der Höhe nach Skalierung. Falls unter der eingestellten Höhe, dann nächstgrößeres Bild nehmen.
-$heightScaledThumb = $WidthThumb*$heightOriginalImg/$widthOriginalImg;
+        // Falls unter der eingestellten Höhe, dann größeres Bild nehmen (normales Bild oder panorama Bild, kein Vertikalbild)
+        if ($heightScaledThumb <= $HeightThumb) {
 
+            // Bestimmung von Breite des Bildes
+            $WidthThumbPic = $HeightThumb*$widthOriginalImg/$heightOriginalImg;
 
-// Falls unter der eingestellten Höhe, dann größeres Bild nehmen (normales Bild oder panorama Bild, kein Vertikalbild)
-if ($heightScaledThumb <= $HeightThumb) {
+            // Bestimmung wie viel links und rechts abgeschnitten werden soll
+            $paddingLeftRight = ($WidthThumbPic-$WidthThumb)/2;
+            $paddingLeftRight = $paddingLeftRight.'px';
 
-    $imageThumb = wp_get_attachment_image_src($WpUpload, 'large');
-    $imageThumb = $imageThumb[0];
+            $padding = "left: -$paddingLeftRight;right: -$paddingLeftRight";
 
-    // Bestimmung von Breite des Bildes
-    $WidthThumbPic = $HeightThumb*$widthOriginalImg/$heightOriginalImg;
+            $WidthThumbPic = $WidthThumbPic.'px';
 
-    // Bestimmung wie viel links und rechts abgeschnitten werden soll
-    $paddingLeftRight = ($WidthThumbPic-$WidthThumb)/2;
-    $paddingLeftRight = $paddingLeftRight.'px';
+        }
 
-    $padding = "left: -$paddingLeftRight;right: -$paddingLeftRight";
+        // Falls über der eingestellten Höhe, dann kleineres Bild nehmen (kein Vertikalbild)
+        if ($heightScaledThumb > $HeightThumb) {
 
-    $WidthThumbPic = $WidthThumbPic.'px';
+            // Bestimmung von Breite des Bildes
+            $WidthThumbPic = $WidthThumb.'px';
 
+            // Bestimmung wie viel oben und unten abgeschnitten werden soll
+            $heightImageThumb = $WidthThumb*$heightOriginalImg/$widthOriginalImg;
+            $paddingTopBottom = ($heightImageThumb-$HeightThumb)/2;
+            $paddingTopBottom = $paddingTopBottom.'px';
 
+            $padding = "top: -$paddingTopBottom;bottom: -$paddingTopBottom";
+
+        }
+    }
 }
 
-// Falls über der eingestellten Höhe, dann kleineres Bild nehmen (kein Vertikalbild)
-
-if ($heightScaledThumb > $HeightThumb) {
-
-    $imageThumb = wp_get_attachment_image_src($WpUpload, 'large');
-    $imageThumb = $imageThumb[0];
-
-    // Bestimmung von Breite des Bildes
-    $WidthThumbPic = $WidthThumb.'px';
-
-    // Bestimmung wie viel oben und unten abgeschnitten werden soll
-    $heightImageThumb = $WidthThumb*$heightOriginalImg/$widthOriginalImg;
-    $paddingTopBottom = ($heightImageThumb-$HeightThumb)/2;
-    $paddingTopBottom = $paddingTopBottom.'px';
-
-    $padding = "top: -$paddingTopBottom;bottom: -$paddingTopBottom";
-
-}
+$isEntryPreviewAvailable = true;
+if($ImgType!='con'){
+    if(cg_is_is_image($ImgType)){
+        $isEntryPreviewAvailable = !empty($imageThumb);
+    }elseif($ImgType=='twt' || $ImgType=='tkt'){
+        $isEntryPreviewAvailable = !empty($post_description);
+    }else{
+        $isEntryPreviewAvailable = !empty($sourceOriginalImgShow);
+    }
 }
 
 
@@ -303,13 +341,18 @@ echo '<div id=\'cgVotesExport\'>
 <input class="cg_backend_button_gallery_action" type="submit" value="Export votes" style="margin: 0 auto;"></form>
 </div>';
 
-echo "<form  data-cg-submit-message='Votes corrected'  action='?page=".cg_get_version()."/index.php&show_votes=true&show_votes=true&image_id=$imageId&option_id=$GalleryID' method=\"post\" class=\"cg_load_backend_submit\">";
+echo "<form action='?page=".cg_get_version()."/index.php&show_votes=true&show_votes=true&image_id=$imageId&option_id=$GalleryID' method=\"post\" class=\"cg_load_backend_submit\">";
 echo '<input type="hidden" name="cg_remove_votes" value="true">';
 
 
 if (!empty($_POST['cg_remove_votes'])) {
     echo "<div>";
-    echo "<p style='text-align: center;margin-bottom:25px;margin-top:20px;font-weight:bold;font-size:20px;line-height:24px;'>Votes corrected</p>";
+    if(!empty($cgVotesCorrectionSucceeded)){
+        echo "<p style='text-align: center;margin-bottom:25px;margin-top:20px;font-weight:bold;font-size:20px;line-height:24px;'>Votes corrected</p>";
+    }else{
+        $cgVotesCorrectionErrorToShow = (!empty($cgVotesCorrectionError)) ? $cgVotesCorrectionError : 'Votes could not be corrected.';
+        echo "<p style='text-align: center;margin-bottom:25px;margin-top:20px;font-weight:bold;font-size:20px;line-height:24px;'>".esc_html($cgVotesCorrectionErrorToShow)."</p>";
+    }
     echo "</div>";
 }
 
@@ -318,7 +361,11 @@ echo "<div id='cgVotesImage'>";
 
     echo "<div id='cgVotesImageVisual'>";
 
-        if(cg_is_alternative_file_type_file($ImgType)){
+        if($ImgType!='con' && !$isEntryPreviewAvailable){
+            echo '<div id="cgVotesImageVisualContent">';
+                echo '<div class="cg_backend_image cg_backend_image_stage"><span>Preview unavailable</span></div>';
+            echo "</div>";
+        }elseif(cg_is_alternative_file_type_file($ImgType)){
                 echo '<a href="'.$sourceOriginalImgShow.'" target="_blank" title="Show full size">';
                     echo '<div id="cgVotesImageVisualContent">';
                         echo '<div class="cg-votes-image-visual-content-file-type-'.$ImgType.'">';
@@ -437,7 +484,11 @@ echo "<div id='cgVotesImage'>";
         echo "<div class='cg-votes-image-info-five-star'>";
 
             echo "<div class='cg-votes-image-info-five-star-content'>";
-                echo "<div class='cg-votes-image-info-header'>Cummulated multiple stars voting:</div>";
+                if($isAverageRating){
+                    echo "<div class='cg-votes-image-info-header'>Average multiple stars voting:</div>";
+                }else{
+                    echo "<div class='cg-votes-image-info-header'>Cummulated multiple stars voting:</div>";
+                }
                 if($AllowRating==2 OR $AllowRating==0){
                     echo "<div class='cg-votes-image-info-content'>Only visible if multiple stars voting is activated</div>";
                 }else{
@@ -461,6 +512,7 @@ echo "<div id='cgVotesImage'>";
                     }
 
                     $ratingCummulated = 0;
+                    $ratingCountTotal = 0;
 
                     for($iR=1;$iR<=$AllowRating-10;$iR++){
                         if(!empty($RatingOverviewArray[$iR])){
@@ -470,11 +522,12 @@ echo "<div id='cgVotesImage'>";
                         }
                         ${'ratingCummulated'.$iR} = ${'countR'.$iR}*$iR;
                         $ratingCummulated = $ratingCummulated + ${'ratingCummulated'.$iR};
+                        $ratingCountTotal = $ratingCountTotal + ${'countR'.$iR};
                     }
 
                     echo "<div class='cg-votes-image-info-content' style='align-items: normal;'>";
 
-                        if($ratingCummulated>=1){
+                        if($ratingCountTotal>=1){
                             echo "<div class='cg-votes-image-info-content-rating-average-stars cg_backend_star_on'>";
                             echo "</div>";
                         }else{
@@ -482,7 +535,12 @@ echo "<div id='cgVotesImage'>";
                             echo "</div>";
                         }
 
-                        echo "<div class='cg-votes-image-info-content-rating-count' style='margin-right: 7px;'>$ratingCummulated => </div>";
+                        $ratingValueToShow = $ratingCummulated;
+                        if($isAverageRating){
+                            $ratingValueToShow = ($ratingCountTotal>=1) ? round($ratingCummulated/$ratingCountTotal,1) : 0;
+                        }
+
+                        echo "<div class='cg-votes-image-info-content-rating-count' style='margin-right: 7px;'>$ratingValueToShow => </div>";
 
                         echo "<div>";
 

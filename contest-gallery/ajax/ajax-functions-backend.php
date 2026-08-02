@@ -38,6 +38,8 @@ if (!function_exists('cg_backend_ajax_require_access_json')) {
     }
 }
 
+include_once(__DIR__.'/../v10/v10-admin/export/user-data-export-jobs.php');
+
 if (!function_exists('cg_backend_ajax_validate_gallery_hash_json')) {
     function cg_backend_ajax_validate_gallery_hash_json($GalleryID, $galleryHash) {
         $GalleryID = absint($GalleryID);
@@ -125,6 +127,11 @@ if (!function_exists('cg_create_pdf_preview_internal')) {
             'error' => ''
         ];
 
+        if (cg_get_version() == 'contest-gallery') {
+            $result['error'] = 'pdf_preview_not_available';
+            return $result;
+        }
+
         $wp_upload_dir = wp_upload_dir();
         $cgWpUploadToReplace = 0;
         $cgNewWpUploadWhichReplace = 0;
@@ -134,6 +141,8 @@ if (!function_exists('cg_create_pdf_preview_internal')) {
         if (empty($realId)) {
             $realId = (!empty($_POST['cgRealId'])) ? absint($_POST['cgRealId']) : 0;
         }
+        $WpUpload = absint($WpUpload);
+        $realId = absint($realId);
         if (empty($cg_base_64)) {
             $cg_base_64 = (!empty($_POST['cg_base_64'])) ? $_POST['cg_base_64'] : '';
         }
@@ -149,21 +158,21 @@ if (!function_exists('cg_create_pdf_preview_internal')) {
             return $result;
         }
 
-        $realIdRow = $wpdb->get_row("SELECT * FROM $tablename WHERE id='$realId'");
+        $realIdRow = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename WHERE id = %d", $realId));
         if (empty($realIdRow)) {
             $result['error'] = 'missing_real_id_row';
             return $result;
         }
 
-        $WpUploadRow = $wpdb->get_row("SELECT * FROM $tablename_posts WHERE ID='$WpUpload'");
+        $WpUploadRow = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_posts WHERE ID = %d", $WpUpload));
         if (empty($WpUploadRow)) {
             $result['error'] = 'missing_wp_upload_row';
             return $result;
         }
 
         if (!empty($cgWpUploadToReplace) && !empty($cgNewWpUploadWhichReplace) && !empty($realIdRow->EcommerceEntry)) {
-            $EcommerceEntry = $realIdRow->EcommerceEntry;
-            $ecommerceEntry = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_entries WHERE id='$EcommerceEntry'");
+            $EcommerceEntry = absint($realIdRow->EcommerceEntry);
+            $ecommerceEntry = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_ecommerce_entries WHERE id = %d", $EcommerceEntry));
             $removedWpUploadIdsFromSale = [$cgWpUploadToReplace];
             cg_replace_ecommerce_file($realIdRow->id, $realIdRow->GalleryID, $ecommerceEntry, $cgNewWpUploadWhichReplace, [], $removedWpUploadIdsFromSale);
         }
@@ -307,9 +316,17 @@ if (!function_exists('cg_create_pdf_preview_internal')) {
                     $MultipleFilesNew[$order] = $file;
                 }
                 $MultipleFilesNew = serialize($MultipleFilesNew);
-                $wpdb->query("UPDATE $tablename SET MultipleFiles='$MultipleFilesNew' WHERE id = $realId");
+                $wpdb->query($wpdb->prepare(
+                    "UPDATE $tablename SET MultipleFiles = %s WHERE id = %d",
+                    $MultipleFilesNew,
+                    $realId
+                ));
             } else {
-                $wpdb->query("UPDATE $tablename SET PdfPreview=$attach_id WHERE id = $realId");
+                $wpdb->query($wpdb->prepare(
+                    "UPDATE $tablename SET PdfPreview = %d WHERE id = %d",
+                    $attach_id,
+                    $realId
+                ));
             }
 
             if (!$isFromFrontendUpload && !empty($realIdRow->Active)) {
@@ -319,13 +336,19 @@ if (!function_exists('cg_create_pdf_preview_internal')) {
                 $thumbSizesWp['medium_size_w'] = get_option("medium_size_w");
                 $thumbSizesWp['large_size_w'] = get_option("large_size_w");
                 $imageArray = array();
-                $pid = $realIdRow->id;
-                $GalleryID = $realIdRow->GalleryID;
-                $row = $wpdb->get_row("SELECT DISTINCT $tablename_posts.*, $tablename.* FROM $tablename_posts, $tablename WHERE
-                          (($tablename.id = $pid) AND $tablename.GalleryID='$GalleryID' AND $tablename.Active='1' and $tablename_posts.ID = $tablename.WpUpload)
+                $pid = absint($realIdRow->id);
+                $GalleryID = absint($realIdRow->GalleryID);
+                $row = $wpdb->get_row($wpdb->prepare(
+                    "SELECT DISTINCT $tablename_posts.*, $tablename.* FROM $tablename_posts, $tablename WHERE
+                          (($tablename.id = %d) AND $tablename.GalleryID = %d AND $tablename.Active = '1' and $tablename_posts.ID = $tablename.WpUpload)
                           OR
-                          (($tablename.id = $pid) AND $tablename.GalleryID='$GalleryID' AND $tablename.Active='1' AND $tablename.WpUpload = 0)
-                          GROUP BY $tablename.id  ORDER BY $tablename.id DESC LIMIT 0, 1");
+                          (($tablename.id = %d) AND $tablename.GalleryID = %d AND $tablename.Active = '1' AND $tablename.WpUpload = 0)
+                          GROUP BY $tablename.id ORDER BY $tablename.id DESC LIMIT 0, 1",
+                    $pid,
+                    $GalleryID,
+                    $pid,
+                    $GalleryID
+                ));
                 cg_create_json_files_when_activating($GalleryID, $row, $thumbSizesWp, $uploadFolder, $imageArray);
             }
 
@@ -633,6 +656,7 @@ add_action('wp_ajax_post_cg_gallery_view_control_backend', 'post_cg_gallery_view
 if (!function_exists('post_cg_gallery_view_control_backend')) {
     function post_cg_gallery_view_control_backend()
     {
+        cg_require_backend_access();
 
         contest_gal1ery_db_check();
 
@@ -711,6 +735,8 @@ add_action('wp_ajax_post_cg_gallery_save_categories_changes', 'post_cg_gallery_s
 if (!function_exists('post_cg_gallery_save_categories_changes')) {
     function post_cg_gallery_save_categories_changes()
     {
+        cg_require_backend_access();
+
         contest_gal1ery_db_check();
 
         $isBackendCall = true;
@@ -744,6 +770,8 @@ add_action('wp_ajax_post_cg_change_invoice', 'post_cg_change_invoice');
 if (!function_exists('post_cg_change_invoice')) {
     function post_cg_change_invoice()
     {
+        cg_require_backend_access();
+
         contest_gal1ery_db_check();
 
         $isBackendCall = true;
@@ -783,6 +811,8 @@ add_action('wp_ajax_post_cg_twitter_get', 'post_cg_twitter_get');
 if (!function_exists('post_cg_twitter_get')) {
     function post_cg_twitter_get()
     {
+        cg_require_backend_access();
+
         //contest_gal1ery_db_check();
 
 	    $_POST = cg1l_sanitize_post($_POST);
@@ -814,14 +844,15 @@ if (!function_exists('post_cg_twitter_get')) {
 	            //curl_setopt($ch, CURLOPT_URL, "https://publish.twitter.com/oembed?theme=dark&url=".$post_cg_twitter_url);
 	            curl_setopt($ch, CURLOPT_URL, "https://publish.twitter.com/oembed?url=".$post_cg_twitter_url);
 	            curl_setopt($ch, CURLOPT_HEADER, false);
-	            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+	            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 	            curl_setopt($ch, CURLOPT_SSLVERSION , 6); //NEW ADDITION
 	            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	            $result = curl_exec($ch);
-	            curl_close($ch);
+	            $curlErrorNumber = curl_errno($ch);
 	            $error_msg = curl_error($ch);
-	            if (curl_errno($ch)) {
-		            $error_msg = curl_error($ch);
+	            curl_close($ch);
+	            if ($curlErrorNumber) {
 		            $result = '';
 	            }else{
 		            $result = str_replace('\n', '', $result);
@@ -855,6 +886,8 @@ add_action('wp_ajax_post_cg_social_platform_input', 'post_cg_social_platform_inp
 if (!function_exists('post_cg_social_platform_input')) {
     function post_cg_social_platform_input()
     {
+        cg_require_backend_access();
+
         contest_gal1ery_db_check();
 
         $blockquote = '';
@@ -969,6 +1002,7 @@ add_action('wp_ajax_post_cg_social_platforms_query', 'post_cg_social_platforms_q
 if (!function_exists('post_cg_social_platforms_query')) {
     function post_cg_social_platforms_query()
     {
+	    cg_require_backend_access();
 
 	    contest_gal1ery_db_check();
 
@@ -1011,6 +1045,7 @@ add_action('wp_ajax_post_cg_social_platforms_add_to_gallery', 'post_cg_social_pl
 if (!function_exists('post_cg_social_platforms_add_to_gallery')) {
     function post_cg_social_platforms_add_to_gallery()
     {
+	    cg_require_backend_access();
 
 	    contest_gal1ery_db_check();
 
@@ -1113,6 +1148,7 @@ add_action('wp_ajax_post_cg_gallery_sort_files', 'post_cg_gallery_sort_files');
 if (!function_exists('post_cg_gallery_sort_files')) {
     function post_cg_gallery_sort_files()
     {
+        cg_require_backend_access();
 
         contest_gal1ery_db_check();
 
@@ -1421,47 +1457,41 @@ add_action('wp_ajax_post_cg_test_ecom_keys', 'post_cg_test_ecom_keys');
 if (!function_exists('post_cg_test_ecom_keys')) {
     function post_cg_test_ecom_keys()
     {
-        contest_gal1ery_db_check();
-
-        if (defined('DOING_AJAX') && DOING_AJAX) {
-
-            $user = wp_get_current_user();
-
-            if (
-                is_super_admin($user->ID) ||
-                in_array('administrator', (array)$user->roles) ||
-                in_array('editor', (array)$user->roles) ||
-                in_array('author', (array)$user->roles)
-            ) {
-
-                $isTest = false;
-                $cg_client = sanitize_text_field($_GET['cg_client']);
-                $cg_secret = sanitize_text_field($_GET['cg_secret']);
-                if(intval($_GET['cg_test_env'])==1){
-                    $isTest = true;
-                }
-
-				if(empty($cg_secret)){// cause without secret an access token will be at least generated, but can not be used for further requests
-					$accessToken='error' ;
-				}else{
-					$accessToken = cg_paypal_get_access_token($cg_client,$cg_secret,$isTest);
-				}
-
-                if($accessToken!='error' && $accessToken!='no-internet'){
-                    echo '###cgkeytrue###';
-                }else{
-                    echo '###cgkeyfalse###';
-                }
-
-            } else {
-                echo "<div id='cgSaveCategoriesCouldNotBeChanged'><h2>MISSINGRIGHTS<br>This area can be edited only as administrator, editor or author.</h2></div>";
-                exit();
-            }
-
-            exit();
-        } else {
+        if (!defined('DOING_AJAX') || !DOING_AJAX) {
             exit();
         }
+
+        cg_require_global_settings_access();
+        cg_check_nonce();
+        contest_gal1ery_db_check();
+
+        $isTest = (
+            isset($_POST['cg_test_env']) &&
+            !is_array($_POST['cg_test_env']) &&
+            intval($_POST['cg_test_env']) === 1
+        );
+        $cg_client = (
+            isset($_POST['cg_client']) &&
+            !is_array($_POST['cg_client'])
+        ) ? sanitize_text_field(wp_unslash($_POST['cg_client'])) : '';
+        $cg_secret = (
+            isset($_POST['cg_secret']) &&
+            !is_array($_POST['cg_secret'])
+        ) ? sanitize_text_field(wp_unslash($_POST['cg_secret'])) : '';
+
+        if($cg_secret === ''){// cause without secret an access token will be at least generated, but can not be used for further requests
+            $accessToken='error';
+        }else{
+            $accessToken = cg_paypal_get_access_token($cg_client,$cg_secret,$isTest);
+        }
+
+        if($accessToken!='error' && $accessToken!='no-internet'){
+            echo '###cgkeytrue###';
+        }else{
+            echo '###cgkeyfalse###';
+        }
+
+        exit();
     }
 }
 // sort files ---- END
@@ -1471,45 +1501,41 @@ add_action('wp_ajax_post_cg_test_stripe_keys', 'post_cg_test_stripe_keys');
 if (!function_exists('post_cg_test_stripe_keys')) {
     function post_cg_test_stripe_keys()
     {
-        contest_gal1ery_db_check();
-
-        if (defined('DOING_AJAX') && DOING_AJAX) {
-
-            $user = wp_get_current_user();
-
-            if (
-                is_super_admin($user->ID) ||
-                in_array('administrator', (array)$user->roles) ||
-                in_array('editor', (array)$user->roles) ||
-                in_array('author', (array)$user->roles)
-            ) {
-
-                $cg_client = sanitize_text_field($_GET['cg_client']);
-                $cg_secret = sanitize_text_field($_GET['cg_secret']);
-
-                $tokenError = '';
-
-				if(empty($cg_client) || empty($cg_secret)){// cause without secret an access token will be at least generated, but can not be used for further requests
-					$tokenError='client or secret not provided';
-				}else{
-					$tokenError = cg_test_stripe_keys($cg_client,$cg_secret);
-				}
-
-                if(!empty($tokenError)){
-	                echo '###cgmessage###'.$tokenError.'###cgmessage###';
-                }else{
-	                echo '###cgkeytrue###';
-                }
-
-            } else {
-                echo "<div id='cgSaveCategoriesCouldNotBeChanged'><h2>MISSINGRIGHTS<br>This area can be edited only as administrator, editor or author.</h2></div>";
-                exit();
-            }
-
-            exit();
-        } else {
+        if (!defined('DOING_AJAX') || !DOING_AJAX) {
             exit();
         }
+
+        cg_require_global_settings_access();
+        cg_check_nonce();
+        contest_gal1ery_db_check();
+
+        $isTest = (
+            isset($_POST['cg_test_env']) &&
+            !is_array($_POST['cg_test_env']) &&
+            intval($_POST['cg_test_env']) === 1
+        );
+        $cg_client = (
+            isset($_POST['cg_client']) &&
+            !is_array($_POST['cg_client'])
+        ) ? sanitize_text_field(wp_unslash($_POST['cg_client'])) : '';
+        $cg_secret = (
+            isset($_POST['cg_secret']) &&
+            !is_array($_POST['cg_secret'])
+        ) ? sanitize_text_field(wp_unslash($_POST['cg_secret'])) : '';
+
+        if($cg_client === '' || $cg_secret === ''){// cause without secret an access token will be at least generated, but can not be used for further requests
+            $tokenError='client or secret not provided';
+        }else{
+            $tokenError = cg_test_stripe_keys($cg_client,$cg_secret);
+        }
+
+        if(!empty($tokenError)){
+            echo '###cgmessage###'.$tokenError.'###cgmessage###';
+        }else{
+            echo '###cgkeytrue###';
+        }
+
+        exit();
     }
 }
 // sort files ---- END
@@ -1521,6 +1547,8 @@ add_action('wp_ajax_post_cg_shortcode_interval_conf', 'post_cg_shortcode_interva
 if (!function_exists('post_cg_shortcode_interval_conf')) {
     function post_cg_shortcode_interval_conf()
     {
+        cg_require_backend_access();
+
         contest_gal1ery_db_check();
 
         $isBackendCall = true;
@@ -1567,6 +1595,7 @@ add_action('wp_ajax_post_cg_show_paypal_api_response', 'post_cg_show_paypal_api_
 if (!function_exists('post_cg_show_paypal_api_response')) {
     function post_cg_show_paypal_api_response()
     {
+        cg_require_backend_access();
 
         contest_gal1ery_db_check();
 
@@ -1659,6 +1688,7 @@ if(!function_exists('post_cg_set_for_paypal_sell')){
 add_action( 'wp_ajax_post_cg_download_original_source_for_ecommerce_sale', 'post_cg_download_original_source_for_ecommerce_sale' );
 if(!function_exists('post_cg_download_original_source_for_ecommerce_sale')){
     function post_cg_download_original_source_for_ecommerce_sale() {
+        cg_require_backend_access();
 
         $_POST = cg1l_sanitize_post($_POST);
 
@@ -1700,58 +1730,24 @@ if(!function_exists('post_cg_download_original_source_for_ecommerce_sale')){
     }
 }
 
-// set for paypal sell
-add_action( 'wp_ajax_post_cg_paypal_invoicing', 'post_cg_paypal_invoicing' );
-if(!function_exists('post_cg_paypal_invoicing')){
-    function post_cg_paypal_invoicing() {
-
-        $_POST = cg1l_sanitize_post($_POST);
-
-        contest_gal1ery_db_check();
-
-        $isBackendCall = true;
-        $isAjaxCall = true;
-
-        $isAjaxCategoriesCall = true;
-
-        global $wp_version;
-        $sanitize_textarea_field = ($wp_version<4.7) ? 'sanitize_text_field' : 'sanitize_textarea_field';
-
-        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-
-            $user = wp_get_current_user();
-
-            if (
-                is_super_admin($user->ID) ||
-                in_array( 'administrator', (array) $user->roles ) ||
-                in_array( 'editor', (array) $user->roles ) ||
-                in_array( 'author', (array) $user->roles )
-            ) {
-
-                cg_get_paypal_data();
-
-              die;
-
-            }else{
-                echo "MISSINGRIGHTS - This area can be edited only as administrator, editor or author.";
-                exit();
-            }
-
-            exit();
-        }
-        else {
-            exit();
-        }
-    }
-}
-// set for paypal sell --- END
-
 // check nickname
 add_action( 'wp_ajax_post_cg_check_nickname_edit_profile', 'post_cg_check_nickname_edit_profile' );
 if(!function_exists('post_cg_check_nickname_edit_profile')){
     function post_cg_check_nickname_edit_profile() {
 
         $_POST = cg1l_sanitize_post($_POST);
+        $cg_user_id = (!empty($_POST['cg_user_id']) && !is_array($_POST['cg_user_id'])) ? absint($_POST['cg_user_id']) : 0;
+
+        if (
+            empty($cg_user_id) ||
+            !current_user_can('edit_user', $cg_user_id) ||
+            check_ajax_referer('update-user_'.$cg_user_id, '_wpnonce', false) === false
+        ) {
+            status_header(403);
+            echo 'do-nothing';
+            die;
+        }
+
         contest_gal1ery_db_check();
 
         $isBackendCall = true;
@@ -1769,8 +1765,6 @@ if(!function_exists('post_cg_check_nickname_edit_profile')){
             if($hasUserGroupAllowedToEdit){
 
                 $nickname = sanitize_text_field($_POST['nickname']);
-                $cg_user_id = absint($_POST['cg_user_id']);
-
                 global $wpdb;
 
                 $table_usermeta = $wpdb->prefix . "usermeta";
@@ -1806,12 +1800,21 @@ if(!function_exists('post_cg_backend_image_upload')){
         $tablename = $wpdb->base_prefix . "contest_gal1ery";
 
         $_POST = cg1l_sanitize_post($_POST);
+        $user = wp_get_current_user();
+        $WpUserId = (!empty($_POST['user_id']) && !is_array($_POST['user_id'])) ? absint($_POST['user_id']) : 0;
+
+        if (
+            empty($WpUserId) ||
+            !current_user_can('edit_user', $WpUserId) ||
+            check_ajax_referer('update-user_'.$WpUserId, '_wpnonce', false) === false
+        ) {
+            status_header(403);
+            die('do-nothing');
+        }
+
         if(!empty($_FILES) AND !empty($_FILES['cg_input_image_upload_file']) AND !empty($_FILES['cg_input_image_upload_file']['tmp_name']) AND !empty($_FILES['cg_input_image_upload_file']['tmp_name'][0])){
             $_FILES = cg1l_sanitize_files($_FILES,'cg_input_image_upload_file',2100000);
         }
-
-        $user = wp_get_current_user();
-        $WpUserId  = absint($_POST['user_id']);
 
         $isAdministrator = false;
 
@@ -1820,7 +1823,8 @@ if(!function_exists('post_cg_backend_image_upload')){
         }
 
         if($user->ID != $WpUserId && $isAdministrator != true){// another user or not administrator user can't edit profile image
-            return;
+            status_header(403);
+            die('do-nothing');
         }
 
         if(!empty($_POST['cg_input_image_upload_file_to_delete_wp_id'])){// then image must be removed!

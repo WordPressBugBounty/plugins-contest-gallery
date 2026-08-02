@@ -123,7 +123,7 @@ if(true){
                             <option value='DD.MM.YYYY' >DD.MM.YYYY</option>
                             <option value='MM.DD.YYYY' >MM.DD.YYYY</option>
                             </select><br/>
-    HEREDOC;
+HEREDOC;
 
     $enterKey = '';
 

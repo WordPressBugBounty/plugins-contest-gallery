@@ -1704,18 +1704,8 @@ if(!empty($cgFrontendPassthroughQueryArgs)){
       </textarea>';
 
         if($options['general']['ShowOnlyUsersVotes']==1 && $options['general']['AllowRating'] >= 1){
-            if($options['general']['AllowRating']==2){
                 foreach ($dataSlider as $realId => $value){
-                    if(!empty($votedUserPids[$realId])){
-                        $dataSlider[$realId][1] = cg1l_count_votes_for_an_entry($realId,$votedUserPids,$options);
-                    }
-                }
-            }else{
-                foreach ($dataSlider as $realId => $value){
-                    if(!in_array($realId,$votedUserPids)!==false){
-                        $dataSlider[$realId][1] = cg1l_count_votes_for_an_entry($realId,$votedUserPids,$options);
-                    }
-                }
+                $dataSlider[$realId][1] = cg1l_get_rating_display_value(array('id' => $realId),$options,$votedUserPids);
             }
         }
 

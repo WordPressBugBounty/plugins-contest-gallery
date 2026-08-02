@@ -35,6 +35,11 @@ wp_enqueue_script( 'jquery-ui-sortable' );
         'cg_rate_v10_fiveStar_ajax_url' => admin_url( 'admin-ajax.php' )
     ));
 
+// Reihenfolge beachten
+    wp_localize_script( 'cg_v10_js_cg_gallery', 'post_cg_rate_v10_average_wordpress_ajax_script_function_name', array(
+        'cg_rate_v10_average_ajax_url' => admin_url( 'admin-ajax.php' )
+    ));
+
     wp_localize_script( 'cg_v10_js_cg_gallery', 'post_cg_gallery_form_upload_wordpress_ajax_script_function_name', array(
         'cg_gallery_form_upload_ajax_url' => admin_url( 'admin-ajax.php' )
     ));

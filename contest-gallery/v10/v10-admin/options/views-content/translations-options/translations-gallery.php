@@ -142,6 +142,26 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
+                        <p>$language_RatingAverageDescend$cgShortcodeCopy<span class="cg-info-icon">info</span><span class="cg-info-container">For average rating</span></p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input type="text" name="translations[$l_RatingAverageDescend]" maxlength="100" value="$translations[$l_RatingAverageDescend]">
+                    </div>
+                </div>
+        </div>
+         <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+                    <div class='cg_view_option_title'>
+                        <p>$language_RatingAverageAscend$cgShortcodeCopy<span class="cg-info-icon">info</span><span class="cg-info-container">For average rating</span></p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input type="text" name="translations[$l_RatingAverageAscend]" maxlength="100" value="$translations[$l_RatingAverageAscend]">
+                    </div>
+                </div>
+        </div>
+        <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+                    <div class='cg_view_option_title'>
                         <p>$language_RatingSumDescend$cgShortcodeCopy<span class="cg-info-icon">info</span><span class="cg-info-container">For multiple stars rating</span></p>
                     </div>
                     <div class='cg_view_option_input'>
@@ -272,6 +292,26 @@ echo <<<HEREDOC
                     </div>
                     <div class='cg_view_option_input'>
                         <input type="text" name="translations[$l_YourVote]" maxlength="100" value="$translations[$l_YourVote]">
+                    </div>
+                </div>
+        </div>
+         <div class='cg_view_options_row' >
+                <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+                    <div class='cg_view_option_title'>
+                        <p>$language_Rating$cgShortcodeCopy</p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input type="text" name="translations[$l_Rating]" maxlength="100" value="$translations[$l_Rating]">
+                    </div>
+                </div>
+        </div>
+         <div class='cg_view_options_row' >
+                <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+                    <div class='cg_view_option_title'>
+                        <p>$language_Ratings$cgShortcodeCopy</p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input type="text" name="translations[$l_Ratings]" maxlength="100" value="$translations[$l_Ratings]">
                     </div>
                 </div>
         </div>

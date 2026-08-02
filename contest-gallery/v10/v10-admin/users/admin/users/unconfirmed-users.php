@@ -51,7 +51,7 @@ if (!empty($cgUserNameEmail)) {
     LIMIT $start, $step
 ",
         '%' . $cgUserNameEmail . '%',  // for first LIKE
-        '%' . $cgUserNameEmail . '%',  // for second LIKE
+        '%' . $cgUserNameEmail . '%'  // for second LIKE
     );
     $users = $wpdb->get_results($sql);
     $sqlCount = $wpdb->prepare("

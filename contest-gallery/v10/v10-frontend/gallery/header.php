@@ -183,12 +183,22 @@ if(true){
                                     echo '<option value="rate-asc"  class="cg_rating_ascend" >'.$language_RatingAscend.'</option>';
                                 }
 
-                                if(in_array('rate-sum-desc',$AllowSortOptionsArray)){
-                                    echo '<option value="rate-sum-desc" class="cg_rating_descend_sum" '.$selected.'>'.$language_RatingSumDescend.'</option>';
-                                }
+                                if(!empty($options['general']['AllowRatingAverage'])){
+                                    if(in_array('rate-average-desc',$AllowSortOptionsArray) || in_array('rate-sum-desc',$AllowSortOptionsArray)){
+                                        echo '<option value="rate-average-desc" class="cg_rating_descend_average" '.$selected.'>'.$language_RatingAverageDescend.'</option>';
+                                    }
 
-                                if(in_array('rate-sum-asc',$AllowSortOptionsArray)){
-                                    echo '<option value="rate-sum-asc"  class="cg_rating_ascend_sum" '.$selected.'>'.$language_RatingSumAscend.'</option>';
+                                    if(in_array('rate-average-asc',$AllowSortOptionsArray) || in_array('rate-sum-asc',$AllowSortOptionsArray)){
+                                        echo '<option value="rate-average-asc" class="cg_rating_ascend_average" '.$selected.'>'.$language_RatingAverageAscend.'</option>';
+                                    }
+                                }else{
+                                    if(in_array('rate-sum-desc',$AllowSortOptionsArray)){
+                                        echo '<option value="rate-sum-desc" class="cg_rating_descend_sum" '.$selected.'>'.$language_RatingSumDescend.'</option>';
+                                    }
+
+                                    if(in_array('rate-sum-asc',$AllowSortOptionsArray)){
+                                        echo '<option value="rate-sum-asc"  class="cg_rating_ascend_sum" '.$selected.'>'.$language_RatingSumAscend.'</option>';
+                                    }
                                 }
 
                             }

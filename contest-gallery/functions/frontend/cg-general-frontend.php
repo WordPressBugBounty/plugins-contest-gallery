@@ -501,6 +501,245 @@ if (!function_exists('cg1l_get_ecommerce_raw_data_access_hash')) {
     }
 }
 
+if (!function_exists('cg1l_get_upload_access_hash')) {
+    function cg1l_get_upload_access_hash($galleryId, $orderItemId = 0, $orderIdHash = '')
+    {
+        $galleryId = absint($galleryId);
+        $orderItemId = absint($orderItemId);
+        $orderIdHash = sanitize_text_field((string)$orderIdHash);
+
+        return cg_hash_function('---cg1lUpload---'.$galleryId.'---'.$orderItemId.'---'.$orderIdHash);
+    }
+}
+
+if (!function_exists('cg1l_validate_upload_access_hash')) {
+    function cg1l_validate_upload_access_hash($providedHash, $galleryId, $orderItemId = 0, $orderIdHash = '')
+    {
+        $providedHash = (string)$providedHash;
+        if($providedHash === ''){
+            return false;
+        }
+
+        $expectedHash = cg1l_get_upload_access_hash($galleryId,$orderItemId,$orderIdHash);
+
+        return cg_hash_equals((string)$expectedHash,$providedHash);
+    }
+}
+
+if (!function_exists('cg1l_get_order_upload_entitlement')) {
+    function cg1l_get_order_upload_entitlement($orderItem, $fallbackEcommerceEntry = false)
+    {
+        $result = array(
+            'valid' => false,
+            'upload_gallery' => 0,
+            'max_uploads' => 0,
+            'max_uploads_value' => '',
+            'is_unlimited' => false
+        );
+
+        if(!is_object($orderItem)){
+            return $result;
+        }
+
+        $rawData = (!empty($orderItem->RawData)) ? maybe_unserialize($orderItem->RawData) : array();
+        if(is_object($rawData)){
+            $rawData = get_object_vars($rawData);
+        }
+
+        $ecommerceData = array();
+        if(is_array($rawData) && isset($rawData['ecommerceData'])){
+            $ecommerceData = $rawData['ecommerceData'];
+            if(is_object($ecommerceData)){
+                $ecommerceData = get_object_vars($ecommerceData);
+            }
+        }
+        if(!is_array($ecommerceData)){
+            $ecommerceData = array();
+        }
+
+        $hasSnapshotUploadGallery = array_key_exists('UploadGallery',$ecommerceData);
+        $hasSnapshotMaxUploads = array_key_exists('MaxUploads',$ecommerceData);
+
+        if($hasSnapshotUploadGallery){
+            $result['upload_gallery'] = absint($ecommerceData['UploadGallery']);
+        }elseif(is_object($fallbackEcommerceEntry) && isset($fallbackEcommerceEntry->UploadGallery)){
+            $result['upload_gallery'] = absint($fallbackEcommerceEntry->UploadGallery);
+        }elseif(is_array($fallbackEcommerceEntry) && isset($fallbackEcommerceEntry['UploadGallery'])){
+            $result['upload_gallery'] = absint($fallbackEcommerceEntry['UploadGallery']);
+        }
+
+        $maxUploadsValue = '';
+        if($hasSnapshotMaxUploads){
+            $maxUploadsValue = $ecommerceData['MaxUploads'];
+        }elseif(is_object($fallbackEcommerceEntry) && isset($fallbackEcommerceEntry->MaxUploads)){
+            $maxUploadsValue = $fallbackEcommerceEntry->MaxUploads;
+        }elseif(is_array($fallbackEcommerceEntry) && isset($fallbackEcommerceEntry['MaxUploads'])){
+            $maxUploadsValue = $fallbackEcommerceEntry['MaxUploads'];
+        }
+
+        $maxUploadsValue = strtolower(trim((string)$maxUploadsValue));
+        if($maxUploadsValue === 'unlimited'){
+            $result['is_unlimited'] = true;
+            $result['max_uploads_value'] = 'unlimited';
+        }else{
+            $result['max_uploads'] = absint($maxUploadsValue);
+            $result['max_uploads_value'] = $result['max_uploads'];
+        }
+
+        if(
+            $result['upload_gallery'] > 0 &&
+            ($result['is_unlimited'] || $result['max_uploads'] > 0)
+        ){
+            $result['valid'] = true;
+        }
+
+        return $result;
+    }
+}
+
+if (!function_exists('cg1l_validate_order_upload_context')) {
+    function cg1l_validate_order_upload_context($galleryId, $orderItem, $order, $fallbackEcommerceEntry, $providedHash, $orderCookie, $currentUserCanAccess)
+    {
+        $result = array(
+            'authorized' => false,
+            'code' => 'cg_invalid_order_upload',
+            'upload_gallery' => 0,
+            'max_uploads' => 0,
+            'max_uploads_value' => '',
+            'is_unlimited' => false
+        );
+
+        $galleryId = absint($galleryId);
+        if(
+            $galleryId < 1 ||
+            !is_object($orderItem) ||
+            !is_object($order) ||
+            empty($orderItem->id) ||
+            empty($orderItem->ParentOrder) ||
+            empty($order->id) ||
+            absint($orderItem->ParentOrder) !== absint($order->id)
+        ){
+            return $result;
+        }
+
+        if(empty($orderItem->IsUpload)){
+            $result['code'] = 'cg_order_item_not_upload';
+            return $result;
+        }
+
+        if(empty($order->IsFullPaid)){
+            $result['code'] = 'cg_order_not_paid';
+            return $result;
+        }
+
+        if(!$currentUserCanAccess){
+            $result['code'] = 'cg_order_user_mismatch';
+            return $result;
+        }
+
+        $orderIdHash = (!empty($order->OrderIdHash)) ? sanitize_text_field((string)$order->OrderIdHash) : '';
+        if($orderIdHash === ''){
+            $result['code'] = 'cg_order_hash_missing';
+            return $result;
+        }
+
+        $entitlement = cg1l_get_order_upload_entitlement($orderItem,$fallbackEcommerceEntry);
+        if(empty($entitlement['valid']) || absint($entitlement['upload_gallery']) !== $galleryId){
+            $result['code'] = 'cg_order_gallery_mismatch';
+            return $result;
+        }
+
+        if(!cg1l_validate_upload_access_hash($providedHash,$galleryId,$orderItem->id,$orderIdHash)){
+            $result['code'] = 'cg_invalid_upload_hash';
+            return $result;
+        }
+
+        $expectedOrderCookie = cg_hash_function('---cg_order---'.$orderIdHash);
+        if(empty($orderCookie) || !cg_hash_equals((string)$expectedOrderCookie,(string)$orderCookie)){
+            $result['code'] = 'cg_invalid_order_cookie';
+            return $result;
+        }
+
+        $result['authorized'] = true;
+        $result['code'] = '';
+        $result['upload_gallery'] = $entitlement['upload_gallery'];
+        $result['max_uploads'] = $entitlement['max_uploads'];
+        $result['max_uploads_value'] = $entitlement['max_uploads_value'];
+        $result['is_unlimited'] = $entitlement['is_unlimited'];
+
+        return $result;
+    }
+}
+
+if (!function_exists('cg1l_get_order_upload_lock_name')) {
+    function cg1l_get_order_upload_lock_name($orderItemId)
+    {
+        global $wpdb;
+
+        $databaseName = (defined('DB_NAME')) ? DB_NAME : '';
+        $sitePrefix = (!empty($wpdb->prefix)) ? $wpdb->prefix : 'wp_';
+        $lockHash = hash('sha256',$databaseName.'|'.$sitePrefix.'|'.absint($orderItemId));
+
+        return 'cg_upload_'.substr($lockHash,0,48);
+    }
+}
+
+if (!function_exists('cg1l_acquire_order_upload_lock')) {
+    function cg1l_acquire_order_upload_lock($orderItemId, $timeout = 5)
+    {
+        global $wpdb;
+
+        $orderItemId = absint($orderItemId);
+        if($orderItemId < 1){
+            return '';
+        }
+
+        $lockName = cg1l_get_order_upload_lock_name($orderItemId);
+        $lockResult = $wpdb->get_var($wpdb->prepare(
+            'SELECT GET_LOCK(%s,%d)',
+            $lockName,
+            max(0,absint($timeout))
+        ));
+
+        return ((string)$lockResult === '1') ? $lockName : '';
+    }
+}
+
+if (!function_exists('cg1l_release_order_upload_lock')) {
+    function cg1l_release_order_upload_lock($lockName)
+    {
+        global $wpdb;
+
+        $lockName = (string)$lockName;
+        if($lockName === ''){
+            return false;
+        }
+
+        $releaseResult = $wpdb->get_var($wpdb->prepare('SELECT RELEASE_LOCK(%s)',$lockName));
+
+        return ((string)$releaseResult === '1');
+    }
+}
+
+if (!function_exists('cg1l_reject_frontend_upload')) {
+    function cg1l_reject_frontend_upload($galleryIdForJs, $message)
+    {
+        $galleryIdForJs = sanitize_text_field((string)$galleryIdForJs);
+        $message = sanitize_text_field((string)$message);
+        ?>
+        <script data-cg-processing="true" data-cg-upload-authorization-failed="true">
+            var gid = <?php echo wp_json_encode($galleryIdForJs); ?>;
+            if(typeof cgJsData !== 'undefined' && cgJsData[gid] && cgJsData[gid].vars && cgJsData[gid].vars.upload){
+                cgJsData[gid].vars.upload.doneUploadFailed = true;
+                cgJsData[gid].vars.upload.failMessage = <?php echo wp_json_encode($message); ?>;
+            }
+        </script>
+        <?php
+        echo esc_html($message);
+        die;
+    }
+}
+
 if (!function_exists('cg1l_include_scripts_reg_pin')) {
     function cg1l_include_scripts_reg_pin()
     {

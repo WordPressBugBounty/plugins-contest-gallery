@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Contest Gallery\n"
 "POT-Creation-Date: 2025-11-30 19:37+0100\n"
-"PO-Revision-Date: 2025-11-30 19:51+0100\n"
+"PO-Revision-Date: 2026-07-25 07:19+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -645,6 +645,14 @@ msgid "Rating quantity ascend"
 msgstr "Bewertungen Anzahl aufsteigend"
 
 #: check-language.php:183
+msgid "Rating average descend"
+msgstr "Bewertungsdurchschnitt absteigend"
+
+#: check-language.php:185
+msgid "Rating average ascend"
+msgstr "Bewertungsdurchschnitt aufsteigend"
+
+#: check-language.php:183
 msgid "Rating sum descend"
 msgstr "Bewertungen Summe absteigend"
 
@@ -1223,12 +1231,6 @@ msgstr ""
 #~ msgid "Contest Gallery - PRO Version"
 #~ msgstr "Contest Gallery - PRO Version"
 
-#~ msgid "Rating average descend"
-#~ msgstr "Bewertungen Durchschnitt absteigend"
-
-#~ msgid "Rating average ascend"
-#~ msgstr "Bewertungen Durchschnitt aufsteigend"
-
 #~ msgid "Same as Billing address"
 #~ msgstr "Identisch mit Rechnungsadresse"
 
@@ -1339,3 +1341,10 @@ msgstr ""
 
 #~ msgid "jdsalkfsajdlkfjdsaf"
 #~ msgstr "2222222222222"
+#: check-language.php
+msgid "rating"
+msgstr "Bewertung"
+
+#: check-language.php
+msgid "ratings"
+msgstr "Bewertungen"

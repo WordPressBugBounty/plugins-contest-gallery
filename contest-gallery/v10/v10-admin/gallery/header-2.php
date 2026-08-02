@@ -3,7 +3,7 @@
 // has to be here
 echo "<div id='cgPdfPreviewGeneration' class='cg_hide' >";
 echo "<input type='hidden' id='cgPdfPreviewsToCreateString' value='$PdfPreviewsToCreateString' >";
-echo "<input type='hidden' id='cgOpenAiKeyOption' value='$OpenAiKey' >";
+echo "<input type='hidden' id='cgOpenAiKeyOption' value='$OpenAiKeyConfigured' >";
 echo "<input type='hidden' id='cgNewWpUploadWhichReplaceForPdfPreview' value='$cgNewWpUploadWhichReplaceForPdfPreview' >";
 echo "<input type='hidden' id='cgWpUploadToReplaceForPdfPreview' value='$cgWpUploadToReplaceForPdfPreview' >";
 echo "<span>PDF preview creation in progress: <span  id='cgPdfPreviewProgress' >50%</span> ...</span><br>";
@@ -403,6 +403,7 @@ $assign_fields_png = plugins_url('/../../../v10/v10-css/assign-fields.png', __FI
 // form start has to be done after get data!!!
 echo "<form id='cgGalleryForm' action='?page=".cg_get_version()."/index.php&option_id=$GalleryID&step=$step&start=$start&edit_gallery=true' method='POST'>";
 
+echo "<input type='hidden' id='cgNonce' name='cg_nonce' value='".esc_attr(wp_create_nonce('cg_nonce'))."'>";
 echo "<input type='hidden' id='cgPdfPreviewBackend' value='$PdfPreviewBackend'>";
 echo "<input type='hidden' id='cgWpUploadToReplace' name='cgWpUploadToReplace' value=''>";
 echo "<input type='hidden' id='cgNewWpUploadWhichReplace' name='cgNewWpUploadWhichReplace' value=''>";
@@ -483,26 +484,24 @@ if($Manipulate==1){
             <option value="rating_asc_with_manip" id="cg_rating_asc_with_manip">Rating quantity (amount of votes) ascend with manipulation</option>';
 }
 
-// since point based system sorting by average is deprecated
-/*if(($AllowRating==1 OR ($AllowRating >= 12 AND $AllowRating <=20)) && $checkTablenameIPentries>=1){
+if(!empty($AllowRatingAverage) && ($AllowRating >= 12 && $AllowRating <=20)){
     $orderByAverage = '<option value="rating_desc_average" id="cg_rating_desc_average">Rating average descend without manipulation (longer loading possible if many images or votes)</option>
         <option value="rating_asc_average" id="cg_rating_asc_average">Rating average ascend without manipulation (longer loading possible if many images or votes)</option>';
-}*/
+}
 
-// since point based system sorting by average is deprecated
-/*if(($AllowRating==1 OR ($AllowRating >= 12 AND $AllowRating <=20)) && $Manipulate==1 && $checkTablenameIPentries>=1){
+if(!empty($AllowRatingAverage) && ($AllowRating >= 12 && $AllowRating <=20) && $Manipulate==1){
     $orderByAverageWithManip = '<option value="rating_desc_average_with_manip" id="cg_rating_desc_average_with_manip">Rating average descend with manipulation (longer loading possible if many images or votes)</option>
         <option value="rating_asc_average_with_manip" id="cg_rating_asc_average_with_manip">Rating average ascend with manipulation (longer loading possible if many images or votes)</option>';
-}*/
+}
 
 $orderBySum = '';
 $orderBySumWithManip = '';
 
-if(($AllowRating==1 OR ($AllowRating >= 12 AND $AllowRating <=20)) && $checkTablenameIPentries>=1){
+if(empty($AllowRatingAverage) && ($AllowRating==1 OR ($AllowRating >= 12 AND $AllowRating <=20)) && $checkTablenameIPentries>=1){
     $orderBySum = '<option value="rating_desc_sum" id="cg_rating_desc_sum">Rating sum descend without manipulation (longer loading possible if many images or votes)</option>
         <option value="rating_asc_sum" id="cg_rating_asc_sum">Rating sum ascend without manipulation (longer loading possible if many images or votes)</option>';
 }
-if(($AllowRating==1 OR ($AllowRating >= 12 AND $AllowRating <=20)) && $Manipulate==1 && $checkTablenameIPentries>=1){
+if(empty($AllowRatingAverage) && ($AllowRating==1 OR ($AllowRating >= 12 AND $AllowRating <=20)) && $Manipulate==1 && $checkTablenameIPentries>=1){
     $orderBySumWithManip = '<option value="rating_desc_sum_with_manip" id="cg_rating_desc_sum_with_manip">Rating sum descend with manipulation (longer loading possible if many images or votes)</option>
         <option value="rating_asc_sum_with_manip" id="cg_rating_asc_sum_with_manip">Rating sum ascend with manipulation (longer loading possible if many images or votes)</option>';
 }
@@ -634,6 +633,8 @@ HEREDOC;
 		<optgroup label="General" id="cgOrderSelectGeneral">
             <option value="date_desc" id="cg_date_desc">Date descend</option>
             <option value="date_asc" id="cg_date_asc">Date ascend</option>
+            $orderByAverage
+            $orderByAverageWithManip
             $orderBySum
             $orderBySumWithManip
             <option value="rating_desc" id="cg_rating_desc">Rating quantity (amount of votes) descend without manipulation</option>
@@ -690,9 +691,20 @@ echo $heredoc;
         }
 
         if(cgOrder_BG){
-            // fallback to go sure if old order options are activated
-            if(cgOrder_BG=='rating_desc_average' || cgOrder_BG=='rating_asc_average' || cgOrder_BG=='rating_desc_average_with_manip' || cgOrder_BG=='rating_asc_average_with_manip'){
+            var isCgOrderAvailable = false;
+
+            if(cgOrderSelect){
+                for(var cgOrderOptionIndex = 0;cgOrderOptionIndex < cgOrderSelect.options.length;cgOrderOptionIndex++){
+                    if(cgOrderSelect.options[cgOrderOptionIndex].value === cgOrder_BG){
+                        isCgOrderAvailable = true;
+                        break;
+                    }
+                }
+            }
+
+            if(!isCgOrderAvailable){
                 cgOrder_BG = 'date_desc';
+                localStorage.setItem('cgOrder_BG_'+gid, cgOrder_BG);
             }
             if(cgOrderSelect){
                 cgOrderSelect.value = cgOrder_BG;

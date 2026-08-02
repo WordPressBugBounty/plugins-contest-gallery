@@ -661,6 +661,42 @@ if(!function_exists('cg_require_backend_access')){
 	}
 }
 
+if(!function_exists('cg_user_can_manage_global_settings')){
+	function cg_user_can_manage_global_settings(){
+		return is_user_logged_in() && current_user_can('manage_options');
+	}
+}
+
+if(!function_exists('cg_die_missing_global_settings_access')){
+	function cg_die_missing_global_settings_access(){
+		status_header(403);
+		echo "<h2>MISSINGRIGHTS<br>This area can be edited only by users with the manage_options permission.</h2>";
+		die;
+	}
+}
+
+if(!function_exists('cg_require_global_settings_access')){
+	function cg_require_global_settings_access(){
+		if(!cg_user_can_manage_global_settings()){
+			cg_die_missing_global_settings_access();
+		}
+	}
+}
+
+if(!function_exists('cg_get_global_secret_post_value')){
+	function cg_get_global_secret_post_value($currentValue,$fieldName){
+		if(!cg_user_can_manage_global_settings()){
+			return $currentValue;
+		}
+
+		if(!isset($_POST[$fieldName]) || is_array($_POST[$fieldName])){
+			return $currentValue;
+		}
+
+		return trim(sanitize_text_field(wp_unslash($_POST[$fieldName])));
+	}
+}
+
 if(!function_exists('cg_get_default_registry_user_role')){
 	function cg_get_default_registry_user_role($galleryDbVersion = 14){
 		return (intval($galleryDbVersion) >= 14) ? 'contest_gallery_user_since_v14' : 'contest_gallery_user';
@@ -1249,6 +1285,20 @@ if(!function_exists('cg_check_headers_sent')){
 
 if(!function_exists('cg_check_if_database_tables_ok')){
 	function cg_check_if_database_tables_ok(){
+
+		if(function_exists('cg_database_install_is_pending') && cg_database_install_is_pending()){
+			if(!cg_database_install_current_user_can_complete()){
+				echo '<b>Contest Gallery is still being prepared.</b><br>Please ask a user who is allowed to activate plugins to open Contest Gallery, or try again shortly.';
+				die;
+			}
+
+			$pending = cg_database_install_get_pending();
+			$result = $pending ? cg_complete_database_install($pending['token']) : array('status'=>'complete');
+			if(empty($result['status']) || $result['status']!=='complete'){
+				echo '<div id="cgDatabaseInstallationPendingResponse" data-cg-database-installation-pending-response="1"><b>Contest Gallery setup is still in progress.</b><br>Please wait a moment. This request will continue automatically.</div>';
+				die;
+			}
+		}
 
 		global $wpdb;
 		$tablename = $wpdb->prefix . "contest_gal1ery";

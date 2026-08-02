@@ -20,7 +20,9 @@ if(!function_exists('cg_options_tabcontent_v10')){
         wp_enqueue_style( 'cg_wp_styles_v10', plugins_url('/v10-css/wp-styles.css', __FILE__), false , cg_get_version_for_scripts() );
         wp_enqueue_style( 'cg_options_style_v10', plugins_url('/v10-css/cg_options_style.css', __FILE__), false , cg_get_version_for_scripts() );
 
-        wp_enqueue_style( 'cg_backend_gallery', plugins_url('/v10-css/backend/cg_backend_gallery.css', __FILE__), false, cg_get_version_for_scripts() );
+        $cgBackendGalleryCssPath = __DIR__ . '/v10-css/backend/cg_backend_gallery.css';
+        $cgBackendGalleryCssModifiedTime = file_exists($cgBackendGalleryCssPath) ? filemtime($cgBackendGalleryCssPath) : 0;
+        wp_enqueue_style( 'cg_backend_gallery', plugins_url('/v10-css/backend/cg_backend_gallery.css', __FILE__), false, cg_get_version_for_scripts() . '-' . $cgBackendGalleryCssModifiedTime );
         wp_enqueue_style( 'cg_main_menu_css', plugins_url('/v10-css/backend/cg_main_menu.css', __FILE__), false, cg_get_version_for_scripts() );
 
         if (!empty($_GET['users_management'])) {

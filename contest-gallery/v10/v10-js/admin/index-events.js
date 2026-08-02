@@ -86,6 +86,24 @@ jQuery(document).ready(function($){
         }
     };
 
+    $(document).on('submit','.cg_load_backend_create_gallery',function (e) {
+        var $form = $(this);
+        var $container = $('#cgDatabaseInstallationContainer');
+        if(
+            $container.length &&
+            $container.attr('data-cg-pending') === '1' &&
+            !$form.data('cg-database-install-complete')
+        ){
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            cgJsClassAdmin.index.functions.showDatabaseInstallation($form,300);
+        }
+    });
+
+    $(document).on('click','#cgDatabaseInstallationReload',function () {
+        window.location.reload();
+    });
+
     $(document).on('submit','.cg_load_backend_submit',function (e) {
         e.preventDefault();
         $(window).scrollTop(0);

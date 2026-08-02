@@ -2,7 +2,7 @@
 /*
 Plugin Name: Contest Gallery
 Description: Upload form, files, photos and videos upload contest gallery plugin for WordPress. Create upload forms for entries with or without file/image upload. Create user registration form. Create login form. Create responsive galleries and allow to vote for any kind of entries. Sell entries via PayPal or Stripe API. Create or edit images via OpenAI API.
-Version: 30.0.7
+Version: 31.0.0
 Author: Contest Gallery
 Plugin URI: https://www.contest-gallery.com
 Author URI: https://www.contest-gallery.com
@@ -82,6 +82,7 @@ if(!function_exists('cg_network_free_deactivation_hook')){
     function cg_network_free_deactivation_hook(){
         if(function_exists('wp_clear_scheduled_hook')){
             wp_clear_scheduled_hook('cg_network_auto_update_event');
+            wp_clear_scheduled_hook('cg_complete_database_install_event');
         }
     }
 }
@@ -116,12 +117,18 @@ include('functions/general/cg-general-functions.php');
 include('functions/general/network/cg-network-export.php');
 include('functions/general/cgl1-texts.php');
 include('functions/general/cg-contest-gallery-plugin-page-functions.php');
+include('functions/frontend/render/cg1l-format-voting-comment-number.php');
+include('functions/frontend/render/rating/cg1l-rating-types.php');
+include('functions/frontend/render/rating/cg1l-average-rating.php');
 include('functions/frontend/render/cg1l-create-rating-comments-div.php');
 include('functions/frontend/render/cg1l-render-frontend-elements.php');
 include('functions/frontend/render/comment/cg1l-render-entry-comment.php');
 include('functions/frontend/render/rating/cg1l-render-entry-rating-one-star.php');
+include('functions/frontend/render/rating/cg1l-render-entry-rating-multiple-stars.php');
 include('functions/frontend/render/rating/cg1l-render-entry-rating-five-stars.php');
+include('functions/frontend/render/rating/cg1l-render-entry-rating-average.php');
 include('functions/frontend/render/rating/cg1l-render-gallery-rating.php');
+include('functions/frontend/render/rating/cg1l-render-gallery-rating-average.php');
 include('functions/frontend/cg-create-noscript-html.php');
 include('functions/frontend/prepare/cg-prepare-data-for-frontend.php');
 include('functions/frontend/prepare/cg-prepare-urls-data.php');
@@ -237,27 +244,6 @@ if (!empty($_POST['contest_gal1ery_post_create_data_csv']) && !empty($_GET['edit
 
 }
 
-if (!empty($_POST['cg_create_user_data_csv_new_export']) && !empty($_GET['users_management']) && !empty($_GET['option_id']) && ($_GET['page'] == 'contest-gallery/index.php' OR $_GET['page'] == 'contest-gallery-pro/index.php')) {
-    if (is_admin() && (!defined('DOING_AJAX') || !DOING_AJAX) && ($_GET['page'] == 'contest-gallery/index.php' OR $_GET['page'] == 'contest-gallery-pro/index.php')) {
-
-        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
-        if (is_plugin_active(cg_get_version() . '/index.php') == false) {
-            echo "Please contact site administrator if you see this, code 857";
-            exit();
-        }
-
-        include('v10/v10-admin/export/export-user-data-registry-new-export.php');
-        add_action('init', 'cg_user_data_registry_csv_new_export');
-        do_action('cg_user_data_registry_csv_new_export');
-
-        include('v10/v10-admin/export/controller.php');
-        add_action('init', 'cg_remove_not_required_coded_csvs');
-        do_action('cg_remove_not_required_coded_csvs');
-
-    }
-
-}
-
 if ((!empty($_POST['cg_ecommerce_export_orders'])) && ($_GET['page'] == 'contest-gallery/index.php' or $_GET['page'] == 'contest-gallery-pro/index.php')) {
     if (is_admin() && (!defined('DOING_AJAX') || !DOING_AJAX) && ($_GET['page'] == 'contest-gallery/index.php' or $_GET['page'] == 'contest-gallery-pro/index.php')) {
 
@@ -335,7 +321,8 @@ include(__DIR__ . '/shortcodes/cg_google_sign_in.php');
 
 include('functions/general/sql/contest-gallery-create-tables.php');
 
-register_activation_hook(__FILE__, 'contest_gal1ery_db_check');
+register_activation_hook(__FILE__, 'cg_database_install_activation');
+register_deactivation_hook(__FILE__, 'cg_database_install_deactivation');
 
 include('functions/general/contest-gallery-db-version-check.php');
 
@@ -470,8 +457,10 @@ include('functions/backend/render/openai/cg-openai-containers.php');
 include('functions/backend/render/cg-attach-to-another-user-container.php');
 include('functions/backend/render/cg-sort-gallery-files-container.php');
 include('functions/backend/render/cg-backend-background-drop.php');
+include('functions/backend/render/cg-database-installation-container.php');
 include('functions/backend/render/cg-backend-gallery-general.php');
 include('functions/backend/render/cg-backend-gallery-dynamic-message.php');
+include('functions/backend/render/cg-user-data-export-container.php');
 include('functions/backend/render/cg-backend-render-go-top-options.php');
 include('functions/backend/render/cg-total-images-shown-in-frontend-zero.php');
 include('functions/backend/render/cg-add-fields-pressed-after-content-modification.php');
@@ -588,7 +577,9 @@ if (!function_exists('contest_gallery_action')) {
             cg_create_nonce();
             cg_create_version_input();
             cg_backend_gallery_dynamic_message();
+            cg_user_data_export_container();
             cg_backend_background_drop();
+            cg_database_installation_container();
             cg_backend_render_go_to_options();
             cg_network_render_admin_notice();
             cg_backend_render_backend_loader();
@@ -917,18 +908,22 @@ if(!function_exists('cg_download_logs')){
                 if(!file_exists($fileUrl)){
                     echo "Log file not found";die;
                 }else{
+	                $logFileContents = file_get_contents($fileUrl);
+	                $sanitizedLogFileContents = cg_ecommerce_get_sanitized_payment_log_contents($logFileContents);
+	                if($sanitizedLogFileContents === false){
+		                echo "Log file could not be sanitized";die;
+	                }
                     //Define header information
                     header('Content-Description: File Transfer');
                     header('Content-Type: application/octet-stream');
                     header("Cache-Control: no-cache, must-revalidate");
                     header("Expires: 0");
                     header('Content-Disposition: attachment; filename="'.$fileNameToShow.'"');
-                    header('Content-Length: ' . filesize($fileUrl));
+                    header('Content-Length: ' . strlen($sanitizedLogFileContents));
                     header('Pragma: public');
 //Clear system output buffer
                     flush();
-//Read the size of the file
-                    readfile($fileUrl);
+                    echo $sanitizedLogFileContents;
 //Terminate from the script
                     die();
                 }

@@ -120,22 +120,8 @@ if(isset($_POST['cg_order'])){
     $order = 'date_desc';
 }
 
-// since point based system sorting by average is deprecated
-/*if(($AllowRating==1 OR ($AllowRating >= 12 AND $AllowRating <=20)) && $checkTablenameIPentries>=1){
-    $orderByAverage = '<option value="rating_desc_average" id="cg_rating_desc_average">Rating average descend without manipulation (longer loading possible if many images or votes)</option>
-        <option value="rating_asc_average" id="cg_rating_asc_average">Rating average ascend without manipulation (longer loading possible if many images or votes)</option>';
-}*/
-
-// since point based system sorting by average is deprecated
-/*if(($AllowRating==1 OR ($AllowRating >= 12 AND $AllowRating <=20)) && $Manipulate==1 && $checkTablenameIPentries>=1){
-    $orderByAverageWithManip = '<option value="rating_desc_average_with_manip" id="cg_rating_desc_average_with_manip">Rating average descend with manipulation (longer loading possible if many images or votes)</option>
-        <option value="rating_asc_average_with_manip" id="cg_rating_asc_average_with_manip">Rating average ascend with manipulation (longer loading possible if many images or votes)</option>';
-}*/
-
-// fallback to go sure if empty or old order options are activated
+// fallback to go sure if empty
 if(empty(trim($order))){
-    $order = 'date_desc';
-}elseif($order=='rating_desc_average' OR $order=='rating_asc_average' OR $order=='rating_desc_average_with_manip' OR $order=='rating_asc_average_with_manip'){
     $order = 'date_desc';
 }
 
@@ -166,7 +152,9 @@ $PdfPreviewBackend = $pro_options->PdfPreviewBackend;
 if(cg_get_version()=='contest-gallery'){
     $PdfPreviewBackend = 0;
 }
-$OpenAiKey = $wpdb->get_var("SELECT OpenAiKey FROM $tablename_pro_options WHERE GeneralID = 1");
+$OpenAiKeyConfigured = !empty(
+    $wpdb->get_var("SELECT OpenAiKey FROM $tablename_pro_options WHERE GeneralID = 1")
+) ? 1 : 0;
 $CatWidgetColor = ($pro_options->CatWidget==1) ? "background-color:#ffffff" : 'background-color:#ffffff';
 $CatWidgetChecked = ($pro_options->CatWidget==1) ? "checked='checked'" : '';
 $ShowCatsUnchecked = ($pro_options->ShowCatsUnchecked==1) ? "checked='checked'" : '';
@@ -257,6 +245,25 @@ if((float)$optionsSQL->Version>=22){
 $AllowRating = $optionsSQL->AllowRating;
 if($AllowRating==1){// this is required for the coming for loops
     $AllowRating = 15;
+}
+$AllowRatingAverage = (!empty($optionsSQL->AllowRatingAverage)) ? 1 : 0;
+
+$averageRatingOrderValues = array(
+    'rating_desc_average',
+    'rating_asc_average',
+    'rating_desc_average_with_manip',
+    'rating_asc_average_with_manip'
+);
+
+if(in_array($order,$averageRatingOrderValues,true)){
+    if(empty($AllowRatingAverage) || $AllowRating < 12 || $AllowRating > 20){
+        $order = 'date_desc';
+    }elseif(
+        empty($Manipulate) &&
+        ($order === 'rating_desc_average_with_manip' || $order === 'rating_asc_average_with_manip')
+    ){
+        $order = str_replace('_with_manip','',$order);
+    }
 }
 $galleryDbVersion = $optionsSQL->Version;
 
@@ -449,16 +456,20 @@ if($isAjaxCall){
         ]));
 
     }else{
-        // since point based system sorting by average is deprecated
-        if($order=='rating_desc_average' || $order=='rating_asc_average' || $order=='rating_desc_average_with_manip' || $order=='rating_asc_average_with_manip'){
-            $order = 'date_desc';
-        }
+        $isAverageRatingOrder = in_array($order,$averageRatingOrderValues,true);
+        $isSumRatingOrder = (
+            $order=='rating_desc_sum' ||
+            $order=='rating_asc_sum' ||
+            $order=='rating_desc_sum_with_manip' ||
+            $order=='rating_asc_sum_with_manip'
+        );
+
         // dann muss es ein ajax call sein!!!
-        if($search==='' && !($order=='rating_desc_sum' || $order=='rating_asc_sum' || $order=='rating_desc_sum_with_manip' || $order=='rating_asc_sum_with_manip' || $order=='rating_desc_average' || $order=='rating_asc_average' || $order=='rating_desc_average_with_manip' || $order=='rating_asc_average_with_manip') && strpos($order, '_for_id_') === false){
+        if($search==='' && !$isSumRatingOrder && !$isAverageRatingOrder && strpos($order, '_for_id_') === false){
 	        include ('order-gallery/order-without-search-and-average.php');
-        }/*elseif(($order=='rating_desc_average' || $order=='rating_asc_average' || $order=='rating_desc_average_with_manip' || $order=='rating_asc_average_with_manip') && strpos($order, '_for_id_') === false){
-            include ('order-gallery/order-by-average-with-and-without-search.php');// will not be used anymore, just average example
-        }*/elseif(($order=='rating_desc_sum' || $order=='rating_asc_sum' || $order=='rating_desc_sum_with_manip' || $order=='rating_asc_sum_with_manip') && strpos($order, '_for_id_') === false){
+        }elseif($isAverageRatingOrder && strpos($order, '_for_id_') === false){
+            include ('order-gallery/order-by-average-with-and-without-search.php');
+        }elseif($isSumRatingOrder && strpos($order, '_for_id_') === false){
 	        include ('order-gallery/order-by-sum-with-and-without-search.php');
         }elseif(strpos($order, '_for_id_') !== false){
 	        include ('order-gallery/order-custom-fields-with-and-without-search.php');
@@ -591,26 +602,61 @@ echo "</pre>";
 
 if($isAjaxCall){
 
-    // entries select here
-    $selectEntriesQuery = "SELECT * FROM $tablenameentries WHERE";
-
-    foreach($selectFormInput as $selectFormInputRow){
-
-        foreach($selectSQL as $imageRow){
-            $selectEntriesQuery .= " (pid = $imageRow->id AND f_input_id = $selectFormInputRow->id) OR";
-        }
-
-    }
-
-    $selectEntriesQuery = substr($selectEntriesQuery,0,-3);
-    $selectEntriesQuery .= " ORDER BY pid DESC, Field_Order DESC";
-    $allEntries = $wpdb->get_results("$selectEntriesQuery");
-
     $allEntriesByImageIdArrayWithContent = array();
+    $allEntriesByImageAndFieldId = array();
     $wpUsersIdsArray = array();
     $ecommerceFilesArray = array();
     $googleUsersIdsArray = array();
     $wpUsersIdsWithNotConfirmedMailArray = array();
+
+    $cgSelectedImageIds = array();
+    foreach($selectSQL as $imageRow){
+        $cgSelectedImageIds[] = absint($imageRow->id);
+    }
+
+    $cgSelectedFormInputIds = array();
+    foreach($selectFormInput as $selectFormInputRow){
+        $cgSelectedFormInputIds[] = absint($selectFormInputRow->id);
+    }
+
+    if(!empty($cgSelectedImageIds) && !empty($cgSelectedFormInputIds)){
+        $cgSelectedImagePlaceholders = implode(',',array_fill(0,count($cgSelectedImageIds),'%d'));
+        $cgSelectedFormInputPlaceholders = implode(',',array_fill(0,count($cgSelectedFormInputIds),'%d'));
+        $selectEntriesQuery = "
+            SELECT *
+            FROM $tablenameentries
+            WHERE GalleryID = %d
+            AND pid IN ($cgSelectedImagePlaceholders)
+            AND f_input_id IN ($cgSelectedFormInputPlaceholders)
+            ORDER BY pid DESC, Field_Order DESC, id ASC
+        ";
+        $selectEntriesParameters = array_merge(
+            array($GalleryID),
+            $cgSelectedImageIds,
+            $cgSelectedFormInputIds
+        );
+        $allEntries = $wpdb->get_results(
+            $wpdb->prepare($selectEntriesQuery,$selectEntriesParameters)
+        );
+
+        foreach($allEntries as $entryRow){
+            $textColumn = 'Short_Text';
+            if($entryRow->Field_Type == 'comment-f' OR $entryRow->Field_Type == 'check-f'){
+                $textColumn = 'Long_Text';
+            }
+            if($entryRow->Field_Type == 'date-f'){
+                $textColumn = 'InputDate';
+            }
+            if(empty($allEntriesByImageAndFieldId[$entryRow->pid])){
+                $allEntriesByImageAndFieldId[$entryRow->pid] = array();
+            }
+            $allEntriesByImageAndFieldId[$entryRow->pid][$entryRow->f_input_id] = array(
+                'Content' => $entryRow->$textColumn,
+                'Checked' => $entryRow->Checked,
+                'ConfMailId' => $entryRow->ConfMailId
+            );
+        }
+    }
 
     $querySETrowLongText = 'UPDATE ' . $tablenameentries . ' SET Long_Text = CASE';
     $querySETaddRowLongText = ' ELSE Long_Text END WHERE (pid,f_input_id) IN (';
@@ -631,21 +677,9 @@ if($isAjaxCall){
         }
 
         foreach($selectFormInput as $selectFormInputRow){
-            foreach($allEntries as $entryRow){
-                if($entryRow->pid==$imageRow->id && $entryRow->f_input_id==$selectFormInputRow->id){
-                    $textColumn = 'Short_Text';
-                    if($entryRow->Field_Type == 'comment-f' OR $entryRow->Field_Type == 'check-f'){
-                        $textColumn = 'Long_Text';
-                    }
-                    if($entryRow->Field_Type == 'date-f'){
-                        $textColumn = 'InputDate';
-                    }
-                    $allEntriesByImageIdArrayWithContent[$imageRow->id][$selectFormInputRow->id]['Content'] = $entryRow->$textColumn;
-                    $allEntriesByImageIdArrayWithContent[$imageRow->id][$selectFormInputRow->id]['Checked'] = $entryRow->Checked;
-                    $allEntriesByImageIdArrayWithContent[$imageRow->id][$selectFormInputRow->id]['ConfMailId'] = $entryRow->ConfMailId;
-                }
-            }
-            if(empty($allEntriesByImageIdArrayWithContent[$imageRow->id][$selectFormInputRow->id])){
+            if(!empty($allEntriesByImageAndFieldId[$imageRow->id][$selectFormInputRow->id])){
+                $allEntriesByImageIdArrayWithContent[$imageRow->id][$selectFormInputRow->id] = $allEntriesByImageAndFieldId[$imageRow->id][$selectFormInputRow->id];
+            }else{
                 $allEntriesByImageIdArrayWithContent[$imageRow->id][$selectFormInputRow->id]['Content']  = '';
                 $allEntriesByImageIdArrayWithContent[$imageRow->id][$selectFormInputRow->id]['Checked'] = 0;
                 $allEntriesByImageIdArrayWithContent[$imageRow->id][$selectFormInputRow->id]['ConfMailId'] = 0;
@@ -1002,52 +1036,6 @@ $i=0;
 
 
 $nr1 = $start + 1;
-
-
-
-// Configuration link urls ----->
-
-//$content_url  = content_url();
-
-$content_url = wp_upload_dir();
-$content_url = $content_url['baseurl']; // Pfad zum Bilderordner angeben
-
-$pathPlugin = plugins_url();
-$pageURL = 'http';
-if ( !empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
-$pageURL .= "://";
-
-$path = $_SERVER['REQUEST_URI'];
-
-$host = $_SERVER['HTTP_HOST'];
-
-/*echo "<br/>";
-echo "$path";
-echo "<br/>";
-echo "$host";
-echo "<br/>";*/
-
-$siteUrlOff = (strpos($path,'?')) ? $host.$path.'&' : $host.$path.'?';
-
-// echo "<b>$siteUrlOff</b>";
-
-$siteURL = $pageURL.$siteUrlOff;
-
-//echo $siteURL;
-
-// Wenn der zweite Teil des Explodes existiert, dann die URL wieder zur�ck machen
-
-$siteURL = (strpos($siteURL,'&&')) ? str_replace("&&", "&","$siteURL") : $siteURL;
-
-$explode = explode('&',$siteURL);
-
-if(!$isAjaxCall){
-    $siteURLdauswahl = ($explode[2]) ? $explode[0].'&'. $explode[1].'&'.'dauswahl' : $siteURL.'dauswahl';
-}
-
-//echo "$siteURLdauswahl";
-
-// Configuration link urls -----> END
 
 
 

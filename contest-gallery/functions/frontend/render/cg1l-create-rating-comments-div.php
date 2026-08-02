@@ -1,70 +1,4 @@
 <?php
-if(!function_exists('cg1l_get_rating_count')){
-    function cg1l_get_rating_count($fullData,$options,$votedUserPids = [],$isCGalleries = false){
-        $rating = 0;
-        if($options['general']['ShowOnlyUsersVotes']==1 && !$isCGalleries){
-            /*if($fullData['id']==1148){
-                var_dump(123123);
-                var_dump($rating);
-                die;
-            }*/
-            $rating = cg1l_count_votes_for_an_entry($fullData['id'],$votedUserPids,$options);
-        }else{
-            if(absint($options['general']['AllowRating'])==2){
-                $rating = absint($fullData['CountS']);
-                if(absint($options['pro']['Manipulate'])==1){
-                    $rating += absint($fullData['addCountS']);
-                }
-            } elseif(absint($options['general']['AllowRating'])>=1){
-                $AllowRating = absint($options['general']['AllowRating']);
-                $rating = 0;
-                $Manipulate = $options['pro']['Manipulate'];
-                foreach ($fullData as $key => $value) {
-                    if (strpos($key, 'CountR') === 0) {
-                        $multiplikator = (int) str_replace('CountR', '', $key);
-                        if($multiplikator<=$AllowRating){
-                            $rating += ($value * $multiplikator);
-                        }
-                    }
-                    if($Manipulate==1){
-                        if (strpos($key, 'addCountR') === 0) {
-                            $multiplikator = (int) str_replace('addCountR', '', $key);
-                            if($multiplikator<=$AllowRating){
-                                $rating += ($value * $multiplikator);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return $rating;
-    }
-}
-
-if(!function_exists('cg1l_has_current_user_voted_for_entry')){
-    function cg1l_has_current_user_voted_for_entry($fullData,$votedUserPids = [],$options = []){
-        $realId = !empty($fullData['id']) ? absint($fullData['id']) : 0;
-        $allowRating = !empty($options['general']['AllowRating']) ? absint($options['general']['AllowRating']) : 0;
-
-        if(!$realId || empty($votedUserPids) || !is_array($votedUserPids)){
-            return false;
-        }
-
-        if($allowRating === 2){
-            foreach($votedUserPids as $votedPid){
-                if(is_scalar($votedPid) && absint($votedPid) === $realId){
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        return !empty($votedUserPids[$realId]);
-    }
-}
-
-
 if(!function_exists('cg1l_create_rating_comments_gallery')){
     function cg1l_create_rating_comments_gallery($galeryIDuserForJs,$fullData,$options,$shortcode_name,$jsonCommentsData,$countSuserVotes,$votedUserPids,$isCGalleries,$commentsWrapperClass = '',$ratingCommentsGroupClass = ''){
         /*if(!isset($fullData['AllowRatingToCheck'])){
@@ -74,7 +8,13 @@ if(!function_exists('cg1l_create_rating_comments_gallery')){
             echo "</pre>";
             var_dump($fullData['GalleryIdToCheck']);
         }*/
-        $allowRating = (!empty($options['general']['AllowRating'])) ? absint($options['general']['AllowRating']) : 0;
+        $ratingOptions = $options;
+        if($isCGalleries && isset($fullData['AllowRatingToCheck'])){
+            $ratingOptions['general']['AllowRating'] = absint($fullData['AllowRatingToCheck']);
+            $ratingOptions['general']['AllowRatingAverage'] = (!empty($fullData['AllowRatingAverageToCheck'])) ? 1 : 0;
+        }
+        $allowRating = (!empty($ratingOptions['general']['AllowRating'])) ? absint($ratingOptions['general']['AllowRating']) : 0;
+        $ratingType = cg1l_get_rating_type($ratingOptions);
         $allowComments = (!empty($options['general']['AllowComments'])) ? absint($options['general']['AllowComments']) : 0;
         $shouldRenderRating = ($allowRating === 1 || $allowRating === 2 || $allowRating >= 12);
 
@@ -95,10 +35,12 @@ if(!function_exists('cg1l_create_rating_comments_gallery')){
 
         if($shouldRenderRating || $shouldRenderComments){
             $ratingDiv = '';
-            if($shouldRenderRating && (($isCGalleries && $fullData['AllowRatingToCheck'] == 1) || ($allowRating === 2))){
-                $ratingDiv = cg1l_get_rating_gallery_one_star($galeryIDuserForJs,$fullData,$options,$shortcode_name,$votedUserPids,$isCGalleries);
-            }elseif($shouldRenderRating && (($isCGalleries && $fullData['AllowRatingToCheck'] >= 12) || ($allowRating === 1 || $allowRating >= 12))){
-                $ratingDiv = cg1l_get_rating_gallery_five_star($galeryIDuserForJs,$fullData,$options,$shortcode_name,$countSuserVotes,$votedUserPids);
+            if($shouldRenderRating && $ratingType === 'one-star'){
+                $ratingDiv = cg1l_get_rating_gallery_one_star($galeryIDuserForJs,$fullData,$ratingOptions,$shortcode_name,$votedUserPids,$isCGalleries);
+            }elseif($shouldRenderRating && $ratingType === 'average'){
+                $ratingDiv = cg1l_get_rating_gallery_average($galeryIDuserForJs,$fullData,$ratingOptions,$shortcode_name,$countSuserVotes,$votedUserPids);
+            }elseif($shouldRenderRating && $ratingType === 'five-stars'){
+                $ratingDiv = cg1l_get_rating_gallery_five_star($galeryIDuserForJs,$fullData,$ratingOptions,$shortcode_name,$countSuserVotes,$votedUserPids);
             }
             $commentsDiv = '';
             if($shouldRenderComments){
@@ -138,6 +80,7 @@ if(!function_exists('cg1l_get_comments_gallery_reload')){
             if($commentsWrapperClass){
                 $commentsWrapperClass = ' '.$commentsWrapperClass;
             }
+            $commentsCountFormatted = cg1l_format_voting_comment_number($commentsCount,$options,0);
             /*if($realId==1067){
                 var_dump('$commentsCount123 ');
                 echo "<pre>";
@@ -146,7 +89,7 @@ if(!function_exists('cg1l_get_comments_gallery_reload')){
             }*/
 
             //<div class="stat comments" aria-label="Comments">💬 <span>34</span></div>
-            return '<div class="cg_gallery_comments_div'.$commentsWrapperClass.'"><div class="cg_gallery_comments_div_child "><div class="cg_gallery_comments_div_icon '.$commentsStat.' cg_gallery_comments_div_icon'.$realId.'"></div><div class="cg_gallery_comments_div_count'.$realId.' cg_gallery_comments_div_count" aria-label="Comments">'.$commentsCount.'</div></div></div>';
+            return '<div class="cg_gallery_comments_div'.$commentsWrapperClass.'"><div class="cg_gallery_comments_div_child "><div class="cg_gallery_comments_div_icon '.$commentsStat.' cg_gallery_comments_div_icon'.$realId.'"></div><div class="cg_gallery_comments_div_count'.$realId.' cg_gallery_comments_div_count" data-cg-number-value="'.esc_attr($commentsCount).'" aria-label="Comments">'.esc_html($commentsCountFormatted).'</div></div></div>';
         }
     }
 }

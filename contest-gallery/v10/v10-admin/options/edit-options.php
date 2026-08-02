@@ -17,6 +17,10 @@ $isEditTranslationsOnly = (!empty($_POST['cg_edit_translations']) || !empty($_GE
 $isEditEcommerceOnly = (!empty($_POST['cg_edit_ecommerce']) || !empty($_GET['cg_edit_ecommerce'])) ? true : false;
 $isEditOptionsOnly = (!$isEditTranslationsOnly && !$isEditEcommerceOnly) ? true : false;
 
+if($isEditEcommerceOnly){
+    cg_require_global_settings_access();
+}
+
 $replyMailNote = '<br><span class="cg_note_label">NOTE FOR TESTING:</span> <span class="cg_note_text">mail is send to and "Reply e-mail" can not be the same</span>';
 
 $tablenameOptions = $wpdb->prefix . "contest_gal1ery_options";
@@ -127,16 +131,16 @@ if(floatval($galleryDbVersion)>=22 && $isEditEcommerceOnly){
 	$PayPalApiActive = ($selectSQLecommerceOptions->PayPalApiActive==2) ? '' : 'checked';
 	$PayPalTestActive = ($selectSQLecommerceOptions->PayPalTestActive==1) ? 'checked' : '';
 	$PayPalDisableFunding = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->PayPalDisableFunding);
-    $PayPalSandboxClientId = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->PayPalSandboxClientId);
-    $PayPalLiveClientId = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->PayPalLiveClientId);
-    $PayPalLiveSecret = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->PayPalLiveSecret);
-    $PayPalSandboxSecret = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->PayPalSandboxSecret);
+    $PayPalSandboxClientId = esc_attr($selectSQLecommerceOptions->PayPalSandboxClientId);
+    $PayPalLiveClientId = esc_attr($selectSQLecommerceOptions->PayPalLiveClientId);
+    $PayPalLiveSecret = esc_attr($selectSQLecommerceOptions->PayPalLiveSecret);
+    $PayPalSandboxSecret = esc_attr($selectSQLecommerceOptions->PayPalSandboxSecret);
 	$StripeApiActive = ($selectSQLecommerceOptions->StripeApiActive==2) ? '' : 'checked';
 	$StripeTestActive = ($selectSQLecommerceOptions->StripeTestActive==1) ? 'checked' : '';
-    $StripeSandboxClientId = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->StripeSandboxClientId);
-    $StripeLiveClientId = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->StripeLiveClientId);
-    $StripeLiveSecret = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->StripeLiveSecret);
-    $StripeSandboxSecret = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->StripeSandboxSecret);
+    $StripeSandboxClientId = esc_attr($selectSQLecommerceOptions->StripeSandboxClientId);
+    $StripeLiveClientId = esc_attr($selectSQLecommerceOptions->StripeLiveClientId);
+    $StripeLiveSecret = esc_attr($selectSQLecommerceOptions->StripeLiveSecret);
+    $StripeSandboxSecret = esc_attr($selectSQLecommerceOptions->StripeSandboxSecret);
     $CurrencyShort = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->CurrencyShort);
     $CurrencyPosition = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->CurrencyPosition);
     $PriceDivider = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->PriceDivider);
@@ -462,10 +466,12 @@ $ContentUserVoteMail = contest_gal1ery_convert_for_html_output_without_nl2br($Co
 
     $selectedCheckComments = ($selectSQL1->AllowComments==1) ? 'checked' : '';
     $AllowRating = $selectSQL1->AllowRating;
+    $AllowRatingAverage = (!empty($selectSQL1->AllowRatingAverage)) ? 1 : 0;
     if($AllowRating==1){// because of old logic, where 1 = 5 stars
         $AllowRating = 15;
     }
-    $selectedCheckRating = ($selectSQL1->AllowRating==1 OR ($selectSQL1->AllowRating>=12 && $selectSQL1->AllowRating<=20)) ? 'checked' : '';
+    $selectedCheckRating = (!$AllowRatingAverage && ($selectSQL1->AllowRating==1 OR ($selectSQL1->AllowRating>=12 && $selectSQL1->AllowRating<=20))) ? 'checked' : '';
+    $selectedCheckRatingAverage = ($AllowRatingAverage && ($selectSQL1->AllowRating==1 OR ($selectSQL1->AllowRating>=12 && $selectSQL1->AllowRating<=20))) ? 'checked' : '';
     $selectedCheckRating2 = ($selectSQL1->AllowRating==2) ? 'checked' : '';
     $selectedCheckFbLike = ($selectSQL1->FbLike==1) ? 'checked' : '';
     $selectedCheckFbLikeGallery = ($selectSQL1->FbLikeGallery==1) ? 'checked' : '';
@@ -683,6 +689,9 @@ foreach($selectSQL2 as $value2){
     $Confirmation_Text_Disabled = ($value2->Forward==0) ? '' : 'disabled';
 }
 
+$VotingCommentNumberFormat = 'dot';
+$VotingCommentNumberFormatDotChecked = 'checked';
+$VotingCommentNumberFormatCommaChecked = '';
 //	print_r($selectSQL3);
 foreach($selectSQL3 as $value3){
     $Field1IdGalleryView = $value3->Field1IdGalleryView;
@@ -754,6 +763,9 @@ foreach($selectSQL3 as $value3){
     $BackToGalleryButtonText = contest_gal1ery_convert_for_html_output_without_nl2br($value3->BackToGalleryButtonText);
     $TextDeactivatedEntry = contest_gal1ery_convert_for_html_output_without_nl2br($value3->TextDeactivatedEntry);
     $FeVotingIconType = contest_gal1ery_convert_for_html_output_without_nl2br($value3->FeVotingIconType);
+    $VotingCommentNumberFormat = (!empty($value3->VotingCommentNumberFormat) && $value3->VotingCommentNumberFormat === 'comma') ? 'comma' : 'dot';
+    $VotingCommentNumberFormatDotChecked = ($VotingCommentNumberFormat === 'dot') ? 'checked' : '';
+    $VotingCommentNumberFormatCommaChecked = ($VotingCommentNumberFormat === 'comma') ? 'checked' : '';
     $ShowBackToGalleryButton = ($value3->ShowBackToGalleryButton==1) ? 'checked' : '';
     $ShowBackToGalleriesButton = ($value3->ShowBackToGalleriesButton==1) ? 'checked' : '';
 }
@@ -778,7 +790,9 @@ if(intval($galleryDbVersion)>=14){
 
     $ForwardAfterLoginUrlCheck = $optionsForGeneralIDsinceV14['pro']['ForwardAfterLoginUrlCheck'];
     $ForwardAfterLoginUrlCheck = ($ForwardAfterLoginUrlCheck==1) ? 'checked' : '';
-    $OpenAiKey = $optionsForGeneralIDsinceV14['pro']['OpenAiKey'];
+    if(cg_user_can_manage_global_settings()){
+        $OpenAiKey = esc_attr($optionsForGeneralIDsinceV14['pro']['OpenAiKey']);
+    }
     $ForwardAfterLoginUrl = $optionsForGeneralIDsinceV14['pro']['ForwardAfterLoginUrl'];
     $ForwardAfterLoginUrl = contest_gal1ery_convert_for_html_output_without_nl2br($ForwardAfterLoginUrl);
 

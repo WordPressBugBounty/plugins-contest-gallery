@@ -1,5 +1,11 @@
 <?php
 
+$cgAdminAssetVersion = function($relativePath){
+    $filePath = __DIR__ . '/' . ltrim($relativePath,'/');
+    $modifiedTime = file_exists($filePath) ? filemtime($filePath) : 0;
+    return cg_get_version_for_scripts() . '-' . $modifiedTime;
+};
+
 wp_enqueue_script( 'jquery-touch-punch' );
 wp_enqueue_script( 'jquery-ui-sortable' );
 
@@ -14,15 +20,15 @@ wp_enqueue_script( 'cg_libs_watermark_min', plugins_url( '/v10/v10-js/libs/water
 
 wp_enqueue_script( 'cg_gallery_admin_objects', plugins_url( '/v10/v10-js/admin/gallery/gallery-admin-objects.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 
-wp_enqueue_script( 'cg_gallery_admin_index_events', plugins_url( '/v10/v10-js/admin/index-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_gallery_admin_index_events', plugins_url( '/v10/v10-js/admin/index-events.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/index-events.js') );
 
 wp_localize_script('cg_gallery_admin_index_events', 'CG1LBackendNonce', [
     'nonce'   => wp_create_nonce('cg_nonce'),
 ]);
 
-wp_enqueue_script( 'cg_gallery_admin_index_functions', plugins_url( '/v10/v10-js/admin/index-functions.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_gallery_admin_index_functions', plugins_url( '/v10/v10-js/admin/index-functions.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/index-functions.js') );
 wp_enqueue_script( 'cg_gallery_reload_entry', plugins_url( '/v10/v10-js/admin/load/gallery-reload-entry.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
-wp_enqueue_script( 'cg_gallery_admin_index_load', plugins_url( '/v10/v10-js/admin/load/index-load.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_gallery_admin_index_load', plugins_url( '/v10/v10-js/admin/load/index-load.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/load/index-load.js') );
 wp_enqueue_script( 'cg_gallery_admin_index_indexeddb', plugins_url( '/v10/v10-js/admin/index-indexeddb.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_script( 'cg_gallery_admin_objects', plugins_url( '/v10/v10-js/admin/gallery/gallery-admin-objects.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_script( 'cg_gallery_admin_functions', plugins_url( '/v10/v10-js/admin/gallery/gallery-admin-functions.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
@@ -52,7 +58,7 @@ cg_ecommerce_include_javascript_admin('cg_gallery_admin_watermark','admin/galler
 wp_enqueue_script( 'cg_gallery_admin_entry_watermark', plugins_url( '/v10/v10-js/admin/gallery/gallery-admin-watermark-entry.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 
 wp_enqueue_script( 'cg_check_wp_admin_upload_v10', plugins_url( '/v10/v10-js/admin/gallery/cg_check_wp_admin_upload.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
-wp_enqueue_style( 'cg_backend_gallery', plugins_url('/v10/v10-css/backend/cg_backend_gallery.css', __FILE__), false, cg_get_version_for_scripts() );
+wp_enqueue_style( 'cg_backend_gallery', plugins_url('/v10/v10-css/backend/cg_backend_gallery.css', __FILE__), false, $cgAdminAssetVersion('v10/v10-css/backend/cg_backend_gallery.css') );
 wp_enqueue_style( 'cg_gallery_admin_vendor_daterangepicker_css', plugins_url('/v10/v10-css/vendor/daterangepicker.css', __FILE__), false, cg_get_version_for_scripts() );
 
 

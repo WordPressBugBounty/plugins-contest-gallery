@@ -639,7 +639,8 @@ else {
 
         /**###NORMAL###**/
         if(is_dir ($plugin_dir_path.'/../../../../../contest-gallery')){
-            cg_update_to_pro_one_star($galeryIDuser,$pictureID,$ratingFileData,'Update to PRO version to use "One vote per picture" function');
+            cg1l_release_stats_lock($lockFp);
+            cg_update_to_pro_one_star($galeryIDuser,$pictureID,$ratingFileData,'Update to PRO version to use "Undo vote" function');
             return true;
         }
         /**###NORMAL-END###**/
@@ -831,6 +832,7 @@ else {
         // Picture already rated!!!!
         /**###NORMAL###**/
         if(is_dir ($plugin_dir_path.'/../../../../../contest-gallery')){
+            cg1l_release_stats_lock($lockFp);
             cg_update_to_pro_one_star($galeryIDuser,$pictureID,$ratingFileData,'Update to PRO version to use "One vote per picture" function');
             return true;
         }
@@ -868,6 +870,7 @@ else {
         // All votes used case
         /**###NORMAL###**/
         if(is_dir ($plugin_dir_path.'/../../../../../contest-gallery')){
+            cg1l_release_stats_lock($lockFp);
             cg_update_to_pro_one_star($galeryIDuser,$pictureID,$ratingFileData,'Update to PRO version to use "Votes per user" function');
             return true;
         }
@@ -932,6 +935,7 @@ else {
         // Votes per category
         /**###NORMAL###**/
         if(is_dir ($plugin_dir_path.'/../../../../../contest-gallery')){
+            cg1l_release_stats_lock($lockFp);
             cg_update_to_pro_one_star($galeryIDuser,$pictureID,$ratingFileData,'Update to PRO version to use "Votes per category" function');
             return true;
         }

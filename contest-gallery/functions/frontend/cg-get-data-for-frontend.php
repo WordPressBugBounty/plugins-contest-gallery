@@ -1,5 +1,44 @@
 <?php
 
+if (!function_exists('cg1l_get_comments_lock_for_update')) {
+    function cg1l_get_comments_lock_for_update($gid, $id, &$lockFp) {
+
+        $lockFp = false;
+
+        $gid = absint($gid);
+        $id = absint($id);
+
+        if (empty($gid) || empty($id)) {
+            return false;
+        }
+
+        $wp_upload_dir = wp_upload_dir();
+        $commentsDir = $wp_upload_dir['basedir']
+            . '/contest-gallery/gallery-id-' . $gid
+            . '/json/image-comments';
+
+        if (!is_dir($commentsDir) && !wp_mkdir_p($commentsDir)) {
+            return false;
+        }
+
+        $commentsFile = $commentsDir . '/image-comments-' . $id . '.json';
+        $lockFp = fopen($commentsFile . '.lock', 'c');
+
+        if ($lockFp === false) {
+            $lockFp = false;
+            return false;
+        }
+
+        if (!flock($lockFp, LOCK_EX)) {
+            fclose($lockFp);
+            $lockFp = false;
+            return false;
+        }
+
+        return $commentsFile;
+    }
+}
+
 if (!function_exists('cg1l_get_stats_for_update')) {
     function cg1l_get_stats_for_update($gid, $id, &$lockFp) {
 
@@ -174,4 +213,3 @@ if (!function_exists('cg1l_get_recent_json_by_ids')) {
         return $result;
     }
 }
-

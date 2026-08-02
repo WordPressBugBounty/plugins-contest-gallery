@@ -60,6 +60,7 @@ jQuery(document).ready(function ($) {
         e.preventDefault();
         var data = {};
         data['action'] = 'post_cg_social_platforms_query';
+        data['cg_nonce'] = CG1LBackendNonce.nonce;
         data['gid'] = $(this).closest('#cgYoutubeLibraryContainer').attr('data-cg-gid');
         data['cg_start'] = 0;
 
@@ -206,6 +207,7 @@ jQuery(document).ready(function ($) {
                     e.preventDefault();
                     var data = {};
                     data['action'] = 'post_cg_twitter_get';
+                    data['cg_nonce'] = CG1LBackendNonce.nonce;
                     data['post_cg_twitter_url'] = url;
                     cgJsClassAdmin.gallery.vars.twitterData = null;
 
@@ -494,6 +496,7 @@ jQuery(document).ready(function ($) {
         var $mediaFrame = $(this).closest('.media-frame.cg_backend_area');
         var data = {};
         data['action'] = 'post_cg_social_platform_input';
+        data['cg_nonce'] = CG1LBackendNonce.nonce;
         data['urlType'] = urlType;
         if(urlType=='youtube'){
             data['socialData'] = youtubeData;
@@ -636,6 +639,7 @@ jQuery(document).ready(function ($) {
 
         var data = {};
         data['action'] = 'post_cg_social_platforms_add_to_gallery';
+        data['cg_nonce'] = CG1LBackendNonce.nonce;
         data['action2'] = $(this).closest('.media-frame-content').find('#cgYoutubeLibraryContainer').attr('data-cg-gid');
         data['cg_wp_post_ids'] = [];
         var cg_assign_category = 0;

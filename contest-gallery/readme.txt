@@ -3,7 +3,7 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, openai
 Requires at least: 5.6
-Stable tag: 30.0.7
+Stable tag: 31.0.0
 Tested up to: 7.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -274,6 +274,21 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= 31.0.0 =
+* NEW: Added a separate average-rating mode that uses the existing multiple-stars voting flow and displays the effective average with up to one decimal place.
+* NEW: Canonical entry pages can output a matching AggregateRating for publicly visible average ratings, including active manual vote adjustments.
+* NEW: Added a per-gallery option to display voting and comment numbers with a decimal point or decimal comma and matching thousands separators.
+* IMPROVED: Average ratings are now integrated throughout frontend and backend workflows, including sorting and preselection, translations, vote resets and corrections, manipulation previews, vote e-mails, gallery previews, and separate per-gallery star-scale preferences for average and cumulative voting.
+* IMPROVED: Multiple-star ratings now provide a compact value, star and rating-count layout together with percentage bars and the total number of ratings across gallery, full-window and entry views.
+* IMPROVED: Visible average and cumulative ratings remain accessible as a read-only rating overview when voting is disabled.
+* IMPROVED: Backend comment moderation now updates database and frontend data more safely and consistently.
+* IMPROVED: Registered-user data exports now run in AJAX processing steps to handle large user lists more reliably.
+* IMPROVED: Gallery data, vote, ZIP and order exports now use optimized database queries and processing for significantly faster large exports.
+* IMPROVED: Faster first-time plugin activation and Multisite network activation through an optimized setup process.
+* IMPROVED: General security hardening different areas.
+* FIXED: Gallery vote undo controls now respect the "Rating out of gallery" setting in both PHP and JavaScript.
+* FIXED: Security issue.
 
 = 30.0.7 =
 * FIXED: Security issues reported by the security community. Thanks to Muni Nitish Kumar Yaddala, Sai Praneeth Koti, Meher Sudhakar Abbireddi, and Jayant Kamble.

@@ -142,10 +142,22 @@ if(empty($Order)){
         }
 
 		$dataForOrder = cg_get_data_for_order($wp_upload_dir,$OrderItem,$RawData);
+		$orderUploadEntitlement = false;
 		if($OrderItem->IsUpload){
 			$hasUploadSell = true;
-			$UploadGallery = $wpdb->get_var("SELECT UploadGallery FROM $tablename_ecommerce_entries WHERE pid = '$pid' LIMIT 1");
-			$UploadGalleries[$OrderItem->id] = $UploadGallery;
+			$currentEcommerceUploadEntry = $wpdb->get_row($wpdb->prepare(
+				"SELECT UploadGallery, MaxUploads
+				FROM $tablename_ecommerce_entries
+				WHERE GalleryID = %d AND pid = %d AND IsUpload = 1
+				ORDER BY id DESC
+				LIMIT 1",
+				absint($OrderItem->GalleryID),
+				absint($pid)
+			));
+			$orderUploadEntitlement = cg1l_get_order_upload_entitlement($OrderItem,$currentEcommerceUploadEntry);
+			if(!empty($orderUploadEntitlement['valid'])){
+				$UploadGalleries[$OrderItem->id] = $orderUploadEntitlement['upload_gallery'];
+			}
 		}
 
 		if(empty($dataForOrder['RawData'])){// then gallery must be deleted
@@ -162,6 +174,21 @@ if(empty($Order)){
 			}else{
 				$jsonInfoData[$OrderItem->pid]  = [];
 			}
+		}
+
+		if(
+			!empty($OrderItem->IsUpload) &&
+			!empty($orderUploadEntitlement['valid']) &&
+			!empty($RawData[$OrderItem->pid]) &&
+			is_array($RawData[$OrderItem->pid])
+		){
+			if(!empty($RawData[$OrderItem->pid]['ecommerceData']) && is_object($RawData[$OrderItem->pid]['ecommerceData'])){
+				$RawData[$OrderItem->pid]['ecommerceData'] = get_object_vars($RawData[$OrderItem->pid]['ecommerceData']);
+			}elseif(empty($RawData[$OrderItem->pid]['ecommerceData']) || !is_array($RawData[$OrderItem->pid]['ecommerceData'])){
+				$RawData[$OrderItem->pid]['ecommerceData'] = array();
+			}
+			$RawData[$OrderItem->pid]['ecommerceData']['UploadGallery'] = $orderUploadEntitlement['upload_gallery'];
+			$RawData[$OrderItem->pid]['ecommerceData']['MaxUploads'] = $orderUploadEntitlement['max_uploads_value'];
 		}
 
 		$ecommerceFilesData = cg_get_ecommerce_files_data($OrderItem->GalleryID,$OrderItem->pid);
@@ -226,7 +253,7 @@ $RegUserOrderSummaryOnlyText
 
 			$ch = curl_init();
 
-			curl_setopt($ch, CURLOPT_URL, 'https://api.stripe.com/v1/payment_intents/'.$Order->StripePiId);
+			curl_setopt($ch, CURLOPT_URL, 'https://api.stripe.com/v1/payment_intents/'.rawurlencode((string)$Order->StripePiId));
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
@@ -398,6 +425,8 @@ Payment type not set
 	        // order might be modified, by adding invoice
 	        $Order = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_orders WHERE id = '$OrderId' LIMIT 1");
         }
+
+		$Order = cg_ecommerce_scrub_order_payment_secrets_for_output($Order,$LogForDatabase);
 
 		if(!empty($_GET['cg_is_after_purchase'])){
 			?>

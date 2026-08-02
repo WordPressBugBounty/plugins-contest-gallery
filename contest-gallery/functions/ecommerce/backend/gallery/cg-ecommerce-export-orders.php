@@ -1,4 +1,188 @@
 <?php
+
+if(!defined('CG_ECOMMERCE_ORDERS_EXPORT_BATCH_SIZE')){
+	define('CG_ECOMMERCE_ORDERS_EXPORT_BATCH_SIZE',100);
+}
+
+if(!function_exists('cg_ecommerce_export_orders_get_batch')){
+	function cg_ecommerce_export_orders_get_batch($beforeOrderId,$batchSize){
+		global $wpdb;
+
+		$ordersTable = $wpdb->prefix . "contest_gal1ery_ecommerce_orders";
+		$itemsTable = $wpdb->prefix . "contest_gal1ery_ecommerce_orders_items";
+		$orderColumns = "sale_orders.id,
+			sale_orders.OrderNumber,
+			sale_orders.Tstamp,
+			sale_orders.PayPalTransactionId,
+			sale_orders.StripePiId,
+			sale_orders.PayerEmail,
+			sale_orders.InvoiceAddressFirstName,
+			sale_orders.InvoiceAddressLastName,
+			sale_orders.InvoiceAddressCompany,
+			sale_orders.InvoiceAddressLine1,
+			sale_orders.InvoiceAddressLine2,
+			sale_orders.InvoiceAddressCity,
+			sale_orders.InvoiceAddressPostalCode,
+			sale_orders.InvoiceAddressStateShort,
+			sale_orders.InvoiceAddressStateTranslation,
+			sale_orders.InvoiceAddressCountryShort,
+			sale_orders.InvoiceAddressCountryTranslation,
+			sale_orders.TaxNr,
+			sale_orders.ShippingAddressFirstName,
+			sale_orders.ShippingAddressLastName,
+			sale_orders.ShippingAddressCompany,
+			sale_orders.ShippingAddressLine1,
+			sale_orders.ShippingAddressLine2,
+			sale_orders.ShippingAddressCity,
+			sale_orders.ShippingAddressPostalCode,
+			sale_orders.ShippingAddressStateShort,
+			sale_orders.ShippingAddressStateTranslation,
+			sale_orders.ShippingAddressCountryShort,
+			sale_orders.ShippingAddressCountryTranslation,
+			sale_orders.ShippingNet,
+			sale_orders.ShippingGross,
+			sale_orders.PriceTotalNetItemsWithShipping,
+			sale_orders.PriceTotalGrossItemsWithShipping,
+			sale_orders.CurrencyShort,
+			sale_orders.CurrencyPosition,
+			sale_orders.LogForDatabase,
+			sale_orders.IsTest";
+
+		if(!empty($_GET['cg_order_id'])){
+			return $wpdb->get_results($wpdb->prepare(
+				"SELECT $orderColumns
+				FROM $ordersTable AS sale_orders
+				WHERE sale_orders.id = %d",
+				absint($_GET['cg_order_id'])
+			));
+		}
+
+		$whereClauses = array();
+		$whereValues = array();
+		$filterClauses = array();
+		$filterValues = array();
+
+		$PayPalTransactionId = cg_ecommerce_get_orders_get_post_text('cg_paypal_transaction_id');
+		$PayerEmail = cg_ecommerce_get_orders_get_post_text('cg_payer_email');
+		$OrderNumber = cg_ecommerce_get_orders_get_post_text('cg_order_number');
+		$ItemIdsSearchValue = cg_ecommerce_get_orders_get_post_text('cg_item_ids');
+		$GalleryIdsSearchValue = cg_ecommerce_get_orders_get_post_text('cg_gallery_ids');
+		$ItemIds = cg_ecommerce_get_orders_get_post_ids('cg_item_ids');
+		$GalleryIds = cg_ecommerce_get_orders_get_post_ids('cg_gallery_ids');
+
+		if($PayPalTransactionId!==''){
+			$PayPalTransactionIdLike = '%'.$wpdb->esc_like($PayPalTransactionId).'%';
+			$filterClauses[] = "(sale_orders.PayPalTransactionId LIKE %s OR sale_orders.StripePiId LIKE %s)";
+			$filterValues[] = $PayPalTransactionIdLike;
+			$filterValues[] = $PayPalTransactionIdLike;
+		}
+
+		if($PayerEmail!==''){
+			$filterClauses[] = "sale_orders.PayerEmail LIKE %s";
+			$filterValues[] = '%'.$wpdb->esc_like($PayerEmail).'%';
+		}
+
+		if($ItemIdsSearchValue!==''){
+			if(count($ItemIds)){
+				$ItemPlaceholders = implode(',',array_fill(0,count($ItemIds),'%d'));
+				$filterClauses[] = "EXISTS (
+					SELECT 1
+					FROM $itemsTable AS item_filter
+					WHERE item_filter.ParentOrder = sale_orders.id
+						AND item_filter.pid IN ($ItemPlaceholders)
+				)";
+				foreach($ItemIds as $ItemId){
+					$filterValues[] = $ItemId;
+				}
+			}else{
+				$filterClauses[] = '1 = 0';
+			}
+		}
+
+		if($OrderNumber!==''){
+			$filterClauses[] = "sale_orders.OrderNumber LIKE %s";
+			$filterValues[] = '%'.$wpdb->esc_like($OrderNumber).'%';
+		}
+
+		if($GalleryIdsSearchValue!==''){
+			if(count($GalleryIds)){
+				$GalleryPlaceholders = implode(',',array_fill(0,count($GalleryIds),'%d'));
+				$filterClauses[] = "EXISTS (
+					SELECT 1
+					FROM $itemsTable AS gallery_filter
+					WHERE gallery_filter.ParentOrder = sale_orders.id
+						AND gallery_filter.GalleryID IN ($GalleryPlaceholders)
+				)";
+				foreach($GalleryIds as $GalleryId){
+					$filterValues[] = $GalleryId;
+				}
+			}else{
+				$filterClauses[] = '1 = 0';
+			}
+		}
+
+		$whereClauses[] = 'sale_orders.id > 0';
+		if(count($filterClauses)){
+			$whereClauses[] = '('.implode(' OR ',$filterClauses).')';
+			$whereValues = array_merge($whereValues,$filterValues);
+		}
+		if(!empty($beforeOrderId)){
+			$whereClauses[] = 'sale_orders.id < %d';
+			$whereValues[] = absint($beforeOrderId);
+		}
+
+		$query = "SELECT $orderColumns
+			FROM $ordersTable AS sale_orders
+			WHERE ".implode(' AND ',$whereClauses)."
+			ORDER BY sale_orders.id DESC
+			LIMIT %d";
+		$whereValues[] = absint($batchSize);
+
+		return $wpdb->get_results(cg_ecommerce_get_orders_prepare_query($wpdb,$query,$whereValues));
+	}
+}
+
+if(!function_exists('cg_ecommerce_export_orders_get_items')){
+	function cg_ecommerce_export_orders_get_items($orderIds){
+		global $wpdb;
+
+		if(empty($orderIds)){
+			return array();
+		}
+
+		$itemsTable = $wpdb->prefix . "contest_gal1ery_ecommerce_orders_items";
+		$placeholders = implode(',',array_fill(0,count($orderIds),'%d'));
+		$query = "SELECT
+				ParentOrder,
+				Units,
+				IsDownload,
+				IsShipping,
+				IsUpload,
+				IsAlternativeShipping,
+				SaleTitle,
+				PriceUnitNet,
+				PriceTotalNet,
+				TaxPercentage,
+				TaxValueTotal,
+				PriceTotalGross,
+				AlternativeShippingNet,
+				AlternativeShippingGross,
+				pid,
+				GalleryID
+			FROM $itemsTable
+			WHERE ParentOrder IN ($placeholders)
+			ORDER BY id ASC";
+
+		return $wpdb->get_results(cg_ecommerce_get_orders_prepare_query($wpdb,$query,$orderIds));
+	}
+}
+
+if(!function_exists('cg_ecommerce_export_orders_write_csv_row')){
+	function cg_ecommerce_export_orders_write_csv_row($fp,$row){
+		return fputcsv($fp,cg_neutralize_csv_array($row),';');
+	}
+}
+
 if(!function_exists('cg_ecommerce_export_orders')){
 	function cg_ecommerce_export_orders(){
 
@@ -6,371 +190,7 @@ if(!function_exists('cg_ecommerce_export_orders')){
 			echo "Logged in user have to be able to manage_options to execute export.";die;
 		}
 
-		global $wpdb;
-
-		$tablename_ecommerce_orders_items = $wpdb->prefix . "contest_gal1ery_ecommerce_orders_items";
-
-        $start = 0;
-		if (isset($_POST["cg_start"])) {
-			$muster = "/^[0-9]+$/";
-			if (preg_match($muster, $_POST["cg_start"]) == 0) {
-				$start = 0;
-			} else {
-				$start = $_POST["cg_start"];
-			}
-		}
-
-		$step = 50;
-		if (isset($_POST["cg_step"])) {
-			$muster = "/^[0-9]+$/"; // reg. Ausdruck für Zahlen
-			if (preg_match($muster, $_POST["cg_step"]) == 0) {
-				$step = 50;
-			} else {
-				$step = $_POST["cg_step"];
-			}
-		}
-
-		$return = cg_ecommerce_get_orders($start,$step,true);
-		$saleOrders = $return['saleOrders'];
-
 		$currenciesArray = cg_get_ecommerce_currencies_array_formatted_by_short_key();
-
-		$saleItemsIdsByOrderIdArray = [];
-		$saleItemsCollectedOrderIds = [];
-		$saleItemsArray = [];
-
-		foreach($saleOrders as $saleOrder){
-			$OrderId = $saleOrder->id;
-			$saleItemsCollectedOrderIds[] = $OrderId;
-			$saleItemsArray[$saleOrder->id] = [];
-		}
-
-		$saleItems = array();
-		if(!empty($saleItemsCollectedOrderIds)){
-			$SaleItemsPlaceholders = implode(',', array_fill(0, count($saleItemsCollectedOrderIds), '%d'));
-			$saleItemsQuery = "SELECT * FROM $tablename_ecommerce_orders_items WHERE ParentOrder IN ($SaleItemsPlaceholders)";
-			$saleItems = $wpdb->get_results(cg_ecommerce_get_orders_prepare_query($wpdb, $saleItemsQuery, $saleItemsCollectedOrderIds));
-		}
-
-		foreach($saleItems as $saleItem){
-			if(!isset($saleItemsIdsByOrderIdArray[$saleItem->ParentOrder])){
-				$saleItemsIdsByOrderIdArray[$saleItem->ParentOrder] = [];
-			}
-			$saleItemsIdsByOrderIdArray[$saleItem->ParentOrder][] = $saleItem->pid;
-			$saleItemsArray[$saleItem->ParentOrder][] = $saleItem;
-		}
-
-		$k = 0;
-
-		$csvData = array();
-
-		$i=0;
-		$r=0;
-
-		$csvData[$i][$k]="Order number";
-		$k++;
-		$csvData[$i][$k]="Purchase date";
-		$k++;
-		$csvData[$i][$k]="PayPal transaction ID";
-		$k++;
-		$csvData[$i][$k]="Stripe Payment Intent ID";
-		$k++;
-		$csvData[$i][$k]="Payer email";
-		$k++;
-		$csvData[$i][$k]="Invoice address first name ";
-		$k++;
-		$csvData[$i][$k]="Invoice address last name ";
-		$k++;
-		$csvData[$i][$k]="Invoice address company";
-		$k++;
-		$csvData[$i][$k]="Invoice address address line 1";
-		$k++;
-		$csvData[$i][$k]="Invoice address address line 2";
-		$k++;
-		$csvData[$i][$k]="Invoice address city";
-		$k++;
-		$csvData[$i][$k]="Invoice address postal code";
-		$k++;
-		$csvData[$i][$k]="Invoice address state short";
-		$k++;
-		$csvData[$i][$k]="Invoice address state";
-		$k++;
-		$csvData[$i][$k]="Invoice address country short";
-		$k++;
-		$csvData[$i][$k]="Invoice address country";
-		$k++;
-		$csvData[$i][$k]="VAT Number";
-		$k++;
-		$csvData[$i][$k]="Shipping address first name ";
-		$k++;
-		$csvData[$i][$k]="Shipping address last name ";
-		$k++;
-		$csvData[$i][$k]="Shipping address company";
-		$k++;
-		$csvData[$i][$k]="Shipping address address line 1";
-		$k++;
-		$csvData[$i][$k]="Shipping address address line 2";
-		$k++;
-		$csvData[$i][$k]="Shipping address city";
-		$k++;
-		$csvData[$i][$k]="Shipping address postal code";
-		$k++;
-		$csvData[$i][$k]="Shipping address state short";
-		$k++;
-		$csvData[$i][$k]="Shipping address state";
-		$k++;
-		$csvData[$i][$k]="Shipping address country short";
-		$k++;
-		$csvData[$i][$k]="Shipping address country";
-		$k++;
-		$csvData[$i][$k]="Shipping default net";
-		$k++;
-		$csvData[$i][$k]="Shipping default gross";
-		$k++;
-		$csvData[$i][$k]="Total net (with shipping if exists)";
-		$k++;
-		$csvData[$i][$k]="Total gross (with shipping if exists)";
-		$k++;
-		$csvData[$i][$k]="Quantity";
-		$k++;
-		$csvData[$i][$k]="Type";
-		$k++;
-		$csvData[$i][$k]="Title";
-		$k++;
-		$csvData[$i][$k]="Price unit net";
-		$k++;
-		$csvData[$i][$k]="Price total net";
-		$k++;
-		$csvData[$i][$k]="Tax percentage";
-		$k++;
-		$csvData[$i][$k]="Tax total";
-		$k++;
-		$csvData[$i][$k]="Price total gross";
-		$k++;
-		$csvData[$i][$k]="Shipping alternative net";
-		$k++;
-		$csvData[$i][$k]="Shipping alternative gross";
-		$k++;
-		$csvData[$i][$k]="Entry ID";
-		$k++;
-		$csvData[$i][$k]="Gallery ID";
-		$k++;
-		$csvData[$i][$k]="Environment";
-		$k++;
-
-		/*echo "<pre>";
-		print_r($saleItemsArray);
-		echo "</pre>";
-
-		die;*/
-
-		// Simple amount of orders
-		$order = 0;
-
-		foreach($saleOrders as $saleOrder){
-				$i++;
-				$k = 0;
-				$order++;
-				$purchaseTime = cg_get_time_based_on_wp_timezone_conf($saleOrder->Tstamp,'d-M-Y H:i:s');
-				$TaxNr =  $saleOrder->TaxNr;
-				$PayerEmail =  $saleOrder->PayerEmail;
-				$LogForDatabase =  unserialize($saleOrder->LogForDatabase);
-				$PriceDivider = $LogForDatabase['PriceDivider'];
-				$CurrencyShort = $saleOrder->CurrencyShort;
-				$CurrencyPosition = $saleOrder->CurrencyPosition;
-
-				$csvData[$i][$k]=$saleOrder->OrderNumber;
-				$k++;
-				$csvData[$i][$k]=$purchaseTime;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->PayPalTransactionId;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->StripePiId;
-				$k++;
-				$csvData[$i][$k]=$PayerEmail;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->InvoiceAddressFirstName;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->InvoiceAddressLastName;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->InvoiceAddressCompany;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->InvoiceAddressLine1;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->InvoiceAddressLine2;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->InvoiceAddressCity;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->InvoiceAddressPostalCode;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->InvoiceAddressStateShort;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->InvoiceAddressStateTranslation;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->InvoiceAddressCountryShort;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->InvoiceAddressCountryTranslation;
-				$k++;
-				$csvData[$i][$k]=$TaxNr;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->ShippingAddressFirstName;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->ShippingAddressLastName;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->ShippingAddressCompany;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->ShippingAddressLine1;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->ShippingAddressLine2;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->ShippingAddressCity;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->ShippingAddressPostalCode;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->ShippingAddressStateShort;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->ShippingAddressStateTranslation;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->ShippingAddressCountryShort;
-				$k++;
-				$csvData[$i][$k]=$saleOrder->ShippingAddressCountryTranslation;
-				$k++;
-
-				$hasDefaultShipping = false;
-				// check if has alternative shipping only
-				foreach($saleItemsArray[$saleOrder->id] as $saleOrderItem){
-					if($saleOrderItem->IsShipping && !$saleOrderItem->IsAlternativeShipping){
-						$hasDefaultShipping = true;
-					}
-				}
-
-				if($hasDefaultShipping){
-					$csvData[$i][$k]=cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$saleOrder->ShippingNet);
-				}else{
-					$csvData[$i][$k]=cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,0);
-				}
-
-				$k++;
-
-				if($hasDefaultShipping){
-					$csvData[$i][$k]=cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$saleOrder->ShippingGross);
-				}else{
-					$csvData[$i][$k]=cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,0);
-				}
-
-				$k++;
-				$csvData[$i][$k]=cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$saleOrder->PriceTotalNetItemsWithShipping);
-				$k++;
-				$csvData[$i][$k]=cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$saleOrder->PriceTotalGrossItemsWithShipping);
-				$k++;
-
-				foreach($saleItemsArray[$saleOrder->id] as $saleOrderItem){
-					$koi = 0;// key order item
-					/*var_dump('$saleOrder->id');
-					var_dump($saleOrder->id);
-					echo "<pre>";
-						print_r($saleOrderItem);
-					echo "</pre>";
-					die;*/
-					$i++;
-					$type = '';
-					if($saleOrderItem->IsDownload){$type='download';}
-					if($saleOrderItem->IsShipping){$type='shipping';}
-					if($saleOrderItem->IsUpload){$type='upload';}
-					//$csvData[$i][0]="Purchase Date";
-					//$csvData[$i][1]="PayPal Transaction ID";
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]='';
-					$koi++;
-					$csvData[$i][$koi]=$saleOrderItem->Units;
-					$koi++;
-					$csvData[$i][$koi]=($type=='shipping' && $saleOrderItem->AlternativeShippingNet>0) ? 'shipping alternative' : $type;
-					$koi++;
-					$csvData[$i][$koi]=contest_gal1ery_convert_for_html_output_without_nl2br($saleOrderItem->SaleTitle);
-					$koi++;
-					$csvData[$i][$koi]=cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$saleOrderItem->PriceUnitNet);
-					$koi++;
-					$csvData[$i][$koi]=cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$saleOrderItem->PriceTotalNet);
-					$koi++;
-					$csvData[$i][$koi]=cg_ecommerce_price_to_show($currenciesArray,'%','right',$PriceDivider,$saleOrderItem->TaxPercentage);
-					$koi++;
-					$csvData[$i][$koi]=cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$saleOrderItem->TaxValueTotal);
-					$koi++;
-					$csvData[$i][$koi]=cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$saleOrderItem->PriceTotalGross);
-					$koi++;
-					$csvData[$i][$koi]=cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$saleOrderItem->AlternativeShippingNet);
-					$koi++;
-					$csvData[$i][$koi]=cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$saleOrderItem->AlternativeShippingGross);
-					$koi++;
-					$csvData[$i][$koi]=$saleOrderItem->pid;
-					$koi++;
-					$csvData[$i][$koi]=$saleOrderItem->GalleryID;
-					$koi++;
-					$csvData[$i][$koi]=($saleOrder->IsTest) ? 'test' : 'live';
-					$koi++;
-				}
-			}
 
 		if(!empty($_GET['cg_order_id'])){
 			$filename = "cg-order-".absint($_GET['cg_order_id']).".csv";
@@ -379,24 +199,175 @@ if(!function_exists('cg_ecommerce_export_orders')){
 			$filename = "cg-orders-".$exportTime.".csv";
 		}
 
-        $csvData = cg_neutralize_csv_array($csvData);
+		nocache_headers();
+		header("Content-type: text/csv; charset=UTF-8");
+		header('Content-Disposition: attachment; filename="'.$filename.'"');
 
-		header("Content-type: text/csv");
-		header("Content-Disposition: attachment; filename=$filename");
-
-		ob_start();
-
-		$fp = fopen("php://output", 'w');
-		fputs($fp, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
-		foreach ($csvData as $fields) {
-			fputcsv($fp, $fields, ";");
+		$fp = fopen("php://output",'w');
+		if($fp===false){
+			echo "CSV export could not be created.";
+			die;
 		}
+
+		fwrite($fp,chr(0xEF).chr(0xBB).chr(0xBF));
+
+		$header = array(
+			"Order number",
+			"Purchase date",
+			"PayPal transaction ID",
+			"Stripe Payment Intent ID",
+			"Payer email",
+			"Invoice address first name ",
+			"Invoice address last name ",
+			"Invoice address company",
+			"Invoice address address line 1",
+			"Invoice address address line 2",
+			"Invoice address city",
+			"Invoice address postal code",
+			"Invoice address state short",
+			"Invoice address state",
+			"Invoice address country short",
+			"Invoice address country",
+			"VAT Number",
+			"Shipping address first name ",
+			"Shipping address last name ",
+			"Shipping address company",
+			"Shipping address address line 1",
+			"Shipping address address line 2",
+			"Shipping address city",
+			"Shipping address postal code",
+			"Shipping address state short",
+			"Shipping address state",
+			"Shipping address country short",
+			"Shipping address country",
+			"Shipping default net",
+			"Shipping default gross",
+			"Total net (with shipping if exists)",
+			"Total gross (with shipping if exists)",
+			"Quantity",
+			"Type",
+			"Title",
+			"Price unit net",
+			"Price total net",
+			"Tax percentage",
+			"Tax total",
+			"Price total gross",
+			"Shipping alternative net",
+			"Shipping alternative gross",
+			"Entry ID",
+			"Gallery ID",
+			"Environment"
+		);
+		cg_ecommerce_export_orders_write_csv_row($fp,$header);
+
+		$beforeOrderId = 0;
+		do{
+			$saleOrders = cg_ecommerce_export_orders_get_batch($beforeOrderId,CG_ECOMMERCE_ORDERS_EXPORT_BATCH_SIZE);
+			if(empty($saleOrders)){
+				break;
+			}
+
+			$orderIds = array();
+			$saleItemsArray = array();
+			$hasDefaultShippingByOrder = array();
+			foreach($saleOrders as $saleOrder){
+				$orderId = absint($saleOrder->id);
+				$orderIds[] = $orderId;
+				$saleItemsArray[$orderId] = array();
+				$hasDefaultShippingByOrder[$orderId] = false;
+			}
+
+			$saleItems = cg_ecommerce_export_orders_get_items($orderIds);
+			foreach($saleItems as $saleItem){
+				$orderId = absint($saleItem->ParentOrder);
+				if(!isset($saleItemsArray[$orderId])){
+					continue;
+				}
+				$saleItemsArray[$orderId][] = $saleItem;
+				if(!empty($saleItem->IsShipping) && empty($saleItem->IsAlternativeShipping)){
+					$hasDefaultShippingByOrder[$orderId] = true;
+				}
+			}
+
+			foreach($saleOrders as $saleOrder){
+				$orderId = absint($saleOrder->id);
+				$purchaseTime = cg_get_time_based_on_wp_timezone_conf($saleOrder->Tstamp,'d-M-Y H:i:s');
+				$LogForDatabase = maybe_unserialize($saleOrder->LogForDatabase);
+				$PriceDivider = (is_array($LogForDatabase) && isset($LogForDatabase['PriceDivider']))
+					? $LogForDatabase['PriceDivider']
+					: '.';
+				$CurrencyShort = $saleOrder->CurrencyShort;
+				$CurrencyPosition = $saleOrder->CurrencyPosition;
+				$hasDefaultShipping = !empty($hasDefaultShippingByOrder[$orderId]);
+
+				$orderRow = array(
+					$saleOrder->OrderNumber,
+					$purchaseTime,
+					$saleOrder->PayPalTransactionId,
+					$saleOrder->StripePiId,
+					$saleOrder->PayerEmail,
+					$saleOrder->InvoiceAddressFirstName,
+					$saleOrder->InvoiceAddressLastName,
+					$saleOrder->InvoiceAddressCompany,
+					$saleOrder->InvoiceAddressLine1,
+					$saleOrder->InvoiceAddressLine2,
+					$saleOrder->InvoiceAddressCity,
+					$saleOrder->InvoiceAddressPostalCode,
+					$saleOrder->InvoiceAddressStateShort,
+					$saleOrder->InvoiceAddressStateTranslation,
+					$saleOrder->InvoiceAddressCountryShort,
+					$saleOrder->InvoiceAddressCountryTranslation,
+					$saleOrder->TaxNr,
+					$saleOrder->ShippingAddressFirstName,
+					$saleOrder->ShippingAddressLastName,
+					$saleOrder->ShippingAddressCompany,
+					$saleOrder->ShippingAddressLine1,
+					$saleOrder->ShippingAddressLine2,
+					$saleOrder->ShippingAddressCity,
+					$saleOrder->ShippingAddressPostalCode,
+					$saleOrder->ShippingAddressStateShort,
+					$saleOrder->ShippingAddressStateTranslation,
+					$saleOrder->ShippingAddressCountryShort,
+					$saleOrder->ShippingAddressCountryTranslation,
+					cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$hasDefaultShipping ? $saleOrder->ShippingNet : 0),
+					cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$hasDefaultShipping ? $saleOrder->ShippingGross : 0),
+					cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$saleOrder->PriceTotalNetItemsWithShipping),
+					cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$saleOrder->PriceTotalGrossItemsWithShipping)
+				);
+				cg_ecommerce_export_orders_write_csv_row($fp,$orderRow);
+
+				foreach($saleItemsArray[$orderId] as $saleOrderItem){
+					$type = '';
+					if($saleOrderItem->IsDownload){$type='download';}
+					if($saleOrderItem->IsShipping){$type='shipping';}
+					if($saleOrderItem->IsUpload){$type='upload';}
+
+					$itemRow = array_fill(0,32,'');
+					$itemRow[] = $saleOrderItem->Units;
+					$itemRow[] = ($type==='shipping' && $saleOrderItem->AlternativeShippingNet>0) ? 'shipping alternative' : $type;
+					$itemRow[] = contest_gal1ery_convert_for_html_output_without_nl2br($saleOrderItem->SaleTitle);
+					$itemRow[] = cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$saleOrderItem->PriceUnitNet);
+					$itemRow[] = cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$saleOrderItem->PriceTotalNet);
+					$itemRow[] = cg_ecommerce_price_to_show($currenciesArray,'%','right',$PriceDivider,$saleOrderItem->TaxPercentage);
+					$itemRow[] = cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$saleOrderItem->TaxValueTotal);
+					$itemRow[] = cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$saleOrderItem->PriceTotalGross);
+					$itemRow[] = cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$saleOrderItem->AlternativeShippingNet);
+					$itemRow[] = cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$saleOrderItem->AlternativeShippingGross);
+					$itemRow[] = $saleOrderItem->pid;
+					$itemRow[] = $saleOrderItem->GalleryID;
+					$itemRow[] = ($saleOrder->IsTest) ? 'test' : 'live';
+					cg_ecommerce_export_orders_write_csv_row($fp,$itemRow);
+				}
+			}
+
+			$lastOrder = end($saleOrders);
+			$beforeOrderId = absint($lastOrder->id);
+			$isFinished = !empty($_GET['cg_order_id']) || count($saleOrders)<CG_ECOMMERCE_ORDERS_EXPORT_BATCH_SIZE;
+			unset($saleOrders,$saleItems,$saleItemsArray,$hasDefaultShippingByOrder);
+		}while(!$isFinished);
+
 		fclose($fp);
-		$masterReturn = ob_get_clean();
-		echo $masterReturn;
 		die();
-
-
 	}
 }
 

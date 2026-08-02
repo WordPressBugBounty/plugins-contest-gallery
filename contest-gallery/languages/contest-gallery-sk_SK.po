@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Contest Gallery\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-11-30 20:10+0100\n"
-"PO-Revision-Date: 2025-11-30 20:12+0100\n"
+"PO-Revision-Date: 2026-07-25 07:19+0200\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -646,6 +646,14 @@ msgid "Rating quantity ascend"
 msgstr "Množstvo hodnotenia stúpa"
 
 #: check-language.php:183
+msgid "Rating average descend"
+msgstr "Priemerné hodnotenie zostupne"
+
+#: check-language.php:185
+msgid "Rating average ascend"
+msgstr "Priemerné hodnotenie vzostupne"
+
+#: check-language.php:183
 msgid "Rating sum descend"
 msgstr "Hodnotenie súčtu zostupne"
 
@@ -1225,12 +1233,6 @@ msgstr ""
 #~ msgid "Contest Gallery - PRO Version"
 #~ msgstr "Contest Gallery - PRO Version"
 
-#~ msgid "Rating average descend"
-#~ msgstr "Priemerný zostup hodnotenia"
-
-#~ msgid "Rating average ascend"
-#~ msgstr "Priemer hodnotenia stúpať"
-
 #~ msgid "Same as Billing address"
 #~ msgstr "Rovnaké ako fakturačná adresa"
 
@@ -1317,3 +1319,10 @@ msgstr ""
 
 #~ msgid "Create a professional photo contest"
 #~ msgstr "Vytvárajte profesionálne fotosúťaže"
+#: check-language.php
+msgid "rating"
+msgstr "hodnotenie"
+
+#: check-language.php
+msgid "ratings"
+msgstr "hodnotenia"

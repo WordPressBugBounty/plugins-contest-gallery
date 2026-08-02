@@ -10,6 +10,53 @@ if (!function_exists('cg1l_get_shortcode_entry_url_map')) {
         ];
     }
 }
+if (!function_exists('cg1l_images_urls_data_has_current_origin')) {
+    function cg1l_images_urls_data_has_current_origin($imagesUrlsData) {
+        $homeUrlParts = wp_parse_url(home_url('/'));
+
+        if (
+            empty($homeUrlParts['scheme']) ||
+            empty($homeUrlParts['host']) ||
+            empty($imagesUrlsData) ||
+            !is_array($imagesUrlsData)
+        ) {
+            return true;
+        }
+
+        $homeScheme = strtolower($homeUrlParts['scheme']);
+        $homePort = !empty($homeUrlParts['port']) ? intval($homeUrlParts['port']) : (($homeScheme === 'https') ? 443 : 80);
+        $map = cg1l_get_shortcode_entry_url_map();
+
+        foreach ($imagesUrlsData as $entryUrls) {
+            if (empty($entryUrls) || !is_array($entryUrls)) {
+                continue;
+            }
+
+            foreach ($map as $mapData) {
+                $guidKey = $mapData[1];
+                if (empty($entryUrls[$guidKey])) {
+                    continue;
+                }
+
+                $entryUrlParts = wp_parse_url($entryUrls[$guidKey]);
+                if (empty($entryUrlParts['scheme']) || empty($entryUrlParts['host'])) {
+                    return false;
+                }
+
+                $entryScheme = strtolower($entryUrlParts['scheme']);
+                $entryPort = !empty($entryUrlParts['port']) ? intval($entryUrlParts['port']) : (($entryScheme === 'https') ? 443 : 80);
+
+                return (
+                    $entryScheme === $homeScheme &&
+                    strcasecmp($entryUrlParts['host'], $homeUrlParts['host']) === 0 &&
+                    $entryPort === $homePort
+                );
+            }
+        }
+
+        return true;
+    }
+}
 if (!function_exists('cg1l_get_entry_urls_data')) {
     function cg1l_get_entry_urls_data($entryId,$recentMainData,$shortcode_name) {
         $entryId = absint($entryId);
@@ -65,35 +112,41 @@ if (!function_exists('cg1l_build_images_urls_data_gzip')) {
                 if(empty($imagesUrlsData) || !is_array($imagesUrlsData)) {
                     $imagesUrlsData = [];
                 }
-                if (!empty($imagesFullData) && !empty($imagesUrlsData)) {
-                    $map = cg1l_get_shortcode_entry_url_map();
+                if (!cg1l_images_urls_data_has_current_origin($imagesUrlsData)) {
+                    $newBuilt = true;
+                } else {
+                    if (!empty($imagesFullData) && !empty($imagesUrlsData)) {
+                        $map = cg1l_get_shortcode_entry_url_map();
 
-                    if (isset($map[$shortcode_name])) {
+                        if (isset($map[$shortcode_name])) {
 
-                        $pageKey = $map[$shortcode_name][0];
-                        $guidKey = $map[$shortcode_name][1];
+                            $pageKey = $map[$shortcode_name][0];
+                            $guidKey = $map[$shortcode_name][1];
 
-                        foreach ($imagesFullData as $id => $data) {
+                            foreach ($imagesFullData as $id => $data) {
 
-                            // Ensure both sides exist before accessing nested keys
-                            if (
-                                !empty($data[$pageKey]) &&
-                                isset($imagesUrlsData[$id]) &&
-                                !empty($imagesUrlsData[$id][$guidKey])
-                            ) {
-                                $imagesFullData[$id]['entryGuid'] = $imagesUrlsData[$id][$guidKey];
+                                // Ensure both sides exist before accessing nested keys
+                                if (
+                                    !empty($data[$pageKey]) &&
+                                    isset($imagesUrlsData[$id]) &&
+                                    !empty($imagesUrlsData[$id][$guidKey])
+                                ) {
+                                    $imagesFullData[$id]['entryGuid'] = $imagesUrlsData[$id][$guidKey];
+                                }
                             }
                         }
                     }
-                }
 
-                if(!empty($imagesFullData)){
-                    return $imagesFullData;
-                }
+                    if(!empty($imagesFullData)){
+                        return $imagesFullData;
+                    }
 
-                return $imagesUrlsData;
+                    return $imagesUrlsData;
+                }
             }
-            return [];
+            if (!$newBuilt) {
+                return [];
+            }
         }
 
         if($newBuilt || !empty($getRecentIds)){
@@ -103,6 +156,10 @@ if (!function_exists('cg1l_build_images_urls_data_gzip')) {
 
             //die;
             $imagesUrlsData = [];
+
+            if($newBuilt && empty($imagesFullData)){
+                $imagesFullData = cg1l_build_images_main_data_gzip($gid,true);
+            }
 
             if (!empty($imagesFullData)) {
                 if(!empty($getRecentIds)){

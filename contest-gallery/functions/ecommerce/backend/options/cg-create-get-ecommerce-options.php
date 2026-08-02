@@ -65,7 +65,7 @@ if(!function_exists('cg_create_ecommerce_options')){
                 0,$OrderConfirmationMailHeader,$OrderConfirmationMailReply,
                 $OrderConfirmationMailSubject,$OrderConfirmationMail,
                 $AllowedCountries,15,5,
-                'You have to be registered and logged in to be able to purchase.','You have to be registered and logged in to see the order summary.',
+                'You have to be registered and logged in to be able to purchase.','You have to be registered and logged in to see the order summary.'
             ) );
         }
 

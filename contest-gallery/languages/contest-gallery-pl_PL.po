@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Contest Gallery\n"
 "POT-Creation-Date: 2025-11-30 20:06+0100\n"
-"PO-Revision-Date: 2025-11-30 20:07+0100\n"
+"PO-Revision-Date: 2026-07-25 07:19+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -643,6 +643,14 @@ msgid "Rating quantity ascend"
 msgstr "Wg ilośći ocen rosnąco"
 
 #: check-language.php:183
+msgid "Rating average descend"
+msgstr "Wg średniej ocen malejąco"
+
+#: check-language.php:185
+msgid "Rating average ascend"
+msgstr "Wg średniej ocen rosnąco"
+
+#: check-language.php:183
 msgid "Rating sum descend"
 msgstr "Wg sumy ocen malejąco"
 
@@ -1224,12 +1232,6 @@ msgstr "Nie znaleziono stron galerii."
 #~ msgid "Contest Gallery - PRO Version"
 #~ msgstr "Contest Gallery - PRO Version"
 
-#~ msgid "Rating average descend"
-#~ msgstr "Wg średniej ocen malejąco"
-
-#~ msgid "Rating average ascend"
-#~ msgstr "Wg średniej ocen rosnąco"
-
 #~ msgid "Same as Billing address"
 #~ msgstr "Taki sam jak adres rozliczeniowy"
 
@@ -1320,3 +1322,10 @@ msgstr "Nie znaleziono stron galerii."
 
 #~ msgid "Vote first"
 #~ msgstr "Najpierw zagłosuj"
+#: check-language.php
+msgid "rating"
+msgstr "ocena"
+
+#: check-language.php
+msgid "ratings"
+msgstr "oceny"

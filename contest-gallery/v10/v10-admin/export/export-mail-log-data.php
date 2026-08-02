@@ -1,52 +1,78 @@
 <?php
 if(!defined('ABSPATH')){exit;}
 
-$GalleryID = absint($_POST['option_id']);
-$cg_file_name_mail_log = $_POST['cg_file_name_mail_log'];//  cause wp_salt is not available in that state
-$cg_file_name_mail_log_general = $_POST['cg_file_name_mail_log_general'];//  cause wp_salt is not available in that state
+cg_require_backend_access();
+
+$GalleryID = (!empty($_POST['option_id']) && !is_array($_POST['option_id'])) ? absint($_POST['option_id']) : 0;
+$cg_file_name_mail_log = (isset($_POST['cg_file_name_mail_log']) && !is_array($_POST['cg_file_name_mail_log'])) ? sanitize_text_field(wp_unslash($_POST['cg_file_name_mail_log'])) : '';
+$cg_file_name_mail_log_general = (isset($_POST['cg_file_name_mail_log_general']) && !is_array($_POST['cg_file_name_mail_log_general'])) ? sanitize_text_field(wp_unslash($_POST['cg_file_name_mail_log_general'])) : '';
+
+if (
+	empty($GalleryID) ||
+	!preg_match('/^[a-f0-9]{32}$/D', $cg_file_name_mail_log) ||
+	!preg_match('/^[a-f0-9]{32}$/D', $cg_file_name_mail_log_general)
+) {
+	status_header(400);
+	die('Mail log request is invalid.');
+}
+
+$expectedGalleryLogHash = md5(wp_salt('auth').'---cnglog---'.$GalleryID);
+$expectedGeneralLogHash = md5(wp_salt('auth').'---cnglog---'.'0');
+
+if (
+	!cg_hash_equals($expectedGalleryLogHash, $cg_file_name_mail_log) ||
+	!cg_hash_equals($expectedGeneralLogHash, $cg_file_name_mail_log_general)
+) {
+	status_header(403);
+	die('Mail log request is not authorized.');
+}
 
 $uploadFolder = wp_upload_dir();
-$file = $uploadFolder['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/logs/errors/mail-'.$cg_file_name_mail_log.'.log';
-
-$fileGeneral = $uploadFolder['basedir'].'/contest-gallery/gallery-general/logs/errors/mail-'.$cg_file_name_mail_log_general.'.log';
+$galleryLogDirectory = $uploadFolder['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/logs/errors';
+$generalLogDirectory = $uploadFolder['basedir'].'/contest-gallery/gallery-general/logs/errors';
+$files = array(
+	array($galleryLogDirectory, $galleryLogDirectory.'/mail-'.$cg_file_name_mail_log.'.log'),
+	array($generalLogDirectory, $generalLogDirectory.'/mail-'.$cg_file_name_mail_log_general.'.log')
+);
 
 $downloadContent = '';
-if(file_exists($file)){
-	$downloadContent .= file_get_contents($file);
-}
+foreach($files as $fileData){
+	$directoryRealPath = realpath($fileData[0]);
+	$fileRealPath = realpath($fileData[1]);
 
-if(file_exists($fileGeneral)){
-	$downloadContent .= "\r\n";
-	$downloadContent .= file_get_contents($fileGeneral);
-}
-
-if(!empty($downloadContent)){
-	//var_dump($downloadContent);die;
-	$folder = $uploadFolder['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/logs/errors';
-	if(!is_dir($folder)){
-		mkdir($folder,0755,true);
-		$usersTableHtmlStart = <<<HEREDOC
-<Files "*.log">
-  <IfModule mod_authz_core.c>
-    Require all denied
-  </IfModule>
-  <IfModule !mod_authz_core.c>
-    Deny from all
-  </IfModule>
-</Files>
-HEREDOC;
-		$htaccessFile = $folder.'/.htaccess';
-		file_put_contents($htaccessFile,$usersTableHtmlStart);
+	if (
+		$directoryRealPath === false ||
+		$fileRealPath === false ||
+		dirname($fileRealPath) !== $directoryRealPath ||
+		!is_file($fileRealPath) ||
+		!is_readable($fileRealPath)
+	) {
+		continue;
 	}
-	$fileDownload = $folder.'/mail-'.$cg_file_name_mail_log.'-download.log';
-	file_put_contents($fileDownload,$downloadContent);
-	header('Content-Description: File Transfer');
-	header('Content-Disposition: attachment; filename='.basename($fileDownload));
-	header('Expires: 0');
-	header('Cache-Control: must-revalidate');
-	header('Pragma: public');
-	header('Content-Length: ' . filesize($fileDownload));
-	header("Content-Type: text/plain");
-	readfile($fileDownload);
-	die();
+
+	$fileContent = file_get_contents($fileRealPath);
+	if($fileContent === false || $fileContent === ''){
+		continue;
+	}
+
+	if($downloadContent !== ''){
+		$downloadContent .= "\r\n";
+	}
+	$downloadContent .= $fileContent;
 }
+
+if($downloadContent === ''){
+	status_header(404);
+	die('Mail log not found.');
+}
+
+$downloadFileName = 'mail-'.$cg_file_name_mail_log.'-download.log';
+header('Content-Description: File Transfer');
+header('Content-Disposition: attachment; filename="'.$downloadFileName.'"');
+header('Expires: 0');
+header('Cache-Control: must-revalidate');
+header('Pragma: public');
+header('Content-Length: ' . strlen($downloadContent));
+header('Content-Type: text/plain; charset=UTF-8');
+echo $downloadContent;
+die();

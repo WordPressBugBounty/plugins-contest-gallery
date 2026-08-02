@@ -17,9 +17,7 @@ $_POST = cg1l_sanitize_post($_POST);
 
 $SENT_POST = $_POST;
 $SENT_POST['ownKeys'] = [];
-
-// returns $SENT_POST as $beforeFilter if function does not exists
-$beforeFilter = apply_filters( 'cg_filter_before_ecommerce_payment_processing', $SENT_POST);
+cg_ecommerce_remove_stripe_client_secret_from_array($SENT_POST);
 
 /*
 echo "<pre>";
@@ -68,6 +66,7 @@ $StripePiClientSecret = '';
 $StripePiId = '';
 $StripePiPaymentMethodId = '';
 $StripePiPaymentMethodConfDetailsId = '';
+$PaymentTransactionLockName = '';
 
 $PaymentType = (!empty($_POST['StripePiClientSecret'])) ? 'stripe' : 'paypal';
 
@@ -75,6 +74,8 @@ $ecommerce_options = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_options 
 $ecommerce_options_array = json_decode(json_encode($ecommerce_options),true);
 
 if($PaymentType == 'paypal'){
+	$requestedPayPalOrderId = !empty($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
+
 	if($IsTest){
 		$accessToken = cg_paypal_get_access_token($ecommerce_options_array['PayPalSandboxClientId'],$ecommerce_options_array['PayPalSandboxSecret'],true);
 	}else{
@@ -85,6 +86,13 @@ if($PaymentType == 'paypal'){
 
 	if(empty($PayPalOrderResponse['id'])){
 		$Error = !empty($PayPalOrderResponse['message']) ? sanitize_text_field($PayPalOrderResponse['message']) : cg_ecommerce_get_reload_checkout_error();
+	}
+
+	if(
+		empty($Error) &&
+		!cg_hash_equals((string)sanitize_text_field($PayPalOrderResponse['id']),(string)$requestedPayPalOrderId)
+	){
+		$Error = cg_ecommerce_get_reload_checkout_error();
 	}
 
 	if(empty($Error) && !empty($PayPalOrderResponse['status'])){
@@ -154,7 +162,7 @@ if($PaymentType == 'paypal'){
 
 	$ch = curl_init();
 
-	curl_setopt($ch, CURLOPT_URL, 'https://api.stripe.com/v1/payment_intents/'.$StripePiId);
+	curl_setopt($ch, CURLOPT_URL, 'https://api.stripe.com/v1/payment_intents/'.rawurlencode($StripePiId));
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_POST, 1);
 	curl_setopt($ch, CURLOPT_USERPWD, $secret . ':' . '');
@@ -179,6 +187,23 @@ if($PaymentType == 'paypal'){
 	}
 
 	curl_close($ch);
+
+	if(empty($Error)){
+		$stripeResultId = !empty($result['id']) ? sanitize_text_field($result['id']) : '';
+		$stripeResultClientSecret = !empty($result['client_secret']) ? sanitize_text_field($result['client_secret']) : '';
+
+		if(
+			empty($stripeResultId) ||
+			empty($stripeResultClientSecret) ||
+			!cg_hash_equals((string)$stripeResultId,(string)$StripePiId) ||
+			!cg_hash_equals((string)$stripeResultClientSecret,(string)$StripePiClientSecret)
+		){
+			$Error = cg_ecommerce_get_stripe_reload_checkout_error();
+		}else{
+			$StripePiId = $stripeResultId;
+			$StripePiClientSecret = $stripeResultClientSecret;
+		}
+	}
 
 	if(empty($Error)){
 		$stripeAuthoritativeCart = cg_ecommerce_build_authoritative_stripe_cart($_POST['purchase_units'], $ecommerce_options);
@@ -210,6 +235,12 @@ if($PaymentType == 'paypal'){
 		}
 	}
 
+	if(empty($Error)){
+		cg_ecommerce_remove_stripe_client_secret_from_array($_POST);
+		cg_ecommerce_remove_stripe_client_secret_from_array($SENT_POST);
+		$StripePiClientSecret = '';
+	}
+
 	if(!empty($Error)){
 		?>
         <script data-cg-processing="true">
@@ -223,33 +254,6 @@ if($PaymentType == 'paypal'){
 			$IsFullPaid = true;
 		}
 	}
-
-	$StripeCustomer = cg_stripe_list_customers($StripeEmail,$secret);
-    if(empty($StripeCustomer)){
-        // create customer
-	    $StripeCustomer = cg_stripe_create_customer($StripeEmail,$secret);
-    }else{
-	    // update customers address
-	    $StripeCustomer = cg_stripe_update_customers($StripeEmail,$secret,$StripeCustomer['id']);
-    }
-
-	/*echo "<pre>";
-	print_r($StripeCustomer);
-	echo "</pre>";
-	die;*/
-
-	//cg_stripe_attach_customer_to_payment_method($secret,$StripePiPaymentMethodId,$StripeCustomer['id']);
-//	$StripePiPaymentMethodName = cg_stripe_update_payment_method($secret,$StripePiPaymentMethodId,$StripeEmail);
-  //  if(empty($StripePiPaymentMethodName)){// then must have been stripe light error, see cg_stripe_update_payment_method
-   //     var_dump(1234);
-	    $StripePiPaymentMethodName = cg_stripe_get_payment_method($secret,$StripePiPaymentMethodId);
- //   }
-
-   // var_dump($StripePiPaymentMethodName);
-
-  //  var_dump('ready123');
-
-    //die;
 
 }else{
 	?>
@@ -460,6 +464,42 @@ $PayPalTransactionId = $_POST['id'];
 $LogFilePath = serialize($_POST);
 $OrderId = 0;
 
+$ProviderTransactionId = ($PaymentType === 'stripe') ? $StripePiId : $PayPalTransactionId;
+$paymentTransactionGuard = cg_ecommerce_begin_payment_transaction_processing($PaymentType,$IsTest,$ProviderTransactionId,5);
+if(empty($paymentTransactionGuard['success'])){
+	if($paymentTransactionGuard['code'] === 'already_processed'){
+		$outputTransactionError('This payment has already been processed. Please use the order link from your confirmation email.');
+	}elseif($paymentTransactionGuard['code'] === 'transaction_busy'){
+		$outputTransactionError('This payment is currently being processed. Please wait a moment and check your confirmation email before trying again.');
+	}else{
+		$outputTransactionError(cg_ecommerce_get_reload_checkout_error());
+	}
+}
+
+$PaymentTransactionLockName = $paymentTransactionGuard['lock_name'];
+register_shutdown_function('cg_ecommerce_release_payment_transaction_lock',$PaymentTransactionLockName);
+
+$beforeFilter = array();
+if($IsFullPaid){
+	$paymentFilterData = cg_ecommerce_prepare_payment_filter_data($_POST,$SENT_POST,$WpUserId);
+	$beforeFilter = cg_ecommerce_apply_before_payment_processing_filter($paymentFilterData);
+}
+
+if($PaymentType === 'stripe'){
+	$StripeCustomer = cg_stripe_list_customers($StripeEmail,$secret);
+	if(empty($StripeCustomer)){
+		// create customer
+		$StripeCustomer = cg_stripe_create_customer($StripeEmail,$secret);
+	}else{
+		// update customers address
+		$StripeCustomer = cg_stripe_update_customers($StripeEmail,$secret,$StripeCustomer['id']);
+	}
+
+	//cg_stripe_attach_customer_to_payment_method($secret,$StripePiPaymentMethodId,$StripeCustomer['id']);
+	// $StripePiPaymentMethodName = cg_stripe_update_payment_method($secret,$StripePiPaymentMethodId,$StripeEmail);
+	$StripePiPaymentMethodName = cg_stripe_get_payment_method($secret,$StripePiPaymentMethodId);
+}
+
 $PaymentOrderType = 'capture';
 
 $captureId = $_POST['id'].time();
@@ -518,16 +558,9 @@ file_put_contents($logFilePath,json_encode($_POST));
 
 //var_dump(123);
 
-//if(!empty($captureId)){
-if(true){
-
     //$OrderId = 1;
 
 	//var_dump('done');
-
-    // to go sure that ecommerce processing is not done twice
-    //if(empty($isCaptureIdExists)){
-    if(true){
 
         /*
     echo "<pre>";
@@ -544,7 +577,7 @@ if(true){
     $CreatedYear = cg_get_time_based_on_wp_timezone_conf($time,'Y');
 
     // client
-    $wpdb->query( $wpdb->prepare(
+    $orderInsertResult = $wpdb->query( $wpdb->prepare(
         "
                 INSERT INTO $tablename_ecommerce_orders  
                 ( id, GalleryID, PriceTotalNetItems, PriceTotalNetItemsWithShipping,PriceTotalGrossItems, PriceTotalGrossItemsWithShipping, ShippingTotal, 
@@ -575,7 +608,7 @@ if(true){
         '',intval($_POST['usedGid']),$PriceTotalNetItems, $PriceTotalNetItemsWithShipping, $PriceTotalGrossItems, $PriceTotalGrossItemsWithShipping, $ShippingTotal,
 	    $ShippingNet, $ShippingGross, $ShippingTaxValue, $TaxPercentageDefault,
 	    $CurrencyShort,$CurrencyPosition,$WpUserId,$IP, $IsTest,
-	    $StripePiClientSecret, $StripePiId, $StripePiPaymentMethodId,$StripePiPaymentMethodConfDetailsId,$StripePiPaymentMethodName,
+	    '', $StripePiId, $StripePiPaymentMethodId,$StripePiPaymentMethodConfDetailsId,$StripePiPaymentMethodName,
 	    $IsFullPaid,$VersionDb,$VersionForScripts,
         $PaymentType, $PaymentStatus, $PaymentOrderType, $PayPalTransactionId,'WP_UPLOAD_DIR'.$databaseToSaveLogFilePath,
         serialize($LogForDatabase),'',$time,
@@ -584,6 +617,10 @@ if(true){
 	    $ShippingAddressFirstName,$ShippingAddressLastName,$ShippingAddressCompany,$ShippingAddressLine1,$ShippingAddressLine2,$ShippingAddressCity,$ShippingAddressPostalCode,$ShippingAddressStateShort,$ShippingAddressStateTranslation,$ShippingAddressCountryShort,$ShippingAddressCountryTranslation,
 	    $Version,$CreatedMonth,$CreatedYear,$CreatedDateWP
     ));
+
+	if((int)$orderInsertResult !== 1 || empty($wpdb->insert_id)){
+		$outputTransactionError('The payment was verified, but the order could not be created. Please try again. If the problem persists, contact the site administrator.');
+	}
 
 	//var_dump('$InvoiceAddressFirstName after insert');
 	//var_dump($InvoiceAddressFirstName);
@@ -601,7 +638,7 @@ if(true){
     $OrderIdHash = '';
     if(function_exists('random_bytes')){
         try{
-            $OrderIdHash = bin2hex(random_bytes(16));
+            $OrderIdHash = bin2hex(call_user_func('random_bytes', 16));
         }catch(Exception $e){
             $OrderIdHash = '';
         }
@@ -632,7 +669,7 @@ if(true){
 	    $currenciesArray = cg_get_ecommerce_currencies_array_formatted_by_short_key();
 	    $CurrencySymbol = $currenciesArray[$CurrencyShort];
 
-        $processingData = cg_ecommerce_payment_processing_data($LogForDatabase, $OrderIdHash,$PayerEmail,$PayPalTransactionId,$time,$PriceDivider,$PaymentStatus,$ParentOrder, $PriceTotalGrossItemsWithShipping,true,false,0,$IsFullPaid,$OrderIdHash);
+        $processingData = cg_ecommerce_payment_processing_data($LogForDatabase, $OrderIdHash,$PayerEmail,$PayPalTransactionId,$time,$PriceDivider,$PaymentStatus,$ParentOrder, $PriceTotalGrossItemsWithShipping,true,false,0,$IsFullPaid,$OrderIdHash,$beforeFilter);
 
 	    $wpdb->update(
 		    "$tablename_ecommerce_orders",
@@ -673,12 +710,16 @@ if(true){
 	    //var_dump('ForwardAfterPurchaseUrl');
 	    //var_dump($ecommerce_options->ForwardAfterPurchaseUrl."?cg_order=$OrderIdHash");
 
-	    apply_filters( 'cg_filter_after_ecommerce_payment_processing', $SENT_POST);
+	    if($IsFullPaid){
+		    $afterFilterData = cg_ecommerce_prepare_after_payment_processing_filter_data($processingData['LogForDatabase'],$beforeFilter,$processingData['ownKeys'],$WpUserId);
+		    apply_filters( 'cg_filter_after_ecommerce_payment_processing', $afterFilterData);
+	    }
+
+		if(!empty($PaymentTransactionLockName)){
+			cg_ecommerce_release_payment_transaction_lock($PaymentTransactionLockName);
+			$PaymentTransactionLockName = '';
+		}
 
 		echo "###ORDERIDHASH###$OrderIdHash###ORDERIDHASH###";
-
-    }
-}
-
 
 ?>

@@ -80,6 +80,284 @@ if(!function_exists('cg_ecommerce_get_stripe_reload_checkout_error')) {
 	}
 }
 
+if(!function_exists('cg_ecommerce_remove_stripe_client_secret_from_array')) {
+	function cg_ecommerce_remove_stripe_client_secret_from_array(&$data){
+
+		if(!is_array($data)){
+			return;
+		}
+
+		foreach(array_keys($data) as $key){
+			if($key === 'StripePiClientSecret'){
+				unset($data[$key]);
+			}elseif(isset($data[$key]) && is_array($data[$key])){
+				cg_ecommerce_remove_stripe_client_secret_from_array($data[$key]);
+			}
+		}
+
+	}
+}
+
+if(!function_exists('cg_ecommerce_prepare_payment_filter_data')) {
+	function cg_ecommerce_prepare_payment_filter_data($orderData, $baseData = array(), $wpUserId = 0){
+
+		$filterData = (is_array($baseData)) ? $baseData : array();
+		$filterData['orderData'] = (is_array($orderData)) ? $orderData : array();
+		$filterData['ownKeys'] = array();
+
+		if(isset($filterData['WpUserId'])){
+			unset($filterData['WpUserId']);
+		}
+
+		$wpUserId = absint($wpUserId);
+		if(!empty($wpUserId)){
+			$filterData['WpUserId'] = $wpUserId;
+		}
+
+		cg_ecommerce_remove_stripe_client_secret_from_array($filterData);
+
+		return $filterData;
+
+	}
+}
+
+if(!function_exists('cg_ecommerce_apply_before_payment_processing_filter')) {
+	function cg_ecommerce_apply_before_payment_processing_filter($filterData){
+
+		$filterData = (is_array($filterData)) ? $filterData : array();
+		$authoritativeOrderData = (!empty($filterData['orderData']) && is_array($filterData['orderData'])) ? $filterData['orderData'] : array();
+		$wpUserId = (!empty($filterData['WpUserId'])) ? absint($filterData['WpUserId']) : 0;
+
+		$filteredData = apply_filters('cg_filter_before_ecommerce_payment_processing',$filterData);
+		if(!is_array($filteredData)){
+			$filteredData = $filterData;
+		}
+
+		$filteredData['orderData'] = $authoritativeOrderData;
+		if(empty($filteredData['ownKeys']) || !is_array($filteredData['ownKeys'])){
+			$filteredData['ownKeys'] = array();
+		}
+
+		if(isset($filteredData['WpUserId'])){
+			unset($filteredData['WpUserId']);
+		}
+		if(!empty($wpUserId)){
+			$filteredData['WpUserId'] = $wpUserId;
+		}
+
+		cg_ecommerce_remove_stripe_client_secret_from_array($filteredData);
+
+		return $filteredData;
+
+	}
+}
+
+if(!function_exists('cg_ecommerce_get_before_payment_processing_key')) {
+	function cg_ecommerce_get_before_payment_processing_key($filterData, $realId, $keyType){
+
+		$realId = intval($realId);
+		if(
+			!is_array($filterData) ||
+			!in_array($keyType,array('DownloadKey','ServiceKey'),true) ||
+			empty($filterData['ownKeys']) ||
+			!is_array($filterData['ownKeys']) ||
+			empty($filterData['ownKeys'][$realId]) ||
+			!is_array($filterData['ownKeys'][$realId]) ||
+			!array_key_exists($keyType,$filterData['ownKeys'][$realId]) ||
+			!is_scalar($filterData['ownKeys'][$realId][$keyType])
+		){
+			return '';
+		}
+
+		return (string)$filterData['ownKeys'][$realId][$keyType];
+
+	}
+}
+
+if(!function_exists('cg_ecommerce_get_own_key_filter_value')) {
+	function cg_ecommerce_get_own_key_filter_value($filterData){
+
+		if(
+			!is_array($filterData) ||
+			!array_key_exists('cgOwnKey',$filterData) ||
+			!is_scalar($filterData['cgOwnKey'])
+		){
+			return '';
+		}
+
+		return (string)$filterData['cgOwnKey'];
+
+	}
+}
+
+if(!function_exists('cg_ecommerce_prepare_after_payment_processing_filter_data')) {
+	function cg_ecommerce_prepare_after_payment_processing_filter_data($orderData, $beforeFilterData, $ownKeys, $wpUserId = 0){
+
+		$filterData = cg_ecommerce_prepare_payment_filter_data($orderData,$beforeFilterData,$wpUserId);
+		$filterData['ownKeys'] = (is_array($ownKeys)) ? $ownKeys : array();
+		cg_ecommerce_remove_stripe_client_secret_from_array($filterData);
+
+		return $filterData;
+
+	}
+}
+
+if(!function_exists('cg_ecommerce_scrub_order_payment_secrets_for_output')) {
+	function cg_ecommerce_scrub_order_payment_secrets_for_output($Order, &$LogForDatabase){
+
+		cg_ecommerce_remove_stripe_client_secret_from_array($LogForDatabase);
+
+		if(is_object($Order)){
+			if(property_exists($Order,'StripePiClientSecret')){
+				$Order->StripePiClientSecret = '';
+			}
+			if(property_exists($Order,'LogForDatabase') && is_array($LogForDatabase)){
+				$Order->LogForDatabase = serialize($LogForDatabase);
+			}
+		}
+
+		return $Order;
+
+	}
+}
+
+if(!function_exists('cg_ecommerce_get_sanitized_payment_log_contents')) {
+	function cg_ecommerce_get_sanitized_payment_log_contents($contents){
+
+		$data = json_decode((string)$contents,true);
+		if(!is_array($data)){
+			return false;
+		}
+
+		cg_ecommerce_remove_stripe_client_secret_from_array($data);
+		$sanitizedContents = wp_json_encode($data);
+
+		return (is_string($sanitizedContents)) ? $sanitizedContents : false;
+
+	}
+}
+
+if(!function_exists('cg_ecommerce_get_payment_transaction_lock_name')) {
+	function cg_ecommerce_get_payment_transaction_lock_name($paymentType, $isTest, $providerTransactionId){
+
+		global $wpdb;
+
+		$paymentType = sanitize_key((string)$paymentType);
+		$providerTransactionId = trim(sanitize_text_field((string)$providerTransactionId));
+		if(!in_array($paymentType,array('paypal','stripe'),true) || $providerTransactionId === ''){
+			return '';
+		}
+
+		$databaseName = (defined('DB_NAME')) ? DB_NAME : '';
+		$sitePrefix = (!empty($wpdb->prefix)) ? $wpdb->prefix : 'wp_';
+		$lockHash = hash('sha256',$databaseName.'|'.$sitePrefix.'|'.$paymentType.'|'.(empty($isTest) ? '0' : '1').'|'.$providerTransactionId);
+
+		return 'cg_payment_'.substr($lockHash,0,48);
+
+	}
+}
+
+if(!function_exists('cg_ecommerce_acquire_payment_transaction_lock')) {
+	function cg_ecommerce_acquire_payment_transaction_lock($paymentType, $isTest, $providerTransactionId, $timeout = 5){
+
+		global $wpdb;
+
+		$lockName = cg_ecommerce_get_payment_transaction_lock_name($paymentType,$isTest,$providerTransactionId);
+		if($lockName === ''){
+			return '';
+		}
+
+		$lockResult = $wpdb->get_var($wpdb->prepare(
+			'SELECT GET_LOCK(%s,%d)',
+			$lockName,
+			max(0,absint($timeout))
+		));
+
+		return ((string)$lockResult === '1') ? $lockName : '';
+
+	}
+}
+
+if(!function_exists('cg_ecommerce_release_payment_transaction_lock')) {
+	function cg_ecommerce_release_payment_transaction_lock($lockName){
+
+		global $wpdb;
+
+		$lockName = (string)$lockName;
+		if($lockName === ''){
+			return false;
+		}
+
+		$releaseResult = $wpdb->get_var($wpdb->prepare('SELECT RELEASE_LOCK(%s)',$lockName));
+
+		return ((string)$releaseResult === '1');
+
+	}
+}
+
+if(!function_exists('cg_ecommerce_get_order_by_payment_transaction')) {
+	function cg_ecommerce_get_order_by_payment_transaction($paymentType, $isTest, $providerTransactionId){
+
+		global $wpdb;
+
+		$tablenameEcommerceOrders = $wpdb->prefix . 'contest_gal1ery_ecommerce_orders';
+		$paymentType = sanitize_key((string)$paymentType);
+		$providerTransactionId = trim(sanitize_text_field((string)$providerTransactionId));
+		if(!in_array($paymentType,array('paypal','stripe'),true) || $providerTransactionId === ''){
+			return null;
+		}
+
+		$providerIdColumn = ($paymentType === 'stripe') ? 'StripePiId' : 'PayPalTransactionId';
+
+		return $wpdb->get_row($wpdb->prepare(
+			"SELECT id, OrderIdHash FROM $tablenameEcommerceOrders
+			WHERE PaymentType = %s
+			AND IsTest = %d
+			AND BINARY $providerIdColumn = BINARY %s
+			ORDER BY id ASC
+			LIMIT 1",
+			$paymentType,
+			empty($isTest) ? 0 : 1,
+			$providerTransactionId
+		));
+
+	}
+}
+
+if(!function_exists('cg_ecommerce_begin_payment_transaction_processing')) {
+	function cg_ecommerce_begin_payment_transaction_processing($paymentType, $isTest, $providerTransactionId, $timeout = 5){
+
+		$result = array(
+			'success' => false,
+			'code' => 'invalid_transaction',
+			'lock_name' => ''
+		);
+
+		if(cg_ecommerce_get_payment_transaction_lock_name($paymentType,$isTest,$providerTransactionId) === ''){
+			return $result;
+		}
+
+		$lockName = cg_ecommerce_acquire_payment_transaction_lock($paymentType,$isTest,$providerTransactionId,$timeout);
+		if($lockName === ''){
+			$result['code'] = 'transaction_busy';
+			return $result;
+		}
+
+		if(cg_ecommerce_get_order_by_payment_transaction($paymentType,$isTest,$providerTransactionId)){
+			cg_ecommerce_release_payment_transaction_lock($lockName);
+			$result['code'] = 'already_processed';
+			return $result;
+		}
+
+		$result['success'] = true;
+		$result['code'] = '';
+		$result['lock_name'] = $lockName;
+
+		return $result;
+
+	}
+}
+
 if(!function_exists('cg_ecommerce_get_authoritative_ecommerce_entry_data')) {
 	function cg_ecommerce_get_authoritative_ecommerce_entry_data($ecommerceEntryRow){
 
@@ -405,22 +683,67 @@ if(!function_exists('cg_ecommerce_processing_afterwards')) {
 	    global $wpdb;
 	    $tablename_ecommerce_orders = $wpdb->prefix . "contest_gal1ery_ecommerce_orders";
 
+	    if(empty($Order->id) || empty($Order->PaymentType)){
+		    return false;
+	    }
+
+	    $paymentType = sanitize_key((string)$Order->PaymentType);
+	    $expectedPaidStatus = ($paymentType === 'stripe') ? 'succeeded' : (($paymentType === 'paypal') ? 'COMPLETED' : '');
+	    if($expectedPaidStatus === '' || !cg_hash_equals($expectedPaidStatus,(string)$status)){
+		    return false;
+	    }
+
+	    $providerTransactionId = ($paymentType === 'stripe') ? $Order->StripePiId : $Order->PayPalTransactionId;
+	    $isTest = empty($Order->IsTest) ? 0 : 1;
+	    $paymentTransactionLockName = cg_ecommerce_acquire_payment_transaction_lock($paymentType,$isTest,$providerTransactionId,5);
+	    if($paymentTransactionLockName === ''){
+		    return false;
+	    }
+	    register_shutdown_function('cg_ecommerce_release_payment_transaction_lock',$paymentTransactionLockName);
+
+	    $Order = $wpdb->get_row($wpdb->prepare(
+		    "SELECT * FROM $tablename_ecommerce_orders WHERE id = %d LIMIT 1",
+		    absint($Order->id)
+	    ));
+	    if(
+		    empty($Order) ||
+		    !empty($Order->IsFullPaid) ||
+		    sanitize_key((string)$Order->PaymentType) !== $paymentType ||
+		    (empty($Order->IsTest) ? 0 : 1) !== (empty($isTest) ? 0 : 1)
+	    ){
+		    cg_ecommerce_release_payment_transaction_lock($paymentTransactionLockName);
+		    return false;
+	    }
+
+	    $currentProviderTransactionId = ($paymentType === 'stripe') ? $Order->StripePiId : $Order->PayPalTransactionId;
+	    if(!cg_hash_equals((string)$providerTransactionId,(string)$currentProviderTransactionId)){
+		    cg_ecommerce_release_payment_transaction_lock($paymentTransactionLockName);
+		    return false;
+	    }
+
+	    $OrderIdHash = $Order->OrderIdHash;
+
 	    include(__DIR__ ."/../../../check-language-ecommerce.php");
 
 	    $Order->IsFullPaid = 1;
 	    $isFullPaid = 1;
 	    $LogForDatabase = unserialize($Order->LogForDatabase);
+	    cg_ecommerce_remove_stripe_client_secret_from_array($LogForDatabase);
 	    $CreateInvoice = $ecommerce_options->CreateInvoice;
 	    $SendInvoice = $ecommerce_options->SendInvoice;
 	    $SendOrderConfirmationMail = $ecommerce_options->SendOrderConfirmationMail;
 
-	    $wpdb->update(
+	    $paymentStatusUpdateResult = $wpdb->update(
 		    "$tablename_ecommerce_orders",
 		    array('IsFullPaid' => 1,'PaymentStatus' => $status),// PaymentStatus must be not completed or succeded before
 		    array('id' => $Order->id),
 		    array('%d','%s'),
 		    array('%d')
 	    );
+	    if((int)$paymentStatusUpdateResult !== 1){
+		    cg_ecommerce_release_payment_transaction_lock($paymentTransactionLockName);
+		    return false;
+	    }
 
 	    $TaxPercentageDefault = $LogForDatabase['TaxPercentageDefault'];
 	    $payer_email = $Order->PayerEmail;
@@ -429,7 +752,11 @@ if(!function_exists('cg_ecommerce_processing_afterwards')) {
 
 	    $PriceTotalGrossItemsWithShipping = round(floatval($LogForDatabase['purchase_units'][0]['amount']['value']),2);
 
-	    $processingData = cg_ecommerce_payment_processing_data($LogForDatabase,$OrderIdHash,$PayerEmail,$Order->PayPalTransactionId,$Order->Tstamp,$LogForDatabase['PriceDivider'],$status,$Order->id, $PriceTotalGrossItemsWithShipping,false,true,$Order->id,$isFullPaid,$OrderNumber);
+	    $wpUserId = (!empty($Order->WpUserId)) ? absint($Order->WpUserId) : 0;
+	    $paymentFilterData = cg_ecommerce_prepare_payment_filter_data($LogForDatabase,array(),$wpUserId);
+	    $beforeFilter = cg_ecommerce_apply_before_payment_processing_filter($paymentFilterData);
+
+	    $processingData = cg_ecommerce_payment_processing_data($LogForDatabase,$OrderIdHash,$PayerEmail,$Order->PayPalTransactionId,$Order->Tstamp,$LogForDatabase['PriceDivider'],$status,$Order->id, $PriceTotalGrossItemsWithShipping,false,true,$Order->id,$isFullPaid,$OrderNumber,$beforeFilter);
 
 	    $itemHasTax = $processingData['itemHasTax'];
 	    $hasDownload = $processingData['hasDownload'];
@@ -458,6 +785,13 @@ if(!function_exists('cg_ecommerce_processing_afterwards')) {
 	    $mailData = cg_ecommerce_prepare_payment_mail($ecommerce_options, $Order->id, $OrderIdHash, $ordersummaryandpage,$hasDownload,$language_FullOrderDetails,$language_Download);
 
 	    cg_ecommerce_payment_processing_mail($CreateInvoice, $SendInvoice, $SendOrderConfirmationMail, $Order->IsFullPaid,$invoiceData['InvoiceNumber'],$invoiceData['ecommerceInvoicesFolder'],$invoiceData['invoiceFilePath'],$payer_email, $mailData['subject'], $mailData['Msg'], $mailData['headers']);
+
+	    $afterFilterData = cg_ecommerce_prepare_after_payment_processing_filter_data($processingData['LogForDatabase'],$beforeFilter,$processingData['ownKeys'],$wpUserId);
+	    apply_filters( 'cg_filter_after_ecommerce_payment_processing', $afterFilterData);
+
+	    cg_ecommerce_release_payment_transaction_lock($paymentTransactionLockName);
+
+	    return true;
 
     }
 }

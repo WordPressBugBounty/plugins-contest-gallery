@@ -105,8 +105,6 @@ cgJsClassAdmin.gallery.load = {
         // fallback to go sure if empty or old order options are activated
         if(!cgOrder_BG){
             cgOrder_BG = cgOrderFallback;
-        }else if(cgOrder_BG=='rating_desc_average' || cgOrder_BG=='rating_asc_average' || cgOrder_BG=='rating_desc_average_with_manip' || cgOrder_BG=='rating_asc_average_with_manip'){
-            cgOrder_BG = cgOrderFallback;
         }
 
         // check if generally available as option. If not date desc as fallback.
@@ -117,11 +115,7 @@ cgJsClassAdmin.gallery.load = {
 
         if(cgOrder_BG){
             $cgOrderSelect.val(cgOrder_BG);
-            if(cgOrder_BG.indexOf('_average')>-1 && $('#cgAllowRating').val()!=1){
-                if(cgOrder_BG){$('#cgGalleryForm #cgOrderValue').val(cgOrderFallback);}
-            }else{
-                if(cgOrder_BG){$('#cgGalleryForm #cgOrderValue').val(cgOrder_BG);}
-            }
+            $('#cgGalleryForm #cgOrderValue').val(cgOrder_BG);
         }else{
             if(cgOrder_BG){$('#cgGalleryForm #cgOrderValue').val(cgOrder_BG);}
         }

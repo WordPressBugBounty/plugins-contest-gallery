@@ -258,6 +258,8 @@ $PreselectSort_date_descend_selected = ($jsonOptions[$GalleryID.'-ec']['pro']['P
 $PreselectSort_date_ascend_selected = ($jsonOptions[$GalleryID.'-ec']['pro']['PreselectSort']=='date_ascend') ? 'selected' : '';
 $PreselectSort_rating_descend_selected = ($jsonOptions[$GalleryID.'-ec']['pro']['PreselectSort']=='rating_descend') ? 'selected' : '';
 $PreselectSort_rating_ascend_selected = ($jsonOptions[$GalleryID.'-ec']['pro']['PreselectSort']=='rating_ascend') ? 'selected' : '';
+$PreselectSort_rating_desc_average_selected = ($jsonOptions[$GalleryID.'-ec']['pro']['PreselectSort']=='rating_desc_average') ? 'selected' : '';
+$PreselectSort_rating_asc_average_selected = ($jsonOptions[$GalleryID.'-ec']['pro']['PreselectSort']=='rating_asc_average') ? 'selected' : '';
 $PreselectSort_rating_sum_descend_selected = ($jsonOptions[$GalleryID.'-ec']['pro']['PreselectSort']=='rating_sum_descend') ? 'selected' : '';
 $PreselectSort_rating_sum_ascend_selected = ($jsonOptions[$GalleryID.'-ec']['pro']['PreselectSort']=='rating_sum_ascend') ? 'selected' : '';
 $PreselectSort_comments_descend_selected = ($jsonOptions[$GalleryID.'-ec']['pro']['PreselectSort']=='comments_descend') ? 'selected' : '';
@@ -268,6 +270,8 @@ echo <<<HEREDOC
         <option value='date_ascend' $PreselectSort_date_ascend_selected>Date ascending</option>
         <option value='rating_descend' class='$cgGalleryEcommerceRatingHidden $cgGalleryEcommerceRatingInputs' $PreselectSort_rating_descend_selected >Rating descending (for one star voting)</option>
         <option value='rating_ascend' class='$cgGalleryEcommerceRatingHidden $cgGalleryEcommerceRatingInputs'  $PreselectSort_rating_ascend_selected >Rating ascending (for one star voting)</option>
+        <option value='rating_desc_average' class='$cgGalleryEcommerceRatingHidden $cgGalleryEcommerceRatingInputs' $PreselectSort_rating_desc_average_selected>Rating average descending (for average rating)</option>
+        <option value='rating_asc_average' class='$cgGalleryEcommerceRatingHidden $cgGalleryEcommerceRatingInputs' $PreselectSort_rating_asc_average_selected>Rating average ascending (for average rating)</option>
         <option value='rating_sum_descend' class='$cgGalleryEcommerceRatingHidden $cgGalleryEcommerceRatingInputs' $PreselectSort_rating_sum_descend_selected>Rating sum descending (for multiple stars voting)</option>
         <option value='rating_sum_ascend' class='$cgGalleryEcommerceRatingHidden $cgGalleryEcommerceRatingInputs' $PreselectSort_rating_sum_ascend_selected>Rating sum ascending (for multiple stars voting)</option>
         <option value='comments_descend' $PreselectSort_comments_descend_selected>Comments descending</option>

@@ -114,53 +114,6 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
         $cgOpenAiContainer.find('#cgOpenAiSelected,#cgOpenAiPrompts').addClass('cg_hide');
     });
 
-    $(document).on('click','#cgOpenAiKeySubmit',function (){
-
-        var $cgOpenAiKey = $(this).closest('#cgOpenAiKey');
-        var data = {};
-        data['action'] = 'post_cg_check_openai_key';
-        data['cgOpenAiKeyInput'] = $(this).parent().find('#cgOpenAiKeyInput').val();
-
-        $.ajax({
-            url: 'admin-ajax.php',
-            method: 'post',
-            data: data
-        }).done(function (response) {
-
-            var $response = jQuery(new DOMParser().parseFromString(response, 'text/html'));
-            $response.find('script[data-cg-processing="true"]').each(function () {
-                var script = jQuery(this).html();
-                eval(script);
-            });
-
-            if(cgJsClassAdmin.gallery.vars.cgOpenAiKeyIsValid){
-                $cgOpenAiContainer.find('.cg_openai_main').addClass('cg_hide');
-                var $cgOpenAiSelected = $cgOpenAiContainer.find('#cgOpenAiSelected');
-                $cgOpenAiSelected.removeClass('cg_hide');
-                $cgOpenAiSelected.find('.cg_openai_model[data-ai-model-name="'+statusSelected+'"]').removeClass('cg_hide');
-            }else{
-                $cgOpenAiKey.find('#cgOpenAiKeyError').html(cgJsClassAdmin.gallery.vars.cgOpenAiKeyErrorMessage).removeClass('cg_hide');
-            }
-
-        }).fail(function (xhr, status, error) {
-            debugger
-            console.log('response error');
-            console.log(xhr);
-            console.log('status error');
-            console.log(status);
-            console.log('error error');
-            console.log(error);
-
-            return;
-
-        }).always(function () {
-
-            var test = 1;
-
-        });
-
-    });
-
     $(document).on('click','#cgOpenAiPromptSubmit',function (){
 
         var $cgOpenAiSelected = $(this).closest('#cgOpenAiSelected');

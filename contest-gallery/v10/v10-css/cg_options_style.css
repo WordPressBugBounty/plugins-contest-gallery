@@ -3589,7 +3589,8 @@ div.tabcontents
 	margin-top: 2px;
 }
 
-#cgSortable .cg_rating_value_countR_div_cummulated{
+#cgSortable .cg_rating_value_countR_div_cummulated,
+#cgSortable .cg_rating_value_countR_div_average{
 	font-size:16px;
 	font-weight: bold;
 	margin-left: 3px;
@@ -3601,6 +3602,16 @@ div.tabcontents
 	position: absolute;
 	top: 45%;
 	right: -10px;
+	transform: translateY(-50%);
+	font-size: 10px;
+	font-weight: normal;
+}
+
+#cgSortable .cg_rating_value_countR_div_average:after{
+	content: "\00D8";
+	position: absolute;
+	top: 45%;
+	right: -12px;
 	transform: translateY(-50%);
 	font-size: 10px;
 	font-weight: normal;
@@ -6822,6 +6833,51 @@ background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHwAAABWCAY
 
 .cg_main_options .cg_view_option .cg_view_option_radio_multiple_container.cg_one_third_width{
 	width: 33%;
+}
+
+.cg_main_options .cg_view_option .cg_view_option_radio_multiple.cg_sale_type_options{
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	align-items: stretch;
+	gap: 28px 20px;
+	width: 100%;
+	padding: 10px 12px 28px;
+	box-sizing: border-box;
+}
+
+.cg_main_options .cg_view_option .cg_sale_type_options > .cg_sale_type_option{
+	width: auto;
+	height: auto;
+	min-width: 0;
+	flex-flow: column;
+	flex-wrap: nowrap;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 10px;
+}
+
+.cg_main_options .cg_view_option .cg_sale_type_option > .cg_sale_type_option_heading,
+.cg_main_options .cg_view_option .cg_sale_type_option > .cg_sale_type_option_note{
+	width: 100%;
+	max-width: 100%;
+	text-align: center;
+	word-break: break-word;
+}
+
+.cg_main_options .cg_view_option .cg_sale_type_option > .cg_sale_type_option_note{
+	min-height: 66px;
+}
+
+@media only screen and (max-width: 900px) {
+	.cg_main_options .cg_view_option .cg_view_option_radio_multiple.cg_sale_type_options{
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media only screen and (max-width: 600px) {
+	.cg_main_options .cg_view_option .cg_view_option_radio_multiple.cg_sale_type_options{
+		grid-template-columns: minmax(0, 1fr);
+	}
 }
 
 .cg_main_options .cg_view_option .cg_view_option_radio_multiple_title{

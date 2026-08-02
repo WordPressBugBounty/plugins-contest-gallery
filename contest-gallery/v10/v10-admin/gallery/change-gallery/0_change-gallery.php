@@ -842,7 +842,8 @@ if ($Manipulate == 1) {
 				$_POST['addCountChange'][$key] = $key;
 
 				$key = absint($key);
-				$value = absint($value);
+				$value = intval($value);
+				$value = max(0,min(9999999,$value));
 
 				$querySETrowAddCount .= " WHEN (id = %d) THEN %d";
 				$querySETaddRowAddCount .= "(%d), ";
@@ -884,7 +885,8 @@ if ($Manipulate == 1) {
 					$_POST['addCountChange'][$key] = $key;
 
 					$key = absint($key);
-					$value = absint($value);
+					$value = intval($value);
+					$value = max(0,min(9999999,$value));
 
 					$querySETrowAddCount .= " WHEN (id = %d) THEN %d";
 					$querySETaddRowAddCount .= "(%d), ";

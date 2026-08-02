@@ -1,5 +1,8 @@
 <?php
 
+if(!cg_user_can_manage_global_settings()){
+    return;
+}
 
 echo <<<HEREDOC
 <br>
@@ -60,7 +63,7 @@ echo <<<HEREDOC
                                 <p>PayPal Secret Key Live</p>
                             </div>
                             <div class='cg_view_option_input'>
-                                <input type="text" name="PayPalLiveSecret" id="PayPalLiveSecret" value="$PayPalLiveSecret"  maxlength="1000" >
+                                <input type="text" name="PayPalLiveSecret" id="PayPalLiveSecret" value="$PayPalLiveSecret" maxlength="1000">
                             </div>
                         </div>
                 </div>
@@ -92,7 +95,7 @@ echo <<<HEREDOC
                                 <p>PayPal Secret Key Sandbox</p>
                             </div>
                             <div class='cg_view_option_input'>
-                                <input type="text" name="PayPalSandboxSecret" id="PayPalSandboxSecret" value="$PayPalSandboxSecret"  maxlength="1000" >
+                                <input type="text" name="PayPalSandboxSecret" id="PayPalSandboxSecret" value="$PayPalSandboxSecret" maxlength="1000">
                             </div>
                         </div>
                 </div>

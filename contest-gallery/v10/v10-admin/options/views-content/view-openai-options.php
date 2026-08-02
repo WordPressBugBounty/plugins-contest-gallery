@@ -1,5 +1,9 @@
 <?php
 
+if(!cg_user_can_manage_global_settings()){
+    return;
+}
+
 if(cg_get_version()=='contest-gallery'){
     $PdfPreviewBackend = '';
     $PdfPreviewFrontend = '';
@@ -31,7 +35,7 @@ echo <<<HEREDOC
                                 </p>
                             </div>
                             <div class='cg_view_option_input'>
-                                <input type="text" name="OpenAiKey" id="OpenAiKey" value="$OpenAiKey"  maxlength="1000" >
+                                <input type="text" name="OpenAiKey" id="OpenAiKey" value="$OpenAiKey" maxlength="1000">
                             </div>
                         </div>
                 </div>

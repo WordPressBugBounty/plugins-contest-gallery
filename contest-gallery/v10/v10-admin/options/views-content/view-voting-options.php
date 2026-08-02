@@ -200,15 +200,19 @@ HEREDOC;
 
 $AllowRating3_disabled_class = '';
 
-if($AllowRating==2 || $AllowRating==0){
+if($AllowRatingAverage || $AllowRating==2 || $AllowRating==0){
     $AllowRating3_disabled_class = ' cg_disabled ';
 }
 
-if($AllowRating==2 || $AllowRating==0){
-    $AllowRating3_disabled_class = ' cg_disabled ';
+$AllowRatingAverage3_disabled_class = '';
+
+if(!$AllowRatingAverage){
+    $AllowRatingAverage3_disabled_class = ' cg_disabled ';
 }
 
 $AllowRatingOptions = '';
+$AllowRatingAverageOptions = '';
+$AllowRatingMultipleStarsSelectValue = ($AllowRating>=12 && $AllowRating<=20) ? intval($AllowRating) : 20;
 
 /**
  <option value="12">2 stars</option>
@@ -225,15 +229,22 @@ $AllowRatingOptions = '';
 for($i = 12;$i<=20;$i++){
     $iToShow = $i-10;
     $AllowRating3_selected = '';
-    if($AllowRating==$i){
+    if($AllowRatingMultipleStarsSelectValue==$i){
         $AllowRating3_selected = 'selected';
     }
     $AllowRatingOptions .= '<option value="'.$i.'" '.$AllowRating3_selected.'>'.$iToShow.' stars</option>';
+    $AllowRatingAverageOptions .= '<option value="'.$i.'" '.$AllowRating3_selected.'>'.$iToShow.' stars</option>';
 }
 
 $AllowRating3Select = <<<HEREDOC
     <select name='AllowRating3' id="AllowRating3" class="$AllowRating3_disabled_class" data-cg-gid="$GalleryID">
         $AllowRatingOptions
+    </select>
+HEREDOC;
+
+$AllowRatingAverage3Select = <<<HEREDOC
+    <select name='AllowRatingAverage3' id="AllowRatingAverage3" class="$AllowRatingAverage3_disabled_class" data-cg-gid="$GalleryID">
+        $AllowRatingAverageOptions
     </select>
 HEREDOC;
 
@@ -279,7 +290,7 @@ echo <<<HEREDOC
                         <input type="checkbox" name="AllowRating2" id="AllowRating2" $selectedCheckRating2>
                     </div>
                 </div>
-                <div class='cg_view_option cg_view_option_50_percent cg_border_border_top_right_radius_8_px' >
+                <div class='cg_view_option cg_view_option_50_percent' >
                     <div class='cg_view_option_content'>
                       <div>
                         <a class="cg-rating-reset cg-action " href="?page=$cg_get_version/index.php&edit_options=true&option_id=$galeryNR&reset_votes2=true" id="cg_reset_votes2" >
@@ -293,6 +304,35 @@ echo <<<HEREDOC
                         </span>
                         <span class='cg-info-container' id='cg_reset_admin_votes2_explanation' style='display: none;'>
                         - 1 star votes counter will be not deleted<br>- All tracked users 1 star voting data for every file will be not deleted<br>- By administrator manually (via manipulation) added votes will be deleted
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_view_option_50_percent cg_border_top_right_none cg_border_bottom_none' id="AllowRatingAverageContainer" >
+                    <div class='cg_view_option_title' style="flex-flow: column;justify-content: center;">
+                        <p>Allow vote via average rating<br><span class="cg_view_option_title_note">Public entry pages can provide this average rating to Google when ratings are publicly visible.</span></p>
+                        <p style="margin-top: 10px;">$AllowRatingAverage3Select</p>
+                    </div>
+                    <div class='cg_view_option_checkbox'>
+                        <input type="checkbox" name="AllowRatingAverage" id="AllowRatingAverage" $selectedCheckRatingAverage>
+                    </div>
+                </div>
+                <div class='cg_view_option cg_view_option_50_percent cg_border_top_none cg_border_bottom_none' >
+                    <div class='cg_view_option_content'>
+                      <div>
+                        <a class="cg-rating-reset cg-action "
+                         href="?page=$cg_get_version/index.php&edit_options=true&option_id=$galeryNR&reset_votes_average=true" id="cg_reset_votes_average">
+                        <button type="button">Reset votes completely (average rating)</button></a></div>
+                        <div>
+                        <a class="cg-rating-reset cg-action cg-rating-reset-administrator-votes"
+                          href="?page=$cg_get_version/index.php&edit_options=true&option_id=$galeryNR&reset_admin_votes_average=true" id="cg_reset_admin_votes_average">
+                        <button type="button">Reset manually added votes only (average rating)</button></a></div>
+                        <span class='cg-info-container' id='cg_reset_votes_average_explanation' style='display: none;'>
+                        - Average rating and multiple stars use the same stored star votes. This reset affects both modes<br>- Average rating votes counter will be deleted (starts with 0 again)<br>- All tracked users average rating voting data for every file will be also deleted<br>- By Administrator manually (via manipulation) added votes will be not deleted
+                        </span>
+                        <span class='cg-info-container' id='cg_reset_admin_votes_average_explanation' style='display: none;'>
+                        - Average rating and multiple stars use the same manually added star votes. This reset affects both modes<br>- Average rating votes counter will be not deleted<br>- All tracked users average rating voting data for every file will be not deleted<br>- By administrator manually (via manipulation) added votes will be deleted
                         </span>
                     </div>
                 </div>

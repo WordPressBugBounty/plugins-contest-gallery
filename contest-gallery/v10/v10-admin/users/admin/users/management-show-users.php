@@ -264,7 +264,6 @@ if(!empty($_GET['wp_user_id'])){
 echo '<input style="flex-grow:1;" class="cg_search_user_name" type="text" placeholder="Username/Email"  name="cg-search-user-name" value="'.$cgUserName.'" />';
 echo '<input type="hidden" class="cg_search_user_name_original" name="cg-search-user-name-original" value="'.$cgUserName.'" />';
 
-echo "<input type='hidden' disabled name='cg_create_user_data_csv_new_export' id='cg_create_user_data_csv_new_export' value='true' />";
 echo '<input type="hidden" name="cg-search-gallery-id-original" value="'.$cgSearchGalleryId.'" />';
 
 

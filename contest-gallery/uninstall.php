@@ -6,6 +6,119 @@ exit ();
 
 if(include('uninstall-check.php')){return;}
 
+ignore_user_abort(true);
+
+if(!function_exists('cg_database_install_cancel_worker_before_uninstall')){
+    function cg_database_install_cancel_worker_before_uninstall(){
+        if(function_exists('wp_unschedule_hook')){
+            wp_unschedule_hook('cg_complete_database_install_event');
+        }
+        delete_option('p_cgal1ery_database_install_pending');
+    }
+}
+
+if(!function_exists('cg_database_install_has_active_worker_before_uninstall')){
+    function cg_database_install_has_active_worker_before_uninstall(){
+
+        global $wpdb;
+
+        $cgDatabaseInstallLockValue = $wpdb->get_var($wpdb->prepare(
+            "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1",
+            'p_cgal1ery_database_install_lock'
+        ));
+        if($cgDatabaseInstallLockValue === null){
+            return false;
+        }
+
+        $cgDatabaseInstallLock = maybe_unserialize($cgDatabaseInstallLockValue);
+        if(!is_array($cgDatabaseInstallLock) || empty($cgDatabaseInstallLock['created_at']) || (time()-absint($cgDatabaseInstallLock['created_at']))>300){
+            delete_option('p_cgal1ery_database_install_lock');
+            return false;
+        }
+
+        return true;
+    }
+}
+
+if(!function_exists('cg_database_install_finalize_state_before_uninstall')){
+    function cg_database_install_finalize_state_before_uninstall(){
+        if(function_exists('wp_unschedule_hook')){
+            wp_unschedule_hook('cg_complete_database_install_event');
+        }
+        delete_option('p_cgal1ery_database_install_pending');
+        delete_option('p_cgal1ery_database_install_lock');
+    }
+}
+
+if(!function_exists('cg_database_install_cancel_workers_before_uninstall')){
+    function cg_database_install_cancel_workers_before_uninstall($blogIds){
+        if(!is_multisite()){
+            cg_database_install_cancel_worker_before_uninstall();
+            return;
+        }
+
+        foreach($blogIds as $blogId){
+            $blogId = absint($blogId);
+            if(empty($blogId)){
+                continue;
+            }
+
+            switch_to_blog($blogId);
+            cg_database_install_cancel_worker_before_uninstall();
+            restore_current_blog();
+        }
+    }
+}
+
+if(!function_exists('cg_database_install_workers_are_inactive_before_uninstall')){
+    function cg_database_install_workers_are_inactive_before_uninstall($blogIds){
+        $waitUntil = microtime(true)+20;
+
+        do{
+            $hasActiveWorker = false;
+
+            if(is_multisite()){
+                foreach($blogIds as $blogId){
+                    $blogId = absint($blogId);
+                    if(empty($blogId)){
+                        continue;
+                    }
+
+                    switch_to_blog($blogId);
+                    $siteHasActiveWorker = cg_database_install_has_active_worker_before_uninstall();
+                    restore_current_blog();
+
+                    if($siteHasActiveWorker){
+                        $hasActiveWorker = true;
+                    }
+                }
+            }else{
+                $hasActiveWorker = cg_database_install_has_active_worker_before_uninstall();
+            }
+
+            if(!$hasActiveWorker){
+                return true;
+            }
+
+            if(microtime(true)>=$waitUntil){
+                return false;
+            }
+
+            usleep(100000);
+        }while(true);
+    }
+}
+
+if(!function_exists('cg_database_install_abort_uninstall_for_active_worker')){
+    function cg_database_install_abort_uninstall_for_active_worker(){
+        wp_die(
+            '<p>'.esc_html__('Contest Gallery is still finishing a one-time setup task. No plugin data was deleted. Please wait a moment, return to the Plugins page, and try Delete again.','contest-gallery').'</p>',
+            esc_html__('Contest Gallery uninstall paused','contest-gallery'),
+            array('response'=>409,'back_link'=>true)
+        );
+    }
+}
+
 // have to be included here, because index.php will be not processed before!!!!
 include('functions/general/option/cg-add-blog-option.php');
 include('functions/general/option/cg-update-blog-option.php');
@@ -350,6 +463,12 @@ if (is_multisite()) {
 	    $wpBlogs = $wpdb->base_prefix . "blogs";
 
 		$getBlogIDs = $wpdb->get_col( "SELECT blog_id FROM $wpBlogs ORDER BY blog_id ASC" );
+        cg_database_install_cancel_workers_before_uninstall($getBlogIDs);
+
+        if(!cg_database_install_workers_are_inactive_before_uninstall($getBlogIDs)){
+            cg_database_install_abort_uninstall_for_active_worker();
+        }
+
 	    foreach($getBlogIDs as $blogId){
 	        $blogId = absint($blogId);
 	        if(empty($blogId)){
@@ -358,6 +477,7 @@ if (is_multisite()) {
 
             switch_to_blog($blogId);
 
+            cg_database_install_finalize_state_before_uninstall();
             cgRestoreEntryWatermarksBeforeUninstall();
             cgRestoreEcommerceDownloadFilesBeforeUninstall();
             cgDropTables();
@@ -371,6 +491,12 @@ if (is_multisite()) {
 else{
 
     if(include('uninstall-check.php')){return;}
+
+	cg_database_install_cancel_workers_before_uninstall(array());
+    if(!cg_database_install_workers_are_inactive_before_uninstall(array())){
+        cg_database_install_abort_uninstall_for_active_worker();
+    }
+	cg_database_install_finalize_state_before_uninstall();
 
 	// move entry files to original folder
     cgRestoreEntryWatermarksBeforeUninstall();

@@ -1,5 +1,15 @@
 <?php
 
+if (!function_exists('cg1l_release_comment_lock')) {
+    function cg1l_release_comment_lock(&$lockFp) {
+        if (!empty($lockFp) && is_resource($lockFp)) {
+            flock($lockFp, LOCK_UN);
+            fclose($lockFp);
+        }
+        $lockFp = false;
+    }
+}
+
 if (!function_exists('cg1l_release_stats_lock')) {
     function cg1l_release_stats_lock(&$lockFp) {
         // Release lock safely (no @)
@@ -66,4 +76,3 @@ if (!function_exists('cg1l_set_stats_with_lock')) {
 
 
 }
-

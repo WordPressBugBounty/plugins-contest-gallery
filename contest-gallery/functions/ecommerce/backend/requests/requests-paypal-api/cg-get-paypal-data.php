@@ -2,10 +2,16 @@
 if(!function_exists('cg_get_paypal_order')){
     function cg_get_paypal_order($accessToken,$id,$isSandbox = false){
 
+	    $id = trim(sanitize_text_field((string)$id));
+	    if($id === ''){
+		    return array();
+	    }
+	    $idForUrl = rawurlencode($id);
+
 	    if($isSandbox){
-		    $url = "https://api-m.sandbox.paypal.com/v2/checkout/orders/".$id;
+		    $url = "https://api-m.sandbox.paypal.com/v2/checkout/orders/".$idForUrl;
 	    }else{
-		    $url = "https://api-m.paypal.com/v2/checkout/orders/".$id;
+		    $url = "https://api-m.paypal.com/v2/checkout/orders/".$idForUrl;
 	    }
 
         $curl = curl_init($url);
@@ -18,14 +24,20 @@ if(!function_exists('cg_get_paypal_order')){
         );
 
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        //for debug only!
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
 
         $resp = curl_exec($curl);
+        $curlErrorNumber = curl_errno($curl);
         curl_close($curl);
 
-        return json_decode($resp,true);
+        if($curlErrorNumber || $resp === false){
+            return array();
+        }
+
+        $result = json_decode($resp,true);
+
+        return (is_array($result)) ? $result : array();
 
     }
 }

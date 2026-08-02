@@ -18,10 +18,108 @@ cgJsClassAdmin.index.vars = {
     cg_nonce_check_active: false,
     cgNextGalleryId: 0,
     lazyEditorIds: [],
-    lazyEditorScrollTimer: null
+    lazyEditorScrollTimer: null,
+    databaseInstallForm: null,
+    databaseInstallRequestActive: false,
+    databaseInstallPollCount: 0
 };
 
 cgJsClassAdmin.index.functions = {
+    setDatabaseInstallationUiActive: function(isActive){
+        var $mainContainer = jQuery('#cg_main_container');
+
+        if(isActive){
+            $mainContainer.addClass('cg_database_installation_active').attr('aria-busy','true');
+            jQuery('body,html').addClass('cg_no_scroll');
+        }else{
+            $mainContainer.removeClass('cg_database_installation_active').removeAttr('aria-busy');
+            jQuery('body,html').removeClass('cg_no_scroll cg_overflow_hidden');
+        }
+    },
+    showDatabaseInstallation: function($form,delay){
+        var $container = jQuery('#cgDatabaseInstallationContainer');
+        if(!$container.length){
+            return false;
+        }
+
+        cgJsClassAdmin.index.vars.databaseInstallForm = ($form && $form.length && $form.is('form')) ? $form : null;
+        cgJsClassAdmin.index.vars.databaseInstallPollCount = 0;
+        $container.removeClass('cg_hide');
+        $container.find('.cg_database_installation_icon,.cg_database_installation_loader').removeClass('cg_hide');
+        $container.find('#cgDatabaseInstallationError,#cgDatabaseInstallationReload').addClass('cg_hide');
+        jQuery('#cgBackendBackgroundDrop').removeClass('cg_hide').addClass('cg_active cg_pointer_events_none');
+        cgJsClassAdmin.index.functions.setDatabaseInstallationUiActive(true);
+
+        setTimeout(function(){
+            cgJsClassAdmin.index.functions.completeDatabaseInstallation();
+        },delay || 0);
+
+        return true;
+    },
+    completeDatabaseInstallation: function(){
+        var $container = jQuery('#cgDatabaseInstallationContainer');
+        if(!$container.length || cgJsClassAdmin.index.vars.databaseInstallRequestActive){
+            return;
+        }
+
+        cgJsClassAdmin.index.vars.databaseInstallRequestActive = true;
+        jQuery.ajax({
+            url: $container.attr('data-cg-ajax-url'),
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                action: 'post_cg_complete_database_install',
+                cg_nonce: $container.attr('data-cg-nonce')
+            }
+        }).done(function(response){
+            var status = response && response.data ? response.data.status : '';
+            if(response && response.success && status === 'in_progress'){
+                cgJsClassAdmin.index.vars.databaseInstallRequestActive = false;
+                cgJsClassAdmin.index.vars.databaseInstallPollCount++;
+                if(cgJsClassAdmin.index.vars.databaseInstallPollCount >= 20){
+                    cgJsClassAdmin.index.functions.showDatabaseInstallationError();
+                    return;
+                }
+                setTimeout(function(){
+                    cgJsClassAdmin.index.functions.completeDatabaseInstallation();
+                },1500);
+                return;
+            }
+            if(response && response.success && status === 'complete'){
+                $container.attr('data-cg-pending','0');
+                cgJsClassAdmin.index.vars.databaseInstallRequestActive = false;
+                cgJsClassAdmin.index.vars.databaseInstallPollCount = 0;
+                cgJsClassAdmin.index.functions.continueAfterDatabaseInstallation();
+                return;
+            }
+            cgJsClassAdmin.index.functions.showDatabaseInstallationError();
+        }).fail(function(){
+            cgJsClassAdmin.index.functions.showDatabaseInstallationError();
+        });
+    },
+    showDatabaseInstallationError: function(){
+        var $container = jQuery('#cgDatabaseInstallationContainer');
+        cgJsClassAdmin.index.vars.databaseInstallRequestActive = false;
+        jQuery('#cg_main_container').removeClass('cg_pointer_events_none').attr('aria-busy','false');
+        $container.find('.cg_database_installation_icon,.cg_database_installation_loader').addClass('cg_hide');
+        $container.find('#cgDatabaseInstallationError,#cgDatabaseInstallationReload').removeClass('cg_hide');
+    },
+    continueAfterDatabaseInstallation: function(){
+        var $container = jQuery('#cgDatabaseInstallationContainer');
+        var $form = cgJsClassAdmin.index.vars.databaseInstallForm;
+
+        if($form && $form.length){
+            $form.data('cg-create-gallery-submitting',false);
+            $form.find('button[type="submit"], input[type="submit"]').prop('disabled',false).removeClass('disabled');
+            $form.data('cg-database-install-complete',true);
+            cgJsClassAdmin.index.functions.cgLoadBackend($form,false);
+            return;
+        }
+
+        $container.addClass('cg_hide');
+        jQuery('#cgBackendBackgroundDrop').addClass('cg_hide').removeClass('cg_active cg_pointer_events_none');
+        cgJsClassAdmin.index.functions.setDatabaseInstallationUiActive(false);
+    },
     resize: function ($wpBodyContent,$cg_main_container) {
 
         return;// not required in 27.0.0

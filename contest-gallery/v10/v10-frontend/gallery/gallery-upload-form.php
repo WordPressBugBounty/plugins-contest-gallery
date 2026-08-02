@@ -105,6 +105,10 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
 
         echo "<form action='' method='post' class='cgGalleryUploadForm' id='cgGalleryUploadForm$galeryIDuserForJs' data-cg-gid='$galeryIDuserForJs' enctype='multipart/form-data' name='cgGalleryUpload' novalidate >";
         echo "<input type='hidden' name='galeryIDuser' value='$galeryIDuser'>";
+        $cgOrderItemIdForUpload = (!empty($OrderItemID)) ? absint($OrderItemID) : 0;
+        $cgOrderIdHashForUpload = (!empty($cgOrderItemIdForUpload) && !empty($OrderIdHash)) ? $OrderIdHash : '';
+        $cgUploadAccessHash = cg1l_get_upload_access_hash($galeryID,$cgOrderItemIdForUpload,$cgOrderIdHashForUpload);
+        echo "<input type='hidden' name='check' id='cg_check' value='".esc_attr($cgUploadAccessHash)."'>";
 
         $isBulkUploadDivRendered = false;
         $isBulkUploadCaptchaDivRendered = false;

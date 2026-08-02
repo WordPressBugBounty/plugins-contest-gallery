@@ -55,6 +55,7 @@ $RandomSortButton = 0;
 $AllowComments = 1;
 $CommentsOutGallery = 1;
 $AllowRating = 2;
+$AllowRatingAverage = 0;
 $VotesPerUser = 0;
 $RatingOutGallery = 0;
 $ShowAlways = 3;

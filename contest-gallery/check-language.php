@@ -180,6 +180,10 @@ __('Rating quantity descend');$l_RatingQuantityDescend = "Rating quantity descen
 
 __('Rating quantity ascend');$l_RatingQuantityAscend = "Rating quantity ascend"; $language_RatingQuantityAscend = (!empty($translations[$l_RatingQuantityAscend]) && $is_frontend) ? $translations[$l_RatingQuantityAscend] : ((empty(trim(__($l_RatingQuantityAscend,$domain)))) ? __($l_RatingQuantityAscend,$domainDefault) : __($l_RatingQuantityAscend,$domain)); if(empty($translations[$l_RatingQuantityAscend])){$translations[$l_RatingQuantityAscend]='';}
 
+__('Rating average descend');$l_RatingAverageDescend = "Rating average descend"; $language_RatingAverageDescend = (!empty($translations[$l_RatingAverageDescend]) && $is_frontend) ? $translations[$l_RatingAverageDescend] : ((empty(trim(__($l_RatingAverageDescend,$domain)))) ? __($l_RatingAverageDescend,$domainDefault) : __($l_RatingAverageDescend,$domain)); if(empty($translations[$l_RatingAverageDescend])){$translations[$l_RatingAverageDescend]='';}
+
+__('Rating average ascend');$l_RatingAverageAscend = "Rating average ascend"; $language_RatingAverageAscend = (!empty($translations[$l_RatingAverageAscend]) && $is_frontend) ? $translations[$l_RatingAverageAscend] : ((empty(trim(__($l_RatingAverageAscend,$domain)))) ? __($l_RatingAverageAscend,$domainDefault) : __($l_RatingAverageAscend,$domain)); if(empty($translations[$l_RatingAverageAscend])){$translations[$l_RatingAverageAscend]='';}
+
 __('Rating sum descend');$l_RatingSumDescend = "Rating sum descend"; $language_RatingSumDescend = (!empty($translations[$l_RatingSumDescend]) && $is_frontend) ? $translations[$l_RatingSumDescend] : ((empty(trim(__($l_RatingSumDescend,$domain)))) ? __($l_RatingSumDescend,$domainDefault) : __($l_RatingSumDescend,$domain)); if(empty($translations[$l_RatingSumDescend])){$translations[$l_RatingSumDescend]='';}
 
 __('Rating sum ascend');$l_RatingSumAscend = "Rating sum ascend"; $language_RatingSumAscend = (!empty($translations[$l_RatingSumAscend]) && $is_frontend) ? $translations[$l_RatingSumAscend] : ((empty(trim(__($l_RatingSumAscend,$domain)))) ? __($l_RatingSumAscend,$domainDefault) : __($l_RatingSumAscend,$domain)); if(empty($translations[$l_RatingSumAscend])){$translations[$l_RatingSumAscend]='';}
@@ -275,6 +279,10 @@ __('Gallery entry link copied');$l_GalleryEntryLinkCopied = "Gallery entry link 
 __('Sum');$l_Sum = "Sum"; $language_Sum = (!empty($translations[$l_Sum]) && $is_frontend) ? $translations[$l_Sum] : ((empty(trim(__($l_Sum,$domain)))) ? __($l_Sum,$domainDefault) : __($l_Sum,$domain)); if(empty($translations[$l_Sum])){$translations[$l_Sum]='';}
 
 __('Your vote');$l_YourVote = "Your vote"; $language_YourVote = (!empty($translations[$l_YourVote]) && $is_frontend) ? $translations[$l_YourVote] : ((empty(trim(__($l_YourVote,$domain)))) ? __($l_YourVote,$domainDefault) : __($l_YourVote,$domain)); if(empty($translations[$l_YourVote])){$translations[$l_YourVote]='';}
+
+__('rating');$l_Rating = "rating"; $language_Rating = (!empty($translations[$l_Rating]) && $is_frontend) ? $translations[$l_Rating] : ((empty(trim(__($l_Rating,$domain)))) ? __($l_Rating,$domainDefault) : __($l_Rating,$domain)); if(empty($translations[$l_Rating])){$translations[$l_Rating]='';}
+
+__('ratings');$l_Ratings = "ratings"; $language_Ratings = (!empty($translations[$l_Ratings]) && $is_frontend) ? $translations[$l_Ratings] : ((empty(trim(__($l_Ratings,$domain)))) ? __($l_Ratings,$domainDefault) : __($l_Ratings,$domain)); if(empty($translations[$l_Ratings])){$translations[$l_Ratings]='';}
 
 // Upload/Registry
 __('The name field must contain two characters or more');$l_TheNameFieldMustContainTwoCharactersOrMore= "The name field must contain two characters or more";$language_TheNameFieldMustContainTwoCharactersOrMore = (!empty($translations[$l_TheNameFieldMustContainTwoCharactersOrMore]) && $is_frontend) ? $translations[$l_TheNameFieldMustContainTwoCharactersOrMore] : ((empty(trim(__($l_TheNameFieldMustContainTwoCharactersOrMore,$domain)))) ? __($l_TheNameFieldMustContainTwoCharactersOrMore,$domainDefault) : __($l_TheNameFieldMustContainTwoCharactersOrMore,$domain)); if(empty($translations[$l_SortBy])){$translations[$l_TheNameFieldMustContainTwoCharactersOrMore]='';}

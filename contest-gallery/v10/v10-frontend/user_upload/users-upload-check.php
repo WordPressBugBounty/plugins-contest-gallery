@@ -20,6 +20,8 @@ $Version = cg_get_version_for_scripts();
 $CookieId='';
 
 $OrderItem = 0;
+$cgOrderUploadAuthorization = array();
+$cgOrderUploadLockName = '';
 
 /*
 echo "<pre>";
@@ -40,17 +42,17 @@ die;*/
 print_r($_FILES);
 echo "</pre>";die;*/
 
-$galeryID = absint($_POST['GalleryID']);
+$galeryID = (!empty($_POST['GalleryID']) && !is_array($_POST['GalleryID'])) ? absint($_POST['GalleryID']) : 0;
 $galeryIDuser = $galeryID;
 
 $_POST = cg1l_sanitize_post($_POST);
 $_FILES = cg1l_sanitize_post($_FILES);// since 21.0.1 can be also done
 
-if(!empty($_POST['cg_order_item_id'])){
+if(!empty($_POST['cg_order_item_id']) && !is_array($_POST['cg_order_item_id'])){
 	$OrderItem = absint($_POST['cg_order_item_id']);
 }
 
-if(isset($_POST['galeryIDuser'])){
+if(isset($_POST['galeryIDuser']) && !is_array($_POST['galeryIDuser'])){
     $galeryIDuser = $_POST['galeryIDuser'];
 }
 
@@ -86,9 +88,73 @@ if(empty($_POST["cg_upload_action"]) OR empty($_FILES["data"])){
     $isManipulated = true;
 }else{
 
+    if($galeryID < 1){
+        cg1l_reject_frontend_upload($galeryIDuser,'Upload authorization failed. Please reload the page and try again.');
+    }
+
+    global $wpdb;
+
+    $providedUploadHash = (!empty($_POST['check']) && !is_array($_POST['check'])) ? sanitize_text_field((string)$_POST['check']) : '';
+    $tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
+    $tablename_ecommerce_orders = $wpdb->prefix . "contest_gal1ery_ecommerce_orders";
+    $tablename_ecommerce_orders_items = $wpdb->prefix . "contest_gal1ery_ecommerce_orders_items";
+
+    if(!empty($OrderItem)){
+        $orderItemRow = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM $tablename_ecommerce_orders_items WHERE id = %d LIMIT 1",
+            $OrderItem
+        ));
+        $orderRow = false;
+        $fallbackEcommerceEntry = false;
+
+        if(!empty($orderItemRow) && !empty($orderItemRow->ParentOrder)){
+            $orderRow = $wpdb->get_row($wpdb->prepare(
+                "SELECT * FROM $tablename_ecommerce_orders WHERE id = %d LIMIT 1",
+                absint($orderItemRow->ParentOrder)
+            ));
+            $fallbackEcommerceEntry = $wpdb->get_row($wpdb->prepare(
+                "SELECT UploadGallery, MaxUploads
+                FROM $tablename_ecommerce_entries
+                WHERE GalleryID = %d AND pid = %d AND IsUpload = 1
+                ORDER BY id DESC
+                LIMIT 1",
+                absint($orderItemRow->GalleryID),
+                absint($orderItemRow->pid)
+            ));
+        }
+
+        $orderCookie = (!empty($_COOKIE['cg_order']) && !is_array($_COOKIE['cg_order'])) ? sanitize_text_field(wp_unslash($_COOKIE['cg_order'])) : '';
+        $currentUserCanAccessOrder = (!empty($orderRow)) ? cg_current_user_can_access_ecommerce_order($orderRow) : false;
+        $cgOrderUploadAuthorization = cg1l_validate_order_upload_context(
+            $galeryID,
+            $orderItemRow,
+            $orderRow,
+            $fallbackEcommerceEntry,
+            $providedUploadHash,
+            $orderCookie,
+            $currentUserCanAccessOrder
+        );
+
+        if(empty($cgOrderUploadAuthorization['authorized'])){
+            cg1l_reject_frontend_upload($galeryIDuser,'Upload authorization failed. Please reload the order page and try again.');
+        }
+
+        $galeryIDuser = $OrderItem.'itemId';
+    }elseif(!cg1l_validate_upload_access_hash($providedUploadHash,$galeryID)){
+        cg1l_reject_frontend_upload($galeryIDuser,'Upload authorization failed. Please reload the page and try again.');
+    }
+
     $wp_upload_dir = wp_upload_dir();
     $optionsPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/'.$galeryID.'-options.json';
-    $optionsSource =json_decode(file_get_contents($optionsPath),true);
+    if(!file_exists($optionsPath)){
+        cg1l_reject_frontend_upload($galeryIDuser,'Upload form configuration could not be found. Please reload the page and try again.');
+    }
+
+    $optionsSource = json_decode(file_get_contents($optionsPath),true);
+    if(empty($optionsSource) || !is_array($optionsSource)){
+        cg1l_reject_frontend_upload($galeryIDuser,'Upload form configuration could not be read. Please reload the page and try again.');
+    }
+
     $intervalConf = cg_shortcode_interval_check($galeryID,$optionsSource,'cg_users_upload');
     if(!$intervalConf['shortcodeIsActive'] && empty($OrderItem)){
         ?>
@@ -120,8 +186,16 @@ if(empty($_POST["cg_upload_action"]) OR empty($_FILES["data"])){
     $selectSQL1 = $wpdb->get_row( "SELECT * FROM $tablenameOptions WHERE id = '$galeryID'" );
     $InformUserUpload = $wpdb->get_var( "SELECT InformUserUpload FROM $tablename_mail_user_upload WHERE GalleryID = '$galeryID'" );
 
+    if(empty($proOptions) || empty($selectSQL1)){
+        cg1l_reject_frontend_upload($galeryIDuser,'Upload form configuration could not be found. Please reload the page and try again.');
+    }
+
     if(cg_get_version()=='contest-gallery'){
         $proOptions->PdfPreviewFrontend = 0;
+    }
+
+    if(absint($proOptions->RegUserUploadOnly) === 1 && empty($OrderItem) && !is_user_logged_in()){
+        cg1l_reject_frontend_upload($galeryIDuser,'Please log in before uploading.');
     }
 
     // correction should be done here, in case bulk upload from older versions is activated
@@ -149,6 +223,45 @@ if(empty($_POST["cg_upload_action"]) OR empty($_FILES["data"])){
             }
         }else{
             $_FILES = cg1l_sanitize_files($_FILES, 'data',0,$galeryIDuser,$galeryID,true);
+        }
+    }
+
+    if(!empty($OrderItem)){
+        $orderUploadRequestedEntries = 1;
+        if(
+            !$isOnlyContactEntry &&
+            empty($proOptions->AdditionalFiles) &&
+            !empty($_FILES['data']['name']) &&
+            is_array($_FILES['data']['name'])
+        ){
+            $orderUploadRequestedEntries = count($_FILES['data']['name']);
+        }
+        $orderUploadRequestedEntries = max(1,absint($orderUploadRequestedEntries));
+
+        $cgOrderUploadLockName = cg1l_acquire_order_upload_lock($OrderItem,5);
+        if(empty($cgOrderUploadLockName)){
+            cg1l_reject_frontend_upload($galeryIDuser,'Another upload for this order is being processed. Please try again.');
+        }
+        register_shutdown_function('cg1l_release_order_upload_lock',$cgOrderUploadLockName);
+
+        $orderUploadedEntries = absint($wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM $tablename1 WHERE OrderItem = %d",
+            $OrderItem
+        )));
+
+        $wpdb->update(
+            "$tablename_ecommerce_orders_items",
+            array('Uploaded' => $orderUploadedEntries),
+            array('id' => $OrderItem),
+            array('%d'),
+            array('%d')
+        );
+
+        if(
+            empty($cgOrderUploadAuthorization['is_unlimited']) &&
+            ($orderUploadedEntries + $orderUploadRequestedEntries) > absint($cgOrderUploadAuthorization['max_uploads'])
+        ){
+            cg1l_reject_frontend_upload($galeryIDuser,'The maximum number of uploads for this order has been reached.');
         }
     }
 
@@ -340,7 +453,6 @@ if(!$isManipulated){
     $cgMailChecked = false;
     $categoryId = 0;
     $processedFilesCounter = 0;
-    $newEntriesInserted = 0;
 
     // These files need to be included as dependencies when on the front end.
     require_once( ABSPATH . 'wp-admin/includes/image.php' );
@@ -956,8 +1068,6 @@ if(!$isManipulated){
                 /*echo "<pre>";
                 print_r($PdfPreviews);
                 echo "</pre>";*/
-
-                $newEntriesInserted++;
 
                 // Insert Upload Fields for pic if exists
                 $realIdBefore = $nextId;
@@ -1668,8 +1778,10 @@ if(!$isManipulated){
 
         if(!empty($OrderItem)){
 
-	        $Uploaded = $wpdb->get_var( "SELECT Uploaded FROM $tablename_ecommerce_orders_items WHERE id = '$OrderItem' LIMIT 1" );
-	        $Uploaded = $Uploaded+$newEntriesInserted;
+	        $Uploaded = absint($wpdb->get_var($wpdb->prepare(
+		        "SELECT COUNT(*) FROM $tablename1 WHERE OrderItem = %d",
+		        $OrderItem
+	        )));
 	        $wpdb->update(
 		        "$tablename_ecommerce_orders_items",
 		        array('Uploaded' => $Uploaded),
@@ -1677,6 +1789,11 @@ if(!$isManipulated){
 		        array('%d'),
 		        array('%d')
 	        );
+
+	        if(!empty($cgOrderUploadLockName)){
+		        cg1l_release_order_upload_lock($cgOrderUploadLockName);
+		        $cgOrderUploadLockName = '';
+	        }
 
         }
 
@@ -1827,13 +1944,17 @@ if(!$isManipulated){
                 foreach ($picsSQL as $rowObject){
                     $dataSliderSortedPids[] = intval($rowObject->id);
                     $fullData = json_decode(json_encode($rowObject), true);
-                    if(cg_is_is_image($fullData['ImgType'])){
+
+                    if(isset($imagesArray[$rowObject->id]) && is_array($imagesArray[$rowObject->id])){
+                        $fullData = array_replace($fullData,$imagesArray[$rowObject->id]);
+                    }
+
+                    if(cg_is_is_image($fullData['ImgType']) && empty($fullData['medium'])){
                         $imgSrcMedium=wp_get_attachment_image_src($fullData['WpUpload'], 'medium');
                         $imgSrcMedium=(isset($imgSrcMedium[0])) ? $imgSrcMedium[0] : '';
                         $fullData['medium'] = $imgSrcMedium;
                     }
-                    $imgSrcThumb=(isset($imgSrcThumb[0])) ? $imgSrcThumb[0] : '';
-                    $imgSrcMedium=wp_get_attachment_image_src($rowObject->WpUpload, 'medium');
+
                     cg1l_set_slider_data($fullData,$dataSlider,$options,0);
                 }
                //e $imagesFullData = cg1l_build_images_main_data_gzip($galeryID);

@@ -2,6 +2,8 @@
 if(!function_exists('cg_ecommerce_change_options_and_sizes')){
     function cg_ecommerce_change_options_and_sizes($GalleryID){
 
+        cg_require_global_settings_access();
+
         global $wpdb;
 
         $tablenameEcommerceOptions = $wpdb->prefix . "contest_gal1ery_ecommerce_options";
@@ -65,16 +67,16 @@ if(!function_exists('cg_ecommerce_change_options_and_sizes')){
 	    $PayPalApiActive = isset($_POST['PayPalApiActive']) ? 1 : 2;
 	    $PayPalTestActive = !empty($_POST['PayPalTestActive']) ? 1 : 0;
 	    $PayPalSandboxClientId = sanitize_text_field(isset($_POST['PayPalSandboxClientId']) ? $_POST['PayPalSandboxClientId'] : $PayPalSandboxClientId);
-        $PayPalSandboxSecret = sanitize_text_field(isset($_POST['PayPalSandboxSecret']) ? $_POST['PayPalSandboxSecret'] : $PayPalSandboxSecret);
+        $PayPalSandboxSecret = cg_get_global_secret_post_value($PayPalSandboxSecret,'PayPalSandboxSecret');
         $PayPalLiveClientId = sanitize_text_field(isset($_POST['PayPalLiveClientId']) ? $_POST['PayPalLiveClientId'] : $PayPalLiveClientId);
-        $PayPalLiveSecret = sanitize_text_field(isset($_POST['PayPalLiveSecret']) ? $_POST['PayPalLiveSecret'] : $PayPalLiveSecret);
+        $PayPalLiveSecret = cg_get_global_secret_post_value($PayPalLiveSecret,'PayPalLiveSecret');
 
 	    $StripeApiActive = isset($_POST['StripeApiActive']) ? 1 : 2;
 	    $StripeTestActive = !empty($_POST['StripeTestActive']) ? 1 : 0;
 	    $StripeSandboxClientId = sanitize_text_field(isset($_POST['StripeSandboxClientId']) ? $_POST['StripeSandboxClientId'] : $StripeSandboxClientId);
-        $StripeSandboxSecret = sanitize_text_field(isset($_POST['StripeSandboxSecret']) ? $_POST['StripeSandboxSecret'] : $StripeSandboxSecret);
+        $StripeSandboxSecret = cg_get_global_secret_post_value($StripeSandboxSecret,'StripeSandboxSecret');
         $StripeLiveClientId = sanitize_text_field(isset($_POST['StripeLiveClientId']) ? $_POST['StripeLiveClientId'] : $StripeLiveClientId);
-        $StripeLiveSecret = sanitize_text_field(isset($_POST['StripeLiveSecret']) ? $_POST['StripeLiveSecret'] : $StripeLiveSecret);
+        $StripeLiveSecret = cg_get_global_secret_post_value($StripeLiveSecret,'StripeLiveSecret');
 		
         $CurrencyShort = sanitize_text_field(isset($_POST['CurrencyShort']) ? $_POST['CurrencyShort'] : $CurrencyShort);
         $CurrencyPosition = sanitize_text_field(isset($_POST['CurrencyPosition']) ? $_POST['CurrencyPosition'] : $CurrencyPosition);

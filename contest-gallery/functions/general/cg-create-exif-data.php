@@ -63,7 +63,11 @@ if(!function_exists('cg_create_exif_data')){
                     return $exifDataForImage;
                 }
 
-                $wpImageExifData = exif_read_data($fullFilePath,0,1);
+				$wpImageExifData = @exif_read_data($fullFilePath,0,1);
+
+				if(!is_array($wpImageExifData)){
+					return $exifDataForImage;
+				}
 
                 if(!empty($wpImageExifData['IFD0'])){
 

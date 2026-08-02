@@ -831,6 +831,11 @@ if($isEntryLandingPage){
 			}
 		}
 
+		$aggregateRatingSchema = cg1l_get_entry_aggregate_rating_schema($rowObject,$options,$shortCodeType);
+		if(!empty($aggregateRatingSchema)){
+			$mainEntity['aggregateRating'] = $aggregateRatingSchema;
+		}
+
 		$pageSchema['mainEntity'] = $mainEntity;
 	}
 

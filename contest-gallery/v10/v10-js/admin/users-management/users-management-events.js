@@ -77,17 +77,243 @@ jQuery(document).ready(function($){
         $form.trigger('submit');
     });
 
-    $(document).on('click','#cg_create_user_data_csv_submit',function () {
-        debugger
-        var $cgUsersManagementForm = $('#cgUsersManagementForm');
-        var $cgCreateUserDataCsvNewExport = $cgUsersManagementForm.find('#cg_create_user_data_csv_new_export');
-        $cgCreateUserDataCsvNewExport.removeAttr('disabled');
-        $cgUsersManagementForm.get(0).submit();
+    var cgUserDataExportJobId = '';
+    var cgUserDataExportRequest = null;
+    var cgUserDataExportRetry = null;
+    var cgUserDataExportIsProcessing = false;
 
-        setTimeout(function () {
-            $cgCreateUserDataCsvNewExport.attr('disabled','disabled');
-        },100);
+    var cgUserDataExportModal = function () {
+        return $('#cgUserDataExportModalContainer');
+    };
 
+    var cgUserDataExportErrorMessage = function (xhr, fallback) {
+        if (xhr && xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
+            return xhr.responseJSON.data.message;
+        }
+        if (xhr && xhr.responseJSON && xhr.responseJSON.data && typeof xhr.responseJSON.data === 'string') {
+            return xhr.responseJSON.data;
+        }
+        return fallback || 'Export request failed.';
+    };
+
+    var cgUserDataExportSetProgress = function (data) {
+        data = data || {};
+        var percent = parseInt(data.percent, 10);
+        var processed = parseInt(data.processed, 10);
+        var total = parseInt(data.total, 10);
+        percent = isNaN(percent) ? 0 : Math.max(0, Math.min(100, percent));
+        processed = isNaN(processed) ? 0 : processed;
+        total = isNaN(total) ? 0 : total;
+        $('#cgUserDataExportProgressBar').css('width', percent + '%');
+        $('#cgUserDataExportPercent').text(percent + '%');
+        $('#cgUserDataExportUsers').text(processed + '/' + total);
+    };
+
+    var cgUserDataExportShowModal = function () {
+        var $modal = cgUserDataExportModal();
+        cgUserDataExportJobId = '';
+        cgUserDataExportRetry = null;
+        cgUserDataExportIsProcessing = true;
+        $modal.attr('data-cg-job-id', '').removeClass('cg-user-data-export-done cg-user-data-export-error').addClass('cg-user-data-export-processing');
+        $('#cgUserDataExportHeadline').text('Preparing export');
+        $('#cgUserDataExportText').text('The registered users and export fields are being prepared.');
+        $('#cgUserDataExportError').addClass('cg_hide').empty();
+        $('#cgUserDataExportDownloadInfo').addClass('cg_hide');
+        $('#cgUserDataExportCancel').removeClass('cg_hide').prop('disabled', false).text('Cancel export');
+        $('#cgUserDataExportRetry, #cgUserDataExportDownload, #cgUserDataExportClose').addClass('cg_hide');
+        cgUserDataExportSetProgress({percent: 0, processed: 0, total: 0});
+        cgJsClassAdmin.gallery.functions.showModal('#cgUserDataExportModalContainer');
+        $('#cgBackendBackgroundDrop').addClass('cg_message_close_extra_processing');
+    };
+
+    var cgUserDataExportSetError = function (message) {
+        var $modal = cgUserDataExportModal();
+        cgUserDataExportIsProcessing = false;
+        $('#cgBackendBackgroundDrop').removeClass('cg_message_close_extra_processing');
+        $modal.removeClass('cg-user-data-export-processing cg-user-data-export-done').addClass('cg-user-data-export-error');
+        $('#cgUserDataExportHeadline').text('Export paused');
+        $('#cgUserDataExportText').text('The completed parts remain available and the failed step can be retried.');
+        $('#cgUserDataExportError').removeClass('cg_hide').text(message);
+        $('#cgUserDataExportRetry').toggleClass('cg_hide', !cgUserDataExportRetry);
+        $('#cgUserDataExportDownload, #cgUserDataExportDownloadInfo').addClass('cg_hide');
+        if (cgUserDataExportJobId) {
+            $('#cgUserDataExportCancel').removeClass('cg_hide').prop('disabled', false).text('Cancel and remove files');
+            $('#cgUserDataExportClose').addClass('cg_hide');
+        } else {
+            $('#cgUserDataExportCancel').addClass('cg_hide');
+            $('#cgUserDataExportClose').removeClass('cg_hide');
+        }
+        $('#cg_create_user_data_csv_submit').prop('disabled', false);
+    };
+
+    var cgUserDataExportSetDone = function (data) {
+        var $modal = cgUserDataExportModal();
+        cgUserDataExportIsProcessing = false;
+        cgUserDataExportRetry = null;
+        $('#cgBackendBackgroundDrop').removeClass('cg_message_close_extra_processing');
+        $modal.removeClass('cg-user-data-export-processing cg-user-data-export-error').addClass('cg-user-data-export-done');
+        cgUserDataExportSetProgress(data);
+        $('#cgUserDataExportProgressBar').css('width', '100%');
+        $('#cgUserDataExportPercent').text('100%');
+        $('#cgUserDataExportHeadline').text('Export completed');
+        $('#cgUserDataExportText').text('The CSV file is ready for download.');
+        $('#cgUserDataExportError, #cgUserDataExportCancel, #cgUserDataExportRetry').addClass('cg_hide');
+        $('#cgUserDataExportDownloadInfo, #cgUserDataExportDownload, #cgUserDataExportClose').removeClass('cg_hide');
+        $('#cgUserDataExportDownload').attr('href', data.download_url || '#');
+        $('#cg_create_user_data_csv_submit').prop('disabled', false);
+    };
+
+    var cgUserDataExportHandleResponse = function (response, retry) {
+        if (!response || !response.success || !response.data) {
+            cgUserDataExportRetry = retry;
+            cgUserDataExportSetError((response && response.data && response.data.message) ? response.data.message : 'Export request failed.');
+            return false;
+        }
+        if (response.data.job_id) {
+            cgUserDataExportJobId = response.data.job_id;
+            cgUserDataExportModal().attr('data-cg-job-id', cgUserDataExportJobId);
+        }
+        cgUserDataExportSetProgress(response.data);
+        if (response.data.done) {
+            cgUserDataExportSetDone(response.data);
+            return false;
+        }
+        return true;
+    };
+
+    var cgUserDataExportRunStep = function () {
+        var retry = function () {
+            cgUserDataExportRunStep();
+        };
+        cgUserDataExportRetry = retry;
+        cgUserDataExportIsProcessing = true;
+        $('#cgBackendBackgroundDrop').addClass('cg_message_close_extra_processing');
+        cgUserDataExportModal().removeClass('cg-user-data-export-error').addClass('cg-user-data-export-processing');
+        $('#cgUserDataExportHeadline').text('Export in progress');
+        $('#cgUserDataExportText').text('Registered users are being exported in small batches.');
+        $('#cgUserDataExportError, #cgUserDataExportRetry').addClass('cg_hide');
+        $('#cgUserDataExportCancel').removeClass('cg_hide').prop('disabled', false).text('Cancel export');
+        cgUserDataExportRequest = $.ajax({
+            url: 'admin-ajax.php',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                action: 'post_cg_user_data_export_step',
+                cg_nonce: CG1LBackendNonce.nonce,
+                job_id: cgUserDataExportJobId
+            }
+        }).done(function (response) {
+            cgUserDataExportRequest = null;
+            if (cgUserDataExportHandleResponse(response, retry)) {
+                window.setTimeout(cgUserDataExportRunStep, 0);
+            }
+        }).fail(function (xhr, status) {
+            cgUserDataExportRequest = null;
+            if (status === 'abort') {
+                return;
+            }
+            cgUserDataExportRetry = retry;
+            cgUserDataExportSetError(cgUserDataExportErrorMessage(xhr, 'The next export batch could not be processed.'));
+        });
+    };
+
+    var cgUserDataExportStart = function () {
+        var $form = $('#cgUsersManagementForm');
+        var search = $form.find('input[name="cg-search-user-name-original"]').val() || '';
+        var galleryId = $form.find('input[name="cg-search-gallery-id-original"]').val() || '';
+        var retry = function () {
+            cgUserDataExportStart();
+        };
+        cgUserDataExportRetry = retry;
+        cgUserDataExportRequest = $.ajax({
+            url: 'admin-ajax.php',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                action: 'post_cg_user_data_export_start',
+                cg_nonce: CG1LBackendNonce.nonce,
+                search: search,
+                gallery_id: galleryId
+            }
+        }).done(function (response) {
+            cgUserDataExportRequest = null;
+            if (cgUserDataExportHandleResponse(response, retry)) {
+                cgUserDataExportRunStep();
+            }
+        }).fail(function (xhr, status) {
+            cgUserDataExportRequest = null;
+            if (status === 'abort') {
+                return;
+            }
+            cgUserDataExportRetry = retry;
+            cgUserDataExportSetError(cgUserDataExportErrorMessage(xhr, 'The export job could not be started.'));
+        });
+    };
+
+    var cgUserDataExportHideModal = function () {
+        cgJsClassAdmin.gallery.functions.hideCgBackendBackgroundDropAndContainer();
+        $('#cgBackendBackgroundDrop').removeClass('cg_message_close_extra_processing');
+        cgUserDataExportModal().removeClass('cg-user-data-export-processing cg-user-data-export-done cg-user-data-export-error').attr('data-cg-job-id', '');
+        $('#cg_create_user_data_csv_submit').prop('disabled', false);
+        cgUserDataExportJobId = '';
+        cgUserDataExportRetry = null;
+        cgUserDataExportIsProcessing = false;
+    };
+
+    $(document).on('click', '#cg_create_user_data_csv_submit', function () {
+        if (cgUserDataExportIsProcessing) {
+            return;
+        }
+        $(this).prop('disabled', true);
+        cgUserDataExportShowModal();
+        cgUserDataExportStart();
+    });
+
+    $(document).on('click', '#cgUserDataExportRetry', function () {
+        if (!cgUserDataExportRetry) {
+            return;
+        }
+        $(this).addClass('cg_hide');
+        cgUserDataExportRetry();
+    });
+
+    $(document).on('click', '#cgUserDataExportCancel', function () {
+        var $button = $(this);
+        var jobId = cgUserDataExportJobId;
+        $button.prop('disabled', true).text('Cancelling...');
+        if (cgUserDataExportRequest) {
+            cgUserDataExportRequest.abort();
+            cgUserDataExportRequest = null;
+        }
+        if (!jobId) {
+            cgUserDataExportHideModal();
+            return;
+        }
+        $.ajax({
+            url: 'admin-ajax.php',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                action: 'post_cg_user_data_export_cancel',
+                cg_nonce: CG1LBackendNonce.nonce,
+                job_id: jobId
+            }
+        }).always(function () {
+            cgUserDataExportHideModal();
+        });
+    });
+
+    $(document).on('click', '#cgUserDataExportClose', function () {
+        cgUserDataExportHideModal();
+    });
+
+    $(document).on('click', '#cgUserDataExportModalContainer .cg_message_close', function (event) {
+        if (cgUserDataExportIsProcessing) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            return false;
+        }
+        cgUserDataExportHideModal();
     });
 
     $(document).on('click','#cg_input_image_upload_file_to_delete_button',function () {

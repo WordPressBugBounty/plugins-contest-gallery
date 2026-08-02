@@ -1,6 +1,6 @@
 <?php
 if(!function_exists('cg_ecommerce_payment_processing_data')) {
-    function cg_ecommerce_payment_processing_data($LogForDatabase, $OrderIdHash,$PayerEmail,$PayPalTransactionId,$time,$PriceDivider,$PaymentStatus,$ParentOrder, $PriceTotalGrossItemsWithShipping,$isWithSaveToDatabase,$isGenerateKeyAfterPurchase,$SaleOrderId,$isFullPaid,$OrderNumber){
+    function cg_ecommerce_payment_processing_data($LogForDatabase, $OrderIdHash,$PayerEmail,$PayPalTransactionId,$time,$PriceDivider,$PaymentStatus,$ParentOrder, $PriceTotalGrossItemsWithShipping,$isWithSaveToDatabase,$isGenerateKeyAfterPurchase,$SaleOrderId,$isFullPaid,$OrderNumber,$beforeFilter = array()){
 
         $itemHasDefaultShipping = cg_ecommerce_check_item_has_default_shipping($LogForDatabase);
 
@@ -10,6 +10,7 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
 	    $itemHasShipping = false;
 	    $hasDownload = false;
 	    $itemHasTax = false;
+	    $ownKeys = array();
 
 	    global $wpdb;
         $tablename_ecommerce_orders = $wpdb->prefix . "contest_gal1ery_ecommerce_orders";
@@ -114,9 +115,18 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
             $ServiceKeysCsvName = $ecommerceEntryRow->ServiceKeysCsvName;
             $realId = $ecommerceEntryRow->pid;
 
-	        if(!empty($DownloadKeysCsvName) && $IsDownload && ($isWithSaveToDatabase || $isGenerateKeyAfterPurchase) && $isFullPaid){
+	        if($IsDownload && ($isWithSaveToDatabase || $isGenerateKeyAfterPurchase) && $isFullPaid){
 
-	            $DownloadKey = cg_get_set_key($GalleryID,$realId,$DownloadKeysCsvName,'',$PayerEmail,$PayPalTransactionId,$time,$OrderNumber);
+		        $DownloadKey = cg_ecommerce_get_before_payment_processing_key($beforeFilter,$realId,'DownloadKey');
+
+		        if($DownloadKey === ''){
+			        if(!empty($DownloadKeysCsvName)){
+				        $DownloadKey = cg_get_set_key($GalleryID,$realId,$DownloadKeysCsvName,'',$PayerEmail,$PayPalTransactionId,$time,$OrderNumber);
+			        }else{
+				        $filterData = apply_filters( 'cg_filter_get_own_key', $LogForDatabase, $realId);
+				        $DownloadKey = cg_ecommerce_get_own_key_filter_value($filterData);
+			        }
+		        }
 
 	            if($isGenerateKeyAfterPurchase){// then was not full paid before at ecommerce-payment-processing.php!!!
 					$itemId = $LogForDatabase['purchase_units'][0]['items'][$key]['itemId'];
@@ -129,48 +139,19 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
 					);
 				}
 
-            }elseif($IsDownload && ($isWithSaveToDatabase || $isGenerateKeyAfterPurchase) && $isFullPaid){
-				//var_dump('before cg_filter_get_own_key');
-	            $filterData = apply_filters( 'cg_filter_get_own_key', $LogForDatabase, $realId);
-
-				//var_dump('$filterData');
-				//var_dump($filterData);
-
-				if(!empty($filterData['cgOwnKey'])){
-					$DownloadKey = $filterData['cgOwnKey'];
-				}
-
-	            if($isGenerateKeyAfterPurchase){// then was not full paid before at ecommerce-payment-processing.php!!!
-		            $itemId = $LogForDatabase['purchase_units'][0]['items'][$key]['itemId'];
-		            $wpdb->update(
-			            "$tablename_ecommerce_orders_items",
-			            array('DownloadKey' => $DownloadKey),
-			            array('id' => $itemId),
-			            array('%s'),
-			            array('%d')
-		            );
-	            }
-
             }
 
-            if(!empty($ServiceKeysCsvName) && $IsService && ($isWithSaveToDatabase || $isGenerateKeyAfterPurchase) && $isFullPaid){
-                $ServiceKey = cg_get_set_key($GalleryID,$realId,'',$ServiceKeysCsvName,$PayerEmail,$PayPalTransactionId,$time,$OrderNumber);
-	            if($isGenerateKeyAfterPurchase){// then was not full paid before at ecommerce-payment-processing.php!!!
-		            $itemId = $LogForDatabase['purchase_units'][0]['items'][$key]['itemId'];
-		            $wpdb->update(
-			            "$tablename_ecommerce_orders_items",
-			            array('ServiceKey' => $ServiceKey),
-			            array('id' => $itemId),
-			            array('%s'),
-			            array('%d')
-		            );
-	            }
-            }elseif($IsService && ($isWithSaveToDatabase || $isGenerateKeyAfterPurchase) && $isFullPaid){
+            if($IsService && ($isWithSaveToDatabase || $isGenerateKeyAfterPurchase) && $isFullPaid){
 
-	            $filterData = apply_filters( 'cg_filter_get_own_key', $LogForDatabase, $realId);
+	            $ServiceKey = cg_ecommerce_get_before_payment_processing_key($beforeFilter,$realId,'ServiceKey');
 
-	            if(!empty($filterData['cgOwnKey'])){
-		            $ServiceKey = $filterData['cgOwnKey'];
+	            if($ServiceKey === ''){
+		            if(!empty($ServiceKeysCsvName)){
+			            $ServiceKey = cg_get_set_key($GalleryID,$realId,'',$ServiceKeysCsvName,$PayerEmail,$PayPalTransactionId,$time,$OrderNumber);
+		            }else{
+			            $filterData = apply_filters( 'cg_filter_get_own_key', $LogForDatabase, $realId);
+			            $ServiceKey = cg_ecommerce_get_own_key_filter_value($filterData);
+		            }
 	            }
 
 	            if($isGenerateKeyAfterPurchase){// then was not full paid before at ecommerce-payment-processing.php!!!
@@ -240,20 +221,12 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
 	        $nameForMailToShow = contest_gal1ery_convert_for_html_output_without_nl2br($nameForMailToShow);
 
             $ordersummaryandpage .= '<tr><td><b>'.$nameForMailToShow.':</b> </td><td style="padding-left:30px;">'.$PriceTotalGrossToShow.'</td></tr>';
-            if(!empty($DownloadKey) && $IsDownload && ($PaymentStatus=='COMPLETED' || $PaymentStatus=='succeeded') && empty($beforeFilter['ownKeys'][$realId]['DownloadKey'])){
-                $SENT_POST['ownKeys'][$realId] = $DownloadKey;
-                $ordersummaryandpage .= '<tr><td><b>'.$nameForMailToShow.' '.$language_Key.':</b> </td><td style="padding-left:30px;">'.$DownloadKey.'</td></tr>';
-            }elseif(!empty($ServiceKey) && $IsService && ($PaymentStatus=='COMPLETED' || $PaymentStatus=='succeeded') && empty($beforeFilter['ownKeys'][$realId]['ServiceKey'])){
-                $SENT_POST['ownKeys'][$realId] = $ServiceKey;
-                $ordersummaryandpage .= '<tr><td><b>'.$nameForMailToShow.' '.$language_Key.':</b> </td><td style="padding-left:30px;">'.$ServiceKey.'</td></tr>';
-            }elseif(!empty($beforeFilter['ownKeys'][$realId]['DownloadKey'])){
-                $DownloadKey = $beforeFilter['ownKeys'][$realId]['DownloadKey'];
-                $SENT_POST['ownKeys'][$realId] = $DownloadKey;
-                $ordersummaryandpage .= '<tr><td><b>'.$nameForMailToShow.' '.$language_Key.':</b> </td><td style="padding-left:30px;">'.$DownloadKey.'</td></tr>';
-            }elseif(!empty($beforeFilter['ownKeys'][$realId]['ServiceKey'])){
-                $ServiceKey = $beforeFilter['ownKeys'][$realId]['ServiceKey'];
-                $SENT_POST['ownKeys'][$realId] = $ServiceKey;
-                $ordersummaryandpage .= '<tr><td><b>'.$nameForMailToShow .' '.$language_Key.':</b> </td><td style="padding-left:30px;">'.$ServiceKey.'</td></tr>';
+            if($DownloadKey !== '' && $IsDownload && ($PaymentStatus=='COMPLETED' || $PaymentStatus=='succeeded')){
+                $ownKeys[$realId] = $DownloadKey;
+                $ordersummaryandpage .= '<tr><td><b>'.$nameForMailToShow.' '.$language_Key.':</b> </td><td style="padding-left:30px;">'.esc_html($DownloadKey).'</td></tr>';
+            }elseif($ServiceKey !== '' && $IsService && ($PaymentStatus=='COMPLETED' || $PaymentStatus=='succeeded')){
+                $ownKeys[$realId] = $ServiceKey;
+                $ordersummaryandpage .= '<tr><td><b>'.$nameForMailToShow.' '.$language_Key.':</b> </td><td style="padding-left:30px;">'.esc_html($ServiceKey).'</td></tr>';
             }
 
             if(!empty($AlternativeShippingGross)){
@@ -348,7 +321,8 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
             'itemHasShipping' => $itemHasShipping,
             'itemHasTax' => $itemHasTax,
             'ordersummaryandpage' => $ordersummaryandpage,
-            'LogForDatabase' => $LogForDatabase
+            'LogForDatabase' => $LogForDatabase,
+            'ownKeys' => $ownKeys
         ];
 
     }

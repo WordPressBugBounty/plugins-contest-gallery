@@ -46,6 +46,12 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
         //console.log('urlString');
         //console.log(urlString);
         var $response = $(new DOMParser().parseFromString(response, 'text/html'));
+        if($response.find('[data-cg-database-installation-pending-response="1"]').length){
+            $formLinkObject.data('cg-create-gallery-submitting',false);
+            $formLinkObject.find('button[type="submit"], input[type="submit"]').prop('disabled',false).removeClass('disabled');
+            cgJsClassAdmin.index.functions.showDatabaseInstallation($formLinkObject,300);
+            return;
+        }
         var cgVersionCurrent = $response.find('#cgVersion').val();
         $response.find('#cgGallerySubmitTop').addClass('cg_hide');
 
@@ -105,6 +111,9 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
             }
 
             $cg_main_container.append($response.find('body').html());// stats with html and contains body. Body content has to be inserted. Otherwise error because html can not be inserted in html.
+            if($cg_main_container.hasClass('cg_database_installation_active')){
+                cgJsClassAdmin.index.functions.setDatabaseInstallationUiActive(false);
+            }
             $('#cgGalleryLoader').addClass('cg_hide');
 
             if($formLinkObject.hasClass('cg_load_backend_copy_gallery')){
@@ -256,6 +265,9 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
 
     }).fail(function(xhr, status, error) {
         cgJsClassAdmin.index.functions.noteIfIsIE();
+        if($('#cg_main_container').hasClass('cg_database_installation_active')){
+            cgJsClassAdmin.index.functions.showDatabaseInstallationError();
+        }
     }).always(function() {
 
     });
