@@ -281,6 +281,48 @@ if (!function_exists('cg1l_frontend_nonce_user_logged_out')) {
 }
 add_filter('nonce_user_logged_out', 'cg1l_frontend_nonce_user_logged_out', 10, 2);
 
+if (!function_exists('cg1l_is_email_allowed_for_jury_voting')) {
+    function cg1l_is_email_allowed_for_jury_voting($userEmail, $allowedUsersToVote)
+    {
+        $userEmail = is_string($userEmail) ? trim($userEmail) : '';
+        $allowedUsersToVote = is_string($allowedUsersToVote) ? trim($allowedUsersToVote) : '';
+
+        if ($allowedUsersToVote === '') {
+            return true;
+        }
+
+        $allowedEmails = preg_split('/[;,]+/', $allowedUsersToVote);
+        if (!is_array($allowedEmails)) {
+            return false;
+        }
+
+        $allowedEmails = array_map('trim', $allowedEmails);
+
+        return in_array($userEmail, $allowedEmails, true);
+    }
+}
+
+if (!function_exists('cg1l_is_current_user_allowed_for_jury_voting')) {
+    function cg1l_is_current_user_allowed_for_jury_voting($galleryId, $checkLogin)
+    {
+        if (intval($checkLogin) !== 1) {
+            return true;
+        }
+
+        global $wpdb;
+
+        $tablenameOptionsVisual = $wpdb->prefix . 'contest_gal1ery_options_visual';
+        $allowedUsersToVote = $wpdb->get_var($wpdb->prepare(
+            "SELECT AllowedUsersToVote FROM $tablenameOptionsVisual WHERE GalleryID = %d",
+            absint($galleryId)
+        ));
+        $currentUser = is_user_logged_in() ? wp_get_current_user() : null;
+        $userEmail = (!empty($currentUser) && !empty($currentUser->user_email)) ? $currentUser->user_email : '';
+
+        return cg1l_is_email_allowed_for_jury_voting($userEmail, $allowedUsersToVote);
+    }
+}
+
 if (!function_exists('cg1l_maybe_nocache_auth_query_urls')) {
     function cg1l_maybe_nocache_auth_query_urls()
     {
@@ -389,6 +431,17 @@ if (!function_exists('cg1l_verify_runtime_context_token')) {
     }
 }
 
+if (!function_exists('cg1l_is_local_environment')) {
+    function cg1l_is_local_environment()
+    {
+        if (function_exists('wp_get_environment_type')) {
+            return wp_get_environment_type() === 'local';
+        }
+
+        return defined('WP_ENVIRONMENT_TYPE') && WP_ENVIRONMENT_TYPE === 'local';
+    }
+}
+
 if (!function_exists('cg1l_get_frontend_action_data')) {
     function cg1l_get_frontend_action_data()
     {
@@ -401,6 +454,7 @@ if (!function_exists('cg1l_get_frontend_action_data')) {
             'cacheCompatibilityActive' => cg1l_is_cache_compatibility_active() ? 1 : 0,
             'activeCachePlugins' => (!empty($cacheLayer['plugins'])) ? $cacheLayer['plugins'] : [],
             'runtimeNonceFresh' => 0,
+            'isLocalEnvironment' => cg1l_is_local_environment() ? 1 : 0,
         ];
     }
 }

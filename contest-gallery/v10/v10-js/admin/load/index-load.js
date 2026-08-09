@@ -242,13 +242,16 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
             $cg_nav_menu_row_container.find('#cgNavMenuEcommerceOrders.cg_load_backend_link').addClass('cg_active').find('.cg_backend_button_general').addClass('cg_active');
         }
 
-        if(location.href.indexOf('cg_comment_id=')>-1){
-            var cg_comment_id = location.href.split('cg_comment_id=')[1];
+        var cgCommentIdMatch = location.href.match(/[?&#]cg_comment_id=([^&#]+)/);
+        if(cgCommentIdMatch){
+            var cg_comment_id = decodeURIComponent(cgCommentIdMatch[1]).replace(/[^0-9]/g,'');
             var $cg_comment = $('#cg_comment_id_'+cg_comment_id);
-            $cg_comment.addClass('cg_blink').get(0).scrollIntoView();
-            setTimeout(function (){
-                $cg_comment.removeClass('cg_blink');
-            },2000);
+            if(cg_comment_id && $cg_comment.length){
+                $cg_comment.addClass('cg_blink').get(0).scrollIntoView({block:'center'});
+                setTimeout(function (){
+                    $cg_comment.removeClass('cg_blink');
+                },2000);
+            }
         }
 
         if(!cgJsClassAdmin.index.vars.cg_nonce_check_active){

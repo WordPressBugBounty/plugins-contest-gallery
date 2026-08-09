@@ -3,8 +3,8 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, openai
 Requires at least: 5.6
-Stable tag: 31.0.0
-Tested up to: 7.0.2
+Stable tag: 32.0.0
+Tested up to: 7.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -274,6 +274,16 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= 32.0.0 =
+* NEW: Added a modern two-step vote-and-comment dialog for one-star, average and cumulative voting, with required, optional or disabled comments and emoji support.
+* NEW: Added direct commenting from gallery views, including entry previews and consistent success feedback without opening the full entry.
+* IMPROVED: Vote and comment dialogs now show matching previews for images, video, audio, alternative files and consent-aware social embeds in bright and dark styles.
+* IMPROVED: Linked votes and comments are shown together in frontend and backend and are removed together when either linked item is deleted.
+* IMPROVED: New galleries now start with five-star average voting and optional comments for an immediately usable interactive setup.
+* IMPROVED: Responsive voting and commenting now preserves drafts and commenter names per session and uses stable loaders, validation and success states across gallery, entry and full-window views.
+* FIXED: Voting restrictions, PIN and jury checks, vote undo and linked comment cleanup now work consistently for one-star, average and cumulative voting on desktop and mobile.
+* IMPROVED: Frontend uploads now show real percentage progress during file transfer and server processing.
 
 = 31.0.0 =
 * NEW: Added a separate average-rating mode that uses the existing multiple-stars voting flow and displays the effective average with up to one decimal place.
@@ -569,7 +579,7 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 = V26.0.0 =
 * NEW: Stripe as payment processing added. Use Stripe payment methods in your ecommerce checkout.
 * NEW: Dynamic up to 10 columns appears now in masonry view, instead of maximum only 3. Depends on container width.
-* NEW: Allow search engines like Google to index or follow the /contest-galleries... pages and subpages, options. By default is deactivated.
+* NEW: Allow search engines like Google to index or follow the /contest-galleries... pages and subpages, options. For new setups, indexing is disabled by default while link following is enabled.
 * NEW: Allow sort by rating possible if "Show only user votes" or "Hide voting until user vote" is activated, for cg_gallery_no_voting and cg_gallery_winner shortcodes.
 * FIXED: Changing options for "Shortcode interval configuration" stuck if options page not reloaded for a while.
 * FIXED: cg_galleries... shortcodes option "Entry preview to display" >>> "Show highest rated entry" did not work always right.

@@ -1565,6 +1565,18 @@ if($isAjaxCall){
 				//echo "<br>averageStars: $averageStars<br>";
 			}else{$countRtotalCheck=0; $averageStarsRounded = 0;}
 
+			if ($countR!=0){
+				$averageStarsRealRounded = round($ratingCummulatedReal/$countR,1);
+			}else{
+				$averageStarsRealRounded = 0;
+			}
+
+			$averageStarsManipulationDelta = round($averageStarsRounded-$averageStarsRealRounded,1);
+			if($averageStarsManipulationDelta==0){
+				$averageStarsManipulationDelta = 0;
+			}
+			$averageStarsManipulationDeltaToShow = ($averageStarsManipulationDelta>=0 ? '+' : '').$averageStarsManipulationDelta;
+
 			// var_dump(intval($countR));
 			//  var_dump(intval($rating));
 			// var_dump(intval($value->CountRtotalSumAdd));
@@ -1612,16 +1624,16 @@ if($isAjaxCall){
 
 			echo '<div class="cg_rating_5_star_img_div_container">';
 
+			if($backendRatingMode=='average'){
+				echo "<div class='cg_rating_value_countR_div_average' style='font-weight: bold;' title='average'>$averageStarsRealRounded</div>";
+			}else{
+				echo "<div class='cg_rating_value_countR_div_cummulated' style='font-weight: bold;' title='sum'>$ratingCummulatedReal</div>";
+			}
+
 			if($ratingCummulated>0){
 				echo "<div class='cg_backend_star cg_backend_five_star cg_backend_five_stars_one_star cg_backend_star_on' ></div>";
 			}else{
 				echo "<div class='cg_backend_star cg_backend_five_star cg_backend_five_stars_one_star cg_backend_star_off' ></div>";
-			}
-
-			if($backendRatingMode=='average'){
-				echo "<div class='cg_rating_value_countR_div_average' style='font-weight: bold;' title='average'>$averageStarsRounded</div>";
-			}else{
-				echo "<div class='cg_rating_value_countR_div_cummulated' style='font-weight: bold;' title='sum'>$ratingCummulated</div>";
 			}
 
 			if($Manipulate==1){
@@ -1631,9 +1643,18 @@ if($isAjaxCall){
 					$countManipulateMultiplicatedHide = 'cg_hide';
 				}
 
-				$countManipulateToShow = ($backendRatingMode=='average') ? $countManipulateCummulated : $countManipulateMultiplicated;
-				echo "<div class='cg_rating_value_countR_additional_votes cg_rating_value_countR_additional_votes_total $countManipulateMultiplicatedHide'>".$countManipulateToShow."</div>";
+				$countManipulateToShow = ($backendRatingMode=='average') ? $averageStarsManipulationDeltaToShow : $countManipulateMultiplicated;
+				$countManipulateAverageClass = ($backendRatingMode=='average') ? 'cg_rating_value_countR_additional_votes_average_delta' : '';
+				echo "<div class='cg_rating_value_countR_additional_votes cg_rating_value_countR_additional_votes_total $countManipulateAverageClass $countManipulateMultiplicatedHide'>".$countManipulateToShow."</div>";
 			}
+
+			$ratingSingularLabel = __('rating','contest-gallery');
+			$ratingPluralLabel = __('ratings','contest-gallery');
+			$ratingCountLabel = ($countR==1) ? $ratingSingularLabel : $ratingPluralLabel;
+			$ratingManipulatedCount = ($Manipulate==1) ? intval($countManipulateCummulated) : 0;
+			$ratingManipulatedCountLabel = ($ratingManipulatedCount==1) ? $ratingSingularLabel : $ratingPluralLabel;
+			$ratingManipulatedCountHide = ($ratingManipulatedCount>0) ? '' : 'cg_hide';
+			echo "<div class='cg_backend_rating_total_ratings_count' data-cg-rating-count='".intval($countRtotalCheck)."' data-cg-real-rating-count='".intval($countR)."' data-cg-manipulated-rating-count='".$ratingManipulatedCount."' data-cg-rating-label-singular='".esc_attr($ratingSingularLabel)."' data-cg-rating-label-plural='".esc_attr($ratingPluralLabel)."'><span class='cg_backend_rating_base_count'>".intval($countR)." ".esc_html($ratingCountLabel)."</span><span class='cg_backend_rating_manipulated_count $ratingManipulatedCountHide'>+ ".$ratingManipulatedCount." ".esc_html($ratingManipulatedCountLabel)."</span></div>";
 
 			echo '</div>';
 

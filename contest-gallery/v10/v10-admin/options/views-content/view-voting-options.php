@@ -7,6 +7,41 @@ echo <<<HEREDOC
 HEREDOC;
 
 echo <<<HEREDOC
+    <div class="cg_view_options_rows_container">
+        <p class="cg_view_options_rows_container_title">Vote and comment at the same time</p>
+        <div class="cg_view_options_row cg_margin_bottom_30">
+            <div class="cg_view_option cg_view_option_full_width cg_border_radius_8_px">
+                <div class="cg_view_option_title">
+                    <p>Commenting while voting<br>
+                        <span class="cg_view_option_title_note">Applies to one-star, average and cumulative voting. Comments must be enabled in the corresponding gallery view.<br>
+                            <a class="cg_go_to_link" href="#" data-cg-go-to-link="AllowCommentsArea">Go to comment options</a>
+                        </span>
+                    </p>
+                </div>
+                <div class="cg_view_option_radio_multiple">
+                    <div class="cg_view_option_radio_multiple_container">
+                        <div class="cg_view_option_radio_multiple_title">Comment required</div>
+                        <div class="cg_view_option_radio_multiple_input">
+                            <input type="radio" name="VoteCommentMode" class="VoteCommentMode cg_view_option_radio_multiple_input_field" value="required" $VoteCommentModeRequired>
+                        </div>
+                    </div>
+                    <div class="cg_view_option_radio_multiple_container">
+                        <div class="cg_view_option_radio_multiple_title">Comment optional</div>
+                        <div class="cg_view_option_radio_multiple_input">
+                            <input type="radio" name="VoteCommentMode" class="VoteCommentMode cg_view_option_radio_multiple_input_field" value="optional" $VoteCommentModeOptional>
+                        </div>
+                    </div>
+                    <div class="cg_view_option_radio_multiple_container">
+                        <div class="cg_view_option_radio_multiple_title">No comment with voting</div>
+                        <div class="cg_view_option_radio_multiple_input">
+                            <input type="radio" name="VoteCommentMode" class="VoteCommentMode cg_view_option_radio_multiple_input_field" value="disabled" $VoteCommentModeDisabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
         <div class='cg_view_options_row cg_margin_bottom_30'>
             <div class='cg_view_option cg_view_option_100_percent cg_border_radius_8_px'>
                 <div class='cg_view_option_title'>

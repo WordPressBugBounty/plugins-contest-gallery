@@ -875,6 +875,49 @@ cgJsClassAdmin.options.functions = {
     cgRememberAllowRatingMultipleStarsValue: function($,mode,value){
         cgJsClassAdmin.options.functions.cgStoreAllowRatingMultipleStarsValue($,mode,value);
     },
+    cgNormalizePreselectSortForRatingMode: function($){
+        var ratingMode = 'none';
+        var ratingSortValues = [
+            'rating_descend',
+            'rating_ascend',
+            'rating_desc_average',
+            'rating_asc_average',
+            'rating_average_descend',
+            'rating_average_ascend',
+            'rating_sum_descend',
+            'rating_sum_ascend'
+        ];
+
+        if($('#AllowRating2').prop('checked')){
+            ratingMode = 'one-star';
+        }else if($('#AllowRatingAverage').prop('checked')){
+            ratingMode = 'average';
+        }else if($('#AllowRating').prop('checked')){
+            ratingMode = 'multiple-stars';
+        }
+
+        $('.PreselectSort').each(function(){
+            var $select = $(this);
+            var preselectSort = $select.val();
+            var isAscending;
+
+            if(ratingSortValues.indexOf(preselectSort) === -1){
+                return;
+            }
+
+            isAscending = preselectSort.indexOf('asc') !== -1;
+
+            if(ratingMode === 'one-star'){
+                $select.val(isAscending ? 'rating_ascend' : 'rating_descend');
+            }else if(ratingMode === 'average'){
+                $select.val(isAscending ? 'rating_asc_average' : 'rating_desc_average');
+            }else if(ratingMode === 'multiple-stars'){
+                $select.val(isAscending ? 'rating_sum_ascend' : 'rating_sum_descend');
+            }else{
+                $select.val('date_descend');
+            }
+        });
+    },
     cg_AllowRating: function($){
 
         var $cgVotingOptions = $('#cgVotingOptions');
@@ -920,6 +963,7 @@ cgJsClassAdmin.options.functions = {
 
         }
 
+        cgJsClassAdmin.options.functions.cgNormalizePreselectSortForRatingMode($);
 
     },
     cg_FbLike: function ($) {

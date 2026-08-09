@@ -37,6 +37,10 @@
     $variablesGallery['lastRealIdInFullImageDataObject'] = 0;
     $variablesGallery['thumbViewWidthFromLastImageInRow'] = false;
     $variablesGallery['allVotesUsed'] = 0;
+    $variablesGallery['currentUserVoteCount'] = intval($countUserVotes);
+    $variablesGallery['currentUserVoteCategoryCounts'] = $currentUserVoteCategoryCounts;
+    $variablesGallery['currentUserJuryVoteAllowed'] = intval($currentUserJuryVoteAllowed);
+    $variablesGallery['voteCategoriesOn'] = !empty($categoriesFullData) ? 1 : 0;
     $variablesGallery['sorting'] = 0;
     $variablesGallery['widthmain'] = 0;
     $variablesGallery['translateX'] = $options['pro']['SlideTransition'];

@@ -42,14 +42,12 @@ echo "<div class='cg_skeleton_loader_on_page_load cg_upload_submit_skeleton_line
 echo "<div class='cg_skeleton_loader_on_page_load cg_upload_submit_skeleton_line'></div>";
 echo "</div>";
 echo "</div>";
-echo "<div class='cg_upload_submit_skeleton_progress'>";
-echo "<div class='cg_skeleton_loader_on_page_load cg_upload_submit_skeleton_progress_bar'></div>";
-echo "<div class='cg_skeleton_loader_on_page_load cg_upload_submit_skeleton_progress_meta'></div>";
-echo "</div>";
-echo "</div>";
-echo "</div>";
-
+echo "<div class='cg_upload_submit_skeleton_progress' role='progressbar' aria-valuemin='0' aria-valuemax='100' aria-valuenow='0' aria-valuetext='0%'>";
+echo "<div class='cg_upload_submit_skeleton_progress_bar'><div class='cg_upload_submit_skeleton_progress_fill'></div></div>";
 echo "<div id='mainCGdivUploadProgress$galeryIDuserForJs' class='cg_hide cg-div-upload-progress $cgFeControlsStyle'></div>";
+echo "</div>";
+echo "</div>";
+echo "</div>";
 
 echo "<div id='mainCGdivUploadFormResult$galeryIDuserForJs' class='mainCGdivUploadFormResult cg_hide' data-cg-gid='$galeryIDuserForJs'>";
 

@@ -327,12 +327,12 @@ if(!function_exists('cg1l_render_single_entry_view')){
             echo "</pre>";
             die;*/
             if($commentsCount >= 1){
-                foreach ($jsonCommentsData[$realId] as $comment){
+                foreach (array_reverse($jsonCommentsData[$realId],true) as $comment){
                     if(isset($comment['Active']) && $comment['Active'] == 2){
                         continue;
                     }
                     $commentVisibleDate = $formatConfiguredDate((!empty($comment['timestamp']) ? $comment['timestamp'] : 0), $commentsDateFormat);
-                    $userCommments .= cg1l_render_center_div_reload_comment_div($comment,$WpUserIdsData,$commentVisibleDate);
+                    $userCommments .= cg1l_render_center_div_reload_comment_div($comment,$WpUserIdsData,$commentVisibleDate,$options);
                 }
             }
 
@@ -643,13 +643,14 @@ if(!function_exists('cg1l_render_single_entry_view')){
                     <div class="cg-center-image-video">
                       <video
                         class="cg-center-image-video-entry-content"
+                        onplay="cgJsClass.gallery.views.singleViewFunctions.videoOnplay(event)"
                         controls 
                         preload="metadata"   
                         aria-describedby="'.$ariaDescribedby.'"'.$mediaDescriptionAttribute.'
                         width="'.$fullData['Width'].'"
                         height="'.$fullData['Height'].'"
                       >
-                        <source src="'.$fullData['guid'].'" type="video/'.strtolower($ImgType).'">
+                        <source src="'.$fullData['guid'].'" type="'.esc_attr(cg1l_get_encoding_formats($ImgType)).'">
                         <!-- Fallback text -->
                         Sorry, your browser doesn’t support embedded videos.
                       </video>
@@ -658,9 +659,9 @@ if(!function_exists('cg1l_render_single_entry_view')){
         }elseif(cg_is_alternative_file_type_audio($ImgType)){
             $centerImage = '<div id="'.$imgId.'" class="cg-center-image cg_translateX cg-center-image-alternative-file-type cg-center-image-'.strtolower($ImgType).' cg-center-image-alternative-file-type-audio cg_transition" data-cg-real-id="'.$rid.'">
                     <div class="cg-center-image-audio">
-                        <audio onplay="cgJsClass.gallery.views.singleViewFunctions.audioOnplay(event)" controls=""    
+                        <audio onplay="cgJsClass.gallery.views.singleViewFunctions.audioOnplay(event)" controls="" preload="metadata"
                     aria-describedby="'.$ariaDescribedby.'"'.$mediaDescriptionAttribute.' >
-                          <source src="'.$fullData['guid'].'" type="audio/mpeg">
+                          <source src="'.$fullData['guid'].'" type="'.esc_attr(cg1l_get_encoding_formats($ImgType)).'">
                             Your browser does not support the audio element.
                         </audio>
                     </div>

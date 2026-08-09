@@ -232,7 +232,7 @@ echo <<<HEREDOC
                 <div class="cg_view_option_title">
                     <p style="margin-right: -30px;">
                         Allow search engines like Google to index the original Contest Gallery URLs under /contest-galleries-user...
-                        <br><span class="cg_view_option_title_note">Recommended: leave this disabled unless you want these original Contest Gallery URLs and their subpages to appear in search results.<br>If you use your own WordPress page with this shortcode as the main SEO page, keeping this disabled is usually the better choice and helps avoid duplicate or technical index pages.<br>If unchecked, &lt;meta name="robots" content="noindex"&gt; is set.</span>
+                        <br><span class="cg_view_option_title_note">Recommended: leave this disabled if your own WordPress page with this shortcode is the main SEO page. Enable it only if the original Contest Gallery URLs and their entry subpages should appear in search results.<br>Indexable entry pages can use their visible structured data, but rich results are not guaranteed.<br>If unchecked, &lt;meta name="robots" content="noindex"&gt; is set.</span>
                     </p>
                 </div>
                 <div class="cg_view_option_checkbox cg_view_option_checked">
@@ -255,7 +255,7 @@ echo <<<HEREDOC
                 <div class="cg_view_option_title">
                     <p style="margin-right: -30px;">
                     	Allow search engines like Google to follow links on the /contest-galleries... pages and subpages
-                    <br><span class="cg_view_option_title_note"><span class="cg_note_label">NOTE:</span> <span class="cg_note_text">if unchecked ...meta name="robots" content="nofollow"... is set</span><br><span class="cg_note_label">NOTE:</span> <span class="cg_note_text">nofollow tells a robot not follow links on a page</span></span>
+                    <br><span class="cg_view_option_title_note">Recommended: leave this enabled for normal internal gallery and entry links.<br><span class="cg_note_label">NOTE:</span> <span class="cg_note_text">if unchecked ...meta name="robots" content="nofollow"... is set</span><br><span class="cg_note_label">NOTE:</span> <span class="cg_note_text">nofollow does not replace noindex and is not an access restriction</span></span>
                     </p>
                 </div>
                 <div class="cg_view_option_checkbox cg_view_option_checked">

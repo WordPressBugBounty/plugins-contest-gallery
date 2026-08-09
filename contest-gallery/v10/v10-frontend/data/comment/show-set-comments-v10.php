@@ -2,8 +2,11 @@
 if(!defined('ABSPATH')){exit;}
 
 global $wpdb;
+$GLOBALS['cg1lCommentSubmitResult'] = array('status' => 'blocked');
+$commentVoteValue = (isset($cg1lCommentVoteValue)) ? absint($cg1lCommentVoteValue) : 0;
 $tablenameComments = $wpdb->prefix . "contest_gal1ery_comments";
 $tablename = $wpdb->prefix . "contest_gal1ery";
+$tablenameIP = $wpdb->prefix . "contest_gal1ery_ip";
 $tablename_comments_notification_options = $wpdb->prefix . "contest_gal1ery_comments_notification_options";
 $tablename_mail_user_comment = $wpdb->prefix . "contest_gal1ery_mail_user_comment";
 $tablename_user_comment_mails = $wpdb->prefix . "contest_gal1ery_user_comment_mails";
@@ -11,6 +14,7 @@ $wp_users = $wpdb->prefix . "users";
 
 if(!function_exists('cg1l_comment_submit_storage_error')){
     function cg1l_comment_submit_storage_error($galeryIDuser){
+        $GLOBALS['cg1lCommentSubmitResult'] = array('status' => 'storage_error');
         ?>
         <script data-cg-processing="true">
             var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
@@ -89,6 +93,37 @@ if(empty($entryExists)){
     return;
 }
 
+$voteCommentFollowUpVoteId = 0;
+$voteCommentFollowUpToken = (!empty($_POST['voteCommentFollowUpToken'])) ? (string)$_POST['voteCommentFollowUpToken'] : '';
+if($voteCommentFollowUpToken !== ''){
+    $voteCommentFollowUpData = cg1l_validate_vote_comment_follow_up_token($voteCommentFollowUpToken,$galeryID,$pictureID);
+    if(cg1l_get_vote_comment_mode($options) !== 'optional' || empty($voteCommentFollowUpData)){
+        cg1l_comment_submit_storage_error($galeryIDuser);
+        return;
+    }
+
+    $voteCommentFollowUpRow = $wpdb->get_row($wpdb->prepare(
+        "SELECT id, Rating, RatingS, CommentId FROM $tablenameIP WHERE id = %d AND GalleryID = %d AND pid = %d LIMIT 1",
+        $voteCommentFollowUpData['vote_id'],
+        $galeryID,
+        $pictureID
+    ));
+    if(
+        empty($voteCommentFollowUpRow) ||
+        !empty($voteCommentFollowUpRow->CommentId) ||
+        (
+            absint($voteCommentFollowUpRow->Rating) !== absint($voteCommentFollowUpData['vote']) &&
+            !(absint($voteCommentFollowUpRow->RatingS) === 1 && absint($voteCommentFollowUpData['vote']) === 1)
+        )
+    ){
+        cg1l_comment_submit_storage_error($galeryIDuser);
+        return;
+    }
+
+    $voteCommentFollowUpVoteId = absint($voteCommentFollowUpRow->id);
+    $commentVoteValue = absint($voteCommentFollowUpData['vote']);
+}
+
 $WpUserId = 0;
 $IsWpUser = 0;
 
@@ -98,6 +133,7 @@ if(is_user_logged_in()){
 }
 
 if(isset($options['pro']['CheckLoginComment']) && $options['pro']['CheckLoginComment']==1 AND !$WpUserId){
+    $GLOBALS['cg1lCommentSubmitResult'] = array('status' => 'logged_out');
     ?>
     <script data-cg-processing="true">// if this exists then everything is fine. Will check if this exits or not
 
@@ -135,6 +171,7 @@ if(!empty($timestampToCompare) && (time()-$rateLimitWindowInSeconds)<$timestampT
 }
 
 if($isFlooding){
+	$GLOBALS['cg1lCommentSubmitResult'] = array('status' => 'rate_limited');
 	?>
     <script data-cg-processing="true">// if this exists then everything is fine. Will check if this exits or not
         var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
@@ -162,6 +199,16 @@ $Comment = cg1l_sanitize_method($_POST['comment']);
 //$Comment = nl2br(htmlspecialchars($Comment, ENT_QUOTES));
 $Comment = substr($Comment,0,3000);// 1000 is max as message in frontend but because of smilies it can be some more
 
+if(!$WpUserId && empty($options['general']['HideCommentNameField']) && strlen(trim($Name))<2){
+    $GLOBALS['cg1lCommentSubmitResult'] = array('status' => 'invalid_name');
+    return;
+}
+
+if(strlen(trim($Comment))<3){
+    $GLOBALS['cg1lCommentSubmitResult'] = array('status' => 'invalid_comment');
+    return;
+}
+
 $unix = time();
 $date = date("Y-m-d H:i",$unix);
 
@@ -170,9 +217,18 @@ if(!empty($options['pro']['ReviewComm'])){
 	$Active = 2;
 }
 
+$cg1lCommentOwnsStatsLock = empty($cg1lCommentStatsLockAlreadyAcquired);
+if($cg1lCommentOwnsStatsLock){
+    cg1l_migrate_image_stats_to_folder($galeryID, true);
+    $lockFp = false;
+    $ratingCommentsData = cg1l_get_stats_for_update($galeryID, $pictureID, $lockFp);
+}
+$hasRatingCommentsData = is_array($ratingCommentsData);
+
 $commentsLockFp = false;
 $commentsFile = cg1l_get_comments_lock_for_update($galeryID, $pictureID, $commentsLockFp);
 if(empty($commentsFile)){
+    if($cg1lCommentOwnsStatsLock){cg1l_release_stats_lock($lockFp);}
     cg1l_comment_submit_storage_error($galeryIDuser);
     return;
 }
@@ -182,12 +238,14 @@ if(file_exists($commentsFile)){
     $commentsFileRaw = file_get_contents($commentsFile);
     if($commentsFileRaw === false || $commentsFileRaw === ''){
         cg1l_release_comment_lock($commentsLockFp);
+        if($cg1lCommentOwnsStatsLock){cg1l_release_stats_lock($lockFp);}
         cg1l_comment_submit_storage_error($galeryIDuser);
         return;
     }
     $commentsFileData = json_decode($commentsFileRaw,true);
     if(!is_array($commentsFileData)){
         cg1l_release_comment_lock($commentsLockFp);
+        if($cg1lCommentOwnsStatsLock){cg1l_release_stats_lock($lockFp);}
         cg1l_comment_submit_storage_error($galeryIDuser);
         return;
     }
@@ -197,15 +255,16 @@ if(file_exists($commentsFile)){
 $wpdb->query( $wpdb->prepare(
     "
 				INSERT INTO $tablenameComments
-				( id, pid, GalleryID, Name, Date, Comment, Timestamp,IP,WpUserId,Active)
-				VALUES ( %s,%d,%d,%s,%s,%s,%d,%s,%d,%d)
+				( id, pid, GalleryID, Name, Date, Comment, Timestamp,IP,WpUserId,Vote,Active)
+				VALUES ( %s,%d,%d,%s,%s,%s,%d,%s,%d,%d,%d)
 			",
-    '',$pictureID,$galeryID,$Name,$date,$Comment,$unix,$userIP,$WpUserId,$Active
+    '',$pictureID,$galeryID,$Name,$date,$Comment,$unix,$userIP,$WpUserId,$commentVoteValue,$Active
 ) );
 
 $insert_id = $wpdb->insert_id;
 if(empty($insert_id)){
     cg1l_release_comment_lock($commentsLockFp);
+    if($cg1lCommentOwnsStatsLock){cg1l_release_stats_lock($lockFp);}
     cg1l_comment_submit_storage_error($galeryIDuser);
     return;
 }
@@ -220,6 +279,7 @@ $commentsFileData[$lastCommentId]['date'] = $date;
 $commentsFileData[$lastCommentId]['timestamp'] = $unix;
 $commentsFileData[$lastCommentId]['name'] = $Name;
 $commentsFileData[$lastCommentId]['comment'] = $Comment;
+$commentsFileData[$lastCommentId]['vote'] = $commentVoteValue;
 $commentsFileData[$lastCommentId]['IsWpUser'] = $IsWpUser;
 $commentsFileData[$lastCommentId]['insert_id'] = $insert_id;
 //$commentsFileData[$lastCommentId]['WpUserId'] = $WpUserId;
@@ -233,6 +293,7 @@ $commentsFileDataTheOnlyOneComment[$lastCommentId]['date'] = $date;
 $commentsFileDataTheOnlyOneComment[$lastCommentId]['timestamp'] = $unix;
 $commentsFileDataTheOnlyOneComment[$lastCommentId]['name'] = $Name;
 $commentsFileDataTheOnlyOneComment[$lastCommentId]['comment'] = $Comment;
+$commentsFileDataTheOnlyOneComment[$lastCommentId]['vote'] = $commentVoteValue;
 $commentsFileDataTheOnlyOneComment[$lastCommentId]['IsWpUser'] = $IsWpUser;
 $commentsFileDataTheOnlyOneComment[$lastCommentId]['insert_id'] = $insert_id;
 //$commentsFileDataTheOnlyOneComment[$lastCommentId]['WpUserId'] = $WpUserId;
@@ -244,6 +305,7 @@ $dirImageComments = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$ga
 if(!is_dir($dirImageComments) && !wp_mkdir_p($dirImageComments)){
     $wpdb->delete($tablenameComments,array('id' => $insert_id,'pid' => $pictureID,'GalleryID' => $galeryID),array('%d','%d','%d'));
     cg1l_release_comment_lock($commentsLockFp);
+    if($cg1lCommentOwnsStatsLock){cg1l_release_stats_lock($lockFp);}
     cg1l_comment_submit_storage_error($galeryIDuser);
     return;
 }
@@ -262,20 +324,37 @@ if(
     }
     $wpdb->delete($tablenameComments,array('id' => $insert_id,'pid' => $pictureID,'GalleryID' => $galeryID),array('%d','%d','%d'));
     cg1l_release_comment_lock($commentsLockFp);
+    if($cg1lCommentOwnsStatsLock){cg1l_release_stats_lock($lockFp);}
     cg1l_comment_submit_storage_error($galeryIDuser);
     return;
+}
+
+if(!empty($voteCommentFollowUpVoteId)){
+    $voteCommentLinkUpdated = $wpdb->query($wpdb->prepare(
+        "UPDATE $tablenameIP SET CommentId = %d WHERE id = %d AND GalleryID = %d AND pid = %d AND CommentId = 0",
+        $insert_id,
+        $voteCommentFollowUpVoteId,
+        $galeryID,
+        $pictureID
+    ));
+    if($voteCommentLinkUpdated !== 1){
+        if(file_exists($singleCommentFile)){
+            unlink($singleCommentFile);
+        }
+        unset($commentsFileData[$lastCommentId]);
+        cg1l_write_atomic_file_payload($commentsFile,json_encode($commentsFileData));
+        $wpdb->delete($tablenameComments,array('id' => $insert_id,'pid' => $pictureID,'GalleryID' => $galeryID),array('%d','%d','%d'));
+        cg1l_release_comment_lock($commentsLockFp);
+        if($cg1lCommentOwnsStatsLock){cg1l_release_stats_lock($lockFp);}
+        cg1l_comment_submit_storage_error($galeryIDuser);
+        return;
+    }
 }
 
 // has to be set here after saving file
 $commentsFileData[$lastCommentId]['WpUserId'] = $WpUserId;
 
 // process comments File --- ENDE
-
-cg1l_migrate_image_stats_to_folder($galeryID, true);// correct first if needs to correct
-
-$lockFp = false;
-$ratingCommentsData = cg1l_get_stats_for_update($galeryID, $pictureID, $lockFp);
-$hasRatingCommentsData = is_array($ratingCommentsData);
 
 // count active comments correctly
 $countActiveComments = 0;
@@ -349,10 +428,10 @@ $wpdb->update(
     print_r($ratingCommentsData);
 echo "</pre>";*/
 
-if($hasRatingCommentsData){
-cg1l_set_stats_with_lock($galeryID, $pictureID, $ratingCommentsData, $lockFp);
-}else{
-cg1l_release_stats_lock($lockFp);
+if($hasRatingCommentsData && $cg1lCommentOwnsStatsLock){
+    cg1l_set_stats_with_lock($galeryID, $pictureID, $ratingCommentsData, $lockFp);
+}elseif($cg1lCommentOwnsStatsLock){
+    cg1l_release_stats_lock($lockFp);
 }
 
 cg1l_push_recent_id_file($galeryID,$pictureID,'image-comments-data-last-update');
@@ -380,6 +459,15 @@ foreach ($commentsDataJsonFiles as $jsonFile) {
     }
 }
 
+$GLOBALS['cg1lCommentSubmitResult'] = array(
+    'status' => 'success',
+    'Active' => $Active,
+    'lastCommentId' => $lastCommentId,
+    'unix' => $unix,
+    'vote' => $commentVoteValue,
+    'insert_id' => $insert_id
+);
+
 ?>
 
     <script data-cg-processing="true">// if this exists then everything is fine. Will check if this exits or not
@@ -388,13 +476,18 @@ foreach ($commentsDataJsonFiles as $jsonFile) {
         var pictureID = <?php echo json_encode($pictureID);?>;
         var lastCommentId = <?php echo json_encode($lastCommentId);?>;
         var Active = <?php echo json_encode($Active);?>;
+        var commentVoteValue = <?php echo json_encode($commentVoteValue);?>;
         var ratingCommentsDataFromJustCommented = <?php echo json_encode($ratingCommentsData);?>;
 
         if(cgJsData[galeryIDuser] && cgJsData[galeryIDuser].vars){
             cgJsData[galeryIDuser].vars.commentSubmitResponse = {
                 status: 'success',
                 ratingCommentsDataFromJustCommented: ratingCommentsDataFromJustCommented,
-                Active: Active
+                Active: Active,
+                lastCommentId: lastCommentId,
+                insertId: <?php echo json_encode($insert_id); ?>,
+                unix: <?php echo json_encode($unix); ?>,
+                vote: commentVoteValue
             };
         }
 

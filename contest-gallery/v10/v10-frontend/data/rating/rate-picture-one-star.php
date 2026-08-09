@@ -35,7 +35,9 @@ $fp = fopen($options, 'r');
 $options =json_decode(fread($fp,filesize($options)),true);
 fclose($fp);
 $optionsSource = $options;
-if(!empty($options[$galeryID])){
+if(!empty($options[$galeryIDuser])){
+    $options = $options[$galeryIDuser];
+}elseif(!empty($options[$galeryID])){
     $options = $options[$galeryID];
 }
 
@@ -343,20 +345,13 @@ else {
     }
 
     if($CheckLogin==1 && !empty(trim($AllowedUsersToVote))){
-        // Split by ; or ,
-        $allowedEmails = preg_split('/[;,]+/', $AllowedUsersToVote);
-        // Trim values
-        $allowedEmails = array_map('trim', $allowedEmails);
-        $isAllowed = true;
-        if (in_array($wpUserEmail, $allowedEmails, true)===false) {
-            $isAllowed = false;
-        }
-        if(!$isAllowed){
+        if(!cg1l_is_email_allowed_for_jury_voting($wpUserEmail, $AllowedUsersToVote)){
             ?>
             <script data-cg-processing="true">
                 var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
                 var pictureID = <?php echo json_encode($pictureID);?>;
                 var ratingFileData = true;
+                cgJsClass.gallery.rating.closeVoteInteractionForRestriction(galeryIDuser);
                 cgJsClass.gallery.rating.setRatingOneStar(pictureID,0,false,galeryIDuser,false,false,ratingFileData);
                 cgJsClass.gallery.function.message.show(galeryIDuser,<?php echo json_encode($language_OnlyJuryMembersCanVote);?>);
             </script>
@@ -649,21 +644,13 @@ else {
 
         if ($CheckLogin == 1 && $wpUserId>0){
             if(is_user_logged_in()){
-                $lastVotedIpId = $wpdb->get_var( "SELECT id FROM $tablenameIP WHERE RatingS = '1' && WpUserId = '$wpUserId' && GalleryID = '$galeryID' && pid = '$pictureID' ORDER BY id DESC LIMIT 1" );
-                $countUserVotesForImage = $wpdb->get_var( "SELECT COUNT(*) AS NumberOfRows FROM $tablenameIP WHERE RatingS = '1' && WpUserId = '$wpUserId' && GalleryID = '$galeryID' && pid = '$pictureID'" );
+                $lastVotedIpId = $wpdb->get_row( "SELECT id, CommentId FROM $tablenameIP WHERE RatingS = '1' && WpUserId = '$wpUserId' && GalleryID = '$galeryID' && pid = '$pictureID' ORDER BY id DESC LIMIT 1" );
             }
         }
         elseif ($CheckCookie == 1 && $CheckIp != 1){
             if(!empty($CookieId)) {
-                $lastVotedIpId = $wpdb->get_var($wpdb->prepare(
-                    "SELECT id FROM $tablenameIP WHERE RatingS = %d AND CookieId = %s AND GalleryID = %d AND pid = %d ORDER BY id DESC LIMIT 1",
-                    1,
-                    $CookieId,
-                    $galeryID,
-                    $pictureID
-                ));
-                $countUserVotesForImage = $wpdb->get_var($wpdb->prepare(
-                    "SELECT COUNT(*) AS NumberOfRows FROM $tablenameIP WHERE RatingS = %d AND CookieId = %s AND GalleryID = %d AND pid = %d",
+                $lastVotedIpId = $wpdb->get_row($wpdb->prepare(
+                    "SELECT id, CommentId FROM $tablenameIP WHERE RatingS = %d AND CookieId = %s AND GalleryID = %d AND pid = %d ORDER BY id DESC LIMIT 1",
                     1,
                     $CookieId,
                     $galeryID,
@@ -672,21 +659,12 @@ else {
             }
         }
         elseif ($CheckIp == 1 && $CheckCookie!=1) {
-            $lastVotedIpId = $wpdb->get_var( "SELECT id FROM $tablenameIP WHERE RatingS = '1' && IP = '$userIP' && GalleryID = '$galeryID' && pid = '$pictureID' ORDER BY id DESC LIMIT 1" );
-            $countUserVotesForImage = $wpdb->get_var( "SELECT COUNT(*) AS NumberOfRows FROM $tablenameIP WHERE RatingS = '1' && IP = '$userIP' && GalleryID = '$galeryID' && pid = '$pictureID'" );
+            $lastVotedIpId = $wpdb->get_row( "SELECT id, CommentId FROM $tablenameIP WHERE RatingS = '1' && IP = '$userIP' && GalleryID = '$galeryID' && pid = '$pictureID' ORDER BY id DESC LIMIT 1" );
         }
         elseif ($CheckIp == 1 && $CheckCookie==1) {
             if(!empty($CookieId)) {
-                $lastVotedIpId = $wpdb->get_var($wpdb->prepare(
-                    "SELECT id FROM $tablenameIP WHERE RatingS = %d AND IP = %s AND CookieId = %s AND GalleryID = %d AND pid = %d ORDER BY id DESC LIMIT 1",
-                    1,
-                    $userIP,
-                    $CookieId,
-                    $galeryID,
-                    $pictureID
-                ));
-                $countUserVotesForImage = $wpdb->get_var($wpdb->prepare(
-                    "SELECT COUNT(*) AS NumberOfRows FROM $tablenameIP WHERE RatingS = %d AND IP = %s AND CookieId = %s AND GalleryID = %d AND pid = %d",
+                $lastVotedIpId = $wpdb->get_row($wpdb->prepare(
+                    "SELECT id, CommentId FROM $tablenameIP WHERE RatingS = %d AND IP = %s AND CookieId = %s AND GalleryID = %d AND pid = %d ORDER BY id DESC LIMIT 1",
                     1,
                     $userIP,
                     $CookieId,
@@ -695,38 +673,54 @@ else {
                 ));
             }else{
                 $lastVotedIpId = 0;
-                $countUserVotesForImage = 0;
             }
        }
 
         if(!empty($lastVotedIpId)){
 
-            $wpdb->delete( $tablenameIP, array( 'id' => $lastVotedIpId ), array( '%d' ) );
-
-            $countS = intval($ratingFileData['CountS'])-1;
-            $ratingFileData['CountS'] = $countS;
-
-            //$fp = fopen($jsonFile, 'w');
-            //fwrite($fp,json_encode($ratingFileData));
-            //fclose($fp);
-
-            $ratingFileData = cg1l_set_stats_with_lock($galeryID, $pictureID, $ratingFileData, $lockFp);
-            cg1l_release_stats_lock($lockFp);
-            cg1l_push_recent_id_file($galeryID,$pictureID,'image-stats-data-last-update');
-            cg1l_create_last_updated_time_file($galeryID,'image-stats-data-last-update');
+            $voteCommentDeleteResult = cg1l_delete_vote_with_linked_comment(
+                $galeryID,
+                $pictureID,
+                $lastVotedIpId->id,
+                (!empty($lastVotedIpId->CommentId) ? $lastVotedIpId->CommentId : 0),
+                $ratingFileData
+            );
+            if($voteCommentDeleteResult === false){
+                cg1l_release_stats_lock($lockFp);
+                ?>
+                <script data-cg-processing="true">
+                    cgJsClass.gallery.function.message.show(<?php echo json_encode($galeryIDuser);?>,'Vote and linked comment could not be removed.');
+                </script>
+                <?php
+                return;
+            }
 
             // UPDATE atomar intern ROW-Lock, no data lost
             $rows = $wpdb->query(
                 $wpdb->prepare(
-                    "UPDATE {$tablename} SET CountS = GREATEST(CountS - 1, 0) WHERE id = %d",
-                    $pictureID
+                    "UPDATE {$tablename} SET CountS = GREATEST(CountS - 1, 0) WHERE id = %d AND GalleryID = %d",
+                    $pictureID,
+                    $galeryID
                 )
             );
-            $isSetUserVoteToNull = false;
-            if(empty($countUserVotesForImage)){
-                $isSetUserVoteToNull = true;
+
+            if(!cg1l_sync_rating_file_data_from_database($galeryID,$pictureID,true,false,$ratingFileData)){
+                $ratingFileData['CountS'] = max(0,intval($ratingFileData['CountS'])-1);
             }
+
+            $remainingUserVoteValues = cg1l_get_user_vote_values_for_image(
+                $galeryID,$pictureID,true,$CheckLogin,$CheckCookie,$CheckIp,$wpUserId,$userIP,$CookieId
+            );
+            $isSetUserVoteToNull = empty($remainingUserVoteValues);
+
+            $ratingFileData = cg1l_set_stats_with_lock($galeryID, $pictureID, $ratingFileData, $lockFp);
             cg1l_release_stats_lock($lockFp);
+            if(!empty($voteCommentDeleteResult['comment_keys'])){
+                cg1l_mark_vote_comment_data_updated($galeryID,$pictureID);
+            }else{
+                cg1l_push_recent_id_file($galeryID,$pictureID,'image-stats-data-last-update');
+                cg1l_create_last_updated_time_file($galeryID,'image-stats-data-last-update');
+            }
 
             ?>
             <script data-cg-processing="true">
@@ -737,8 +731,24 @@ else {
                 var pictureID = <?php echo json_encode($pictureID);?>;
                 var ratingFileData = <?php echo json_encode($ratingFileData);?>;
                 var isSetUserVoteToNull = <?php echo json_encode($isSetUserVoteToNull);?>;
+                var remainingUserVoteValues = <?php echo json_encode($remainingUserVoteValues);?>;
+                var removedVoteCommentKeys = <?php echo json_encode($voteCommentDeleteResult['comment_keys']);?>;
+                var removedVoteCommentIds = <?php echo json_encode($voteCommentDeleteResult['comment_ids']);?>;
 
-                cgJsClass.gallery.rating.setRatingOneStar(pictureID,-1,false,galeryIDuser,false,false,ratingFileData,isSetUserVoteToNull);
+                if(
+                    (removedVoteCommentKeys.length || removedVoteCommentIds.length) &&
+                    cgJsClass.gallery.comment.removeLinkedVoteComment
+                ){
+                    cgJsClass.gallery.comment.removeLinkedVoteComment(
+                        pictureID,
+                        galeryIDuser,
+                        removedVoteCommentIds,
+                        removedVoteCommentKeys,
+                        ratingFileData
+                    );
+                }
+
+                cgJsClass.gallery.rating.setRatingOneStar(pictureID,-1,false,galeryIDuser,false,false,ratingFileData,isSetUserVoteToNull,undefined,remainingUserVoteValues);
 
                 cgJsData[galeryIDuser].vars.allVotesUsed = 0;
 
@@ -810,6 +820,7 @@ else {
                 var pictureID = <?php echo json_encode($pictureID);?>;
                 var ratingFileData = <?php echo json_encode($ratingFileData);?>;
 
+                cgJsClass.gallery.rating.closeVoteInteractionForRestriction(galeryIDuser);
                 cgJsClass.gallery.rating.setRatingOneStar(pictureID,0,false,galeryIDuser,false,true,ratingFileData);
 
             </script>
@@ -848,6 +859,7 @@ else {
             cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive = <?php echo json_encode($VoteMessageWarningActive);?>;
             cgJsData[galeryIDuser].options.pro.VoteMessageWarningText = <?php echo json_encode($VoteMessageWarningText);?>;
 
+            cgJsClass.gallery.rating.closeVoteInteractionForRestriction(galeryIDuser);
             cgJsClass.gallery.rating.setRatingOneStar(pictureID,0,false,galeryIDuser,false,false,ratingFileData);
 
             if(cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive==1 && hasVoteMessageWarningTextContent){
@@ -888,6 +900,7 @@ else {
             cgJsData[galeryIDuser].options.pro.VoteMessageWarningText = <?php echo json_encode($VoteMessageWarningText);?>;
             cgJsData[galeryIDuser].options.pro.VotesPerUserAllVotesUsedHtmlMessage = <?php echo json_encode($VotesPerUserAllVotesUsedHtmlMessage);?>;
 
+            cgJsClass.gallery.rating.closeVoteInteractionForRestriction(galeryIDuser);
             cgJsClass.gallery.rating.setRatingOneStar(pictureID,0,false,galeryIDuser,true,false,ratingFileData);
 
             if(cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive==1 && hasVoteMessageWarningTextContent){
@@ -918,6 +931,7 @@ else {
             cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive = <?php echo json_encode($VoteMessageWarningActive);?>;
             cgJsData[galeryIDuser].options.pro.VoteMessageWarningText = <?php echo json_encode($VoteMessageWarningText);?>;
 
+            cgJsClass.gallery.rating.closeVoteInteractionForRestriction(galeryIDuser);
             cgJsClass.gallery.rating.setRatingOneStar(pictureID,0,false,galeryIDuser,true,false,ratingFileData);
 
             if(cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive==1 && hasVoteMessageWarningTextContent){
@@ -952,6 +966,7 @@ else {
             cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive = <?php echo json_encode($VoteMessageWarningActive);?>;
             cgJsData[galeryIDuser].options.pro.VoteMessageWarningText = <?php echo json_encode($VoteMessageWarningText);?>;
 
+            cgJsClass.gallery.rating.closeVoteInteractionForRestriction(galeryIDuser);
             cgJsClass.gallery.rating.setRatingOneStar(pictureID,0,false,galeryIDuser,true,false,ratingFileData);
 
             if(cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive==1 && hasVoteMessageWarningTextContent){
@@ -976,7 +991,19 @@ else {
             }
         }
 
+        $voteCommentWasSaved = false;
+        $voteCommentInsertId = 0;
+        $voteCommentFollowUpToken = '';
         if($cookieVotingJustActivated == false){
+
+            $voteCommentFollowUpRequested = (
+                cg1l_get_vote_comment_mode($options) === 'optional' &&
+                !empty($_REQUEST['voteCommentFollowUp'])
+            );
+            if(!cg1l_process_vote_comment_request($options,$galeryID,$galeryIDuser,$pictureID,$galleryHash,$rateValue,$ratingFileData,$lockFp,$voteCommentWasSaved,$voteCommentInsertId)){
+                cg1l_release_stats_lock($lockFp);
+                return;
+            }
 
             // vote done!!! Save and forward
             //if(!($MinusVote == 1 && $minusVoteNow)){
@@ -986,14 +1013,18 @@ else {
             $VoteDate = date('d-M-Y H:i:s', $Tstamp);
 
             // insert in tableIP
-            $wpdb->query( $wpdb->prepare(
+            $voteInsertResult = $wpdb->query( $wpdb->prepare(
                 "
 					INSERT INTO $tablenameIP
-					( id, IP, GalleryID, pid, Rating, RatingS,WpUserId,VoteDate,Tstamp,OptionSet,CookieId,Category,CategoriesOn)
-					VALUES ( %s,%s,%d,%d,%d,%d,%d,%s,%d,%s,%s,%d,%d )
+					( id, IP, GalleryID, pid, Rating, RatingS,WpUserId,VoteDate,Tstamp,OptionSet,CookieId,Category,CategoriesOn,CommentId)
+					VALUES ( %s,%s,%d,%d,%d,%d,%d,%s,%d,%s,%s,%d,%d,%d )
 				",
-                '',$userIP,$galeryID,$pictureID,0,1,$wpUserId,$VoteDate,$Tstamp,$OptionSet,$CookieId,$imageData['Category'],$CategoriesOn
+                '',$userIP,$galeryID,$pictureID,0,1,$wpUserId,$VoteDate,$Tstamp,$OptionSet,$CookieId,$imageData['Category'],$CategoriesOn,$voteCommentInsertId
             ) );
+
+            if($voteCommentFollowUpRequested && empty($voteCommentInsertId) && $voteInsertResult !== false && !empty($wpdb->insert_id)){
+                $voteCommentFollowUpToken = cg1l_create_vote_comment_follow_up_token($wpdb->insert_id,$galeryID,$pictureID,1);
+            }
 
             // update will still be done in case but not really used
             // since 13.02.2022 always dynamic values from tablename_ip will be get
@@ -1029,17 +1060,28 @@ else {
             var ThankVote = <?php echo json_encode($ThankVote);?>;
             var cookieVotingJustActivated = <?php echo json_encode($cookieVotingJustActivated);?>;
             var ratingFileData = <?php echo json_encode($ratingFileData);?>;
+            var voteCommentWasSaved = <?php echo json_encode(!empty($voteCommentWasSaved));?>;
+            var voteCommentFollowUpToken = <?php echo json_encode($voteCommentFollowUpToken);?>;
+            var voteCommentModeActive = <?php echo json_encode(cg1l_get_vote_comment_mode($options)!=='disabled');?>;
             cgJsData[galeryIDuser].options.pro.VoteMessageSuccessActive = <?php echo json_encode($VoteMessageSuccessActive);?>;
             cgJsData[galeryIDuser].options.pro.VoteMessageSuccessText = <?php echo json_encode($VoteMessageSuccessText);?>;
 
             if(!cookieVotingJustActivated){
+
+                if(voteCommentModeActive && !voteCommentFollowUpToken && !voteCommentWasSaved){
+                    cgJsClass.gallery.function.message.close(true);
+                }
 
                 var allVotesUsed = <?php echo json_encode($allVotesUsed);?>;
 
                 cgJsData[galeryIDuser].lastVotedUserImageId = pictureID;
                 cgJsClass.gallery.rating.setRatingOneStar(pictureID,1,false,galeryIDuser,false,false,ratingFileData);
 
-                if(cgJsData[galeryIDuser].options.pro.VoteMessageSuccessActive==1){
+                if(voteCommentFollowUpToken){
+                    cgJsClass.gallery.rating.completeOptionalVoteStep(galeryIDuser,pictureID,ThankVote,1,voteCommentFollowUpToken);
+                }else if(voteCommentWasSaved){
+                    cgJsClass.gallery.rating.showVoteCommentSuccess(galeryIDuser,pictureID,ThankVote,1);
+                }else if(cgJsData[galeryIDuser].options.pro.VoteMessageSuccessActive==1){
                     cgJsClass.gallery.function.message.showPro(galeryIDuser,cgJsData[galeryIDuser].options.pro.VoteMessageSuccessText);
                 }else{
                     if(ThankVote==1){

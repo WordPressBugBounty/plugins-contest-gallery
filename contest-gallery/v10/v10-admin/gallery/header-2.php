@@ -789,8 +789,8 @@ $checkCookieIdOrIP = '';
     $checkCookieIdOrIP = ", IP";
 }*/
 
-echo '<span class="cg-info-icon"><strong>info</strong></span>
-    <span class="cg-info-container cg-info-container-gallery-user" style="display: none;margin-top: 55px !important;margin-left: 180px !important;">Search by fields content, categories,
+echo '<span class="cg-info-icon" style="margin-left:4px;"><strong>info</strong></span>
+    <span class="cg-info-container cg-info-container-gallery-user" style="display: none;margin-top: 73px !important;margin-left: 180px !important;">Search by fields content, categories,
 file name, entry id, EXIF data (if available), user email, user nickname'.$checkCookieIdOrIP.'<br><br><strong>Pay attention!<br>Database queries with searched value takes longer then without searched value</strong></span>';
 ?>
 

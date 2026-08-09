@@ -445,47 +445,93 @@ debugger
 
     var cgBackendSetMultiStarRatingState = function ($cgSortableDiv, ratingCount) {
         var $ratingStar = $cgSortableDiv.find('.cg_rating_5_star_img_div_container > .cg_backend_star.cg_backend_five_star');
+        var $ratingCount = $cgSortableDiv.find('.cg_backend_rating_total_ratings_count');
+        var $baseRatingCount = $ratingCount.find('.cg_backend_rating_base_count');
+        var $manipulatedRatingCount = $ratingCount.find('.cg_backend_rating_manipulated_count');
+        var singularLabel = $ratingCount.attr('data-cg-rating-label-singular') || 'rating';
+        var pluralLabel = $ratingCount.attr('data-cg-rating-label-plural') || 'ratings';
+        var realRatingCount = parseInt($ratingCount.attr('data-cg-real-rating-count'), 10);
+        var manipulatedRatingCount;
+
+        ratingCount = parseInt(ratingCount, 10);
+        if (isNaN(ratingCount) || ratingCount < 0) {
+            ratingCount = 0;
+        }
+        if (isNaN(realRatingCount) || realRatingCount < 0) {
+            realRatingCount = 0;
+        }
+        manipulatedRatingCount = Math.max(0, ratingCount - realRatingCount);
 
         if (ratingCount < 1) {
             $ratingStar.removeClass('cg_backend_star_on').addClass('cg_backend_star_off');
         } else {
             $ratingStar.removeClass('cg_backend_star_off').addClass('cg_backend_star_on');
         }
+
+        $baseRatingCount.text(realRatingCount + ' ' + (realRatingCount === 1 ? singularLabel : pluralLabel));
+        $ratingCount
+            .attr('data-cg-rating-count', ratingCount)
+            .attr('data-cg-manipulated-rating-count', manipulatedRatingCount);
+
+        if (manipulatedRatingCount > 0) {
+            $manipulatedRatingCount
+                .text('+ ' + manipulatedRatingCount + ' ' + (manipulatedRatingCount === 1 ? singularLabel : pluralLabel))
+                .removeClass('cg_hide');
+        } else {
+            $manipulatedRatingCount.addClass('cg_hide').text('');
+        }
     };
 
-    var cgBackendRenderCumulativeManipulation = function ($cgSortableDiv, ratingTotal, ratingCount, addedWeightedValue) {
+    var cgBackendRoundRatingAverage = function (value) {
+        value = Math.round(value * 10) / 10;
+        return value === 0 ? 0 : value;
+    };
+
+    var cgBackendFormatSignedRatingAverage = function (value) {
+        value = cgBackendRoundRatingAverage(value);
+        return (value >= 0 ? '+' : '') + value;
+    };
+
+    var cgBackendRenderCumulativeManipulation = function ($cgSortableDiv, realRatingTotal, realRatingCount, addedCount, addedWeightedValue) {
         var $infoContainer = $cgSortableDiv.find('.cg_backend_info_container');
         var $additionalVotes = $infoContainer.find('.cg_rating_value_countR_additional_votes_total');
 
-        $infoContainer.find('.cg_rating_value_countR_div_cummulated').text(ratingTotal);
+        $infoContainer.find('.cg_rating_value_countR_div_cummulated').text(realRatingTotal);
 
-        if (addedWeightedValue > 0) {
+        if (addedCount > 0) {
             $additionalVotes.removeClass('cg_hide').text(addedWeightedValue);
         } else {
             $additionalVotes.addClass('cg_hide');
         }
 
-        cgBackendSetMultiStarRatingState($cgSortableDiv, ratingCount);
+        cgBackendSetMultiStarRatingState($cgSortableDiv, realRatingCount + addedCount);
     };
 
-    var cgBackendRenderAverageManipulation = function ($cgSortableDiv, ratingTotal, ratingCount, addedCount) {
+    var cgBackendRenderAverageManipulation = function ($cgSortableDiv, realRatingTotal, realRatingCount, addedCount, addedWeightedValue) {
         var $infoContainer = $cgSortableDiv.find('.cg_backend_info_container');
         var $additionalVotes = $infoContainer.find('.cg_rating_value_countR_additional_votes_total');
-        var average = 0;
+        var realAverage = 0;
+        var visibleAverage = 0;
+        var visibleRatingCount = realRatingCount + addedCount;
+        var averageDelta;
 
-        if (ratingCount > 0) {
-            average = Math.round((ratingTotal / ratingCount) * 10) / 10;
+        if (realRatingCount > 0) {
+            realAverage = cgBackendRoundRatingAverage(realRatingTotal / realRatingCount);
         }
+        if (visibleRatingCount > 0) {
+            visibleAverage = cgBackendRoundRatingAverage((realRatingTotal + addedWeightedValue) / visibleRatingCount);
+        }
+        averageDelta = cgBackendRoundRatingAverage(visibleAverage - realAverage);
 
-        $infoContainer.find('.cg_rating_value_countR_div_average').text(average);
+        $infoContainer.find('.cg_rating_value_countR_div_average').text(realAverage);
 
         if (addedCount > 0) {
-            $additionalVotes.removeClass('cg_hide').text(addedCount);
+            $additionalVotes.removeClass('cg_hide').text(cgBackendFormatSignedRatingAverage(averageDelta));
         } else {
             $additionalVotes.addClass('cg_hide');
         }
 
-        cgBackendSetMultiStarRatingState($cgSortableDiv, ratingCount);
+        cgBackendSetMultiStarRatingState($cgSortableDiv, visibleRatingCount);
     };
 
     $(document).on('keypress', '#cgGalleryBackendContainer .cg_manipulate_plus_value.cg_manipulate_5_star_input', function (e) {
@@ -585,15 +631,17 @@ debugger
         if ($ratingOverview.attr('data-cg-rating-mode') === 'average') {
             cgBackendRenderAverageManipulation(
                 $cgSortableDiv,
-                originRatingTotal + addedWeightedValue,
-                originRatingCount + addedCount,
-                addedCount
+                originRatingTotal,
+                originRatingCount,
+                addedCount,
+                addedWeightedValue
             );
         } else {
             cgBackendRenderCumulativeManipulation(
                 $cgSortableDiv,
-                originRatingTotal + addedWeightedValue,
-                originRatingCount + addedCount,
+                originRatingTotal,
+                originRatingCount,
+                addedCount,
                 addedWeightedValue
             );
         }

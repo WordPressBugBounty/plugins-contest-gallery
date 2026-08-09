@@ -14,6 +14,7 @@ return array(
         'Name' => array('COLUMN_TYPE' => 'VARCHAR(1000)','DEFAULT' => '""'),// Update 07.08.2021
         'IP' => array('COLUMN_TYPE' => 'VARCHAR(200)','DEFAULT' => '""'),// Update 07.01.2022
         'WpUserId' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update 07.01.2022
+        'Vote' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update 02.08.2026
         'ReviewTstamp' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update 08.09.2022
         'Active' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0)// Update 08.09.2022
     ),
@@ -84,7 +85,8 @@ return array(
         'OptionSet' => array('COLUMN_TYPE' => 'VARCHAR(30)','DEFAULT' => '""'),// Update 11.06.2019
         'CookieId' => array('COLUMN_TYPE' => 'VARCHAR(99)','DEFAULT' => '""'),// Update 11.06.2019
         'Category' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' =>0),// Update 27.01.2021
-        'CategoriesOn' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' =>0)// Update 27.01.2021
+        'CategoriesOn' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' =>0),// Update 27.01.2021
+        'CommentId' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' =>0)// Update 03.08.2026
     ),
     $tablename_options => array(
         'HideUntilVote' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0), // first update
@@ -99,6 +101,7 @@ return array(
         'CommentsOutGallery' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 01.01.2016
         'RatingOutGallery' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),
         'AllowRatingAverage' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 21.07.2026
+        'VoteCommentMode' => array('COLUMN_TYPE' => 'VARCHAR(10)','DEFAULT' => '"disabled"'),// Update 02.08.2026
         'ForwardToURL' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 1),//  Update ab 05.02.2016
         'ForwardFrom' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 1),
         'ForwardType' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),

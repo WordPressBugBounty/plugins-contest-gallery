@@ -46,6 +46,7 @@ $columnsToRepairArray = array();
 $updateArray = include('update-conf.php');
 $updateIndexArray = include('update-index-conf.php');
 $isField1IdFullWindowBlogViewAdded = false;
+$isVoteCommentIdAdded = false;
 
 if(!isset($errorsArray)){
     $errorsArray = array();
@@ -410,6 +411,9 @@ foreach($updateArray as $tableName => $tableData){
                     if($tableName == $tablename_options_visual && $columnName == 'Field1IdFullWindowBlogView'){
                         $isField1IdFullWindowBlogViewAdded = true;
                     }
+                    if($tableName == $tablename_ip && $columnName == 'CommentId'){
+                        $isVoteCommentIdAdded = true;
+                    }
                 }
 
             }
@@ -442,6 +446,85 @@ foreach($updateArray as $tableName => $tableData){
 }
 
 cg_update_check_new_handle_indexes($updateIndexArray,$dtacaoo,$isJustCheck,$columnsToRepairArray,$errorsArray);
+
+$shouldBackfillVoteCommentLinks = $isVoteCommentIdAdded;
+if(isset($p_cgal1ery_db_installed_ver) && floatval($p_cgal1ery_db_installed_ver) < 32.02){
+    $shouldBackfillVoteCommentLinks = true;
+}
+
+if(empty($isJustCheck) && $shouldBackfillVoteCommentLinks){
+    $voteCommentCandidates = $wpdb->get_results(
+        "SELECT
+            vote.id AS vote_id,
+            vote.GalleryID AS gallery_id,
+            vote.pid AS entry_id,
+            comment.id AS comment_id
+        FROM $tablename_comments AS comment
+        INNER JOIN $tablename_ip AS vote
+            ON vote.GalleryID = comment.GalleryID
+            AND vote.pid = comment.pid
+            AND vote.Tstamp = comment.Timestamp
+            AND vote.WpUserId = comment.WpUserId
+            AND vote.IP = comment.IP
+            AND (
+                (vote.RatingS = 1 AND comment.Vote = 1)
+                OR
+                (vote.Rating BETWEEN 1 AND 10 AND comment.Vote = vote.Rating)
+            )
+        WHERE vote.CommentId = 0
+            AND comment.Vote BETWEEN 1 AND 10
+            AND NOT EXISTS (
+                SELECT 1
+                FROM $tablename_ip AS linked_vote
+                WHERE linked_vote.GalleryID = comment.GalleryID
+                    AND linked_vote.pid = comment.pid
+                    AND linked_vote.CommentId = comment.id
+            )"
+    );
+
+    if(!empty($voteCommentCandidates)){
+        $voteCandidateCounts = array();
+        $commentCandidateCounts = array();
+
+        foreach($voteCommentCandidates as $voteCommentCandidate){
+            $voteId = absint($voteCommentCandidate->vote_id);
+            $commentId = absint($voteCommentCandidate->comment_id);
+            if(empty($voteId) || empty($commentId)){
+                continue;
+            }
+            $voteCandidateCounts[$voteId] = isset($voteCandidateCounts[$voteId]) ? $voteCandidateCounts[$voteId]+1 : 1;
+            $commentCandidateCounts[$commentId] = isset($commentCandidateCounts[$commentId]) ? $commentCandidateCounts[$commentId]+1 : 1;
+        }
+
+        foreach($voteCommentCandidates as $voteCommentCandidate){
+            $voteId = absint($voteCommentCandidate->vote_id);
+            $commentId = absint($voteCommentCandidate->comment_id);
+            if(
+                empty($voteId) ||
+                empty($commentId) ||
+                empty($voteCandidateCounts[$voteId]) ||
+                intval($voteCandidateCounts[$voteId]) !== 1 ||
+                empty($commentCandidateCounts[$commentId]) ||
+                intval($commentCandidateCounts[$commentId]) !== 1
+            ){
+                continue;
+            }
+
+            $wpdb->update(
+                $tablename_ip,
+                array('CommentId' => $commentId),
+                array(
+                    'id' => $voteId,
+                    'GalleryID' => absint($voteCommentCandidate->gallery_id),
+                    'pid' => absint($voteCommentCandidate->entry_id),
+                    'CommentId' => 0,
+                ),
+                array('%d'),
+                array('%d','%d','%d','%d')
+            );
+        }
+    }
+}
 
 if($isField1IdFullWindowBlogViewAdded && empty($isJustCheck)){
 

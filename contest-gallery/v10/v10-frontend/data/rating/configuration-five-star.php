@@ -10,7 +10,7 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
 
                 $countRuserId = $wpdb->get_results($wpdb->prepare(
                     "
-                                    SELECT pid, Rating
+                                    SELECT pid, Rating, Category, CategoriesOn
                                     FROM $tablenameIP
                                     WHERE GalleryID = %d and WpUserId = %s and Rating >= %d and Rating <= %d
                                 ",
@@ -23,6 +23,7 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
                     foreach ($countRuserId as $object) {
                         if(!isset($votedUserPids[$object->pid])){$votedUserPids[$object->pid] = [];}
                         $votedUserPids[$object->pid][] = $object->Rating;
+                        $addCurrentUserVoteCategoryCount($object);
                     }
                 }
             }
@@ -30,7 +31,7 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
         if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {
             $countSuserCookie = $wpdb->get_results( $wpdb->prepare(
                 "
-                            SELECT pid, Rating
+                            SELECT pid, Rating, Category, CategoriesOn
                             FROM $tablenameIP
                             WHERE GalleryID = %d and CookieId = %s and Rating >= %d and Rating <= %d
                         ",
@@ -43,6 +44,7 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
                 foreach($countSuserCookie as $object){
                     if(!isset($votedUserPids[$object->pid])){$votedUserPids[$object->pid] = [];}
                     $votedUserPids[$object->pid][] = $object->Rating;
+                    $addCurrentUserVoteCategoryCount($object);
                 }
             }
         }
@@ -53,7 +55,7 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
 
             $countSuserCookie = $wpdb->get_results( $wpdb->prepare(
                 "
-                            SELECT pid, Rating
+                            SELECT pid, Rating, Category, CategoriesOn
                             FROM $tablenameIP
                             WHERE GalleryID = %d and CookieId = %s and IP = %s and Rating >= %d and Rating <= %d
                         ",
@@ -67,6 +69,7 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
                 foreach($countSuserCookie as $object){
                     if(!isset($votedUserPids[$object->pid])){$votedUserPids[$object->pid] = [];}
                     $votedUserPids[$object->pid][] = $object->Rating;
+                    $addCurrentUserVoteCategoryCount($object);
                 }
         }
     } elseif ($options['general']['CheckIp']==1 and $options['general']['CheckCookie']!=1){// IP check then
@@ -75,7 +78,7 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
 
             $countRuserIp = $wpdb->get_results($wpdb->prepare(
                 "
-                            SELECT pid, Rating
+                            SELECT pid, Rating, Category, CategoriesOn
                             FROM $tablenameIP
                             WHERE GalleryID = %d and IP = %s and Rating >= %d and Rating <= %d
                         ",
@@ -88,6 +91,7 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
                 foreach ($countRuserIp as $object) {
                     if(!isset($votedUserPids[$object->pid])){$votedUserPids[$object->pid] = [];}
                     $votedUserPids[$object->pid][] = $object->Rating;
+                    $addCurrentUserVoteCategoryCount($object);
                 }
             }
             //   }

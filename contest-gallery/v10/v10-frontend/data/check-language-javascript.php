@@ -98,6 +98,7 @@
 	cgJsClass.gallery.language[index].AllVotesUsed = <?php echo json_encode($language_AllVotesUsed); ?>;
 	cgJsClass.gallery.language[index].ItIsNotAllowedToVoteForYourOwnPicture = <?php echo json_encode($language_ItIsNotAllowedToVoteForYourOwnPicture); ?>;
 	cgJsClass.gallery.language[index].OnlyRegisteredUsersCanVote = <?php echo json_encode($language_OnlyRegisteredUsersCanVote); ?>;
+	cgJsClass.gallery.language[index].OnlyJuryMembersCanVote = <?php echo json_encode($language_OnlyJuryMembersCanVote); ?>;
 	cgJsClass.gallery.language[index].ThisFileTypeIsNotAllowed = <?php echo json_encode($language_ThisFileTypeIsNotAllowed); ?>;
 	cgJsClass.gallery.language[index].TheFileYouChoosedIsToBigMaxAllowedSize = <?php echo json_encode($language_TheFileYouChoosedIsToBigMaxAllowedSize); ?>;
 	cgJsClass.gallery.language[index].TheResolutionOfThisPicIs = <?php echo json_encode($language_TheResolutionOfThisPicIs); ?>;
@@ -172,6 +173,9 @@
 	cgJsClass.gallery.language[index].DataSaved = <?php echo json_encode($language_DataSaved); ?>;
 	cgJsClass.gallery.language[index].Sum = <?php echo json_encode($language_Sum); ?>;
 	cgJsClass.gallery.language[index].YourVote = <?php echo json_encode($language_YourVote); ?>;
+	cgJsClass.gallery.language[index].CommentRequiredToVote = <?php echo json_encode($language_CommentRequiredToVote); ?>;
+	cgJsClass.gallery.language[index].LeaveAComment = <?php echo json_encode($language_LeaveAComment); ?>;
+	cgJsClass.gallery.language[index].NotNow = <?php echo json_encode($language_NotNow); ?>;
 	cgJsClass.gallery.language[index].Rating = <?php echo json_encode($language_Rating); ?>;
 	cgJsClass.gallery.language[index].Ratings = <?php echo json_encode($language_Ratings); ?>;
 	cgJsClass.gallery.language[index].PleaseUseAvailableEmojis = <?php echo json_encode($language_PleaseUseAvailableEmojis); ?>;

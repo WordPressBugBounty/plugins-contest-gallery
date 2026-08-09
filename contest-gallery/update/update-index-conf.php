@@ -24,7 +24,8 @@ return array(
         'GalleryID_WpUserId_pid_id_index' => array('columns' => array('GalleryID','WpUserId','pid','id')),
         'GalleryID_CookieId_pid_id_index' => array('columns' => array('GalleryID',array('name' => 'CookieId','length' => 64),'pid','id')),
         'GalleryID_IP_CookieId_pid_id_index' => array('columns' => array('GalleryID',array('name' => 'IP','length' => 64),array('name' => 'CookieId','length' => 64),'pid','id')),
-        'GalleryID_Tstamp_index' => array('columns' => array('GalleryID','Tstamp'))
+        'GalleryID_Tstamp_index' => array('columns' => array('GalleryID','Tstamp')),
+        'GalleryID_pid_CommentId_index' => array('columns' => array('GalleryID','pid','CommentId'))
     ),
     $tablename_comments => array(
         'pid_index' => array('columns' => array('pid')),

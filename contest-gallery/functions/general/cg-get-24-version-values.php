@@ -23,7 +23,7 @@ if(!function_exists('cg_get_24_version_values')){
 			//'GalleryPageRedirectURL' => '',
 			'GalleryEntryPageRedirectURL' => '',
 			'GalleriesPagesNoIndex' => 0,
-			'GalleriesPagesNoFollow' => 0,
+			'GalleriesPagesNoFollow' => 1,
 			'FeControlsStyle' => 'white'
 		];
 

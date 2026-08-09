@@ -2,7 +2,7 @@
 
 add_action('cg_copy_rating','cg_copy_rating');
 if(!function_exists('cg_copy_rating')){
-    function cg_copy_rating($cg_copy_start,$oldGalleryID,$nextGalleryID,$collectImageIdsArray){
+    function cg_copy_rating($cg_copy_start,$oldGalleryID,$nextGalleryID,$collectImageIdsArray,$commentIdMap = array()){
         if(!empty($collectImageIdsArray)){
 
             global $wpdb;
@@ -69,8 +69,24 @@ if(!function_exists('cg_copy_rating')){
             //SELECT NULL, pid, IP, 3001, Rating, RatingS, WpUserId, Tstamp, DateVote, VoteDate, OptionSet, CookieId
             //FROM wp_contest_gal1ery_ip
             //WHERE GalleryID IN (3000)
+            $commentIdSelect = '0';
+            if(!empty($commentIdMap) && is_array($commentIdMap)){
+                $commentIdCase = '';
+                foreach($commentIdMap as $oldCommentId => $newCommentId){
+                    $oldCommentId = absint($oldCommentId);
+                    $newCommentId = absint($newCommentId);
+                    if(!empty($oldCommentId) && !empty($newCommentId)){
+                        $commentIdCase .= "WHEN $oldCommentId THEN $newCommentId ";
+                    }
+                }
+                if($commentIdCase !== ''){
+                    $commentIdSelect = 'CASE CommentId '.rtrim($commentIdCase).' ELSE 0 END';
+                }
+            }
+
             $insertQuery = "INSERT INTO $tablename_ip
-SELECT NULL, pid, IP, %d, Rating, RatingS, WpUserId, VoteDate, Tstamp, OptionSet, CookieId, Category, CategoriesOn
+(id, pid, IP, GalleryID, Rating, RatingS, WpUserId, VoteDate, Tstamp, OptionSet, CookieId, Category, CategoriesOn, CommentId)
+SELECT NULL, pid, IP, %d, Rating, RatingS, WpUserId, VoteDate, Tstamp, OptionSet, CookieId, Category, CategoriesOn, $commentIdSelect
 FROM $tablename_ip
 WHERE GalleryID = %d AND pid IN ($oldImageIdsPlaceholders)";
             $insertParameters = array_merge([$nextGalleryID, $oldGalleryID], $oldImageIds);

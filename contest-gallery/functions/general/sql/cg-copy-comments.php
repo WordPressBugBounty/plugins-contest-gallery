@@ -2,16 +2,15 @@
 add_action('cg_copy_comments','cg_copy_comments');
 if(!function_exists('cg_copy_comments')){
     function cg_copy_comments($cg_copy_start,$oldGalleryID,$nextGalleryID,$collectImageIdsArray){
+        $commentIdMap = array();
         if(!empty($collectImageIdsArray)){
 
             global $wpdb;
 
-            $tablename = $wpdb->prefix . "contest_gal1ery";
             $tablename_comments = $wpdb->prefix . "contest_gal1ery_comments";
 
             $oldImageIds = [];
             $newImageIds = [];
-            $whenThenString = '';
 
             foreach($collectImageIdsArray as $oldImageId => $newImageId){
                 if (
@@ -24,11 +23,6 @@ if(!function_exists('cg_copy_comments')){
                     $oldImageIds[] = $oldImageId;
                     $newImageIds[] = $newImageId;
 
-                    if ($oldImageId === $newImageId) {
-                        continue;
-                    }
-
-                    $whenThenString .= "WHEN $oldImageId THEN $newImageId ";
                 }
             }
 
@@ -36,37 +30,37 @@ if(!function_exists('cg_copy_comments')){
             $newImageIds = array_values(array_unique($newImageIds));
 
             if(empty($oldImageIds) || empty($newImageIds)){
-                return;
+                return $commentIdMap;
             }
 
             $oldImageIdsPlaceholders = implode(',', array_fill(0, count($oldImageIds), '%d'));
-            $newImageIdsPlaceholders = implode(',', array_fill(0, count($newImageIds), '%d'));
+            $sourceComments = $wpdb->get_results($wpdb->prepare(
+                "SELECT *
+                FROM $tablename_comments
+                WHERE GalleryID = %d AND pid IN ($oldImageIdsPlaceholders)
+                ORDER BY id ASC",
+                array_merge(array($oldGalleryID),$oldImageIds)
+            ),ARRAY_A);
 
-            $query = "INSERT INTO $tablename_comments
-    SELECT NULL, pid, %d, Name, Date, Comment, Timestamp, IP, WpUserId, ReviewTstamp, Active
-    FROM $tablename_comments 
-    WHERE GalleryID = %d AND pid IN ($oldImageIdsPlaceholders)";
-            $queryParameters = array_merge([$nextGalleryID, $oldGalleryID], $oldImageIds);
-            $wpdb->query($wpdb->prepare($query,$queryParameters));
+            foreach($sourceComments as $sourceComment){
+                $oldCommentId = (!empty($sourceComment['id'])) ? absint($sourceComment['id']) : 0;
+                $oldCommentPid = (!empty($sourceComment['pid'])) ? absint($sourceComment['pid']) : 0;
+                $newCommentPid = (!empty($collectImageIdsArray[$oldCommentPid])) ? absint($collectImageIdsArray[$oldCommentPid]) : 0;
+                if(empty($oldCommentId) || empty($newCommentPid)){
+                    continue;
+                }
 
-            if(!empty($whenThenString)){
-                $whenThenString = rtrim($whenThenString);
-                $updateQuery = "UPDATE $tablename_comments SET pid = CASE pid $whenThenString ELSE pid END WHERE GalleryID = %d AND pid IN ($oldImageIdsPlaceholders)";
-                $updateParameters = array_merge([$nextGalleryID], $oldImageIds);
-                $wpdb->query($wpdb->prepare($updateQuery,$updateParameters));
+                unset($sourceComment['id']);
+                $sourceComment['pid'] = $newCommentPid;
+                $sourceComment['GalleryID'] = absint($nextGalleryID);
+                $inserted = $wpdb->insert($tablename_comments,$sourceComment);
+                if($inserted !== false && !empty($wpdb->insert_id)){
+                    $commentIdMap[$oldCommentId] = absint($wpdb->insert_id);
+                }
             }
 
             $wp_upload_dir = wp_upload_dir();
             $time = time();
-
-            $all_insert_ids = $wpdb->get_results($wpdb->prepare("SELECT id, pid, Timestamp FROM $tablename_comments WHERE GalleryID = %d AND pid IN ($newImageIdsPlaceholders)",array_merge(array($nextGalleryID),$newImageIds)));
-            $allInsertIdsByPidAndTimestamp = array();
-            foreach ($all_insert_ids as $insert_id_to_check){
-                if(!isset($allInsertIdsByPidAndTimestamp[$insert_id_to_check->pid])){
-                    $allInsertIdsByPidAndTimestamp[$insert_id_to_check->pid] = array();
-                }
-                $allInsertIdsByPidAndTimestamp[$insert_id_to_check->pid][$insert_id_to_check->Timestamp] = $insert_id_to_check->id;
-            }
 
 	        // image files first, because must be newer, released in 16.0.0
             $oldImageCommentIdsDir = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$oldGalleryID.'/json/image-comments/ids';
@@ -101,6 +95,7 @@ if(!function_exists('cg_copy_comments')){
                                     $imageCommentNewArray[$newCommentId]['timestamp'] = $fileImageCommentDirFileValue->timestamp;
                                     $imageCommentNewArray[$newCommentId]['name'] = $fileImageCommentDirFileValue->name;
                                     $imageCommentNewArray[$newCommentId]['comment'] = $fileImageCommentDirFileValue->comment;
+                                    $imageCommentNewArray[$newCommentId]['vote'] = (!empty($fileImageCommentDirFileValue->vote)) ? absint($fileImageCommentDirFileValue->vote) : 0;
                                     $imageCommentNewArray[$newCommentId]['Active'] = (!empty($fileImageCommentDirFileValue->Active)) ? $fileImageCommentDirFileValue->Active : 1;
                                     $imageCommentNewArray[$newCommentId]['ReviewTstamp'] = (!empty($fileImageCommentDirFileValue->ReviewTstamp)) ? $fileImageCommentDirFileValue->ReviewTstamp : '';
                                     if(!empty($fileImageCommentDirFileValue->WpUserId)){// better to check here for sure
@@ -115,8 +110,9 @@ if(!function_exists('cg_copy_comments')){
 		                                $imageCommentNewArray[$newCommentId]['IsWpUser'] = (isset($fileImageCommentDirFileValue->IsWpUser)) ? $fileImageCommentDirFileValue->IsWpUser : 0;
 		                                $imageCommentNewArray[$newCommentId]['insert_id'] = '';
 									if(!empty($fileImageCommentDirFileValue->insert_id)){
-										if(isset($allInsertIdsByPidAndTimestamp[$newImageId][$fileImageCommentDirFileValue->timestamp])){
-											$imageCommentNewArray[$newCommentId]['insert_id'] = $allInsertIdsByPidAndTimestamp[$newImageId][$fileImageCommentDirFileValue->timestamp];
+                                        $oldCommentInsertId = absint($fileImageCommentDirFileValue->insert_id);
+                                        if(!empty($commentIdMap[$oldCommentInsertId])){
+											$imageCommentNewArray[$newCommentId]['insert_id'] = $commentIdMap[$oldCommentInsertId];
 										}
 	                                }
                                 }
@@ -134,6 +130,8 @@ if(!function_exists('cg_copy_comments')){
             }
 
         }
+
+        return $commentIdMap;
 
     }
 }

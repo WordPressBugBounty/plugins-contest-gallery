@@ -473,6 +473,10 @@ $ContentUserVoteMail = contest_gal1ery_convert_for_html_output_without_nl2br($Co
     $selectedCheckRating = (!$AllowRatingAverage && ($selectSQL1->AllowRating==1 OR ($selectSQL1->AllowRating>=12 && $selectSQL1->AllowRating<=20))) ? 'checked' : '';
     $selectedCheckRatingAverage = ($AllowRatingAverage && ($selectSQL1->AllowRating==1 OR ($selectSQL1->AllowRating>=12 && $selectSQL1->AllowRating<=20))) ? 'checked' : '';
     $selectedCheckRating2 = ($selectSQL1->AllowRating==2) ? 'checked' : '';
+    $VoteCommentMode = (!empty($selectSQL1->VoteCommentMode) && in_array($selectSQL1->VoteCommentMode, array('required','optional','disabled'), true)) ? $selectSQL1->VoteCommentMode : 'disabled';
+    $VoteCommentModeRequired = ($VoteCommentMode === 'required') ? 'checked' : '';
+    $VoteCommentModeOptional = ($VoteCommentMode === 'optional') ? 'checked' : '';
+    $VoteCommentModeDisabled = ($VoteCommentMode === 'disabled') ? 'checked' : '';
     $selectedCheckFbLike = ($selectSQL1->FbLike==1) ? 'checked' : '';
     $selectedCheckFbLikeGallery = ($selectSQL1->FbLikeGallery==1) ? 'checked' : '';
     $selectedCheckFbLikeGalleryVote = ($selectSQL1->FbLikeGalleryVote==1) ? 'checked' : '';

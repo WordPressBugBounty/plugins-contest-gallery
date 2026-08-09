@@ -21,6 +21,7 @@ $tablename_options = $wpdb->prefix . "contest_gal1ery_options";
 $tablename_pro_options = $wpdb->prefix . "contest_gal1ery_pro_options";
 $tablename_categories = $wpdb->prefix . "contest_gal1ery_categories";
 $tablename_ip = $wpdb->prefix . "contest_gal1ery_ip";
+$tablename_comments = $wpdb->prefix . "contest_gal1ery_comments";
 $table_posts = $wpdb->prefix."posts";
 $table_wp_users = $wpdb->base_prefix."users";
 $tablename_google_users = $wpdb->base_prefix."contest_gal1ery_google_users";
@@ -129,6 +130,32 @@ $votingDataLength = $wpdb->get_var($wpdb->prepare(
     $imageId,
     $GalleryID
 ));
+
+$linkedCommentIds = array();
+$linkedCommentIdsToCheck = array();
+foreach($votingData as $voteDataRow){
+    $linkedCommentIdToCheck = (!empty($voteDataRow->CommentId)) ? absint($voteDataRow->CommentId) : 0;
+    if(!empty($linkedCommentIdToCheck)){
+        $linkedCommentIdsToCheck[$linkedCommentIdToCheck] = $linkedCommentIdToCheck;
+    }
+}
+
+if(!empty($linkedCommentIdsToCheck)){
+    $linkedCommentPlaceholders = implode(',',array_fill(0,count($linkedCommentIdsToCheck),'%d'));
+    $linkedCommentQueryValues = array_merge(array_values($linkedCommentIdsToCheck),array($imageId,$GalleryID));
+    $existingLinkedCommentIds = $wpdb->get_col($wpdb->prepare(
+        "SELECT id
+        FROM $tablename_comments
+        WHERE id IN ($linkedCommentPlaceholders) AND pid = %d AND GalleryID = %d",
+        $linkedCommentQueryValues
+    ));
+    foreach($existingLinkedCommentIds as $existingLinkedCommentId){
+        $existingLinkedCommentId = absint($existingLinkedCommentId);
+        if(!empty($existingLinkedCommentId)){
+            $linkedCommentIds[$existingLinkedCommentId] = true;
+        }
+    }
+}
 
 $upload_folder = wp_upload_dir();
 $upload_folder_url = $upload_folder['baseurl']; // Pfad zum Bilderordner angeben
@@ -343,6 +370,12 @@ echo '<div id=\'cgVotesExport\'>
 
 echo "<form action='?page=".cg_get_version()."/index.php&show_votes=true&show_votes=true&image_id=$imageId&option_id=$GalleryID' method=\"post\" class=\"cg_load_backend_submit\">";
 echo '<input type="hidden" name="cg_remove_votes" value="true">';
+if(!empty($linkedCommentIds)){
+    echo '<div class="cg_vote_comment_delete_notice">'.
+        '<span class="cg_vote_comment_delete_notice_label">Linked vote and comment</span>'.
+        '<span>Deleting a vote with a linked comment also deletes that comment.</span>'.
+    '</div>';
+}
 
 
 if (!empty($_POST['cg_remove_votes'])) {
@@ -648,6 +681,7 @@ if($votingDataLength>50){
             echo "<div class='cg-votes-header'>WordPress<br>user name</div>";
             echo "<div class='cg-votes-header'>WordPress<br>user email</div>";
             echo "<div class='cg-votes-header'>Vote date</div>";
+            echo "<div class='cg-votes-header'>Linked comment</div>";
             echo "<div class='cg-votes-header cg-votes-action-header'>".
                 cg1l_render_admin_vote_action_checkbox('Select all','cgVotesSelectAll','','','','select_all').
                 "<span class='cg_votes_action_header_caption'>Remove vote</span>".
@@ -689,6 +723,13 @@ if($votingDataLength>50){
                 echo "<div class='cg-votes-row'>$useremail</div>";
                 if(empty($row->VoteDate)){$row->VoteDate="&nbsp";};
             echo "<div class='cg-votes-row'>".cg_get_time_based_on_wp_timezone_conf($row->Tstamp,'d-M-Y H:i:s')."</div>";
+                $linkedCommentId = (!empty($row->CommentId)) ? absint($row->CommentId) : 0;
+                if(!empty($linkedCommentId) && !empty($linkedCommentIds[$linkedCommentId])){
+                    $linkedCommentUrl = '?page='.cg_get_version().'/index.php&option_id='.$GalleryID.'&show_comments=true&id='.$imageId.'&cg_comment_id='.$linkedCommentId;
+                    echo "<div class='cg-votes-row'><a class='cg_load_backend_link cg_vote_comment_admin_link' href='".esc_attr($linkedCommentUrl)."'>View comment</a></div>";
+                }else{
+                    echo "<div class='cg-votes-row cg_vote_comment_admin_link_empty'>&mdash;</div>";
+                }
                 $ratingVariant = ($row->RatingS>0) ? 'RatingS' : 'Rating';
                 $ratingHeight = ($row->RatingS>0) ? $row->RatingS : $row->Rating;
                 $voteActionInputId = 'cgVoteRemove'.preg_replace('/[^A-Za-z0-9_-]/','_', $row->id.'_'.$ratingVariant);

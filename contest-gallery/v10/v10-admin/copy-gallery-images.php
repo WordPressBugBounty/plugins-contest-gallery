@@ -472,11 +472,11 @@ if(!empty($copyImageInfoPids)){
 
 if($cgCopyType=='cg_copy_type_all'){
 
-    // copy rating here
-    cg_copy_rating($cg_copy_start,$idToCopy,$nextIDgallery,$collectImageIdsArray);
+    // Comments are copied first so linked vote rows can receive the remapped comment id.
+    $commentIdMap = cg_copy_comments($cg_copy_start,$idToCopy,$nextIDgallery,$collectImageIdsArray);
 
-    // copy comments here
-    cg_copy_comments($cg_copy_start,$idToCopy,$nextIDgallery,$collectImageIdsArray);
+    // copy rating here
+    cg_copy_rating($cg_copy_start,$idToCopy,$nextIDgallery,$collectImageIdsArray,$commentIdMap);
 }
 
 if($cg_processed_images >= $imagesToProcess){

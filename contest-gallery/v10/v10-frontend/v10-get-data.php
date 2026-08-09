@@ -100,6 +100,18 @@ $postId = (!empty($post->ID)) ? absint($post->ID) : 0;
 
 $countUserVotes = 0;
 $votedUserPids = [];
+$currentUserVoteCategoryCounts = [];
+$addCurrentUserVoteCategoryCount = function($voteRow) use (&$currentUserVoteCategoryCounts) {
+    if(!is_object($voteRow) || empty($voteRow->CategoriesOn)){
+        return;
+    }
+
+    $categoryId = intval($voteRow->Category);
+    if(!isset($currentUserVoteCategoryCounts[$categoryId])){
+        $currentUserVoteCategoryCounts[$categoryId] = 0;
+    }
+    $currentUserVoteCategoryCounts[$categoryId]++;
+};
 $languageNames = [
     'gallery'   => [],
     'general'   => [],
@@ -367,6 +379,27 @@ if(
     if(array_key_exists('PdfPreviewBackend',$optionsSource['pro'])){
         $options['pro']['PdfPreviewBackend'] = $optionsSource['pro']['PdfPreviewBackend'];
     }
+}
+
+if(!isset($options['pro']) || !is_array($options['pro'])){
+    $options['pro'] = array();
+}
+$preselectSortForCurrentRatingMode = '';
+if(!empty($options['general']['PreselectSort'])){
+    $preselectSortForCurrentRatingMode = $options['general']['PreselectSort'];
+}elseif(!empty($options['pro']['PreselectSort'])){
+    $preselectSortForCurrentRatingMode = $options['pro']['PreselectSort'];
+}
+$preselectSortForCurrentRatingMode = cg1l_normalize_preselect_sort_for_rating_mode(
+    $preselectSortForCurrentRatingMode,
+    (!empty($options['general']['AllowRating'])) ? $options['general']['AllowRating'] : 0,
+    (!empty($options['general']['AllowRatingAverage'])) ? $options['general']['AllowRatingAverage'] : 0,
+    (!empty($options['general']['rating_sum_descend'])) ? $options['general']['rating_sum_descend'] : '',
+    (!empty($options['pro']['IsModernFiveStar'])) ? $options['pro']['IsModernFiveStar'] : 0
+);
+$options['pro']['PreselectSort'] = $preselectSortForCurrentRatingMode;
+if(isset($options['general']['PreselectSort'])){
+    $options['general']['PreselectSort'] = $preselectSortForCurrentRatingMode;
 }
 
 $parentPermalink = '';
@@ -1016,6 +1049,7 @@ if($isShowGallery == true){
             $CheckLogin = 1;
         }
     }
+    $currentUserJuryVoteAllowed = cg1l_is_current_user_allowed_for_jury_voting($galeryID, $CheckLogin) ? 1 : 0;
 
     if(!empty($entryId) && !empty($cgEntryId) && $entryId==$cgEntryId){
         echo "<input type='hidden' id='mainCGdivEntryPageHiddenInput' value='true'>";
@@ -1511,6 +1545,12 @@ if(($options['general']['AllowRating']==1 OR $options['general']['AllowRating']>
             echo "<div style='visibility: hidden;'  class='cg_header cg_hide'>";
                 include('gallery/header.php');
             echo "</div>";
+        }elseif(!empty($options['visual']['ShowPinFormVoting'])){
+            $cgFeControlsStyleBeforePinForm = $cgFeControlsStyle;
+            $BorderRadiusClassBeforePinForm = $BorderRadiusClass;
+            include(__DIR__.'/gallery/pin-form.php');
+            $cgFeControlsStyle = $cgFeControlsStyleBeforePinForm;
+            $BorderRadiusClass = $BorderRadiusClassBeforePinForm;
         }
 
         echo "</div>";// Closing mainCGdivHelperChild

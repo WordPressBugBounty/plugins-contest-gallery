@@ -2,6 +2,7 @@
 
 global $wpdb;
 $tablename_comments = $wpdb->prefix . "contest_gal1ery_comments";
+$tablename_ip = $wpdb->prefix . "contest_gal1ery_ip";
 $tablename = $wpdb->prefix . "contest_gal1ery";
 $tablenameWpUsers = $wpdb->prefix . "users";
 $tablenameOptions = $wpdb->prefix . "contest_gal1ery_options";
@@ -285,10 +286,22 @@ if(!function_exists('cg1l_admin_comment_action_error')){
 
         cg_require_backend_access();
 
+        $commentActionStatsLockFp = false;
+        $commentActionStatsData = false;
+        if(!empty($_POST['delete-comment'])){
+            $commentActionStatsData = cg1l_get_stats_for_update($galeryNR,$pid,$commentActionStatsLockFp);
+            if(!is_array($commentActionStatsData)){
+                cg1l_release_stats_lock($commentActionStatsLockFp);
+                cg1l_admin_comment_action_error('Comment and vote data could not be locked for deletion.');
+                return;
+            }
+        }
+
         $commentsLockFp = false;
         $jsonFile = cg1l_get_comments_lock_for_update($galeryNR,$pid,$commentsLockFp);
         if(empty($jsonFile) || !file_exists($jsonFile)){
             cg1l_release_comment_lock($commentsLockFp);
+            cg1l_release_stats_lock($commentActionStatsLockFp);
             cg1l_admin_comment_action_error('Comment data could not be loaded.');
             return;
         }
@@ -297,6 +310,7 @@ if(!function_exists('cg1l_admin_comment_action_error')){
         $commentsArray = ($commentsArrayRaw !== false && $commentsArrayRaw !== '') ? json_decode($commentsArrayRaw,true) : false;
         if(!is_array($commentsArray)){
             cg1l_release_comment_lock($commentsLockFp);
+            cg1l_release_stats_lock($commentActionStatsLockFp);
             cg1l_admin_comment_action_error('Comment data is invalid. No changes were saved.');
             return;
         }
@@ -307,6 +321,7 @@ if(!function_exists('cg1l_admin_comment_action_error')){
 
         if(!$deleteAction['valid'] || !$activateAction['valid'] || !$deactivateAction['valid']){
             cg1l_release_comment_lock($commentsLockFp);
+            cg1l_release_stats_lock($commentActionStatsLockFp);
             cg1l_admin_comment_action_error('Invalid comment action. No changes were saved.');
             return;
         }
@@ -317,6 +332,7 @@ if(!function_exists('cg1l_admin_comment_action_error')){
             count(array_intersect($activateAction['ids'],$deactivateAction['ids']))
         ){
             cg1l_release_comment_lock($commentsLockFp);
+            cg1l_release_stats_lock($commentActionStatsLockFp);
             cg1l_admin_comment_action_error('A comment can have only one action. No changes were saved.');
             return;
         }
@@ -324,6 +340,7 @@ if(!function_exists('cg1l_admin_comment_action_error')){
         $fileImageCommentsDir = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryNR.'/json/image-comments/ids/'.$pid;
         if(!is_dir($fileImageCommentsDir) && !wp_mkdir_p($fileImageCommentsDir)){
             cg1l_release_comment_lock($commentsLockFp);
+            cg1l_release_stats_lock($commentActionStatsLockFp);
             cg1l_admin_comment_action_error('Comment directory could not be prepared.');
             return;
         }
@@ -447,11 +464,37 @@ if(!function_exists('cg1l_admin_comment_action_error')){
             cg1l_admin_restore_comment_files($fileBackups);
             cg1l_write_atomic_file_payload($jsonFile,$commentsArrayRaw);
             cg1l_release_comment_lock($commentsLockFp);
+            cg1l_release_stats_lock($commentActionStatsLockFp);
             cg1l_admin_comment_action_error('Comment files could not be updated. No changes were saved.');
             return;
         }
 
         $databaseWriteFailed = false;
+        $linkedVoteIds = array();
+        $commentInsertIdsToDelete = array();
+        foreach($databaseActions as $databaseAction){
+            if($databaseAction['action'] === 'delete' && !empty($databaseAction['insert_id'])){
+                $commentInsertIdToDelete = absint($databaseAction['insert_id']);
+                if(!empty($commentInsertIdToDelete)){
+                    $commentInsertIdsToDelete[$commentInsertIdToDelete] = $commentInsertIdToDelete;
+                }
+            }
+        }
+        if(!empty($commentInsertIdsToDelete)){
+            $commentInsertIdPlaceholders = implode(',',array_fill(0,count($commentInsertIdsToDelete),'%d'));
+            $linkedVoteValues = array_merge(array_values($commentInsertIdsToDelete),array($pid,$galeryNR));
+            $linkedVoteRows = $wpdb->get_results($wpdb->prepare(
+                "SELECT id FROM $tablename_ip WHERE CommentId IN ($commentInsertIdPlaceholders) AND pid = %d AND GalleryID = %d",
+                $linkedVoteValues
+            ));
+            foreach($linkedVoteRows as $linkedVoteRow){
+                $linkedVoteId = absint($linkedVoteRow->id);
+                if(!empty($linkedVoteId)){
+                    $linkedVoteIds[$linkedVoteId] = $linkedVoteId;
+                }
+            }
+        }
+
         $wpdb->query('START TRANSACTION');
         foreach($databaseActions as $databaseAction){
             if(empty($databaseAction['insert_id'])){
@@ -488,11 +531,32 @@ if(!function_exists('cg1l_admin_comment_action_error')){
             }
         }
 
+        if(!$databaseWriteFailed && !empty($linkedVoteIds)){
+            $linkedVotePlaceholders = implode(',',array_fill(0,count($linkedVoteIds),'%d'));
+            $deleteLinkedVoteValues = array_merge(array_values($linkedVoteIds),array($pid,$galeryNR));
+            $deletedLinkedVotes = $wpdb->query($wpdb->prepare(
+                "DELETE FROM $tablename_ip WHERE id IN ($linkedVotePlaceholders) AND pid = %d AND GalleryID = %d",
+                $deleteLinkedVoteValues
+            ));
+            if($deletedLinkedVotes === false){
+                $databaseWriteFailed = true;
+            }
+        }
+
+        $correctedRatingCounts = false;
+        if(!$databaseWriteFailed && !empty($linkedVoteIds)){
+            $correctedRatingCounts = cg_correct_entry_count($pid,$galeryNR);
+            if($correctedRatingCounts === false){
+                $databaseWriteFailed = true;
+            }
+        }
+
         if($databaseWriteFailed){
             $wpdb->query('ROLLBACK');
             cg1l_admin_restore_comment_files($fileBackups);
             cg1l_write_atomic_file_payload($jsonFile,$commentsArrayRaw);
             cg1l_release_comment_lock($commentsLockFp);
+            cg1l_release_stats_lock($commentActionStatsLockFp);
             cg1l_admin_comment_action_error('Comment database data could not be updated. No changes were saved.');
             return;
         }
@@ -526,7 +590,20 @@ if(!function_exists('cg1l_admin_comment_action_error')){
             array('%d','%d')
         );
 
-        cg1l_admin_refresh_comment_frontend_data($galeryNR, $pid, $countCommentsTotal, $countHiddenCommentsForFrontend);
+        if(is_array($commentActionStatsData)){
+            if(is_array($correctedRatingCounts)){
+                foreach($correctedRatingCounts as $ratingKey => $ratingValue){
+                    $commentActionStatsData[$ratingKey] = intval($ratingValue);
+                }
+            }
+            $commentActionStatsData['CountC'] = intval($countCommentsTotal);
+            $commentActionStatsData['CountCtoReview'] = intval($countHiddenCommentsForFrontend);
+            cg1l_set_stats_with_lock($galeryNR,$pid,$commentActionStatsData,$commentActionStatsLockFp);
+            cg1l_release_stats_lock($commentActionStatsLockFp);
+            cg1l_mark_vote_comment_data_updated($galeryNR,$pid);
+        }else{
+            cg1l_admin_refresh_comment_frontend_data($galeryNR, $pid, $countCommentsTotal, $countHiddenCommentsForFrontend);
+        }
         cg1l_release_comment_lock($commentsLockFp);
 
         if($hasNewReviewed){
@@ -785,6 +862,7 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
 
           $select_comments_array = [];
           $collectWpUserIdsArray = [];
+          $commentInsertIdsForLinkedVoteCheck = [];
 
           foreach($select_comments as $key => $value){
               if(!is_array($value)){
@@ -798,6 +876,13 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
               $commentForAdmin['Active'] = (empty($value['Active']) || $value['Active']==1) ? 1 : 2;
               $select_comments_array[] = $commentForAdmin;
 
+              if(!empty($value['insert_id'])){
+                  $commentInsertIdForLinkedVoteCheck = absint($value['insert_id']);
+                  if(!empty($commentInsertIdForLinkedVoteCheck)){
+                      $commentInsertIdsForLinkedVoteCheck[$commentInsertIdForLinkedVoteCheck] = $commentInsertIdForLinkedVoteCheck;
+                  }
+              }
+
               if(!empty($value['WpUserId'])){
                   $commentWpUserId = absint($value['WpUserId']);
                   if(!empty($commentWpUserId)){
@@ -809,6 +894,26 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
                       $insert_ids_collected_for_wp_user_ids[$commentInsertId] = $commentInsertId;
                   }
               }
+          }
+
+          $linkedCommentVoteExists = false;
+          if(!empty($commentInsertIdsForLinkedVoteCheck)){
+              $linkedCommentVotePlaceholders = implode(',',array_fill(0,count($commentInsertIdsForLinkedVoteCheck),'%d'));
+              $linkedCommentVoteQueryValues = array_merge(array($pid,$galeryNR),array_values($commentInsertIdsForLinkedVoteCheck));
+              $linkedCommentVoteExists = !empty($wpdb->get_var($wpdb->prepare(
+                  "SELECT 1
+                  FROM $tablename_ip AS voteRow
+                  INNER JOIN $tablename_comments AS commentRow
+                      ON commentRow.id = voteRow.CommentId
+                      AND commentRow.pid = voteRow.pid
+                      AND commentRow.GalleryID = voteRow.GalleryID
+                  WHERE voteRow.pid = %d
+                      AND voteRow.GalleryID = %d
+                      AND voteRow.CommentId IN ($linkedCommentVotePlaceholders)
+                      AND (voteRow.RatingS = 1 OR (voteRow.Rating >= 1 AND voteRow.Rating <= 10))
+                  LIMIT 1",
+                  $linkedCommentVoteQueryValues
+              )));
           }
 
 	      $collectInsertIdsWithWpUserIdsAndIps = [];
@@ -876,6 +981,13 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
           echo '<input type="hidden" name="cg_picture_id" id="cg_picture_id" value="'.$pid.'">';
 
         echo "<div id='cgShowComments' class='cg_border_top_none' >";
+
+        if(!empty($linkedCommentVoteExists)){
+            echo '<div class="cg_vote_comment_delete_notice">'.
+                '<span class="cg_vote_comment_delete_notice_label">Linked vote and comment</span>'.
+                '<span>Deleting a comment with a linked vote also deletes that vote.<br>Deactivating hides the comment but the linked vote remains.</span>'.
+            '</div>';
+        }
 
         if(count($select_comments)){
             echo "<div class='cg_comment_bulk_actions'>";
@@ -958,6 +1070,10 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
             }
         }else{
             echo "<span class='cg_comment_status cg_comment_status_active'>Active</span>";
+        }
+        $commentVoteValue = (!empty($value['vote'])) ? absint($value['vote']) : 0;
+        if(!empty($commentVoteValue)){
+            echo "<span class='cg_comment_vote' title='Vote: ".esc_attr($commentVoteValue)."'><span class='cg_comment_vote_star' aria-hidden='true'>&#9733;</span> ".esc_html($commentVoteValue)."</span>";
         }
         if(!empty($value['userIP'])){
             $userIP = esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($value['userIP']));

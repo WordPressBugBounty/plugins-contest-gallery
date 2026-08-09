@@ -831,6 +831,14 @@ msgstr "Somme"
 msgid "Your vote"
 msgstr "Votre vote"
 
+#: check-language.php:283
+msgid "A comment is required to vote"
+msgstr "Un commentaire est requis pour voter"
+
+#: check-language.php:287
+msgid "Leave a comment"
+msgstr "Laisser un commentaire"
+
 #: check-language.php:280
 msgid "The name field must contain two characters or more"
 msgstr "Le pseudo doit comporter au moins 2 caractères"

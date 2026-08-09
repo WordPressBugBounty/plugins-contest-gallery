@@ -1023,9 +1023,9 @@ $wp_upload_dir = wp_upload_dir();
                 '%d', '%d',
                 '%d', '%d',
                 '%s', '%s',
-                '%s', '%s', '%s',
+                '%s', '%s', '%d',
                 '%d', '%d', '%d', '%d',
-                '%d', '%s', '%s',
+                '%d', '%s',
                 '%d', '%d', '%s', '%s',
                 '%d', '%s', '%s',
                 '%d', '%d', '%d', '%s',
@@ -1215,6 +1215,10 @@ $wp_upload_dir = wp_upload_dir();
         $RandomSortButton = (!empty($_POST['RandomSortButton'])) ? '1' : '0';
 
         $AllowComments = $_POST['AllowComments'];
+        $VoteCommentMode = (!empty($_POST['VoteCommentMode'])) ? sanitize_key($_POST['VoteCommentMode']) : 'disabled';
+        if(!in_array($VoteCommentMode, array('required','optional','disabled'), true)){
+            $VoteCommentMode = 'disabled';
+        }
 
         $CommentsOutGallery = (!empty($_POST['CommentsOutGallery'])) ? '1' : '0';
 
@@ -1443,7 +1447,7 @@ $wp_upload_dir = wp_upload_dir();
             'MinResPNGheight' => $MinResPNGheight, 'MinResGIFwidth' => $MinResGIFwidth, 'MinResGIFheight' => $MinResGIFheight,
                 'MaxResJPGwidth' => $MaxResJPGwidth, 'MaxResJPGheight' => $MaxResJPGheight, 'MaxResPNGwidth' => $MaxResPNGwidth, 'MaxResPNGheight' => $MaxResPNGheight, 'MaxResGIFwidth' => $MaxResGIFwidth, 'MaxResGIFheight' => $MaxResGIFheight,
                 'OnlyGalleryView' => $OnlyGalleryView, 'SinglePicView' => $SinglePicView, 'ScaleOnly' => $ScaleOnly, 'ScaleAndCut' => $ScaleAndCut, 'FullSize' => $FullSize, 'FullSizeGallery' => $FullSizeGallery, 'FullSizeSlideOutStart' => $FullSizeSlideOutStart, 'AllowSort' => $AllowSort, 'RandomSort' => $RandomSort, 'RandomSortButton' => $RandomSortButton, 'ShowAlways' => $ShowAlways,
-                'AllowComments' => $AllowComments, 'CommentsOutGallery' => $CommentsOutGallery, 'AllowRating' => $AllowRating, 'AllowRatingAverage' => $AllowRatingAverage, 'VotesPerUser' => $VotesPerUser, 'RatingOutGallery' => $RatingOutGallery, 'IpBlock' => $IpBlock,
+                'AllowComments' => $AllowComments, 'VoteCommentMode' => $VoteCommentMode, 'CommentsOutGallery' => $CommentsOutGallery, 'AllowRating' => $AllowRating, 'AllowRatingAverage' => $AllowRatingAverage, 'VotesPerUser' => $VotesPerUser, 'RatingOutGallery' => $RatingOutGallery, 'IpBlock' => $IpBlock,
                 'CheckLogin' => $CheckLogin, 'FbLike' => $FbLike, 'FbLikeGallery' => $FbLikeGallery, 'FbLikeGalleryVote' => $FbLikeGalleryVote,
                 'AllowGalleryScript' => $AllowGalleryScript, 'InfiniteScroll' => $InfiniteScroll, 'FullSizeImageOutGallery' => $FullSizeImageOutGallery, 'FullSizeImageOutGalleryNewTab' => $FullSizeImageOutGalleryNewTab,
                 'Inform' => $Inform, 'ShowAlwaysInfoSlider' => $ShowAlwaysInfoSlider, 'ThumbLook' => $ThumbLook, 'AdjustThumbLook' => $AdjustThumbLook, 'HeightLook' => $HeightLook, 'RowLook' => $RowLook,
@@ -1462,7 +1466,7 @@ $wp_upload_dir = wp_upload_dir();
             '%d', '%d', '%d',
                 '%d', '%d', '%d', '%d', '%d', '%d', '%d',
                 '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d',
-                '%d', '%d', '%d', '%d', '%d', '%d',
+                '%d', '%d', '%s', '%d', '%d', '%d', '%d', '%d',
                 '%d', '%d', '%d', '%d', '%d', '%d',
                 '%d', '%d', '%d', '%d', '%d', '%d',
                 '%d', '%d', '%d', '%d', '%d', '%d', '%d',
@@ -1820,6 +1824,18 @@ $wp_upload_dir = wp_upload_dir();
 
 
         $PreselectSort = (isset($_POST['PreselectSort'])) ? sanitize_text_field($_POST['PreselectSort']) : 'date_descend';
+        $PreselectSort = cg1l_normalize_preselect_sort_for_rating_mode($PreselectSort, $AllowRating, $AllowRatingAverage, '', $IsModernFiveStar);
+        foreach(array('cg_gallery','cg_gallery_user','cg_gallery_no_voting','cg_gallery_winner','cg_gallery_ecommerce') as $preselectSortShortcodeType){
+            if(isset($_POST['multiple-pics'][$preselectSortShortcodeType]['pro']['PreselectSort'])){
+                $_POST['multiple-pics'][$preselectSortShortcodeType]['pro']['PreselectSort'] = cg1l_normalize_preselect_sort_for_rating_mode(
+                    sanitize_text_field($_POST['multiple-pics'][$preselectSortShortcodeType]['pro']['PreselectSort']),
+                    $AllowRating,
+                    $AllowRatingAverage,
+                    '',
+                    $IsModernFiveStar
+                );
+            }
+        }
         $UploadRequiresCookieMessage = (isset($_POST['UploadRequiresCookieMessage'])) ? sanitize_text_field($_POST['UploadRequiresCookieMessage']) : '';
 
         $RegMailOptional = (isset($_POST['RegMailOptional'])) ? 1 : 0;

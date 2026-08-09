@@ -415,6 +415,7 @@ if(!function_exists('cg_create_comments_json_file_when_activating_image')){
 						$imageCommentsArray[$commentId]['timestamp'] = $commentData->timestamp;
 						$imageCommentsArray[$commentId]['name'] = $commentData->name;
 						$imageCommentsArray[$commentId]['comment'] = $commentData->comment;
+						$imageCommentsArray[$commentId]['vote'] = (!empty($commentData->vote)) ? absint($commentData->vote) : 0;
 						$imageCommentsArray[$commentId]['Active'] = (!empty($commentData->Active)) ? $commentData->Active : '';
 						$imageCommentsArray[$commentId]['ReviewTstamp'] = (!empty($commentData->ReviewTstamp)) ? $commentData->ReviewTstamp : '';
 						if(!empty($commentData->WpUserId)){// better to check here for sure
@@ -451,6 +452,7 @@ if(!function_exists('cg_create_comments_json_file_when_activating_image')){
 					$imageCommentsArray[$comment->id]['timestamp'] = $comment->Timestamp;
 					$imageCommentsArray[$comment->id]['name'] = $comment->Name;
 					$imageCommentsArray[$comment->id]['comment'] = $comment->Comment;
+					$imageCommentsArray[$comment->id]['vote'] = (!empty($comment->Vote)) ? absint($comment->Vote) : 0;
 					$imageCommentsArray[$comment->id]['Active'] = $comment->Active;
 					$imageCommentsArray[$comment->id]['ReviewTstamp'] = $comment->ReviewTstamp;
 					$imageCommentsArray[$comment->id]['IsWpUser'] = 0;

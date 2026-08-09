@@ -150,6 +150,7 @@ $jsonOptions['general']['RandomSortButton'] = $RandomSortButton;
 $jsonOptions['general']['ShowAlways'] = $ShowAlways;
 
 $jsonOptions['general']['AllowComments'] = $AllowComments;
+$jsonOptions['general']['VoteCommentMode'] = $VoteCommentMode;
 $jsonOptions['general']['CommentsOutGallery'] = $CommentsOutGallery;
 $jsonOptions['general']['AllowRating'] = $AllowRating;
 $jsonOptions['general']['AllowRatingAverage'] = $AllowRatingAverage;

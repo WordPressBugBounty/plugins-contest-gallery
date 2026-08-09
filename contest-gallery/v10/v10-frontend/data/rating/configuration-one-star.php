@@ -6,7 +6,7 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
         if(is_user_logged_in()){
             $countSuserId = $wpdb->get_results( $wpdb->prepare(
                 "
-                            SELECT pid
+                            SELECT pid, Category, CategoriesOn
                             FROM $tablenameIP
                             WHERE GalleryID = %d and WpUserId = %s and RatingS = %d
                         ",
@@ -16,6 +16,7 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
             if(!empty($countSuserId) && count($countSuserId)){
                 foreach($countSuserId as $object){
                     $votedUserPids[] = intval($object->pid);
+                    $addCurrentUserVoteCategoryCount($object);
                 }
             }
         }
@@ -29,7 +30,7 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
 
             $countSuserCookie = $wpdb->get_results( $wpdb->prepare(
                 "
-                        SELECT pid
+                        SELECT pid, Category, CategoriesOn
                         FROM $tablenameIP
                         WHERE GalleryID = %d and CookieId = %s and RatingS = %d
                     ",
@@ -41,6 +42,7 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
             if(!empty($countSuserCookie) && count($countSuserCookie)){
                 foreach($countSuserCookie as $object){
                     $votedUserPids[] = intval($object->pid);
+                    $addCurrentUserVoteCategoryCount($object);
                 }
             }
         }
@@ -51,7 +53,7 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
         if(isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {
             $countSuserIp = $wpdb->get_results( $wpdb->prepare(
                 "
-                    SELECT pid
+                    SELECT pid, Category, CategoriesOn
                     FROM $tablenameIP
                     WHERE GalleryID = %d and IP = %s and CookieId = %s and RatingS = %d
                 ",
@@ -64,6 +66,7 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
          if(!empty($countSuserIp) && count($countSuserIp)){
              foreach($countSuserIp as $object){
                  $votedUserPids[] = intval($object->pid);
+                 $addCurrentUserVoteCategoryCount($object);
              }
          }
 
@@ -73,7 +76,7 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
 
             $countSuserIp = $wpdb->get_results( $wpdb->prepare(
                 "
-                    SELECT pid
+                    SELECT pid, Category, CategoriesOn
                     FROM $tablenameIP
                     WHERE GalleryID = %d and IP = %s and RatingS = %d
                 ",
@@ -85,6 +88,7 @@ if(empty($isOnlyGalleryNoVoting) && empty($isOnlyGalleryWinner)) {
          if(!empty($countSuserIp) && count($countSuserIp)){
              foreach($countSuserIp as $object){
                  $votedUserPids[] = intval($object->pid);
+                 $addCurrentUserVoteCategoryCount($object);
              }
          }
 

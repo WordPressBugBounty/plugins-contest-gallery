@@ -377,6 +377,7 @@ if (!function_exists('cg1l_get_runtime_instance_state')) {
             'options' => [],
             'formUploadFullData' => [],
             'votedUserPids' => [],
+            'currentUserJuryVoteAllowed' => 1,
             'upload' => $uploadState,
         ];
 
@@ -479,6 +480,10 @@ if (!function_exists('cg1l_get_runtime_instance_state')) {
         $state['allowedRealIds'] = $allowedRealIds;
         $state['options'] = $options;
         $state['formUploadFullData'] = $formUploadFullData;
+        $state['currentUserJuryVoteAllowed'] = cg1l_is_current_user_allowed_for_jury_voting(
+            $realGid,
+            (!empty($options['general']['CheckLogin'])) ? $options['general']['CheckLogin'] : 0
+        ) ? 1 : 0;
         if ($shortcodeName !== 'cg_users_upload') {
             $state['votedUserPids'] = cg1l_get_runtime_voted_user_pids($realGid, $options);
         }

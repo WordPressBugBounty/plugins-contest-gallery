@@ -829,6 +829,14 @@ msgstr "和"
 msgid "Your vote"
 msgstr "你的投票"
 
+#: check-language.php:283
+msgid "A comment is required to vote"
+msgstr "必須留言才能投票"
+
+#: check-language.php:287
+msgid "Leave a comment"
+msgstr "留下評論"
+
 #: check-language.php:280
 msgid "The name field must contain two characters or more"
 msgstr "名稱字段必須包含兩個或以上字符"

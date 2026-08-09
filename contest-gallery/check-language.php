@@ -280,6 +280,13 @@ __('Sum');$l_Sum = "Sum"; $language_Sum = (!empty($translations[$l_Sum]) && $is_
 
 __('Your vote');$l_YourVote = "Your vote"; $language_YourVote = (!empty($translations[$l_YourVote]) && $is_frontend) ? $translations[$l_YourVote] : ((empty(trim(__($l_YourVote,$domain)))) ? __($l_YourVote,$domainDefault) : __($l_YourVote,$domain)); if(empty($translations[$l_YourVote])){$translations[$l_YourVote]='';}
 
+__('A comment is required to vote');$l_CommentRequiredToVote = "A comment is required to vote"; $language_CommentRequiredToVote = (!empty($translations[$l_CommentRequiredToVote]) && $is_frontend) ? $translations[$l_CommentRequiredToVote] : ((empty(trim(__($l_CommentRequiredToVote,$domain)))) ? __($l_CommentRequiredToVote,$domainDefault) : __($l_CommentRequiredToVote,$domain)); if(empty($translations[$l_CommentRequiredToVote])){$translations[$l_CommentRequiredToVote]='';}
+$l_CommentOnVoteCommunityLegacy = "Comment on your vote to enrich the community.";
+$l_LeaveAComment = "Leave a comment";
+if(empty($translations[$l_LeaveAComment]) && !empty($translations[$l_CommentOnVoteCommunityLegacy])){$translations[$l_LeaveAComment]=$translations[$l_CommentOnVoteCommunityLegacy];}
+__('Leave a comment');$language_LeaveAComment = (!empty($translations[$l_LeaveAComment]) && $is_frontend) ? $translations[$l_LeaveAComment] : ((empty(trim(__($l_LeaveAComment,$domain)))) ? __($l_LeaveAComment,$domainDefault) : __($l_LeaveAComment,$domain)); if(empty($translations[$l_LeaveAComment])){$translations[$l_LeaveAComment]='';}
+__('Not now');$l_NotNow = "Not now"; $language_NotNow = (!empty($translations[$l_NotNow]) && $is_frontend) ? $translations[$l_NotNow] : ((empty(trim(__($l_NotNow,$domain)))) ? __($l_NotNow,$domainDefault) : __($l_NotNow,$domain)); if(empty($translations[$l_NotNow])){$translations[$l_NotNow]='';}
+
 __('rating');$l_Rating = "rating"; $language_Rating = (!empty($translations[$l_Rating]) && $is_frontend) ? $translations[$l_Rating] : ((empty(trim(__($l_Rating,$domain)))) ? __($l_Rating,$domainDefault) : __($l_Rating,$domain)); if(empty($translations[$l_Rating])){$translations[$l_Rating]='';}
 
 __('ratings');$l_Ratings = "ratings"; $language_Ratings = (!empty($translations[$l_Ratings]) && $is_frontend) ? $translations[$l_Ratings] : ((empty(trim(__($l_Ratings,$domain)))) ? __($l_Ratings,$domainDefault) : __($l_Ratings,$domain)); if(empty($translations[$l_Ratings])){$translations[$l_Ratings]='';}

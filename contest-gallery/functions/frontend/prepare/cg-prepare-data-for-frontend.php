@@ -413,7 +413,8 @@ if (!function_exists('cg1l_frontend_get_meta_html')) {
 if (!function_exists('cg1l_frontend_get_meta_comment_count')) {
     function cg1l_frontend_get_meta_comment_count($fullData)
     {
-        $meta = '<meta itemprop="commentCount" content="' . intval($fullData['CountC']) . '">' . "\r\n";
+        $countC = isset($fullData['CountC']) ? intval($fullData['CountC']) : 0;
+        $meta = '<meta itemprop="commentCount" content="' . $countC . '">' . "\r\n";
         return $meta;
     }
 }
@@ -1590,6 +1591,52 @@ if (!function_exists('cg1l_frontend_normalize_preselect_sort')) {
     }
 }
 
+if (!function_exists('cg1l_normalize_preselect_sort_for_rating_mode')) {
+    function cg1l_normalize_preselect_sort_for_rating_mode($preselectSort = '', $allowRating = 0, $allowRatingAverage = 0, $legacyRatingSort = '', $isModernFiveStar = 1)
+    {
+        $preselectSort = cg1l_frontend_normalize_preselect_sort($preselectSort, $legacyRatingSort);
+        $allowRating = intval($allowRating);
+        $allowRatingAverage = intval($allowRatingAverage);
+        $isModernFiveStar = intval($isModernFiveStar);
+        $ratingSorts = array(
+            'rating_descend',
+            'rating_ascend',
+            'rating_average_descend',
+            'rating_average_ascend',
+            'rating_sum_descend',
+            'rating_sum_ascend'
+        );
+
+        if(empty($preselectSort)){
+            return 'date_descend';
+        }
+
+        if(!in_array($preselectSort, $ratingSorts, true)){
+            return $preselectSort;
+        }
+
+        $isAscending = (strpos($preselectSort, '_ascend') !== false);
+
+        if($allowRating === 2){
+            return ($isAscending) ? 'rating_ascend' : 'rating_descend';
+        }
+
+        if($allowRating === 1 || ($allowRating >= 12 && $allowRating <= 20)){
+            if($isModernFiveStar !== 1){
+                return ($isAscending) ? 'rating_ascend' : 'rating_descend';
+            }
+
+            if($allowRatingAverage === 1){
+                return ($isAscending) ? 'rating_asc_average' : 'rating_desc_average';
+            }
+
+            return ($isAscending) ? 'rating_sum_ascend' : 'rating_sum_descend';
+        }
+
+        return 'date_descend';
+    }
+}
+
 if (!function_exists('cg1l_get_data_images_full_data_sorted')) {
     function cg1l_get_data_images_full_data_sorted($options,$imagesFullData,$isCGalleries = false,$isCGalleriesNoSorting = false){
         if (!is_array($imagesFullData)) {
@@ -1611,15 +1658,11 @@ if (!function_exists('cg1l_get_data_images_full_data_sorted')) {
             $legacyRatingSort = $options['general']['rating_sum_descend'];
         }
 
-        $preselectSort = cg1l_frontend_normalize_preselect_sort($preselectSort, $legacyRatingSort);
-
-        if(!empty($options['general']['AllowRatingAverage'])){
-            if($preselectSort === 'rating_sum_descend'){
-                $preselectSort = 'rating_average_descend';
-            }elseif($preselectSort === 'rating_sum_ascend'){
-                $preselectSort = 'rating_average_ascend';
-            }
-        }
+        $allowRating = !empty($options['general']['AllowRating']) ? intval($options['general']['AllowRating']) : 0;
+        $allowRatingAverage = !empty($options['general']['AllowRatingAverage']) ? intval($options['general']['AllowRatingAverage']) : 0;
+        $isModernFiveStar = !empty($options['pro']['IsModernFiveStar']) ? intval($options['pro']['IsModernFiveStar']) : 0;
+        $preselectSort = cg1l_normalize_preselect_sort_for_rating_mode($preselectSort, $allowRating, $allowRatingAverage, $legacyRatingSort, $isModernFiveStar);
+        $preselectSort = cg1l_frontend_normalize_preselect_sort($preselectSort);
 
         if($isCGalleries){
             $imagesFullDataArrays = cg1l_frontend_sort_by($imagesFullData,'gid',$picsPerSite,'DESC','',5,$isCGalleriesNoSorting);
@@ -1638,7 +1681,6 @@ if (!function_exists('cg1l_get_data_images_full_data_sorted')) {
                 $imagesFullDataArrays = cg1l_frontend_sort_by($imagesFullData,'CountC',$picsPerSite,'ASC');
             }elseif($preselectSort=='rating_descend' || $preselectSort=='rating_ascend' || $preselectSort=='rating_average_descend' || $preselectSort=='rating_average_ascend' || $preselectSort=='rating_sum_descend' || $preselectSort=='rating_sum_ascend'){
                 $sortDirection = (strpos($preselectSort, '_ascend') !== false) ? 'ASC' : 'DESC';
-                $allowRating = !empty($options['general']['AllowRating']) ? intval($options['general']['AllowRating']) : 0;
                 $isManipulationActive = (!empty($options['pro']['Manipulate']) && intval($options['pro']['Manipulate']) === 1);
 
                 if($allowRating === 2){
@@ -2024,14 +2066,12 @@ if (!function_exists('cg1l_get_images_full_data_frontend_for_galleries')) {
                 // $a2 == current file
                 $AllowRating = (!empty($options['general']['AllowRating'])) ? intval($options['general']['AllowRating']) : 0;
                 if($AllowRating=='2'){
-                    if(empty($a1['addCountS'])){
-                        $a1['addCountS'] = 0;
-                    }
-                    if(empty($a2['addCountS'])){
-                        $a2['addCountS'] = 0;
-                    }
-                    if (intval($a1['CountS'])+intval($a1['addCountS']) == intval($a2['CountS'])+intval($a2['addCountS'])) return $a1;// return previous always, which means higher id
-                    return (intval($a1['CountS'])+intval($a1['addCountS']) > intval($a2['CountS'])+intval($a2['addCountS'])) ? $a1 : $a2;
+                    $countSA1 = isset($a1['CountS']) ? intval($a1['CountS']) : 0;
+                    $countSA2 = isset($a2['CountS']) ? intval($a2['CountS']) : 0;
+                    $addCountSA1 = isset($a1['addCountS']) ? intval($a1['addCountS']) : 0;
+                    $addCountSA2 = isset($a2['addCountS']) ? intval($a2['addCountS']) : 0;
+                    if ($countSA1+$addCountSA1 == $countSA2+$addCountSA2) return $a1;// return previous always, which means higher id
+                    return ($countSA1+$addCountSA1 > $countSA2+$addCountSA2) ? $a1 : $a2;
                 }elseif(cg1l_get_rating_type($options) === 'average'){
                     $averageMetricsA1 = cg1l_get_average_rating_metrics($a1,$options,array(),true);
                     $averageMetricsA2 = cg1l_get_average_rating_metrics($a2,$options,array(),true);
@@ -2069,8 +2109,10 @@ if (!function_exists('cg1l_get_images_full_data_frontend_for_galleries')) {
             function cgGetHighestComments($a1, $a2){
                 // $a1 == previous file
                 // $a2 == current file
-                if ($a1['CountC'] == $a2['CountC']) return $a1;// return previous always, which means higher id
-                return ($a1['CountC'] > $a2['CountC']) ? $a1 : $a2;
+                $countCA1 = isset($a1['CountC']) ? intval($a1['CountC']) : 0;
+                $countCA2 = isset($a2['CountC']) ? intval($a2['CountC']) : 0;
+                if ($countCA1 == $countCA2) return $a1;// return previous always, which means higher id
+                return ($countCA1 > $countCA2) ? $a1 : $a2;
             }
         }
 
@@ -2208,8 +2250,8 @@ if (!function_exists('cg1l_get_images_full_data_frontend_for_galleries')) {
                                     continue;
                                 }
                                 $jsonFileData = cg1l_get_stats_for_galleries_shortcode($wp_upload_dir,$galleryIdToCheck,$imageID,$jsonFileData);
+                                $jsonFileData['id'] = $imageID;// for sure because of previous versions
                                 if(!empty($previousHighestFileData)){
-                                    $jsonFileData['id'] = $imageID;// for sure because of previous versions
                                     if($galleriesOptions['PreviewHighestRated']==1 ){
                                         $jsonFileTemp = cgGetHighestRating($previousHighestFileData, $jsonFileData, $optionsToCheck);
                                     }elseif($galleriesOptions['PreviewMostCommented']==1){
@@ -2218,8 +2260,6 @@ if (!function_exists('cg1l_get_images_full_data_frontend_for_galleries')) {
                                     $previousHighestFileData = $jsonFileTemp;
                                     $jsonFileData = $jsonFileTemp;
                                 }else{
-                                    $jsonFileData = json_decode(file_get_contents($jsonFile),true);
-                                    $jsonFileData['id'] = $imageID;// for sure because of previous versions
                                     $previousHighestFileData = $jsonFileData;
                                 }
                             }

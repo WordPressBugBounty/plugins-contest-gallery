@@ -380,9 +380,7 @@ body > .mainCGdivHelperParent .mainCGdiv .mainCGallery .cgCenterDiv.cgCenterDivL
 .mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_title,
 .mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_badge,
 .mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_icon,
-.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_line,
-.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_progress_bar,
-.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_progress_meta {
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_line {
     position: relative;
     overflow: hidden;
     box-sizing: border-box;
@@ -420,14 +418,29 @@ body > .mainCGdivHelperParent .mainCGdiv .mainCGallery .cgCenterDiv.cgCenterDivL
 .mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_progress_bar {
     width: 100%;
     height: 10px;
+    overflow: hidden;
+    box-sizing: border-box;
+    background-color: #333;
+    border: 1px solid #454545;
     border-radius: 999px;
 }
 
-.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_progress_meta {
-    width: 38%;
-    max-width: 170px;
-    height: 12px;
-    margin: 10px auto 0;
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_progress_fill {
+    width: 0;
+    height: 100%;
+    background-color: #fd9a2c;
+    border-radius: 999px;
+    transition: width .2s ease;
+}
+
+.mainCGdivUploadForm .cg_skeleton_loader_on_page_load_div_form_submit .cg-div-upload-progress {
+    min-height: 18px;
+    margin: 8px auto 0;
+    color: #e7e9ea;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 18px;
+    text-align: center;
 }
 
 .mainCGdivUploadForm.cg_fe_controls_style_white .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_panel {
@@ -444,10 +457,17 @@ body > .mainCGdivHelperParent .mainCGdiv .mainCGallery .cgCenterDiv.cgCenterDivL
 .mainCGdivUploadForm.cg_fe_controls_style_white .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_title,
 .mainCGdivUploadForm.cg_fe_controls_style_white .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_badge,
 .mainCGdivUploadForm.cg_fe_controls_style_white .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_icon,
-.mainCGdivUploadForm.cg_fe_controls_style_white .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_line,
-.mainCGdivUploadForm.cg_fe_controls_style_white .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_progress_bar,
-.mainCGdivUploadForm.cg_fe_controls_style_white .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_progress_meta {
+.mainCGdivUploadForm.cg_fe_controls_style_white .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_line {
     background-color: #dfe4ea;
+}
+
+.mainCGdivUploadForm.cg_fe_controls_style_white .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_progress_bar {
+    background-color: #dfe4ea;
+    border-color: #cbd2da;
+}
+
+.mainCGdivUploadForm.cg_fe_controls_style_white .cg_skeleton_loader_on_page_load_div_form_submit .cg-div-upload-progress {
+    color: #111;
 }
 
 .mainCGdivUploadForm.cg_fe_controls_style_black .cg_skeleton_loader_on_page_load_div_form_submit .cg_upload_submit_skeleton_panel {

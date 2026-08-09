@@ -1825,29 +1825,36 @@ if(!function_exists('cg_gallery_transfer_import_entry_related_rows')){
 				),true);
 			}
 		}
+		$comment_id_map = array();
+		if(!empty($data['comments'])){
+			foreach($data['comments'] as $row){
+				if(intval($row['pid'])!==intval($old_entry_id)){
+					continue;
+				}
+				$old_comment_id = (!empty($row['id'])) ? absint($row['id']) : 0;
+				$new_comment_id = cg_gallery_transfer_insert_row($table_comments,$row,array(
+					'GalleryID' => $new_gallery_id,
+					'pid' => $new_entry_id,
+					'WpUserId' => cg_gallery_transfer_map_user_id($state,$row['WpUserId'],'comment'),
+				),true);
+				if(!empty($old_comment_id) && !empty($new_comment_id)){
+					$comment_id_map[$old_comment_id] = $new_comment_id;
+				}
+			}
+		}
 		if(!empty($data['votes'])){
 			foreach($data['votes'] as $row){
 				if(intval($row['pid'])!==intval($old_entry_id)){
 					continue;
 				}
 				$old_category = (!empty($row['Category'])) ? intval($row['Category']) : 0;
+				$old_comment_id = (!empty($row['CommentId'])) ? absint($row['CommentId']) : 0;
 				cg_gallery_transfer_insert_row($table_votes,$row,array(
 					'GalleryID' => $new_gallery_id,
 					'pid' => $new_entry_id,
 					'WpUserId' => cg_gallery_transfer_map_user_id($state,$row['WpUserId'],'vote'),
 					'Category' => (!empty($state['maps']['categories'][$old_category])) ? $state['maps']['categories'][$old_category] : 0,
-				),true);
-			}
-		}
-		if(!empty($data['comments'])){
-			foreach($data['comments'] as $row){
-				if(intval($row['pid'])!==intval($old_entry_id)){
-					continue;
-				}
-				cg_gallery_transfer_insert_row($table_comments,$row,array(
-					'GalleryID' => $new_gallery_id,
-					'pid' => $new_entry_id,
-					'WpUserId' => cg_gallery_transfer_map_user_id($state,$row['WpUserId'],'comment'),
+					'CommentId' => (!empty($comment_id_map[$old_comment_id])) ? $comment_id_map[$old_comment_id] : 0,
 				),true);
 			}
 		}

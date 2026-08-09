@@ -103,7 +103,9 @@ $wpdb->query($wpdb->prepare(
 				ActivatePostMaxMBfile,
 				PostMaxMBfile,
 				VersionDecimal,
-				WpPageParent
+				WpPageParent,
+				VoteCommentMode,
+				AllowRatingAverage
 				)
 				VALUES ( 
 				%s,
@@ -205,6 +207,8 @@ $wpdb->query($wpdb->prepare(
 				%d,
 				%d,
 				%f,
+				%d,
+				%s,
 				%d
 				 )
 			",
@@ -307,5 +311,7 @@ $wpdb->query($wpdb->prepare(
     $ActivatePostMaxMBfile,
     $PostMaxMBfile,
     $VersionDecimal,
-    0
+    0,
+    $VoteCommentMode,
+    $AllowRatingAverage
 ));

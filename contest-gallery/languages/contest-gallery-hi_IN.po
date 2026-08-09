@@ -823,6 +823,14 @@ msgstr "योग"
 msgid "Your vote"
 msgstr "आपका वोट"
 
+#: check-language.php:283
+msgid "A comment is required to vote"
+msgstr "वोट करने के लिए एक टिप्पणी आवश्यक है"
+
+#: check-language.php:287
+msgid "Leave a comment"
+msgstr "टिप्पणी छोड़ें"
+
 #: check-language.php:280
 msgid "The name field must contain two characters or more"
 msgstr "नाम फ़ील्ड में कम से कम दो अक्षर होने चाहिए"

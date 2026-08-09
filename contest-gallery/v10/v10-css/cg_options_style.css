@@ -3492,19 +3492,7 @@ div.tabcontents
 	font-size: 13px;
 	position: relative;
 	font-weight: bold;
-	margin-right: 10px;
-}
-
-#cgSortable .cg_stars_overview .cg_stars_overview_rating_cummulated:after,
-#cgVotesImage .cg_stars_overview .cg_stars_overview_rating_cummulated:after
-{
-	content: "\002211";
-	position: absolute;
-	top: 47%;
-	right: -9px;
-	transform: translateY(-50%);
-	font-size: 9px;
-	font-weight: normal;
+	margin-right: 0;
 }
 
 #cgSortable .cg_manipulate_5_star_input{
@@ -3571,9 +3559,10 @@ div.tabcontents
 	display:flex;
 	flex-direction: row;
 	align-items: center;
-	margin-bottom: 10px;
 	flex-wrap: wrap;
-	margin-left: 60px;
+	justify-content: center;
+	width: 100%;
+	margin: 0 auto 10px;
 }
 
 #cgSortable .cg_rating_5_star_img{
@@ -3593,33 +3582,42 @@ div.tabcontents
 #cgSortable .cg_rating_value_countR_div_average{
 	font-size:16px;
 	font-weight: bold;
-	margin-left: 3px;
+	margin-left: 0;
 	position: relative;
 }
 
-#cgSortable .cg_rating_value_countR_div_cummulated:after{
-	content: "\002211";
-	position: absolute;
-	top: 45%;
-	right: -10px;
-	transform: translateY(-50%);
-	font-size: 10px;
-	font-weight: normal;
-}
-
-#cgSortable .cg_rating_value_countR_div_average:after{
-	content: "\00D8";
-	position: absolute;
-	top: 45%;
-	right: -12px;
-	transform: translateY(-50%);
-	font-size: 10px;
-	font-weight: normal;
+#cgSortable .cg_rating_5_star_img_div_container > .cg_backend_star.cg_backend_five_star{
+	margin-left: 4px;
 }
 
 #cgSortable .cg_rating_5_star_img_div_container .cg_rating_value_countR_additional_votes{
 	font-size: 14px;
-	margin-left: 16px;
+	margin-left: 5px;
+}
+
+#cgSortable .cg_rating_value_countR_additional_votes_average_delta:before{
+	content: none;
+}
+
+#cgSortable .cg_backend_rating_total_ratings_count{
+	flex: 0 0 100%;
+	margin-top: 1px;
+	color: inherit;
+	font-size: 11px;
+	font-weight: normal;
+	line-height: 13px;
+	text-align: center;
+	opacity: 1;
+}
+
+#cgSortable .cg_backend_rating_base_count{
+	opacity: .76;
+}
+
+#cgSortable li.cg_sortable_div span.cg_backend_rating_manipulated_count{
+	margin-left: 5px;
+	color: green;
+	opacity: 1;
 }
 
 #cgSortable .cg_rating_value_countR_div .cg_rating_value_countR_average{
@@ -3873,7 +3871,7 @@ td input, td input:focus, td input:hover{
 
 #cgVotes #cgVotesHeaderContainer{
 	display: grid;
-	grid-template-columns: repeat(13, 1fr); /* 13 gleich breite Spalten */
+	grid-template-columns: repeat(14, 1fr);
 	gap: 2px; /* optional: Abstand zwischen den "Zellen" */
 }
 
@@ -3887,7 +3885,7 @@ td input, td input:focus, td input:hover{
 
 #cgVotes .cg-votes-row-container{
 	display: grid;
-	grid-template-columns: repeat(13, calc(100% / 13));
+	grid-template-columns: repeat(14, calc(100% / 14));
 	align-items: center;
 	gap: 0; /* optional: Abstand zwischen den "Zellen" */
 	border-bottom: thin solid black;

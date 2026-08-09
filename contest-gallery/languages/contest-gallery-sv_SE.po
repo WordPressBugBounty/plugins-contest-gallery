@@ -829,6 +829,14 @@ msgstr "Summa"
 msgid "Your vote"
 msgstr "Din röst"
 
+#: check-language.php:283
+msgid "A comment is required to vote"
+msgstr "En kommentar krävs för att rösta"
+
+#: check-language.php:287
+msgid "Leave a comment"
+msgstr "Lämna en kommentar"
+
 #: check-language.php:280
 msgid "The name field must contain two characters or more"
 msgstr "Namnfältet måste innehålla minst två tecken"

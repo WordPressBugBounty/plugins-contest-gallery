@@ -260,6 +260,7 @@ if(!function_exists('contest_gal1ery_create_table')){
         CookieId VARCHAR (99),
         Category INT(11) DEFAULT 0,
         CategoriesOn TINYINT DEFAULT 0,
+        CommentId BIGINT(20) DEFAULT 0,
         INDEX pid_index (pid),
         INDEX WpUserId_index (WpUserId),
         INDEX GalleryID_index (GalleryID),
@@ -267,7 +268,8 @@ if(!function_exists('contest_gal1ery_create_table')){
         INDEX GalleryID_WpUserId_pid_id_index (GalleryID, WpUserId, pid, id),
         INDEX GalleryID_CookieId_pid_id_index (GalleryID, CookieId(64), pid, id),
         INDEX GalleryID_IP_CookieId_pid_id_index (GalleryID, IP(64), CookieId(64), pid, id),
-        INDEX GalleryID_Tstamp_index (GalleryID, Tstamp)
+        INDEX GalleryID_Tstamp_index (GalleryID, Tstamp),
+        INDEX GalleryID_pid_CommentId_index (GalleryID, pid, CommentId)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -284,6 +286,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		Timestamp VARCHAR(20) NOT NULL,
 		IP VARCHAR (200) NOT NULL,
 		WpUserId INT(11) DEFAULT 0,
+		Vote INT(11) DEFAULT 0,
 		ReviewTstamp INT(11) DEFAULT 0,
 		Active TINYINT DEFAULT 0,
         INDEX pid_index (pid),
@@ -362,6 +365,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		RandomSort TINYINT DEFAULT 0,
 		RandomSortButton TINYINT DEFAULT 0,
 		AllowComments TINYINT DEFAULT 0,
+		VoteCommentMode VARCHAR(10) DEFAULT 'disabled',
 		CommentsOutGallery TINYINT DEFAULT 0,
 		AllowRating TINYINT DEFAULT 0,
 		AllowRatingAverage TINYINT DEFAULT 0,

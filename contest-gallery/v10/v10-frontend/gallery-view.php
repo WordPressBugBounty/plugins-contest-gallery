@@ -143,15 +143,18 @@
         $id = $fullData['id'];
         $imgSrcLarge = $fullData['large'];
         $ImgType = strtolower($fullData['ImgType']);
+        $socialConsentRequired = false;
         $isOnlyGalleryView = !empty($options['general']['OnlyGalleryView']) && intval($options['general']['OnlyGalleryView']) === 1;
         $isFullSizeImageOutGallery = !empty($options['general']['FullSizeImageOutGallery']) && intval($options['general']['FullSizeImageOutGallery']) === 1;
         $isFullSizeImageOutGalleryNewTab = !empty($options['general']['FullSizeImageOutGalleryNewTab']) && intval($options['general']['FullSizeImageOutGalleryNewTab']) === 1;
+        $isCommentsOutGallery = !empty($options['general']['CommentsOutGallery']) && intval($options['general']['CommentsOutGallery']) === 1;
+        $isCommentingAllowed = !empty($options['general']['AllowComments']) && intval($options['general']['AllowComments']) === 1;
         if($isCGalleries){
             $isOnlyGalleryView = false;
             $isFullSizeImageOutGallery = false;
             $isFullSizeImageOutGalleryNewTab = false;
         }
-        $commentsWrapperClass = ($isOnlyGalleryView || $isFullSizeImageOutGallery) ? 'cg_pointer_events_none' : '';
+        $commentsWrapperClass = (($isOnlyGalleryView || $isFullSizeImageOutGallery) && !($isCommentsOutGallery && $isCommentingAllowed)) ? 'cg_pointer_events_none' : '';
         if($cgGalleryReadOnlyInfoActions){
             $commentsWrapperClass = trim($commentsWrapperClass.' cg_pointer_events_none');
         }
@@ -448,6 +451,26 @@
                 '.$cg_wrap_gallery_media_shell($cg_render_gallery_media_link($videoContent,$galleryMediaHref,$galleryMediaTargetAttr,$galleryMediaLinkClass)).'
                 '.$cg_gallery_info.'
               </figure>';
+        }elseif(cg_is_alternative_file_type_audio($ImgType) && $isOnlyGalleryView){
+            $audioTitle = (!empty($fullData['NamePic'])) ? $fullData['NamePic'] : '';
+            $audioTitleMarkup = '';
+            if($audioTitle !== ''){
+                $audioTitleMarkup = '<div class="cg_gallery_audio_preview_title" title="'.esc_attr($audioTitle).'">'.esc_html($audioTitle).'</div>';
+            }
+            $audioContent = '<div id="cg_append'.$id.'"
+                    class="cg_append cg_append_alternative_file_type_audio_player">
+                    <audio onplay="cgJsClass.gallery.views.singleViewFunctions.audioOnplay(event)" controls preload="metadata"'.$mediaDescriptionAttribute.'>
+                        <source src="'.esc_url($fullData['guid']).'" type="'.esc_attr(cg1l_get_encoding_formats($ImgType)).'">
+                        Sorry, your browser doesn’t support embedded audio.
+                    </audio>
+                    '.$audioTitleMarkup.'
+                </div>';
+            $figure = '<figure class="cg_figure" itemscope itemtype="https://schema.org/'.$itemTypeObject.'Object">
+                '.$meta.'
+                '.$metaComment.'
+                '.$cg_wrap_gallery_media_shell($audioContent).'
+                '.$cg_gallery_info.'
+              </figure>';
         }elseif(cg_is_alternative_file_type_file($ImgType)){
             $fileContent = '<div id="cg_append'.$id.'" 
                     class="cg_append cg_append_alternative_file_type cg_append_'.$ImgType.'"
@@ -474,8 +497,10 @@
 
             if($ImgType=='tkt' || $ImgType=='twt'){
                 if($ImgType=='tkt' && $options['pro']['ConsentTikTok']=='1'){
+                    $socialConsentRequired = true;
                     $cg_append = cg1l_get_consent_tkt($galeryIDuserForJs,$id,$fullData,$languageNames);
                 } elseif($ImgType=='twt' && $options['pro']['ConsentTwitter']=='1'){
+                    $socialConsentRequired = true;
                     $cg_append = cg1l_get_consent_twt($galeryIDuserForJs,$id,$fullData,$languageNames);
                 }else{
                     $blockquote = cg_get_blockquote_post_content_php_rendering($fullData['post_content']);
@@ -487,8 +512,10 @@
                 }
             }else if($ImgType=='ytb' || $ImgType=='inst'){
                 if($ImgType=='ytb' && $options['pro']['ConsentYoutube']=='1'){
+                    $socialConsentRequired = true;
                     $cg_append = cg1l_get_consent_ytb($galeryIDuserForJs,$id,$fullData,$languageNames);
                 }else if($ImgType=='inst' && $options['pro']['ConsentInstagram']=='1'){
+                    $socialConsentRequired = true;
                     $cg_append = cg1l_get_consent_inst($galeryIDuserForJs,$id,$fullData,$languageNames);
                 }else{
                     $cg_append = '<div class="cg_append_container">'.$cg_append_overlay.'<iframe class="cg_append cg_append_social cg_append_'.$ImgType.' skip-lazy" loading="lazy" data-skip-lazy="1" src="'.$fullData['guid'].'"  ></iframe></div>'.$embedHiddenLink;
@@ -516,6 +543,10 @@
             'cg_grid_item',
             'cg-cat-'.$Category
         );
+
+        if($socialConsentRequired){
+            $articleClasses[] = 'cg_social_consent_required';
+        }
 
         if($hasSubTitleContent && $hasThirdTitleContent){
             $articleClasses[] = 'has_sub_and_third_title';

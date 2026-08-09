@@ -830,6 +830,14 @@ msgstr "Suma"
 msgid "Your vote"
 msgstr "Twój głos"
 
+#: check-language.php:283
+msgid "A comment is required to vote"
+msgstr "Aby zagłosować, wymagany jest komentarz"
+
+#: check-language.php:287
+msgid "Leave a comment"
+msgstr "Zostaw komentarz"
+
 #: check-language.php:280
 msgid "The name field must contain two characters or more"
 msgstr "Pole musi zawierać co najmniej dwa znaki"

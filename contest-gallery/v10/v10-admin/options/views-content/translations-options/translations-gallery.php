@@ -288,6 +288,36 @@ echo <<<HEREDOC
          <div class='cg_view_options_row' >
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
+                        <p>$language_CommentRequiredToVote$cgShortcodeCopy</p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input type="text" name="translations[$l_CommentRequiredToVote]" maxlength="100" value="$translations[$l_CommentRequiredToVote]">
+                    </div>
+                </div>
+        </div>
+         <div class='cg_view_options_row' >
+                <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+                    <div class='cg_view_option_title'>
+                        <p>$language_LeaveAComment$cgShortcodeCopy</p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input type="text" name="translations[$l_LeaveAComment]" maxlength="100" value="$translations[$l_LeaveAComment]">
+                    </div>
+                </div>
+        </div>
+         <div class='cg_view_options_row' >
+                <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+                    <div class='cg_view_option_title'>
+                        <p>$language_NotNow$cgShortcodeCopy</p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input type="text" name="translations[$l_NotNow]" maxlength="100" value="$translations[$l_NotNow]">
+                    </div>
+                </div>
+        </div>
+         <div class='cg_view_options_row' >
+                <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+                    <div class='cg_view_option_title'>
                         <p>$language_YourVote$cgShortcodeCopy</p>
                     </div>
                     <div class='cg_view_option_input'>
