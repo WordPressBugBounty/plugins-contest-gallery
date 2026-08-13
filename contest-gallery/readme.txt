@@ -3,8 +3,8 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, openai
 Requires at least: 5.6
-Stable tag: 32.0.0
-Tested up to: 7.0.3
+Stable tag: 32.0.1
+Tested up to: 7.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -274,6 +274,12 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= 32.0.1 =
+* FIXED: Multi-gallery overview shortcodes no longer inherit category filters, controls or empty-gallery text from an unrelated bootstrap gallery.
+* FIXED: Multi-gallery preview cards selected by highest rating or most comments now open the correct gallery reliably.
+* FIXED: One-star galleries with manually added votes now keep the complete visible total immediately after voting or undoing a vote.
+* FIXED: A first vote in a new browser now saves immediately when cookie checking and the vote-and-comment flow are enabled.
 
 = 32.0.0 =
 * NEW: Added a modern two-step vote-and-comment dialog for one-star, average and cumulative voting, with required, optional or disabled comments and emoji support.

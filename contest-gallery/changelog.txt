@@ -1,5 +1,11 @@
 Contest Gallery
 
+= 32.0.1 =
+* FIXED: Multi-gallery overview shortcodes no longer inherit category filters, controls or empty-gallery text from an unrelated bootstrap gallery.
+* FIXED: Multi-gallery preview cards selected by highest rating or most comments now open the correct gallery reliably.
+* FIXED: One-star galleries with manually added votes now keep the complete visible total immediately after voting or undoing a vote.
+* FIXED: A first vote in a new browser now saves immediately when cookie checking and the vote-and-comment flow are enabled.
+
 = 32.0.0 =
 * NEW: Added a modern two-step vote-and-comment dialog for one-star, average and cumulative voting, with required, optional or disabled comments and emoji support.
 * NEW: Added direct commenting from gallery views, including entry previews and consistent success feedback without opening the full entry.

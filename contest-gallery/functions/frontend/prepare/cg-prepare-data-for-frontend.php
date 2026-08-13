@@ -2266,6 +2266,12 @@ if (!function_exists('cg1l_get_images_full_data_frontend_for_galleries')) {
                         }
                     }
 
+                    $imageId = (!empty($jsonFileData['id'])) ? absint($jsonFileData['id']) : absint($imageId);
+                    if(empty($imageId)){
+                        continue;
+                    }
+                    $jsonFileData['id'] = $imageId;
+
                     $jsonFileData['GalleryIdToCheck'] = $galleryIdToCheck;
                     $jsonFileData['AllowRatingToCheck'] = $AllowRatingToCheck;
                     $jsonFileData['AllowRatingAverageToCheck'] = (!empty($optionsToCheck['general']['AllowRatingAverage'])) ? 1 : 0;

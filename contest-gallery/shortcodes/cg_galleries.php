@@ -28,7 +28,23 @@ if(!function_exists('cg_load_galleries_shortcode')){
 
 	    global $wpdb;
 	    $tablename_options = $wpdb->prefix . "contest_gal1ery_options";
-	    $galeryID = absint($wpdb->get_var( "SELECT id FROM $tablename_options ORDER BY id DESC LIMIT 0, 1" ));
+	    $wp_upload_dir = wp_upload_dir();
+	    $galeryID = 0;
+
+	    if($hasGalleriesIds){
+	        foreach($galleriesIds as $galleryIdToCheck){
+	            $galleryIdToCheck = absint($galleryIdToCheck);
+	            $galleryOptionsFileToCheck = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galleryIdToCheck.'/json/'.$galleryIdToCheck.'-options.json';
+	            if(file_exists($galleryOptionsFileToCheck)){
+	                $galeryID = $galleryIdToCheck;
+	                break;
+	            }
+	        }
+	    }
+
+	    if(empty($galeryID)){
+	        $galeryID = absint($wpdb->get_var( "SELECT id FROM $tablename_options ORDER BY id DESC LIMIT 0, 1" ));
+	    }
 
         $requestedGalleryId = absint(get_query_var('cgl_gallery'));
         if(empty($requestedGalleryId) && !empty($_GET['cg_gallery_id'])){
@@ -42,7 +58,7 @@ if(!function_exists('cg_load_galleries_shortcode')){
                 in_array($requestedGalleryId, $galleriesIds, true)
             )
         ){
-            $requestedOptionsFile = wp_upload_dir()['basedir'].'/contest-gallery/gallery-id-'.$requestedGalleryId.'/json/'.$requestedGalleryId.'-options.json';
+            $requestedOptionsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$requestedGalleryId.'/json/'.$requestedGalleryId.'-options.json';
             if(file_exists($requestedOptionsFile)){
                 $galeryID = $requestedGalleryId;
                 $isCGalleries = 0;
@@ -52,7 +68,6 @@ if(!function_exists('cg_load_galleries_shortcode')){
 
 	    $frontend_gallery = '';
 
-	    $wp_upload_dir = wp_upload_dir();
 	    $optionsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/'.$galeryID.'-options.json';
 
 	    if(file_exists($optionsFile)){
