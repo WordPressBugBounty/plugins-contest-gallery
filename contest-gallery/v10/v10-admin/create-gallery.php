@@ -70,7 +70,7 @@ if(!empty($_POST['cg_create'])){
 "Automatically activate users entries after successful frontend upload" can be activated/deactivated in "Edit options" >>> "Upload options"
 </p>';
     $GalleryUploadConfirmationText = htmlentities($GalleryUploadConfirmationText, ENT_QUOTES);
-    $ShowRefreshButtonAfterUpload = 1;
+    $ShowRefreshButtonAfterUpload = 0;
 
     // pro options
     $ForwardAfterRegText = 'Thank you for your registration<br/>Check your email account to confirm your email and complete the registration. If you don\'t see any message then plz check also the spam folder.';

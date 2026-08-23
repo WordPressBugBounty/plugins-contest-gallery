@@ -86,7 +86,7 @@ if((!empty($galleryDbVersion) && intval($galleryDbVersion)>=14) || empty($Galler
 }
 
 $FeControlsStyleLogin = ($optionsVisual->FeControlsStyleLogin=='white' || empty($optionsVisual->FeControlsStyleLogin)) ?  'cg_fe_controls_style_white' : 'cg_fe_controls_style_black';
-$BorderRadiusLogin = ($optionsVisual->BorderRadiusLogin=='1' || empty($optionsVisual->FeControlsStyleLogin)) ? 'cg_border_radius_controls_and_containers' : '';
+$BorderRadiusLogin = 'cg_border_radius_controls_and_containers';
 $cgFeControlsStyle = $FeControlsStyleLogin;
 $BorderRadiusClass = $BorderRadiusLogin;
 include(__DIR__.'/../../../../../v10/v10-frontend/gallery/cg-messages.php');

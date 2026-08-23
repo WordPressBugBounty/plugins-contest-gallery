@@ -131,6 +131,14 @@ $votingDataLength = $wpdb->get_var($wpdb->prepare(
     $GalleryID
 ));
 
+$voteIdsForPaidActionDetails = array();
+foreach($votingData as $voteDataRow){
+    $voteIdsForPaidActionDetails[] = absint($voteDataRow->id);
+}
+$paidActionVoteDetails = function_exists('cg_paid_actions_get_action_payment_details')
+    ? cg_paid_actions_get_action_payment_details($GalleryID,'vote',$voteIdsForPaidActionDetails)
+    : array();
+
 $linkedCommentIds = array();
 $linkedCommentIdsToCheck = array();
 foreach($votingData as $voteDataRow){
@@ -681,6 +689,7 @@ if($votingDataLength>50){
             echo "<div class='cg-votes-header'>WordPress<br>user name</div>";
             echo "<div class='cg-votes-header'>WordPress<br>user email</div>";
             echo "<div class='cg-votes-header'>Vote date</div>";
+            echo "<div class='cg-votes-header'>Payment</div>";
             echo "<div class='cg-votes-header'>Linked comment</div>";
             echo "<div class='cg-votes-header cg-votes-action-header'>".
                 cg1l_render_admin_vote_action_checkbox('Select all','cgVotesSelectAll','','','','select_all').
@@ -723,6 +732,9 @@ if($votingDataLength>50){
                 echo "<div class='cg-votes-row'>$useremail</div>";
                 if(empty($row->VoteDate)){$row->VoteDate="&nbsp";};
             echo "<div class='cg-votes-row'>".cg_get_time_based_on_wp_timezone_conf($row->Tstamp,'d-M-Y H:i:s')."</div>";
+                $paidActionVoteDetail = !empty($paidActionVoteDetails[$row->id]) ? $paidActionVoteDetails[$row->id] : array();
+                $paidActionVoteBadge = function_exists('cg_paid_actions_admin_payment_badge') ? cg_paid_actions_admin_payment_badge($paidActionVoteDetail,$GalleryID) : '';
+                echo $paidActionVoteBadge!=='' ? "<div class='cg-votes-row cg-votes-row-payment'>".$paidActionVoteBadge."</div>" : "<div class='cg-votes-row cg-votes-row-payment'>&mdash;</div>";
                 $linkedCommentId = (!empty($row->CommentId)) ? absint($row->CommentId) : 0;
                 if(!empty($linkedCommentId) && !empty($linkedCommentIds[$linkedCommentId])){
                     $linkedCommentUrl = '?page='.cg_get_version().'/index.php&option_id='.$GalleryID.'&show_comments=true&id='.$imageId.'&cg_comment_id='.$linkedCommentId;

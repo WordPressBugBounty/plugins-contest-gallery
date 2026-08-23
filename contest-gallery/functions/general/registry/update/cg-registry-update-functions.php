@@ -142,8 +142,8 @@ if(!function_exists('cg_update_registry_and_login_options_v14')){
         $wpdb->update(
             "$tablename_options_visual",
             array(
-                'BorderRadiusRegistry' => $options['visual']['BorderRadiusRegistry'], 'FeControlsStyleRegistry' => $options['visual']['FeControlsStyleRegistry'],
-                'BorderRadiusLogin' => $options['visual']['BorderRadiusLogin'],'FeControlsStyleLogin' => $options['visual']['FeControlsStyleLogin']
+                'BorderRadiusRegistry' => 1, 'FeControlsStyleRegistry' => $options['visual']['FeControlsStyleRegistry'],
+                'BorderRadiusLogin' => 1,'FeControlsStyleLogin' => $options['visual']['FeControlsStyleLogin']
             ),
             array('GeneralID' => 1),
             array(

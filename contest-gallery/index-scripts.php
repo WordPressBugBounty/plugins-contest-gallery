@@ -43,6 +43,7 @@ wp_enqueue_script( 'cg_gallery_admin_gallery_load_init_or_add', plugins_url( '/v
 wp_enqueue_script( 'cg_gallery_admin_gallery_reload_entry', plugins_url( '/v10/v10-js/admin/load/gallery-reload-entry.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_script( 'cg_gallery_admin_gallery_load_change_or_sort', plugins_url( '/v10/v10-js/admin/load/gallery-load-change-or-sort.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_script( 'cg_gallery_admin_events', plugins_url( '/v10/v10-js/admin/gallery/events/gallery-admin-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_gallery_admin_paid_actions', plugins_url( '/v10/v10-js/admin/gallery/gallery-admin-paid-actions.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/gallery/gallery-admin-paid-actions.js') );
 wp_enqueue_script( 'cg_gallery_admin_send_mail_events', plugins_url( '/v10/v10-js/admin/gallery/events/gallery-admin-send-mail-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_script( 'cg_gallery_admin_events_multiple_files', plugins_url( '/v10/v10-js/admin/gallery/events/gallery-admin-events-multiple-files.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 

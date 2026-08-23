@@ -164,6 +164,114 @@ echo <<<HEREDOC
 </div>
 <div class='cg_view_options_row'>
     <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+        <div class='cg_view_option_title'><p>$language_SendNewPinCountdown$cgShortcodeCopy</p></div>
+        <div class='cg_view_option_input'><input type="text" name="translations[$l_SendNewPinCountdown]" maxlength="100" value="$translations[$l_SendNewPinCountdown]"></div>
+    </div>
+</div>
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+        <div class='cg_view_option_title'><p>$language_NewPinCouldNotBeSent$cgShortcodeCopy</p></div>
+        <div class='cg_view_option_input'><input type="text" name="translations[$l_NewPinCouldNotBeSent]" maxlength="200" value="$translations[$l_NewPinCouldNotBeSent]"></div>
+    </div>
+</div>
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+        <div class='cg_view_option_title'><p>$language_PinCouldNotBeSent$cgShortcodeCopy</p></div>
+        <div class='cg_view_option_input'><input type="text" name="translations[$l_PinCouldNotBeSent]" maxlength="200" value="$translations[$l_PinCouldNotBeSent]"></div>
+    </div>
+</div>
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+        <div class='cg_view_option_title'><p>$language_WaitBeforeAnotherPin$cgShortcodeCopy</p></div>
+        <div class='cg_view_option_input'><input type="text" name="translations[$l_WaitBeforeAnotherPin]" maxlength="300" value="$translations[$l_WaitBeforeAnotherPin]"></div>
+    </div>
+</div>
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+        <div class='cg_view_option_title'><p>$language_Second / $language_Seconds$cgShortcodeCopy</p></div>
+        <div class='cg_view_option_input'><input type="text" name="translations[$l_Second]" maxlength="50" value="$translations[$l_Second]"><input type="text" name="translations[$l_Seconds]" maxlength="50" value="$translations[$l_Seconds]"></div>
+    </div>
+</div>
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+        <div class='cg_view_option_title'><p>$language_TooManyPinsRequested$cgShortcodeCopy</p></div>
+        <div class='cg_view_option_input'><input type="text" name="translations[$l_TooManyPinsRequested]" maxlength="300" value="$translations[$l_TooManyPinsRequested]"></div>
+    </div>
+</div>
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+        <div class='cg_view_option_title'><p>$language_EnterValidEmailAddress$cgShortcodeCopy</p></div>
+        <div class='cg_view_option_input'><input type="text" name="translations[$l_EnterValidEmailAddress]" maxlength="200" value="$translations[$l_EnterValidEmailAddress]"></div>
+    </div>
+</div>
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+        <div class='cg_view_option_title'><p>$language_PinInvalidOrExpired$cgShortcodeCopy</p></div>
+        <div class='cg_view_option_input'><input type="text" name="translations[$l_PinInvalidOrExpired]" maxlength="200" value="$translations[$l_PinInvalidOrExpired]"></div>
+    </div>
+</div>
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+        <div class='cg_view_option_title'><p>$language_TooManyPinAttempts$cgShortcodeCopy</p></div>
+        <div class='cg_view_option_input'><input type="text" name="translations[$l_TooManyPinAttempts]" maxlength="200" value="$translations[$l_TooManyPinAttempts]"></div>
+    </div>
+</div>
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+        <div class='cg_view_option_title'><p>$language_PinIsIncorrect$cgShortcodeCopy</p></div>
+        <div class='cg_view_option_input'><input type="text" name="translations[$l_PinIsIncorrect]" maxlength="200" value="$translations[$l_PinIsIncorrect]"></div>
+    </div>
+</div>
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+        <div class='cg_view_option_title'><p>$language_PinRequestNoLongerAvailable$cgShortcodeCopy</p></div>
+        <div class='cg_view_option_input'><input type="text" name="translations[$l_PinRequestNoLongerAvailable]" maxlength="200" value="$translations[$l_PinRequestNoLongerAvailable]"></div>
+    </div>
+</div>
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+        <div class='cg_view_option_title'><p>$language_AccountConfirmationCouldNotBePrepared$cgShortcodeCopy</p></div>
+        <div class='cg_view_option_input'><input type="text" name="translations[$l_AccountConfirmationCouldNotBePrepared]" maxlength="300" value="$translations[$l_AccountConfirmationCouldNotBePrepared]"></div>
+    </div>
+</div>
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+        <div class='cg_view_option_title'><p>$language_NoRegisteredUserForEmail$cgShortcodeCopy</p></div>
+        <div class='cg_view_option_input'><input type="text" name="translations[$l_NoRegisteredUserForEmail]" maxlength="300" value="$translations[$l_NoRegisteredUserForEmail]"></div>
+    </div>
+</div>
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+        <div class='cg_view_option_title'><p>$language_UserAccountCouldNotBeFound$cgShortcodeCopy</p></div>
+        <div class='cg_view_option_input'><input type="text" name="translations[$l_UserAccountCouldNotBeFound]" maxlength="300" value="$translations[$l_UserAccountCouldNotBeFound]"></div>
+    </div>
+</div>
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+        <div class='cg_view_option_title'><p>$language_PinDataNotFound$cgShortcodeCopy</p></div>
+        <div class='cg_view_option_input'><input type="text" name="translations[$l_PinDataNotFound]" maxlength="300" value="$translations[$l_PinDataNotFound]"></div>
+    </div>
+</div>
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+        <div class='cg_view_option_title'><p>$language_UserAccountCouldNotBeCreated$cgShortcodeCopy</p></div>
+        <div class='cg_view_option_input'><input type="text" name="translations[$l_UserAccountCouldNotBeCreated]" maxlength="300" value="$translations[$l_UserAccountCouldNotBeCreated]"></div>
+    </div>
+</div>
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+        <div class='cg_view_option_title'><p>$language_UserCouldNotBeSignedIn$cgShortcodeCopy</p></div>
+        <div class='cg_view_option_input'><input type="text" name="translations[$l_UserCouldNotBeSignedIn]" maxlength="400" value="$translations[$l_UserCouldNotBeSignedIn]"></div>
+    </div>
+</div>
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
+        <div class='cg_view_option_title'><p>$language_PinCouldNotBeConfirmed$cgShortcodeCopy</p></div>
+        <div class='cg_view_option_input'><input type="text" name="translations[$l_PinCouldNotBeConfirmed]" maxlength="400" value="$translations[$l_PinCouldNotBeConfirmed]"></div>
+    </div>
+</div>
+<div class='cg_view_options_row'>
+    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
         <div class='cg_view_option_title'>
             <p>$language_IncorrectPinPleaseTryAgain$cgShortcodeCopy</p>
         </div>

@@ -1,5 +1,8 @@
 <?php
 
+$cgPaidActionsSandboxToken = !empty($_POST['cg_paid_actions_preview']) ? sanitize_text_field(wp_unslash($_POST['cg_paid_actions_preview'])) : '';
+$cgPaidActionsCheckoutMode = !empty($_POST['cg_paid_actions_checkout_mode']) ? sanitize_key(wp_unslash($_POST['cg_paid_actions_checkout_mode'])) : '';
+
 /*
 echo "<pre>";
 print_r($_POST);
@@ -17,6 +20,7 @@ $_POST = cg1l_sanitize_post($_POST);
 
 $SENT_POST = $_POST;
 $SENT_POST['ownKeys'] = [];
+unset($SENT_POST['cg_paid_actions_preview'],$SENT_POST['cg_paid_actions_checkout_mode'],$SENT_POST['cg_paid_actions_checkout_provider']);
 cg_ecommerce_remove_stripe_client_secret_from_array($SENT_POST);
 
 /*
@@ -48,13 +52,9 @@ if(is_user_logged_in()){
 }
 $_POST = $_POST['orderData'];
 
+$sandboxRequested = !empty($_POST['isSandbox']) && $_POST['isSandbox']==='true';
 $IsTest = 0;
-if($_POST['isSandbox']=='true'){// has to be checked this way because of mixed sent data (rawdata as string) the true is a string
-	$Environment = 'sandbox';
-	$IsTest = 1;
-}else{
-	$Environment = 'live';
-}
+$Environment = 'live';
 
 $Error = '';
 
@@ -72,6 +72,37 @@ $PaymentType = (!empty($_POST['StripePiClientSecret'])) ? 'stripe' : 'paypal';
 
 $ecommerce_options = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_options WHERE GeneralID = 1");
 $ecommerce_options_array = json_decode(json_encode($ecommerce_options),true);
+
+$authoritativeCart = ($PaymentType==='stripe') ?
+	cg_ecommerce_build_authoritative_stripe_cart($_POST['purchase_units'],$ecommerce_options) :
+	cg_ecommerce_build_authoritative_checkout_cart($_POST['purchase_units'],$ecommerce_options);
+if(empty($authoritativeCart['success'])){
+	$Error = !empty($authoritativeCart['message']) ? $authoritativeCart['message'] : cg_ecommerce_get_reload_checkout_error();
+}
+
+if(empty($Error)){
+	$checkoutEnvironment = cg_ecommerce_resolve_checkout_environment($sandboxRequested,$PaymentType,$authoritativeCart);
+	if(empty($checkoutEnvironment['success'])){
+		$Error = $checkoutEnvironment['message'];
+	}else{
+		$IsTest = !empty($checkoutEnvironment['is_test']) ? 1 : 0;
+		$Environment = $IsTest ? 'sandbox' : 'live';
+		$_POST['isSandbox'] = $IsTest ? 'true' : 'false';
+	}
+}
+
+if(empty($Error) && !cg_ecommerce_payment_provider_is_ready($ecommerce_options,$PaymentType,$IsTest)){
+	$Error = ucfirst($PaymentType).' is not available for the requested checkout environment.';
+}
+
+if(!empty($Error)){
+	?>
+	<script data-cg-processing="true">
+		cgJsClass.gallery.vars.ecommerce.TransactionError = <?php echo json_encode($Error);?>;
+	</script>
+	<?php
+	die;
+}
 
 if($PaymentType == 'paypal'){
 	$requestedPayPalOrderId = !empty($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
@@ -100,40 +131,36 @@ if($PaymentType == 'paypal'){
 	}
 
 	if(empty($Error)){
-		$payPalAuthoritativeCart = cg_ecommerce_build_authoritative_checkout_cart($_POST['purchase_units'], $ecommerce_options);
-		if(empty($payPalAuthoritativeCart['success'])){
-			$Error = $payPalAuthoritativeCart['message'];
+		$payPalAuthoritativeCart = $authoritativeCart;
+		$payPalAmountValue = '';
+		$payPalCurrency = '';
+
+		if(!empty($PayPalOrderResponse['purchase_units'][0]['amount']['value'])){
+			$payPalAmountValue = cg_ecommerce_format_money_value($PayPalOrderResponse['purchase_units'][0]['amount']['value']);
+		}
+
+		if(!empty($PayPalOrderResponse['purchase_units'][0]['amount']['currency_code'])){
+			$payPalCurrency = strtolower(sanitize_text_field($PayPalOrderResponse['purchase_units'][0]['amount']['currency_code']));
+		}
+
+		$payPalExpectedAmountValue = cg_ecommerce_format_money_value($payPalAuthoritativeCart['PriceTotalGrossItemsWithShipping']);
+		$payPalExpectedCurrency = strtolower($payPalAuthoritativeCart['currency_short']);
+
+		if(
+			$PaymentStatus !== 'COMPLETED' ||
+			empty($payPalAmountValue) ||
+			empty($payPalCurrency) ||
+			$payPalAmountValue !== $payPalExpectedAmountValue ||
+			$payPalCurrency !== $payPalExpectedCurrency
+		){
+			$Error = cg_ecommerce_get_reload_checkout_error();
 		}else{
-			$payPalAmountValue = '';
-			$payPalCurrency = '';
-
-			if(!empty($PayPalOrderResponse['purchase_units'][0]['amount']['value'])){
-				$payPalAmountValue = cg_ecommerce_format_money_value($PayPalOrderResponse['purchase_units'][0]['amount']['value']);
+			cg_ecommerce_apply_authoritative_checkout_cart_to_post($_POST, $payPalAuthoritativeCart, $ecommerce_options);
+			$_POST['id'] = $PayPalOrderResponse['id'];
+			if(!empty($PayPalOrderResponse['payer']['email_address'])){
+				$_POST['payer']['email_address'] = sanitize_email($PayPalOrderResponse['payer']['email_address']);
 			}
-
-			if(!empty($PayPalOrderResponse['purchase_units'][0]['amount']['currency_code'])){
-				$payPalCurrency = strtolower(sanitize_text_field($PayPalOrderResponse['purchase_units'][0]['amount']['currency_code']));
-			}
-
-			$payPalExpectedAmountValue = cg_ecommerce_format_money_value($payPalAuthoritativeCart['PriceTotalGrossItemsWithShipping']);
-			$payPalExpectedCurrency = strtolower($payPalAuthoritativeCart['currency_short']);
-
-			if(
-				$PaymentStatus !== 'COMPLETED' ||
-				empty($payPalAmountValue) ||
-				empty($payPalCurrency) ||
-				$payPalAmountValue !== $payPalExpectedAmountValue ||
-				$payPalCurrency !== $payPalExpectedCurrency
-			){
-				$Error = cg_ecommerce_get_reload_checkout_error();
-			}else{
-				cg_ecommerce_apply_authoritative_checkout_cart_to_post($_POST, $payPalAuthoritativeCart, $ecommerce_options);
-				$_POST['id'] = $PayPalOrderResponse['id'];
-				if(!empty($PayPalOrderResponse['payer']['email_address'])){
-					$_POST['payer']['email_address'] = sanitize_email($PayPalOrderResponse['payer']['email_address']);
-				}
-				$IsFullPaid = true;
-			}
+			$IsFullPaid = true;
 		}
 	}
 
@@ -206,33 +233,33 @@ if($PaymentType == 'paypal'){
 	}
 
 	if(empty($Error)){
-		$stripeAuthoritativeCart = cg_ecommerce_build_authoritative_stripe_cart($_POST['purchase_units'], $ecommerce_options);
-		if(empty($stripeAuthoritativeCart['success'])){
-			$Error = $stripeAuthoritativeCart['message'];
-		}else{
-			$stripeResultMetadata = !empty($result['metadata']) && is_array($result['metadata']) ? $result['metadata'] : [];
-			$stripeResultAmount = !empty($result['amount']) ? absint($result['amount']) : 0;
-			$stripeResultCurrency = !empty($result['currency']) ? strtolower(sanitize_text_field($result['currency'])) : '';
-			$stripeExpectedCurrency = strtolower($stripeAuthoritativeCart['currency_short']);
-			$stripeMetadataAmount = !empty($stripeResultMetadata['cg_amount_cents']) ? absint($stripeResultMetadata['cg_amount_cents']) : 0;
-			$stripeMetadataCurrency = !empty($stripeResultMetadata['cg_currency']) ? strtolower(sanitize_text_field($stripeResultMetadata['cg_currency'])) : '';
-			$stripeMetadataCartHash = !empty($stripeResultMetadata['cg_cart_hash']) ? sanitize_text_field($stripeResultMetadata['cg_cart_hash']) : '';
+		$stripeAuthoritativeCart = $authoritativeCart;
+		$stripeResultMetadata = !empty($result['metadata']) && is_array($result['metadata']) ? $result['metadata'] : [];
+		$stripeResultAmount = !empty($result['amount']) ? absint($result['amount']) : 0;
+		$stripeResultCurrency = !empty($result['currency']) ? strtolower(sanitize_text_field($result['currency'])) : '';
+		$stripeExpectedCurrency = strtolower($stripeAuthoritativeCart['currency_short']);
+		$stripeMetadataAmount = !empty($stripeResultMetadata['cg_amount_cents']) ? absint($stripeResultMetadata['cg_amount_cents']) : 0;
+		$stripeMetadataCurrency = !empty($stripeResultMetadata['cg_currency']) ? strtolower(sanitize_text_field($stripeResultMetadata['cg_currency'])) : '';
+		$stripeMetadataCartHash = !empty($stripeResultMetadata['cg_cart_hash']) ? sanitize_text_field($stripeResultMetadata['cg_cart_hash']) : '';
 
-			if(
-				empty($stripeMetadataCartHash) ||
-				empty($stripeMetadataAmount) ||
-				empty($stripeMetadataCurrency) ||
-				$stripeMetadataCartHash !== $stripeAuthoritativeCart['cart_hash'] ||
-				$stripeMetadataAmount !== $stripeAuthoritativeCart['amount_cents'] ||
-				$stripeMetadataCurrency !== $stripeExpectedCurrency ||
-				$stripeResultAmount !== $stripeAuthoritativeCart['amount_cents'] ||
-				$stripeResultCurrency !== $stripeExpectedCurrency
-			){
-				$Error = cg_ecommerce_get_stripe_reload_checkout_error();
-			}else{
-				cg_ecommerce_apply_authoritative_checkout_cart_to_post($_POST, $stripeAuthoritativeCart, $ecommerce_options);
-			}
+		if(
+			empty($stripeMetadataCartHash) ||
+			empty($stripeMetadataAmount) ||
+			empty($stripeMetadataCurrency) ||
+			$stripeMetadataCartHash !== $stripeAuthoritativeCart['cart_hash'] ||
+			$stripeMetadataAmount !== $stripeAuthoritativeCart['amount_cents'] ||
+			$stripeMetadataCurrency !== $stripeExpectedCurrency ||
+			$stripeResultAmount !== $stripeAuthoritativeCart['amount_cents'] ||
+			$stripeResultCurrency !== $stripeExpectedCurrency
+		){
+			$Error = cg_ecommerce_get_stripe_reload_checkout_error();
+		}else{
+			cg_ecommerce_apply_authoritative_checkout_cart_to_post($_POST, $stripeAuthoritativeCart, $ecommerce_options);
 		}
+	}
+
+	if(empty($Error) && (empty($result['status']) || $result['status']!=='succeeded')){
+		$Error = cg_ecommerce_get_stripe_reload_checkout_error();
 	}
 
 	if(empty($Error)){
@@ -249,10 +276,8 @@ if($PaymentType == 'paypal'){
 		<?php
 		die;
 	}else{
-		$PaymentStatus = $result['status'];
-		if($PaymentStatus=='succeeded'){
-			$IsFullPaid = true;
-		}
+		$PaymentStatus = 'succeeded';
+		$IsFullPaid = true;
 	}
 
 }else{
@@ -635,6 +660,13 @@ file_put_contents($logFilePath,json_encode($_POST));
     $ParentOrder = $OrderId;
     $createdOrderId =  $OrderId;
 
+    if(
+        $IsTest && $cgPaidActionsSandboxToken!=='' && $cgPaidActionsCheckoutMode==='sandbox' &&
+        !empty($GLOBALS['cgPaidActionsSandboxCheckoutContext']) && function_exists('cg_paid_actions_mark_sandbox_order')
+    ){
+        cg_paid_actions_mark_sandbox_order($OrderId,$GLOBALS['cgPaidActionsSandboxCheckoutContext']);
+    }
+
     $OrderIdHash = '';
     if(function_exists('random_bytes')){
         try{
@@ -669,7 +701,11 @@ file_put_contents($logFilePath,json_encode($_POST));
 	    $currenciesArray = cg_get_ecommerce_currencies_array_formatted_by_short_key();
 	    $CurrencySymbol = $currenciesArray[$CurrencyShort];
 
-        $processingData = cg_ecommerce_payment_processing_data($LogForDatabase, $OrderIdHash,$PayerEmail,$PayPalTransactionId,$time,$PriceDivider,$PaymentStatus,$ParentOrder, $PriceTotalGrossItemsWithShipping,true,false,0,$IsFullPaid,$OrderIdHash,$beforeFilter);
+	    $processingData = cg_ecommerce_payment_processing_data($LogForDatabase, $OrderIdHash,$PayerEmail,$PayPalTransactionId,$time,$PriceDivider,$PaymentStatus,$ParentOrder, $PriceTotalGrossItemsWithShipping,true,false,0,$IsFullPaid,$OrderIdHash,$beforeFilter);
+
+	    if($IsFullPaid && function_exists('cg_paid_actions_grant_order')){
+		    cg_paid_actions_grant_order($OrderId);
+	    }
 
 	    $wpdb->update(
 		    "$tablename_ecommerce_orders",
@@ -691,6 +727,14 @@ file_put_contents($logFilePath,json_encode($_POST));
             'ecommerceInvoicesFolder' => '',
             'invoiceFilePath' => ''
         ];
+
+	    ###PRO###
+	    if($CreateInvoice && $cgProVersion && cg_get_version()=='contest-gallery-pro' && $IsFullPaid){
+            $invoiceData = cg_ecommerce_payment_processing_create_invoice($createdOrderId);
+		    // order might be modified, by adding invoice
+		    $Order = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_orders WHERE id = '$OrderId' LIMIT 1");
+	    }
+	    ###PRO-END###
 
 	    //var_dump(        'sale id sale item invoice and mail');
 	    //var_dump(        '$OrderId');

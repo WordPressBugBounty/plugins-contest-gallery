@@ -108,6 +108,9 @@ if(!function_exists('cg_get_ecommerce_options')){
 
         $tablename_ecommerce_options = $wpdb->prefix . "contest_gal1ery_ecommerce_options";
         $selectSQLecommerceOptions = $wpdb->get_row( "SELECT * FROM $tablename_ecommerce_options WHERE GeneralID = '1'" );
+        if(!empty($selectSQLecommerceOptions)){
+            $selectSQLecommerceOptions->BorderRadiusOrder = 1;
+        }
 
         return $selectSQLecommerceOptions;
     }

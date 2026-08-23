@@ -51,6 +51,8 @@
 		cgJsClass.gallery.language.ecommerce.ShipToDifferentAddress = <?php echo json_encode($language_ShipToDifferentAddress); ?>;
 		cgJsClass.gallery.language.ecommerce.Country = <?php echo json_encode($language_Country); ?>;
 		cgJsClass.gallery.language.ecommerce.OrderSuccessfulYouWillBeRedirected = <?php echo json_encode($language_OrderSuccessfulYouWillBeRedirected); ?>;
+		cgJsClass.gallery.language.ecommerce.PaymentNotCompletedTryAgain = <?php echo json_encode($language_PaymentNotCompletedTryAgain); ?>;
+		cgJsClass.gallery.language.ecommerce.PaymentCanceledTryAgain = <?php echo json_encode($language_PaymentCanceledTryAgain); ?>;
 		cgJsClass.gallery.language.ecommerce.OrderFailedContactAdministrator = <?php echo json_encode($language_OrderFailedContactAdministrator); ?>;
 		cgJsClass.gallery.language.ecommerce.ShippingPossibleOnlyForAvailableCountries = <?php echo json_encode($language_ShippingPossibleOnlyForAvailableCountries); ?>;
 		cgJsClass.gallery.language.ecommerce.SameAsBillingAddress = <?php echo json_encode($language_SameAsBillingAddress); ?>;
@@ -69,4 +71,3 @@
 		cgJsClass.gallery.language.ecommerce.AllUploadsUsed = <?php echo json_encode($language_AllUploadsUsed); ?>;
 	}
 </script>
-

@@ -14,7 +14,8 @@ return array(
         'GalleryID_Active_id_index' => array('columns' => array('GalleryID','Active','id')),
         'GalleryID_WpUserId_id_index' => array('columns' => array('GalleryID','WpUserId','id')),
         'GalleryID_PositionNumber_id_index' => array('columns' => array('GalleryID','PositionNumber','id')),
-        'GalleryID_Active_Category_index' => array('columns' => array('GalleryID','Active','Category'))
+        'GalleryID_Active_Category_index' => array('columns' => array('GalleryID','Active','Category')),
+        'GalleryID_IsPaidActionPreview_id_index' => array('columns' => array('GalleryID','IsPaidActionPreview','id'))
     ),
     $tablename_ip => array(
         'pid_index' => array('columns' => array('pid')),
@@ -25,7 +26,8 @@ return array(
         'GalleryID_CookieId_pid_id_index' => array('columns' => array('GalleryID',array('name' => 'CookieId','length' => 64),'pid','id')),
         'GalleryID_IP_CookieId_pid_id_index' => array('columns' => array('GalleryID',array('name' => 'IP','length' => 64),array('name' => 'CookieId','length' => 64),'pid','id')),
         'GalleryID_Tstamp_index' => array('columns' => array('GalleryID','Tstamp')),
-        'GalleryID_pid_CommentId_index' => array('columns' => array('GalleryID','pid','CommentId'))
+        'GalleryID_pid_CommentId_index' => array('columns' => array('GalleryID','pid','CommentId')),
+        'GalleryID_IsPaidActionPreview_id_index' => array('columns' => array('GalleryID','IsPaidActionPreview','id'))
     ),
     $tablename_comments => array(
         'pid_index' => array('columns' => array('pid')),
@@ -34,7 +36,8 @@ return array(
         'GalleryID_index' => array('columns' => array('GalleryID')),
         'GalleryID_pid_id_index' => array('columns' => array('GalleryID','pid','id')),
         'GalleryID_WpUserId_id_index' => array('columns' => array('GalleryID','WpUserId','id')),
-        'GalleryID_Active_pid_index' => array('columns' => array('GalleryID','Active','pid'))
+        'GalleryID_Active_pid_index' => array('columns' => array('GalleryID','Active','pid')),
+        'GalleryID_IsPaidActionPreview_id_index' => array('columns' => array('GalleryID','IsPaidActionPreview','id'))
     ),
     $tablename_email => array(
         'GalleryID_index' => array('columns' => array('GalleryID'))
@@ -118,7 +121,25 @@ return array(
     $tablename_ecommerce_orders_items => array(
         'ParentOrder_index' => array('columns' => array('ParentOrder')),
         'pid_ParentOrder_index' => array('columns' => array('pid','ParentOrder')),
-        'GalleryID_ParentOrder_index' => array('columns' => array('GalleryID','ParentOrder'))
+        'GalleryID_ParentOrder_index' => array('columns' => array('GalleryID','ParentOrder')),
+        'PaidActionType_ParentOrder_index' => array('columns' => array('PaidActionType','ParentOrder'))
+    ),
+    $tablename_paid_action_settings => array(
+        'GalleryID_unique' => array('columns' => array('GalleryID'),'unique' => true)
+    ),
+    $tablename_paid_action_entitlements => array(
+        'IdempotencyKey_unique' => array('columns' => array('IdempotencyKey'),'unique' => true),
+        'User_Action_Scope_index' => array('columns' => array('WpUserId','ActionType','ScopeType')),
+        'OriginGallery_User_Action_index' => array('columns' => array('OriginGalleryID','WpUserId','ActionType')),
+        'OrderItem_index' => array('columns' => array('OrderItem'))
+    ),
+    $tablename_paid_action_ledger => array(
+        'IdempotencyKey_unique' => array('columns' => array('IdempotencyKey'),'unique' => true),
+        'User_Action_Created_index' => array('columns' => array('WpUserId','ActionType','CreatedAt')),
+        'ParentOrder_index' => array('columns' => array('ParentOrder')),
+        'TargetGallery_index' => array('columns' => array('TargetGalleryID')),
+        'Target_Action_Event_Object_index' => array('columns' => array('TargetGalleryID','ActionType','EventType','ObjectId')),
+        'EventType_ReferenceLedgerId_index' => array('columns' => array('EventType','ReferenceLedgerId'))
     ),
     $tablename_wp_pdf_previews => array(
         'WpUpload_index' => array('columns' => array('WpUpload')),

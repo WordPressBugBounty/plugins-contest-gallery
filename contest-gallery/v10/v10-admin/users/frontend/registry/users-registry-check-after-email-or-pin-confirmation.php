@@ -101,8 +101,9 @@ if (count($userAccountEntries)) {
     }
 
     if($pinHash){
-        $cgl_pin = !empty($_POST['cgl_pin']) ? substr($_POST['cgl_pin'], 0, 4) : '';
+        $cgl_pin = !empty($_POST['cgl_pin']) ? substr(preg_replace('/[^0-9]/','',(string)wp_unslash($_POST['cgl_pin'])), 0, 6) : '';
         $pinCheck = password_verify($cgl_pin, $pinHash);
+		$legacyAttemptsKey = !empty($cgPinRequestKey) ? 'cg_pin_legacy_attempts_'.md5($cgPinRequestKey) : '';
 
         if ($currentTime>($regTime+$PinExpiry)) {
             ?>
@@ -113,7 +114,19 @@ if (count($userAccountEntries)) {
             die;
             return;
         }
+		if($legacyAttemptsKey && absint(get_transient($legacyAttemptsKey))>=5){
+			?>
+			<script data-cg-processing="true">
+				cgJsClass.gallery.vars.pinMessage = 'too-many-attempts';
+			</script>
+			<?php
+			die;
+			return;
+		}
         if (!$pinCheck) {
+			if($legacyAttemptsKey){
+				set_transient($legacyAttemptsKey,absint(get_transient($legacyAttemptsKey))+1,max(1,($regTime+$PinExpiry)-$currentTime));
+			}
             ?>
             <script  data-cg-processing="true">
                 cgJsClass.gallery.vars.pinMessage = 'wrong-pin';
@@ -122,6 +135,7 @@ if (count($userAccountEntries)) {
             die;
             return;
         }
+		if($legacyAttemptsKey){delete_transient($legacyAttemptsKey);}
     }else{
         if($currentTime>($regTime+$ConfirmExpiry)){
             $page_id = get_the_ID();

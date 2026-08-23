@@ -40,6 +40,23 @@ if(!function_exists('cg_ecommerce_sale_activate')){
 
 	    $sqlObjectFile = $wpdb->get_row("SELECT * FROM $tablename WHERE id = '$realId'");
         $EcommerceEntry = intval($sqlObjectFile->EcommerceEntry);
+	    $existingSaleType = '';
+	    if(!empty($EcommerceEntry)){
+		    $existingSaleType = (string)$wpdb->get_var($wpdb->prepare("SELECT SaleType FROM $tablename_ecommerce_entries WHERE id = %d",$EcommerceEntry));
+	    }
+
+	    $galleryVersion = cg_ecommerce_get_gallery_creation_version($GalleryID);
+	    $isLegacyUploadSaleAllowed = cg_ecommerce_legacy_upload_sale_is_allowed($GalleryID,$realId);
+	    if($SaleType === 'upload'){
+		    if($galleryVersion >= 33 && $existingSaleType !== 'upload' && !$isLegacyUploadSaleAllowed){
+			    if(function_exists('cg_backend_ajax_error_json')){
+				    cg_backend_ajax_error_json('Classic upload packages can no longer be created for this gallery. Use Pay for uploads instead.', 400, 'cg_legacy_upload_sale_unavailable');
+			    }
+			    status_header(400);
+			    echo 'LEGACYUPLOADSALEUNAVAILABLE';
+			    die;
+		    }
+	    }
 
 		//var_dump('$EcommerceEntry');
 		//var_dump($EcommerceEntry);
@@ -290,6 +307,14 @@ HEREDOC;
             ),
             array('%d')
         );
+
+	    if($galleryVersion >= 33){
+		    if($SaleType === 'upload'){
+			    cg_ecommerce_set_legacy_upload_sale_allowed($GalleryID,$realId,true);
+		    }elseif($existingSaleType === 'upload' || $isLegacyUploadSaleAllowed){
+			    cg_ecommerce_set_legacy_upload_sale_allowed($GalleryID,$realId,false);
+		    }
+	    }
 
         $wp_upload_dir = wp_upload_dir();
 

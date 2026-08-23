@@ -1331,3 +1331,895 @@ msgstr "évaluation"
 #: check-language.php
 msgid "ratings"
 msgstr "évaluations"
+
+#: check-language-paid-actions.php
+msgid "Uploads"
+msgstr "Téléchargements"
+
+#: check-language-paid-actions.php
+msgid "Votes"
+msgstr "Votes"
+
+#: check-language-paid-actions.php
+msgid "Upload credits"
+msgstr "Crédits de téléversement"
+
+#: check-language-paid-actions.php
+msgid "Voting credits"
+msgstr "Crédits de vote"
+
+#: check-language-paid-actions.php
+msgid "Comment credits"
+msgstr "Crédits de commentaire"
+
+#: check-language-paid-actions.php
+msgid "upload credit"
+msgstr "crédit de téléversement"
+
+#: check-language-paid-actions.php
+msgid "voting credit"
+msgstr "crédit de vote"
+
+#: check-language-paid-actions.php
+msgid "comment credit"
+msgstr "crédit de commentaire"
+
+#: check-language-paid-actions.php
+msgid "Credits for {type} in gallery {number}"
+msgstr "Crédits pour {type} dans la galerie {number}"
+
+#: check-language-paid-actions.php
+msgid "credit"
+msgstr "crédit"
+
+#: check-language-paid-actions.php
+msgid "credits"
+msgstr "crédits"
+
+#: check-language-paid-actions.php
+msgid "each"
+msgstr "chacun"
+
+#: check-language-paid-actions.php
+msgid "Loading"
+msgstr "Chargement"
+
+#: check-language-paid-actions.php
+msgid "or"
+msgstr "ou"
+
+#: check-language-paid-actions.php
+msgid "Cancel"
+msgstr "Annuler"
+
+#: check-language-paid-actions.php
+msgid "Not now"
+msgstr "Pas maintenant"
+
+#: check-language-paid-actions.php
+msgid "Try again"
+msgstr "Réessayez"
+
+#: check-language-paid-actions.php
+msgid "Continue to gallery"
+msgstr "Continuer vers la galerie"
+
+#: check-language-paid-actions.php
+msgid "Return to gallery"
+msgstr "Retour à la galerie"
+
+#: check-language-paid-actions.php
+msgid "Private payment preview"
+msgstr "Aperçu du paiement privé"
+
+#: check-language-paid-actions.php
+msgid "Sandbox checkout test"
+msgstr "Test de vérification du bac à sable"
+
+#: check-language-paid-actions.php
+msgid "Your gallery credits"
+msgstr "Vos crédits de galerie"
+
+#: check-language-paid-actions.php
+msgid "Real test actions are saved and visible until reset"
+msgstr "Les actions de test réelles sont enregistrées et visibles jusqu'à la réinitialisation"
+
+#: check-language-paid-actions.php
+msgid "Real sandbox orders grant persistent gallery credits"
+msgstr "Les vraies commandes sandbox accordent des crédits de galerie persistants"
+
+#: check-language-paid-actions.php
+msgid "Buy only what you want to use"
+msgstr "Achetez uniquement ce que vous souhaitez utiliser"
+
+#: check-language-paid-actions.php
+msgid "Add test credits"
+msgstr "Ajouter des crédits de test"
+
+#: check-language-paid-actions.php
+msgid "Sandbox checkout"
+msgstr "Paiement du bac à sable"
+
+#: check-language-paid-actions.php
+msgid "Get credits"
+msgstr "Obtenir des crédits"
+
+#: check-language-paid-actions.php
+msgid "Buy credits in sandbox"
+msgstr "Acheter des crédits dans le bac à sable"
+
+#: check-language-paid-actions.php
+msgid "Buy gallery credits"
+msgstr "Acheter des crédits de galerie"
+
+#: check-language-paid-actions.php
+msgid "Reset test actions"
+msgstr "Réinitialiser les actions de test"
+
+#: check-language-paid-actions.php
+msgid "{count} used here"
+msgstr "{count} utilisé ici"
+
+#: check-language-paid-actions.php
+msgid "Get credits: {credits}"
+msgstr "Obtenir des crédits : {credits}"
+
+#: check-language-paid-actions.php
+msgid "Your credits are ready. You can continue in the gallery."
+msgstr "Vos crédits sont prêts. Vous pouvez continuer dans la galerie."
+
+#: check-language-paid-actions.php
+msgid "Sandbox test link unavailable"
+msgstr "Lien de test Sandbox indisponible"
+
+#: check-language-paid-actions.php
+msgid "This link has expired, is invalid, or belongs to another test user. Create a new sandbox test link in the gallery settings."
+msgstr "Ce lien a expiré, n'est pas valide ou appartient à un autre utilisateur test. Créez un nouveau lien de test sandbox dans les paramètres de la galerie."
+
+#: check-language-paid-actions.php
+msgid "Credits temporarily unavailable"
+msgstr "Crédits temporairement indisponibles"
+
+#: check-language-paid-actions.php
+msgid "Please try again in a moment"
+msgstr "Veuillez réessayer dans un instant"
+
+#: check-language-paid-actions.php
+msgid "Purchasing credits is temporarily unavailable. Please contact the gallery administrator."
+msgstr "L'achat de crédits est temporairement indisponible. Veuillez contacter l'administrateur de la galerie."
+
+#: check-language-paid-actions.php
+msgid "CREDIT REQUIRED"
+msgstr "CRÉDIT REQUIS"
+
+#: check-language-paid-actions.php
+msgid "TEST CREDITS USED"
+msgstr "CRÉDITS DE TEST UTILISÉS"
+
+#: check-language-paid-actions.php
+msgid "Upload credit required"
+msgstr "Crédit de téléchargement requis"
+
+#: check-language-paid-actions.php
+msgid "Voting credit required"
+msgstr "Crédit de vote requis"
+
+#: check-language-paid-actions.php
+msgid "Comment credit required"
+msgstr "Un crédit est requis pour commenter"
+
+#: check-language-paid-actions.php
+msgid "Buy upload credits to upload an entry to this gallery."
+msgstr "Achetez des crédits de téléchargement pour télécharger une entrée dans cette galerie."
+
+#: check-language-paid-actions.php
+msgid "Buy voting credits to vote in this gallery."
+msgstr "Achetez des crédits de vote pour voter dans cette galerie."
+
+#: check-language-paid-actions.php
+msgid "Buy comment credits to comment in this gallery."
+msgstr "Achetez des crédits de commentaires pour commenter dans cette galerie."
+
+#: check-language-paid-actions.php
+msgid "All test upload credits used"
+msgstr "Tous les crédits de téléchargement de test utilisés"
+
+#: check-language-paid-actions.php
+msgid "All test voting credits used"
+msgstr "Tous les crédits de vote test utilisés"
+
+#: check-language-paid-actions.php
+msgid "All test comment credits used"
+msgstr "Tous les crédits de commentaires de test utilisés"
+
+#: check-language-paid-actions.php
+msgid "You have used all test upload credits for this gallery. Add more to keep testing."
+msgstr "Vous avez utilisé tous les crédits de test de téléchargement pour cette galerie. Ajoutez-en davantage pour continuer à tester."
+
+#: check-language-paid-actions.php
+msgid "You have used all test voting credits for this gallery. Add more to keep testing."
+msgstr "Vous avez utilisé tous les crédits de vote test pour cette galerie. Ajoutez-en davantage pour continuer à tester."
+
+#: check-language-paid-actions.php
+msgid "You have used all test comment credits for this gallery. Add more to keep testing."
+msgstr "Vous avez utilisé tous les crédits de commentaires de test pour cette galerie. Ajoutez-en davantage pour continuer à tester."
+
+#: check-language-paid-actions.php
+msgid "Add more test credits"
+msgstr "Ajouter plus de crédits de test"
+
+#: check-language-paid-actions.php
+msgid "Buy credits"
+msgstr "Acheter des crédits"
+
+#: check-language-paid-actions.php
+msgid "COMMENT CREDITS"
+msgstr "CRÉDITS DE COMMENTAIRES"
+
+#: check-language-paid-actions.php
+msgid "Checking comment credits"
+msgstr "Vérifier les crédits des commentaires"
+
+#: check-language-paid-actions.php
+msgid "Please wait while your comment credits are checked."
+msgstr "Veuillez patienter pendant la vérification de vos crédits de commentaire."
+
+#: check-language-paid-actions.php
+msgid "Comment credits temporarily unavailable"
+msgstr "Crédits de commentaires temporairement indisponibles"
+
+#: check-language-paid-actions.php
+msgid "Your comment credits could not be checked. Please try again."
+msgstr "Vos crédits de commentaire n’ont pas pu être vérifiés. Veuillez réessayer."
+
+#: check-language-paid-actions.php
+msgid "YOUR CURRENT TEST CREDITS"
+msgstr "VOS CRÉDITS DE TEST ACTUELS"
+
+#: check-language-paid-actions.php
+msgid "YOUR CURRENT CREDITS"
+msgstr "VOS CRÉDITS ACTUELS"
+
+#: check-language-paid-actions.php
+msgid "{count} {type} available"
+msgstr "{count} {type} disponible"
+
+#: check-language-paid-actions.php
+msgid "{count} {type} available, {selected} selected for checkout"
+msgstr "{count} {type} disponible, {selected} sélectionné pour le paiement"
+
+#: check-language-paid-actions.php
+msgid "{count} {type} available, {selected} selected for test checkout"
+msgstr "{count} {type} disponible, {selected} sélectionné pour le test de paiement"
+
+#: check-language-paid-actions.php
+msgid "PRIVATE PAYMENT PREVIEW"
+msgstr "APERÇU DU PAIEMENT PRIVÉ"
+
+#: check-language-paid-actions.php
+msgid "Reset saved test actions?"
+msgstr "Réinitialiser les actions de test enregistrées ?"
+
+#: check-language-paid-actions.php
+msgid "This removes every paid preview action in this gallery, including tests from other preview tabs and administrators."
+msgstr "Cela supprime toutes les actions d'aperçu payantes dans cette galerie, y compris les tests d'autres onglets d'aperçu et administrateurs."
+
+#: check-language-paid-actions.php
+msgid "TEST ACTIONS IN THIS GALLERY"
+msgstr "TESTEZ LES ACTIONS DANS CETTE GALERIE"
+
+#: check-language-paid-actions.php
+msgid "Test upload"
+msgstr "Tester le téléchargement"
+
+#: check-language-paid-actions.php
+msgid "Test uploads"
+msgstr "Tester les téléchargements"
+
+#: check-language-paid-actions.php
+msgid "Test vote"
+msgstr "Vote test"
+
+#: check-language-paid-actions.php
+msgid "Test votes"
+msgstr "Votes tests"
+
+#: check-language-paid-actions.php
+msgid "Test comment"
+msgstr "Commentaire du test"
+
+#: check-language-paid-actions.php
+msgid "Test comments"
+msgstr "Commentaires sur les tests"
+
+#: check-language-paid-actions.php
+msgid "saved test action will be removed"
+msgstr "l'action de test enregistrée sera supprimée"
+
+#: check-language-paid-actions.php
+msgid "saved test actions will be removed"
+msgstr "les actions de test enregistrées seront supprimées"
+
+#: check-language-paid-actions.php
+msgid "test credit will be restored to its original credit type"
+msgstr "le crédit de test sera restauré à son type de crédit d'origine"
+
+#: check-language-paid-actions.php
+msgid "test credits will be restored to their original credit types"
+msgstr "les crédits de test seront restaurés à leurs types de crédits d'origine"
+
+#: check-language-paid-actions.php
+msgid "Preview uploads and their files are deleted completely. Everything attached to those entries is removed as well. Test credits used in this gallery are restored."
+msgstr "Prévisualisez les téléchargements et leurs fichiers sont complètement supprimés. Tout ce qui est attaché à ces entrées est également supprimé. Les crédits de test utilisés dans cette galerie sont restaurés."
+
+#: check-language-paid-actions.php
+msgid "SECURE TEST CHECKOUT"
+msgstr "PAIEMENT SÉCURISÉ DES TESTS"
+
+#: check-language-paid-actions.php
+msgid "Choose your free test credits"
+msgstr "Choisissez vos crédits de test gratuits"
+
+#: check-language-paid-actions.php
+msgid "Set the quantity directly in each checkout item. No money or payment details are used."
+msgstr "Définissez la quantité directement dans chaque article de caisse. Aucun argent ni aucun détail de paiement ne sont utilisés."
+
+#: check-language-paid-actions.php
+msgid "PRIVATE PREVIEW"
+msgstr "APERÇU PRIVÉ"
+
+#: check-language-paid-actions.php
+msgid "Visible only to you"
+msgstr "Visible uniquement par vous"
+
+#: check-language-paid-actions.php
+msgid "No real charge"
+msgstr "Pas de frais réels"
+
+#: check-language-paid-actions.php
+msgid "Payment data is never requested"
+msgstr "Les données de paiement ne sont jamais demandées"
+
+#: check-language-paid-actions.php
+msgid "Persistent credits"
+msgstr "Crédits persistants"
+
+#: check-language-paid-actions.php
+msgid "Available after reload"
+msgstr "Disponible après rechargement"
+
+#: check-language-paid-actions.php
+msgid "Choose a quantity above to continue."
+msgstr "Sélectionnez une quantité dans le champ ci-dessus pour continuer."
+
+#: check-language-paid-actions.php
+msgid "Choose a test payment method"
+msgstr "Choisissez un mode de paiement test"
+
+#: check-language-paid-actions.php
+msgid "Clicking a method simulates approval and adds the selected credits."
+msgstr "Cliquer sur une méthode simule l’approbation et ajoute les crédits sélectionnés."
+
+#: check-language-paid-actions.php
+msgid "Simulate secure payment"
+msgstr "Simuler un paiement sécurisé"
+
+#: check-language-paid-actions.php
+msgid "TEST MODE · {amount} {currency} will not be charged"
+msgstr "MODE TEST · {amount} {currency} ne seront pas facturés"
+
+#: check-language-paid-actions.php
+msgid "Added test credits"
+msgstr "Crédits de test ajoutés"
+
+#: check-language-paid-actions.php
+msgid "TEST PAYMENT APPROVED"
+msgstr "PAIEMENT TEST APPROUVÉ"
+
+#: check-language-paid-actions.php
+msgid "Your test credits are ready"
+msgstr "Vos crédits de test sont disponibles"
+
+#: check-language-paid-actions.php
+msgid "{count} credit was added after the simulated {provider} approval."
+msgstr "Le crédit {count} a été ajouté après l'approbation simulée de {provider}."
+
+#: check-language-paid-actions.php
+msgid "{count} credits were added after the simulated {provider} approval."
+msgstr "Des crédits {count} ont été ajoutés après l'approbation simulée de {provider}."
+
+#: check-language-paid-actions.php
+msgid "No real order or payment was created. The credits remain available after reloading this gallery."
+msgstr "Aucune commande ou paiement réel n'a été créé. Les crédits restent disponibles après rechargement de cette galerie."
+
+#: check-language-paid-actions.php
+msgid "Approving secure {provider} test payment…"
+msgstr "Approbation du paiement test sécurisé {provider}…"
+
+#: check-language-paid-actions.php
+msgid "The test payment could not be approved."
+msgstr "Le paiement test n’a pas pu être approuvé."
+
+#: check-language-paid-actions.php
+msgid "REAL SANDBOX CHECKOUT"
+msgstr "VRAIE CAISSE SANDBOX"
+
+#: check-language-paid-actions.php
+msgid "SECURE CHECKOUT"
+msgstr "PAIEMENT SÉCURISÉ"
+
+#: check-language-paid-actions.php
+msgid "Choose persistent test credits"
+msgstr "Choisissez des crédits de test persistants"
+
+#: check-language-paid-actions.php
+msgid "Choose your gallery credits"
+msgstr "Choisissez vos crédits de galerie"
+
+#: check-language-paid-actions.php
+msgid "Set the quantity directly in each checkout item. The total updates immediately."
+msgstr "Définissez la quantité directement dans chaque article de caisse. Le total est mis à jour immédiatement."
+
+#: check-language-paid-actions.php
+msgid "SANDBOX CHECKOUT"
+msgstr "CAISSE DU BAC À SABLE"
+
+#: check-language-paid-actions.php
+msgid "Sign in to test buying credits"
+msgstr "Connectez-vous pour tester l’achat de crédits"
+
+#: check-language-paid-actions.php
+msgid "Sign in to continue the sandbox checkout. You can test buying credits and participating in this gallery without a real payment."
+msgstr "Connectez-vous pour continuer la commande sandbox. Vous pouvez tester l'achat de crédits et la participation à cette galerie sans paiement réel."
+
+#: check-language-paid-actions.php
+msgid "Sign in to buy credits"
+msgstr "Connectez-vous pour acheter des crédits"
+
+#: check-language-paid-actions.php
+msgid "You need an account to buy credits and participate in this gallery. Continue with Google or receive a six-digit PIN by email."
+msgstr "Vous avez besoin d'un compte pour acheter des crédits et participer à cette galerie. Continuez avec Google ou recevez un code PIN à six chiffres par e-mail."
+
+#: check-language-paid-actions.php
+msgid "Email address"
+msgstr "Adresse e-mail"
+
+#: check-language-paid-actions.php
+msgid "Email me a PIN"
+msgstr "Envoyer un PIN"
+
+#: check-language-paid-actions.php
+msgid "Six-digit PIN"
+msgstr "Code PIN à six chiffres"
+
+#: check-language-paid-actions.php
+msgid "PIN digit {number}"
+msgstr "Chiffre du code {number}"
+
+#: check-language-paid-actions.php
+msgid "Send a new PIN"
+msgstr "Envoyer un nouveau code PIN"
+
+#: check-language-paid-actions.php
+msgid "Send a new PIN in {seconds}s"
+msgstr "Envoyer un nouveau code PIN dans {seconds}s"
+
+#: check-language-paid-actions.php
+msgid "PIN confirmed. Preparing your checkout…"
+msgstr "Code PIN confirmé. Préparer votre commande…"
+
+#: check-language-paid-actions.php
+msgid "Sign-in successful. Reloading the gallery…"
+msgstr "Connexion réussie. Rechargement de la galerie…"
+
+#: check-language-paid-actions.php
+msgid "The sign-in form could not be loaded."
+msgstr "Le formulaire de connexion n'a pas pu être chargé."
+
+#: check-language-paid-actions.php
+msgid "PIN CONFIRMED"
+msgstr "PIN CONFIRMÉ"
+
+#: check-language-paid-actions.php
+msgid "Sign-in successful"
+msgstr "Connexion réussie"
+
+#: check-language-paid-actions.php
+msgid "Continue to buy credits"
+msgstr "Poursuivre l’achat de crédits"
+
+#: check-language-paid-actions.php
+msgid "Please wait {seconds} {secondsLabel} before requesting another PIN."
+msgstr "Veuillez patienter {seconds} {secondsLabel} avant de demander un autre code PIN."
+
+#: check-language-paid-actions.php
+msgid "second"
+msgstr "seconde"
+
+#: check-language-paid-actions.php
+msgid "seconds"
+msgstr "secondes"
+
+#: check-language-paid-actions.php
+msgid "Too many PINs were requested. Please try again later."
+msgstr "Trop de codes PIN ont été demandés. Veuillez réessayer plus tard."
+
+#: check-language-paid-actions.php
+msgid "The PIN could not be sent."
+msgstr "Le code PIN n'a pas pu être envoyé."
+
+#: check-language-paid-actions.php
+msgid "Enter a valid email address."
+msgstr "Entrez une adresse e-mail valide."
+
+#: check-language-paid-actions.php
+msgid "The PIN is invalid or expired."
+msgstr "Le code PIN est invalide ou a expiré."
+
+#: check-language-paid-actions.php
+msgid "Too many attempts. Request a new PIN."
+msgstr "Trop de tentatives. Demandez un nouveau code PIN."
+
+#: check-language-paid-actions.php
+msgid "The PIN is incorrect."
+msgstr "Le code PIN est incorrect."
+
+#: check-language-paid-actions.php
+msgid "Enter all six PIN digits."
+msgstr "Saisissez les six chiffres du code PIN."
+
+#: check-language-paid-actions.php
+msgid "A new PIN could not be sent."
+msgstr "Un nouveau code PIN n'a pas pu être envoyé."
+
+#: check-language-paid-actions.php
+msgid "The PIN request is no longer available."
+msgstr "La demande de code PIN n'est plus disponible."
+
+#: check-language-paid-actions.php
+msgid "SANDBOX PAYMENT"
+msgstr "PAIEMENT SANDBOX"
+
+#: check-language-paid-actions.php
+msgid "SECURE PAYMENT"
+msgstr "PAIEMENT SÉCURISÉ"
+
+#: check-language-paid-actions.php
+msgid "Finalizing your sandbox credits"
+msgstr "Finalisation de vos crédits sandbox"
+
+#: check-language-paid-actions.php
+msgid "Finalizing your credits"
+msgstr "Finaliser vos crédits"
+
+#: check-language-paid-actions.php
+msgid "Your test payment was approved. We are adding your credits now. You will return to the gallery automatically."
+msgstr "Votre paiement test a été approuvé. Nous ajoutons vos crédits maintenant. Vous reviendrez automatiquement à la galerie."
+
+#: check-language-paid-actions.php
+msgid "Your payment was approved. We are adding your credits now. You will return to the gallery automatically."
+msgstr "Votre paiement a été approuvé. Nous ajoutons vos crédits maintenant. Vous reviendrez automatiquement à la galerie."
+
+#: check-language-paid-actions.php
+msgid "Your test payment was approved. We are securely adding your credits now. You will return to the gallery automatically."
+msgstr "Votre paiement test a été approuvé. Nous ajoutons vos crédits en toute sécurité maintenant. Vous reviendrez automatiquement à la galerie."
+
+#: check-language-paid-actions.php
+msgid "Your payment was approved. We are securely adding your credits now. You will return to the gallery automatically."
+msgstr "Votre paiement a été approuvé. Nous ajoutons vos crédits en toute sécurité maintenant. Vous reviendrez automatiquement à la galerie."
+
+#: check-language-paid-actions.php
+msgid "Do not start another payment while this payment is being finalized."
+msgstr "Ne commencez pas un autre paiement pendant que ce paiement est en cours de finalisation."
+
+#: check-language-paid-actions.php
+msgid "Try finalizing again"
+msgstr "Essayez à nouveau de finaliser"
+
+#: check-language-paid-actions.php
+msgid "Your credits are ready"
+msgstr "Vos crédits sont prêts"
+
+#: check-language-paid-actions.php
+msgid "Your credits were added successfully. Returning to the gallery now."
+msgstr "Vos crédits ont été ajoutés avec succès. Revenons maintenant à la galerie."
+
+#: check-language-paid-actions.php
+msgid "PAYMENT NEEDS ATTENTION"
+msgstr "LE PAIEMENT DOIT ATTENTION"
+
+#: check-language-paid-actions.php
+msgid "We could not finish adding your credits"
+msgstr "Nous n'avons pas pu terminer l'ajout de vos crédits"
+
+#: check-language-paid-actions.php
+msgid "The payment could not be finalized automatically. You can safely try finalizing this same payment again."
+msgstr "Le paiement n'a pas pu être finalisé automatiquement. Vous pouvez réessayer en toute sécurité de finaliser ce même paiement."
+
+#: check-language-paid-actions.php
+msgid "Your credit selection changed. Please review it and try again."
+msgstr "La sélection de crédits a changé. Vérifiez-la et réessayez."
+
+#: check-language-paid-actions.php
+msgid "The requested gallery is not available."
+msgstr "La galerie demandée n'est pas disponible."
+
+#: check-language-paid-actions.php
+msgid "Paid actions are not available for this gallery."
+msgstr "Les actions payantes ne sont pas disponibles pour cette galerie."
+
+#: check-language-paid-actions.php
+msgid "The private payment preview is invalid or expired."
+msgstr "L'aperçu du paiement privé est invalide ou a expiré."
+
+#: check-language-paid-actions.php
+msgid "This private preview session has ended. Open \"Try it now\" again from the gallery settings."
+msgstr "Cette session de prévisualisation privée est terminée. Ouvrez à nouveau « Essayez-le maintenant » dans les paramètres de la galerie."
+
+#: check-language-paid-actions.php
+msgid "Activate pay for {type} before adding its test credits."
+msgstr "Activez le paiement pour {type} avant d'ajouter ses crédits de test."
+
+#: check-language-paid-actions.php
+msgid "Test credits are being updated. Please try again."
+msgstr "Les crédits de test sont en cours de mise à jour. Veuillez réessayer."
+
+#: check-language-paid-actions.php
+msgid "Demo credits could not be added."
+msgstr "Les crédits de démonstration n'ont pas pu être ajoutés."
+
+#: check-language-paid-actions.php
+msgid "Preview actions are being reset. Please try again."
+msgstr "Les actions d'aperçu sont en cours de réinitialisation. Veuillez réessayer."
+
+#: check-language-paid-actions.php
+msgid "Demo credits could not be reserved."
+msgstr "Les crédits de démonstration n'ont pas pu être réservés."
+
+#: check-language-paid-actions.php
+msgid "Not enough demo credits are available."
+msgstr "Il n'y a pas assez de crédits de démonstration disponibles."
+
+#: check-language-paid-actions.php
+msgid "Purchasing credits for this action is temporarily unavailable."
+msgstr "L'achat de crédits pour cette action est temporairement indisponible."
+
+#: check-language-paid-actions.php
+msgid "Sign in to purchase and use gallery credits."
+msgstr "Connectez-vous pour acheter et utiliser les crédits de la galerie."
+
+#: check-language-paid-actions.php
+msgid "Invalid credit reservation."
+msgstr "Réservation de crédits non valide."
+
+#: check-language-paid-actions.php
+msgid "This paid action is temporarily unavailable."
+msgstr "Cette action payante est temporairement indisponible."
+
+#: check-language-paid-actions.php
+msgid "This action does not require paid credits."
+msgstr "Cette action ne nécessite pas de crédits payants."
+
+#: check-language-paid-actions.php
+msgid "Credits are being updated. Please try again."
+msgstr "Les crédits sont en cours de mise à jour. Veuillez réessayer."
+
+#: check-language-paid-actions.php
+msgid "Credits could not be reserved."
+msgstr "Les crédits n'ont pas pu être réservés."
+
+#: check-language-paid-actions.php
+msgid "Not enough credits are available."
+msgstr "Il n'y a pas assez de crédits disponibles."
+
+#: check-language-paid-actions.php
+msgid "This sandbox test link is invalid, expired or already belongs to another test user."
+msgstr "Ce lien de test sandbox n'est pas valide, a expiré ou appartient déjà à un autre utilisateur test."
+
+#: check-language-paid-actions.php
+msgid "A preview action is still running. Please try the reset again."
+msgstr "Une action de prévisualisation est toujours en cours. Veuillez réessayer la réinitialisation."
+
+#: check-language-paid-actions.php
+msgid "Some preview uploads could not be removed. Run the reset again."
+msgstr "Certains téléchargements d'aperçu n'ont pas pu être supprimés. Exécutez à nouveau la réinitialisation."
+
+#: check-language-paid-actions.php
+msgid "Preview actions were reset and their demo credits were restored."
+msgstr "Les actions d'aperçu ont été réinitialisées et leurs crédits de démonstration ont été restaurés."
+
+#: check-language-paid-actions.php
+msgid "A six-digit PIN was sent to your email address."
+msgstr "Un code PIN à six chiffres a été envoyé à votre adresse e-mail."
+
+#: check-language-paid-actions.php
+msgid "A new six-digit PIN was sent to your email address."
+msgstr "Un nouveau code PIN à six chiffres a été envoyé à votre adresse e-mail."
+
+#: check-language-paid-actions.php
+msgid "The private payment preview is busy. Please try again."
+msgstr "L'aperçu du paiement privé est occupé. Veuillez réessayer."
+
+#: check-language-paid-actions.php
+msgid "The test actions could not be reset."
+msgstr "Les actions de test n'ont pas pu être réinitialisées."
+
+#: check-language-paid-actions.php
+msgid "The saved test actions were reset."
+msgstr "Les actions de test enregistrées ont été réinitialisées."
+
+#: check-language-paid-actions.php
+msgid "The test credits could not be added."
+msgstr "Les crédits de test n'ont pas pu être ajoutés."
+
+#: check-language-paid-actions.php
+msgid "Resetting…"
+msgstr "Réinitialisation…"
+
+#: check-language-paid-actions.php
+msgid "The code could not be sent."
+msgstr "Le code n'a pas pu être envoyé."
+
+#: check-language-paid-actions.php
+msgid "The code is invalid."
+msgstr "Le code n'est pas valide."
+
+#: check-language-paid-actions.php
+msgid "Gallery {number}"
+msgstr "Galerie {number}"
+
+#: check-language-paid-actions.php
+msgid "Purchase a credit to continue."
+msgstr "Achetez un crédit pour continuer."
+
+#: check-language-general.php
+msgid "Send new PIN in {seconds}s"
+msgstr "Envoyer un nouveau code PIN dans {seconds}s"
+
+#: check-language-general.php
+msgid "The account confirmation could not be prepared."
+msgstr "La confirmation du compte n'a pas pu être préparée."
+
+#: check-language-general.php
+msgid "No registered user was found for this email address."
+msgstr "Aucun utilisateur enregistré n'a été trouvé pour cette adresse e-mail."
+
+#: check-language-general.php
+msgid "The user account could not be found."
+msgstr "Le compte utilisateur est introuvable."
+
+#: check-language-general.php
+msgid "PIN data was not found. Please contact the administrator."
+msgstr "Les données PIN n'ont pas été trouvées. Veuillez contacter l'administrateur."
+
+#: check-language-general.php
+msgid "The user account could not be created. Please contact the administrator."
+msgstr "Le compte utilisateur n'a pas pu être créé. Veuillez contacter l'administrateur."
+
+#: check-language-general.php
+msgid "The user could not be signed in after the PIN check. Please contact the administrator."
+msgstr "L'utilisateur n'a pas pu être connecté après la vérification du code PIN. Veuillez contacter l'administrateur."
+
+#: check-language-general.php
+msgid "The PIN could not be confirmed. Please contact the administrator."
+msgstr "Le code PIN n'a pas pu être confirmé. Veuillez contacter l'administrateur."
+
+#: check-language-paid-actions.php
+msgid "Checkout could not be started."
+msgstr "Le paiement n'a pas pu être démarré."
+
+#: check-language-paid-actions.php
+msgid "Processing…"
+msgstr "Traitement en cours…"
+
+#: check-language-paid-actions.php
+msgid "Processing payment"
+msgstr "Traitement du paiement"
+
+#: check-language-paid-actions.php
+msgid "You may be redirected to complete the payment. You will return automatically."
+msgstr "Vous pouvez être redirigé pour effectuer le paiement. Vous reviendrez automatiquement."
+
+#: check-language-paid-actions.php
+msgid "This browser could not access the saved checkout data. Return to the gallery and contact the site owner before making another payment."
+msgstr "Ce navigateur n'a pas pu accéder aux données de paiement enregistrées. Retournez à la galerie et contactez le propriétaire du site avant d'effectuer un autre paiement."
+
+#: check-language-paid-actions.php
+msgid "The saved checkout data could not be opened. You can safely try finalizing this same payment again."
+msgstr "Les données de paiement enregistrées n'ont pas pu être ouvertes. Vous pouvez réessayer de finaliser ce même paiement en toute sécurité."
+
+#: check-language-paid-actions.php
+msgid "Another browser tab is currently using the saved checkout data. Close the other tab and try finalizing this same payment again."
+msgstr "Un autre onglet du navigateur utilise actuellement les données de paiement enregistrées. Fermez l'autre onglet et réessayez de finaliser ce même paiement."
+
+#: check-language-paid-actions.php
+msgid "The saved checkout data could not be read. You can safely try finalizing this same payment again."
+msgstr "Les données de paiement enregistrées n'ont pas pu être lues. Vous pouvez réessayer de finaliser ce même paiement en toute sécurité."
+
+#: check-language-paid-actions.php
+msgid "Your test payment was approved. We are creating the gallery order and adding your credits now. You will return to the gallery automatically."
+msgstr "Votre paiement test a été approuvé. Nous créons la commande de la galerie et ajoutons vos crédits maintenant. Vous retournerez automatiquement à la galerie."
+
+#: check-language-paid-actions.php
+msgid "Your payment was approved. We are creating the gallery order and adding your credits now. You will return to the gallery automatically."
+msgstr "Votre paiement a été approuvé. Nous créons la commande de la galerie et ajoutons vos crédits maintenant. Vous retournerez automatiquement à la galerie."
+
+#: check-language-paid-actions.php
+msgid "The saved checkout data was not found in this browser. Return to the gallery and contact the site owner before making another payment."
+msgstr "Les données de paiement enregistrées n'ont pas été trouvées dans ce navigateur. Retournez à la galerie et contactez le propriétaire du site avant d'effectuer un autre paiement."
+
+#: check-language-paid-actions.php
+msgid "Payment processing could not be started. You can safely try finalizing this same payment again."
+msgstr "Le traitement des paiements n'a pas pu être démarré. Vous pouvez réessayer de finaliser ce même paiement en toute sécurité."
+
+#: check-language-paid-actions.php
+msgid "uploads"
+msgstr "téléversements"
+
+#: check-language-paid-actions.php
+msgid "votes"
+msgstr "votes"
+
+#: check-language-paid-actions.php
+msgid "comments"
+msgstr "commentaires"
+
+#: check-language-paid-actions.php
+msgid "Your upload credits"
+msgstr "Vos crédits d’envoi"
+
+#: check-language-paid-actions.php
+msgid "One credit is used for each submitted entry."
+msgstr "Un crédit est utilisé pour chaque participation envoyée."
+
+#: check-language-paid-actions.php
+msgid "UPLOAD CREDITS"
+msgstr "CRÉDITS D’ENVOI"
+
+#: check-language-paid-actions.php
+msgid "UPLOAD ACCESS"
+msgstr "ACCÈS À L’ENVOI"
+
+#: check-language-paid-actions.php
+msgid "Checking upload credits"
+msgstr "Vérification des crédits d’envoi"
+
+#: check-language-paid-actions.php
+msgid "Please wait while your upload credits are checked."
+msgstr "Veuillez patienter pendant la vérification de vos crédits d’envoi."
+
+#: check-language-paid-actions.php
+msgid "Sign in to upload"
+msgstr "Se connecter pour envoyer"
+
+#: check-language-paid-actions.php
+msgid "Sign in to buy upload credits and submit an entry to this gallery."
+msgstr "Connectez-vous pour acheter des crédits d’envoi et soumettre une participation à cette galerie."
+
+#: check-language-paid-actions.php
+msgid "Sign in to continue"
+msgstr "Se connecter pour continuer"
+
+#: check-language-paid-actions.php
+msgid "Upload credits temporarily unavailable"
+msgstr "Crédits d’envoi temporairement indisponibles"
+
+#: check-language-paid-actions.php
+msgid "Your upload credits could not be checked. Please try again."
+msgstr "Vos crédits d’envoi n’ont pas pu être vérifiés. Veuillez réessayer."
+
+#: check-language-paid-actions.php
+msgid "More upload credits required"
+msgstr "Crédits d’envoi supplémentaires requis"
+
+#: check-language-paid-actions.php
+msgid "This selection needs {required} upload credits. You currently have {available}."
+msgstr "Cette sélection nécessite {required} crédits d’envoi. Vous en avez actuellement {available}."
+
+#: check-language-ecommerce.php
+msgid "The payment was not completed. Please try again."
+msgstr "Le paiement n’a pas été effectué. Veuillez réessayer."
+
+#: check-language-ecommerce.php
+msgid "Payment canceled. You can try again."
+msgstr "Paiement annulé. Vous pouvez réessayer."

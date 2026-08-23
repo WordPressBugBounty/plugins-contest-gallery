@@ -2073,6 +2073,10 @@ if(!function_exists('cg_entry_watermark_frontend_upload_fail')){
 			$message = 'Watermark could not be created. Upload stopped.';
 		}
 
+		if(!empty($GLOBALS['cgPaidActionUploadReservation']) && function_exists('cg_paid_actions_mark_reservation_progress')){
+			cg_paid_actions_mark_reservation_progress($GLOBALS['cgPaidActionUploadReservation'],0,array());
+		}
+
 		cg_entry_watermark_frontend_upload_cleanup($GalleryID, $entryIds, $wpUploadIds);
 
 		echo '<script data-cg-processing="true">';

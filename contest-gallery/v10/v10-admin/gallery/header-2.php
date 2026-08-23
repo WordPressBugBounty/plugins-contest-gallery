@@ -323,6 +323,8 @@ cg_total_images_shown_in_frontend_zero();
 echo "</div>";
 echo "</div>";
 
+cg_paid_actions_gallery_card($GalleryID,$ecommerceOptions);
+
 if(!$cgProFalse){
 	cg_move_to_another_gallery_container($GalleryID);
 }
@@ -359,7 +361,8 @@ cg_sell_ecommerce_download_can_not_be_removed();
 
 cg_entry_watermark_container($GalleryID);
 
-cg_sell_ecommerce_container($GalleryID, $ecommerceOptions,$cgProFalse);
+$cgSellGalleryVersion = !empty($optionsSQL->Version) ? $optionsSQL->Version : $optionsSQL->VersionDecimal;
+cg_sell_ecommerce_container($GalleryID, $ecommerceOptions,$cgProFalse,$cgSellGalleryVersion);
 
 cg_download_ecommerce_form($GalleryID, $ecommerceOptions);
 

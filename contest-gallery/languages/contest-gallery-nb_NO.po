@@ -1227,3 +1227,895 @@ msgstr "vurdering"
 #: check-language.php
 msgid "ratings"
 msgstr "vurderinger"
+
+#: check-language-paid-actions.php
+msgid "Uploads"
+msgstr "Opplastinger"
+
+#: check-language-paid-actions.php
+msgid "Votes"
+msgstr "Stemmer"
+
+#: check-language-paid-actions.php
+msgid "Upload credits"
+msgstr "Opplastingskreditter"
+
+#: check-language-paid-actions.php
+msgid "Voting credits"
+msgstr "Stemmekreditter"
+
+#: check-language-paid-actions.php
+msgid "Comment credits"
+msgstr "Kommentarkreditter"
+
+#: check-language-paid-actions.php
+msgid "upload credit"
+msgstr "opplastingskreditt"
+
+#: check-language-paid-actions.php
+msgid "voting credit"
+msgstr "stemmekreditt"
+
+#: check-language-paid-actions.php
+msgid "comment credit"
+msgstr "kommentarkreditt"
+
+#: check-language-paid-actions.php
+msgid "Credits for {type} in gallery {number}"
+msgstr "Kreditter for {type} i galleri {number}"
+
+#: check-language-paid-actions.php
+msgid "credit"
+msgstr "kreditt"
+
+#: check-language-paid-actions.php
+msgid "credits"
+msgstr "kreditter"
+
+#: check-language-paid-actions.php
+msgid "each"
+msgstr "hver"
+
+#: check-language-paid-actions.php
+msgid "Loading"
+msgstr "Laster"
+
+#: check-language-paid-actions.php
+msgid "or"
+msgstr "eller"
+
+#: check-language-paid-actions.php
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: check-language-paid-actions.php
+msgid "Not now"
+msgstr "Ikke nå"
+
+#: check-language-paid-actions.php
+msgid "Try again"
+msgstr "Prøv igjen"
+
+#: check-language-paid-actions.php
+msgid "Continue to gallery"
+msgstr "Fortsett til galleriet"
+
+#: check-language-paid-actions.php
+msgid "Return to gallery"
+msgstr "Gå tilbake til galleriet"
+
+#: check-language-paid-actions.php
+msgid "Private payment preview"
+msgstr "Forhåndsvisning av privat betaling"
+
+#: check-language-paid-actions.php
+msgid "Sandbox checkout test"
+msgstr "Sandbox utsjekkingstest"
+
+#: check-language-paid-actions.php
+msgid "Your gallery credits"
+msgstr "Dine gallerikreditter"
+
+#: check-language-paid-actions.php
+msgid "Real test actions are saved and visible until reset"
+msgstr "Ekte testhandlinger lagres og er synlige til de tilbakestilles"
+
+#: check-language-paid-actions.php
+msgid "Real sandbox orders grant persistent gallery credits"
+msgstr "Ekte sandkasseordrer gir vedvarende gallerikreditter"
+
+#: check-language-paid-actions.php
+msgid "Buy only what you want to use"
+msgstr "Kjøp kun det du vil bruke"
+
+#: check-language-paid-actions.php
+msgid "Add test credits"
+msgstr "Legg til testkreditter"
+
+#: check-language-paid-actions.php
+msgid "Sandbox checkout"
+msgstr "Sandkassekasse"
+
+#: check-language-paid-actions.php
+msgid "Get credits"
+msgstr "Få kreditter"
+
+#: check-language-paid-actions.php
+msgid "Buy credits in sandbox"
+msgstr "Kjøp kreditter i sandkasse"
+
+#: check-language-paid-actions.php
+msgid "Buy gallery credits"
+msgstr "Kjøp gallerikreditter"
+
+#: check-language-paid-actions.php
+msgid "Reset test actions"
+msgstr "Tilbakestill testhandlinger"
+
+#: check-language-paid-actions.php
+msgid "{count} used here"
+msgstr "{count} brukt her"
+
+#: check-language-paid-actions.php
+msgid "Get credits: {credits}"
+msgstr "Få kreditter: {credits}"
+
+#: check-language-paid-actions.php
+msgid "Your credits are ready. You can continue in the gallery."
+msgstr "Kredittene dine er klare. Du kan fortsette i galleriet."
+
+#: check-language-paid-actions.php
+msgid "Sandbox test link unavailable"
+msgstr "Sandbox-testkoblingen er utilgjengelig"
+
+#: check-language-paid-actions.php
+msgid "This link has expired, is invalid, or belongs to another test user. Create a new sandbox test link in the gallery settings."
+msgstr "Denne koblingen er utløpt, er ugyldig eller tilhører en annen testbruker. Opprett en ny testkobling for sandkasse i galleriinnstillingene."
+
+#: check-language-paid-actions.php
+msgid "Credits temporarily unavailable"
+msgstr "Kreditt er midlertidig utilgjengelig"
+
+#: check-language-paid-actions.php
+msgid "Please try again in a moment"
+msgstr "Prøv igjen om et øyeblikk"
+
+#: check-language-paid-actions.php
+msgid "Purchasing credits is temporarily unavailable. Please contact the gallery administrator."
+msgstr "Å kjøpe kreditter er midlertidig utilgjengelig. Ta kontakt med galleriadministratoren."
+
+#: check-language-paid-actions.php
+msgid "CREDIT REQUIRED"
+msgstr "KREDITT KREVES"
+
+#: check-language-paid-actions.php
+msgid "TEST CREDITS USED"
+msgstr "TESTKREDITTER BRUKT"
+
+#: check-language-paid-actions.php
+msgid "Upload credit required"
+msgstr "Opplastingskreditt kreves"
+
+#: check-language-paid-actions.php
+msgid "Voting credit required"
+msgstr "Stemmekreditt kreves"
+
+#: check-language-paid-actions.php
+msgid "Comment credit required"
+msgstr "Kommentarkreditt kreves"
+
+#: check-language-paid-actions.php
+msgid "Buy upload credits to upload an entry to this gallery."
+msgstr "Kjøp opplastingskreditter for å laste opp en oppføring til dette galleriet."
+
+#: check-language-paid-actions.php
+msgid "Buy voting credits to vote in this gallery."
+msgstr "Kjøp stemmepoeng for å stemme i dette galleriet."
+
+#: check-language-paid-actions.php
+msgid "Buy comment credits to comment in this gallery."
+msgstr "Kjøp kommentarkreditter for å kommentere i dette galleriet."
+
+#: check-language-paid-actions.php
+msgid "All test upload credits used"
+msgstr "Alle testopplastingskreditter er brukt"
+
+#: check-language-paid-actions.php
+msgid "All test voting credits used"
+msgstr "Alle teststemmepoeng brukt"
+
+#: check-language-paid-actions.php
+msgid "All test comment credits used"
+msgstr "Alle testkommentarer er brukt"
+
+#: check-language-paid-actions.php
+msgid "You have used all test upload credits for this gallery. Add more to keep testing."
+msgstr "Du har brukt alle testopplastingskreditter for dette galleriet. Legg til mer for å fortsette å teste."
+
+#: check-language-paid-actions.php
+msgid "You have used all test voting credits for this gallery. Add more to keep testing."
+msgstr "Du har brukt alle teststemmekreditter for dette galleriet. Legg til mer for å fortsette å teste."
+
+#: check-language-paid-actions.php
+msgid "You have used all test comment credits for this gallery. Add more to keep testing."
+msgstr "Du har brukt alle testkommentarer for dette galleriet. Legg til mer for å fortsette å teste."
+
+#: check-language-paid-actions.php
+msgid "Add more test credits"
+msgstr "Legg til flere testkreditter"
+
+#: check-language-paid-actions.php
+msgid "Buy credits"
+msgstr "Kjøp kreditter"
+
+#: check-language-paid-actions.php
+msgid "COMMENT CREDITS"
+msgstr "KOMMENTAR KREDITTER"
+
+#: check-language-paid-actions.php
+msgid "Checking comment credits"
+msgstr "Sjekker kommentarkreditter"
+
+#: check-language-paid-actions.php
+msgid "Please wait while your comment credits are checked."
+msgstr "Vent mens kommentarkredittene dine kontrolleres."
+
+#: check-language-paid-actions.php
+msgid "Comment credits temporarily unavailable"
+msgstr "Kommentarkreditter er midlertidig utilgjengelige"
+
+#: check-language-paid-actions.php
+msgid "Your comment credits could not be checked. Please try again."
+msgstr "Kommentarkredittene dine kunne ikke kontrolleres. Prøv igjen."
+
+#: check-language-paid-actions.php
+msgid "YOUR CURRENT TEST CREDITS"
+msgstr "DINE GJELDENDE TESTKREDITTER"
+
+#: check-language-paid-actions.php
+msgid "YOUR CURRENT CREDITS"
+msgstr "DINE AKTUELLE KREDITTER"
+
+#: check-language-paid-actions.php
+msgid "{count} {type} available"
+msgstr "{count} {type} tilgjengelig"
+
+#: check-language-paid-actions.php
+msgid "{count} {type} available, {selected} selected for checkout"
+msgstr "{count} {type} tilgjengelig, {selected} valgt for utsjekking"
+
+#: check-language-paid-actions.php
+msgid "{count} {type} available, {selected} selected for test checkout"
+msgstr "{count} {type} tilgjengelig, {selected} valgt for testutsjekking"
+
+#: check-language-paid-actions.php
+msgid "PRIVATE PAYMENT PREVIEW"
+msgstr "FORHÅNDSVISNING AV PRIVAT BETALING"
+
+#: check-language-paid-actions.php
+msgid "Reset saved test actions?"
+msgstr "Vil du tilbakestille lagrede testhandlinger?"
+
+#: check-language-paid-actions.php
+msgid "This removes every paid preview action in this gallery, including tests from other preview tabs and administrators."
+msgstr "Dette fjerner alle betalte forhåndsvisningshandlinger i dette galleriet, inkludert tester fra andre forhåndsvisningsfaner og administratorer."
+
+#: check-language-paid-actions.php
+msgid "TEST ACTIONS IN THIS GALLERY"
+msgstr "TESTHANDLINGER I DETTE GALLERIET"
+
+#: check-language-paid-actions.php
+msgid "Test upload"
+msgstr "Testopplasting"
+
+#: check-language-paid-actions.php
+msgid "Test uploads"
+msgstr "Testopplastinger"
+
+#: check-language-paid-actions.php
+msgid "Test vote"
+msgstr "Teststemme"
+
+#: check-language-paid-actions.php
+msgid "Test votes"
+msgstr "Teststemmer"
+
+#: check-language-paid-actions.php
+msgid "Test comment"
+msgstr "Testkommentar"
+
+#: check-language-paid-actions.php
+msgid "Test comments"
+msgstr "Testkommentarer"
+
+#: check-language-paid-actions.php
+msgid "saved test action will be removed"
+msgstr "lagret testhandling vil bli fjernet"
+
+#: check-language-paid-actions.php
+msgid "saved test actions will be removed"
+msgstr "lagrede testhandlinger vil bli fjernet"
+
+#: check-language-paid-actions.php
+msgid "test credit will be restored to its original credit type"
+msgstr "testkreditt vil bli gjenopprettet til sin opprinnelige kreditttype"
+
+#: check-language-paid-actions.php
+msgid "test credits will be restored to their original credit types"
+msgstr "testkreditter vil bli gjenopprettet til sine opprinnelige kreditttyper"
+
+#: check-language-paid-actions.php
+msgid "Preview uploads and their files are deleted completely. Everything attached to those entries is removed as well. Test credits used in this gallery are restored."
+msgstr "Forhåndsvis opplastinger og filene deres slettes fullstendig. Alt som er knyttet til disse oppføringene fjernes også. Testkreditter brukt i dette galleriet blir gjenopprettet."
+
+#: check-language-paid-actions.php
+msgid "SECURE TEST CHECKOUT"
+msgstr "SIKKER TESTKASSE"
+
+#: check-language-paid-actions.php
+msgid "Choose your free test credits"
+msgstr "Velg dine gratis testkreditter"
+
+#: check-language-paid-actions.php
+msgid "Set the quantity directly in each checkout item. No money or payment details are used."
+msgstr "Still inn antallet direkte i hver kassevare. Ingen penger eller betalingsopplysninger brukes."
+
+#: check-language-paid-actions.php
+msgid "PRIVATE PREVIEW"
+msgstr "PRIVAT FORHÅNDSVISNING"
+
+#: check-language-paid-actions.php
+msgid "Visible only to you"
+msgstr "Bare synlig for deg"
+
+#: check-language-paid-actions.php
+msgid "No real charge"
+msgstr "Ingen reell kostnad"
+
+#: check-language-paid-actions.php
+msgid "Payment data is never requested"
+msgstr "Betalingsdata blir aldri etterspurt"
+
+#: check-language-paid-actions.php
+msgid "Persistent credits"
+msgstr "Vedvarende kreditter"
+
+#: check-language-paid-actions.php
+msgid "Available after reload"
+msgstr "Tilgjengelig etter omlasting"
+
+#: check-language-paid-actions.php
+msgid "Choose a quantity above to continue."
+msgstr "Velg et antall i feltet ovenfor for å fortsette."
+
+#: check-language-paid-actions.php
+msgid "Choose a test payment method"
+msgstr "Velg en testbetalingsmetode"
+
+#: check-language-paid-actions.php
+msgid "Clicking a method simulates approval and adds the selected credits."
+msgstr "Klikk på en metode simulerer godkjenning og legger til de valgte kredittene."
+
+#: check-language-paid-actions.php
+msgid "Simulate secure payment"
+msgstr "Simuler sikker betaling"
+
+#: check-language-paid-actions.php
+msgid "TEST MODE · {amount} {currency} will not be charged"
+msgstr "TESTMODUS · {amount} {currency} vil ikke bli belastet"
+
+#: check-language-paid-actions.php
+msgid "Added test credits"
+msgstr "Lagt til testkreditter"
+
+#: check-language-paid-actions.php
+msgid "TEST PAYMENT APPROVED"
+msgstr "TESTBETALING GODKJENT"
+
+#: check-language-paid-actions.php
+msgid "Your test credits are ready"
+msgstr "Testkredittene dine er tilgjengelige"
+
+#: check-language-paid-actions.php
+msgid "{count} credit was added after the simulated {provider} approval."
+msgstr "{count} kreditt ble lagt til etter den simulerte {provider}-godkjenningen."
+
+#: check-language-paid-actions.php
+msgid "{count} credits were added after the simulated {provider} approval."
+msgstr "{count} kreditter ble lagt til etter den simulerte {provider}-godkjenningen."
+
+#: check-language-paid-actions.php
+msgid "No real order or payment was created. The credits remain available after reloading this gallery."
+msgstr "Ingen reell ordre eller betaling ble opprettet. Kredittene forblir tilgjengelige etter å ha lastet inn dette galleriet på nytt."
+
+#: check-language-paid-actions.php
+msgid "Approving secure {provider} test payment…"
+msgstr "Godkjenner sikker {provider} testbetaling …"
+
+#: check-language-paid-actions.php
+msgid "The test payment could not be approved."
+msgstr "Testbetalingen kunne ikke godkjennes."
+
+#: check-language-paid-actions.php
+msgid "REAL SANDBOX CHECKOUT"
+msgstr "EKTE SANDKASSE KASSA"
+
+#: check-language-paid-actions.php
+msgid "SECURE CHECKOUT"
+msgstr "SIKKER KASSE"
+
+#: check-language-paid-actions.php
+msgid "Choose persistent test credits"
+msgstr "Velg vedvarende testkreditter"
+
+#: check-language-paid-actions.php
+msgid "Choose your gallery credits"
+msgstr "Velg gallerikreditter"
+
+#: check-language-paid-actions.php
+msgid "Set the quantity directly in each checkout item. The total updates immediately."
+msgstr "Still inn antallet direkte i hver kassevare. Totalen oppdateres umiddelbart."
+
+#: check-language-paid-actions.php
+msgid "SANDBOX CHECKOUT"
+msgstr "SANDKASSE KASSA"
+
+#: check-language-paid-actions.php
+msgid "Sign in to test buying credits"
+msgstr "Logg inn for å teste kjøp av kreditter"
+
+#: check-language-paid-actions.php
+msgid "Sign in to continue the sandbox checkout. You can test buying credits and participating in this gallery without a real payment."
+msgstr "Logg på for å fortsette utsjekkingen av sandkassen. Du kan teste å kjøpe kreditter og delta i dette galleriet uten en reell betaling."
+
+#: check-language-paid-actions.php
+msgid "Sign in to buy credits"
+msgstr "Logg på for å kjøpe kreditter"
+
+#: check-language-paid-actions.php
+msgid "You need an account to buy credits and participate in this gallery. Continue with Google or receive a six-digit PIN by email."
+msgstr "Du trenger en konto for å kjøpe kreditter og delta i dette galleriet. Fortsett med Google eller motta en sekssifret PIN-kode på e-post."
+
+#: check-language-paid-actions.php
+msgid "Email address"
+msgstr "E-postadresse"
+
+#: check-language-paid-actions.php
+msgid "Email me a PIN"
+msgstr "Send PIN"
+
+#: check-language-paid-actions.php
+msgid "Six-digit PIN"
+msgstr "Sekssifret PIN-kode"
+
+#: check-language-paid-actions.php
+msgid "PIN digit {number}"
+msgstr "PIN-kode {number}"
+
+#: check-language-paid-actions.php
+msgid "Send a new PIN"
+msgstr "Send en ny PIN-kode"
+
+#: check-language-paid-actions.php
+msgid "Send a new PIN in {seconds}s"
+msgstr "Send en ny PIN-kode i {seconds}s"
+
+#: check-language-paid-actions.php
+msgid "PIN confirmed. Preparing your checkout…"
+msgstr "PIN-kode bekreftet. Forbereder kassen …"
+
+#: check-language-paid-actions.php
+msgid "Sign-in successful. Reloading the gallery…"
+msgstr "Pålogging vellykket. Laster inn galleriet på nytt …"
+
+#: check-language-paid-actions.php
+msgid "The sign-in form could not be loaded."
+msgstr "Påloggingsskjemaet kunne ikke lastes inn."
+
+#: check-language-paid-actions.php
+msgid "PIN CONFIRMED"
+msgstr "PIN-koden BEKREFTET"
+
+#: check-language-paid-actions.php
+msgid "Sign-in successful"
+msgstr "Pålogging vellykket"
+
+#: check-language-paid-actions.php
+msgid "Continue to buy credits"
+msgstr "Fortsett til kjøp av kreditter"
+
+#: check-language-paid-actions.php
+msgid "Please wait {seconds} {secondsLabel} before requesting another PIN."
+msgstr "Vent {seconds} {secondsLabel} før du ber om en ny PIN-kode."
+
+#: check-language-paid-actions.php
+msgid "second"
+msgstr "sekund"
+
+#: check-language-paid-actions.php
+msgid "seconds"
+msgstr "sekunder"
+
+#: check-language-paid-actions.php
+msgid "Too many PINs were requested. Please try again later."
+msgstr "Det ble bedt om for mange PIN-koder. Prøv igjen senere."
+
+#: check-language-paid-actions.php
+msgid "The PIN could not be sent."
+msgstr "PIN-koden kunne ikke sendes."
+
+#: check-language-paid-actions.php
+msgid "Enter a valid email address."
+msgstr "Skriv inn en gyldig e-postadresse."
+
+#: check-language-paid-actions.php
+msgid "The PIN is invalid or expired."
+msgstr "PIN-koden er ugyldig eller utløpt."
+
+#: check-language-paid-actions.php
+msgid "Too many attempts. Request a new PIN."
+msgstr "For mange forsøk. Be om en ny PIN-kode."
+
+#: check-language-paid-actions.php
+msgid "The PIN is incorrect."
+msgstr "PIN-koden er feil."
+
+#: check-language-paid-actions.php
+msgid "Enter all six PIN digits."
+msgstr "Skriv inn alle seks PIN-sifrene."
+
+#: check-language-paid-actions.php
+msgid "A new PIN could not be sent."
+msgstr "En ny PIN-kode kunne ikke sendes."
+
+#: check-language-paid-actions.php
+msgid "The PIN request is no longer available."
+msgstr "PIN-forespørselen er ikke lenger tilgjengelig."
+
+#: check-language-paid-actions.php
+msgid "SANDBOX PAYMENT"
+msgstr "SANDKASSEBETALING"
+
+#: check-language-paid-actions.php
+msgid "SECURE PAYMENT"
+msgstr "SIKKER BETALING"
+
+#: check-language-paid-actions.php
+msgid "Finalizing your sandbox credits"
+msgstr "Fullføre sandkassekredittene dine"
+
+#: check-language-paid-actions.php
+msgid "Finalizing your credits"
+msgstr "Fullfør kredittene dine"
+
+#: check-language-paid-actions.php
+msgid "Your test payment was approved. We are adding your credits now. You will return to the gallery automatically."
+msgstr "Testbetalingen din ble godkjent. Vi legger til kredittene dine nå. Du kommer automatisk tilbake til galleriet."
+
+#: check-language-paid-actions.php
+msgid "Your payment was approved. We are adding your credits now. You will return to the gallery automatically."
+msgstr "Betalingen din ble godkjent. Vi legger til kredittene dine nå. Du kommer automatisk tilbake til galleriet."
+
+#: check-language-paid-actions.php
+msgid "Your test payment was approved. We are securely adding your credits now. You will return to the gallery automatically."
+msgstr "Testbetalingen din ble godkjent. Vi legger sikkert til kredittene dine nå. Du kommer automatisk tilbake til galleriet."
+
+#: check-language-paid-actions.php
+msgid "Your payment was approved. We are securely adding your credits now. You will return to the gallery automatically."
+msgstr "Betalingen din ble godkjent. Vi legger sikkert til kredittene dine nå. Du kommer automatisk tilbake til galleriet."
+
+#: check-language-paid-actions.php
+msgid "Do not start another payment while this payment is being finalized."
+msgstr "Ikke start en ny betaling mens denne betalingen fullføres."
+
+#: check-language-paid-actions.php
+msgid "Try finalizing again"
+msgstr "Prøv å fullføre på nytt"
+
+#: check-language-paid-actions.php
+msgid "Your credits are ready"
+msgstr "Kredittene dine er klare"
+
+#: check-language-paid-actions.php
+msgid "Your credits were added successfully. Returning to the gallery now."
+msgstr "Kredittene dine ble lagt til. Går tilbake til galleriet nå."
+
+#: check-language-paid-actions.php
+msgid "PAYMENT NEEDS ATTENTION"
+msgstr "BETALING TRENGER OPPMERKSOMHET"
+
+#: check-language-paid-actions.php
+msgid "We could not finish adding your credits"
+msgstr "Vi kunne ikke fullføre å legge til kredittene dine"
+
+#: check-language-paid-actions.php
+msgid "The payment could not be finalized automatically. You can safely try finalizing this same payment again."
+msgstr "Betalingen kunne ikke fullføres automatisk. Du kan trygt prøve å fullføre den samme betalingen på nytt."
+
+#: check-language-paid-actions.php
+msgid "Your credit selection changed. Please review it and try again."
+msgstr "Kredittvalget er endret. Kontroller det og prøv igjen."
+
+#: check-language-paid-actions.php
+msgid "The requested gallery is not available."
+msgstr "Det forespurte galleriet er ikke tilgjengelig."
+
+#: check-language-paid-actions.php
+msgid "Paid actions are not available for this gallery."
+msgstr "Betalte handlinger er ikke tilgjengelig for dette galleriet."
+
+#: check-language-paid-actions.php
+msgid "The private payment preview is invalid or expired."
+msgstr "Den private betalingsforhåndsvisningen er ugyldig eller utløpt."
+
+#: check-language-paid-actions.php
+msgid "This private preview session has ended. Open \"Try it now\" again from the gallery settings."
+msgstr "Denne private forhåndsvisningsøkten er avsluttet. Åpne «Prøv nå» igjen fra galleriinnstillingene."
+
+#: check-language-paid-actions.php
+msgid "Activate pay for {type} before adding its test credits."
+msgstr "Aktiver betaling for {type} før du legger til testkreditter."
+
+#: check-language-paid-actions.php
+msgid "Test credits are being updated. Please try again."
+msgstr "Testkreditter oppdateres. Vennligst prøv igjen."
+
+#: check-language-paid-actions.php
+msgid "Demo credits could not be added."
+msgstr "Demokreditter kunne ikke legges til."
+
+#: check-language-paid-actions.php
+msgid "Preview actions are being reset. Please try again."
+msgstr "Forhåndsvisningshandlinger tilbakestilles. Vennligst prøv igjen."
+
+#: check-language-paid-actions.php
+msgid "Demo credits could not be reserved."
+msgstr "Demokreditter kunne ikke reserveres."
+
+#: check-language-paid-actions.php
+msgid "Not enough demo credits are available."
+msgstr "Ikke nok demokreditter er tilgjengelige."
+
+#: check-language-paid-actions.php
+msgid "Purchasing credits for this action is temporarily unavailable."
+msgstr "Å kjøpe kreditter for denne handlingen er midlertidig utilgjengelig."
+
+#: check-language-paid-actions.php
+msgid "Sign in to purchase and use gallery credits."
+msgstr "Logg på for å kjøpe og bruke gallerikreditter."
+
+#: check-language-paid-actions.php
+msgid "Invalid credit reservation."
+msgstr "Ugyldig kredittreservasjon."
+
+#: check-language-paid-actions.php
+msgid "This paid action is temporarily unavailable."
+msgstr "Denne betalte handlingen er midlertidig utilgjengelig."
+
+#: check-language-paid-actions.php
+msgid "This action does not require paid credits."
+msgstr "Denne handlingen krever ikke betalte kreditter."
+
+#: check-language-paid-actions.php
+msgid "Credits are being updated. Please try again."
+msgstr "Studiepoeng blir oppdatert. Vennligst prøv igjen."
+
+#: check-language-paid-actions.php
+msgid "Credits could not be reserved."
+msgstr "Kreditter kunne ikke reserveres."
+
+#: check-language-paid-actions.php
+msgid "Not enough credits are available."
+msgstr "Ikke nok kreditter er tilgjengelig."
+
+#: check-language-paid-actions.php
+msgid "This sandbox test link is invalid, expired or already belongs to another test user."
+msgstr "Denne testlinken til sandkassen er ugyldig, utløpt eller tilhører allerede en annen testbruker."
+
+#: check-language-paid-actions.php
+msgid "A preview action is still running. Please try the reset again."
+msgstr "En forhåndsvisningshandling kjører fortsatt. Prøv tilbakestillingen på nytt."
+
+#: check-language-paid-actions.php
+msgid "Some preview uploads could not be removed. Run the reset again."
+msgstr "Noen forhåndsvisningsopplastinger kunne ikke fjernes. Kjør tilbakestillingen igjen."
+
+#: check-language-paid-actions.php
+msgid "Preview actions were reset and their demo credits were restored."
+msgstr "Forhåndsvisningshandlinger ble tilbakestilt og demokredittene deres ble gjenopprettet."
+
+#: check-language-paid-actions.php
+msgid "A six-digit PIN was sent to your email address."
+msgstr "En sekssifret PIN-kode ble sendt til e-postadressen din."
+
+#: check-language-paid-actions.php
+msgid "A new six-digit PIN was sent to your email address."
+msgstr "En ny sekssifret PIN-kode ble sendt til e-postadressen din."
+
+#: check-language-paid-actions.php
+msgid "The private payment preview is busy. Please try again."
+msgstr "Den private betalingsforhåndsvisningen er opptatt. Vennligst prøv igjen."
+
+#: check-language-paid-actions.php
+msgid "The test actions could not be reset."
+msgstr "Testhandlingene kunne ikke tilbakestilles."
+
+#: check-language-paid-actions.php
+msgid "The saved test actions were reset."
+msgstr "De lagrede testhandlingene ble tilbakestilt."
+
+#: check-language-paid-actions.php
+msgid "The test credits could not be added."
+msgstr "Testkredittene kunne ikke legges til."
+
+#: check-language-paid-actions.php
+msgid "Resetting…"
+msgstr "Tilbakestiller …"
+
+#: check-language-paid-actions.php
+msgid "The code could not be sent."
+msgstr "Koden kunne ikke sendes."
+
+#: check-language-paid-actions.php
+msgid "The code is invalid."
+msgstr "Koden er ugyldig."
+
+#: check-language-paid-actions.php
+msgid "Gallery {number}"
+msgstr "Galleri {number}"
+
+#: check-language-paid-actions.php
+msgid "Purchase a credit to continue."
+msgstr "Kjøp en kreditt for å fortsette."
+
+#: check-language-general.php
+msgid "Send new PIN in {seconds}s"
+msgstr "Send ny PIN-kode i {seconds}s"
+
+#: check-language-general.php
+msgid "The account confirmation could not be prepared."
+msgstr "Kontobekreftelsen kunne ikke utarbeides."
+
+#: check-language-general.php
+msgid "No registered user was found for this email address."
+msgstr "Ingen registrerte brukere ble funnet for denne e-postadressen."
+
+#: check-language-general.php
+msgid "The user account could not be found."
+msgstr "Finner ikke brukerkontoen."
+
+#: check-language-general.php
+msgid "PIN data was not found. Please contact the administrator."
+msgstr "PIN-data ble ikke funnet. Ta kontakt med administratoren."
+
+#: check-language-general.php
+msgid "The user account could not be created. Please contact the administrator."
+msgstr "Brukerkontoen kunne ikke opprettes. Ta kontakt med administratoren."
+
+#: check-language-general.php
+msgid "The user could not be signed in after the PIN check. Please contact the administrator."
+msgstr "Brukeren kunne ikke logges på etter PIN-kontrollen. Ta kontakt med administratoren."
+
+#: check-language-general.php
+msgid "The PIN could not be confirmed. Please contact the administrator."
+msgstr "PIN-koden kunne ikke bekreftes. Ta kontakt med administratoren."
+
+#: check-language-paid-actions.php
+msgid "Checkout could not be started."
+msgstr "Betalingen kunne ikke startes."
+
+#: check-language-paid-actions.php
+msgid "Processing…"
+msgstr "Jobber…"
+
+#: check-language-paid-actions.php
+msgid "Processing payment"
+msgstr "Behandler betaling.."
+
+#: check-language-paid-actions.php
+msgid "You may be redirected to complete the payment. You will return automatically."
+msgstr "Du kan bli omdirigert for å fullføre betalingen. Du kommer tilbake automatisk."
+
+#: check-language-paid-actions.php
+msgid "This browser could not access the saved checkout data. Return to the gallery and contact the site owner before making another payment."
+msgstr "Denne nettleseren fikk ikke tilgang til de lagrede betalingsdataene. Gå tilbake til galleriet og kontakt eieren av nettstedet før du foretar en ny betaling."
+
+#: check-language-paid-actions.php
+msgid "The saved checkout data could not be opened. You can safely try finalizing this same payment again."
+msgstr "De lagrede betalingsdataene kunne ikke åpnes. Du kan trygt prøve å fullføre den samme betalingen på nytt."
+
+#: check-language-paid-actions.php
+msgid "Another browser tab is currently using the saved checkout data. Close the other tab and try finalizing this same payment again."
+msgstr "En annen nettleserfane bruker for øyeblikket de lagrede betalingsdataene. Lukk den andre fanen og prøv å fullføre den samme betalingen på nytt."
+
+#: check-language-paid-actions.php
+msgid "The saved checkout data could not be read. You can safely try finalizing this same payment again."
+msgstr "De lagrede betalingsdataene kunne ikke leses. Du kan trygt prøve å fullføre den samme betalingen på nytt."
+
+#: check-language-paid-actions.php
+msgid "Your test payment was approved. We are creating the gallery order and adding your credits now. You will return to the gallery automatically."
+msgstr "Testbetalingen din ble godkjent. Vi oppretter galleribestillingen og legger til kredittene dine nå. Du kommer tilbake til galleriet automatisk."
+
+#: check-language-paid-actions.php
+msgid "Your payment was approved. We are creating the gallery order and adding your credits now. You will return to the gallery automatically."
+msgstr "Betalingen din ble godkjent. Vi oppretter galleribestillingen og legger til kredittene dine nå. Du kommer tilbake til galleriet automatisk."
+
+#: check-language-paid-actions.php
+msgid "The saved checkout data was not found in this browser. Return to the gallery and contact the site owner before making another payment."
+msgstr "De lagrede betalingsdataene ble ikke funnet i denne nettleseren. Gå tilbake til galleriet og kontakt eieren av nettstedet før du foretar en ny betaling."
+
+#: check-language-paid-actions.php
+msgid "Payment processing could not be started. You can safely try finalizing this same payment again."
+msgstr "Betalingsbehandlingen kunne ikke startes. Du kan trygt prøve å fullføre den samme betalingen på nytt."
+
+#: check-language-paid-actions.php
+msgid "uploads"
+msgstr "opplastinger"
+
+#: check-language-paid-actions.php
+msgid "votes"
+msgstr "stemmer"
+
+#: check-language-paid-actions.php
+msgid "comments"
+msgstr "kommentarer"
+
+#: check-language-paid-actions.php
+msgid "Your upload credits"
+msgstr "Dine opplastingskreditter"
+
+#: check-language-paid-actions.php
+msgid "One credit is used for each submitted entry."
+msgstr "Én kreditt brukes for hvert innsendte bidrag."
+
+#: check-language-paid-actions.php
+msgid "UPLOAD CREDITS"
+msgstr "OPPLASTINGSKREDITTER"
+
+#: check-language-paid-actions.php
+msgid "UPLOAD ACCESS"
+msgstr "OPPLASTINGSTILGANG"
+
+#: check-language-paid-actions.php
+msgid "Checking upload credits"
+msgstr "Kontrollerer opplastingskreditter"
+
+#: check-language-paid-actions.php
+msgid "Please wait while your upload credits are checked."
+msgstr "Vent mens opplastingskredittene dine kontrolleres."
+
+#: check-language-paid-actions.php
+msgid "Sign in to upload"
+msgstr "Logg inn for å laste opp"
+
+#: check-language-paid-actions.php
+msgid "Sign in to buy upload credits and submit an entry to this gallery."
+msgstr "Logg inn for å kjøpe opplastingskreditter og sende inn et bidrag til dette galleriet."
+
+#: check-language-paid-actions.php
+msgid "Sign in to continue"
+msgstr "Logg inn for å fortsette"
+
+#: check-language-paid-actions.php
+msgid "Upload credits temporarily unavailable"
+msgstr "Opplastingskreditter er midlertidig utilgjengelige"
+
+#: check-language-paid-actions.php
+msgid "Your upload credits could not be checked. Please try again."
+msgstr "Opplastingskredittene dine kunne ikke kontrolleres. Prøv igjen."
+
+#: check-language-paid-actions.php
+msgid "More upload credits required"
+msgstr "Flere opplastingskreditter kreves"
+
+#: check-language-paid-actions.php
+msgid "This selection needs {required} upload credits. You currently have {available}."
+msgstr "Dette valget krever {required} opplastingskreditter. Du har for øyeblikket {available}."
+
+#: check-language-ecommerce.php
+msgid "The payment was not completed. Please try again."
+msgstr "Betalingen ble ikke fullført. Prøv igjen."
+
+#: check-language-ecommerce.php
+msgid "Payment canceled. You can try again."
+msgstr "Betalingen ble avbrutt. Du kan prøve på nytt."

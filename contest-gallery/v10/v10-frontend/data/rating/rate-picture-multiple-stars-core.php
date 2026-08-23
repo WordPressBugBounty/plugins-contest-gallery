@@ -1111,11 +1111,24 @@ else {
         $voteCommentFollowUpToken = '';
         if($cookieVotingJustActivated == false){
 
+            $paidVoteReservations = cg1l_prepare_paid_vote_reservations($options,$galeryID,$pictureID,$rateValue);
+            if(is_wp_error($paidVoteReservations)){
+				cg_paid_actions_output_frontend_error($galeryIDuser,cg1l_paid_action_error_type($paidVoteReservations),$paidVoteReservations);
+                cg1l_release_stats_lock($lockFp);
+                ?>
+                <script data-cg-processing="true">
+                    cgJsClass.gallery.rating.setRatingMultiStarByMode(<?php echo wp_json_encode($pictureID); ?>,0,0,false,<?php echo wp_json_encode($galeryIDuser); ?>,true,false,<?php echo wp_json_encode($ratingFileData); ?>,<?php echo wp_json_encode($isFromSingleView); ?>,undefined,undefined,true);
+                </script>
+                <?php
+                return;
+            }
+
             $voteCommentFollowUpRequested = (
                 cg1l_get_vote_comment_mode($options) === 'optional' &&
                 !empty($_REQUEST['voteCommentFollowUp'])
             );
-            if(!cg1l_process_vote_comment_request($options,$galeryID,$galeryIDuser,$pictureID,$galleryHash,$rateValue,$ratingFileData,$lockFp,$voteCommentWasSaved,$voteCommentInsertId)){
+            if(!cg1l_process_vote_comment_request($options,$galeryID,$galeryIDuser,$pictureID,$galleryHash,$rateValue,$ratingFileData,$lockFp,$voteCommentWasSaved,$voteCommentInsertId,$paidVoteReservations['comment'])){
+                cg1l_settle_paid_vote_reservations($paidVoteReservations,false,0,false,0);
                 cg1l_release_stats_lock($lockFp);
                 return;
             }
@@ -1126,19 +1139,30 @@ else {
 
                 // vote done!!! Save and forward
             $VoteDate = date('d-M-Y H:i:s', $Tstamp);
+			$paidVoteFlags = cg_paid_actions_reservation_flags($paidVoteReservations['vote']);
 
             // speichern in der IP Tabelle
             $voteInsertResult = $wpdb->query( $wpdb->prepare(
                 "
                         INSERT INTO $tablenameIP
-                        ( id, IP, GalleryID, pid, Rating, RatingS,WpUserId,VoteDate,Tstamp,OptionSet,CookieId,Category,CategoriesOn,CommentId)
-                        VALUES ( %s,%s,%d,%d,%d,%d,%d,%s,%d,%s,%s,%d,%d,%d )
+                        ( id, IP, GalleryID, pid, Rating, RatingS,WpUserId,VoteDate,Tstamp,OptionSet,CookieId,Category,CategoriesOn,CommentId,IsPaidAction,IsPaidActionPreview)
+                        VALUES ( %s,%s,%d,%d,%d,%d,%d,%s,%d,%s,%s,%d,%d,%d,%d,%d )
                     ",
-                '',$userIP,$galeryID,$pictureID,$rateValue,0,$wpUserId,$VoteDate,$Tstamp,$OptionSet,$CookieId,$imageData['Category'],$CategoriesOn,$voteCommentInsertId
+                '',$userIP,$galeryID,$pictureID,$rateValue,0,$wpUserId,$VoteDate,$Tstamp,$OptionSet,$CookieId,$imageData['Category'],$CategoriesOn,$voteCommentInsertId,$paidVoteFlags['isPaidAction'],$paidVoteFlags['isPaidActionPreview']
             ) );
+            $voteInsertId = ($voteInsertResult!==false) ? absint($wpdb->insert_id) : 0;
 
-            if($voteCommentFollowUpRequested && empty($voteCommentInsertId) && $voteInsertResult !== false && !empty($wpdb->insert_id)){
-                $voteCommentFollowUpToken = cg1l_create_vote_comment_follow_up_token($wpdb->insert_id,$galeryID,$pictureID,$rateValue);
+            if($voteInsertResult===false || empty($voteInsertId)){
+                cg1l_settle_paid_vote_reservations($paidVoteReservations,false,0,$voteCommentWasSaved,$voteCommentInsertId);
+                cg1l_release_stats_lock($lockFp);
+                cg1l_vote_comment_error_script($galeryIDuser,'storage_error');
+                return;
+            }
+
+            cg1l_settle_paid_vote_reservations($paidVoteReservations,true,$voteInsertId,$voteCommentWasSaved,$voteCommentInsertId);
+
+            if($voteCommentFollowUpRequested && empty($voteCommentInsertId)){
+                $voteCommentFollowUpToken = cg1l_create_vote_comment_follow_up_token($voteInsertId,$galeryID,$pictureID,$rateValue);
             }
 
             // save in main table and file
@@ -1238,6 +1262,10 @@ else {
             cgJsData[galeryIDuser].options.pro.VoteMessageSuccessText = <?php echo json_encode($VoteMessageSuccessText);?>;
              if(!cookieVotingJustActivated){
                 var rateValue = <?php echo json_encode($rateValue);?>;
+
+                 if(cgJsClass.gallery.paidActions && cgJsClass.gallery.paidActions.consumeLocalBalance){
+                     cgJsClass.gallery.paidActions.consumeLocalBalance(galeryIDuser,'vote',1);
+                 }
 
                  var isSomeMessageWillBeShown = undefined;
                  if(ThankVote==1){

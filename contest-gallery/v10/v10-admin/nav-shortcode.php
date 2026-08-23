@@ -200,6 +200,9 @@ Displays the <b>user registration form</b>.<br><b>Hidden</b> by default if <b>lo
 </ul>
     Configure which fields are also shown in the PIN form under<br>
     <b>\"Edit user form\"</b>.
+<br><br>
+    <b>PIN access mode</b><br>
+    <code>[cg_users_pin mode=&quot;access&quot;]</code> shows a compact email-only form for passwordless sign-in. Existing users sign in with the PIN. A new email address creates a minimal account after confirmation.
 $cg_v14_note_caret_text</span>
         </div>
     </div>

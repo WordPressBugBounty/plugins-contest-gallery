@@ -146,20 +146,15 @@ if(!function_exists('contest_gal1ery_entry_on_off')){
 
         $optionsVisual = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_options_visual WHERE GalleryID = %d",array($GalleryID)));
         $FeControlsStyleUpload = (!empty($optionsVisual->FeControlsStyleUpload)) ? $optionsVisual->FeControlsStyleUpload : 'white';
-        $BorderRadiusUpload = (!empty($optionsVisual->BorderRadiusUpload)) ? $optionsVisual->BorderRadiusUpload : '';
 
         $optionsRow = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_options WHERE id = %d",array($GalleryID)));
         $galleryDBversion = (!empty($optionsRow->Version)) ? $optionsRow->Version : 0;
 
-        $BorderRadiusClass = '';
+        $BorderRadiusClass = 'cg_border_radius_controls_and_containers';
         $cgFeControlsStyle = 'cg_fe_controls_style_white';
         if($FeControlsStyleUpload=='black'){
             $cgFeControlsStyle = 'cg_fe_controls_style_black';
         }
-        if($BorderRadiusUpload=='1'){
-            $BorderRadiusClass = 'cg_border_radius_controls_and_containers';
-        }
-
         $isProVersion = false;
         $plugin_dir_path = plugin_dir_path(__FILE__);
         if(is_dir($plugin_dir_path.'/../../contest-gallery-pro') && strpos(cg_get_version_for_scripts(),'-PRO')!==false){

@@ -1332,3 +1332,895 @@ msgstr "beoordeling"
 #: check-language.php
 msgid "ratings"
 msgstr "beoordelingen"
+
+#: check-language-paid-actions.php
+msgid "Uploads"
+msgstr "Uploads"
+
+#: check-language-paid-actions.php
+msgid "Votes"
+msgstr "Stemmen"
+
+#: check-language-paid-actions.php
+msgid "Upload credits"
+msgstr "Uploadtegoeden"
+
+#: check-language-paid-actions.php
+msgid "Voting credits"
+msgstr "Stemtegoeden"
+
+#: check-language-paid-actions.php
+msgid "Comment credits"
+msgstr "Reactietegoeden"
+
+#: check-language-paid-actions.php
+msgid "upload credit"
+msgstr "uploadtegoed"
+
+#: check-language-paid-actions.php
+msgid "voting credit"
+msgstr "stemtegoed"
+
+#: check-language-paid-actions.php
+msgid "comment credit"
+msgstr "reactietegoed"
+
+#: check-language-paid-actions.php
+msgid "Credits for {type} in gallery {number}"
+msgstr "Tegoeden voor {type} in galerij {number}"
+
+#: check-language-paid-actions.php
+msgid "credit"
+msgstr "tegoed"
+
+#: check-language-paid-actions.php
+msgid "credits"
+msgstr "tegoeden"
+
+#: check-language-paid-actions.php
+msgid "each"
+msgstr "elk"
+
+#: check-language-paid-actions.php
+msgid "Loading"
+msgstr "Laden"
+
+#: check-language-paid-actions.php
+msgid "or"
+msgstr "of"
+
+#: check-language-paid-actions.php
+msgid "Cancel"
+msgstr "Annuleer"
+
+#: check-language-paid-actions.php
+msgid "Not now"
+msgstr "Niet nu"
+
+#: check-language-paid-actions.php
+msgid "Try again"
+msgstr "Probeer het opnieuw"
+
+#: check-language-paid-actions.php
+msgid "Continue to gallery"
+msgstr "Ga verder naar galerij"
+
+#: check-language-paid-actions.php
+msgid "Return to gallery"
+msgstr "Keer terug naar de galerij"
+
+#: check-language-paid-actions.php
+msgid "Private payment preview"
+msgstr "Voorbeeld van privébetaling"
+
+#: check-language-paid-actions.php
+msgid "Sandbox checkout test"
+msgstr "Sandbox-afrekentest"
+
+#: check-language-paid-actions.php
+msgid "Your gallery credits"
+msgstr "Je galerijtegoed"
+
+#: check-language-paid-actions.php
+msgid "Real test actions are saved and visible until reset"
+msgstr "Echte testacties worden opgeslagen en zichtbaar totdat ze worden gereset"
+
+#: check-language-paid-actions.php
+msgid "Real sandbox orders grant persistent gallery credits"
+msgstr "Echte sandbox-bestellingen geven blijvende galerijcredits"
+
+#: check-language-paid-actions.php
+msgid "Buy only what you want to use"
+msgstr "Koop alleen wat u wilt gebruiken"
+
+#: check-language-paid-actions.php
+msgid "Add test credits"
+msgstr "Voeg testtegoeden toe"
+
+#: check-language-paid-actions.php
+msgid "Sandbox checkout"
+msgstr "Sandbox-afrekenen"
+
+#: check-language-paid-actions.php
+msgid "Get credits"
+msgstr "Tegoed verkrijgen"
+
+#: check-language-paid-actions.php
+msgid "Buy credits in sandbox"
+msgstr "Koop credits in de sandbox"
+
+#: check-language-paid-actions.php
+msgid "Buy gallery credits"
+msgstr "Koop galerijcredits"
+
+#: check-language-paid-actions.php
+msgid "Reset test actions"
+msgstr "Testacties resetten"
+
+#: check-language-paid-actions.php
+msgid "{count} used here"
+msgstr "{count} hier gebruikt"
+
+#: check-language-paid-actions.php
+msgid "Get credits: {credits}"
+msgstr "Verkrijg credits: {credits}"
+
+#: check-language-paid-actions.php
+msgid "Your credits are ready. You can continue in the gallery."
+msgstr "Uw tegoeden zijn klaar. U kunt verdergaan in de galerij."
+
+#: check-language-paid-actions.php
+msgid "Sandbox test link unavailable"
+msgstr "Sandbox-testlink niet beschikbaar"
+
+#: check-language-paid-actions.php
+msgid "This link has expired, is invalid, or belongs to another test user. Create a new sandbox test link in the gallery settings."
+msgstr "Deze link is verlopen, ongeldig of behoort toe aan een andere testgebruiker. Maak een nieuwe sandbox-testlink in de galerijinstellingen."
+
+#: check-language-paid-actions.php
+msgid "Credits temporarily unavailable"
+msgstr "Tegoeden tijdelijk niet beschikbaar"
+
+#: check-language-paid-actions.php
+msgid "Please try again in a moment"
+msgstr "Probeer het over enkele ogenblikken opnieuw"
+
+#: check-language-paid-actions.php
+msgid "Purchasing credits is temporarily unavailable. Please contact the gallery administrator."
+msgstr "Het kopen van credits is tijdelijk niet mogelijk. Neem dan contact op met de galeriebeheerder."
+
+#: check-language-paid-actions.php
+msgid "CREDIT REQUIRED"
+msgstr "TEGOED VEREIST"
+
+#: check-language-paid-actions.php
+msgid "TEST CREDITS USED"
+msgstr "GEBRUIKTE TESTCREDITS"
+
+#: check-language-paid-actions.php
+msgid "Upload credit required"
+msgstr "Uploadtegoed vereist"
+
+#: check-language-paid-actions.php
+msgid "Voting credit required"
+msgstr "Stemtegoed vereist"
+
+#: check-language-paid-actions.php
+msgid "Comment credit required"
+msgstr "Tegoed vereist om te reageren"
+
+#: check-language-paid-actions.php
+msgid "Buy upload credits to upload an entry to this gallery."
+msgstr "Koop uploadcredits om een bijdrage aan deze galerij te uploaden."
+
+#: check-language-paid-actions.php
+msgid "Buy voting credits to vote in this gallery."
+msgstr "Koop stemcredits om in deze galerij te stemmen."
+
+#: check-language-paid-actions.php
+msgid "Buy comment credits to comment in this gallery."
+msgstr "Koop commentaarcredits om in deze galerij te reageren."
+
+#: check-language-paid-actions.php
+msgid "All test upload credits used"
+msgstr "Alle testuploadtegoeden zijn gebruikt"
+
+#: check-language-paid-actions.php
+msgid "All test voting credits used"
+msgstr "Alle teststemcredits zijn gebruikt"
+
+#: check-language-paid-actions.php
+msgid "All test comment credits used"
+msgstr "Alle testcommentaarcredits zijn gebruikt"
+
+#: check-language-paid-actions.php
+msgid "You have used all test upload credits for this gallery. Add more to keep testing."
+msgstr "Je hebt alle testuploadtegoeden voor deze galerij gebruikt. Voeg meer toe om te blijven testen."
+
+#: check-language-paid-actions.php
+msgid "You have used all test voting credits for this gallery. Add more to keep testing."
+msgstr "U heeft alle teststemcredits voor deze galerij gebruikt. Voeg meer toe om te blijven testen."
+
+#: check-language-paid-actions.php
+msgid "You have used all test comment credits for this gallery. Add more to keep testing."
+msgstr "Je hebt alle testcommentaarcredits voor deze galerij gebruikt. Voeg meer toe om te blijven testen."
+
+#: check-language-paid-actions.php
+msgid "Add more test credits"
+msgstr "Voeg meer testtegoeden toe"
+
+#: check-language-paid-actions.php
+msgid "Buy credits"
+msgstr "Koop tegoeden"
+
+#: check-language-paid-actions.php
+msgid "COMMENT CREDITS"
+msgstr "COMMENTAAR KREDIETEN"
+
+#: check-language-paid-actions.php
+msgid "Checking comment credits"
+msgstr "Reactiecredits controleren"
+
+#: check-language-paid-actions.php
+msgid "Please wait while your comment credits are checked."
+msgstr "Wacht terwijl je reactietegoed wordt gecontroleerd."
+
+#: check-language-paid-actions.php
+msgid "Comment credits temporarily unavailable"
+msgstr "Reactiecredits zijn tijdelijk niet beschikbaar"
+
+#: check-language-paid-actions.php
+msgid "Your comment credits could not be checked. Please try again."
+msgstr "Je reactietegoed kon niet worden gecontroleerd. Probeer het opnieuw."
+
+#: check-language-paid-actions.php
+msgid "YOUR CURRENT TEST CREDITS"
+msgstr "UW HUIDIGE TESTCREDITS"
+
+#: check-language-paid-actions.php
+msgid "YOUR CURRENT CREDITS"
+msgstr "UW HUIDIGE KREDIETEN"
+
+#: check-language-paid-actions.php
+msgid "{count} {type} available"
+msgstr "{count} {type} beschikbaar"
+
+#: check-language-paid-actions.php
+msgid "{count} {type} available, {selected} selected for checkout"
+msgstr "{count} {type} beschikbaar, {selected} geselecteerd om af te rekenen"
+
+#: check-language-paid-actions.php
+msgid "{count} {type} available, {selected} selected for test checkout"
+msgstr "{count} {type} beschikbaar, {selected} geselecteerd voor testbetaling"
+
+#: check-language-paid-actions.php
+msgid "PRIVATE PAYMENT PREVIEW"
+msgstr "PRIVÉ BETALING VOORBEELD"
+
+#: check-language-paid-actions.php
+msgid "Reset saved test actions?"
+msgstr "Opgeslagen testacties resetten?"
+
+#: check-language-paid-actions.php
+msgid "This removes every paid preview action in this gallery, including tests from other preview tabs and administrators."
+msgstr "Hiermee wordt elke betaalde voorbeeldactie in deze galerij verwijderd, inclusief tests van andere voorbeeldtabbladen en beheerders."
+
+#: check-language-paid-actions.php
+msgid "TEST ACTIONS IN THIS GALLERY"
+msgstr "TESTACTIES IN DEZE GALERIJ"
+
+#: check-language-paid-actions.php
+msgid "Test upload"
+msgstr "Testupload"
+
+#: check-language-paid-actions.php
+msgid "Test uploads"
+msgstr "Testuploads"
+
+#: check-language-paid-actions.php
+msgid "Test vote"
+msgstr "Proefstemming"
+
+#: check-language-paid-actions.php
+msgid "Test votes"
+msgstr "Stemmen testen"
+
+#: check-language-paid-actions.php
+msgid "Test comment"
+msgstr "Testopmerking"
+
+#: check-language-paid-actions.php
+msgid "Test comments"
+msgstr "Reacties testen"
+
+#: check-language-paid-actions.php
+msgid "saved test action will be removed"
+msgstr "opgeslagen testactie wordt verwijderd"
+
+#: check-language-paid-actions.php
+msgid "saved test actions will be removed"
+msgstr "opgeslagen testacties worden verwijderd"
+
+#: check-language-paid-actions.php
+msgid "test credit will be restored to its original credit type"
+msgstr "testtegoed wordt hersteld naar het oorspronkelijke tegoedtype"
+
+#: check-language-paid-actions.php
+msgid "test credits will be restored to their original credit types"
+msgstr "testtegoeden worden hersteld naar hun oorspronkelijke tegoedtypes"
+
+#: check-language-paid-actions.php
+msgid "Preview uploads and their files are deleted completely. Everything attached to those entries is removed as well. Test credits used in this gallery are restored."
+msgstr "Preview-uploads en hun bestanden worden volledig verwijderd. Alles wat aan deze vermeldingen is gekoppeld, wordt ook verwijderd. Testcredits die in deze galerij worden gebruikt, worden hersteld."
+
+#: check-language-paid-actions.php
+msgid "SECURE TEST CHECKOUT"
+msgstr "VEILIG TESTEN AFREKENEN"
+
+#: check-language-paid-actions.php
+msgid "Choose your free test credits"
+msgstr "Kies uw gratis testtegoeden"
+
+#: check-language-paid-actions.php
+msgid "Set the quantity directly in each checkout item. No money or payment details are used."
+msgstr "Stel het aantal rechtstreeks in elk afrekenartikel in. Er worden geen geld- of betaalgegevens gebruikt."
+
+#: check-language-paid-actions.php
+msgid "PRIVATE PREVIEW"
+msgstr "PRIVÉ VOORBEELD"
+
+#: check-language-paid-actions.php
+msgid "Visible only to you"
+msgstr "Alleen zichtbaar voor jou"
+
+#: check-language-paid-actions.php
+msgid "No real charge"
+msgstr "Geen echte aanklacht"
+
+#: check-language-paid-actions.php
+msgid "Payment data is never requested"
+msgstr "Er worden nooit betalingsgegevens gevraagd"
+
+#: check-language-paid-actions.php
+msgid "Persistent credits"
+msgstr "Aanhoudende tegoeden"
+
+#: check-language-paid-actions.php
+msgid "Available after reload"
+msgstr "Beschikbaar na herladen"
+
+#: check-language-paid-actions.php
+msgid "Choose a quantity above to continue."
+msgstr "Kies een aantal in het veld hierboven om door te gaan."
+
+#: check-language-paid-actions.php
+msgid "Choose a test payment method"
+msgstr "Kies een testbetaalmethode"
+
+#: check-language-paid-actions.php
+msgid "Clicking a method simulates approval and adds the selected credits."
+msgstr "Als u op een methode klikt, wordt de goedkeuring gesimuleerd en worden de geselecteerde credits toegevoegd."
+
+#: check-language-paid-actions.php
+msgid "Simulate secure payment"
+msgstr "Simuleer veilige betaling"
+
+#: check-language-paid-actions.php
+msgid "TEST MODE · {amount} {currency} will not be charged"
+msgstr "TESTMODUS · {amount} Er worden geen kosten in rekening gebracht voor {currency}"
+
+#: check-language-paid-actions.php
+msgid "Added test credits"
+msgstr "Testtegoeden toegevoegd"
+
+#: check-language-paid-actions.php
+msgid "TEST PAYMENT APPROVED"
+msgstr "TESTBETALING GOEDGEKEURD"
+
+#: check-language-paid-actions.php
+msgid "Your test credits are ready"
+msgstr "Je testtegoed is beschikbaar"
+
+#: check-language-paid-actions.php
+msgid "{count} credit was added after the simulated {provider} approval."
+msgstr "{count} tegoed is toegevoegd na de gesimuleerde {provider} goedkeuring."
+
+#: check-language-paid-actions.php
+msgid "{count} credits were added after the simulated {provider} approval."
+msgstr "{count} credits zijn toegevoegd na de gesimuleerde {provider} goedkeuring."
+
+#: check-language-paid-actions.php
+msgid "No real order or payment was created. The credits remain available after reloading this gallery."
+msgstr "Er is geen echte bestelling of betaling aangemaakt. De credits blijven beschikbaar na het herladen van deze galerij."
+
+#: check-language-paid-actions.php
+msgid "Approving secure {provider} test payment…"
+msgstr "Veilige testbetaling van {provider} goedkeuren…"
+
+#: check-language-paid-actions.php
+msgid "The test payment could not be approved."
+msgstr "De testbetaling kan niet worden goedgekeurd."
+
+#: check-language-paid-actions.php
+msgid "REAL SANDBOX CHECKOUT"
+msgstr "ECHTE ZANDBAK KASSA"
+
+#: check-language-paid-actions.php
+msgid "SECURE CHECKOUT"
+msgstr "VEILIG AFREKENEN"
+
+#: check-language-paid-actions.php
+msgid "Choose persistent test credits"
+msgstr "Kies voor permanente testtegoeden"
+
+#: check-language-paid-actions.php
+msgid "Choose your gallery credits"
+msgstr "Kies uw galerijcredits"
+
+#: check-language-paid-actions.php
+msgid "Set the quantity directly in each checkout item. The total updates immediately."
+msgstr "Stel het aantal rechtstreeks in elk afrekenartikel in. Het totaal wordt onmiddellijk bijgewerkt."
+
+#: check-language-paid-actions.php
+msgid "SANDBOX CHECKOUT"
+msgstr "ZANDBOX AFREKENEN"
+
+#: check-language-paid-actions.php
+msgid "Sign in to test buying credits"
+msgstr "Log in om het kopen van tegoeden te testen"
+
+#: check-language-paid-actions.php
+msgid "Sign in to continue the sandbox checkout. You can test buying credits and participating in this gallery without a real payment."
+msgstr "Meld u aan om door te gaan met het afrekenen van de sandbox. U kunt het aankooptegoed en deelname aan deze galerij testen zonder een echte betaling."
+
+#: check-language-paid-actions.php
+msgid "Sign in to buy credits"
+msgstr "Log in om credits te kopen"
+
+#: check-language-paid-actions.php
+msgid "You need an account to buy credits and participate in this gallery. Continue with Google or receive a six-digit PIN by email."
+msgstr "Je hebt een account nodig om credits te kopen en deel te nemen aan deze galerij. Ga door met Google of ontvang een zescijferige pincode per e-mail."
+
+#: check-language-paid-actions.php
+msgid "Email address"
+msgstr "E-mailadres"
+
+#: check-language-paid-actions.php
+msgid "Email me a PIN"
+msgstr "PIN versturen"
+
+#: check-language-paid-actions.php
+msgid "Six-digit PIN"
+msgstr "Zescijferige pincode"
+
+#: check-language-paid-actions.php
+msgid "PIN digit {number}"
+msgstr "Pincodecijfer {number}"
+
+#: check-language-paid-actions.php
+msgid "Send a new PIN"
+msgstr "Stuur een nieuwe pincode"
+
+#: check-language-paid-actions.php
+msgid "Send a new PIN in {seconds}s"
+msgstr "Stuur een nieuwe pincode over {seconds}s"
+
+#: check-language-paid-actions.php
+msgid "PIN confirmed. Preparing your checkout…"
+msgstr "Pincode bevestigd. Je kassa voorbereiden…"
+
+#: check-language-paid-actions.php
+msgid "Sign-in successful. Reloading the gallery…"
+msgstr "Inloggen is gelukt. De galerij opnieuw laden…"
+
+#: check-language-paid-actions.php
+msgid "The sign-in form could not be loaded."
+msgstr "Het aanmeldingsformulier kan niet worden geladen."
+
+#: check-language-paid-actions.php
+msgid "PIN CONFIRMED"
+msgstr "PIN BEVESTIGD"
+
+#: check-language-paid-actions.php
+msgid "Sign-in successful"
+msgstr "Inloggen is gelukt"
+
+#: check-language-paid-actions.php
+msgid "Continue to buy credits"
+msgstr "Doorgaan met het kopen van tegoeden"
+
+#: check-language-paid-actions.php
+msgid "Please wait {seconds} {secondsLabel} before requesting another PIN."
+msgstr "Wacht alstublieft {seconds} {secondsLabel} voordat u een nieuwe pincode aanvraagt."
+
+#: check-language-paid-actions.php
+msgid "second"
+msgstr "seconde"
+
+#: check-language-paid-actions.php
+msgid "seconds"
+msgstr "seconden"
+
+#: check-language-paid-actions.php
+msgid "Too many PINs were requested. Please try again later."
+msgstr "Er zijn te veel pincodes gevraagd. Probeer het later opnieuw."
+
+#: check-language-paid-actions.php
+msgid "The PIN could not be sent."
+msgstr "De pincode kon niet worden verzonden."
+
+#: check-language-paid-actions.php
+msgid "Enter a valid email address."
+msgstr "Voer een geldig e-mailadres in."
+
+#: check-language-paid-actions.php
+msgid "The PIN is invalid or expired."
+msgstr "De pincode is ongeldig of verlopen."
+
+#: check-language-paid-actions.php
+msgid "Too many attempts. Request a new PIN."
+msgstr "Te veel pogingen. Vraag een nieuwe pincode aan."
+
+#: check-language-paid-actions.php
+msgid "The PIN is incorrect."
+msgstr "De pincode is onjuist."
+
+#: check-language-paid-actions.php
+msgid "Enter all six PIN digits."
+msgstr "Voer alle zes cijfers van de pincode in."
+
+#: check-language-paid-actions.php
+msgid "A new PIN could not be sent."
+msgstr "Er kon geen nieuwe pincode worden verzonden."
+
+#: check-language-paid-actions.php
+msgid "The PIN request is no longer available."
+msgstr "Het pincodeverzoek is niet langer beschikbaar."
+
+#: check-language-paid-actions.php
+msgid "SANDBOX PAYMENT"
+msgstr "SANDBOX-BETALING"
+
+#: check-language-paid-actions.php
+msgid "SECURE PAYMENT"
+msgstr "VEILIGE BETALING"
+
+#: check-language-paid-actions.php
+msgid "Finalizing your sandbox credits"
+msgstr "Het finaliseren van uw sandbox-credits"
+
+#: check-language-paid-actions.php
+msgid "Finalizing your credits"
+msgstr "Het finaliseren van uw tegoeden"
+
+#: check-language-paid-actions.php
+msgid "Your test payment was approved. We are adding your credits now. You will return to the gallery automatically."
+msgstr "Uw testbetaling is goedgekeurd. We voegen uw credits nu toe. U keert automatisch terug naar de galerij."
+
+#: check-language-paid-actions.php
+msgid "Your payment was approved. We are adding your credits now. You will return to the gallery automatically."
+msgstr "Uw betaling is goedgekeurd. We voegen uw credits nu toe. U keert automatisch terug naar de galerij."
+
+#: check-language-paid-actions.php
+msgid "Your test payment was approved. We are securely adding your credits now. You will return to the gallery automatically."
+msgstr "Uw testbetaling is goedgekeurd. We voegen uw tegoeden nu veilig toe. U keert automatisch terug naar de galerij."
+
+#: check-language-paid-actions.php
+msgid "Your payment was approved. We are securely adding your credits now. You will return to the gallery automatically."
+msgstr "Uw betaling is goedgekeurd. We voegen uw tegoeden nu veilig toe. U keert automatisch terug naar de galerij."
+
+#: check-language-paid-actions.php
+msgid "Do not start another payment while this payment is being finalized."
+msgstr "Start geen nieuwe betaling terwijl deze betaling wordt afgerond."
+
+#: check-language-paid-actions.php
+msgid "Try finalizing again"
+msgstr "Probeer opnieuw af te ronden"
+
+#: check-language-paid-actions.php
+msgid "Your credits are ready"
+msgstr "Uw tegoeden zijn klaar"
+
+#: check-language-paid-actions.php
+msgid "Your credits were added successfully. Returning to the gallery now."
+msgstr "Uw credits zijn succesvol toegevoegd. Ik keer nu terug naar de galerij."
+
+#: check-language-paid-actions.php
+msgid "PAYMENT NEEDS ATTENTION"
+msgstr "BETALING HEEFT AANDACHT NODIG"
+
+#: check-language-paid-actions.php
+msgid "We could not finish adding your credits"
+msgstr "We konden het toevoegen van uw credits niet voltooien"
+
+#: check-language-paid-actions.php
+msgid "The payment could not be finalized automatically. You can safely try finalizing this same payment again."
+msgstr "De betaling kon niet automatisch worden afgerond. U kunt veilig proberen dezelfde betaling opnieuw af te ronden."
+
+#: check-language-paid-actions.php
+msgid "Your credit selection changed. Please review it and try again."
+msgstr "De tegoedselectie is gewijzigd. Controleer deze en probeer het opnieuw."
+
+#: check-language-paid-actions.php
+msgid "The requested gallery is not available."
+msgstr "De gevraagde galerij is niet beschikbaar."
+
+#: check-language-paid-actions.php
+msgid "Paid actions are not available for this gallery."
+msgstr "Betaalde acties zijn niet beschikbaar voor deze galerij."
+
+#: check-language-paid-actions.php
+msgid "The private payment preview is invalid or expired."
+msgstr "Het privébetalingsvoorbeeld is ongeldig of verlopen."
+
+#: check-language-paid-actions.php
+msgid "This private preview session has ended. Open \"Try it now\" again from the gallery settings."
+msgstr "Deze privé previewsessie is beëindigd. Open \"Probeer het nu\" opnieuw vanuit de galerijinstellingen."
+
+#: check-language-paid-actions.php
+msgid "Activate pay for {type} before adding its test credits."
+msgstr "Activeer de betaling voor {type} voordat u de testtegoeden toevoegt."
+
+#: check-language-paid-actions.php
+msgid "Test credits are being updated. Please try again."
+msgstr "Testtegoeden worden bijgewerkt. Probeer het opnieuw."
+
+#: check-language-paid-actions.php
+msgid "Demo credits could not be added."
+msgstr "Democredits konden niet worden toegevoegd."
+
+#: check-language-paid-actions.php
+msgid "Preview actions are being reset. Please try again."
+msgstr "Voorbeeldacties worden opnieuw ingesteld. Probeer het opnieuw."
+
+#: check-language-paid-actions.php
+msgid "Demo credits could not be reserved."
+msgstr "Democredits konden niet worden gereserveerd."
+
+#: check-language-paid-actions.php
+msgid "Not enough demo credits are available."
+msgstr "Er zijn niet voldoende democredits beschikbaar."
+
+#: check-language-paid-actions.php
+msgid "Purchasing credits for this action is temporarily unavailable."
+msgstr "Het kopen van credits voor deze actie is tijdelijk niet mogelijk."
+
+#: check-language-paid-actions.php
+msgid "Sign in to purchase and use gallery credits."
+msgstr "Meld u aan om galerijcredits te kopen en te gebruiken."
+
+#: check-language-paid-actions.php
+msgid "Invalid credit reservation."
+msgstr "Ongeldige tegoedreservering."
+
+#: check-language-paid-actions.php
+msgid "This paid action is temporarily unavailable."
+msgstr "Deze betaalde actie is tijdelijk niet beschikbaar."
+
+#: check-language-paid-actions.php
+msgid "This action does not require paid credits."
+msgstr "Voor deze actie zijn geen betaalde credits vereist."
+
+#: check-language-paid-actions.php
+msgid "Credits are being updated. Please try again."
+msgstr "Tegoeden worden bijgewerkt. Probeer het opnieuw."
+
+#: check-language-paid-actions.php
+msgid "Credits could not be reserved."
+msgstr "Credits konden niet worden gereserveerd."
+
+#: check-language-paid-actions.php
+msgid "Not enough credits are available."
+msgstr "Er zijn niet voldoende tegoeden beschikbaar."
+
+#: check-language-paid-actions.php
+msgid "This sandbox test link is invalid, expired or already belongs to another test user."
+msgstr "Deze sandbox-testlink is ongeldig, verlopen of behoort al toe aan een andere testgebruiker."
+
+#: check-language-paid-actions.php
+msgid "A preview action is still running. Please try the reset again."
+msgstr "Er wordt nog steeds een voorbeeldactie uitgevoerd. Probeer de reset opnieuw."
+
+#: check-language-paid-actions.php
+msgid "Some preview uploads could not be removed. Run the reset again."
+msgstr "Sommige voorbeelduploads konden niet worden verwijderd. Voer de reset opnieuw uit."
+
+#: check-language-paid-actions.php
+msgid "Preview actions were reset and their demo credits were restored."
+msgstr "Preview-acties zijn gereset en hun democredits zijn hersteld."
+
+#: check-language-paid-actions.php
+msgid "A six-digit PIN was sent to your email address."
+msgstr "Er is een zescijferige pincode naar uw e-mailadres verzonden."
+
+#: check-language-paid-actions.php
+msgid "A new six-digit PIN was sent to your email address."
+msgstr "Er is een nieuwe zescijferige pincode naar uw e-mailadres verzonden."
+
+#: check-language-paid-actions.php
+msgid "The private payment preview is busy. Please try again."
+msgstr "Het privébetalingsvoorbeeld is bezet. Probeer het opnieuw."
+
+#: check-language-paid-actions.php
+msgid "The test actions could not be reset."
+msgstr "De testacties konden niet worden gereset."
+
+#: check-language-paid-actions.php
+msgid "The saved test actions were reset."
+msgstr "De opgeslagen testacties zijn gereset."
+
+#: check-language-paid-actions.php
+msgid "The test credits could not be added."
+msgstr "De testcredits konden niet worden toegevoegd."
+
+#: check-language-paid-actions.php
+msgid "Resetting…"
+msgstr "Resetten…"
+
+#: check-language-paid-actions.php
+msgid "The code could not be sent."
+msgstr "De code kon niet worden verzonden."
+
+#: check-language-paid-actions.php
+msgid "The code is invalid."
+msgstr "De code is ongeldig."
+
+#: check-language-paid-actions.php
+msgid "Gallery {number}"
+msgstr "Galerij {number}"
+
+#: check-language-paid-actions.php
+msgid "Purchase a credit to continue."
+msgstr "Koop een tegoed om door te gaan."
+
+#: check-language-general.php
+msgid "Send new PIN in {seconds}s"
+msgstr "Stuur een nieuwe pincode in {seconds}s"
+
+#: check-language-general.php
+msgid "The account confirmation could not be prepared."
+msgstr "De rekeningbevestiging kon niet worden voorbereid."
+
+#: check-language-general.php
+msgid "No registered user was found for this email address."
+msgstr "Er is geen geregistreerde gebruiker gevonden voor dit e-mailadres."
+
+#: check-language-general.php
+msgid "The user account could not be found."
+msgstr "Het gebruikersaccount kan niet worden gevonden."
+
+#: check-language-general.php
+msgid "PIN data was not found. Please contact the administrator."
+msgstr "Er zijn geen pincodegegevens gevonden. Neem contact op met de beheerder."
+
+#: check-language-general.php
+msgid "The user account could not be created. Please contact the administrator."
+msgstr "Het gebruikersaccount kon niet worden aangemaakt. Neem contact op met de beheerder."
+
+#: check-language-general.php
+msgid "The user could not be signed in after the PIN check. Please contact the administrator."
+msgstr "De gebruiker kon niet worden aangemeld na de pincodecontrole. Neem contact op met de beheerder."
+
+#: check-language-general.php
+msgid "The PIN could not be confirmed. Please contact the administrator."
+msgstr "De pincode kon niet worden bevestigd. Neem contact op met de beheerder."
+
+#: check-language-paid-actions.php
+msgid "Checkout could not be started."
+msgstr "Afrekenen kon niet worden gestart."
+
+#: check-language-paid-actions.php
+msgid "Processing…"
+msgstr "Verwerken…"
+
+#: check-language-paid-actions.php
+msgid "Processing payment"
+msgstr "Betaling aan het verwerken"
+
+#: check-language-paid-actions.php
+msgid "You may be redirected to complete the payment. You will return automatically."
+msgstr "Je wordt mogelijk doorgestuurd om de betaling te voltooien. Je komt automatisch terug."
+
+#: check-language-paid-actions.php
+msgid "This browser could not access the saved checkout data. Return to the gallery and contact the site owner before making another payment."
+msgstr "Deze browser heeft geen toegang tot de opgeslagen afrekengegevens. Ga terug naar de galerij en neem contact op met de site-eigenaar voordat je opnieuw betaalt."
+
+#: check-language-paid-actions.php
+msgid "The saved checkout data could not be opened. You can safely try finalizing this same payment again."
+msgstr "De opgeslagen afrekengegevens konden niet worden geopend. Je kunt gerust opnieuw proberen deze betaling af te ronden."
+
+#: check-language-paid-actions.php
+msgid "Another browser tab is currently using the saved checkout data. Close the other tab and try finalizing this same payment again."
+msgstr "Een ander browsertabblad gebruikt momenteel de opgeslagen afrekengegevens. Sluit het andere tabblad en probeer dezelfde betaling opnieuw te voltooien."
+
+#: check-language-paid-actions.php
+msgid "The saved checkout data could not be read. You can safely try finalizing this same payment again."
+msgstr "De opgeslagen afrekengegevens konden niet worden gelezen. Je kunt gerust opnieuw proberen deze betaling af te ronden."
+
+#: check-language-paid-actions.php
+msgid "Your test payment was approved. We are creating the gallery order and adding your credits now. You will return to the gallery automatically."
+msgstr "Je testbetaling is goedgekeurd. We maken de galerijbestelling aan en voegen nu je tegoed toe. U keert automatisch terug naar de galerij."
+
+#: check-language-paid-actions.php
+msgid "Your payment was approved. We are creating the gallery order and adding your credits now. You will return to the gallery automatically."
+msgstr "Je betaling is goedgekeurd. We maken de galerijbestelling aan en voegen nu je tegoed toe. U keert automatisch terug naar de galerij."
+
+#: check-language-paid-actions.php
+msgid "The saved checkout data was not found in this browser. Return to the gallery and contact the site owner before making another payment."
+msgstr "De opgeslagen afrekengegevens zijn niet gevonden in deze browser. Ga terug naar de galerij en neem contact op met de site-eigenaar voordat je opnieuw betaalt."
+
+#: check-language-paid-actions.php
+msgid "Payment processing could not be started. You can safely try finalizing this same payment again."
+msgstr "De betalingsverwerking kon niet worden gestart. Je kunt gerust opnieuw proberen deze betaling af te ronden."
+
+#: check-language-paid-actions.php
+msgid "uploads"
+msgstr "uploads"
+
+#: check-language-paid-actions.php
+msgid "votes"
+msgstr "stemmen"
+
+#: check-language-paid-actions.php
+msgid "comments"
+msgstr "reacties"
+
+#: check-language-paid-actions.php
+msgid "Your upload credits"
+msgstr "Uw uploadtegoed"
+
+#: check-language-paid-actions.php
+msgid "One credit is used for each submitted entry."
+msgstr "Voor elke ingezonden deelname wordt één tegoed gebruikt."
+
+#: check-language-paid-actions.php
+msgid "UPLOAD CREDITS"
+msgstr "UPLOADTEGOED"
+
+#: check-language-paid-actions.php
+msgid "UPLOAD ACCESS"
+msgstr "UPLOADTOEGANG"
+
+#: check-language-paid-actions.php
+msgid "Checking upload credits"
+msgstr "Uploadtegoed controleren"
+
+#: check-language-paid-actions.php
+msgid "Please wait while your upload credits are checked."
+msgstr "Wacht terwijl uw uploadtegoed wordt gecontroleerd."
+
+#: check-language-paid-actions.php
+msgid "Sign in to upload"
+msgstr "Inloggen om te uploaden"
+
+#: check-language-paid-actions.php
+msgid "Sign in to buy upload credits and submit an entry to this gallery."
+msgstr "Log in om uploadtegoed te kopen en een deelname naar deze galerij te sturen."
+
+#: check-language-paid-actions.php
+msgid "Sign in to continue"
+msgstr "Inloggen om door te gaan"
+
+#: check-language-paid-actions.php
+msgid "Upload credits temporarily unavailable"
+msgstr "Uploadtegoed tijdelijk niet beschikbaar"
+
+#: check-language-paid-actions.php
+msgid "Your upload credits could not be checked. Please try again."
+msgstr "Uw uploadtegoed kon niet worden gecontroleerd. Probeer het opnieuw."
+
+#: check-language-paid-actions.php
+msgid "More upload credits required"
+msgstr "Meer uploadtegoed vereist"
+
+#: check-language-paid-actions.php
+msgid "This selection needs {required} upload credits. You currently have {available}."
+msgstr "Deze selectie vereist {required} uploadtegoed. U hebt momenteel {available}."
+
+#: check-language-ecommerce.php
+msgid "The payment was not completed. Please try again."
+msgstr "De betaling is niet voltooid. Probeer het opnieuw."
+
+#: check-language-ecommerce.php
+msgid "Payment canceled. You can try again."
+msgstr "Betaling geannuleerd. U kunt het opnieuw proberen."

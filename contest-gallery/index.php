@@ -2,7 +2,9 @@
 /*
 Plugin Name: Contest Gallery
 Description: Upload form, files, photos and videos upload contest gallery plugin for WordPress. Create upload forms for entries with or without file/image upload. Create user registration form. Create login form. Create responsive galleries and allow to vote for any kind of entries. Sell entries via PayPal or Stripe API. Create or edit images via OpenAI API.
-Version: 32.0.1
+Version: 33.0.0
+Requires at least: 5.6
+Requires PHP: 5.6
 Author: Contest Gallery
 Plugin URI: https://www.contest-gallery.com
 Author URI: https://www.contest-gallery.com
@@ -150,9 +152,16 @@ include('functions/general/registry/cg-registry-functions.php');
 include('functions/general/registry/cg-registry-add-profile-image.php');
 include('functions/general/registry/create/cg-registry-create-functions.php');
 include('functions/general/registry/update/cg-registry-update-functions.php');
+$cgPaidActionsLanguageFunctionsOnly = true;
+include('check-language-paid-actions.php');
+unset($cgPaidActionsLanguageFunctionsOnly);
+include('functions/general/registry/cg-pin-auth-service.php');
 include('functions/general/mail/cg-mail-functions.php');
+include('functions/ecommerce/paid-actions/cg-paid-actions-core.php');
+include('functions/frontend/cg-paid-actions-bar.php');
 include('ajax/ajax-functions-frontend.php');
 include('ajax/ajax-functions-backend.php');
+include('functions/ecommerce/paid-actions/cg-paid-actions-ajax.php');
 include('functions/backend/ajax/openai/cg-ai-general-functions.php');
 include('functions/backend/ajax/openai/post-cg-get-openai-prompts.php');
 include('functions/backend/ajax/openai/post-cg-check-openai-key.php');
@@ -463,6 +472,8 @@ include('functions/backend/render/cg-backend-gallery-general.php');
 include('functions/backend/render/cg-backend-gallery-dynamic-message.php');
 include('functions/backend/render/cg-user-data-export-container.php');
 include('functions/backend/render/cg-backend-render-go-top-options.php');
+include('functions/backend/render/cg-paid-actions-gallery-card.php');
+include('functions/backend/render/cg-paid-actions-order-card.php');
 include('functions/backend/render/cg-total-images-shown-in-frontend-zero.php');
 include('functions/backend/render/cg-add-fields-pressed-after-content-modification.php');
 include('functions/backend/render/templates/cg-create-template-from-body.php');
@@ -936,86 +947,86 @@ if(!function_exists('cg_download_logs')){
 if(!function_exists('cg_download_sale_item')){
 	add_action('template_redirect','cg_download_sale_item');
 	function cg_download_sale_item() {
-		if (isset($_GET['cg_download_file_order_id_hash']) && isset($_GET['cg_entry'])) {
-			global $wpdb;
-			$tablename = $wpdb->prefix . "contest_gal1ery";
-			$tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
-			$tablename_ecommerce_orders = $wpdb->prefix . "contest_gal1ery_ecommerce_orders";
-			$tablename_ecommerce_orders_items = $wpdb->prefix . "contest_gal1ery_ecommerce_orders_items";
-			$tablePostMeta = $wpdb->prefix . "postmeta";
-			$OrderIdHash = sanitize_text_field(wp_unslash($_GET['cg_download_file_order_id_hash']));
-			$WpUpload = absint($_GET['cg_wp_upload']);
-			$Order = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_ecommerce_orders WHERE OrderIdHash = %s LIMIT 1",$OrderIdHash));
-
-			if(empty($Order)){
-				echo "Order not found";die;
-			}else{
-				if(!cg_current_user_can_access_ecommerce_order($Order)){
-					status_header(403);
-					echo 'Download not possible';die;
-				}
-				$id = $Order->id;
-				$downloadNotFound = true;
-
-				$wp_upload_dir = wp_upload_dir();
-
-				$orderItems = $wpdb->get_results("SELECT * FROM $tablename_ecommerce_orders_items WHERE ParentOrder = '$id' ");
-
-				foreach($orderItems as $orderItem){
-					$pid = $orderItem->pid;
-					$ecommerceEntry = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_entries WHERE pid = '$pid' ");
-					if(empty($ecommerceEntry)){
-						continue;
-					}
-					$WpUploadFilesForSale = null;
-					if($ecommerceEntry->WpUploadFilesForSale){
-						$WpUploadFilesForSale = unserialize($ecommerceEntry->WpUploadFilesForSale);
-					}
-
-					if($WpUploadFilesForSale && in_array($WpUpload,$WpUploadFilesForSale)!==false){
-
-						// old code for copied files
-						/*$RawData = unserialize($orderItem->RawData);
-						$metaData = $RawData['ecommerceData']['WpUploadFilesPostMeta'][$WpUpload];
-						$soldDownloadsFolder = $wp_upload_dir['basedir'].'/contest-gallery/ecommerce/sold-downloads';
-						$soldDownloadsFolderWpUpload = $soldDownloadsFolder.'/wp-upload-id-'.$WpUpload;
-						$filename = substr($metaData['_wp_attached_file'],strrpos($metaData['_wp_attached_file'],'/')+1,strlen($metaData['_wp_attached_file']));
-						$fileUrl = $soldDownloadsFolderWpUpload.'/'.$filename;*/
-
-						// #2 use collected data to move files to contest gallery folder
-						$ecommerceFileFolder = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$orderItem->GalleryID.'/ecommerce/real-id-'.$orderItem->pid;
-						$ecommerceFileFolderWpUploadFolder = $ecommerceFileFolder.'/wp-upload-id-'.$WpUpload;
-						$WpMetaAttachedFile = $wpdb->get_var( "SELECT meta_value FROM $tablePostMeta WHERE meta_key = '_wp_attached_file' AND post_id='$WpUpload'" );
-						$filename = substr($WpMetaAttachedFile,strrpos($WpMetaAttachedFile,'/')+1,strlen($WpMetaAttachedFile));
-						$fileUrl = $ecommerceFileFolderWpUploadFolder.'/'.$filename;
-
-						if(!file_exists($fileUrl)){
-							echo "Entry file not found";die;
-						}
-						$downloadNotFound = false;
-						//Define header information
-						header('Content-Description: File Transfer');
-						//header('Content-Type: image/jpg'); // not required... image might be broken because of that
-						header("Cache-Control: no-cache, must-revalidate");
-						header("Expires: 0");
-						header('Content-Disposition: attachment; filename="'.basename($fileUrl).'"');
-						header('Content-Length: ' . filesize($fileUrl));
-						header('Pragma: public');
-//Clear system output buffer
-						flush();
-//Read the size of the file
-						readfile($fileUrl);
-//Terminate from the script
-						die();
-					}
-				}
-
-				if($downloadNotFound){
-					echo "Download not available anymore";die;
-				}
-
-			}
+		if (!isset($_GET['cg_download_file_order_id_hash']) || !isset($_GET['cg_entry']) || !isset($_GET['cg_wp_upload'])) {
+			return;
 		}
+
+		global $wpdb;
+		$tablename_ecommerce_orders = $wpdb->prefix . "contest_gal1ery_ecommerce_orders";
+		$tablename_ecommerce_orders_items = $wpdb->prefix . "contest_gal1ery_ecommerce_orders_items";
+		$tablePostMeta = $wpdb->prefix . "postmeta";
+		$OrderIdHash = sanitize_text_field(wp_unslash($_GET['cg_download_file_order_id_hash']));
+		$WpUpload = absint($_GET['cg_wp_upload']);
+		$Order = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_ecommerce_orders WHERE OrderIdHash = %s LIMIT 1",$OrderIdHash));
+
+		if(empty($Order)){
+			status_header(404);
+			echo "Order not found";die;
+		}
+
+		if(!cg_current_user_can_access_ecommerce_order($Order)){
+			status_header(403);
+			echo 'Download not possible';die;
+		}
+
+		$paymentSucceeded =
+			($Order->PaymentType==='stripe' && $Order->PaymentStatus==='succeeded') ||
+			($Order->PaymentType==='paypal' && $Order->PaymentStatus==='COMPLETED');
+
+		if(empty($Order->IsFullPaid) || !$paymentSucceeded){
+			status_header(403);
+			echo 'Download not possible';die;
+		}
+
+		if(!empty($Order->IsTest) && (!is_user_logged_in() || !current_user_can('manage_options'))){
+			status_header(403);
+			echo 'Sandbox downloads are available only to administrators';die;
+		}
+
+		$id = $Order->id;
+		$wp_upload_dir = wp_upload_dir();
+		$orderItems = $wpdb->get_results($wpdb->prepare(
+			"SELECT * FROM $tablename_ecommerce_orders_items WHERE ParentOrder = %d AND IsDownload = 1",
+			$id
+		));
+
+		foreach($orderItems as $orderItem){
+			$WpUploadFilesForSale = null;
+			if(!empty($orderItem->WpUploadFilesForSale)){
+				$WpUploadFilesForSale = unserialize($orderItem->WpUploadFilesForSale);
+			}
+
+			if(!is_array($WpUploadFilesForSale) || !in_array($WpUpload,array_map('absint',$WpUploadFilesForSale),true)){
+				continue;
+			}
+
+			$ecommerceFileFolder = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$orderItem->GalleryID.'/ecommerce/real-id-'.$orderItem->pid;
+			$ecommerceFileFolderWpUploadFolder = $ecommerceFileFolder.'/wp-upload-id-'.$WpUpload;
+			$WpMetaAttachedFile = $wpdb->get_var($wpdb->prepare(
+				"SELECT meta_value FROM $tablePostMeta WHERE meta_key = '_wp_attached_file' AND post_id = %d LIMIT 1",
+				$WpUpload
+			));
+			if(empty($WpMetaAttachedFile)){continue;}
+
+			$filename = substr($WpMetaAttachedFile,strrpos($WpMetaAttachedFile,'/')+1,strlen($WpMetaAttachedFile));
+			$fileUrl = $ecommerceFileFolderWpUploadFolder.'/'.$filename;
+
+			if(!file_exists($fileUrl)){
+				echo "Entry file not found";die;
+			}
+
+			header('Content-Description: File Transfer');
+			header("Cache-Control: no-cache, must-revalidate");
+			header("Expires: 0");
+			header('Content-Disposition: attachment; filename="'.basename($fileUrl).'"');
+			header('Content-Length: ' . filesize($fileUrl));
+			header('Pragma: public');
+			flush();
+			readfile($fileUrl);
+			die();
+		}
+
+		echo "Download not available anymore";die;
 	}
 }
 

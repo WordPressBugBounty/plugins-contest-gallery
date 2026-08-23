@@ -132,6 +132,7 @@ if(empty($Order)){
 
 		$ecommerce_options = $wpdb->get_row( "SELECT * FROM $tablename_ecommerce_options WHERE GeneralID = 1");
 		$ecommerceOptions = json_decode(json_encode($ecommerce_options),true);
+		$ecommerceOptions['BorderRadiusOrder'] = 1;
 
 		if($Order->PaymentType == 'stripe'){
 			if($Order->IsTest){
@@ -174,11 +175,13 @@ if(empty($Order)){
 			}else{
 				$status = $result['status'];
 
-                if(!empty($result['latest_charge']['amount_refunded']) && $result['latest_charge']['amount_refunded'] == $result['latest_charge']['amount_refunded']){
+				$amountRefunded = !empty($result['latest_charge']['amount_refunded']) ? absint($result['latest_charge']['amount_refunded']) : 0;
+				$amountCaptured = !empty($result['latest_charge']['amount_captured']) ? absint($result['latest_charge']['amount_captured']) : (!empty($result['amount']) ? absint($result['amount']) : 0);
+				if($amountRefunded && $amountCaptured && $amountRefunded >= $amountCaptured){
 	                $status = 'refunded';
-                }elseif(!empty($result['latest_charge']['amount_refunded']) && $result['latest_charge']['amount_refunded'] != $result['latest_charge']['amount_refunded']){
+				}elseif($amountRefunded){
 	                $status = 'partially refunded';
-                }
+				}
 
 				$explanation = 'Status unknown';
 				// status explanation source // https://docs.stripe.com/payments/paymentintents/lifecycle
@@ -224,11 +227,18 @@ if(empty($Order)){
 						array('%d')
 					);
 				}
+				if($status==='refunded' && function_exists('cg_paid_actions_revoke_refunded_order')){
+					cg_paid_actions_revoke_refunded_order($OrderId);
+				}
 
 				if($status!='succeeded'){
 					echo "<div  id='mainCGdivOrderContainer'  class='mainCGdivOrderContainer'>
 <p style='text-align: center;'><b>Status:</b> $status ($explanation)</p>
-</div>"; return;
+</div>";
+					if($status==='partially refunded' && function_exists('cg_paid_actions_order_card')){
+						cg_paid_actions_order_card($OrderId,$Order);
+					}
+					return;
 				}
 
 			}
@@ -259,6 +269,9 @@ if(empty($Order)){
     </div>"; return;
             }
             $status = $PayPalOrderResponse['status'];
+            if(!empty($PayPalOrderResponse['purchase_units'][0]['payments']['captures'][0]['status'])){
+                $status = $PayPalOrderResponse['purchase_units'][0]['payments']['captures'][0]['status'];
+            }
             $explanation = 'Status unknown';
             // status explanation source // https://developer.paypal.com/docs/api/payments/v2/
             if($status=='COMPLETED'){
@@ -292,12 +305,19 @@ if(empty($Order)){
 					array('%d')
 				);
 			}
+			if($status==='REFUNDED' && function_exists('cg_paid_actions_revoke_refunded_order')){
+				cg_paid_actions_revoke_refunded_order($OrderId);
+			}
 
 			if($status!='COMPLETED'){
 				$isPayPalResponseError = true;
 				echo "<div  id='mainCGdivOrderContainer'  class='mainCGdivOrderContainer'>
 <p style='text-align: center;'><b>Status:</b> $status ($explanation)</p>
-</div>"; return;
+</div>";
+				if($status==='PARTIALLY_REFUNDED' && function_exists('cg_paid_actions_order_card')){
+					cg_paid_actions_order_card($OrderId,$Order);
+				}
+				return;
 			}
 
     }else{
@@ -462,11 +482,16 @@ Payment type not set
 </div>
 </div>";
 
+	if(function_exists('cg_paid_actions_order_card')){
+		cg_paid_actions_order_card($OrderId,$Order);
+	}
+
 	cg_ecommerce_show_api_response();
 
 	$galeryIDuserForJs = $GalleryID;
 
 	include(__DIR__ . "/../../../check-language.php");
+	include(__DIR__ . "/../../../check-language-general.php");
 	include(__DIR__ . "/../../../check-language-ecommerce.php");
 
 	include(__DIR__.'/../../../v10/v10-frontend/data/check-language-javascript.php');

@@ -36,9 +36,13 @@ if(!$isProVersion || $isLegacyGallerySpecificForm){
 if(!$intervalConf['shortcodeIsActive']){
     echo contest_gal1ery_convert_for_html_output_without_nl2br($intervalConf['TextWhenShortcodeIntervalIsOff']);
 }else{
+    $cgUsersPinModeValue = ($shortcode_name === 'cg_users_pin' && !empty($cgUsersPinMode) && $cgUsersPinMode === 'access') ? 'access' : 'register';
+    $cgUsersPinModeClass = $cgUsersPinModeValue === 'access' ? ' cg_users_pin_access' : '';
+    $cgUsersPinContainerModeClass = $cgUsersPinModeValue === 'access' ? ' cg_users_pin_access_mode' : '';
+
     echo contest_gal1ery_convert_for_html_output_without_nl2br($intervalConf['TextWhenShortcodeIntervalIsOn']);
 
-    echo "<div id='cg_user_registry_div' class='cg_user_registry_div mainCGdivUploadForm $InGalleryRegistryHide $mainCGdivUploadFormType $cgHideUserAjaxLoginForm $BorderRadiusRegistry $FeControlsStyleRegistry' data-cg-gid='$galeryIDuser' >";
+    echo "<div id='cg_user_registry_div' class='cg_user_registry_div mainCGdivUploadForm$cgUsersPinContainerModeClass $InGalleryRegistryHide $mainCGdivUploadFormType $cgHideUserAjaxLoginForm $BorderRadiusRegistry $FeControlsStyleRegistry' data-cg-gid='$galeryIDuser' >";
 
     echo "<div class='cg_hover_effect cg-close-upload-form $FeControlsStyleRegistry $cgHideUserAjaxLoginFormCloseButton' data-cg-gid='$galeryIDuser' data-cg-tooltip='$language_Close'>";
     echo "</div>";
@@ -46,9 +50,14 @@ if(!$intervalConf['shortcodeIsActive']){
     echo "<div style='visibility: hidden;' class='mainCGdivUploadFormContainer' >";
 
     if(!is_user_logged_in()){
-        echo "<div id='cg_user_registry_div_before' class='cg_user_registry_div_before'>";
+        $cgUsersPinBeforeClass = $cgUsersPinModeValue === 'access' ? ' cg_users_pin_access_header' : '';
+        echo "<div id='cg_user_registry_div_before' class='cg_user_registry_div_before$cgUsersPinBeforeClass'>";
         if($shortcode_name == 'cg_users_pin'){
-            echo contest_gal1ery_convert_for_html_output_without_nl2br($registry_and_login_options->TextBeforePinFormBeforeLoggedIn);
+            if($cgUsersPinModeValue === 'access'){
+                echo '<div class="cg_users_pin_access_intro">'.contest_gal1ery_convert_for_html_output_without_nl2br($registry_and_login_options->TextBeforePinFormBeforeLoggedIn).'</div>';
+            }else{
+                echo contest_gal1ery_convert_for_html_output_without_nl2br($registry_and_login_options->TextBeforePinFormBeforeLoggedIn);
+            }
         }else{
             echo contest_gal1ery_convert_for_html_output_without_nl2br($registry_and_login_options->TextBeforeRegFormBeforeLoggedIn);
         }
@@ -76,7 +85,7 @@ if(!$intervalConf['shortcodeIsActive']){
     echo "</pre>";
     echo "</div>";*/
 
-    echo '<form action="?cg_register=true" method="post" id="cg_user_registry_form" class="cg_user_registry_form '.$shortcode_name.'" enctype="multipart/form-data" data-cg-gid="$GalleryID">';
+    echo '<form action="?cg_register=true" method="post" id="cg_user_registry_form" class="cg_user_registry_form '.$shortcode_name.$cgUsersPinModeClass.'" enctype="multipart/form-data" data-cg-gid="$GalleryID" data-cg-pin-mode="'.$cgUsersPinModeValue.'">';
 
 // User ID �berpr�fung ob es die selbe ist
 // $check = wp_create_nonce("check");
@@ -157,7 +166,9 @@ if(!$intervalConf['shortcodeIsActive']){
                 $cgCheckUsernameNicknameMail = "id='cg_nick_name_check_alert'";
             }
             if ($value->Field_Type == 'main-mail') {
-                $cgContentField = "<input type='text' placeholder='$placeholder' class='cg_registry_form_field cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_Fields[$i][Field_Content]'>";
+                $cgUsersPinEmailType = $cgUsersPinModeValue === 'access' ? 'email' : 'text';
+                $cgUsersPinEmailAutocomplete = $cgUsersPinModeValue === 'access' ? " autocomplete='email'" : '';
+                $cgContentField = "<input type='$cgUsersPinEmailType'$cgUsersPinEmailAutocomplete placeholder='$placeholder' class='cg_registry_form_field cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_Fields[$i][Field_Content]'>";
                 $cgCheckUsernameNicknameMail = "id='cg_mail_check_alert'";
             }
         }
@@ -398,8 +409,9 @@ if(!$intervalConf['shortcodeIsActive']){
 
 
     if($shortcode_name=='cg_users_pin'){
+        $cgPinResendSeconds = function_exists('cg_pin_auth_cooldown_seconds') ? absint(cg_pin_auth_cooldown_seconds()) : 60;
         echo '<form action="" method="post" id="cglPinForm" 
-              class="cglPinForm cg_hide" enctype="multipart/form-data" data-cg-gid="'.$GalleryID.'">
+              class="cglPinForm cg_hide" enctype="multipart/form-data" data-cg-gid="'.$GalleryID.'" data-cg-pin-mode="'.$cgUsersPinModeValue.'" data-cg-pin-sent-message="'.esc_attr($language_PinSentToYourEmail).'">
            <input type="hidden" name="cglActivationKey" class="cglActivationKey" id="cglActivationKey" value="">
              <div id="cglPinSuccess" class="cglPinSuccess cg_row cg_hide">
                 <div class="cg_row_col cg_100">
@@ -409,7 +421,6 @@ if(!$intervalConf['shortcodeIsActive']){
             <div class="cg_row cglPinContent" id="cglPinContent" >
                 <div class="cg_row_col cg_100">
                     <div class="cg_form_div">
-                        <p style="text-align: center;">'.$language_PinSentToYourEmail.'</p>
                         <label for="cglPin" style="text-align: center;">'.$language_EnterPin.'</label>
                         <div class="cg-pin-wrapper">
                             <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*"
@@ -420,6 +431,10 @@ if(!$intervalConf['shortcodeIsActive']){
                                    class="cg-pin-digit" data-index="2">
                             <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*"
                                    class="cg-pin-digit" data-index="3">
+							<input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*"
+								   class="cg-pin-digit" data-index="4">
+							<input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*"
+								   class="cg-pin-digit" data-index="5">
                             <!-- real value that goes to PHP -->
                             <input type="hidden" name="cg_pin" id="cglPinValue" class="cglPinValue">
                         </div>
@@ -429,12 +444,14 @@ if(!$intervalConf['shortcodeIsActive']){
                 <div class="cg_form_upload_submit_div cg_form_div" style="text-align: center;margin-top: 0;">
                     <button type="submit" id="cglPinSubmit" 
                         class="cglPinSubmit cg_form_upload_submit">'.$language_ConfirmPin.'</button>
+                    <button type="button" class="cglPinSendNewButton cglPinCooldown" data-cg-send-new-pin-label="'.esc_attr($language_SendNewPin).'" data-cg-send-new-pin-countdown="'.esc_attr($language_SendNewPinCountdown).'" data-cg-pin-resend-seconds="'.$cgPinResendSeconds.'" disabled aria-disabled="true">'.esc_html(strtr($language_SendNewPinCountdown,array('{seconds}'=>$cgPinResendSeconds))).'</button>
+                    <div class="cglPinAuthMessage" role="status" aria-live="polite">'.$language_PinSentToYourEmail.'</div>
                         <p class="cg_input_error cg_hide cglPinSubmitError" id="cglPinSubmitError" style="text-align: center; margin-left: auto; margin-right: auto;"></p>
                 </div>
             </div>
         </form>
         <form action="" method="post" id="cglResendPinForm" 
-              class="cglResendPinForm cg_hide" enctype="multipart/form-data" data-cg-gid="'.$GalleryID.'">
+              class="cglResendPinForm cg_hide" enctype="multipart/form-data" data-cg-gid="'.$GalleryID.'" data-cg-pin-mode="'.$cgUsersPinModeValue.'">
             <input type="hidden" name="cglActivationKeyResend" class="cglActivationKeyResend" id="cglActivationKeyResend" value="">
             <div class="cg_row">
                 <div class="cg_row_col cg_100">

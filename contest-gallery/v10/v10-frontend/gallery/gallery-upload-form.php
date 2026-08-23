@@ -8,7 +8,34 @@ if (empty($OrderItemID)) {
     $OrderItemID = '';
 }
 
-echo "<div id='mainCGdivUploadForm$galeryIDuserForJs' class='mainCGdivUploadForm 123 $mainCGdivShowUncollapsed $mainCGdivContactEntriesOnly $mainCGdivUploadNotRequired $mainCGdivUploadFormBulk $mainCGdivUploadFormAdditionalFiles mainCGdivUploadFormAjax cg_hide $cgFeControlsStyle $BorderRadiusClassUploadForm' data-cg-gid='$galeryIDuserForJs' data-cg-real-gid='$galeryID'  data-cg-order-item-id='$OrderItemID' >";
+$cgIsUsersUploadShortcode = !empty($shortcode_name) && $shortcode_name==='cg_users_upload';
+$cgPaidUploadSubmissionOpen = !((time() >= $ContestEndTime && $ContestEnd == 1) || $ContestEnd == 2 || (time() < $ContestStartTime && $ContestStart == 1));
+$cgIsOrderSummaryUpload = !empty($isFromOrderSummary) && !empty($OrderItemID);
+$cgPaidUploadGateActive = !$cgIsOrderSummaryUpload && $cgIsUsersUploadShortcode && $cgPaidUploadSubmissionOpen && function_exists('cg_paid_actions_is_action_active_for_request') && cg_paid_actions_is_action_active_for_request($galeryID,'upload');
+$cgPaidUploadGateClass = $cgPaidUploadGateActive ? ' cg-paid-actions-upload-form-gated' : '';
+$cgPaidUploadGateAttribute = $cgPaidUploadGateActive ? " data-cg-paid-actions-upload-gate='1'" : '';
+
+echo "<div id='mainCGdivUploadForm$galeryIDuserForJs' class='mainCGdivUploadForm 123 $mainCGdivShowUncollapsed $mainCGdivContactEntriesOnly $mainCGdivUploadNotRequired $mainCGdivUploadFormBulk $mainCGdivUploadFormAdditionalFiles mainCGdivUploadFormAjax cg_hide $cgFeControlsStyle $BorderRadiusClassUploadForm$cgPaidUploadGateClass' data-cg-gid='$galeryIDuserForJs' data-cg-real-gid='$galeryID' data-cg-order-item-id='$OrderItemID'$cgPaidUploadGateAttribute>";
+
+if(!$cgIsOrderSummaryUpload && $cgIsUsersUploadShortcode && function_exists('cg_paid_actions_render_frontend_bar_shell')){
+    cg_paid_actions_render_frontend_bar_shell($galeryID,$galeryIDuserForJs,$options['visual'],array('upload'));
+}
+
+if($cgPaidUploadGateActive){
+    $cgPaidUploadAccessState = is_user_logged_in() ? 'loading' : 'auth';
+    $cgPaidUploadAccessKicker = is_user_logged_in() ? cg_paid_actions_t('UploadCreditsUpper') : cg_paid_actions_t('UploadAccessUpper');
+    $cgPaidUploadAccessTitle = is_user_logged_in() ? cg_paid_actions_t('CheckingUploadCredits') : cg_paid_actions_t('SignInToUpload');
+    $cgPaidUploadAccessDescription = is_user_logged_in() ? cg_paid_actions_t('CheckingUploadCreditsDescription') : cg_paid_actions_t('SignInToUploadDescription');
+    $cgPaidUploadAccessButton = is_user_logged_in() ? '' : cg_paid_actions_t('SignInToContinue');
+    $cgPaidUploadAccessTitleId = 'cgPaidActionsUploadAccessTitle'.preg_replace('/[^A-Za-z0-9_-]/','',(string)$galeryIDuserForJs);
+    echo "<div class='cg-paid-actions-upload-access cg-paid-actions-upload-access-".esc_attr($cgPaidUploadAccessState)."' data-cg-state='".esc_attr($cgPaidUploadAccessState)."' role='status' aria-live='polite' aria-labelledby='".esc_attr($cgPaidUploadAccessTitleId)."'>";
+    echo "<span class='cg-paid-actions-upload-access-icon'><span class='cg-paid-actions-balance-icon cg-paid-actions-balance-icon-upload' aria-hidden='true'></span></span>";
+    echo "<span class='cg-paid-actions-upload-access-kicker'>".esc_html($cgPaidUploadAccessKicker)."</span>";
+    echo "<strong class='cg-paid-actions-upload-access-title' id='".esc_attr($cgPaidUploadAccessTitleId)."'>".esc_html($cgPaidUploadAccessTitle)."</strong>";
+    echo "<span class='cg-paid-actions-upload-access-description'>".esc_html($cgPaidUploadAccessDescription)."</span>";
+    echo "<button type='button' class='cg-paid-actions-primary cg-paid-actions-upload-access-action".($cgPaidUploadAccessButton==='' ? " cg_hide" : '')."' data-cg-access-action='".($cgPaidUploadAccessState==='auth' ? 'auth' : '')."'>".esc_html($cgPaidUploadAccessButton)."</button>";
+    echo "</div>";
+}
 
 $jsonUploadFormSortedByFieldOrder = array();
 
@@ -75,8 +102,8 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
 } else {
     $cgShowGoogleSignInAnyCase = true;
 
-    $regUserOnlyHide = '';
-    if ($options['pro']['RegUserUploadOnly'] == 1 && is_user_logged_in() == false) {
+    $regUserOnlyHide = $cgPaidUploadGateActive ? 'cg_hide' : '';
+    if (!$cgPaidUploadGateActive && $options['pro']['RegUserUploadOnly'] == 1 && is_user_logged_in() == false) {
         $regUserOnlyHide = 'cg_hide';
         echo '<div class="mainCGdivUploadRegUserOnlyText">';
             echo contest_gal1ery_convert_for_html_output_without_nl2br($options['pro']['RegUserUploadOnlyText']);

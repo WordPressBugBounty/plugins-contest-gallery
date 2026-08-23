@@ -362,18 +362,8 @@ echo <<<HEREDOC
 HEREDOC;
 
 echo <<<HEREDOC
-<div class="cg_view_options_row">
-        <div class="cg_view_option cg_view_option_100_percent cg_border_top_none" id="BorderRadiusOrderContainer">
-            <div class="cg_view_option_title">
-                <p style="margin-right: -30px;">Round borders form container and field inputs</p>
-            </div>
-            <div class="cg_view_option_checkbox cg_view_option_checked">
-                <input type="checkbox" name="BorderRadiusOrder" id="BorderRadiusOrder" $BorderRadiusOrder>
-            </div>
-        </div>
-</div>
 <div class='cg_view_options_row '  >
-        <div class='cg_view_option cg_view_option_full_width cg_border_top_none' style="padding-bottom: 10px;">
+        <div class='cg_view_option cg_view_option_full_width' style="padding-bottom: 10px;">
             <div class='cg_view_option_title'>
                 <p>Background, fields and font color style</p>
             </div>

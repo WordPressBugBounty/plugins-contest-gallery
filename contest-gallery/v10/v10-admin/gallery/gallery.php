@@ -206,6 +206,7 @@ if($isAjaxCall){
 	$CgEntriesOwnSlugName = cg_get_gallery_slug_name();
 
 	$Version = intval($optionsSQL->Version);
+	$legacyUploadSaleEntries = function_exists('cg_ecommerce_get_legacy_upload_sale_entries') ? cg_ecommerce_get_legacy_upload_sale_entries($GalleryID) : array();
 
 	foreach($selectSQL as $value){
 
@@ -263,6 +264,7 @@ if($isAjaxCall){
 			$value->MultipleFiles = '';
 		}
 		$SaleType = (!empty($value->EcommerceEntry)) ? $allEcommerceFilesByIdArray[$id]['SaleType']  : '';
+		$LegacyUploadSaleAllowed = ($SaleType === 'upload' || in_array(absint($id),$legacyUploadSaleEntries,true)) ? 1 : 0;
 		$EcommerceEntry = $value->EcommerceEntry;
 		$EcommerceEntryAndWpUploadIds = [];
 		$addedEcommerceImageForDownload[$id] = [];
@@ -1049,6 +1051,12 @@ if($isAjaxCall){
         }
         echo "<div class='cg_sent_mails $cg_sent_mails_hide'>Mails<br><b>".$cg_sent_mails_count."</b></div>";
 
+		$paidActionUploadDetail = !empty($cgPaidActionUploadDetails[$id]) ? $cgPaidActionUploadDetails[$id] : array();
+		$paidActionUploadBadge = function_exists('cg_paid_actions_admin_payment_badge') ? cg_paid_actions_admin_payment_badge($paidActionUploadDetail,$GalleryID) : '';
+		if($paidActionUploadBadge!==''){
+			echo "<div class='cg_backend_paid_action_upload'>".$paidActionUploadBadge."</div>";
+		}
+
 		if(!empty($OrderItem)){
 			$OrderId = $wpdb->get_var("SELECT ParentOrder FROM $tablename_ecommerce_orders_items WHERE id = $OrderItem");
 			$PayerEmail = $wpdb->get_var("SELECT PayerEmail FROM $tablename_ecommerce_orders WHERE id = $OrderId");
@@ -1213,6 +1221,7 @@ if($isAjaxCall){
 		echo "<input type='hidden' class='AllUploadsUsedText' value='$AllUploadsUsedText'>";
 		echo "<input type='hidden' class='SaleDescription' value='$SaleDescription'>";
 		echo "<input type='hidden' class='SaleType' value='$SaleType'>";
+		echo "<input type='hidden' class='LegacyUploadSaleAllowed' value='$LegacyUploadSaleAllowed'>";
 		echo "<input type='hidden' class='SaleAmountMin' value='$SaleAmountMin'>";
 		echo "<input type='hidden' class='SaleAmountMax' value='$SaleAmountMax'>";
 		echo "<input type='hidden' class='UploadGallery' value='$UploadGallery'>";
@@ -2257,9 +2266,7 @@ if($isAjaxCall){
 					echo "<div class='cg_image_title_container' >";
 
 					echo "Facebook share button title:<br/>";
-					echo "<input type='text' value='".$valueTitle."' name='fbcontent[$id][title]'  maxlength='1000' class='cg_image_title cg_input_vars_count'>";
-					$baseUrlFacebook=$uploadFolder['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/'.$Timestamp."_".$NamePic."413.html";
-					echo "<input type='hidden' value='".$baseUrlFacebook."' name='fbcontent[$id][baseUrlForFacebook]' class='cg_input_vars_count'>";
+					echo "<input type='text' value='".esc_attr($valueTitle)."' name='fbcontent[$id][title]'  maxlength='1000' class='cg_image_title cg_input_vars_count'>";
 					echo "<img src='$titleIcon' title='Insert original WordPress file title if exists' alt='Insert original WordPress file title if exists' class='$hideWpFileInfoToInsert cg_title_icon' />";
 					echo "<input type='hidden' class='post_title' value='$post_title' >";
 					echo "</div>";
@@ -2274,7 +2281,7 @@ if($isAjaxCall){
                                 <div class=\"cg-info-container cg-info-container-facebook-description\" style=\"top: 21px;left: 38px;display: none;\">In general description appears with a delay after upload</div><br/>";
 					}
 
-					echo "<textarea name='fbcontent[$id][description]'  maxlength='10000' rows='4' class='cg_image_description cg_image_excerpt cg_input_vars_count'>$valueDescription</textarea>";
+					echo "<textarea name='fbcontent[$id][description]'  maxlength='10000' rows='4' class='cg_image_description cg_image_excerpt cg_input_vars_count'>".esc_textarea($valueDescription)."</textarea>";
 					echo "<div class='cg_comment_icons_div'>";
 					echo "<img src='$descriptionIcon' title='Insert original WordPress description if exists' alt='Insert original WordPress description' class='$hideWpFileInfoToInsert cg_description_icon' />";
 					echo "<img src='$excerptIcon' title='Insert original WordPress excerpt if exists' alt='Insert original WordPress excerpt if exists' class='$hideWpFileInfoToInsert cg_excerpt_icon' />";

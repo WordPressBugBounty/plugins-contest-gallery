@@ -16,6 +16,9 @@ if(!function_exists('cg_ecommerce_sale_deactivate')){
 
 		if(!empty($ecommerceEntryId)){
 			$ecommerceEntry = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_entries WHERE id = '$ecommerceEntryId'");
+			if(!empty($ecommerceEntry) && $ecommerceEntry->SaleType === 'upload' && cg_ecommerce_get_gallery_creation_version($GalleryID) >= 33){
+				cg_ecommerce_set_legacy_upload_sale_allowed($GalleryID,$realId,true);
+			}
 
 			$isAllWpUploadsSuccessfulMoved = true;
 

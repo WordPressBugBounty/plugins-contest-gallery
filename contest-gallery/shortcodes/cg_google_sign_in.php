@@ -43,10 +43,10 @@ if(!function_exists('contest_gal1ery_google_sign_in')){
         $tablename_pro_options = $wpdb->prefix . "contest_gal1ery_pro_options";// required for users-login-text-after-login.php
         $tablename_registry_and_login_options = $wpdb->prefix . "contest_gal1ery_registry_and_login_options";
 
-            $options_visual = $wpdb->get_row( "SELECT BorderRadiusLogin, FeControlsStyleLogin FROM $tablename_options_visual WHERE GeneralID = '1'" );
+            $options_visual = $wpdb->get_row( "SELECT FeControlsStyleLogin FROM $tablename_options_visual WHERE GeneralID = '1'" );
             $PermanentTextWhenLoggedIn = contest_gal1ery_convert_for_html_output_without_nl2br($wpdb->get_var("SELECT PermanentTextWhenLoggedIn FROM $tablename_registry_and_login_options WHERE GeneralID = '1'"));
 
-        $BorderRadiusClass = ($options_visual->BorderRadiusLogin==1) ? 'cg_border_radius_controls_and_containers ' : '';
+        $BorderRadiusClass = 'cg_border_radius_controls_and_containers ';
         $cgFeControlsStyle = ($options_visual->FeControlsStyleLogin=='white' || empty($options_visual->FeControlsStyleLogin)) ?  'cg_fe_controls_style_white' : 'cg_fe_controls_style_black';
 
         // has to be set so loading button without moving

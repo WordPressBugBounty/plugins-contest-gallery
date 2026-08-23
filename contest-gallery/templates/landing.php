@@ -1066,7 +1066,11 @@ if(!empty($cgEntryId)){
     $is_loggedn_in = 'false';
     if(is_user_logged_in()){
 	    $is_loggedn_in = 'true';
-    }
+	}
+
+	if(function_exists('cg_paid_actions_render_stripe_return_critical_head')){
+		cg_paid_actions_render_stripe_return_critical_head();
+	}
 
     ?>
 </head>

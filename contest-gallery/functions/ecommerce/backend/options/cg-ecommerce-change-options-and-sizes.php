@@ -82,7 +82,7 @@ if(!function_exists('cg_ecommerce_change_options_and_sizes')){
         $CurrencyPosition = sanitize_text_field(isset($_POST['CurrencyPosition']) ? $_POST['CurrencyPosition'] : $CurrencyPosition);
         $PriceDivider = sanitize_text_field(isset($_POST['PriceDivider']) ? $_POST['PriceDivider'] : $PriceDivider);
         $Environment = sanitize_text_field(isset($_POST['Environment']) ? $_POST['Environment'] : $Environment);
-        $BorderRadiusOrder = isset($_POST['BorderRadiusOrder']) ? 1 : 0;
+        $BorderRadiusOrder = 1;
         $ForwardAfterPurchaseUrl = sanitize_text_field(isset($_POST['ForwardAfterPurchaseUrl']) ? $_POST['ForwardAfterPurchaseUrl'] : $ForwardAfterPurchaseUrl);
 
 	    $RegUserPurchaseOnly = isset($_POST['RegUserPurchaseOnly']) ? 1 : 0;

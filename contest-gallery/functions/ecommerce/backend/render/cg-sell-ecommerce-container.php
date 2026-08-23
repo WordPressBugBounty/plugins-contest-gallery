@@ -43,7 +43,7 @@ if(!function_exists('cg_sell_ecommerce_container_warnings')){
 }
 
 if(!function_exists('cg_sell_ecommerce_container')){
-    function cg_sell_ecommerce_container($GalleryID, $payPalOptions, $cgProFalse){
+    function cg_sell_ecommerce_container($GalleryID, $payPalOptions, $cgProFalse, $galleryVersion = 0){
 
 	    $wp_upload_dir = wp_upload_dir();
         $CurrencyShort = $payPalOptions->CurrencyShort;
@@ -52,6 +52,11 @@ if(!function_exists('cg_sell_ecommerce_container')){
         $Tax = $payPalOptions->TaxPercentageDefault;
         $Shipping = $payPalOptions->ShippingGross;
         $siteURL = get_site_url();
+	    $isLegacyUploadSaleExistingOnly = (float)$galleryVersion >= 33;
+	    $legacyUploadSaleOptionClass = $isLegacyUploadSaleExistingOnly ? ' cg_hide' : '';
+	    $saleTypeOptionsClass = $isLegacyUploadSaleExistingOnly ? ' cg_sale_type_options_three_columns' : '';
+	    $legacyUploadSaleTitle = $isLegacyUploadSaleExistingOnly ? 'Legacy upload package' : 'Upload';
+	    $legacyUploadSaleNote = $isLegacyUploadSaleExistingOnly ? '<b>LEGACY:</b> available only for an existing upload package. Use Pay for uploads for new sales.' : '<b>NOTE:</b> charge users for upload';
 
 	    $cgProFalseSellContainer = '';
 		if($cgProFalse){
@@ -171,7 +176,7 @@ HEREDOC;
                     <div class='cg_view_option_title cg_hide'>
                     <p>Sale type</p>
                     </div>
-                    <div class='cg_view_option_radio_multiple cg_sale_type_options'>
+                    <div class='cg_view_option_radio_multiple cg_sale_type_options$saleTypeOptionsClass'>
                         <div class='cg_view_option_radio_multiple_container cg_sale_type_option cg_flex_flow_column' id="SaleType_shipping_option_container">
                             <div class='cg_view_option_radio_multiple_title cg_sale_type_option_heading' id="SaleType_shipping_option">
                                 <b>Shipping</b>
@@ -221,15 +226,15 @@ HEREDOC;
                                 </span>
                             </div>
                         </div>
-                        <div class='cg_view_option_radio_multiple_container cg_sale_type_option cg_flex_flow_column' id="SaleType_upload_option_container">
+                        <div class='cg_view_option_radio_multiple_container cg_sale_type_option cg_flex_flow_column$legacyUploadSaleOptionClass' id="SaleType_upload_option_container" data-cg-existing-only="{$isLegacyUploadSaleExistingOnly}">
                             <div class='cg_view_option_radio_multiple_title cg_sale_type_option_heading' id="SaleType_upload_option">
-                                <b>Upload</b>
+                                <b>$legacyUploadSaleTitle</b>
                             </div>
                             <div class='cg_view_option_radio_multiple_input'>
                                 <input type="radio" name="cgSellContainer[SaleType]" class="SaleType SaleType_upload cg_view_option_radio_multiple_input_field"  value="upload">
                             </div>
                             <div class='cg_view_option_radio_multiple_title cg_sale_type_option_note' id="SaleType_upload_option">
-                                <span class="cg_view_option_title_note"><b>NOTE:</b> charge users for upload</span>
+                                <span class="cg_view_option_title_note">$legacyUploadSaleNote</span>
                             </div>
                         </div>
                 </div>

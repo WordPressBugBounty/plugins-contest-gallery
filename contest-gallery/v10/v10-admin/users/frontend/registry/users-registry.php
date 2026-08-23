@@ -47,7 +47,7 @@ $FeControlsStyleRegistry = ($optionsVisual->FeControlsStyleRegistry=='white' || 
 if($FeControlsStyleRegistry=='cg_fe_controls_style_white'){
     $isWhite = 1;
 }
-$BorderRadiusRegistry = ($optionsVisual->BorderRadiusRegistry=='1' || empty($optionsVisual->FeControlsStyleRegistry)) ? 'cg_border_radius_controls_and_containers' : '';
+$BorderRadiusRegistry = 'cg_border_radius_controls_and_containers';
 if($BorderRadiusRegistry){
     $isBorderRadius = 1;
 }
@@ -98,6 +98,15 @@ if (!empty($_GET["cgkey"]) || !empty($cg_users_pin_from_email_check)) {// joins 
     $tablenameCreateUserForm = $wpdb->prefix . "contest_gal1ery_create_user_form";
 
     $selectUserForm = $wpdb->get_results("SELECT * FROM $tablenameCreateUserForm WHERE GeneralID = '1' && Active = '1' ORDER BY Field_Order ASC");
+
+    if($shortcode_name === 'cg_users_pin' && !empty($cgUsersPinMode) && $cgUsersPinMode === 'access'){
+        foreach($selectUserForm as $selectUserFormKey => $selectUserFormValue){
+            if($selectUserFormValue->Field_Type !== 'main-mail'){
+                unset($selectUserForm[$selectUserFormKey]);
+            }
+        }
+        $selectUserForm = array_values($selectUserForm);
+    }
 
     if (empty($selectUserForm)) {
         echo "Please check your shortcode. The id does not exists.<br>";

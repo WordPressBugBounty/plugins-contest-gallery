@@ -85,8 +85,11 @@ if(!function_exists('cg_copy_rating')){
             }
 
             $insertQuery = "INSERT INTO $tablename_ip
-(id, pid, IP, GalleryID, Rating, RatingS, WpUserId, VoteDate, Tstamp, OptionSet, CookieId, Category, CategoriesOn, CommentId)
-SELECT NULL, pid, IP, %d, Rating, RatingS, WpUserId, VoteDate, Tstamp, OptionSet, CookieId, Category, CategoriesOn, $commentIdSelect
+(id, pid, IP, GalleryID, Rating, RatingS, WpUserId, VoteDate, Tstamp, OptionSet, CookieId, Category, CategoriesOn, CommentId,
+ IsPaidAction, IsPaidActionPreview, PaidActionSource, PaidActionPriceUnitGross, PaidActionCurrencyShort,
+ PaidActionCurrencyPosition, PaidActionPriceDivider, PaidActionParentOrder, PaidActionOrderItem)
+SELECT NULL, pid, IP, %d, Rating, RatingS, WpUserId, VoteDate, Tstamp, OptionSet, CookieId, Category, CategoriesOn, $commentIdSelect,
+       0, 0, '', 0, '', '', '', 0, 0
 FROM $tablename_ip
 WHERE GalleryID = %d AND pid IN ($oldImageIdsPlaceholders)";
             $insertParameters = array_merge([$nextGalleryID, $oldGalleryID], $oldImageIds);

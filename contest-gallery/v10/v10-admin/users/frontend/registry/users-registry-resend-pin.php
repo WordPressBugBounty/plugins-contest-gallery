@@ -47,6 +47,26 @@ if (count($userAccountEntries)) {
         die;
     }
 
+    $cgPinRateLock = cg_pin_auth_acquire_lock('rate',$cg_main_mail);
+    if($cgPinRateLock){
+        $cgPinRateReservation = cg_pin_auth_reserve_request($cg_main_mail);
+        cg_pin_auth_release_lock($cgPinRateLock);
+    }else{
+        $cgPinRateReservation = cg_pin_auth_busy_error();
+    }
+    if(is_wp_error($cgPinRateReservation)){
+        $cgPinRateErrorData = $cgPinRateReservation->get_error_data();
+        ?>
+        <script data-cg-processing="true">
+            cgJsClass.gallery.vars.activationKey = '';
+            cgJsClass.gallery.vars.pinMessage = <?php echo wp_json_encode($cgPinRateReservation->get_error_code());?>;
+            cgJsClass.gallery.vars.pinRetryAfter = <?php echo is_array($cgPinRateErrorData) && !empty($cgPinRateErrorData['retryAfter']) ? absint($cgPinRateErrorData['retryAfter']) : 0;?>;
+            cgJsClass.gallery.vars.pinStatusMessage = <?php echo wp_json_encode($cgPinRateReservation->get_error_message());?>;
+        </script>
+        <?php
+        die;
+    }
+
     $proOptions = $wpdb->get_row("SELECT * FROM $tablenameProOptions WHERE GeneralID = '1'");
     $posPin = '$pin$';
     $TextEmailConfirmation = contest_gal1ery_convert_for_html_output_without_nl2br($proOptions->TextPinConfirmation);
@@ -74,7 +94,7 @@ if (count($userAccountEntries)) {
         ['%s']
     );
 
-    $pin = wp_rand(1000, 9999);
+    $pin = wp_rand(100000, 999999);
     $pinHashed = password_hash($pin,PASSWORD_DEFAULT);
 
     $wpdb->update(
@@ -121,6 +141,9 @@ if (count($userAccountEntries)) {
     ?>
     <script  data-cg-processing="true" data-cg-success="true">
         cgJsClass.gallery.vars.activationKey = <?php echo json_encode($cgPinRequestKey);?>;
+        cgJsClass.gallery.vars.pinMessage = '';
+        cgJsClass.gallery.vars.pinRetryAfter = <?php echo absint(cg_pin_auth_cooldown_seconds());?>;
+        cgJsClass.gallery.vars.pinStatusMessage = <?php echo wp_json_encode(isset($language_PinSentToYourEmail) ? $language_PinSentToYourEmail : 'A PIN has been sent to your email');?>;
     </script>
     <?php
     die;

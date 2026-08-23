@@ -35,6 +35,9 @@ if(!function_exists('cg_create_ecommerce_tables')){
         $tablename_ecommerce_invoice_options = $wpdb->base_prefix . "$i"."contest_gal1ery_ecommerce_invoice_options";
         $tablename_ecommerce_orders = $wpdb->base_prefix . "$i"."contest_gal1ery_ecommerce_orders";
         $tablename_ecommerce_orders_items = $wpdb->base_prefix . "$i"."contest_gal1ery_ecommerce_orders_items";
+        $tablename_paid_action_settings = $wpdb->base_prefix . "$i"."contest_gal1ery_paid_action_settings";
+        $tablename_paid_action_entitlements = $wpdb->base_prefix . "$i"."contest_gal1ery_paid_action_entitlements";
+        $tablename_paid_action_ledger = $wpdb->base_prefix . "$i"."contest_gal1ery_paid_action_ledger";
 
         if(!is_array($existingContestGalleryTables)){
             $existingContestGalleryTables = cg_contest_gallery_create_table_get_existing_tables($wpdb->base_prefix . "$i"."contest_gal1ery");
@@ -272,9 +275,91 @@ if(!function_exists('cg_create_ecommerce_tables')){
             RawData TEXT DEFAULT '',
             WpUploadFilesForSale TEXT DEFAULT '',
             Uploaded INT(11) DEFAULT 0,
+            PaidActionType VARCHAR(16) DEFAULT '',
+            PaidActionScope VARCHAR(8) DEFAULT '',
             INDEX ParentOrder_index (ParentOrder),
             INDEX pid_ParentOrder_index (pid, ParentOrder),
-            INDEX GalleryID_ParentOrder_index (GalleryID, ParentOrder)
+            INDEX GalleryID_ParentOrder_index (GalleryID, ParentOrder),
+            INDEX PaidActionType_ParentOrder_index (PaidActionType, ParentOrder)
+            ) $charset_collate";
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($sql);
+            cg_echo_last_sql_error($isShowError,$lastError);
+        }
+
+        if(cg_contest_gallery_create_table_needs_creation($tablename_paid_action_settings,$existingContestGalleryTables)){
+            $sql = "CREATE TABLE $tablename_paid_action_settings (
+            id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            GalleryID BIGINT(20) NOT NULL,
+            UploadMode TINYINT DEFAULT 0,
+            VoteMode TINYINT DEFAULT 0,
+            CommentMode TINYINT DEFAULT 0,
+            UploadPrice DECIMAL(65,2) DEFAULT 1.00,
+            VotePrice DECIMAL(65,2) DEFAULT 1.00,
+            CommentPrice DECIMAL(65,2) DEFAULT 1.00,
+            ShareCredits TINYINT DEFAULT 0,
+            UpdatedBy BIGINT(20) DEFAULT 0,
+            UpdatedAt DATETIME DEFAULT '0000-00-00 00:00:00',
+            UNIQUE INDEX GalleryID_unique (GalleryID)
+            ) $charset_collate";
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($sql);
+            cg_echo_last_sql_error($isShowError,$lastError);
+        }
+
+        if(cg_contest_gallery_create_table_needs_creation($tablename_paid_action_entitlements,$existingContestGalleryTables)){
+            $sql = "CREATE TABLE $tablename_paid_action_entitlements (
+            id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            WpUserId BIGINT(20) NOT NULL,
+            OriginGalleryID BIGINT(20) NOT NULL,
+            ActionType VARCHAR(16) NOT NULL,
+            ScopeType VARCHAR(8) NOT NULL,
+            ParentOrder BIGINT(20) DEFAULT 0,
+            OrderItem BIGINT(20) DEFAULT 0,
+            GrantType VARCHAR(16) DEFAULT 'purchase',
+            Granted INT(11) DEFAULT 0,
+            Reserved INT(11) DEFAULT 0,
+            Consumed INT(11) DEFAULT 0,
+            Revoked INT(11) DEFAULT 0,
+            IsTest TINYINT DEFAULT 0,
+            IdempotencyKey VARCHAR(191) NOT NULL,
+            CreatedAt DATETIME DEFAULT '0000-00-00 00:00:00',
+            UpdatedAt DATETIME DEFAULT '0000-00-00 00:00:00',
+            UNIQUE INDEX IdempotencyKey_unique (IdempotencyKey),
+            INDEX User_Action_Scope_index (WpUserId, ActionType, ScopeType),
+            INDEX OriginGallery_User_Action_index (OriginGalleryID, WpUserId, ActionType),
+            INDEX OrderItem_index (OrderItem)
+            ) $charset_collate";
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($sql);
+            cg_echo_last_sql_error($isShowError,$lastError);
+        }
+
+        if(cg_contest_gallery_create_table_needs_creation($tablename_paid_action_ledger,$existingContestGalleryTables)){
+            $sql = "CREATE TABLE $tablename_paid_action_ledger (
+            id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            WpUserId BIGINT(20) NOT NULL,
+            OriginGalleryID BIGINT(20) DEFAULT 0,
+            TargetGalleryID BIGINT(20) DEFAULT 0,
+            ActionType VARCHAR(16) NOT NULL,
+            ScopeType VARCHAR(8) NOT NULL,
+            Delta INT(11) DEFAULT 0,
+            EventType VARCHAR(24) NOT NULL,
+            ParentOrder BIGINT(20) DEFAULT 0,
+            OrderItem BIGINT(20) DEFAULT 0,
+            EntitlementId BIGINT(20) DEFAULT 0,
+            ObjectId BIGINT(20) DEFAULT 0,
+            ReferenceLedgerId BIGINT(20) DEFAULT 0,
+            AdminUserId BIGINT(20) DEFAULT 0,
+            IdempotencyKey VARCHAR(191) NOT NULL,
+            MetaData TEXT DEFAULT '',
+            CreatedAt DATETIME DEFAULT '0000-00-00 00:00:00',
+            UNIQUE INDEX IdempotencyKey_unique (IdempotencyKey),
+            INDEX User_Action_Created_index (WpUserId, ActionType, CreatedAt),
+            INDEX ParentOrder_index (ParentOrder),
+            INDEX TargetGallery_index (TargetGalleryID),
+            INDEX Target_Action_Event_Object_index (TargetGalleryID, ActionType, EventType, ObjectId),
+            INDEX EventType_ReferenceLedgerId_index (EventType, ReferenceLedgerId)
             ) $charset_collate";
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);

@@ -209,6 +209,25 @@ if(strlen(trim($Comment))<3){
     return;
 }
 
+$cgPaidActionCommentReservation = null;
+$cgPaidActionCommentReservationOwnedHere = true;
+if(isset($GLOBALS['cgPaidActionCommentReservation']) && is_array($GLOBALS['cgPaidActionCommentReservation'])){
+    $cgPaidActionCommentReservation = $GLOBALS['cgPaidActionCommentReservation'];
+    $cgPaidActionCommentReservationOwnedHere = false;
+}elseif(function_exists('cg_paid_actions_maybe_reserve')){
+    $cgPaidActionCommentReservation = cg_paid_actions_maybe_reserve(
+        $galeryID,
+        'comment',
+        1,
+        'comment:'.$pictureID.':'.md5($Comment)
+    );
+    if(is_wp_error($cgPaidActionCommentReservation)){
+        $GLOBALS['cg1lCommentSubmitResult'] = array('status' => $cgPaidActionCommentReservation->get_error_code());
+        cg_paid_actions_output_frontend_error($galeryIDuser,'comment',$cgPaidActionCommentReservation);
+        return;
+    }
+}
+
 $unix = time();
 $date = date("Y-m-d H:i",$unix);
 
@@ -252,13 +271,14 @@ if(file_exists($commentsFile)){
 }
 
 // reinserted in 23.1.3, after removed in 16 and higher
+$paidCommentFlags = cg_paid_actions_reservation_flags($cgPaidActionCommentReservation);
 $wpdb->query( $wpdb->prepare(
     "
 				INSERT INTO $tablenameComments
-				( id, pid, GalleryID, Name, Date, Comment, Timestamp,IP,WpUserId,Vote,Active)
-				VALUES ( %s,%d,%d,%s,%s,%s,%d,%s,%d,%d,%d)
+				( id, pid, GalleryID, Name, Date, Comment, Timestamp,IP,WpUserId,Vote,Active,IsPaidAction,IsPaidActionPreview)
+				VALUES ( %s,%d,%d,%s,%s,%s,%d,%s,%d,%d,%d,%d,%d)
 			",
-    '',$pictureID,$galeryID,$Name,$date,$Comment,$unix,$userIP,$WpUserId,$commentVoteValue,$Active
+    '',$pictureID,$galeryID,$Name,$date,$Comment,$unix,$userIP,$WpUserId,$commentVoteValue,$Active,$paidCommentFlags['isPaidAction'],$paidCommentFlags['isPaidActionPreview']
 ) );
 
 $insert_id = $wpdb->insert_id;
@@ -285,6 +305,8 @@ $commentsFileData[$lastCommentId]['insert_id'] = $insert_id;
 //$commentsFileData[$lastCommentId]['WpUserId'] = $WpUserId;
 $commentsFileData[$lastCommentId]['ReviewTstamp'] = '';
 $commentsFileData[$lastCommentId]['Active'] = $Active;
+$commentsFileData[$lastCommentId]['IsPaidAction'] = $paidCommentFlags['isPaidAction'];
+$commentsFileData[$lastCommentId]['IsPaidActionPreview'] = $paidCommentFlags['isPaidActionPreview'];
 //$commentsFileData[$lastCommentId]['userIP'] = $userIP;
 
 $commentsFileDataTheOnlyOneComment = array();;
@@ -299,6 +321,8 @@ $commentsFileDataTheOnlyOneComment[$lastCommentId]['insert_id'] = $insert_id;
 //$commentsFileDataTheOnlyOneComment[$lastCommentId]['WpUserId'] = $WpUserId;
 $commentsFileDataTheOnlyOneComment[$lastCommentId]['ReviewTstamp'] = '';
 $commentsFileDataTheOnlyOneComment[$lastCommentId]['Active'] = $Active;
+$commentsFileDataTheOnlyOneComment[$lastCommentId]['IsPaidAction'] = $paidCommentFlags['isPaidAction'];
+$commentsFileDataTheOnlyOneComment[$lastCommentId]['IsPaidActionPreview'] = $paidCommentFlags['isPaidActionPreview'];
 //$commentsFileDataTheOnlyOneComment[$lastCommentId]['userIP'] = $userIP;
 
 $dirImageComments = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/image-comments/ids/'.$pictureID;
@@ -468,6 +492,10 @@ $GLOBALS['cg1lCommentSubmitResult'] = array(
     'insert_id' => $insert_id
 );
 
+if($cgPaidActionCommentReservationOwnedHere && is_array($cgPaidActionCommentReservation)){
+    cg_paid_actions_settle_reservation($cgPaidActionCommentReservation,1,array($insert_id));
+}
+
 ?>
 
     <script data-cg-processing="true">// if this exists then everything is fine. Will check if this exits or not
@@ -499,12 +527,15 @@ $GLOBALS['cg1lCommentSubmitResult'] = array(
 
         cgJsData[galeryIDuser].vars.commentUnix = <?php echo json_encode($unix); ?>;
         cgJsClass.gallery.comment.setComments(galeryIDuser);
+        if(cgJsClass.gallery.paidActions && cgJsClass.gallery.paidActions.consumeLocalBalance){
+            cgJsClass.gallery.paidActions.consumeLocalBalance(galeryIDuser,'comment',1);
+        }
 
     </script>
 
 <?php
 
-if(!empty($options['pro']['CommNoteActive'])){
+if(!cg_paid_actions_is_current_request_preview($galeryID) && !empty($options['pro']['CommNoteActive'])){
 
     include(__DIR__ ."/../../../../check-language.php");
 

@@ -446,7 +446,7 @@ $cgGalleryDashboardStats['trend'] = [
 $fieldsToSelectString = "id, rowid, Timestamp, NamePic, ImgType, CountC, CountCtoReview, CountR, CountS, Rating, GalleryID, Active, Informed, WpUpload,
              Width, Height, WpUserId, rSource, rThumb, addCountS, addCountR1, addCountR2, addCountR3, addCountR4, addCountR5, addCountR6, addCountR7, 
              addCountR8, addCountR9, addCountR10,Category, Exif, IP, CountR1, CountR2, CountR3, CountR4, CountR5, CountR6, CountR7, CountR8, CountR9, CountR10, 
-             Version, CheckSet, CookieId, Winner, MultipleFiles, WpPage, WpPageUser, WpPageNoVoting, WpPageWinner, WpPageEcommerce, OrderItem, EcommerceEntry, PdfPreview, Mails";
+             Version, CheckSet, CookieId, Winner, MultipleFiles, WpPage, WpPageUser, WpPageNoVoting, WpPageWinner, WpPageEcommerce, OrderItem, EcommerceEntry, PdfPreview, Mails, IsPaidAction";
 if($isAjaxCall){
     // dann wurde die seite gerade aufgerufen oder ein reload gemacht nach dem neue gallery kreiert worden ist
     if($isNewGallery){
@@ -484,6 +484,15 @@ if($isAjaxCall){
 
     $countSelectSQL = count($selectSQL);
 
+}
+
+$cgPaidActionUploadDetails = array();
+if(!empty($selectSQL) && function_exists('cg_paid_actions_get_action_payment_details')){
+    $cgPaidActionUploadIds = array();
+    foreach($selectSQL as $cgPaidActionUploadRow){
+        if(!empty($cgPaidActionUploadRow->IsPaidAction)){$cgPaidActionUploadIds[] = absint($cgPaidActionUploadRow->id);}
+    }
+    $cgPaidActionUploadDetails = cg_paid_actions_get_action_payment_details($GalleryID,'upload',$cgPaidActionUploadIds);
 }
 
 $saleItemsCountArray = [];
@@ -743,7 +752,7 @@ if($isAjaxCall){
                                         // preg match example from https://stackoverflow.com/questions/23343087/php-preg-match-return-position-of-last-match
                                         preg_match('/content="(.*?)" \/>/', (string)$line, $match);
                                         if(!empty($match)){
-                                            $fbLikeContentArray[$imageId]['description'] = $match[1];
+                                            $fbLikeContentArray[$imageId]['description'] = html_entity_decode($match[1],ENT_QUOTES,'UTF-8');
                                         }else{
                                             $fbLikeContentArray[$imageId]['description'] = '';
                                         }
@@ -755,7 +764,7 @@ if($isAjaxCall){
                                     // preg match example from https://stackoverflow.com/questions/23343087/php-preg-match-return-position-of-last-match
                                     preg_match('/content="(.*?)" \/>/', (string)$line, $match);
                                     if(!empty($match)){
-                                        $fbLikeContentArray[$imageId]['title'] = $match[1];
+                                        $fbLikeContentArray[$imageId]['title'] = html_entity_decode($match[1],ENT_QUOTES,'UTF-8');
                                     }else{
                                         $fbLikeContentArray[$imageId]['title'] = '';
                                     }

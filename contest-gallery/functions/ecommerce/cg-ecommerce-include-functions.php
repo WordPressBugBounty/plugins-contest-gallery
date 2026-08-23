@@ -1,5 +1,6 @@
 <?php
 
+    include(__DIR__.'/../ecommerce/backend/gallery/cg-ecommerce-legacy-upload-sale.php');
     include(__DIR__.'/../ecommerce/backend/gallery/cg-ecommerce-get-orders.php');
     include(__DIR__.'/../ecommerce/backend/gallery/cg-ecommerce-sell-conf.php');
     include(__DIR__.'/../ecommerce/backend/gallery/cg-ecommerce-sell-activate.php');
@@ -27,6 +28,5 @@
     include (__DIR__.'/../ecommerce/backend/requests/requests-stripe-api/cg-test-stripe-keys.php');
     include(__DIR__.'/general/cg-paypal-get-invoice-number-logic-result.php');
     include(__DIR__.'/general/cg-ecommerce-functions.php');
-
 
 

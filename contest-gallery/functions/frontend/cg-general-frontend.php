@@ -1,4 +1,43 @@
 <?php
+if (!function_exists('cg1l_get_gallery_status_card_theme')) {
+    function cg1l_get_gallery_status_card_theme($options = array(), $galleriesOptions = array(), $isCGalleries = false)
+    {
+        $style = '';
+
+        if (!empty($isCGalleries) && !empty($galleriesOptions['FeControlsStyle'])) {
+            $style = $galleriesOptions['FeControlsStyle'];
+        } elseif (!empty($options['visual']['FeControlsStyle'])) {
+            $style = $options['visual']['FeControlsStyle'];
+        }
+
+        return ($style === 'black') ? 'cg_fe_controls_style_black' : 'cg_fe_controls_style_white';
+    }
+}
+
+if (!function_exists('cg1l_get_gallery_status_card')) {
+    function cg1l_get_gallery_status_card($content, $themeClass = 'cg_fe_controls_style_white', $additionalClasses = '')
+    {
+        $content = (string)$content;
+        if (trim($content) === '') {
+            return '';
+        }
+
+        if ($themeClass !== 'cg_fe_controls_style_black') {
+            $themeClass = 'cg_fe_controls_style_white';
+        }
+
+        $classes = array('cg-gallery-status-card', $themeClass);
+        foreach (preg_split('/\s+/', trim((string)$additionalClasses)) as $additionalClass) {
+            $additionalClass = sanitize_html_class($additionalClass);
+            if ($additionalClass !== '') {
+                $classes[] = $additionalClass;
+            }
+        }
+
+        return '<div class="'.esc_attr(implode(' ', array_unique($classes))).'" role="status">'.$content.'</div>';
+    }
+}
+
 if (!function_exists('cg_echo_closed_upload_form')) {
     function cg_echo_closed_upload_form()
     {

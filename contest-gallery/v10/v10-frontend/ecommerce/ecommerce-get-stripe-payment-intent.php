@@ -20,7 +20,7 @@ $ecommerceOptions = $wpdb->get_row("SELECT * FROM $tablenameEcommerceOptions WHE
 $StripeError = '';
 $result = [];
 
-if(isset($_POST['cgPurchaseUnits']) && !empty($ecommerceOptions->StripeApiActive)){
+if(isset($_POST['cgPurchaseUnits'])){
 
     $data = $_POST['cgPurchaseUnits'];
 	$authoritativeStripeCart = cg_ecommerce_build_authoritative_stripe_cart($data, $ecommerceOptions);
@@ -28,6 +28,25 @@ if(isset($_POST['cgPurchaseUnits']) && !empty($ecommerceOptions->StripeApiActive
 	if(empty($authoritativeStripeCart['success'])){
 		$StripeError = 'Error:' . $authoritativeStripeCart['message'];
 	}else{
+		$sandboxRequested = !empty($_POST['isTestEnv']) && intval($_POST['isTestEnv'])===1;
+		$checkoutEnvironment = cg_ecommerce_resolve_checkout_environment($sandboxRequested,'stripe',$authoritativeStripeCart);
+		if(empty($checkoutEnvironment['success'])){
+			$StripeError = 'Error:' . $checkoutEnvironment['message'];
+		}elseif(!cg_ecommerce_payment_provider_is_ready($ecommerceOptions,'stripe',!empty($checkoutEnvironment['is_test']))){
+			$StripeError = 'Error:Stripe is not available for the requested checkout environment.';
+		}
+		if($StripeError!==''){
+			?>
+			<script data-cg-processing="true">
+				cgJsClass.gallery.vars.ecommerce.StripeError = <?php echo json_encode($StripeError);?>;
+				cgJsClass.gallery.vars.ecommerce.StripePiId = '';
+				cgJsClass.gallery.vars.ecommerce.StripePiKey = '';
+				cgJsClass.gallery.vars.ecommerce.StripePiResult = {};
+			</script>
+			<?php
+			return;
+		}
+		$isTestEnvironment = !empty($checkoutEnvironment['is_test']);
 
 	/*echo "<pre>";
 	print_r($data);
@@ -76,8 +95,7 @@ if(isset($_POST['cgPurchaseUnits']) && !empty($ecommerceOptions->StripeApiActive
     //var_dump('isTestEnv');
     //var_dump($_POST['isTestEnv']);
 
-	// to be checked this way, because string might sent
-	if(!empty($_POST['isTestEnv']) && $_POST['isTestEnv'] == 1){
+	if($isTestEnvironment){
 		$secret = $ecommerceOptions->StripeSandboxSecret;
 	}else{
 		$secret = $ecommerceOptions->StripeLiveSecret;

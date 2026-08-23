@@ -1,10 +1,18 @@
 Contest Gallery
 
-= 32.0.1 =
+= 33.0.0 =
+* NEW: Sell upload, vote and comment credits directly from any regular gallery, with separate gross prices and a combined quantity checkout.
+* NEW: Customers can see persistent credit balances, sign in by Google or one-time email code, and return to the relevant gallery after payment.
+* NEW: Credits can remain gallery-local or be shared across participating galleries, while existing credit scopes stay unchanged.
+* NEW: Paid credit orders include audited absolute balance controls; full refunds revoke only unused credits from the refunded order.
+* IMPROVED: FREE includes a private, write-free preview for all three paid actions while live charging remains a PRO feature.
+* IMPROVED: General security hardening.
+* FIXED: Security issue.
 * FIXED: Multi-gallery overview shortcodes no longer inherit category filters, controls or empty-gallery text from an unrelated bootstrap gallery.
 * FIXED: Multi-gallery preview cards selected by highest rating or most comments now open the correct gallery reliably.
 * FIXED: One-star galleries with manually added votes now keep the complete visible total immediately after voting or undoing a vote.
 * FIXED: A first vote in a new browser now saves immediately when cookie checking and the vote-and-comment flow are enabled.
+* FIXED: The WordPress Media Library opened from "Add files / Social embed / OpenAI" now keeps the correct attachment grid width and vertical scrollbar.
 
 = 32.0.0 =
 * NEW: Added a modern two-step vote-and-comment dialog for one-star, average and cumulative voting, with required, optional or disabled comments and emoji support.

@@ -1324,3 +1324,895 @@ msgstr "評分"
 #: check-language.php
 msgid "ratings"
 msgstr "評分"
+
+#: check-language-paid-actions.php
+msgid "Uploads"
+msgstr "上傳"
+
+#: check-language-paid-actions.php
+msgid "Votes"
+msgstr "投票數"
+
+#: check-language-paid-actions.php
+msgid "Upload credits"
+msgstr "上傳點數"
+
+#: check-language-paid-actions.php
+msgid "Voting credits"
+msgstr "投票點數"
+
+#: check-language-paid-actions.php
+msgid "Comment credits"
+msgstr "留言點數"
+
+#: check-language-paid-actions.php
+msgid "upload credit"
+msgstr "上傳點數"
+
+#: check-language-paid-actions.php
+msgid "voting credit"
+msgstr "投票點數"
+
+#: check-language-paid-actions.php
+msgid "comment credit"
+msgstr "留言點數"
+
+#: check-language-paid-actions.php
+msgid "Credits for {type} in gallery {number}"
+msgstr "圖庫 {number} 中用於{type}的點數"
+
+#: check-language-paid-actions.php
+msgid "credit"
+msgstr "點數"
+
+#: check-language-paid-actions.php
+msgid "credits"
+msgstr "點數"
+
+#: check-language-paid-actions.php
+msgid "each"
+msgstr "每個"
+
+#: check-language-paid-actions.php
+msgid "Loading"
+msgstr "載入中"
+
+#: check-language-paid-actions.php
+msgid "or"
+msgstr "或"
+
+#: check-language-paid-actions.php
+msgid "Cancel"
+msgstr "取消"
+
+#: check-language-paid-actions.php
+msgid "Not now"
+msgstr "現在不行"
+
+#: check-language-paid-actions.php
+msgid "Try again"
+msgstr "再試一次"
+
+#: check-language-paid-actions.php
+msgid "Continue to gallery"
+msgstr "繼續畫廊"
+
+#: check-language-paid-actions.php
+msgid "Return to gallery"
+msgstr "返回畫廊"
+
+#: check-language-paid-actions.php
+msgid "Private payment preview"
+msgstr "私人付款預覽"
+
+#: check-language-paid-actions.php
+msgid "Sandbox checkout test"
+msgstr "沙盒檢查測試"
+
+#: check-language-paid-actions.php
+msgid "Your gallery credits"
+msgstr "您的圖庫點數"
+
+#: check-language-paid-actions.php
+msgid "Real test actions are saved and visible until reset"
+msgstr "真實的測試操作將被保存並可見，直到重置"
+
+#: check-language-paid-actions.php
+msgid "Real sandbox orders grant persistent gallery credits"
+msgstr "真正的沙盒訂單將授予持久的畫廊積分"
+
+#: check-language-paid-actions.php
+msgid "Buy only what you want to use"
+msgstr "只購買您想要使用的東西"
+
+#: check-language-paid-actions.php
+msgid "Add test credits"
+msgstr "增加測試點數"
+
+#: check-language-paid-actions.php
+msgid "Sandbox checkout"
+msgstr "沙箱結帳"
+
+#: check-language-paid-actions.php
+msgid "Get credits"
+msgstr "取得點數"
+
+#: check-language-paid-actions.php
+msgid "Buy credits in sandbox"
+msgstr "在沙盒中購買積分"
+
+#: check-language-paid-actions.php
+msgid "Buy gallery credits"
+msgstr "購買畫廊積分"
+
+#: check-language-paid-actions.php
+msgid "Reset test actions"
+msgstr "重置測試操作"
+
+#: check-language-paid-actions.php
+msgid "{count} used here"
+msgstr "這裡使用了{count}"
+
+#: check-language-paid-actions.php
+msgid "Get credits: {credits}"
+msgstr "獲得積分：{credits}"
+
+#: check-language-paid-actions.php
+msgid "Your credits are ready. You can continue in the gallery."
+msgstr "您的積分已準備好。您可以繼續在畫廊中。"
+
+#: check-language-paid-actions.php
+msgid "Sandbox test link unavailable"
+msgstr "沙盒測試連結不可用"
+
+#: check-language-paid-actions.php
+msgid "This link has expired, is invalid, or belongs to another test user. Create a new sandbox test link in the gallery settings."
+msgstr "此連結已過期、無效或屬於其他測試使用者。在圖庫設定中建立一個新的沙箱測試連結。"
+
+#: check-language-paid-actions.php
+msgid "Credits temporarily unavailable"
+msgstr "暫時無法獲得積分"
+
+#: check-language-paid-actions.php
+msgid "Please try again in a moment"
+msgstr "請稍後重試"
+
+#: check-language-paid-actions.php
+msgid "Purchasing credits is temporarily unavailable. Please contact the gallery administrator."
+msgstr "暫時無法購買積分。請聯絡畫廊管理員。"
+
+#: check-language-paid-actions.php
+msgid "CREDIT REQUIRED"
+msgstr "需要點數"
+
+#: check-language-paid-actions.php
+msgid "TEST CREDITS USED"
+msgstr "使用的測試點數"
+
+#: check-language-paid-actions.php
+msgid "Upload credit required"
+msgstr "需要上傳積分"
+
+#: check-language-paid-actions.php
+msgid "Voting credit required"
+msgstr "需要投票點數"
+
+#: check-language-paid-actions.php
+msgid "Comment credit required"
+msgstr "留言需要點數"
+
+#: check-language-paid-actions.php
+msgid "Buy upload credits to upload an entry to this gallery."
+msgstr "購買上傳積分以將條目上傳到此畫廊。"
+
+#: check-language-paid-actions.php
+msgid "Buy voting credits to vote in this gallery."
+msgstr "購買投票積分以在該畫廊投票。"
+
+#: check-language-paid-actions.php
+msgid "Buy comment credits to comment in this gallery."
+msgstr "購買評論積分以在此畫廊中發表評論。"
+
+#: check-language-paid-actions.php
+msgid "All test upload credits used"
+msgstr "使用的所有測試上傳積分"
+
+#: check-language-paid-actions.php
+msgid "All test voting credits used"
+msgstr "所使用的所有測試投票積分"
+
+#: check-language-paid-actions.php
+msgid "All test comment credits used"
+msgstr "所使用的所有測試評論積分"
+
+#: check-language-paid-actions.php
+msgid "You have used all test upload credits for this gallery. Add more to keep testing."
+msgstr "您已使用該圖庫的所有測試上傳積分。添加更多內容以繼續測試。"
+
+#: check-language-paid-actions.php
+msgid "You have used all test voting credits for this gallery. Add more to keep testing."
+msgstr "您已使用該畫廊的所有測試投票積分。添加更多內容以繼續測試。"
+
+#: check-language-paid-actions.php
+msgid "You have used all test comment credits for this gallery. Add more to keep testing."
+msgstr "您已使用此圖庫的所有測試評論積分。添加更多內容以繼續測試。"
+
+#: check-language-paid-actions.php
+msgid "Add more test credits"
+msgstr "增加更多測試點數"
+
+#: check-language-paid-actions.php
+msgid "Buy credits"
+msgstr "購買積分"
+
+#: check-language-paid-actions.php
+msgid "COMMENT CREDITS"
+msgstr "評論積分"
+
+#: check-language-paid-actions.php
+msgid "Checking comment credits"
+msgstr "檢查評論積分"
+
+#: check-language-paid-actions.php
+msgid "Please wait while your comment credits are checked."
+msgstr "請稍候，系統正在檢查您的留言點數。"
+
+#: check-language-paid-actions.php
+msgid "Comment credits temporarily unavailable"
+msgstr "評論積分暫時無法使用"
+
+#: check-language-paid-actions.php
+msgid "Your comment credits could not be checked. Please try again."
+msgstr "無法檢查您的留言點數。請再試一次。"
+
+#: check-language-paid-actions.php
+msgid "YOUR CURRENT TEST CREDITS"
+msgstr "您目前的測試點數"
+
+#: check-language-paid-actions.php
+msgid "YOUR CURRENT CREDITS"
+msgstr "您目前的點數"
+
+#: check-language-paid-actions.php
+msgid "{count} {type} available"
+msgstr "{count} {type} 可用"
+
+#: check-language-paid-actions.php
+msgid "{count} {type} available, {selected} selected for checkout"
+msgstr "{count} {type} 可用，已選擇 {selected} 結帳"
+
+#: check-language-paid-actions.php
+msgid "{count} {type} available, {selected} selected for test checkout"
+msgstr "{count} {type} 可用，選擇 {selected} 進行測試結帳"
+
+#: check-language-paid-actions.php
+msgid "PRIVATE PAYMENT PREVIEW"
+msgstr "私人付款預覽"
+
+#: check-language-paid-actions.php
+msgid "Reset saved test actions?"
+msgstr "重置已儲存的測試操作？"
+
+#: check-language-paid-actions.php
+msgid "This removes every paid preview action in this gallery, including tests from other preview tabs and administrators."
+msgstr "這將刪除此庫中的所有付費預覽操作，包括來自其他預覽標籤和管理員的測試。"
+
+#: check-language-paid-actions.php
+msgid "TEST ACTIONS IN THIS GALLERY"
+msgstr "在此圖庫中測試操作"
+
+#: check-language-paid-actions.php
+msgid "Test upload"
+msgstr "測試上傳"
+
+#: check-language-paid-actions.php
+msgid "Test uploads"
+msgstr "測試上傳"
+
+#: check-language-paid-actions.php
+msgid "Test vote"
+msgstr "測試投票"
+
+#: check-language-paid-actions.php
+msgid "Test votes"
+msgstr "測試投票"
+
+#: check-language-paid-actions.php
+msgid "Test comment"
+msgstr "測試評論"
+
+#: check-language-paid-actions.php
+msgid "Test comments"
+msgstr "測試評論"
+
+#: check-language-paid-actions.php
+msgid "saved test action will be removed"
+msgstr "已儲存的測試操作將會被刪除"
+
+#: check-language-paid-actions.php
+msgid "saved test actions will be removed"
+msgstr "已儲存的測試操作將會被刪除"
+
+#: check-language-paid-actions.php
+msgid "test credit will be restored to its original credit type"
+msgstr "測試點數將恢復到原來的點數類型"
+
+#: check-language-paid-actions.php
+msgid "test credits will be restored to their original credit types"
+msgstr "測試點數將恢復到原來的點數類型"
+
+#: check-language-paid-actions.php
+msgid "Preview uploads and their files are deleted completely. Everything attached to those entries is removed as well. Test credits used in this gallery are restored."
+msgstr "預覽上傳的文件及其文件將完全刪除。附加到這些條目的所有內容也將被刪除。該畫廊中使用的測試積分已恢復。"
+
+#: check-language-paid-actions.php
+msgid "SECURE TEST CHECKOUT"
+msgstr "安全的測試檢查"
+
+#: check-language-paid-actions.php
+msgid "Choose your free test credits"
+msgstr "選擇您的免費測驗點數"
+
+#: check-language-paid-actions.php
+msgid "Set the quantity directly in each checkout item. No money or payment details are used."
+msgstr "直接在每個結帳項目中設定數量。不要使用金錢或付款詳細資料。"
+
+#: check-language-paid-actions.php
+msgid "PRIVATE PREVIEW"
+msgstr "私人預覽"
+
+#: check-language-paid-actions.php
+msgid "Visible only to you"
+msgstr "僅您可見"
+
+#: check-language-paid-actions.php
+msgid "No real charge"
+msgstr "沒有實際費用"
+
+#: check-language-paid-actions.php
+msgid "Payment data is never requested"
+msgstr "從未要求支付數據"
+
+#: check-language-paid-actions.php
+msgid "Persistent credits"
+msgstr "持續積分"
+
+#: check-language-paid-actions.php
+msgid "Available after reload"
+msgstr "重新加載後可用"
+
+#: check-language-paid-actions.php
+msgid "Choose a quantity above to continue."
+msgstr "請在上方欄位選擇數量以繼續。"
+
+#: check-language-paid-actions.php
+msgid "Choose a test payment method"
+msgstr "選擇測試付款方式"
+
+#: check-language-paid-actions.php
+msgid "Clicking a method simulates approval and adds the selected credits."
+msgstr "按一下方法會模擬核准並新增所選的積分。"
+
+#: check-language-paid-actions.php
+msgid "Simulate secure payment"
+msgstr "模擬安全支付"
+
+#: check-language-paid-actions.php
+msgid "TEST MODE · {amount} {currency} will not be charged"
+msgstr "測試模式 · {amount} {currency} 不會被收費"
+
+#: check-language-paid-actions.php
+msgid "Added test credits"
+msgstr "增加了測試點數"
+
+#: check-language-paid-actions.php
+msgid "TEST PAYMENT APPROVED"
+msgstr "測試付款已獲批准"
+
+#: check-language-paid-actions.php
+msgid "Your test credits are ready"
+msgstr "您的測試點數已可使用"
+
+#: check-language-paid-actions.php
+msgid "{count} credit was added after the simulated {provider} approval."
+msgstr "{count} 積分是在模擬 {provider} 批准後添加的。"
+
+#: check-language-paid-actions.php
+msgid "{count} credits were added after the simulated {provider} approval."
+msgstr "{count} 積分是在模擬 {provider} 批准後添加的。"
+
+#: check-language-paid-actions.php
+msgid "No real order or payment was created. The credits remain available after reloading this gallery."
+msgstr "沒有創建真正的訂單或付款。重新加載此畫廊後，積分仍然可用。"
+
+#: check-language-paid-actions.php
+msgid "Approving secure {provider} test payment…"
+msgstr "正在批准安全{provider}測試付款..."
+
+#: check-language-paid-actions.php
+msgid "The test payment could not be approved."
+msgstr "測試付款無法獲得批准。"
+
+#: check-language-paid-actions.php
+msgid "REAL SANDBOX CHECKOUT"
+msgstr "真正的沙盒檢查"
+
+#: check-language-paid-actions.php
+msgid "SECURE CHECKOUT"
+msgstr "安全結帳"
+
+#: check-language-paid-actions.php
+msgid "Choose persistent test credits"
+msgstr "選擇持久的測試點數"
+
+#: check-language-paid-actions.php
+msgid "Choose your gallery credits"
+msgstr "選擇您的畫廊作品"
+
+#: check-language-paid-actions.php
+msgid "Set the quantity directly in each checkout item. The total updates immediately."
+msgstr "直接在每個結帳項目中設定數量。總數立即更新。"
+
+#: check-language-paid-actions.php
+msgid "SANDBOX CHECKOUT"
+msgstr "沙盒檢查"
+
+#: check-language-paid-actions.php
+msgid "Sign in to test buying credits"
+msgstr "登入以測試購買點數"
+
+#: check-language-paid-actions.php
+msgid "Sign in to continue the sandbox checkout. You can test buying credits and participating in this gallery without a real payment."
+msgstr "登入以繼續沙箱結帳。您可以測試購買積分並參與此畫廊，而無需實際付款。"
+
+#: check-language-paid-actions.php
+msgid "Sign in to buy credits"
+msgstr "登入購買積分"
+
+#: check-language-paid-actions.php
+msgid "You need an account to buy credits and participate in this gallery. Continue with Google or receive a six-digit PIN by email."
+msgstr "您需要一個帳戶才能購買積分並參與此畫廊。繼續使用 Google 或透過電子郵件接收六位數的 PIN 碼。"
+
+#: check-language-paid-actions.php
+msgid "Email address"
+msgstr "電子郵件地址"
+
+#: check-language-paid-actions.php
+msgid "Email me a PIN"
+msgstr "發送 PIN"
+
+#: check-language-paid-actions.php
+msgid "Six-digit PIN"
+msgstr "六位數 PIN 碼"
+
+#: check-language-paid-actions.php
+msgid "PIN digit {number}"
+msgstr "PIN 碼{number}"
+
+#: check-language-paid-actions.php
+msgid "Send a new PIN"
+msgstr "發送新的 PIN 碼"
+
+#: check-language-paid-actions.php
+msgid "Send a new PIN in {seconds}s"
+msgstr "在 {seconds}s 發送新的 PIN"
+
+#: check-language-paid-actions.php
+msgid "PIN confirmed. Preparing your checkout…"
+msgstr "PIN 碼已確認。正在準備結帳..."
+
+#: check-language-paid-actions.php
+msgid "Sign-in successful. Reloading the gallery…"
+msgstr "登入成功。正在重新載入圖庫..."
+
+#: check-language-paid-actions.php
+msgid "The sign-in form could not be loaded."
+msgstr "無法載入登入表單。"
+
+#: check-language-paid-actions.php
+msgid "PIN CONFIRMED"
+msgstr "密碼已確認"
+
+#: check-language-paid-actions.php
+msgid "Sign-in successful"
+msgstr "登入成功"
+
+#: check-language-paid-actions.php
+msgid "Continue to buy credits"
+msgstr "繼續購買點數"
+
+#: check-language-paid-actions.php
+msgid "Please wait {seconds} {secondsLabel} before requesting another PIN."
+msgstr "請等待 {seconds} {secondsLabel}，然後再要求另一個 PIN。"
+
+#: check-language-paid-actions.php
+msgid "second"
+msgstr "秒"
+
+#: check-language-paid-actions.php
+msgid "seconds"
+msgstr "秒"
+
+#: check-language-paid-actions.php
+msgid "Too many PINs were requested. Please try again later."
+msgstr "請求的 PIN 碼過多。請稍後重試。"
+
+#: check-language-paid-actions.php
+msgid "The PIN could not be sent."
+msgstr "無法發送 PIN。"
+
+#: check-language-paid-actions.php
+msgid "Enter a valid email address."
+msgstr "輸入有效的電子郵件地址。"
+
+#: check-language-paid-actions.php
+msgid "The PIN is invalid or expired."
+msgstr "PIN 碼無效或已過期。"
+
+#: check-language-paid-actions.php
+msgid "Too many attempts. Request a new PIN."
+msgstr "嘗試次數太多。請求新的 PIN。"
+
+#: check-language-paid-actions.php
+msgid "The PIN is incorrect."
+msgstr "PIN 碼不正確。"
+
+#: check-language-paid-actions.php
+msgid "Enter all six PIN digits."
+msgstr "輸入全部六位 PIN 碼。"
+
+#: check-language-paid-actions.php
+msgid "A new PIN could not be sent."
+msgstr "無法發送新的 PIN。"
+
+#: check-language-paid-actions.php
+msgid "The PIN request is no longer available."
+msgstr "PIN 請求不再可用。"
+
+#: check-language-paid-actions.php
+msgid "SANDBOX PAYMENT"
+msgstr "沙盒支付"
+
+#: check-language-paid-actions.php
+msgid "SECURE PAYMENT"
+msgstr "安全支付"
+
+#: check-language-paid-actions.php
+msgid "Finalizing your sandbox credits"
+msgstr "完成您的沙箱積分"
+
+#: check-language-paid-actions.php
+msgid "Finalizing your credits"
+msgstr "完成你的點數"
+
+#: check-language-paid-actions.php
+msgid "Your test payment was approved. We are adding your credits now. You will return to the gallery automatically."
+msgstr "您的測試付款已獲得批准。我們現在正在添加您的積分。您將自動返回圖庫。"
+
+#: check-language-paid-actions.php
+msgid "Your payment was approved. We are adding your credits now. You will return to the gallery automatically."
+msgstr "您的付款已獲批准。我們現在正在添加您的積分。您將自動返回圖庫。"
+
+#: check-language-paid-actions.php
+msgid "Your test payment was approved. We are securely adding your credits now. You will return to the gallery automatically."
+msgstr "您的測試付款已獲得批准。我們現在正在安全地添加您的積分。您將自動返回圖庫。"
+
+#: check-language-paid-actions.php
+msgid "Your payment was approved. We are securely adding your credits now. You will return to the gallery automatically."
+msgstr "您的付款已獲批准。我們現在正在安全地添加您的積分。您將自動返回圖庫。"
+
+#: check-language-paid-actions.php
+msgid "Do not start another payment while this payment is being finalized."
+msgstr "在此付款完成期間，請勿開始另一筆付款。"
+
+#: check-language-paid-actions.php
+msgid "Try finalizing again"
+msgstr "再次嘗試完成"
+
+#: check-language-paid-actions.php
+msgid "Your credits are ready"
+msgstr "您的積分已準備好"
+
+#: check-language-paid-actions.php
+msgid "Your credits were added successfully. Returning to the gallery now."
+msgstr "您的積分已成功新增。現在回到畫廊。"
+
+#: check-language-paid-actions.php
+msgid "PAYMENT NEEDS ATTENTION"
+msgstr "付款需注意"
+
+#: check-language-paid-actions.php
+msgid "We could not finish adding your credits"
+msgstr "我們無法完成添加您的積分"
+
+#: check-language-paid-actions.php
+msgid "The payment could not be finalized automatically. You can safely try finalizing this same payment again."
+msgstr "付款無法自動完成。您可以安全地再次嘗試完成相同的付款。"
+
+#: check-language-paid-actions.php
+msgid "Your credit selection changed. Please review it and try again."
+msgstr "點數選擇已變更。請檢查後再試。"
+
+#: check-language-paid-actions.php
+msgid "The requested gallery is not available."
+msgstr "所要求的畫廊不可用。"
+
+#: check-language-paid-actions.php
+msgid "Paid actions are not available for this gallery."
+msgstr "該畫廊不提供付費操作。"
+
+#: check-language-paid-actions.php
+msgid "The private payment preview is invalid or expired."
+msgstr "私人付款預覽無效或已過期。"
+
+#: check-language-paid-actions.php
+msgid "This private preview session has ended. Open \"Try it now\" again from the gallery settings."
+msgstr "本次私人預覽會議已經結束。從圖庫設定中再次開啟「立即嘗試」。"
+
+#: check-language-paid-actions.php
+msgid "Activate pay for {type} before adding its test credits."
+msgstr "在添加測試積分之前啟動支付 {type}。"
+
+#: check-language-paid-actions.php
+msgid "Test credits are being updated. Please try again."
+msgstr "測試點數正在更新。請再試一次。"
+
+#: check-language-paid-actions.php
+msgid "Demo credits could not be added."
+msgstr "無法新增演示積分。"
+
+#: check-language-paid-actions.php
+msgid "Preview actions are being reset. Please try again."
+msgstr "正在重置預覽操作。請再試一次。"
+
+#: check-language-paid-actions.php
+msgid "Demo credits could not be reserved."
+msgstr "無法保留演示積分。"
+
+#: check-language-paid-actions.php
+msgid "Not enough demo credits are available."
+msgstr "沒有足夠的演示積分。"
+
+#: check-language-paid-actions.php
+msgid "Purchasing credits for this action is temporarily unavailable."
+msgstr "暫時無法為此操作購買積分。"
+
+#: check-language-paid-actions.php
+msgid "Sign in to purchase and use gallery credits."
+msgstr "登入以購買和使用畫廊積分。"
+
+#: check-language-paid-actions.php
+msgid "Invalid credit reservation."
+msgstr "點數保留無效。"
+
+#: check-language-paid-actions.php
+msgid "This paid action is temporarily unavailable."
+msgstr "此付費操作暫時無法使用。"
+
+#: check-language-paid-actions.php
+msgid "This action does not require paid credits."
+msgstr "此操作不需要付費積分。"
+
+#: check-language-paid-actions.php
+msgid "Credits are being updated. Please try again."
+msgstr "積分正在更新。請再試一次。"
+
+#: check-language-paid-actions.php
+msgid "Credits could not be reserved."
+msgstr "無法保留點數。"
+
+#: check-language-paid-actions.php
+msgid "Not enough credits are available."
+msgstr "沒有足夠的可用積分。"
+
+#: check-language-paid-actions.php
+msgid "This sandbox test link is invalid, expired or already belongs to another test user."
+msgstr "此沙盒測試連結無效、已過期或已屬於其他測試使用者。"
+
+#: check-language-paid-actions.php
+msgid "A preview action is still running. Please try the reset again."
+msgstr "預覽操作仍在運作。請再次嘗試重置。"
+
+#: check-language-paid-actions.php
+msgid "Some preview uploads could not be removed. Run the reset again."
+msgstr "無法刪除某些預覽上傳的內容。再次運行重置。"
+
+#: check-language-paid-actions.php
+msgid "Preview actions were reset and their demo credits were restored."
+msgstr "預覽操作已重置，演示積分也已恢復。"
+
+#: check-language-paid-actions.php
+msgid "A six-digit PIN was sent to your email address."
+msgstr "六位數的 PIN 碼已發送到您的電子郵件地址。"
+
+#: check-language-paid-actions.php
+msgid "A new six-digit PIN was sent to your email address."
+msgstr "新的六位數 PIN 碼已發送到您的電子郵件地址。"
+
+#: check-language-paid-actions.php
+msgid "The private payment preview is busy. Please try again."
+msgstr "私人付款預覽正忙。請再試一次。"
+
+#: check-language-paid-actions.php
+msgid "The test actions could not be reset."
+msgstr "無法重置測試操作。"
+
+#: check-language-paid-actions.php
+msgid "The saved test actions were reset."
+msgstr "已儲存的測試操作已重設。"
+
+#: check-language-paid-actions.php
+msgid "The test credits could not be added."
+msgstr "無法添加測試點數。"
+
+#: check-language-paid-actions.php
+msgid "Resetting…"
+msgstr "正在重置..."
+
+#: check-language-paid-actions.php
+msgid "The code could not be sent."
+msgstr "無法發送代碼。"
+
+#: check-language-paid-actions.php
+msgid "The code is invalid."
+msgstr "該代碼無效。"
+
+#: check-language-paid-actions.php
+msgid "Gallery {number}"
+msgstr "畫廊{number}"
+
+#: check-language-paid-actions.php
+msgid "Purchase a credit to continue."
+msgstr "購買積分以繼續。"
+
+#: check-language-general.php
+msgid "Send new PIN in {seconds}s"
+msgstr "在 {seconds}s 中發送新的 PIN"
+
+#: check-language-general.php
+msgid "The account confirmation could not be prepared."
+msgstr "無法準備帳戶確認。"
+
+#: check-language-general.php
+msgid "No registered user was found for this email address."
+msgstr "找不到該電子郵件地址的註冊用戶。"
+
+#: check-language-general.php
+msgid "The user account could not be found."
+msgstr "找不到用戶帳戶。"
+
+#: check-language-general.php
+msgid "PIN data was not found. Please contact the administrator."
+msgstr "未找到 PIN 資料。請聯絡管理員。"
+
+#: check-language-general.php
+msgid "The user account could not be created. Please contact the administrator."
+msgstr "無法建立使用者帳戶。請聯絡管理員。"
+
+#: check-language-general.php
+msgid "The user could not be signed in after the PIN check. Please contact the administrator."
+msgstr "PIN 檢查後使用者無法登入。請聯絡管理員。"
+
+#: check-language-general.php
+msgid "The PIN could not be confirmed. Please contact the administrator."
+msgstr "無法確認 PIN 碼。請聯絡管理員。"
+
+#: check-language-paid-actions.php
+msgid "Checkout could not be started."
+msgstr "無法開始結帳。"
+
+#: check-language-paid-actions.php
+msgid "Processing…"
+msgstr "處理中"
+
+#: check-language-paid-actions.php
+msgid "Processing payment"
+msgstr "正在處理付款"
+
+#: check-language-paid-actions.php
+msgid "You may be redirected to complete the payment. You will return automatically."
+msgstr "系統可能會重新導向你以完成付款。你將自動返回。"
+
+#: check-language-paid-actions.php
+msgid "This browser could not access the saved checkout data. Return to the gallery and contact the site owner before making another payment."
+msgstr "此瀏覽器無法存取已儲存的結帳資料。返回圖庫並聯絡網站擁有者，然後再進行一次付款。"
+
+#: check-language-paid-actions.php
+msgid "The saved checkout data could not be opened. You can safely try finalizing this same payment again."
+msgstr "無法開啟已儲存的結帳資料。你可以嘗試再次完成相同的付款。"
+
+#: check-language-paid-actions.php
+msgid "Another browser tab is currently using the saved checkout data. Close the other tab and try finalizing this same payment again."
+msgstr "另一個瀏覽器分頁目前正在使用儲存的結帳資料。關閉另一個分頁，然後嘗試再次完成相同的付款。"
+
+#: check-language-paid-actions.php
+msgid "The saved checkout data could not be read. You can safely try finalizing this same payment again."
+msgstr "無法讀取儲存的結帳資料。你可以嘗試再次完成相同的付款。"
+
+#: check-language-paid-actions.php
+msgid "Your test payment was approved. We are creating the gallery order and adding your credits now. You will return to the gallery automatically."
+msgstr "您的測試付款已通過審核。我們正在建立圖庫訂單，並正在新增您的點數。您將自動返回圖庫。"
+
+#: check-language-paid-actions.php
+msgid "Your payment was approved. We are creating the gallery order and adding your credits now. You will return to the gallery automatically."
+msgstr "您的付款已通過審核。我們正在建立圖庫訂單，並正在新增您的點數。您將自動返回圖庫。"
+
+#: check-language-paid-actions.php
+msgid "The saved checkout data was not found in this browser. Return to the gallery and contact the site owner before making another payment."
+msgstr "在此瀏覽器中找不到已儲存的結帳資料。返回圖庫並聯絡網站擁有者，然後再進行一次付款。"
+
+#: check-language-paid-actions.php
+msgid "Payment processing could not be started. You can safely try finalizing this same payment again."
+msgstr "無法啟動付款處理。你可以嘗試再次完成相同的付款。"
+
+#: check-language-paid-actions.php
+msgid "uploads"
+msgstr "上傳"
+
+#: check-language-paid-actions.php
+msgid "votes"
+msgstr "投票"
+
+#: check-language-paid-actions.php
+msgid "comments"
+msgstr "留言"
+
+#: check-language-paid-actions.php
+msgid "Your upload credits"
+msgstr "你的上載點數"
+
+#: check-language-paid-actions.php
+msgid "One credit is used for each submitted entry."
+msgstr "每提交一個作品會使用一個點數。"
+
+#: check-language-paid-actions.php
+msgid "UPLOAD CREDITS"
+msgstr "上載點數"
+
+#: check-language-paid-actions.php
+msgid "UPLOAD ACCESS"
+msgstr "上載權限"
+
+#: check-language-paid-actions.php
+msgid "Checking upload credits"
+msgstr "正在檢查上載點數"
+
+#: check-language-paid-actions.php
+msgid "Please wait while your upload credits are checked."
+msgstr "請稍候，我們正在檢查你的上載點數。"
+
+#: check-language-paid-actions.php
+msgid "Sign in to upload"
+msgstr "登入以上載"
+
+#: check-language-paid-actions.php
+msgid "Sign in to buy upload credits and submit an entry to this gallery."
+msgstr "登入以購買上載點數，並向此圖庫提交作品。"
+
+#: check-language-paid-actions.php
+msgid "Sign in to continue"
+msgstr "登入以繼續"
+
+#: check-language-paid-actions.php
+msgid "Upload credits temporarily unavailable"
+msgstr "上載點數暫時無法使用"
+
+#: check-language-paid-actions.php
+msgid "Your upload credits could not be checked. Please try again."
+msgstr "無法檢查你的上載點數。請再試一次。"
+
+#: check-language-paid-actions.php
+msgid "More upload credits required"
+msgstr "需要更多上載點數"
+
+#: check-language-paid-actions.php
+msgid "This selection needs {required} upload credits. You currently have {available}."
+msgstr "此選擇需要 {required} 個上載點數。你目前有 {available} 個。"
+
+#: check-language-ecommerce.php
+msgid "The payment was not completed. Please try again."
+msgstr "付款未完成。請再試一次。"
+
+#: check-language-ecommerce.php
+msgid "Payment canceled. You can try again."
+msgstr "付款已取消。您可以再試一次。"

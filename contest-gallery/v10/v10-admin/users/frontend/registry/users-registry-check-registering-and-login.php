@@ -77,6 +77,25 @@ if (!defined('ABSPATH')) {
         die;
     }
 
+    if($cg_users_pin){
+        $cgPinRateLock = cg_pin_auth_acquire_lock('rate',$cg_main_mail);
+        if($cgPinRateLock){
+            $cgPinRateReservation = cg_pin_auth_reserve_request($cg_main_mail);
+            cg_pin_auth_release_lock($cgPinRateLock);
+        }else{
+            $cgPinRateReservation = cg_pin_auth_busy_error();
+        }
+        if(is_wp_error($cgPinRateReservation)){
+            ?>
+            <script data-cg-processing="true" data-cg-processing-error="true">
+                var cg_error = <?php echo wp_json_encode($cgPinRateReservation->get_error_message());?>;
+                cgJsClass.gallery.vars.$regFormContainer.find('#cg_registry_manipulation_error').text(cg_error).removeClass('cg_hide');
+            </script>
+            <?php
+            die;
+        }
+    }
+
     $password = '';
     $passwordConfirm = '';
 
@@ -225,7 +244,7 @@ if (!defined('ABSPATH')) {
 
     }
     if($cg_users_pin){
-        $pin = wp_rand(1000, 9999);
+        $pin = wp_rand(100000, 999999);
         $Subject = str_ireplace($posPin, $pin, contest_gal1ery_convert_for_html_output_without_nl2br($proOptions->RegPinSubject));
         $pinHashed = password_hash($pin,PASSWORD_DEFAULT);
         $wpdb->query($wpdb->prepare(
@@ -401,6 +420,8 @@ if (!defined('ABSPATH')) {
 			?>
 			<script  data-cg-processing="true" data-cg-success="true">
 				cgJsClass.gallery.vars.activationKey = <?php echo json_encode($cgPinRequestKey);?>;
+				cgJsClass.gallery.vars.pinRetryAfter = <?php echo absint(cg_pin_auth_cooldown_seconds());?>;
+				cgJsClass.gallery.vars.pinStatusMessage = <?php echo wp_json_encode(isset($language_PinSentToYourEmail) ? $language_PinSentToYourEmail : 'A PIN has been sent to your email');?>;
 			</script>
 			<?php
 			die;

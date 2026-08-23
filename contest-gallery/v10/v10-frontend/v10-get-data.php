@@ -116,6 +116,7 @@ $languageNames = [
     'gallery'   => [],
     'general'   => [],
     'ecommerce' => [],
+    'paidActions' => [],
 ];
 $variablesGallery = [];
 $variablesGeneral = [];
@@ -402,18 +403,21 @@ if(isset($options['general']['PreselectSort'])){
     $options['general']['PreselectSort'] = $preselectSortForCurrentRatingMode;
 }
 
+$cgGalleryStatusCardTheme = cg1l_get_gallery_status_card_theme($options);
+
 $parentPermalink = '';
 if(intval($options['general']['Version'])>=21){
     $parentPermalink = get_permalink($options['general'][$WpPageParentShortCodeType]);
     if(empty($parentPermalink)){
-        echo "<p style='margin: 40px auto;text-align: center;font-weight: bold;'>The custom post type page of your Gallery (ID = $realGid) was deleted. <br>Please check backend and execute<br>
-                    \"Edit options\" >>> \"Status, repair....\" >>>> \"Repair frontend\"</p>";
+        $message = "<b>The custom post type page of your Gallery (ID = $realGid) was deleted.</b><br>Please check backend and execute<br>
+                    \"Edit options\" >>> \"Status, repair....\" >>>> \"Repair frontend\"";
+        echo cg1l_get_gallery_status_card($message, $cgGalleryStatusCardTheme);
         return;
     }
 }
 
 if(intval($options['general']['Version'])<22 && (!empty($isOnlyGalleryEcommerce) || !empty($isOnlyUploadFormEcommerce))){
-        echo "<p style='margin: 40px auto;text-align: center;font-weight: bold;'>Ecommerce shortcodes are only allowed to be used for galleries created or copied in plugin version 22 and later</p>";
+        echo cg1l_get_gallery_status_card('<b>Ecommerce shortcodes are only allowed to be used for galleries created or copied in plugin version 22 and later.</b>', $cgGalleryStatusCardTheme);
         return;
 }
 
@@ -532,6 +536,7 @@ if($backToGalleriesFromPageNumber > 1){
 include(__DIR__ ."/../../check-language.php");
 include(__DIR__ ."/../../check-language-general.php");
 include(__DIR__ ."/../../check-language-ecommerce.php");
+include(__DIR__ ."/../../check-language-paid-actions.php");
 
 if(!$isCGalleries && !$isOnlyUploadForm && !$isOnlyContactForm && file_exists($categoriesFullDataFile)){
     $categoriesFullData = json_decode(file_get_contents($categoriesFullDataFile),true);
@@ -551,6 +556,7 @@ $isCategoryUploadFieldActive = cg1l_frontend_has_active_category_upload_field($f
 if($isCGalleries){
     $galleriesOptions = cg_galleries_options($shortcode_name);
     $options = cg_set_option_from_galleries_options($options,$galleriesOptions);
+    $cgGalleryStatusCardTheme = cg1l_get_gallery_status_card_theme($options,$galleriesOptions,true);
     $dataArray = cg1l_get_images_full_data_frontend_for_galleries($wp_upload_dir,$shortcode_name,$is_user_logged_in,$language_NoGalleryEntries,$WpPageParentShortCodeType,[],$isGalleriesMainPage,$galleriesIds,$hasGalleriesIds,$WpUserId);
     $imagesFullData = $dataArray['imagesFullData'];
 
@@ -852,7 +858,7 @@ if($isCGalleries){
 
     // don't change the order with deactivated check, this is so far the best order logic combination
     if($shortcode_name == 'cg_gallery_ecommerce' && $isNotActivatedForSelling){
-        echo '<p style="text-align: center;margin-top: 50px;font-size: 22px;"><b>Not activated for selling</b></p>';
+        echo cg1l_get_gallery_status_card('<b>Not activated for selling</b>', $cgGalleryStatusCardTheme);
         return;
     }
 
@@ -873,6 +879,7 @@ if(empty($entryId)){
 cg1l_load_language_file_categorized(__DIR__.'/../../check-language.php', 'gallery', $languageNames);
 cg1l_load_language_file_categorized(__DIR__.'/../../check-language-general.php', 'general', $languageNames);
 cg1l_load_language_file_categorized(__DIR__.'/../../check-language-ecommerce.php', 'ecommerce', $languageNames);
+cg1l_load_language_file_categorized(__DIR__.'/../../check-language-paid-actions.php', 'paidActions', $languageNames);
 
 if(!empty($entryId) && $shortcode_name == 'cg_gallery_user'){
 	$isNotUsersEntryId = false;
@@ -886,7 +893,7 @@ if(!empty($entryId) && $shortcode_name == 'cg_gallery_user'){
 		}
 	}
 	if($isNotUsersEntryId){
-		echo '<p style="text-align: center;margin-top: 50px;font-size: 22px;"><b>'.$language_OnlyVisibleForRegisteredAndLoggedInOwner.'</b></p>';
+		echo cg1l_get_gallery_status_card('<b>'.$language_OnlyVisibleForRegisteredAndLoggedInOwner.'</b>', $cgGalleryStatusCardTheme);
 		return;
 	}
 }
@@ -895,14 +902,14 @@ $intervalConf = cg_shortcode_interval_check($galeryID,$optionsSource,$cg_gallery
 
 if($intervalConf['shortcodeIsActive'] && empty($isFromOrderSummary)){
     if(!empty($entryId) && !empty($cgEntryId) && $entryId==$cgEntryId && $isOnlyGalleryWinner && !empty($entryFullDataBeforeAllowedFilter) && empty($entryFullDataBeforeAllowedFilter['Winner'])){
-        echo "<p class='mainCGentryNotWinnerMessage' >$language_ThisEntryIsNotAWinner</p>";
+        echo cg1l_get_gallery_status_card($language_ThisEntryIsNotAWinner, $cgGalleryStatusCardTheme, 'mainCGentryNotWinnerMessage');
         return;
     }
 }
 
 if($intervalConf['shortcodeIsActive'] && empty($isFromOrderSummary)){
     if(!empty($entryId) && !empty($cgEntryId) && $entryId==$cgEntryId && $isOnlyGalleryEcommerce && !empty($entryFullDataBeforeAllowedFilter) && empty($entryFullDataBeforeAllowedFilter['EcommerceEntry'])){
-        echo "<p class='mainCGentryNotEntryMessage' >Not set for sale</p>";
+        echo cg1l_get_gallery_status_card('Not set for sale', $cgGalleryStatusCardTheme, 'mainCGentryNotEntryMessage');
         return;
     }
 }
@@ -918,9 +925,10 @@ if(!empty($entryId) && !empty($cgEntryId) && $entryId==$cgEntryId && empty($imag
     if(!empty($entryLandingPageFilterReason['type']) && $entryLandingPageFilterReason['type'] === 'category'){
         $categoryNameToShow = (!empty($entryLandingPageFilterReason['categoryName'])) ? $entryLandingPageFilterReason['categoryName'] : $language_Other;
         $categoryNameToShow = contest_gal1ery_convert_for_html_output_without_nl2br($categoryNameToShow);
-        echo '<p style="font-size: 20px; text-align: center;">Category <b>'.$categoryNameToShow.'</b> is deactivated.</p>';
+        echo cg1l_get_gallery_status_card('Category <b>'.$categoryNameToShow.'</b> is deactivated.', $cgGalleryStatusCardTheme);
     }else{
-        echo contest_gal1ery_convert_for_html_output_without_nl2br($options['visual']['TextDeactivatedEntry']);
+        $message = contest_gal1ery_convert_for_html_output_without_nl2br($options['visual']['TextDeactivatedEntry']);
+        echo cg1l_get_gallery_status_card($message, $cgGalleryStatusCardTheme);
     }
     return;
 }
@@ -1065,18 +1073,14 @@ if($isShowGallery == true){
     }
 
     $cgFeControlsStyle = 'cg_fe_controls_style_white';
-    $BorderRadiusClass = '';
+    $BorderRadiusClass = 'cg_border_radius_controls_and_containers';
     if(!empty($isOnlyContactForm)){
 
         $optionsVisual = $wpdb->get_row($wpdb->prepare( "SELECT * FROM $tablename_options_visual WHERE GalleryID = %d"  ,[$galeryID]));
         $FeControlsStyleUpload = $optionsVisual->FeControlsStyleUpload;
-        $BorderRadiusUpload = $optionsVisual->BorderRadiusUpload;
 
         if($FeControlsStyleUpload=='black'){
             $cgFeControlsStyle='cg_fe_controls_style_black';
-        }
-        if($BorderRadiusUpload=='1' || empty($optionsVisual->FeControlsStyleUpload)){
-            $BorderRadiusClass = 'cg_border_radius_controls_and_containers';
         }
     }else{
         if(!empty($options['visual']['FeControlsStyle'])){
@@ -1084,7 +1088,6 @@ if($isShowGallery == true){
                 $cgFeControlsStyle='cg_fe_controls_style_black';
             }
         }
-        $BorderRadiusClass = 'cg_border_radius_controls_and_containers';
     }
 
 	if(!empty($isCGalleries)){
@@ -1094,6 +1097,8 @@ if($isShowGallery == true){
 	        $cgFeControlsStyle='cg_fe_controls_style_black';
         }
     }
+
+    $cgGalleryStatusCardTheme = $cgFeControlsStyle;
 
     $cgHideDivContainerClass = '';
 
@@ -1118,7 +1123,8 @@ if($isShowGallery == true){
     $entryLandingNeighborsHtml = '';
 
     if(!$intervalConf['shortcodeIsActive'] && empty($isFromOrderSummary) && empty($isCGalleries)){
-            echo contest_gal1ery_convert_for_html_output_without_nl2br($intervalConf['TextWhenShortcodeIntervalIsOff']);
+            $message = contest_gal1ery_convert_for_html_output_without_nl2br($intervalConf['TextWhenShortcodeIntervalIsOff']);
+            echo cg1l_get_gallery_status_card($message, $cgGalleryStatusCardTheme, 'cg-gallery-status-card-interval-off');
     }
     else{
 
@@ -1230,8 +1236,17 @@ if(empty($isFromOrderSummary)){
 $ecommerceOptions = [];
 $ecommerceCountries = [];
 $ecommerceCountriesStatesCodes = [];
+$hasPaidGalleryActions = false;
+if(function_exists('cg_paid_actions_get_settings')){
+    $paidGalleryActionSettings = cg_paid_actions_get_settings($galeryID);
+    $hasPaidGalleryActions = (
+        !empty($paidGalleryActionSettings->UploadMode) ||
+        !empty($paidGalleryActionSettings->VoteMode) ||
+        !empty($paidGalleryActionSettings->CommentMode)
+    );
+}
 
-if((!empty($isOnlyGalleryEcommerce) || !empty($isOnlyUploadFormEcommerce) || !empty($hasEcommerceEntry)) && intval($options['general']['Version'])>=22){
+if((!empty($isOnlyGalleryEcommerce) || !empty($isOnlyUploadFormEcommerce) || !empty($hasEcommerceEntry) || $hasPaidGalleryActions) && intval($options['general']['Version'])>=22){
 
     $ecommerceCountries = cg_get_countries();
 
@@ -1255,6 +1270,7 @@ if((!empty($isOnlyGalleryEcommerce) || !empty($isOnlyUploadFormEcommerce) || !em
     $currenciesArray = cg_get_ecommerce_currencies_array_formatted_by_short_key();
 
     $ecommerceOptions = json_decode(json_encode($wpdb->get_row( "SELECT * FROM $tablename_ecommerce_options WHERE GeneralID = 1")),true);
+    $ecommerceOptions['BorderRadiusOrder'] = 1;
 
     if(!empty($ecommerceOptions['AllowedCountries'])){
         $ecommerceOptions['AllowedCountries'] = unserialize($ecommerceOptions['AllowedCountries']);
@@ -1349,6 +1365,11 @@ if(($options['general']['AllowRating']==1 OR $options['general']['AllowRating']>
         }
 
         echo "<div id='mainCGdiv$galeryIDuserForJs' class='mainCGdiv $CGalleriesMainPageClass $cgAjaxClass $isOnlyGalleryEcommerceClass $isCgWpPageEntryLandingPageClass $cgFeControlsStyle $BorderRadiusClass $cgl_heart $sliderViewMainClass' data-cg-gid='$galeryIDuserForJs' data-cg-version='$Version'>";
+
+        $shouldRenderHeader = !($isGalleryShortcode && !empty($entryId)) || (!empty($entryId) && !empty($isOnlyGalleryEcommerce));
+        if(!$shouldRenderHeader && empty($isCGalleries) && $shortcode_name!=='cg_users_upload' && function_exists('cg_paid_actions_render_frontend_bar_shell')){
+            cg_paid_actions_render_frontend_bar_shell($galeryID,$galeryIDuserForJs,$options['visual']);
+        }
 
         if($currentLook=='thumb'){
             echo '<div id="cglSliderNav'.$galeryIDuserForJs.'" class="cg_hide cgl_nav" data-cg-gid="'.$galeryIDuserForJs.'">
@@ -1540,8 +1561,10 @@ if(($options['general']['AllowRating']==1 OR $options['general']['AllowRating']>
         echo "<div id='cg_AlreadyRated_dialog' style='display:none;' class='cg_show_dialog'><p>$language_YouHaveAlreadyVotedThisPicture</p></div>";
         echo "<div id='cg_AllVotesUsed_dialog' style='display:none;' class='cg_show_dialog'><p>$language_AllVotesUsed</p></div>";
 
-        $shouldRenderHeader = !($isGalleryShortcode && !empty($entryId)) || (!empty($entryId) && !empty($isOnlyGalleryEcommerce));
         if($shouldRenderHeader){
+            if(empty($isCGalleries) && $shortcode_name!=='cg_users_upload' && function_exists('cg_paid_actions_render_frontend_bar_shell')){
+                cg_paid_actions_render_frontend_bar_shell($galeryID,$galeryIDuserForJs,$options['visual']);
+            }
             echo "<div style='visibility: hidden;'  class='cg_header cg_hide'>";
                 include('gallery/header.php');
             echo "</div>";
@@ -1921,14 +1944,14 @@ if(!empty($isGalleriesMainPage) && !empty($hasOlderVersionsOnMainCGalleriesPage)
         $recognizedFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/cg-galleries-main-page-information-recognized.txt';
         if(!file_exists($recognizedFile)){
             echo <<<HEREDOC
-<p style="text-align: center;background-color: white;max-width: 800px;border-radius: 8px;margin-left: auto; margin-right: auto;" id="cgGalleriesMainPageRecognizedContainer"><b>Information - only visible for administrators</b><br><br>
+<div class="cg-gallery-status-card $cgGalleryStatusCardTheme cg-galleries-admin-status-card" role="status" id="cgGalleriesMainPageRecognizedContainer"><b>Information - only visible for administrators</b><br><br>
 Galleries copied or created before version 24 are not visible here on auto generated Contest Gallery Galleries page<br><br>
 If you place [$shortcode_name_plural] on of your custom pages<br>
 you will see all your galleries<br><br>
 You can also add ids to display certain galleries<br>
 Example: [$shortcode_name_plural ids="1,2,3"]<br><br>
 <span id="cgGalleriesMainPageRecognized">Got it</span>
-</p>
+</div>
 HEREDOC;
         }
     }
@@ -1938,9 +1961,10 @@ HEREDOC;
 else{
 
     if(!$intervalConf['shortcodeIsActive'] && empty($isFromOrderSummary)){
-        echo contest_gal1ery_convert_for_html_output_without_nl2br($intervalConf['TextWhenShortcodeIntervalIsOff']);
+        $message = contest_gal1ery_convert_for_html_output_without_nl2br($intervalConf['TextWhenShortcodeIntervalIsOff']);
+        echo cg1l_get_gallery_status_card($message, $cgGalleryStatusCardTheme, 'cg-gallery-status-card-interval-off');
     }else{
-        echo "<div id='cgRegUserGalleryOnly$galeryIDuserForJs' class='cgRegUserGalleryOnly' data-cg-gid='$galeryIDuserForJs'>";
+        echo "<div id='cgRegUserGalleryOnly$galeryIDuserForJs' class='cgRegUserGalleryOnly cg-gallery-status-card $cgGalleryStatusCardTheme' role='status' data-cg-gid='$galeryIDuserForJs'>";
         echo contest_gal1ery_convert_for_html_output_without_nl2br($options['pro']['RegUserGalleryOnlyText']);
         echo "</div>";
     }

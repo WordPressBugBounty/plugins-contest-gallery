@@ -1334,3 +1334,895 @@ msgstr "hodnotenie"
 #: check-language.php
 msgid "ratings"
 msgstr "hodnotenia"
+
+#: check-language-paid-actions.php
+msgid "Uploads"
+msgstr "Nahrané súbory"
+
+#: check-language-paid-actions.php
+msgid "Votes"
+msgstr "Hlasy"
+
+#: check-language-paid-actions.php
+msgid "Upload credits"
+msgstr "Kredity na nahrávanie"
+
+#: check-language-paid-actions.php
+msgid "Voting credits"
+msgstr "Kredity na hlasovanie"
+
+#: check-language-paid-actions.php
+msgid "Comment credits"
+msgstr "Kredity na komentovanie"
+
+#: check-language-paid-actions.php
+msgid "upload credit"
+msgstr "kredit na nahrávanie"
+
+#: check-language-paid-actions.php
+msgid "voting credit"
+msgstr "kredit na hlasovanie"
+
+#: check-language-paid-actions.php
+msgid "comment credit"
+msgstr "kredit na komentovanie"
+
+#: check-language-paid-actions.php
+msgid "Credits for {type} in gallery {number}"
+msgstr "Kredity na {type} v galérii {number}"
+
+#: check-language-paid-actions.php
+msgid "credit"
+msgstr "kredit"
+
+#: check-language-paid-actions.php
+msgid "credits"
+msgstr "kredity"
+
+#: check-language-paid-actions.php
+msgid "each"
+msgstr "každý"
+
+#: check-language-paid-actions.php
+msgid "Loading"
+msgstr "Načítava sa"
+
+#: check-language-paid-actions.php
+msgid "or"
+msgstr "alebo"
+
+#: check-language-paid-actions.php
+msgid "Cancel"
+msgstr "Zrušiť"
+
+#: check-language-paid-actions.php
+msgid "Not now"
+msgstr "Teraz nie"
+
+#: check-language-paid-actions.php
+msgid "Try again"
+msgstr "Skúste to znova"
+
+#: check-language-paid-actions.php
+msgid "Continue to gallery"
+msgstr "Pokračujte do galérie"
+
+#: check-language-paid-actions.php
+msgid "Return to gallery"
+msgstr "Návrat do galérie"
+
+#: check-language-paid-actions.php
+msgid "Private payment preview"
+msgstr "Ukážka súkromnej platby"
+
+#: check-language-paid-actions.php
+msgid "Sandbox checkout test"
+msgstr "Test pokladne v karanténe"
+
+#: check-language-paid-actions.php
+msgid "Your gallery credits"
+msgstr "Vaše kredity v galérii"
+
+#: check-language-paid-actions.php
+msgid "Real test actions are saved and visible until reset"
+msgstr "Skutočné testovacie akcie sú uložené a viditeľné až do resetovania"
+
+#: check-language-paid-actions.php
+msgid "Real sandbox orders grant persistent gallery credits"
+msgstr "Skutočné objednávky v karanténe poskytujú trvalé kredity galérie"
+
+#: check-language-paid-actions.php
+msgid "Buy only what you want to use"
+msgstr "Kupujte len to, čo chcete použiť"
+
+#: check-language-paid-actions.php
+msgid "Add test credits"
+msgstr "Pridajte testovacie kredity"
+
+#: check-language-paid-actions.php
+msgid "Sandbox checkout"
+msgstr "Pokladňa v pieskovisku"
+
+#: check-language-paid-actions.php
+msgid "Get credits"
+msgstr "Získať kredity"
+
+#: check-language-paid-actions.php
+msgid "Buy credits in sandbox"
+msgstr "Kúpte si kredity v karanténe"
+
+#: check-language-paid-actions.php
+msgid "Buy gallery credits"
+msgstr "Kúpte si kredity galérie"
+
+#: check-language-paid-actions.php
+msgid "Reset test actions"
+msgstr "Obnoviť testovacie akcie"
+
+#: check-language-paid-actions.php
+msgid "{count} used here"
+msgstr "Používa sa tu {count}"
+
+#: check-language-paid-actions.php
+msgid "Get credits: {credits}"
+msgstr "Získať kredity: {credits}"
+
+#: check-language-paid-actions.php
+msgid "Your credits are ready. You can continue in the gallery."
+msgstr "Vaše kredity sú pripravené. Pokračovať môžete v galérii."
+
+#: check-language-paid-actions.php
+msgid "Sandbox test link unavailable"
+msgstr "Odkaz na test karantény nie je k dispozícii"
+
+#: check-language-paid-actions.php
+msgid "This link has expired, is invalid, or belongs to another test user. Create a new sandbox test link in the gallery settings."
+msgstr "Platnosť tohto odkazu vypršala, je neplatný alebo patrí inému testovaciemu používateľovi. Vytvorte nový odkaz na test karantény v nastaveniach galérie."
+
+#: check-language-paid-actions.php
+msgid "Credits temporarily unavailable"
+msgstr "Kredity sú dočasne nedostupné"
+
+#: check-language-paid-actions.php
+msgid "Please try again in a moment"
+msgstr "Skúste to znova o chvíľu"
+
+#: check-language-paid-actions.php
+msgid "Purchasing credits is temporarily unavailable. Please contact the gallery administrator."
+msgstr "Nákup kreditov je dočasne nedostupný. Kontaktujte správcu galérie."
+
+#: check-language-paid-actions.php
+msgid "CREDIT REQUIRED"
+msgstr "VYŽADUJE SA KREDIT"
+
+#: check-language-paid-actions.php
+msgid "TEST CREDITS USED"
+msgstr "POUŽITÉ TESTOVACIE KREDITY"
+
+#: check-language-paid-actions.php
+msgid "Upload credit required"
+msgstr "Vyžaduje sa odovzdanie kreditu"
+
+#: check-language-paid-actions.php
+msgid "Voting credit required"
+msgstr "Vyžaduje sa hlasovací kredit"
+
+#: check-language-paid-actions.php
+msgid "Comment credit required"
+msgstr "Na komentovanie sa vyžaduje kredit"
+
+#: check-language-paid-actions.php
+msgid "Buy upload credits to upload an entry to this gallery."
+msgstr "Ak chcete nahrať záznam do tejto galérie, kúpte si kredity na nahrávanie."
+
+#: check-language-paid-actions.php
+msgid "Buy voting credits to vote in this gallery."
+msgstr "Kúpte si hlasovacie kredity, aby ste mohli hlasovať v tejto galérii."
+
+#: check-language-paid-actions.php
+msgid "Buy comment credits to comment in this gallery."
+msgstr "Ak chcete komentovať v tejto galérii, kúpte si kredity za komentáre."
+
+#: check-language-paid-actions.php
+msgid "All test upload credits used"
+msgstr "Boli použité všetky kredity testovacieho nahrávania"
+
+#: check-language-paid-actions.php
+msgid "All test voting credits used"
+msgstr "Všetky testovacie hlasovacie kredity boli použité"
+
+#: check-language-paid-actions.php
+msgid "All test comment credits used"
+msgstr "Všetky použité kredity za testovacie komentáre"
+
+#: check-language-paid-actions.php
+msgid "You have used all test upload credits for this gallery. Add more to keep testing."
+msgstr "Použili ste všetky kredity testovacieho nahrávania pre túto galériu. Ak chcete pokračovať v testovaní, pridajte ďalšie."
+
+#: check-language-paid-actions.php
+msgid "You have used all test voting credits for this gallery. Add more to keep testing."
+msgstr "Využili ste všetky testovacie hlasovacie kredity pre túto galériu. Ak chcete pokračovať v testovaní, pridajte ďalšie."
+
+#: check-language-paid-actions.php
+msgid "You have used all test comment credits for this gallery. Add more to keep testing."
+msgstr "Použili ste všetky kredity testovacích komentárov pre túto galériu. Ak chcete pokračovať v testovaní, pridajte ďalšie."
+
+#: check-language-paid-actions.php
+msgid "Add more test credits"
+msgstr "Pridajte ďalšie testovacie kredity"
+
+#: check-language-paid-actions.php
+msgid "Buy credits"
+msgstr "Kúpte si kredity"
+
+#: check-language-paid-actions.php
+msgid "COMMENT CREDITS"
+msgstr "KOMENTÁR KREDITY"
+
+#: check-language-paid-actions.php
+msgid "Checking comment credits"
+msgstr "Kontrola kreditov komentárov"
+
+#: check-language-paid-actions.php
+msgid "Please wait while your comment credits are checked."
+msgstr "Počkajte, kým sa skontrolujú vaše kredity na komentovanie."
+
+#: check-language-paid-actions.php
+msgid "Comment credits temporarily unavailable"
+msgstr "Kredity komentárov sú dočasne nedostupné"
+
+#: check-language-paid-actions.php
+msgid "Your comment credits could not be checked. Please try again."
+msgstr "Vaše kredity na komentovanie sa nepodarilo skontrolovať. Skúste to znova."
+
+#: check-language-paid-actions.php
+msgid "YOUR CURRENT TEST CREDITS"
+msgstr "VAŠE AKTUÁLNE TESTOVACIE KREDITY"
+
+#: check-language-paid-actions.php
+msgid "YOUR CURRENT CREDITS"
+msgstr "VAŠE AKTUÁLNE KREDITY"
+
+#: check-language-paid-actions.php
+msgid "{count} {type} available"
+msgstr "{count} {type} k dispozícii"
+
+#: check-language-paid-actions.php
+msgid "{count} {type} available, {selected} selected for checkout"
+msgstr "{count} {type} k dispozícii, {selected} vybraté na platbu"
+
+#: check-language-paid-actions.php
+msgid "{count} {type} available, {selected} selected for test checkout"
+msgstr "{count} {type} k dispozícii, {selected} vybraté na testovaciu platbu"
+
+#: check-language-paid-actions.php
+msgid "PRIVATE PAYMENT PREVIEW"
+msgstr "NÁHĽAD SÚKROMNEJ PLATBY"
+
+#: check-language-paid-actions.php
+msgid "Reset saved test actions?"
+msgstr "Obnoviť uložené testovacie akcie?"
+
+#: check-language-paid-actions.php
+msgid "This removes every paid preview action in this gallery, including tests from other preview tabs and administrators."
+msgstr "Týmto sa odstráni každá platená akcia ukážky v tejto galérii vrátane testov z iných kariet ukážok a správcov."
+
+#: check-language-paid-actions.php
+msgid "TEST ACTIONS IN THIS GALLERY"
+msgstr "TESTOVAŤ AKCIE V TEJTO GALÉRII"
+
+#: check-language-paid-actions.php
+msgid "Test upload"
+msgstr "Skúšobné nahrávanie"
+
+#: check-language-paid-actions.php
+msgid "Test uploads"
+msgstr "Testovať nahrávanie"
+
+#: check-language-paid-actions.php
+msgid "Test vote"
+msgstr "Skúšobné hlasovanie"
+
+#: check-language-paid-actions.php
+msgid "Test votes"
+msgstr "Testovacie hlasy"
+
+#: check-language-paid-actions.php
+msgid "Test comment"
+msgstr "Testovací komentár"
+
+#: check-language-paid-actions.php
+msgid "Test comments"
+msgstr "Testovacie komentáre"
+
+#: check-language-paid-actions.php
+msgid "saved test action will be removed"
+msgstr "uložená testovacia akcia bude odstránená"
+
+#: check-language-paid-actions.php
+msgid "saved test actions will be removed"
+msgstr "uložené testovacie akcie budú odstránené"
+
+#: check-language-paid-actions.php
+msgid "test credit will be restored to its original credit type"
+msgstr "skúšobný kredit bude obnovený na pôvodný typ kreditu"
+
+#: check-language-paid-actions.php
+msgid "test credits will be restored to their original credit types"
+msgstr "testovacie kredity budú obnovené na ich pôvodné typy kreditov"
+
+#: check-language-paid-actions.php
+msgid "Preview uploads and their files are deleted completely. Everything attached to those entries is removed as well. Test credits used in this gallery are restored."
+msgstr "Odovzdané ukážky a ich súbory sa úplne vymažú. Všetko pripojené k týmto záznamom je tiež odstránené. Testovacie kredity použité v tejto galérii sú obnovené."
+
+#: check-language-paid-actions.php
+msgid "SECURE TEST CHECKOUT"
+msgstr "ZABEZPEČENÁ SKÚŠOBNÁ PLATBA"
+
+#: check-language-paid-actions.php
+msgid "Choose your free test credits"
+msgstr "Vyberte si svoje bezplatné testovacie kredity"
+
+#: check-language-paid-actions.php
+msgid "Set the quantity directly in each checkout item. No money or payment details are used."
+msgstr "Množstvo nastavte priamo v každej položke pokladne. Nepoužívajú sa žiadne peniaze ani platobné údaje."
+
+#: check-language-paid-actions.php
+msgid "PRIVATE PREVIEW"
+msgstr "SÚKROMNÁ NÁHĽAD"
+
+#: check-language-paid-actions.php
+msgid "Visible only to you"
+msgstr "Viditeľné iba pre vás"
+
+#: check-language-paid-actions.php
+msgid "No real charge"
+msgstr "Žiadny skutočný poplatok"
+
+#: check-language-paid-actions.php
+msgid "Payment data is never requested"
+msgstr "Platobné údaje sa nikdy nevyžadujú"
+
+#: check-language-paid-actions.php
+msgid "Persistent credits"
+msgstr "Trvalé kredity"
+
+#: check-language-paid-actions.php
+msgid "Available after reload"
+msgstr "Dostupné po opätovnom nabití"
+
+#: check-language-paid-actions.php
+msgid "Choose a quantity above to continue."
+msgstr "Ak chcete pokračovať, zadajte počet do poľa vyššie."
+
+#: check-language-paid-actions.php
+msgid "Choose a test payment method"
+msgstr "Vyberte skúšobný spôsob platby"
+
+#: check-language-paid-actions.php
+msgid "Clicking a method simulates approval and adds the selected credits."
+msgstr "Kliknutím na metódu simulujete schválenie a pridáte vybrané kredity."
+
+#: check-language-paid-actions.php
+msgid "Simulate secure payment"
+msgstr "Simulujte bezpečnú platbu"
+
+#: check-language-paid-actions.php
+msgid "TEST MODE · {amount} {currency} will not be charged"
+msgstr "TESTOVACÍ REŽIM · {amount} {currency} nebude účtované"
+
+#: check-language-paid-actions.php
+msgid "Added test credits"
+msgstr "Pridané testovacie kredity"
+
+#: check-language-paid-actions.php
+msgid "TEST PAYMENT APPROVED"
+msgstr "SKÚŠOBNÁ PLATBA SCHVÁLENÁ"
+
+#: check-language-paid-actions.php
+msgid "Your test credits are ready"
+msgstr "Vaše testovacie kredity sú k dispozícii"
+
+#: check-language-paid-actions.php
+msgid "{count} credit was added after the simulated {provider} approval."
+msgstr "Kredit {count} bol pridaný po simulovanom schválení {provider}."
+
+#: check-language-paid-actions.php
+msgid "{count} credits were added after the simulated {provider} approval."
+msgstr "Kredity {count} boli pridané po simulovanom schválení {provider}."
+
+#: check-language-paid-actions.php
+msgid "No real order or payment was created. The credits remain available after reloading this gallery."
+msgstr "Nebola vytvorená žiadna skutočná objednávka ani platba. Kredity zostanú k dispozícii po opätovnom načítaní tejto galérie."
+
+#: check-language-paid-actions.php
+msgid "Approving secure {provider} test payment…"
+msgstr "Schvaľuje sa zabezpečená testovacia platba {provider}…"
+
+#: check-language-paid-actions.php
+msgid "The test payment could not be approved."
+msgstr "Testovaciu platbu nebolo možné schváliť."
+
+#: check-language-paid-actions.php
+msgid "REAL SANDBOX CHECKOUT"
+msgstr "REAL SANDBOX CHECKOUT"
+
+#: check-language-paid-actions.php
+msgid "SECURE CHECKOUT"
+msgstr "ZABEZPEČENÁ PLATBA"
+
+#: check-language-paid-actions.php
+msgid "Choose persistent test credits"
+msgstr "Vyberte si trvalé testovacie kredity"
+
+#: check-language-paid-actions.php
+msgid "Choose your gallery credits"
+msgstr "Vyberte si kredity galérie"
+
+#: check-language-paid-actions.php
+msgid "Set the quantity directly in each checkout item. The total updates immediately."
+msgstr "Množstvo nastavte priamo v každej položke pokladne. Celkový počet sa okamžite aktualizuje."
+
+#: check-language-paid-actions.php
+msgid "SANDBOX CHECKOUT"
+msgstr "SANDBOX CHECKOUT"
+
+#: check-language-paid-actions.php
+msgid "Sign in to test buying credits"
+msgstr "Prihláste sa a otestujte nákup kreditov"
+
+#: check-language-paid-actions.php
+msgid "Sign in to continue the sandbox checkout. You can test buying credits and participating in this gallery without a real payment."
+msgstr "Ak chcete pokračovať v pokladni v karanténe, prihláste sa. Nákup kreditov a účasť v tejto galérii môžete testovať bez skutočnej platby."
+
+#: check-language-paid-actions.php
+msgid "Sign in to buy credits"
+msgstr "Ak chcete nakupovať kredity, prihláste sa"
+
+#: check-language-paid-actions.php
+msgid "You need an account to buy credits and participate in this gallery. Continue with Google or receive a six-digit PIN by email."
+msgstr "Na nákup kreditov a účasť v tejto galérii potrebujete účet. Pokračujte v službe Google alebo získajte e-mailom šesťmiestny kód PIN."
+
+#: check-language-paid-actions.php
+msgid "Email address"
+msgstr "E-mailová adresa"
+
+#: check-language-paid-actions.php
+msgid "Email me a PIN"
+msgstr "Odoslať PIN"
+
+#: check-language-paid-actions.php
+msgid "Six-digit PIN"
+msgstr "Šesťmiestny PIN"
+
+#: check-language-paid-actions.php
+msgid "PIN digit {number}"
+msgstr "Číslo PIN {number}"
+
+#: check-language-paid-actions.php
+msgid "Send a new PIN"
+msgstr "Pošlite nový PIN"
+
+#: check-language-paid-actions.php
+msgid "Send a new PIN in {seconds}s"
+msgstr "Pošlite nový kód PIN do {seconds}s"
+
+#: check-language-paid-actions.php
+msgid "PIN confirmed. Preparing your checkout…"
+msgstr "PIN potvrdený. Pripravuje sa vaša platba…"
+
+#: check-language-paid-actions.php
+msgid "Sign-in successful. Reloading the gallery…"
+msgstr "Prihlásenie bolo úspešné. Opätovné načítanie galérie…"
+
+#: check-language-paid-actions.php
+msgid "The sign-in form could not be loaded."
+msgstr "Prihlasovací formulár sa nepodarilo načítať."
+
+#: check-language-paid-actions.php
+msgid "PIN CONFIRMED"
+msgstr "PIN POTVRDENÝ"
+
+#: check-language-paid-actions.php
+msgid "Sign-in successful"
+msgstr "Prihlásenie bolo úspešné"
+
+#: check-language-paid-actions.php
+msgid "Continue to buy credits"
+msgstr "Pokračovať k nákupu kreditov"
+
+#: check-language-paid-actions.php
+msgid "Please wait {seconds} {secondsLabel} before requesting another PIN."
+msgstr "Pred vyžiadaním ďalšieho kódu PIN počkajte {seconds} {secondsLabel}."
+
+#: check-language-paid-actions.php
+msgid "second"
+msgstr "sekunda"
+
+#: check-language-paid-actions.php
+msgid "seconds"
+msgstr "sekundy"
+
+#: check-language-paid-actions.php
+msgid "Too many PINs were requested. Please try again later."
+msgstr "Bolo požadovaných príliš veľa kódov PIN. Skúste to znova neskôr."
+
+#: check-language-paid-actions.php
+msgid "The PIN could not be sent."
+msgstr "Kód PIN sa nepodarilo odoslať."
+
+#: check-language-paid-actions.php
+msgid "Enter a valid email address."
+msgstr "Zadajte platnú e-mailovú adresu."
+
+#: check-language-paid-actions.php
+msgid "The PIN is invalid or expired."
+msgstr "Kód PIN je neplatný alebo jeho platnosť vypršala."
+
+#: check-language-paid-actions.php
+msgid "Too many attempts. Request a new PIN."
+msgstr "Príliš veľa pokusov. Požiadajte o nový PIN."
+
+#: check-language-paid-actions.php
+msgid "The PIN is incorrect."
+msgstr "Kód PIN je nesprávny."
+
+#: check-language-paid-actions.php
+msgid "Enter all six PIN digits."
+msgstr "Zadajte všetkých šesť číslic PIN."
+
+#: check-language-paid-actions.php
+msgid "A new PIN could not be sent."
+msgstr "Nepodarilo sa odoslať nový kód PIN."
+
+#: check-language-paid-actions.php
+msgid "The PIN request is no longer available."
+msgstr "Žiadosť o PIN už nie je k dispozícii."
+
+#: check-language-paid-actions.php
+msgid "SANDBOX PAYMENT"
+msgstr "PLATBA SANDBOX"
+
+#: check-language-paid-actions.php
+msgid "SECURE PAYMENT"
+msgstr "BEZPEČNÁ PLATBA"
+
+#: check-language-paid-actions.php
+msgid "Finalizing your sandbox credits"
+msgstr "Dokončujú sa vaše kredity v karanténe"
+
+#: check-language-paid-actions.php
+msgid "Finalizing your credits"
+msgstr "Finalizácia vašich kreditov"
+
+#: check-language-paid-actions.php
+msgid "Your test payment was approved. We are adding your credits now. You will return to the gallery automatically."
+msgstr "Vaša skúšobná platba bola schválená. Teraz pridávame vaše kredity. Automaticky sa vrátite do galérie."
+
+#: check-language-paid-actions.php
+msgid "Your payment was approved. We are adding your credits now. You will return to the gallery automatically."
+msgstr "Vaša platba bola schválená. Teraz pridávame vaše kredity. Automaticky sa vrátite do galérie."
+
+#: check-language-paid-actions.php
+msgid "Your test payment was approved. We are securely adding your credits now. You will return to the gallery automatically."
+msgstr "Vaša skúšobná platba bola schválená. Teraz bezpečne pridávame vaše kredity. Automaticky sa vrátite do galérie."
+
+#: check-language-paid-actions.php
+msgid "Your payment was approved. We are securely adding your credits now. You will return to the gallery automatically."
+msgstr "Vaša platba bola schválená. Teraz bezpečne pridávame vaše kredity. Automaticky sa vrátite do galérie."
+
+#: check-language-paid-actions.php
+msgid "Do not start another payment while this payment is being finalized."
+msgstr "Nezačínajte ďalšiu platbu, kým sa táto platba dokončí."
+
+#: check-language-paid-actions.php
+msgid "Try finalizing again"
+msgstr "Skúste to znova dokončiť"
+
+#: check-language-paid-actions.php
+msgid "Your credits are ready"
+msgstr "Vaše kredity sú pripravené"
+
+#: check-language-paid-actions.php
+msgid "Your credits were added successfully. Returning to the gallery now."
+msgstr "Vaše kredity boli úspešne pridané. Teraz sa vraciame do galérie."
+
+#: check-language-paid-actions.php
+msgid "PAYMENT NEEDS ATTENTION"
+msgstr "PLATBA TREBA POZORNOSŤ"
+
+#: check-language-paid-actions.php
+msgid "We could not finish adding your credits"
+msgstr "Nepodarilo sa nám dokončiť pridávanie vašich kreditov"
+
+#: check-language-paid-actions.php
+msgid "The payment could not be finalized automatically. You can safely try finalizing this same payment again."
+msgstr "Platbu nebolo možné dokončiť automaticky. Môžete bezpečne skúsiť dokončiť tú istú platbu znova."
+
+#: check-language-paid-actions.php
+msgid "Your credit selection changed. Please review it and try again."
+msgstr "Výber kreditov sa zmenil. Skontrolujte ho a skúste to znova."
+
+#: check-language-paid-actions.php
+msgid "The requested gallery is not available."
+msgstr "Požadovaná galéria nie je k dispozícii."
+
+#: check-language-paid-actions.php
+msgid "Paid actions are not available for this gallery."
+msgstr "Platené akcie nie sú pre túto galériu k dispozícii."
+
+#: check-language-paid-actions.php
+msgid "The private payment preview is invalid or expired."
+msgstr "Ukážka súkromnej platby je neplatná alebo jej platnosť vypršala."
+
+#: check-language-paid-actions.php
+msgid "This private preview session has ended. Open \"Try it now\" again from the gallery settings."
+msgstr "Táto relácia súkromnej ukážky sa skončila. V nastaveniach galérie znova otvorte „Vyskúšať teraz“."
+
+#: check-language-paid-actions.php
+msgid "Activate pay for {type} before adding its test credits."
+msgstr "Pred pridaním testovacích kreditov aktivujte platbu za {type}."
+
+#: check-language-paid-actions.php
+msgid "Test credits are being updated. Please try again."
+msgstr "Testovacie kredity sa aktualizujú. Skúste to znova."
+
+#: check-language-paid-actions.php
+msgid "Demo credits could not be added."
+msgstr "Demo kredity nebolo možné pridať."
+
+#: check-language-paid-actions.php
+msgid "Preview actions are being reset. Please try again."
+msgstr "Akcie ukážky sa resetujú. Skúste to znova."
+
+#: check-language-paid-actions.php
+msgid "Demo credits could not be reserved."
+msgstr "Demo kredity nebolo možné rezervovať."
+
+#: check-language-paid-actions.php
+msgid "Not enough demo credits are available."
+msgstr "Nie je k dispozícii dostatok demo kreditov."
+
+#: check-language-paid-actions.php
+msgid "Purchasing credits for this action is temporarily unavailable."
+msgstr "Nákup kreditov pre túto akciu je dočasne nedostupný."
+
+#: check-language-paid-actions.php
+msgid "Sign in to purchase and use gallery credits."
+msgstr "Ak chcete nakupovať a používať kredity galérie, prihláste sa."
+
+#: check-language-paid-actions.php
+msgid "Invalid credit reservation."
+msgstr "Neplatná rezervácia kreditov."
+
+#: check-language-paid-actions.php
+msgid "This paid action is temporarily unavailable."
+msgstr "Táto platená akcia je dočasne nedostupná."
+
+#: check-language-paid-actions.php
+msgid "This action does not require paid credits."
+msgstr "Táto akcia nevyžaduje platené kredity."
+
+#: check-language-paid-actions.php
+msgid "Credits are being updated. Please try again."
+msgstr "Kredity sa aktualizujú. Skúste to znova."
+
+#: check-language-paid-actions.php
+msgid "Credits could not be reserved."
+msgstr "Kredity nebolo možné rezervovať."
+
+#: check-language-paid-actions.php
+msgid "Not enough credits are available."
+msgstr "Nie je k dispozícii dostatok kreditov."
+
+#: check-language-paid-actions.php
+msgid "This sandbox test link is invalid, expired or already belongs to another test user."
+msgstr "Tento testovací odkaz v karanténe je neplatný, jeho platnosť vypršala alebo už patrí inému testovaciemu používateľovi."
+
+#: check-language-paid-actions.php
+msgid "A preview action is still running. Please try the reset again."
+msgstr "Akcia ukážky stále prebieha. Skúste reset znova."
+
+#: check-language-paid-actions.php
+msgid "Some preview uploads could not be removed. Run the reset again."
+msgstr "Niektoré nahrané ukážky sa nepodarilo odstrániť. Znova spustite reset."
+
+#: check-language-paid-actions.php
+msgid "Preview actions were reset and their demo credits were restored."
+msgstr "Akcie ukážky boli resetované a ich demo kredity boli obnovené."
+
+#: check-language-paid-actions.php
+msgid "A six-digit PIN was sent to your email address."
+msgstr "Na vašu e-mailovú adresu bol odoslaný šesťmiestny kód PIN."
+
+#: check-language-paid-actions.php
+msgid "A new six-digit PIN was sent to your email address."
+msgstr "Na vašu e-mailovú adresu bol odoslaný nový šesťmiestny kód PIN."
+
+#: check-language-paid-actions.php
+msgid "The private payment preview is busy. Please try again."
+msgstr "Ukážka súkromnej platby je zaneprázdnená. Skúste to znova."
+
+#: check-language-paid-actions.php
+msgid "The test actions could not be reset."
+msgstr "Testovacie akcie nebolo možné resetovať."
+
+#: check-language-paid-actions.php
+msgid "The saved test actions were reset."
+msgstr "Uložené testovacie akcie boli resetované."
+
+#: check-language-paid-actions.php
+msgid "The test credits could not be added."
+msgstr "Testovacie kredity nebolo možné pridať."
+
+#: check-language-paid-actions.php
+msgid "Resetting…"
+msgstr "Resetuje sa…"
+
+#: check-language-paid-actions.php
+msgid "The code could not be sent."
+msgstr "Kód sa nepodarilo odoslať."
+
+#: check-language-paid-actions.php
+msgid "The code is invalid."
+msgstr "Kód je neplatný."
+
+#: check-language-paid-actions.php
+msgid "Gallery {number}"
+msgstr "Galéria {number}"
+
+#: check-language-paid-actions.php
+msgid "Purchase a credit to continue."
+msgstr "Ak chcete pokračovať, kúpte si kredit."
+
+#: check-language-general.php
+msgid "Send new PIN in {seconds}s"
+msgstr "Odoslať nový PIN o {seconds}s"
+
+#: check-language-general.php
+msgid "The account confirmation could not be prepared."
+msgstr "Potvrdenie účtu sa nepodarilo pripraviť."
+
+#: check-language-general.php
+msgid "No registered user was found for this email address."
+msgstr "Pre túto e-mailovú adresu sa nenašiel žiadny registrovaný používateľ."
+
+#: check-language-general.php
+msgid "The user account could not be found."
+msgstr "Používateľský účet sa nepodarilo nájsť."
+
+#: check-language-general.php
+msgid "PIN data was not found. Please contact the administrator."
+msgstr "Údaje PIN sa nenašli. Kontaktujte prosím správcu."
+
+#: check-language-general.php
+msgid "The user account could not be created. Please contact the administrator."
+msgstr "Používateľský účet sa nepodarilo vytvoriť. Kontaktujte prosím správcu."
+
+#: check-language-general.php
+msgid "The user could not be signed in after the PIN check. Please contact the administrator."
+msgstr "Používateľa sa po kontrole kódu PIN nepodarilo prihlásiť. Kontaktujte prosím správcu."
+
+#: check-language-general.php
+msgid "The PIN could not be confirmed. Please contact the administrator."
+msgstr "Kód PIN sa nepodarilo potvrdiť. Kontaktujte prosím správcu."
+
+#: check-language-paid-actions.php
+msgid "Checkout could not be started."
+msgstr "Proces platby sa nepodarilo spustiť."
+
+#: check-language-paid-actions.php
+msgid "Processing…"
+msgstr "Prebieha spracovanie…"
+
+#: check-language-paid-actions.php
+msgid "Processing payment"
+msgstr "Prebieha spracovanie platby"
+
+#: check-language-paid-actions.php
+msgid "You may be redirected to complete the payment. You will return automatically."
+msgstr "Môžete byť presmerovaní na dokončenie platby. Vrátite sa automaticky."
+
+#: check-language-paid-actions.php
+msgid "This browser could not access the saved checkout data. Return to the gallery and contact the site owner before making another payment."
+msgstr "Tento prehliadač nemohol získať prístup k uloženým údajom pokladne. Vráťte sa do galérie a pred vykonaním ďalšej platby kontaktujte vlastníka stránky."
+
+#: check-language-paid-actions.php
+msgid "The saved checkout data could not be opened. You can safely try finalizing this same payment again."
+msgstr "Uložené údaje pokladne sa nepodarilo otvoriť. Túto platbu môžete bezpečne skúsiť dokončiť znova."
+
+#: check-language-paid-actions.php
+msgid "Another browser tab is currently using the saved checkout data. Close the other tab and try finalizing this same payment again."
+msgstr "Uložené údaje o pokladni momentálne používa iná karta prehliadača. Zatvorte druhú kartu a skúste tú istú platbu dokončiť znova."
+
+#: check-language-paid-actions.php
+msgid "The saved checkout data could not be read. You can safely try finalizing this same payment again."
+msgstr "Uložené údaje o odchode sa nepodarilo prečítať. Túto platbu môžete bezpečne skúsiť dokončiť znova."
+
+#: check-language-paid-actions.php
+msgid "Your test payment was approved. We are creating the gallery order and adding your credits now. You will return to the gallery automatically."
+msgstr "Vaša skúšobná platba bola schválená. Teraz vytvárame objednávku galérie a pridávame vaše kredity. Do galérie sa vrátite automaticky."
+
+#: check-language-paid-actions.php
+msgid "Your payment was approved. We are creating the gallery order and adding your credits now. You will return to the gallery automatically."
+msgstr "Vaša platba bola schválená. Teraz vytvárame objednávku galérie a pridávame vaše kredity. Do galérie sa vrátite automaticky."
+
+#: check-language-paid-actions.php
+msgid "The saved checkout data was not found in this browser. Return to the gallery and contact the site owner before making another payment."
+msgstr "Uložené údaje pokladne sa v tomto prehliadači nenašli. Vráťte sa do galérie a pred vykonaním ďalšej platby kontaktujte vlastníka stránky."
+
+#: check-language-paid-actions.php
+msgid "Payment processing could not be started. You can safely try finalizing this same payment again."
+msgstr "Spracovanie platby sa nepodarilo spustiť. Túto platbu môžete bezpečne skúsiť dokončiť znova."
+
+#: check-language-paid-actions.php
+msgid "uploads"
+msgstr "nahrávania"
+
+#: check-language-paid-actions.php
+msgid "votes"
+msgstr "hlasy"
+
+#: check-language-paid-actions.php
+msgid "comments"
+msgstr "komentáre"
+
+#: check-language-paid-actions.php
+msgid "Your upload credits"
+msgstr "Vaše kredity na nahrávanie"
+
+#: check-language-paid-actions.php
+msgid "One credit is used for each submitted entry."
+msgstr "Za každý odoslaný príspevok sa použije jeden kredit."
+
+#: check-language-paid-actions.php
+msgid "UPLOAD CREDITS"
+msgstr "KREDITY NA NAHRÁVANIE"
+
+#: check-language-paid-actions.php
+msgid "UPLOAD ACCESS"
+msgstr "PRÍSTUP K NAHRÁVANIU"
+
+#: check-language-paid-actions.php
+msgid "Checking upload credits"
+msgstr "Kontrola kreditov na nahrávanie"
+
+#: check-language-paid-actions.php
+msgid "Please wait while your upload credits are checked."
+msgstr "Počkajte, kým sa skontrolujú vaše kredity na nahrávanie."
+
+#: check-language-paid-actions.php
+msgid "Sign in to upload"
+msgstr "Prihláste sa na nahrávanie"
+
+#: check-language-paid-actions.php
+msgid "Sign in to buy upload credits and submit an entry to this gallery."
+msgstr "Prihláste sa, aby ste si mohli kúpiť kredity na nahrávanie a odoslať príspevok do tejto galérie."
+
+#: check-language-paid-actions.php
+msgid "Sign in to continue"
+msgstr "Prihláste sa a pokračujte"
+
+#: check-language-paid-actions.php
+msgid "Upload credits temporarily unavailable"
+msgstr "Kredity na nahrávanie sú dočasne nedostupné"
+
+#: check-language-paid-actions.php
+msgid "Your upload credits could not be checked. Please try again."
+msgstr "Vaše kredity na nahrávanie sa nepodarilo skontrolovať. Skúste to znova."
+
+#: check-language-paid-actions.php
+msgid "More upload credits required"
+msgstr "Potrebujete viac kreditov na nahrávanie"
+
+#: check-language-paid-actions.php
+msgid "This selection needs {required} upload credits. You currently have {available}."
+msgstr "Tento výber vyžaduje {required} kreditov na nahrávanie. Momentálne máte {available}."
+
+#: check-language-ecommerce.php
+msgid "The payment was not completed. Please try again."
+msgstr "Platba nebola dokončená. Skúste to znova."
+
+#: check-language-ecommerce.php
+msgid "Payment canceled. You can try again."
+msgstr "Platba bola zrušená. Môžete to skúsiť znova."

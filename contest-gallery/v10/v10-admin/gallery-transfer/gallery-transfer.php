@@ -610,6 +610,14 @@ if(!function_exists('cg_gallery_transfer_collect_json_files')){
 	}
 }
 
+if(!function_exists('cg_gallery_transfer_strip_order_references')){
+	function cg_gallery_transfer_strip_order_references($row){
+		if(!is_array($row)){return $row;}
+		unset($row['OrderItem'],$row['PaidActionParentOrder'],$row['PaidActionOrderItem']);
+		return $row;
+	}
+}
+
 if(!function_exists('cg_gallery_transfer_get_domain_slug')){
 	function cg_gallery_transfer_get_domain_slug(){
 		$host = wp_parse_url(home_url('/'),PHP_URL_HOST);
@@ -731,6 +739,7 @@ if(!function_exists('post_cg_gallery_transfer_export_step')){
 				$placeholders = implode(',',array_fill(0,count($ids),'%d'));
 				$entry_rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_entries WHERE id IN ($placeholders) ORDER BY id ASC",$ids),ARRAY_A);
 				foreach($entry_rows as $row){
+					$row = cg_gallery_transfer_strip_order_references($row);
 					$state['data']['entries'][] = $row;
 					cg_gallery_transfer_add_user_ref($state,$row['WpUserId']);
 					cg_gallery_transfer_add_media_ref($state,$row['WpUpload']);
@@ -743,9 +752,13 @@ if(!function_exists('post_cg_gallery_transfer_export_step')){
 				}
 				$params = array_merge(array($gallery_id),$ids);
 				$state['data']['entry_fields'] = array_merge($state['data']['entry_fields'],$wpdb->get_results($wpdb->prepare("SELECT * FROM $table_entry_fields WHERE GalleryID = %d AND pid IN ($placeholders) ORDER BY pid ASC, id ASC",$params),ARRAY_A));
-				$state['data']['votes'] = array_merge($state['data']['votes'],$wpdb->get_results($wpdb->prepare("SELECT * FROM $table_votes WHERE GalleryID = %d AND pid IN ($placeholders) ORDER BY pid ASC, id ASC",$params),ARRAY_A));
+				$vote_rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_votes WHERE GalleryID = %d AND pid IN ($placeholders) ORDER BY pid ASC, id ASC",$params),ARRAY_A);
+				foreach($vote_rows as $vote_row){
+					$state['data']['votes'][] = cg_gallery_transfer_strip_order_references($vote_row);
+				}
 				$comment_rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_comments WHERE GalleryID = %d AND pid IN ($placeholders) ORDER BY pid ASC, id ASC",$params),ARRAY_A);
 				foreach($comment_rows as $comment_row){
+					$comment_row = cg_gallery_transfer_strip_order_references($comment_row);
 					cg_gallery_transfer_add_user_ref($state,$comment_row['WpUserId']);
 					$state['data']['comments'][] = $comment_row;
 				}
@@ -1757,6 +1770,8 @@ if(!function_exists('cg_gallery_transfer_import_entries_step')){
 				'PdfPreview' => 0,
 				'EcommerceEntry' => 0,
 				'OrderItem' => 0,
+				'PaidActionParentOrder' => 0,
+				'PaidActionOrderItem' => 0,
 				'WpPage' => 0,
 				'WpPageUser' => 0,
 				'WpPageNoVoting' => 0,
@@ -1836,6 +1851,8 @@ if(!function_exists('cg_gallery_transfer_import_entry_related_rows')){
 					'GalleryID' => $new_gallery_id,
 					'pid' => $new_entry_id,
 					'WpUserId' => cg_gallery_transfer_map_user_id($state,$row['WpUserId'],'comment'),
+					'PaidActionParentOrder' => 0,
+					'PaidActionOrderItem' => 0,
 				),true);
 				if(!empty($old_comment_id) && !empty($new_comment_id)){
 					$comment_id_map[$old_comment_id] = $new_comment_id;
@@ -1855,6 +1872,8 @@ if(!function_exists('cg_gallery_transfer_import_entry_related_rows')){
 					'WpUserId' => cg_gallery_transfer_map_user_id($state,$row['WpUserId'],'vote'),
 					'Category' => (!empty($state['maps']['categories'][$old_category])) ? $state['maps']['categories'][$old_category] : 0,
 					'CommentId' => (!empty($comment_id_map[$old_comment_id])) ? $comment_id_map[$old_comment_id] : 0,
+					'PaidActionParentOrder' => 0,
+					'PaidActionOrderItem' => 0,
 				),true);
 			}
 		}

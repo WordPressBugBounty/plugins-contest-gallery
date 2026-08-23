@@ -53,9 +53,13 @@ if(!empty($_POST['cg_edit_translations'])){
 // Save translations
 
     $translations = array();
+    $postedTranslations = (!empty($_POST['translations']) && is_array($_POST['translations'])) ? $_POST['translations'] : array();
 
-    foreach ($_POST['translations'] as $defaultKey => $translation) {
-        if($defaultKey=='pro' OR $defaultKey=='general' OR $defaultKey=='ecommerce'){
+    foreach ($postedTranslations as $defaultKey => $translation) {
+        if($defaultKey=='pro' OR $defaultKey=='general' OR $defaultKey=='ecommerce' OR $defaultKey=='paidActions'){
+            continue;
+        }
+        if(!is_string($translation)){
             continue;
         }
         $translations[$defaultKey] = contest_gal1ery_htmlentities_and_preg_replace(trim($translation));
@@ -79,11 +83,14 @@ if(!empty($_POST['cg_edit_translations'])){
 	$translationsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/json/translations-previous.json';
 	file_put_contents($translationsFile,json_encode($translations));
 
-    if(!empty( $_POST['translations']['general'] )){
-        if(is_array( $_POST['translations']['general'])){
+    if(!empty( $postedTranslations['general'] )){
+        if(is_array( $postedTranslations['general'])){
             $translations= array();
 
-            foreach ($_POST['translations']['general'] as $defaultKey => $translation) {
+            foreach ($postedTranslations['general'] as $defaultKey => $translation) {
+                if(!is_string($translation)){
+                    continue;
+                }
                 $translations[$defaultKey] = contest_gal1ery_htmlentities_and_preg_replace(trim($translation));
             }
 
@@ -93,11 +100,14 @@ if(!empty($_POST['cg_edit_translations'])){
         }
     }
 
-    if(!empty( $_POST['translations']['ecommerce'] )){
-        if(is_array( $_POST['translations']['ecommerce'])){
+    if(!empty( $postedTranslations['ecommerce'] )){
+        if(is_array( $postedTranslations['ecommerce'])){
             $translations= array();
 
-            foreach ($_POST['translations']['ecommerce'] as $defaultKey => $translation) {
+            foreach ($postedTranslations['ecommerce'] as $defaultKey => $translation) {
+                if(!is_string($translation)){
+                    continue;
+                }
                 $translations[$defaultKey] = contest_gal1ery_htmlentities_and_preg_replace(trim($translation));
             }
 
@@ -107,6 +117,19 @@ if(!empty($_POST['cg_edit_translations'])){
             fclose($fp);
 
         }
+    }
+
+    if(!empty($postedTranslations['paidActions']) && is_array($postedTranslations['paidActions'])){
+        $translations = array();
+        foreach($postedTranslations['paidActions'] as $defaultKey=>$translation){
+            if(!is_string($translation)){
+                continue;
+            }
+            $translations[$defaultKey] = contest_gal1ery_htmlentities_and_preg_replace(trim($translation));
+        }
+        $paidActionsTranslationsDirectory = $wp_upload_dir['basedir'].'/contest-gallery/paid-actions/json';
+        if(!is_dir($paidActionsTranslationsDirectory)){wp_mkdir_p($paidActionsTranslationsDirectory);}
+        file_put_contents($paidActionsTranslationsDirectory.'/translations.json',json_encode($translations));
     }
 // Save translations --- ENDE
 
@@ -937,10 +960,10 @@ $wp_upload_dir = wp_upload_dir();
         $ImageViewFullWindow = (!empty($_POST['ImageViewFullWindow'])) ? 1 : 0;
         $ImageViewFullScreen = (!empty($_POST['ImageViewFullScreen'])) ? 1 : 0;
         $SliderThumbNav = (!empty($_POST['SliderThumbNav'])) ? 1 : 0;
-        $BorderRadiusUpload = (!empty($_POST['BorderRadiusUpload'])) ? 1 : 0;
+        $BorderRadiusUpload = 1;
         $UploadRealWatermarkSettings = cg_upload_options_real_watermark_prepare_for_storage($_POST);
-        $BorderRadiusRegistry = (!empty($_POST['BorderRadiusRegistry'])) ? 1 : 0;// will be also saved for general options in cg_update_registry_and_login_options_v14
-        $BorderRadiusLogin = (!empty($_POST['BorderRadiusLogin'])) ? 1 : 0;// will be also saved for general options in cg_update_registry_and_login_options_v14
+        $BorderRadiusRegistry = 1;// will be also saved for general options in cg_update_registry_and_login_options_v14
+        $BorderRadiusLogin = 1;// will be also saved for general options in cg_update_registry_and_login_options_v14
         $ThankVote = (!empty($_POST['ThankVote'])) ? 1 : 0;
         $ShowPinFormVoting = (!empty($_POST['ShowPinFormVoting'])) ? 1 : 0;
         $ShowPinFormUploading = (!empty($_POST['ShowPinFormUploading'])) ? 1 : 0;

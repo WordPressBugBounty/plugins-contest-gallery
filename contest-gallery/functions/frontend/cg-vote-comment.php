@@ -106,7 +106,7 @@ if(!function_exists('cg1l_vote_comment_error_script')){
 }
 
 if(!function_exists('cg1l_process_vote_comment_request')){
-    function cg1l_process_vote_comment_request($options,$galeryID,$galeryIDuser,$pictureID,$galleryHash,$rateValue,&$ratingCommentsData,&$lockFp,&$voteCommentWasSaved,&$voteCommentInsertId){
+    function cg1l_process_vote_comment_request($options,$galeryID,$galeryIDuser,$pictureID,$galleryHash,$rateValue,&$ratingCommentsData,&$lockFp,&$voteCommentWasSaved,&$voteCommentInsertId,$paidCommentReservation = null){
         $voteCommentWasSaved = false;
         $voteCommentInsertId = 0;
         $mode = cg1l_get_vote_comment_mode($options);
@@ -144,10 +144,14 @@ if(!function_exists('cg1l_process_vote_comment_request')){
 
         $cg1lCommentStatsLockAlreadyAcquired = true;
         $GLOBALS['cg1lCommentSubmitResult'] = array('status' => 'blocked');
+        if(is_array($paidCommentReservation)){
+            $GLOBALS['cgPaidActionCommentReservation'] = $paidCommentReservation;
+        }
 
         ob_start();
         include(dirname(dirname(__DIR__)).'/v10/v10-frontend/data/comment/show-set-comments-v10.php');
         $commentResponse = ob_get_clean();
+        unset($GLOBALS['cgPaidActionCommentReservation']);
         $_POST = $postBackup;
 
         $result = $GLOBALS['cg1lCommentSubmitResult'];
@@ -162,6 +166,61 @@ if(!function_exists('cg1l_process_vote_comment_request')){
         $voteCommentWasSaved = true;
         $voteCommentInsertId = (!empty($result['insert_id'])) ? absint($result['insert_id']) : 0;
         return true;
+    }
+}
+
+if(!function_exists('cg1l_prepare_paid_vote_reservations')){
+    function cg1l_prepare_paid_vote_reservations($options,$galleryId,$pictureId,$rateValue){
+        $reservations = array('vote'=>null,'comment'=>null);
+        if(!function_exists('cg_paid_actions_maybe_reserve')){
+            return $reservations;
+        }
+
+        $context = 'vote:'.absint($pictureId).':'.absint($rateValue);
+        $reservations['vote'] = cg_paid_actions_maybe_reserve($galleryId,'vote',1,$context);
+        if(is_wp_error($reservations['vote'])){
+			$reservations['vote']->add_data(array('paidActionType'=>'vote'),$reservations['vote']->get_error_code());
+            return $reservations['vote'];
+        }
+
+        $comment = '';
+        if(isset($_REQUEST['voteCommentText']) && is_scalar($_REQUEST['voteCommentText'])){
+            $comment = trim(wp_unslash((string)$_REQUEST['voteCommentText']));
+        }
+        if($comment!=='' && cg1l_get_vote_comment_mode($options)!=='disabled'){
+            $reservations['comment'] = cg_paid_actions_maybe_reserve($galleryId,'comment',1,$context.':comment');
+            if(is_wp_error($reservations['comment'])){
+                cg_paid_actions_release_reservation($reservations['vote']);
+				$reservations['comment']->add_data(array('paidActionType'=>'comment'),$reservations['comment']->get_error_code());
+                return $reservations['comment'];
+            }
+        }
+
+        return $reservations;
+    }
+}
+
+if(!function_exists('cg1l_paid_action_error_type')){
+	function cg1l_paid_action_error_type($error,$fallback = 'vote'){
+		if(is_wp_error($error)){
+			$data = $error->get_error_data();
+			if(is_array($data) && !empty($data['paidActionType']) && in_array($data['paidActionType'],array('vote','comment'),true)){
+				return $data['paidActionType'];
+			}
+		}
+		return $fallback;
+	}
+}
+
+if(!function_exists('cg1l_settle_paid_vote_reservations')){
+    function cg1l_settle_paid_vote_reservations($reservations,$voteWasSaved,$voteInsertId,$commentWasSaved,$commentInsertId){
+        if(!is_array($reservations)){return;}
+        if(is_array($reservations['vote'])){
+            cg_paid_actions_settle_reservation($reservations['vote'],$voteWasSaved ? 1 : 0,$voteWasSaved ? array($voteInsertId) : array());
+        }
+        if(is_array($reservations['comment'])){
+            cg_paid_actions_settle_reservation($reservations['comment'],$commentWasSaved ? 1 : 0,$commentWasSaved ? array($commentInsertId) : array());
+        }
     }
 }
 

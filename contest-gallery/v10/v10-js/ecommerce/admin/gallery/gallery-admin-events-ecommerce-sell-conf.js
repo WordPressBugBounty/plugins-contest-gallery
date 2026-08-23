@@ -355,6 +355,16 @@ jQuery(document).ready(function ($) {
         }else{
             cgJsClassAdmin.gallery.functions.addRemoveCgProFalse($cgSellContainer);
         }
+        var $legacyUploadSaleOption = $cgSellContainer.find('#SaleType_upload_option_container');
+        if($legacyUploadSaleOption.attr('data-cg-existing-only') === '1'){
+            if(saleType === 'upload' || $sortableDiv.find('.LegacyUploadSaleAllowed').val() === '1'){
+                $legacyUploadSaleOption.removeClass('cg_hide');
+                $legacyUploadSaleOption.closest('.cg_sale_type_options').removeClass('cg_sale_type_options_three_columns');
+            }else{
+                $legacyUploadSaleOption.addClass('cg_hide');
+                $legacyUploadSaleOption.closest('.cg_sale_type_options').addClass('cg_sale_type_options_three_columns');
+            }
+        }
         var saleAmountMin = $sortableDiv.find('.SaleAmountMin').val();
         var saleAmountMax = $sortableDiv.find('.SaleAmountMax').val();
         var Tax = $sortableDiv.find('.Tax').val();

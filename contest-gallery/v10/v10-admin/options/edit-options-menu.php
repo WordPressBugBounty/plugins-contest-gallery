@@ -123,6 +123,7 @@ HEREDOC;
                     <div id="cg_main_options_tab_second_row_inner" class="cg_main_options_tab_row">
                         <div class='cg_view_select cg_view_select_translations cg_v14_note_caret' cg-data-view="#translations" data-count="9"><a class="cg_view_select_link" cg-data-view="#translations" cg-data-href="cgViewHelper9">Translations</a></div>
                       <div class='cg_view_select cg_view_select_translations cg_v14_note_caret' cg-data-view="#translationsEcommerce" data-count="15"><a class="cg_view_select_link" cg-data-view="#translationsEcommerce" cg-data-href="translationsEcommerce">Translations ecommerce</a></div>
+                      <div class='cg_view_select cg_view_select_translations cg_v14_note_caret' cg-data-view="#translationsPaidActions" data-count="17"><a class="cg_view_select_link" cg-data-view="#translationsPaidActions" cg-data-href="translationsPaidActions">Translations paid actions</a></div>
                       <div cg-data-view="#view16" data-count="75" id="cgSaveOptionsNavButton">
                         <span cg-data-view="#view16" cg-data-href="cgViewHelper16" class="cg_backend_button_gallery_action" >Save options</span>
                       </div>
@@ -427,6 +428,12 @@ HEREDOC;
 HEREDOC;
         include(__DIR__.'/views-content/view-translations-ecommerce-options.php');
         echo "</div>";
+        echo <<<HEREDOC
+        <h4 id="translationsPaidActions" class="cg_view_header cg_view_header_translations">Translations paid actions (general)</h4>
+<div class="cg_view cg_view_translations cgViewHelper17">
+HEREDOC;
+        include(__DIR__.'/views-content/view-translations-paid-actions-options.php');
+        echo "</div>";
     }
 
 }else{
@@ -588,6 +595,12 @@ HEREDOC;
 <div class="cg_view cg_view_translations  cgViewHelper15">
 HEREDOC;
         include(__DIR__.'/views-content/view-translations-ecommerce-options.php');
+        echo "</div>";
+        echo <<<HEREDOC
+        <h4 id="translationsPaidActions" class="cg_view_header cg_view_header_translations">Translations paid actions (general)</h4>
+<div class="cg_view cg_view_translations cgViewHelper17">
+HEREDOC;
+        include(__DIR__.'/views-content/view-translations-paid-actions-options.php');
         echo "</div>";
     }
 

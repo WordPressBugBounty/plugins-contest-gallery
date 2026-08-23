@@ -66,7 +66,10 @@ if(!function_exists('cg_contest_gallery_get_required_table_names')){
             $tablePrefix . '_ecommerce_options',
             $tablePrefix . '_ecommerce_invoice_options',
             $tablePrefix . '_ecommerce_orders',
-            $tablePrefix . '_ecommerce_orders_items'
+            $tablePrefix . '_ecommerce_orders_items',
+            $tablePrefix . '_paid_action_settings',
+            $tablePrefix . '_paid_action_entitlements',
+            $tablePrefix . '_paid_action_ledger'
         );
     }
 }
@@ -229,6 +232,15 @@ if(!function_exists('contest_gal1ery_create_table')){
 		OrderItem INT(11) DEFAULT 0,
 		PdfPreview BIGINT(20) DEFAULT 0,
 		Mails INT(11) DEFAULT 0,
+		IsPaidAction TINYINT DEFAULT 0,
+		IsPaidActionPreview TINYINT DEFAULT 0,
+		PaidActionSource VARCHAR(16) DEFAULT '',
+		PaidActionPriceUnitGross DECIMAL(65,2) DEFAULT 0,
+		PaidActionCurrencyShort VARCHAR(16) DEFAULT '',
+		PaidActionCurrencyPosition VARCHAR(16) DEFAULT '',
+		PaidActionPriceDivider VARCHAR(1) DEFAULT '',
+		PaidActionParentOrder BIGINT(20) DEFAULT 0,
+		PaidActionOrderItem BIGINT(20) DEFAULT 0,
         INDEX WpUpload_index (WpUpload),
         INDEX WpUserId_index (WpUserId),
         INDEX GalleryID_index (GalleryID),
@@ -237,7 +249,8 @@ if(!function_exists('contest_gal1ery_create_table')){
         INDEX GalleryID_Active_id_index (GalleryID, Active, id),
         INDEX GalleryID_WpUserId_id_index (GalleryID, WpUserId, id),
         INDEX GalleryID_PositionNumber_id_index (GalleryID, PositionNumber, id),
-        INDEX GalleryID_Active_Category_index (GalleryID, Active, Category)
+        INDEX GalleryID_Active_Category_index (GalleryID, Active, Category),
+        INDEX GalleryID_IsPaidActionPreview_id_index (GalleryID, IsPaidActionPreview, id)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -261,6 +274,15 @@ if(!function_exists('contest_gal1ery_create_table')){
         Category INT(11) DEFAULT 0,
         CategoriesOn TINYINT DEFAULT 0,
         CommentId BIGINT(20) DEFAULT 0,
+		IsPaidAction TINYINT DEFAULT 0,
+		IsPaidActionPreview TINYINT DEFAULT 0,
+		PaidActionSource VARCHAR(16) DEFAULT '',
+		PaidActionPriceUnitGross DECIMAL(65,2) DEFAULT 0,
+		PaidActionCurrencyShort VARCHAR(16) DEFAULT '',
+		PaidActionCurrencyPosition VARCHAR(16) DEFAULT '',
+		PaidActionPriceDivider VARCHAR(1) DEFAULT '',
+		PaidActionParentOrder BIGINT(20) DEFAULT 0,
+		PaidActionOrderItem BIGINT(20) DEFAULT 0,
         INDEX pid_index (pid),
         INDEX WpUserId_index (WpUserId),
         INDEX GalleryID_index (GalleryID),
@@ -269,7 +291,8 @@ if(!function_exists('contest_gal1ery_create_table')){
         INDEX GalleryID_CookieId_pid_id_index (GalleryID, CookieId(64), pid, id),
         INDEX GalleryID_IP_CookieId_pid_id_index (GalleryID, IP(64), CookieId(64), pid, id),
         INDEX GalleryID_Tstamp_index (GalleryID, Tstamp),
-        INDEX GalleryID_pid_CommentId_index (GalleryID, pid, CommentId)
+        INDEX GalleryID_pid_CommentId_index (GalleryID, pid, CommentId),
+        INDEX GalleryID_IsPaidActionPreview_id_index (GalleryID, IsPaidActionPreview, id)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -289,13 +312,23 @@ if(!function_exists('contest_gal1ery_create_table')){
 		Vote INT(11) DEFAULT 0,
 		ReviewTstamp INT(11) DEFAULT 0,
 		Active TINYINT DEFAULT 0,
+		IsPaidAction TINYINT DEFAULT 0,
+		IsPaidActionPreview TINYINT DEFAULT 0,
+		PaidActionSource VARCHAR(16) DEFAULT '',
+		PaidActionPriceUnitGross DECIMAL(65,2) DEFAULT 0,
+		PaidActionCurrencyShort VARCHAR(16) DEFAULT '',
+		PaidActionCurrencyPosition VARCHAR(16) DEFAULT '',
+		PaidActionPriceDivider VARCHAR(1) DEFAULT '',
+		PaidActionParentOrder BIGINT(20) DEFAULT 0,
+		PaidActionOrderItem BIGINT(20) DEFAULT 0,
         INDEX pid_index (pid),
         INDEX WpUserId_index (WpUserId),
         INDEX Active_index (Active),
         INDEX GalleryID_index (GalleryID),
         INDEX GalleryID_pid_id_index (GalleryID, pid, id),
         INDEX GalleryID_WpUserId_id_index (GalleryID, WpUserId, id),
-        INDEX GalleryID_Active_pid_index (GalleryID, Active, pid)
+        INDEX GalleryID_Active_pid_index (GalleryID, Active, pid),
+        INDEX GalleryID_IsPaidActionPreview_id_index (GalleryID, IsPaidActionPreview, id)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
@@ -1041,7 +1074,7 @@ HEREDOC;
 
                 $GalleryUploadConfirmationText = "<p>Your entry was successful.<br/>We will activate your file soon.<br/>Your file has to be approved.</p>";
                 $GalleryUploadConfirmationText = htmlentities($GalleryUploadConfirmationText, ENT_QUOTES);
-                $ShowRefreshButtonAfterUpload = 1;
+                $ShowRefreshButtonAfterUpload = 0;
 
                 $ShowNickname = 0;
                 $MinusVote = 0;

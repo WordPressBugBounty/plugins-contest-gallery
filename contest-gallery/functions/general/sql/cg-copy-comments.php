@@ -53,6 +53,9 @@ if(!function_exists('cg_copy_comments')){
                 unset($sourceComment['id']);
                 $sourceComment['pid'] = $newCommentPid;
                 $sourceComment['GalleryID'] = absint($nextGalleryID);
+                if(function_exists('cg_paid_actions_normalize_copied_values')){
+                    $sourceComment = cg_paid_actions_normalize_copied_values($sourceComment);
+                }
                 $inserted = $wpdb->insert($tablename_comments,$sourceComment);
                 if($inserted !== false && !empty($wpdb->insert_id)){
                     $commentIdMap[$oldCommentId] = absint($wpdb->insert_id);

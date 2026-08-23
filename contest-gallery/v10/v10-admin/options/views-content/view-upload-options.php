@@ -87,18 +87,8 @@ echo <<<HEREDOC
         <p class='cg_view_options_rows_container_title'>Upload form shortcode <b>visual</b> configuration<br><span class="cg_view_options_rows_container_title_note">Is not for "In gallery upload form". It is for upload form shortcode: 
          <span class='cg_shortcode_parent'><span class='cg_shortcode_copy_text cg_font_weight_bold' style="position:relative;">[cg_users_upload id="$galeryNR"]<span class='cg_shortcode_copy cg_shortcode_copy_mail_confirm cg_tooltip' style="margin-top: 8px;"></span></span></span>
         </span></p>
-        <div class="cg_view_options_row">
-            <div class="cg_view_option cg_view_option_100_percent" id="BorderRadiusContainer">
-                <div class="cg_view_option_title" >
-                    <p style="margin-right: -30px;">Round borders form container and field inputs</p>
-                </div>
-                <div class="cg_view_option_checkbox cg_view_option_checked">
-                    <input type="checkbox" name="BorderRadiusUpload" id="BorderRadiusUpload" $BorderRadiusUpload>
-                </div>
-            </div>
-    </div>
      <div class='cg_view_options_row '  >
-                <div class='cg_view_option cg_view_option_full_width cg_border_top_none'>
+                <div class='cg_view_option cg_view_option_full_width cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px'>
                     <div class='cg_view_option_title'>
                         <p>Background, fields and font color style</p>
                     </div>

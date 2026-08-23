@@ -374,16 +374,147 @@ if(!function_exists('cg_ecommerce_get_authoritative_ecommerce_entry_data')) {
 	}
 }
 
+if(!function_exists('cg_ecommerce_get_checkout_cart_type')) {
+	function cg_ecommerce_get_checkout_cart_type($purchaseUnits){
+		if(empty($purchaseUnits[0]['items']) || !is_array($purchaseUnits[0]['items'])){
+			return 'invalid';
+		}
+
+		$hasPaidActions = false;
+		$hasProducts = false;
+		foreach($purchaseUnits[0]['items'] as $item){
+			if(!is_array($item)){
+				return 'invalid';
+			}
+
+			$isPaidAction = !empty($item['PaidActionType']);
+			$isProduct = !empty($item['EcommerceEntryID']);
+			if(($isPaidAction && $isProduct) || (!$isPaidAction && !$isProduct)){
+				return 'invalid';
+			}
+
+			$hasPaidActions = $hasPaidActions || $isPaidAction;
+			$hasProducts = $hasProducts || $isProduct;
+			if($hasPaidActions && $hasProducts){
+				return 'mixed';
+			}
+		}
+
+		return $hasPaidActions ? 'paid_actions' : 'products';
+	}
+}
+
+if(!function_exists('cg_ecommerce_prepare_visitor_product_sandbox_context')) {
+	function cg_ecommerce_prepare_visitor_product_sandbox_context($authoritativeCart,$paymentType = ''){
+		unset($GLOBALS['cgVisitorEcommerceSandboxCheckoutContext']);
+
+		if(
+			empty($authoritativeCart['success']) ||
+			empty($authoritativeCart['cart_type']) ||
+			$authoritativeCart['cart_type']!=='products' ||
+			empty($authoritativeCart['gallery_ids']) ||
+			!is_array($authoritativeCart['gallery_ids']) ||
+			count($authoritativeCart['gallery_ids'])!==1 ||
+			!function_exists('cg_paid_actions_get_preview_context')
+		){
+			return false;
+		}
+
+		$requestedMode = !empty($_REQUEST['cg_paid_actions_checkout_mode']) ? sanitize_key(wp_unslash($_REQUEST['cg_paid_actions_checkout_mode'])) : '';
+		$requestedProvider = !empty($_REQUEST['cg_paid_actions_checkout_provider']) ? sanitize_key(wp_unslash($_REQUEST['cg_paid_actions_checkout_provider'])) : '';
+		if($requestedMode!=='sandbox' || $requestedProvider==='' || ($paymentType!=='' && $requestedProvider!==$paymentType)){
+			return false;
+		}
+
+		$galleryIds = $authoritativeCart['gallery_ids'];
+		$galleryId = absint(reset($galleryIds));
+		$context = $galleryId ? cg_paid_actions_get_preview_context($galleryId,true) : false;
+		if(
+			empty($context) ||
+			empty($context['accessMode']) ||
+			$context['accessMode']!=='visitor_sandbox' ||
+			empty($context['checkoutMode']) ||
+			$context['checkoutMode']!=='sandbox' ||
+			empty($context['originGalleryId']) ||
+			absint($context['originGalleryId'])!==$galleryId ||
+			empty($context['targetGalleryId']) ||
+			absint($context['targetGalleryId'])!==$galleryId
+		){
+			return false;
+		}
+
+		$GLOBALS['cgVisitorEcommerceSandboxCheckoutContext'] = $context;
+		return true;
+	}
+}
+
+if(!function_exists('cg_ecommerce_resolve_checkout_environment')) {
+	function cg_ecommerce_resolve_checkout_environment($sandboxRequested,$paymentType = '',$authoritativeCart = array()){
+		$isPaidActionsSandbox = !empty($GLOBALS['cgPaidActionsSandboxCheckoutContext']) &&
+			!empty($GLOBALS['cgPaidActionsSandboxCheckoutContext']['checkoutMode']) &&
+			$GLOBALS['cgPaidActionsSandboxCheckoutContext']['checkoutMode']==='sandbox';
+
+		if($isPaidActionsSandbox){
+			$requestedProvider = !empty($_REQUEST['cg_paid_actions_checkout_provider']) ? sanitize_key(wp_unslash($_REQUEST['cg_paid_actions_checkout_provider'])) : '';
+			if($requestedProvider==='' || ($paymentType!=='' && $requestedProvider!==$paymentType)){
+				return array('success'=>false,'message'=>cg_ecommerce_get_reload_checkout_error());
+			}
+			return array('success'=>true,'is_test'=>1,'environment'=>'sandbox','paid_actions_sandbox'=>1);
+		}
+
+		if($sandboxRequested){
+			if(cg_ecommerce_prepare_visitor_product_sandbox_context($authoritativeCart,$paymentType)){
+				return array('success'=>true,'is_test'=>1,'environment'=>'sandbox','paid_actions_sandbox'=>0,'visitor_product_sandbox'=>1);
+			}
+			if(!is_user_logged_in() || !current_user_can('manage_options')){
+				return array('success'=>false,'message'=>'Sandbox checkout is available only to administrators or through a valid Paid Actions sandbox link.');
+			}
+			return array('success'=>true,'is_test'=>1,'environment'=>'sandbox','paid_actions_sandbox'=>0,'visitor_product_sandbox'=>0);
+		}
+
+		return array('success'=>true,'is_test'=>0,'environment'=>'live','paid_actions_sandbox'=>0,'visitor_product_sandbox'=>0);
+	}
+}
+
+if(!function_exists('cg_ecommerce_payment_provider_is_ready')) {
+	function cg_ecommerce_payment_provider_is_ready($ecommerceOptions,$paymentType,$isTest){
+		if($paymentType==='paypal'){
+			if(!isset($ecommerceOptions->PayPalApiActive) || intval($ecommerceOptions->PayPalApiActive)!==1){return false;}
+			if($isTest){
+				return !empty($ecommerceOptions->PayPalTestActive) && !empty($ecommerceOptions->PayPalSandboxClientId) && !empty($ecommerceOptions->PayPalSandboxSecret);
+			}
+			return !empty($ecommerceOptions->PayPalLiveClientId) && !empty($ecommerceOptions->PayPalLiveSecret);
+		}
+
+		if($paymentType==='stripe'){
+			if(!isset($ecommerceOptions->StripeApiActive) || intval($ecommerceOptions->StripeApiActive)!==1){return false;}
+			if($isTest){
+				return !empty($ecommerceOptions->StripeTestActive) && !empty($ecommerceOptions->StripeSandboxClientId) && !empty($ecommerceOptions->StripeSandboxSecret);
+			}
+			return !empty($ecommerceOptions->StripeLiveClientId) && !empty($ecommerceOptions->StripeLiveSecret);
+		}
+
+		return false;
+	}
+}
+
 if(!function_exists('cg_ecommerce_build_authoritative_checkout_cart')) {
 	function cg_ecommerce_build_authoritative_checkout_cart($purchaseUnits, $ecommerceOptions){
-
-		global $wpdb;
-		$tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
-
 		$return = [
 			'success' => false,
 			'message' => cg_ecommerce_get_reload_checkout_error()
 		];
+		$cartType = cg_ecommerce_get_checkout_cart_type($purchaseUnits);
+
+		if($cartType==='paid_actions' && function_exists('cg_paid_actions_build_authoritative_cart')){
+			return cg_paid_actions_build_authoritative_cart($purchaseUnits,$ecommerceOptions);
+		}
+		if($cartType!=='products'){
+			return $return;
+		}
+
+		global $wpdb;
+		$tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
 
 		if(empty($purchaseUnits[0]['items']) || !is_array($purchaseUnits[0]['items'])){
 			return $return;
@@ -429,6 +560,7 @@ if(!function_exists('cg_ecommerce_build_authoritative_checkout_cart')) {
 		$alternativeShippingTotalTaxValue = 0;
 		$normalizedItems = [];
 		$cartSignatureItems = [];
+		$authoritativeGalleryIds = [];
 
 		foreach ($purchaseUnits[0]['items'] as $key => $item){
 
@@ -457,6 +589,7 @@ if(!function_exists('cg_ecommerce_build_authoritative_checkout_cart')) {
 			if($authoritativeGalleryId !== $realGid || $authoritativeRealId !== $realId){
 				return $return;
 			}
+			$authoritativeGalleryIds[$authoritativeGalleryId] = true;
 
 			$saleAmountMin = max(1, absint($ecommerceEntryRow->SaleAmountMin));
 			$saleAmountMax = absint($ecommerceEntryRow->SaleAmountMax);
@@ -627,6 +760,8 @@ if(!function_exists('cg_ecommerce_build_authoritative_checkout_cart')) {
 			'amount_cents' => $amountCents,
 			'currency_short' => $currencyShort,
 			'item_count' => count($normalizedItems),
+			'cart_type' => 'products',
+			'gallery_ids' => array_map('intval',array_keys($authoritativeGalleryIds)),
 			'DefaultShipping' => $defaultShippingGross,
 			'TaxPercentageDefault' => $defaultTax,
 			'ShippingNet' => $shippingNet,
@@ -672,6 +807,9 @@ if(!function_exists('cg_ecommerce_apply_authoritative_checkout_cart_to_post')) {
 		$post['defaultShipping'] = $authoritativeCart['defaultShipping'];
 		$post['CurrencyShort'] = $authoritativeCart['currency_short'];
 		$post['CurrencyPosition'] = $ecommerceOptions->CurrencyPosition;
+		if(!empty($authoritativeCart['usedGalleryId'])){
+			$post['usedGid'] = absint($authoritativeCart['usedGalleryId']);
+		}
 
 	}
 }
@@ -757,6 +895,9 @@ if(!function_exists('cg_ecommerce_processing_afterwards')) {
 	    $beforeFilter = cg_ecommerce_apply_before_payment_processing_filter($paymentFilterData);
 
 	    $processingData = cg_ecommerce_payment_processing_data($LogForDatabase,$OrderIdHash,$PayerEmail,$Order->PayPalTransactionId,$Order->Tstamp,$LogForDatabase['PriceDivider'],$status,$Order->id, $PriceTotalGrossItemsWithShipping,false,true,$Order->id,$isFullPaid,$OrderNumber,$beforeFilter);
+	    if(function_exists('cg_paid_actions_grant_order')){
+		    cg_paid_actions_grant_order($Order->id);
+	    }
 
 	    $itemHasTax = $processingData['itemHasTax'];
 	    $hasDownload = $processingData['hasDownload'];

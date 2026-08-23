@@ -16,7 +16,16 @@ return array(
         'WpUserId' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update 07.01.2022
         'Vote' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update 02.08.2026
         'ReviewTstamp' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update 08.09.2022
-        'Active' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0)// Update 08.09.2022
+        'Active' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 08.09.2022
+        'IsPaidAction' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 33.0.0
+        'IsPaidActionPreview' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 33.0.0
+        'PaidActionSource' => array('COLUMN_TYPE' => 'VARCHAR(16)','DEFAULT' => "''"),// Update 33.0.0
+        'PaidActionPriceUnitGross' => array('COLUMN_TYPE' => 'DECIMAL(65,2)','DEFAULT' => 0),// Update 33.0.0
+        'PaidActionCurrencyShort' => array('COLUMN_TYPE' => 'VARCHAR(16)','DEFAULT' => "''"),// Update 33.0.0
+        'PaidActionCurrencyPosition' => array('COLUMN_TYPE' => 'VARCHAR(16)','DEFAULT' => "''"),// Update 33.0.0
+        'PaidActionPriceDivider' => array('COLUMN_TYPE' => 'VARCHAR(1)','DEFAULT' => "''"),// Update 33.0.0
+        'PaidActionParentOrder' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0),// Update 33.0.0
+        'PaidActionOrderItem' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0)// Update 33.0.0
     ),
     $tablename_entries => array(
         'Long_Text' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019
@@ -74,7 +83,16 @@ return array(
         'WpPageEcommerce' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0),// Update ab 17.03.2023
         'OrderItem' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update ab 05.06.2024
         'PdfPreview' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0),// Update ab 10.04.2025
-        'Mails' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0)// Update ab 22.10.2025
+        'Mails' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update ab 22.10.2025
+        'IsPaidAction' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 33.0.0
+        'IsPaidActionPreview' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 33.0.0
+        'PaidActionSource' => array('COLUMN_TYPE' => 'VARCHAR(16)','DEFAULT' => "''"),// Update 33.0.0
+        'PaidActionPriceUnitGross' => array('COLUMN_TYPE' => 'DECIMAL(65,2)','DEFAULT' => 0),// Update 33.0.0
+        'PaidActionCurrencyShort' => array('COLUMN_TYPE' => 'VARCHAR(16)','DEFAULT' => "''"),// Update 33.0.0
+        'PaidActionCurrencyPosition' => array('COLUMN_TYPE' => 'VARCHAR(16)','DEFAULT' => "''"),// Update 33.0.0
+        'PaidActionPriceDivider' => array('COLUMN_TYPE' => 'VARCHAR(1)','DEFAULT' => "''"),// Update 33.0.0
+        'PaidActionParentOrder' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0),// Update 33.0.0
+        'PaidActionOrderItem' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0)// Update 33.0.0
     ),
     $tablename_ip => array(
         'RatingS' => array('COLUMN_TYPE' => 'INT(1)','DEFAULT' => 0),// Update ab 11.06.2016
@@ -86,7 +104,16 @@ return array(
         'CookieId' => array('COLUMN_TYPE' => 'VARCHAR(99)','DEFAULT' => '""'),// Update 11.06.2019
         'Category' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' =>0),// Update 27.01.2021
         'CategoriesOn' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' =>0),// Update 27.01.2021
-        'CommentId' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' =>0)// Update 03.08.2026
+        'CommentId' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' =>0),// Update 03.08.2026
+        'IsPaidAction' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 33.0.0
+        'IsPaidActionPreview' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 33.0.0
+        'PaidActionSource' => array('COLUMN_TYPE' => 'VARCHAR(16)','DEFAULT' => "''"),// Update 33.0.0
+        'PaidActionPriceUnitGross' => array('COLUMN_TYPE' => 'DECIMAL(65,2)','DEFAULT' => 0),// Update 33.0.0
+        'PaidActionCurrencyShort' => array('COLUMN_TYPE' => 'VARCHAR(16)','DEFAULT' => "''"),// Update 33.0.0
+        'PaidActionCurrencyPosition' => array('COLUMN_TYPE' => 'VARCHAR(16)','DEFAULT' => "''"),// Update 33.0.0
+        'PaidActionPriceDivider' => array('COLUMN_TYPE' => 'VARCHAR(1)','DEFAULT' => "''"),// Update 33.0.0
+        'PaidActionParentOrder' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0),// Update 33.0.0
+        'PaidActionOrderItem' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0)// Update 33.0.0
     ),
     $tablename_options => array(
         'HideUntilVote' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0), // first update
@@ -396,6 +423,11 @@ return array(
     $tablename_ecommerce_orders_items => array(
         'IsUpload' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 03.06.2024
         'Uploaded' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update 03.06.2024
+        'PaidActionType' => array('COLUMN_TYPE' => 'VARCHAR(16)','DEFAULT' => "''"),// Update 33.0.0
+        'PaidActionScope' => array('COLUMN_TYPE' => 'VARCHAR(8)','DEFAULT' => "''"),// Update 33.0.0
+    ),
+    $tablename_paid_action_ledger => array(
+        'ReferenceLedgerId' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0),// Update 33.0.0
     )
 )
 

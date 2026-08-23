@@ -37,13 +37,16 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
             $IsDownload = false;
             $IsUpload = false;
             $Shipping = 0;
-            $TaxValue = 0;
-            $DownloadKey = '';
-            $ServiceKey = '';
-            $entryId = intval($item['EcommerceEntryID']);
-            $WpUploads = serialize($item['WpUploads']);
+	            $TaxValue = 0;
+	            $DownloadKey = '';
+	            $ServiceKey = '';
+	            $isPaidAction = !empty($item['PaidActionType']);
+	            $paidActionType = $isPaidAction ? cg_paid_actions_normalize_type($item['PaidActionType']) : '';
+	            $paidActionScope = ($isPaidAction && !empty($item['PaidActionScope']) && $item['PaidActionScope']==='shared') ? 'shared' : 'local';
+	            $entryId = !empty($item['EcommerceEntryID']) ? intval($item['EcommerceEntryID']) : 0;
+	            $WpUploads = serialize(!empty($item['WpUploads']) && is_array($item['WpUploads']) ? $item['WpUploads'] : array());
 
-            $WpUploadFilesForSale = $item['RawData']['ecommerceData']['WpUploadFilesForSale'];
+	            $WpUploadFilesForSale = !empty($item['RawData']['ecommerceData']['WpUploadFilesForSale']) ? $item['RawData']['ecommerceData']['WpUploadFilesForSale'] : '';
             //var_dump('MultipleFilesParsed123');
             //var_dump('$WpUploadFilesForSale');
             //var_dump($WpUploadFilesForSale);
@@ -60,8 +63,8 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
             //var_dump('realGid123');
             //var_dump($item['RawData']['realGid']);
 
-            $GalleryID = intval($item['RawData']['realGid']);
-            $RawData = serialize($item['RawData']);
+	            $GalleryID = !empty($item['RawData']['realGid']) ? intval($item['RawData']['realGid']) : intval($item['realGid']);
+	            $RawData = serialize(!empty($item['RawData']) && is_array($item['RawData']) ? $item['RawData'] : array());
 
             $AlternativeShippingGross = 0;
             $AlternativeShippingNet = 0;
@@ -84,15 +87,15 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
                         $IsAlternativeShipping = true;
                     }
                 }
-            }elseif($item['IsService']){
+	            }elseif(!empty($item['IsService'])){
                 //var_dump('$IsService123');
                 //var_dump($IsService);
                 $IsService = true;
-            }elseif($item['IsUpload']){
+	            }elseif(!empty($item['IsUpload'])){
                 //var_dump('$IsService123');
                 //var_dump($IsService);
                 $IsUpload = true;
-            }else{
+	            }elseif(!$isPaidAction){
                 $hasDownload = true;
                 $IsDownload = true;
             }
@@ -107,13 +110,18 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
                 $TaxPercentage = round(floatval($item['tax_percentage']),2);
             }
 
-            $EcommerceEntryID = $item['EcommerceEntryID'];
-
-            $ecommerceEntryRow = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_entries WHERE id = '$EcommerceEntryID'  ORDER BY id DESC LIMIT 1");
-
-            $DownloadKeysCsvName = $ecommerceEntryRow->DownloadKeysCsvName;
-            $ServiceKeysCsvName = $ecommerceEntryRow->ServiceKeysCsvName;
-            $realId = $ecommerceEntryRow->pid;
+	            $EcommerceEntryID = !empty($item['EcommerceEntryID']) ? intval($item['EcommerceEntryID']) : 0;
+	            $DownloadKeysCsvName = '';
+	            $ServiceKeysCsvName = '';
+	            $realId = 0;
+	            if(!$isPaidAction){
+	                $ecommerceEntryRow = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_entries WHERE id = '$EcommerceEntryID' ORDER BY id DESC LIMIT 1");
+	                if(!empty($ecommerceEntryRow)){
+	                    $DownloadKeysCsvName = $ecommerceEntryRow->DownloadKeysCsvName;
+	                    $ServiceKeysCsvName = $ecommerceEntryRow->ServiceKeysCsvName;
+	                    $realId = $ecommerceEntryRow->pid;
+	                }
+	            }
 
 	        if($IsDownload && ($isWithSaveToDatabase || $isGenerateKeyAfterPurchase) && $isFullPaid){
 
@@ -249,21 +257,21 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
 					 Units, SaleTitle,SaleDescription,IsShipping,IsAlternativeShipping,IsDownload,IsService,IsUpload,
 					 AlternativeShippingGross,AlternativeShippingNet,AlternateShippingTaxValue,
 					 TaxPercentage,
-					 DownloadKey,ServiceKey,WpUploads,RawData,WpUploadFilesForSale)
+					 DownloadKey,ServiceKey,WpUploads,RawData,WpUploadFilesForSale,PaidActionType,PaidActionScope)
 					VALUES ( 
 					        %s,%d,%d,%d,%f,%f,
 					        %f,%f,%f,%f,
 					        %d,%s,%s,%d,%d,%d,%d,%d,
 					        %f,%f,%f,
 					        %f,
-					        %s,%s,%s,%s,%s)
+					        %s,%s,%s,%s,%s,%s,%s)
 				",
                     '',$realId,$GalleryID,$ParentOrder,$TaxValueUnit,$TaxValueTotal,
                     $PriceUnitNet, $PriceUnitGross, $PriceTotalNet, $PriceTotalGross,
                     intval($item['quantity']),$SaleTitle,$SaleDescription,$IsShipping,$IsAlternativeShipping,$IsDownload,$IsService,$IsUpload,
                     $AlternativeShippingGross,$AlternativeShippingNet,$AlternateShippingTaxValue,
                     $TaxPercentage,
-                    $DownloadKey,$ServiceKey,$WpUploads,$RawData,$WpUploadFilesForSale
+	                    $DownloadKey,$ServiceKey,$WpUploads,$RawData,$WpUploadFilesForSale,$paidActionType,$paidActionScope
                 ));
                 //$wpdb->show_errors(); //setting the Show or Display errors option to true
                 //var_dump('$wpdb->print_error();');

@@ -1,6 +1,26 @@
 <?php
 
-if(!empty($isReallyGalleryEcommerce)){
+$isPaidActionsLiveCheckout = false;
+$isPaidActionsAdminSandboxCheckout = false;
+if(empty($isReallyGalleryEcommerce) && !empty($galeryID) && function_exists('cg_paid_actions_get_settings')){
+	$paidActionsScriptSettings = cg_paid_actions_get_settings($galeryID);
+	$isPaidActionsLiveCheckout = (
+		absint($paidActionsScriptSettings->UploadMode)===2 ||
+		absint($paidActionsScriptSettings->VoteMode)===2 ||
+		absint($paidActionsScriptSettings->CommentMode)===2
+	);
+	$isPaidActionsAdminSandboxCheckout = (
+		cg_paid_actions_is_pro_available() && cg_user_has_backend_access() &&
+		(
+			absint($paidActionsScriptSettings->UploadMode)>0 ||
+			absint($paidActionsScriptSettings->VoteMode)>0 ||
+			absint($paidActionsScriptSettings->CommentMode)>0
+		)
+	);
+}
+$isEcommerceCheckoutRuntime = !empty($isReallyGalleryEcommerce) || $isPaidActionsLiveCheckout || $isPaidActionsAdminSandboxCheckout;
+
+if($isEcommerceCheckoutRuntime){
 	wp_enqueue_script( 'cg_v10_js_cg_stripe_url', 'https://js.stripe.com/v3/', [], false);
 }
 
@@ -48,7 +68,7 @@ wp_enqueue_script( 'jquery-ui-sortable' );
         'cg_show_set_comments_v10_ajax_url' => admin_url( 'admin-ajax.php' )
     ));
     // ecommerce REIHENFOLGE BEACHTEN!
-    if(!empty($isReallyGalleryEcommerce)){
+    if($isEcommerceCheckoutRuntime){
         cg_ecommerce_include_javascript_ajax_frontend('cg_v10_js_cg_gallery','post_cg_ecommerce_payment_processing_wordpress_ajax_script_function_name',array('cg_ecommerce_payment_processing_ajax_url' => admin_url( 'admin-ajax.php' )));
     }
 

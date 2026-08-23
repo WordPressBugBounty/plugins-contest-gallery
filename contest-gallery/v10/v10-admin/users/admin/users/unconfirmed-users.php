@@ -227,8 +227,8 @@ echo '
         <thead>
             <tr>
                 <th scope="col" class="manage-column">Email</th>
-                <th scope="col" class="manage-column">Registry date</th>
-                <th scope="col" class="manage-column">Action</th>
+                <th scope="col" class="manage-column cg_unconfirmed_registry_date">Registry date</th>
+                <th scope="col" class="manage-column cg_unconfirmed_actions_cell">Action</th>
             </tr>
         </thead>
         <tbody >';
@@ -242,7 +242,7 @@ echo '
                     echo '<td><span class="cg_mail_data">'.$user->Field_Content.'</span><br><b class="cg_registered_not_confirmed">Registered but not confirmed</b></td>';
                 }
                 $regTime = cg_get_time_based_on_wp_timezone_conf($user->Tstamp,'d-M-Y H:i:s');
-                echo '<td>'.$regTime.'</td>';
+                echo '<td class="cg_unconfirmed_registry_date">'.$regTime.'</td>';
                 if(!isset($keyed[$user->Field_Content])){
                     $cg_hide_mails = 'cg_hide';
                     $mailsCount = 0;
@@ -250,7 +250,7 @@ echo '
                     $cg_hide_mails = '';
                     $mailsCount = $keyed[$user->Field_Content];
                 }
-                echo '<td><div class="cg_resend '.$cgProFalse.'">Resend mail</div><div class="cg_mails '.$cg_hide_mails.'">Reg mails <b>'.$mailsCount.'</b></div><div class="cg_delete">Delete</div></td>
+                echo '<td class="cg_unconfirmed_actions_cell"><div class="cg_unconfirmed_actions"><div class="cg_resend '.$cgProFalse.'">Resend mail</div><div class="cg_mails '.$cg_hide_mails.'">Reg mails <b>'.$mailsCount.'</b></div><div class="cg_delete">Delete</div></div></td>
                 </tr>';
             }
         }else{

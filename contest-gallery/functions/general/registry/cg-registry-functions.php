@@ -679,9 +679,9 @@ if(!function_exists('cg_get_registry_and_login_options_v14')){
         $optionsForGeneralIDsinceV14 = [];
 
         $optionsForGeneralIDsinceV14['visual'] = [];
-        $optionsForGeneralIDsinceV14['visual']['BorderRadiusRegistry'] = $optionsVisual->BorderRadiusRegistry;
+        $optionsForGeneralIDsinceV14['visual']['BorderRadiusRegistry'] = 1;
         $optionsForGeneralIDsinceV14['visual']['FeControlsStyleRegistry'] = $optionsVisual->FeControlsStyleRegistry;
-        $optionsForGeneralIDsinceV14['visual']['BorderRadiusLogin'] = $optionsVisual->BorderRadiusLogin;
+        $optionsForGeneralIDsinceV14['visual']['BorderRadiusLogin'] = 1;
         $optionsForGeneralIDsinceV14['visual']['FeControlsStyleLogin'] = $optionsVisual->FeControlsStyleLogin;
 
         $optionsForGeneralIDsinceV14['pro'] = [];

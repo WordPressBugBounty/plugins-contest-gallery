@@ -12,6 +12,11 @@ if(!function_exists('cg1l_cg_users_pin')){
 
         $shortcode_name = 'cg_users_pin';
 
+        $cgUsersPinShortcodeAtts = shortcode_atts(array(
+            'mode' => 'register'
+        ),$atts,'cg_users_pin');
+        $cgUsersPinMode = strtolower(trim((string)$cgUsersPinShortcodeAtts['mode'])) === 'access' ? 'access' : 'register';
+
         // PLUGIN VERSION CHECK HERE --- END
 
         global $wp_version;

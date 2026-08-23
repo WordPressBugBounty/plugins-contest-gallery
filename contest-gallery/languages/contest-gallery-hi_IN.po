@@ -663,6 +663,58 @@ msgstr "चित्र टिप्पणियाँ"
 msgid "Comments"
 msgstr "टिप्पणियाँ"
 
+#: check-language-paid-actions.php
+msgid "Your upload credits"
+msgstr "आपके अपलोड क्रेडिट"
+
+#: check-language-paid-actions.php
+msgid "One credit is used for each submitted entry."
+msgstr "हर सबमिट की गई प्रविष्टि के लिए एक क्रेडिट उपयोग होता है।"
+
+#: check-language-paid-actions.php
+msgid "UPLOAD CREDITS"
+msgstr "अपलोड क्रेडिट"
+
+#: check-language-paid-actions.php
+msgid "UPLOAD ACCESS"
+msgstr "अपलोड एक्सेस"
+
+#: check-language-paid-actions.php
+msgid "Checking upload credits"
+msgstr "अपलोड क्रेडिट जाँचे जा रहे हैं"
+
+#: check-language-paid-actions.php
+msgid "Please wait while your upload credits are checked."
+msgstr "कृपया अपने अपलोड क्रेडिट की जाँच होने तक प्रतीक्षा करें।"
+
+#: check-language-paid-actions.php
+msgid "Sign in to upload"
+msgstr "अपलोड करने के लिए साइन इन करें"
+
+#: check-language-paid-actions.php
+msgid "Sign in to buy upload credits and submit an entry to this gallery."
+msgstr "अपलोड क्रेडिट खरीदने और इस गैलरी में प्रविष्टि भेजने के लिए साइन इन करें।"
+
+#: check-language-paid-actions.php
+msgid "Sign in to continue"
+msgstr "जारी रखने के लिए साइन इन करें"
+
+#: check-language-paid-actions.php
+msgid "Upload credits temporarily unavailable"
+msgstr "अपलोड क्रेडिट अस्थायी रूप से उपलब्ध नहीं हैं"
+
+#: check-language-paid-actions.php
+msgid "Your upload credits could not be checked. Please try again."
+msgstr "आपके अपलोड क्रेडिट जाँचे नहीं जा सके। कृपया फिर प्रयास करें।"
+
+#: check-language-paid-actions.php
+msgid "More upload credits required"
+msgstr "और अपलोड क्रेडिट चाहिए"
+
+#: check-language-paid-actions.php
+msgid "This selection needs {required} upload credits. You currently have {available}."
+msgstr "इस चयन के लिए {required} अपलोड क्रेडिट चाहिए। आपके पास अभी {available} हैं।"
+
 #: check-language.php:193
 msgid "Your comment"
 msgstr "आपकी टिप्पणी"
@@ -1348,3 +1400,843 @@ msgstr "रेटिंग"
 #: check-language.php
 msgid "ratings"
 msgstr "रेटिंग"
+
+#: check-language-paid-actions.php
+msgid "Uploads"
+msgstr "अपलोड"
+
+#: check-language-paid-actions.php
+msgid "Votes"
+msgstr "वोट"
+
+#: check-language-paid-actions.php
+msgid "Upload credits"
+msgstr "अपलोड क्रेडिट"
+
+#: check-language-paid-actions.php
+msgid "Voting credits"
+msgstr "वोटिंग क्रेडिट"
+
+#: check-language-paid-actions.php
+msgid "Comment credits"
+msgstr "कमेंट क्रेडिट"
+
+#: check-language-paid-actions.php
+msgid "upload credit"
+msgstr "अपलोड क्रेडिट"
+
+#: check-language-paid-actions.php
+msgid "voting credit"
+msgstr "वोटिंग क्रेडिट"
+
+#: check-language-paid-actions.php
+msgid "comment credit"
+msgstr "कमेंट क्रेडिट"
+
+#: check-language-paid-actions.php
+msgid "Credits for {type} in gallery {number}"
+msgstr "गैलरी {number} में {type} के लिए क्रेडिट"
+
+#: check-language-paid-actions.php
+msgid "credit"
+msgstr "क्रेडिट"
+
+#: check-language-paid-actions.php
+msgid "credits"
+msgstr "क्रेडिट"
+
+#: check-language-paid-actions.php
+msgid "each"
+msgstr "प्रत्येक"
+
+#: check-language-paid-actions.php
+msgid "Loading"
+msgstr "लोड हो रहा है"
+
+#: check-language-paid-actions.php
+msgid "or"
+msgstr "या"
+
+#: check-language-paid-actions.php
+msgid "Cancel"
+msgstr "रद्द करें"
+
+#: check-language-paid-actions.php
+msgid "Not now"
+msgstr "अभी नहीं"
+
+#: check-language-paid-actions.php
+msgid "Try again"
+msgstr "पुनः प्रयास करें"
+
+#: check-language-paid-actions.php
+msgid "Continue to gallery"
+msgstr "गैलरी जारी रखें"
+
+#: check-language-paid-actions.php
+msgid "Return to gallery"
+msgstr "गैलरी पर लौटें"
+
+#: check-language-paid-actions.php
+msgid "Private payment preview"
+msgstr "निजी भुगतान पूर्वावलोकन"
+
+#: check-language-paid-actions.php
+msgid "Sandbox checkout test"
+msgstr "सैंडबॉक्स चेकआउट परीक्षण"
+
+#: check-language-paid-actions.php
+msgid "Your gallery credits"
+msgstr "आपके गैलरी क्रेडिट"
+
+#: check-language-paid-actions.php
+msgid "Real test actions are saved and visible until reset"
+msgstr "वास्तविक परीक्षण क्रियाएँ रीसेट होने तक सहेजी और दृश्यमान रहती हैं"
+
+#: check-language-paid-actions.php
+msgid "Real sandbox orders grant persistent gallery credits"
+msgstr "वास्तविक सैंडबॉक्स ऑर्डर लगातार गैलरी क्रेडिट प्रदान करते हैं"
+
+#: check-language-paid-actions.php
+msgid "Buy only what you want to use"
+msgstr "केवल वही खरीदें जो आप उपयोग करना चाहते हैं"
+
+#: check-language-paid-actions.php
+msgid "Add test credits"
+msgstr "परीक्षण क्रेडिट जोड़ें"
+
+#: check-language-paid-actions.php
+msgid "Sandbox checkout"
+msgstr "सैंडबॉक्स चेकआउट"
+
+#: check-language-paid-actions.php
+msgid "Get credits"
+msgstr "क्रेडिट प्राप्त करें"
+
+#: check-language-paid-actions.php
+msgid "Buy credits in sandbox"
+msgstr "सैंडबॉक्स में क्रेडिट खरीदें"
+
+#: check-language-paid-actions.php
+msgid "Buy gallery credits"
+msgstr "गैलरी क्रेडिट खरीदें"
+
+#: check-language-paid-actions.php
+msgid "Reset test actions"
+msgstr "परीक्षण क्रियाएँ रीसेट करें"
+
+#: check-language-paid-actions.php
+msgid "{count} used here"
+msgstr "यहां {count} का उपयोग किया गया है"
+
+#: check-language-paid-actions.php
+msgid "Get credits: {credits}"
+msgstr "क्रेडिट प्राप्त करें: {credits}"
+
+#: check-language-paid-actions.php
+msgid "Your credits are ready. You can continue in the gallery."
+msgstr "आपके क्रेडिट तैयार हैं. आप गैलरी में जारी रख सकते हैं."
+
+#: check-language-paid-actions.php
+msgid "Sandbox test link unavailable"
+msgstr "सैंडबॉक्स परीक्षण लिंक अनुपलब्ध है"
+
+#: check-language-paid-actions.php
+msgid "This link has expired, is invalid, or belongs to another test user. Create a new sandbox test link in the gallery settings."
+msgstr "यह लिंक समाप्त हो चुका है, अमान्य है, या किसी अन्य परीक्षण उपयोगकर्ता का है। गैलरी सेटिंग्स में एक नया सैंडबॉक्स परीक्षण लिंक बनाएं।"
+
+#: check-language-paid-actions.php
+msgid "Credits temporarily unavailable"
+msgstr "क्रेडिट अस्थायी रूप से अनुपलब्ध है"
+
+#: check-language-paid-actions.php
+msgid "Please try again in a moment"
+msgstr "कृपया एक क्षण में पुनः प्रयास करें"
+
+#: check-language-paid-actions.php
+msgid "Purchasing credits is temporarily unavailable. Please contact the gallery administrator."
+msgstr "क्रय क्रेडिट अस्थायी रूप से अनुपलब्ध है। कृपया गैलरी व्यवस्थापक से संपर्क करें."
+
+#: check-language-paid-actions.php
+msgid "CREDIT REQUIRED"
+msgstr "क्रेडिट आवश्यक है"
+
+#: check-language-paid-actions.php
+msgid "TEST CREDITS USED"
+msgstr "परीक्षण क्रेडिट का उपयोग किया गया"
+
+#: check-language-paid-actions.php
+msgid "Upload credit required"
+msgstr "क्रेडिट अपलोड करना आवश्यक है"
+
+#: check-language-paid-actions.php
+msgid "Voting credit required"
+msgstr "वोटिंग क्रेडिट आवश्यक है"
+
+#: check-language-paid-actions.php
+msgid "Comment credit required"
+msgstr "टिप्पणी करने के लिए क्रेडिट आवश्यक है"
+
+#: check-language-paid-actions.php
+msgid "Buy upload credits to upload an entry to this gallery."
+msgstr "इस गैलरी में प्रविष्टि अपलोड करने के लिए अपलोड क्रेडिट खरीदें।"
+
+#: check-language-paid-actions.php
+msgid "Buy voting credits to vote in this gallery."
+msgstr "इस गैलरी में वोट करने के लिए वोटिंग क्रेडिट खरीदें।"
+
+#: check-language-paid-actions.php
+msgid "Buy comment credits to comment in this gallery."
+msgstr "इस गैलरी में टिप्पणी करने के लिए टिप्पणी क्रेडिट खरीदें।"
+
+#: check-language-paid-actions.php
+msgid "All test upload credits used"
+msgstr "सभी परीक्षण अपलोड क्रेडिट का उपयोग किया गया"
+
+#: check-language-paid-actions.php
+msgid "All test voting credits used"
+msgstr "सभी परीक्षण मतदान क्रेडिट का उपयोग किया गया"
+
+#: check-language-paid-actions.php
+msgid "All test comment credits used"
+msgstr "सभी परीक्षण टिप्पणी क्रेडिट का उपयोग किया गया"
+
+#: check-language-paid-actions.php
+msgid "You have used all test upload credits for this gallery. Add more to keep testing."
+msgstr "आपने इस गैलरी के लिए सभी परीक्षण अपलोड क्रेडिट का उपयोग किया है। परीक्षण जारी रखने के लिए और जोड़ें."
+
+#: check-language-paid-actions.php
+msgid "You have used all test voting credits for this gallery. Add more to keep testing."
+msgstr "आपने इस गैलरी के लिए सभी परीक्षण वोटिंग क्रेडिट का उपयोग किया है। परीक्षण जारी रखने के लिए और जोड़ें."
+
+#: check-language-paid-actions.php
+msgid "You have used all test comment credits for this gallery. Add more to keep testing."
+msgstr "आपने इस गैलरी के लिए सभी परीक्षण टिप्पणी क्रेडिट का उपयोग किया है। परीक्षण जारी रखने के लिए और जोड़ें."
+
+#: check-language-paid-actions.php
+msgid "Add more test credits"
+msgstr "अधिक परीक्षण क्रेडिट जोड़ें"
+
+#: check-language-paid-actions.php
+msgid "Buy credits"
+msgstr "क्रेडिट खरीदें"
+
+#: check-language-paid-actions.php
+msgid "COMMENT CREDITS"
+msgstr "टिप्पणी श्रेय"
+
+#: check-language-paid-actions.php
+msgid "Checking comment credits"
+msgstr "टिप्पणी क्रेडिट की जाँच की जा रही है"
+
+#: check-language-paid-actions.php
+msgid "Please wait while your comment credits are checked."
+msgstr "आपके कमेंट क्रेडिट की जाँच होने तक प्रतीक्षा करें।"
+
+#: check-language-paid-actions.php
+msgid "Comment credits temporarily unavailable"
+msgstr "टिप्पणी क्रेडिट अस्थायी रूप से अनुपलब्ध है"
+
+#: check-language-paid-actions.php
+msgid "Your comment credits could not be checked. Please try again."
+msgstr "आपके कमेंट क्रेडिट की जाँच नहीं हो सकी। कृपया फिर से प्रयास करें।"
+
+#: check-language-paid-actions.php
+msgid "YOUR CURRENT TEST CREDITS"
+msgstr "आपके वर्तमान परीक्षण क्रेडिट"
+
+#: check-language-paid-actions.php
+msgid "YOUR CURRENT CREDITS"
+msgstr "आपके वर्तमान क्रेडिट"
+
+#: check-language-paid-actions.php
+msgid "{count} {type} available"
+msgstr "{count} {type} उपलब्ध है"
+
+#: check-language-paid-actions.php
+msgid "{count} {type} available, {selected} selected for checkout"
+msgstr "{count} {type} उपलब्ध है, {selected} चेकआउट के लिए चयनित है"
+
+#: check-language-paid-actions.php
+msgid "{count} {type} available, {selected} selected for test checkout"
+msgstr "{count} {type} उपलब्ध है, {selected} को परीक्षण चेकआउट के लिए चुना गया है"
+
+#: check-language-paid-actions.php
+msgid "PRIVATE PAYMENT PREVIEW"
+msgstr "निजी भुगतान पूर्वावलोकन"
+
+#: check-language-paid-actions.php
+msgid "Reset saved test actions?"
+msgstr "सहेजे गए परीक्षण क्रियाएँ रीसेट करें?"
+
+#: check-language-paid-actions.php
+msgid "This removes every paid preview action in this gallery, including tests from other preview tabs and administrators."
+msgstr "यह इस गैलरी में प्रत्येक भुगतान पूर्वावलोकन कार्रवाई को हटा देता है, जिसमें अन्य पूर्वावलोकन टैब और व्यवस्थापकों के परीक्षण भी शामिल हैं।"
+
+#: check-language-paid-actions.php
+msgid "TEST ACTIONS IN THIS GALLERY"
+msgstr "इस गैलरी में गतिविधियों का परीक्षण करें"
+
+#: check-language-paid-actions.php
+msgid "Test upload"
+msgstr "परीक्षण अपलोड करें"
+
+#: check-language-paid-actions.php
+msgid "Test uploads"
+msgstr "अपलोड का परीक्षण करें"
+
+#: check-language-paid-actions.php
+msgid "Test vote"
+msgstr "परीक्षण वोट"
+
+#: check-language-paid-actions.php
+msgid "Test votes"
+msgstr "परीक्षण वोट"
+
+#: check-language-paid-actions.php
+msgid "Test comment"
+msgstr "परीक्षण टिप्पणी"
+
+#: check-language-paid-actions.php
+msgid "Test comments"
+msgstr "टिप्पणियाँ परीक्षण करें"
+
+#: check-language-paid-actions.php
+msgid "saved test action will be removed"
+msgstr "सहेजी गई परीक्षण कार्रवाई हटा दी जाएगी"
+
+#: check-language-paid-actions.php
+msgid "saved test actions will be removed"
+msgstr "सहेजी गई परीक्षण कार्रवाइयां हटा दी जाएंगी"
+
+#: check-language-paid-actions.php
+msgid "test credit will be restored to its original credit type"
+msgstr "परीक्षण क्रेडिट को उसके मूल क्रेडिट प्रकार पर बहाल कर दिया जाएगा"
+
+#: check-language-paid-actions.php
+msgid "test credits will be restored to their original credit types"
+msgstr "परीक्षण क्रेडिट को उनके मूल क्रेडिट प्रकार पर बहाल कर दिया जाएगा"
+
+#: check-language-paid-actions.php
+msgid "Preview uploads and their files are deleted completely. Everything attached to those entries is removed as well. Test credits used in this gallery are restored."
+msgstr "अपलोड का पूर्वावलोकन करें और उनकी फ़ाइलें पूरी तरह से हटा दी जाती हैं। उन प्रविष्टियों से जुड़ी सभी चीज़ें भी हटा दी जाती हैं। इस गैलरी में उपयोग किए गए परीक्षण क्रेडिट पुनर्स्थापित किए गए हैं।"
+
+#: check-language-paid-actions.php
+msgid "SECURE TEST CHECKOUT"
+msgstr "सुरक्षित परीक्षण चेकआउट"
+
+#: check-language-paid-actions.php
+msgid "Choose your free test credits"
+msgstr "अपना निःशुल्क परीक्षण क्रेडिट चुनें"
+
+#: check-language-paid-actions.php
+msgid "Set the quantity directly in each checkout item. No money or payment details are used."
+msgstr "प्रत्येक चेकआउट आइटम में सीधे मात्रा निर्धारित करें। किसी पैसे या भुगतान विवरण का उपयोग नहीं किया जाता है।"
+
+#: check-language-paid-actions.php
+msgid "PRIVATE PREVIEW"
+msgstr "निजी पूर्वावलोकन"
+
+#: check-language-paid-actions.php
+msgid "Visible only to you"
+msgstr "केवल आपके लिए दृश्यमान"
+
+#: check-language-paid-actions.php
+msgid "No real charge"
+msgstr "कोई वास्तविक शुल्क नहीं"
+
+#: check-language-paid-actions.php
+msgid "Payment data is never requested"
+msgstr "भुगतान डेटा का अनुरोध कभी नहीं किया जाता है"
+
+#: check-language-paid-actions.php
+msgid "Persistent credits"
+msgstr "लगातार क्रेडिट"
+
+#: check-language-paid-actions.php
+msgid "Available after reload"
+msgstr "पुनः लोड करने के बाद उपलब्ध है"
+
+#: check-language-paid-actions.php
+msgid "Choose a quantity above to continue."
+msgstr "जारी रखने के लिए ऊपर दिए गए फ़ील्ड में मात्रा चुनें।"
+
+#: check-language-paid-actions.php
+msgid "Choose a test payment method"
+msgstr "एक परीक्षण भुगतान विधि चुनें"
+
+#: check-language-paid-actions.php
+msgid "Clicking a method simulates approval and adds the selected credits."
+msgstr "किसी विधि पर क्लिक करने से अनुमोदन अनुकरण होता है और चयनित क्रेडिट जुड़ जाता है।"
+
+#: check-language-paid-actions.php
+msgid "Simulate secure payment"
+msgstr "सुरक्षित भुगतान का अनुकरण करें"
+
+#: check-language-paid-actions.php
+msgid "TEST MODE · {amount} {currency} will not be charged"
+msgstr "परीक्षण मोड · {amount} {currency} शुल्क नहीं लिया जाएगा"
+
+#: check-language-paid-actions.php
+msgid "Added test credits"
+msgstr "परीक्षण क्रेडिट जोड़ा गया"
+
+#: check-language-paid-actions.php
+msgid "TEST PAYMENT APPROVED"
+msgstr "परीक्षण भुगतान स्वीकृत"
+
+#: check-language-paid-actions.php
+msgid "Your test credits are ready"
+msgstr "आपके टेस्ट क्रेडिट उपलब्ध हैं"
+
+#: check-language-paid-actions.php
+msgid "{count} credit was added after the simulated {provider} approval."
+msgstr "{count} क्रेडिट सिम्युलेटेड {provider} अनुमोदन के बाद जोड़ा गया था।"
+
+#: check-language-paid-actions.php
+msgid "{count} credits were added after the simulated {provider} approval."
+msgstr "सिम्युलेटेड {provider} अनुमोदन के बाद {count} क्रेडिट जोड़े गए।"
+
+#: check-language-paid-actions.php
+msgid "No real order or payment was created. The credits remain available after reloading this gallery."
+msgstr "कोई वास्तविक ऑर्डर या भुगतान नहीं बनाया गया. इस गैलरी को पुनः लोड करने के बाद भी क्रेडिट उपलब्ध रहते हैं।"
+
+#: check-language-paid-actions.php
+msgid "Approving secure {provider} test payment…"
+msgstr "सुरक्षित {provider} परीक्षण भुगतान स्वीकृत किया जा रहा है..."
+
+#: check-language-paid-actions.php
+msgid "The test payment could not be approved."
+msgstr "परीक्षण भुगतान स्वीकृत नहीं किया जा सका."
+
+#: check-language-paid-actions.php
+msgid "REAL SANDBOX CHECKOUT"
+msgstr "असली सैंडबॉक्स चेकआउट"
+
+#: check-language-paid-actions.php
+msgid "SECURE CHECKOUT"
+msgstr "सुरक्षित चेकआउट"
+
+#: check-language-paid-actions.php
+msgid "Choose persistent test credits"
+msgstr "लगातार परीक्षण क्रेडिट चुनें"
+
+#: check-language-paid-actions.php
+msgid "Choose your gallery credits"
+msgstr "अपनी गैलरी क्रेडिट चुनें"
+
+#: check-language-paid-actions.php
+msgid "Set the quantity directly in each checkout item. The total updates immediately."
+msgstr "प्रत्येक चेकआउट आइटम में सीधे मात्रा निर्धारित करें। कुल अद्यतन तुरंत।"
+
+#: check-language-paid-actions.php
+msgid "SANDBOX CHECKOUT"
+msgstr "सैंडबॉक्स चेकआउट"
+
+#: check-language-paid-actions.php
+msgid "Sign in to test buying credits"
+msgstr "क्रेडिट खरीदने की प्रक्रिया का परीक्षण करने के लिए साइन इन करें"
+
+#: check-language-paid-actions.php
+msgid "Sign in to continue the sandbox checkout. You can test buying credits and participating in this gallery without a real payment."
+msgstr "सैंडबॉक्स चेकआउट जारी रखने के लिए साइन इन करें। आप वास्तविक भुगतान के बिना क्रेडिट खरीदने और इस गैलरी में भाग लेने का परीक्षण कर सकते हैं।"
+
+#: check-language-paid-actions.php
+msgid "Sign in to buy credits"
+msgstr "क्रेडिट खरीदने के लिए साइन इन करें"
+
+#: check-language-paid-actions.php
+msgid "You need an account to buy credits and participate in this gallery. Continue with Google or receive a six-digit PIN by email."
+msgstr "क्रेडिट खरीदने और इस गैलरी में भाग लेने के लिए आपको एक खाते की आवश्यकता है। Google के साथ जारी रखें या ईमेल द्वारा छह अंकों का पिन प्राप्त करें।"
+
+#: check-language-paid-actions.php
+msgid "Email address"
+msgstr "ईमेल पता"
+
+#: check-language-paid-actions.php
+msgid "Email me a PIN"
+msgstr "पिन भेजें"
+
+#: check-language-paid-actions.php
+msgid "Six-digit PIN"
+msgstr "छह अंकों का पिन"
+
+#: check-language-paid-actions.php
+msgid "PIN digit {number}"
+msgstr "पिन अंक {number}"
+
+#: check-language-paid-actions.php
+msgid "Send a new PIN"
+msgstr "एक नया पिन भेजें"
+
+#: check-language-paid-actions.php
+msgid "Send a new PIN in {seconds}s"
+msgstr "{seconds}s में एक नया पिन भेजें"
+
+#: check-language-paid-actions.php
+msgid "PIN confirmed. Preparing your checkout…"
+msgstr "पिन की पुष्टि की गई. आपका चेकआउट तैयार किया जा रहा है..."
+
+#: check-language-paid-actions.php
+msgid "Sign-in successful. Reloading the gallery…"
+msgstr "साइन-इन सफल. गैलरी पुनः लोड हो रही है..."
+
+#: check-language-paid-actions.php
+msgid "The sign-in form could not be loaded."
+msgstr "साइन-इन फ़ॉर्म लोड नहीं किया जा सका."
+
+#: check-language-paid-actions.php
+msgid "PIN CONFIRMED"
+msgstr "पिन की पुष्टि हो गई"
+
+#: check-language-paid-actions.php
+msgid "Sign-in successful"
+msgstr "साइन-इन सफल"
+
+#: check-language-paid-actions.php
+msgid "Continue to buy credits"
+msgstr "क्रेडिट खरीदना जारी रखें"
+
+#: check-language-paid-actions.php
+msgid "Please wait {seconds} {secondsLabel} before requesting another PIN."
+msgstr "कृपया दूसरे पिन का अनुरोध करने से पहले {seconds} {secondsLabel} प्रतीक्षा करें।"
+
+#: check-language-paid-actions.php
+msgid "second"
+msgstr "सेकंड"
+
+#: check-language-paid-actions.php
+msgid "seconds"
+msgstr "सेकंड"
+
+#: check-language-paid-actions.php
+msgid "Too many PINs were requested. Please try again later."
+msgstr "बहुत सारे पिन का अनुरोध किया गया था. कृपया बाद में पुन: प्रयास करें।"
+
+#: check-language-paid-actions.php
+msgid "The PIN could not be sent."
+msgstr "पिन नहीं भेजा जा सका."
+
+#: check-language-paid-actions.php
+msgid "Enter a valid email address."
+msgstr "एक वैध ईमेल पता दर्ज करें."
+
+#: check-language-paid-actions.php
+msgid "The PIN is invalid or expired."
+msgstr "पिन अमान्य है या समाप्त हो गया है."
+
+#: check-language-paid-actions.php
+msgid "Too many attempts. Request a new PIN."
+msgstr "बहुत अधिक प्रयास. नये पिन का अनुरोध करें."
+
+#: check-language-paid-actions.php
+msgid "The PIN is incorrect."
+msgstr "पिन ग़लत है."
+
+#: check-language-paid-actions.php
+msgid "Enter all six PIN digits."
+msgstr "सभी छह पिन अंक दर्ज करें।"
+
+#: check-language-paid-actions.php
+msgid "A new PIN could not be sent."
+msgstr "नया पिन नहीं भेजा जा सका."
+
+#: check-language-paid-actions.php
+msgid "The PIN request is no longer available."
+msgstr "पिन अनुरोध अब उपलब्ध नहीं है."
+
+#: check-language-paid-actions.php
+msgid "SANDBOX PAYMENT"
+msgstr "सैंडबॉक्स भुगतान"
+
+#: check-language-paid-actions.php
+msgid "SECURE PAYMENT"
+msgstr "सुरक्षित भुगतान"
+
+#: check-language-paid-actions.php
+msgid "Finalizing your sandbox credits"
+msgstr "आपके सैंडबॉक्स क्रेडिट को अंतिम रूप दिया जा रहा है"
+
+#: check-language-paid-actions.php
+msgid "Finalizing your credits"
+msgstr "आपके क्रेडिट को अंतिम रूप दिया जा रहा है"
+
+#: check-language-paid-actions.php
+msgid "Your test payment was approved. We are adding your credits now. You will return to the gallery automatically."
+msgstr "आपका परीक्षण भुगतान स्वीकृत हो गया था. हम अब आपके क्रेडिट जोड़ रहे हैं। आप स्वचालित रूप से गैलरी में वापस आ जायेंगे।"
+
+#: check-language-paid-actions.php
+msgid "Your payment was approved. We are adding your credits now. You will return to the gallery automatically."
+msgstr "आपका भुगतान स्वीकृत हो गया. हम अब आपके क्रेडिट जोड़ रहे हैं। आप स्वचालित रूप से गैलरी में वापस आ जायेंगे।"
+
+#: check-language-paid-actions.php
+msgid "Your test payment was approved. We are securely adding your credits now. You will return to the gallery automatically."
+msgstr "आपका परीक्षण भुगतान स्वीकृत हो गया था. हम अब आपके क्रेडिट सुरक्षित रूप से जोड़ रहे हैं। आप स्वचालित रूप से गैलरी में वापस आ जायेंगे।"
+
+#: check-language-paid-actions.php
+msgid "Your payment was approved. We are securely adding your credits now. You will return to the gallery automatically."
+msgstr "आपका भुगतान स्वीकृत हो गया. हम अब आपके क्रेडिट सुरक्षित रूप से जोड़ रहे हैं। आप स्वचालित रूप से गैलरी में वापस आ जायेंगे।"
+
+#: check-language-paid-actions.php
+msgid "Do not start another payment while this payment is being finalized."
+msgstr "इस भुगतान को अंतिम रूप दिए जाने के दौरान दूसरा भुगतान शुरू न करें।"
+
+#: check-language-paid-actions.php
+msgid "Try finalizing again"
+msgstr "पुनः अंतिम रूप देने का प्रयास करें"
+
+#: check-language-paid-actions.php
+msgid "Your credits are ready"
+msgstr "आपके क्रेडिट तैयार हैं"
+
+#: check-language-paid-actions.php
+msgid "Your credits were added successfully. Returning to the gallery now."
+msgstr "आपके क्रेडिट सफलतापूर्वक जोड़ दिए गए. अब गैलरी में लौट रहे हैं।"
+
+#: check-language-paid-actions.php
+msgid "PAYMENT NEEDS ATTENTION"
+msgstr "भुगतान पर ध्यान देने की जरूरत है"
+
+#: check-language-paid-actions.php
+msgid "We could not finish adding your credits"
+msgstr "हम आपके क्रेडिट जोड़ना समाप्त नहीं कर सके"
+
+#: check-language-paid-actions.php
+msgid "The payment could not be finalized automatically. You can safely try finalizing this same payment again."
+msgstr "भुगतान स्वचालित रूप से अंतिम रूप नहीं दिया जा सका. आप सुरक्षित रूप से इसी भुगतान को दोबारा अंतिम रूप देने का प्रयास कर सकते हैं।"
+
+#: check-language-paid-actions.php
+msgid "Your credit selection changed. Please review it and try again."
+msgstr "क्रेडिट चयन बदल गया है। कृपया इसकी समीक्षा करें और फिर प्रयास करें।"
+
+#: check-language-paid-actions.php
+msgid "The requested gallery is not available."
+msgstr "अनुरोधित गैलरी उपलब्ध नहीं है."
+
+#: check-language-paid-actions.php
+msgid "Paid actions are not available for this gallery."
+msgstr "इस गैलरी के लिए भुगतान की गई कार्रवाइयाँ उपलब्ध नहीं हैं।"
+
+#: check-language-paid-actions.php
+msgid "The private payment preview is invalid or expired."
+msgstr "निजी भुगतान पूर्वावलोकन अमान्य है या समाप्त हो गया है।"
+
+#: check-language-paid-actions.php
+msgid "This private preview session has ended. Open \"Try it now\" again from the gallery settings."
+msgstr "यह निजी पूर्वावलोकन सत्र समाप्त हो गया है. गैलरी सेटिंग्स से \"इसे अभी आज़माएं\" फिर से खोलें।"
+
+#: check-language-paid-actions.php
+msgid "Activate pay for {type} before adding its test credits."
+msgstr "इसके परीक्षण क्रेडिट जोड़ने से पहले {type} के लिए भुगतान सक्रिय करें।"
+
+#: check-language-paid-actions.php
+msgid "Test credits are being updated. Please try again."
+msgstr "टेस्ट क्रेडिट अपडेट किए जा रहे हैं. कृपया पुन: प्रयास करें।"
+
+#: check-language-paid-actions.php
+msgid "Demo credits could not be added."
+msgstr "डेमो क्रेडिट नहीं जोड़े जा सके."
+
+#: check-language-paid-actions.php
+msgid "Preview actions are being reset. Please try again."
+msgstr "पूर्वावलोकन क्रियाएँ रीसेट की जा रही हैं. कृपया पुन: प्रयास करें।"
+
+#: check-language-paid-actions.php
+msgid "Demo credits could not be reserved."
+msgstr "डेमो क्रेडिट आरक्षित नहीं किया जा सका."
+
+#: check-language-paid-actions.php
+msgid "Not enough demo credits are available."
+msgstr "पर्याप्त डेमो क्रेडिट उपलब्ध नहीं हैं."
+
+#: check-language-paid-actions.php
+msgid "Purchasing credits for this action is temporarily unavailable."
+msgstr "इस कार्रवाई के लिए क्रय क्रेडिट अस्थायी रूप से अनुपलब्ध है।"
+
+#: check-language-paid-actions.php
+msgid "Sign in to purchase and use gallery credits."
+msgstr "गैलरी क्रेडिट खरीदने और उपयोग करने के लिए साइन इन करें।"
+
+#: check-language-paid-actions.php
+msgid "Invalid credit reservation."
+msgstr "अमान्य क्रेडिट आरक्षण।"
+
+#: check-language-paid-actions.php
+msgid "This paid action is temporarily unavailable."
+msgstr "यह सशुल्क कार्रवाई अस्थायी रूप से अनुपलब्ध है."
+
+#: check-language-paid-actions.php
+msgid "This action does not require paid credits."
+msgstr "इस कार्रवाई के लिए सशुल्क क्रेडिट की आवश्यकता नहीं है."
+
+#: check-language-paid-actions.php
+msgid "Credits are being updated. Please try again."
+msgstr "क्रेडिट अपडेट किए जा रहे हैं. कृपया पुन: प्रयास करें।"
+
+#: check-language-paid-actions.php
+msgid "Credits could not be reserved."
+msgstr "क्रेडिट आरक्षित नहीं किया जा सका."
+
+#: check-language-paid-actions.php
+msgid "Not enough credits are available."
+msgstr "पर्याप्त क्रेडिट उपलब्ध नहीं हैं."
+
+#: check-language-paid-actions.php
+msgid "This sandbox test link is invalid, expired or already belongs to another test user."
+msgstr "यह सैंडबॉक्स परीक्षण लिंक अमान्य है, समाप्त हो चुका है या पहले से ही किसी अन्य परीक्षण उपयोगकर्ता का है।"
+
+#: check-language-paid-actions.php
+msgid "A preview action is still running. Please try the reset again."
+msgstr "एक पूर्वावलोकन कार्रवाई अभी भी चल रही है. कृपया पुनः रीसेट का प्रयास करें."
+
+#: check-language-paid-actions.php
+msgid "Some preview uploads could not be removed. Run the reset again."
+msgstr "कुछ पूर्वावलोकन अपलोड हटाए नहीं जा सके. रीसेट फिर से चलाएँ।"
+
+#: check-language-paid-actions.php
+msgid "Preview actions were reset and their demo credits were restored."
+msgstr "पूर्वावलोकन क्रियाएँ रीसेट कर दी गईं और उनके डेमो क्रेडिट बहाल कर दिए गए।"
+
+#: check-language-paid-actions.php
+msgid "A six-digit PIN was sent to your email address."
+msgstr "आपके ईमेल पते पर छह अंकों का पिन भेजा गया था।"
+
+#: check-language-paid-actions.php
+msgid "A new six-digit PIN was sent to your email address."
+msgstr "आपके ईमेल पते पर एक नया छह अंकों का पिन भेजा गया था।"
+
+#: check-language-paid-actions.php
+msgid "The private payment preview is busy. Please try again."
+msgstr "निजी भुगतान पूर्वावलोकन व्यस्त है. कृपया पुन: प्रयास करें।"
+
+#: check-language-paid-actions.php
+msgid "The test actions could not be reset."
+msgstr "परीक्षण क्रियाएँ रीसेट नहीं की जा सकीं."
+
+#: check-language-paid-actions.php
+msgid "The saved test actions were reset."
+msgstr "सहेजी गई परीक्षण क्रियाएँ रीसेट कर दी गईं।"
+
+#: check-language-paid-actions.php
+msgid "The test credits could not be added."
+msgstr "परीक्षण क्रेडिट नहीं जोड़े जा सके."
+
+#: check-language-paid-actions.php
+msgid "Resetting…"
+msgstr "रीसेट किया जा रहा है..."
+
+#: check-language-paid-actions.php
+msgid "The code could not be sent."
+msgstr "कोड नहीं भेजा जा सका."
+
+#: check-language-paid-actions.php
+msgid "The code is invalid."
+msgstr "कोड अमान्य है."
+
+#: check-language-paid-actions.php
+msgid "Gallery {number}"
+msgstr "गैलरी {number}"
+
+#: check-language-paid-actions.php
+msgid "Purchase a credit to continue."
+msgstr "जारी रखने के लिए क्रेडिट खरीदें."
+
+#: check-language-general.php
+msgid "Send new PIN in {seconds}s"
+msgstr "{seconds}s में नया पिन भेजें"
+
+#: check-language-general.php
+msgid "The account confirmation could not be prepared."
+msgstr "खाता पुष्टिकरण तैयार नहीं किया जा सका."
+
+#: check-language-general.php
+msgid "No registered user was found for this email address."
+msgstr "इस ईमेल पते के लिए कोई पंजीकृत उपयोगकर्ता नहीं मिला."
+
+#: check-language-general.php
+msgid "The user account could not be found."
+msgstr "उपयोगकर्ता खाता नहीं मिल सका."
+
+#: check-language-general.php
+msgid "PIN data was not found. Please contact the administrator."
+msgstr "पिन डेटा नहीं मिला. कृपया व्यवस्थापक से संपर्क करें."
+
+#: check-language-general.php
+msgid "The user account could not be created. Please contact the administrator."
+msgstr "उपयोगकर्ता खाता नहीं बनाया जा सका. कृपया व्यवस्थापक से संपर्क करें."
+
+#: check-language-general.php
+msgid "The user could not be signed in after the PIN check. Please contact the administrator."
+msgstr "पिन जांच के बाद उपयोगकर्ता साइन इन नहीं हो सका। कृपया व्यवस्थापक से संपर्क करें."
+
+#: check-language-general.php
+msgid "The PIN could not be confirmed. Please contact the administrator."
+msgstr "पिन की पुष्टि नहीं की जा सकी. कृपया व्यवस्थापक से संपर्क करें."
+
+#: check-language-paid-actions.php
+msgid "Checkout could not be started."
+msgstr "चेक आउट शुरू नहीं किया जा सका।"
+
+#: check-language-paid-actions.php
+msgid "Processing…"
+msgstr "प्रोसेस हो रहा है..."
+
+#: check-language-paid-actions.php
+msgid "Processing payment"
+msgstr "भुगतान प्रक्रिया में है..."
+
+#: check-language-paid-actions.php
+msgid "You may be redirected to complete the payment. You will return automatically."
+msgstr "आपको भुगतान पूरा करने के लिए रीडायरेक्ट किया जा सकता है। आप अपने आप लौट आएँगे।"
+
+#: check-language-paid-actions.php
+msgid "This browser could not access the saved checkout data. Return to the gallery and contact the site owner before making another payment."
+msgstr "यह ब्राउज़र सहेजे गए चेकआउट डेटा को एक्सेस नहीं कर सका। गैलरी पर लौटें और एक और भुगतान करने से पहले साइट के मालिक से संपर्क करें।"
+
+#: check-language-paid-actions.php
+msgid "The saved checkout data could not be opened. You can safely try finalizing this same payment again."
+msgstr "सहेजा गया चेकआउट डेटा खोला नहीं जा सका। आप सुरक्षित रूप से फिर से उसी भुगतान को अंतिम रूप देने की कोशिश कर सकते हैं।"
+
+#: check-language-paid-actions.php
+msgid "Another browser tab is currently using the saved checkout data. Close the other tab and try finalizing this same payment again."
+msgstr "एक और ब्राउज़र टैब फ़िलहाल सेव किए गए चेक आउट डेटा का इस्तेमाल कर रहा है। दूसरे टैब को बंद करें और फिर से उसी भुगतान को अंतिम रूप देने की कोशिश करें।"
+
+#: check-language-paid-actions.php
+msgid "The saved checkout data could not be read. You can safely try finalizing this same payment again."
+msgstr "सहेजा गया चेकआउट डेटा पढ़ा नहीं जा सका। आप सुरक्षित रूप से फिर से उसी भुगतान को अंतिम रूप देने की कोशिश कर सकते हैं।"
+
+#: check-language-paid-actions.php
+msgid "Your test payment was approved. We are creating the gallery order and adding your credits now. You will return to the gallery automatically."
+msgstr "आपका टेस्ट भुगतान मंज़ूर कर लिया गया था। हम गैलरी ऑर्डर बना रहे हैं और अभी आपके क्रेडिट जोड़ रहे हैं। आप अपने आप गैलरी में लौट आएँगे।"
+
+#: check-language-paid-actions.php
+msgid "Your payment was approved. We are creating the gallery order and adding your credits now. You will return to the gallery automatically."
+msgstr "आपका भुगतान मंज़ूर कर लिया गया था। हम गैलरी ऑर्डर बना रहे हैं और अभी आपके क्रेडिट जोड़ रहे हैं। आप अपने आप गैलरी में लौट आएँगे।"
+
+#: check-language-paid-actions.php
+msgid "The saved checkout data was not found in this browser. Return to the gallery and contact the site owner before making another payment."
+msgstr "इस ब्राउज़र में सेव किया गया चेक आउट डेटा नहीं मिला। गैलरी पर लौटें और एक और भुगतान करने से पहले साइट के मालिक से संपर्क करें।"
+
+#: check-language-paid-actions.php
+msgid "Payment processing could not be started. You can safely try finalizing this same payment again."
+msgstr "भुगतान प्रोसेस करना शुरू नहीं किया जा सका। आप सुरक्षित रूप से फिर से उसी भुगतान को अंतिम रूप देने की कोशिश कर सकते हैं।"
+
+#: check-language-paid-actions.php
+msgid "uploads"
+msgstr "अपलोड"
+
+#: check-language-paid-actions.php
+msgid "votes"
+msgstr "वोट"
+
+#: check-language-paid-actions.php
+msgid "comments"
+msgstr "टिप्पणियाँ"
+
+#: check-language-ecommerce.php
+msgid "The payment was not completed. Please try again."
+msgstr "भुगतान पूरा नहीं हुआ। कृपया पुनः प्रयास करें।"
+
+#: check-language-ecommerce.php
+msgid "Payment canceled. You can try again."
+msgstr "भुगतान रद्द कर दिया गया। आप फिर से प्रयास कर सकते हैं।"

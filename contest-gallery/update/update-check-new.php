@@ -38,6 +38,9 @@ $tablename_ecommerce_invoice_options = $wpdb->base_prefix . "$i"."contest_gal1er
 $tablename_ecommerce_options = $wpdb->base_prefix . "$i"."contest_gal1ery_ecommerce_options";
 $tablename_ecommerce_orders = $wpdb->base_prefix . "$i"."contest_gal1ery_ecommerce_orders";
 $tablename_ecommerce_orders_items = $wpdb->base_prefix . "$i"."contest_gal1ery_ecommerce_orders_items";
+$tablename_paid_action_settings = $wpdb->base_prefix . "$i"."contest_gal1ery_paid_action_settings";
+$tablename_paid_action_entitlements = $wpdb->base_prefix . "$i"."contest_gal1ery_paid_action_entitlements";
+$tablename_paid_action_ledger = $wpdb->base_prefix . "$i"."contest_gal1ery_paid_action_ledger";
 $tablename_wp_pages = $wpdb->base_prefix . "$i"."contest_gal1ery_wp_pages";
 $tablename_wp_pdf_previews = $wpdb->base_prefix . "$i"."contest_gal1ery_pdf_previews";
 
@@ -306,7 +309,8 @@ if(!function_exists('cg_update_check_new_handle_indexes')){
                         )
                     );
                 }else{
-                    $query = "ALTER TABLE ".cg_update_check_new_quote_identifier($tableName)." ADD INDEX ".cg_update_check_new_quote_identifier($indexName)." ($indexColumnsSql)";
+                    $indexTypeSql = !empty($indexData['unique']) ? 'UNIQUE INDEX' : 'INDEX';
+                    $query = "ALTER TABLE ".cg_update_check_new_quote_identifier($tableName)." ADD $indexTypeSql ".cg_update_check_new_quote_identifier($indexName)." ($indexColumnsSql)";
                     if(!$wpdb->query($query)){
                         $wpdb->show_errors();
                         ob_start();
@@ -359,6 +363,9 @@ $dtacaoo[$tablename_ecommerce_options] = $wpdb->get_results( "SHOW COLUMNS FROM 
 $dtacaoo[$tablename_ecommerce_invoice_options] = $wpdb->get_results( "SHOW COLUMNS FROM $tablename_ecommerce_invoice_options" );
 $dtacaoo[$tablename_ecommerce_orders] = $wpdb->get_results( "SHOW COLUMNS FROM $tablename_ecommerce_orders" );
 $dtacaoo[$tablename_ecommerce_orders_items] = $wpdb->get_results( "SHOW COLUMNS FROM $tablename_ecommerce_orders_items" );
+$dtacaoo[$tablename_paid_action_settings] = $wpdb->get_results( "SHOW COLUMNS FROM $tablename_paid_action_settings" );
+$dtacaoo[$tablename_paid_action_entitlements] = $wpdb->get_results( "SHOW COLUMNS FROM $tablename_paid_action_entitlements" );
+$dtacaoo[$tablename_paid_action_ledger] = $wpdb->get_results( "SHOW COLUMNS FROM $tablename_paid_action_ledger" );
 
 
 /*
@@ -446,6 +453,39 @@ foreach($updateArray as $tableName => $tableData){
 }
 
 cg_update_check_new_handle_indexes($updateIndexArray,$dtacaoo,$isJustCheck,$columnsToRepairArray,$errorsArray);
+
+if(
+    empty($isJustCheck) &&
+    isset($p_cgal1ery_db_installed_ver) &&
+    floatval($p_cgal1ery_db_installed_ver) < 33.04
+){
+    $wpdb->query("UPDATE $tablename_paid_action_entitlements SET IsTest = 1 WHERE GrantType = 'sandbox_purchase'");
+    $wpdb->query(
+        "UPDATE $tablename_paid_action_entitlements entitlement
+         INNER JOIN $tablename_ecommerce_orders ecommerce_order ON ecommerce_order.id = entitlement.ParentOrder
+         SET entitlement.IsTest = 1, entitlement.GrantType = 'sandbox_admin'
+         WHERE ecommerce_order.IsTest = 1 AND entitlement.GrantType = 'admin'"
+    );
+}
+
+if(
+    empty($isJustCheck) &&
+    isset($p_cgal1ery_db_installed_ver) &&
+    floatval($p_cgal1ery_db_installed_ver) < 33.03 &&
+    function_exists('cg_get_version') &&
+    cg_get_version()==='contest-gallery'
+){
+    $wpdb->query("UPDATE $tablename_paid_action_settings SET CommentMode = 1 WHERE CommentMode = 2");
+}
+
+if(
+    empty($isJustCheck) &&
+    isset($p_cgal1ery_db_installed_ver) &&
+    floatval($p_cgal1ery_db_installed_ver) < 33.02 &&
+    function_exists('cg_paid_actions_backfill_action_snapshots')
+){
+    cg_paid_actions_backfill_action_snapshots();
+}
 
 $shouldBackfillVoteCommentLinks = $isVoteCommentIdAdded;
 if(isset($p_cgal1ery_db_installed_ver) && floatval($p_cgal1ery_db_installed_ver) < 32.02){

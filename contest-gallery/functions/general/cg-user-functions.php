@@ -249,6 +249,16 @@ if(!function_exists('cg1l_delete_unconfirmed_user')){
 
         if (!empty($activation_keys)) {
             $placeholders = implode(',', array_fill(0, count($activation_keys), '%s'));
+            $requestKeys = $wpdb->get_col($wpdb->prepare(
+                "SELECT Field_Content FROM {$tablenameCreateUserEntries} WHERE Field_Type = 'cg-pin-request-key' AND activation_key IN ($placeholders)",
+                $activation_keys
+            ));
+            foreach($requestKeys as $requestKey){
+                if(function_exists('cg_pin_auth_transient_key')){
+                    delete_transient(cg_pin_auth_transient_key($requestKey));
+                }
+            }
+            $placeholders = implode(',', array_fill(0, count($activation_keys), '%s'));
             $sql = $wpdb->prepare("
         DELETE FROM {$tablenameCreateUserEntries}
         WHERE activation_key IN ($placeholders)
@@ -286,6 +296,7 @@ if(!function_exists('cg1l_resend_unconfirmed_mail')){
     FROM $tablenameCreateUserEntries 
     WHERE (Field_Type = 'main-mail' OR Field_Type = 'unconfirmed-mail') 
           AND Field_Content = %s 
+    ORDER BY id DESC
     LIMIT 1
   )
     LIMIT 1;",

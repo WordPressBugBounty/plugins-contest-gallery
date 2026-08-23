@@ -23,37 +23,51 @@ include(__DIR__ . "/../../../check-language-general.php");
 include(__DIR__ . "/../../../check-language-ecommerce.php");
 
 if(!empty($_GET['payment_intent'])){
+	$redirectStatus = (!empty($_GET['redirect_status']) && !is_array($_GET['redirect_status'])) ? sanitize_key(wp_unslash($_GET['redirect_status'])) : '';
+	$isFailedStripeRedirect = ($redirectStatus==='failed');
 
 	global $wpdb;
 	$tablename_ecommerce_options = $wpdb->prefix . "contest_gal1ery_ecommerce_options";
 
 	$ecommerce_options = $wpdb->get_row( "SELECT * FROM $tablename_ecommerce_options WHERE GeneralID = 1");
 	$ecommerceOptions = json_decode(json_encode($ecommerce_options),true);
+	$ecommerceOptions['BorderRadiusOrder'] = 1;
 	unset($ecommerceOptions['PayPalLiveSecret']);
 	unset($ecommerceOptions['PayPalSandboxSecret']);
 	unset($ecommerceOptions['StripeLiveSecret']);
 	unset($ecommerceOptions['StripeSandboxSecret']);
 
 	$FeControlsStyleOrder = ($ecommerceOptions['FeControlsStyleOrder'] == 'white') ? 'cg_fe_controls_style_white' : '';
-	$BorderRadiusOrder = ($ecommerceOptions['BorderRadiusOrder'] == '1') ? 'cg_border_radius_controls_and_containers' : '';
+	$BorderRadiusOrder = 'cg_border_radius_controls_and_containers';
+	$stripeReturnStateClass = $isFailedStripeRedirect ? 'cg-ecommerce-order-return-failure' : 'cg-ecommerce-order-return-success';
+	$stripeReturnIcon = $isFailedStripeRedirect ? '&#10005;' : '&#10003;';
 
-	echo "<div  id='mainCGdivOrderContainer' class='mainCGdivOrderContainer mainCGdiv $FeControlsStyleOrder $BorderRadiusOrder' >
-<p style='font-weight: bold; text-align: center;font-size: 24px;margin: 50px  0;'>$language_OrderSuccessfulYouWillBeRedirected</p>
-</div>";
+	$stripeReturnMessage = $isFailedStripeRedirect ? $language_PaymentNotCompletedTryAgain : $language_OrderSuccessfulYouWillBeRedirected;
+	echo "<div id='mainCGdivOrderContainer' class='mainCGdivOrderContainer mainCGdiv cg-ecommerce-order-return-container $FeControlsStyleOrder $BorderRadiusOrder'>";
+	echo "<div class='cg-ecommerce-order-return-card ".esc_attr($stripeReturnStateClass)."' role='status' aria-live='polite' aria-busy='true'>";
+	echo "<span class='cg-ecommerce-order-return-icon' aria-hidden='true'>".$stripeReturnIcon."</span>";
+	echo "<p class='cg-ecommerce-order-return-message'>".esc_html($stripeReturnMessage)."</p>";
+	echo "<span class='cg-ecommerce-order-return-spinner' aria-hidden='true'></span>";
+	echo "</div></div>";
 	$pi = cg1l_sanitize_method($_GET['payment_intent']);
 	?>
     <pre>
         <script>
                 var PiId = <?php echo json_encode($pi); ?>;
                 cgJsClass.gallery.vars.ecommerce.StripePiId = PiId;
+                cgJsClass.gallery.vars.ecommerce.StripeRedirectStatus = <?php echo json_encode($redirectStatus); ?>;
                 cgJsClass.gallery.vars.ecommerce.ecommerceOptions = <?php echo json_encode($ecommerceOptions); ?>;
-                jQuery('body').addClass('cg_pointer_events_none');
-                jQuery('body').css('pointer-events','none');
+                if (cgJsClass.gallery.vars.ecommerce.StripeRedirectStatus !== 'failed') {
+                    jQuery('body').addClass('cg_pointer_events_none');
+                    jQuery('body').css('pointer-events','none');
+                }
                 setTimeout(function (){
                     cgJsClass.gallery.ecommerce.functions.stripeIndexDb.init(true,PiId);
-                },1000);
+                },cgJsClass.gallery.vars.ecommerce.StripeRedirectStatus === 'failed' ? 50 : 1000);
                 var domain = <?php echo json_encode(get_bloginfo('wpurl')); ?>;
-                localStorage.removeItem('cgEcomCustomerProducts_for_'+domain);
+                if (cgJsClass.gallery.vars.ecommerce.StripeRedirectStatus !== 'failed') {
+                    localStorage.removeItem('cgEcomCustomerProducts_for_'+domain);
+                }
         </script>
     </pre>
 	<?php
@@ -219,9 +233,10 @@ if(empty($Order)){
 
 		$ecommerce_options = $wpdb->get_row( "SELECT * FROM $tablename_ecommerce_options WHERE GeneralID = 1");
 		$ecommerceOptions = json_decode(json_encode($ecommerce_options),true);
+		$ecommerceOptions['BorderRadiusOrder'] = 1;
 
 		$FeControlsStyleOrder = ($ecommerceOptions['FeControlsStyleOrder'] == 'white') ? 'cg_fe_controls_style_white' : '';
-		$BorderRadiusOrder = ($ecommerceOptions['BorderRadiusOrder'] == '1') ? 'cg_border_radius_controls_and_containers' : '';
+		$BorderRadiusOrder = 'cg_border_radius_controls_and_containers';
 
 		$isAllowedUser = cg_current_user_can_access_ecommerce_order($Order);
 		$orderHasOwner = cg_ecommerce_order_has_owner($Order);
@@ -280,9 +295,11 @@ $RegUserOrderSummaryOnlyText
 			}else{
                 $status = $result['status'];
 
-				if(!empty($result['latest_charge']['amount_refunded']) && $result['latest_charge']['amount_refunded'] == $result['latest_charge']['amount_refunded']){
+				$amountRefunded = !empty($result['latest_charge']['amount_refunded']) ? absint($result['latest_charge']['amount_refunded']) : 0;
+				$amountCaptured = !empty($result['latest_charge']['amount_captured']) ? absint($result['latest_charge']['amount_captured']) : (!empty($result['amount']) ? absint($result['amount']) : 0);
+				if($amountRefunded && $amountCaptured && $amountRefunded >= $amountCaptured){
 					$status = 'refunded';
-				}elseif(!empty($result['latest_charge']['amount_refunded']) && $result['latest_charge']['amount_refunded'] != $result['latest_charge']['amount_refunded']){
+				}elseif($amountRefunded){
 					$status = 'partially refunded';
 				}
 
@@ -329,6 +346,9 @@ $RegUserOrderSummaryOnlyText
 						array('%s'),
 						array('%d')
 					);
+				}
+				if($status==='refunded' && function_exists('cg_paid_actions_revoke_refunded_order')){
+					cg_paid_actions_revoke_refunded_order($OrderId);
 				}
 
 				if($status!='succeeded'){
@@ -400,6 +420,9 @@ $RegUserOrderSummaryOnlyText
 					array('%s'),
 					array('%d')
 				);
+			}
+			if($status==='REFUNDED' && function_exists('cg_paid_actions_revoke_refunded_order')){
+				cg_paid_actions_revoke_refunded_order($OrderId);
 			}
 
 			if($status!='COMPLETED'){
@@ -565,7 +588,7 @@ Payment type not set
 
 // will be determined in initSaleOrder
 	$cgFeControlsStyle = '';
-	$BorderRadiusClass = '';
+	$BorderRadiusClass = 'cg_border_radius_controls_and_containers';
 
 	echo "<div style='visibility: hidden;' id='mainCGdivOrderContainer' class='mainCGdivOrderContainer mainCGdiv' ></div>";
 

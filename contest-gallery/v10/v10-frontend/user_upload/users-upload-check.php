@@ -637,6 +637,32 @@ if(!$isManipulated){
 
     // manipulation fields check of fields --- END
 
+    $cgPaidActionUploadReservation = null;
+    if(empty($OrderItem) && function_exists('cg_paid_actions_maybe_reserve')){
+        $cgPaidActionUploadQuantity = (!empty($proOptions->AdditionalFiles)) ? 1 : max(1,absint($uploadQuantity));
+        $cgPaidActionUploadReservation = cg_paid_actions_maybe_reserve(
+            $galeryID,
+            'upload',
+            $cgPaidActionUploadQuantity,
+            'upload:'.md5(wp_json_encode(array_keys((array)$files['name'])))
+        );
+        if(is_wp_error($cgPaidActionUploadReservation)){
+            cg_paid_actions_output_frontend_error($galeryIDuser,'upload',$cgPaidActionUploadReservation);
+            ?>
+            <script data-cg-processing="true">
+                if(cgJsData[<?php echo wp_json_encode($galeryIDuser); ?>] && cgJsData[<?php echo wp_json_encode($galeryIDuser); ?>].vars.upload){
+                    cgJsData[<?php echo wp_json_encode($galeryIDuser); ?>].vars.upload.doneUploadFailed = true;
+                    cgJsData[<?php echo wp_json_encode($galeryIDuser); ?>].vars.upload.failMessage = <?php echo wp_json_encode($cgPaidActionUploadReservation->get_error_message()); ?>;
+                }
+            </script>
+            <?php
+            return;
+        }
+        if(is_array($cgPaidActionUploadReservation)){
+            $GLOBALS['cgPaidActionUploadReservation'] = $cgPaidActionUploadReservation;
+        }
+    }
+
     $AdditionalFilesArray = [];
     $nextId = 0;
     $ExifDataByRealIds = [];
@@ -644,7 +670,8 @@ if(!$isManipulated){
     $AdditionalFilesMainRealId = 0;
     $WpUploadBefore = 0;
     $realIdBefore = 0;
-    $cgCreatedEntryIds = array();
+	$cgCreatedEntryIds = array();
+	$cgPaidActionUploadFlags = cg_paid_actions_reservation_flags($cgPaidActionUploadReservation);
     $cgUploadedWpUploadIds = array();
     $cgAdditionalFilesExifByWpUpload = array();
     $cgPendingEntryActivations = array();
@@ -1031,16 +1058,16 @@ if(!$isManipulated){
 					( id, rowid, Timestamp, NamePic,
 					ImgType, CountC, CountR, Rating,
 					GalleryID, Active, Informed, WpUpload, Width, Height, WpUserId, IP,
-			        OrderItem)
+			        OrderItem,IsPaidAction,IsPaidActionPreview)
 					VALUES ( %s,%s,%d,%s,
 					%s,%d,%s,%s,
 					%d,%s,%s,%s,%s,%s,%s,%s,
-			        %d)
+			        %d,%d,%d)
 				",
                     '','',$unixadd,$dateiname,
                     $post_type,0,'','',
                     $galeryID,'','',$wp_image_id,$current_width,$current_height,$WpUserId,$userIP,
-                    $OrderItem
+                    $OrderItem,$cgPaidActionUploadFlags['isPaidAction'],$cgPaidActionUploadFlags['isPaidActionPreview']
                 ) );
 
                 $nextId = $wpdb->insert_id;
@@ -1744,6 +1771,9 @@ if(!$isManipulated){
             }
 
             $processedFilesCounter++;
+            if(is_array($cgPaidActionUploadReservation)){
+                cg_paid_actions_mark_reservation_progress($cgPaidActionUploadReservation,count($cgCreatedEntryIds),$cgCreatedEntryIds);
+            }
 
         }
 
@@ -1917,7 +1947,7 @@ if(!$isManipulated){
                     array('%d')
                 );
 
-                if(!empty($userMail) && $InformUsers == 1){
+                if(!cg_paid_actions_is_current_request_preview($galeryID) && !empty($userMail) && $InformUsers == 1){
                     include(plugin_dir_path(__FILE__).'mail_image_activation.php');
                 }
             }
@@ -1968,6 +1998,11 @@ if(!$isManipulated){
 
         }
 
+        if(is_array($cgPaidActionUploadReservation)){
+            cg_paid_actions_settle_reservation($cgPaidActionUploadReservation,count($cgCreatedEntryIds),$cgCreatedEntryIds);
+            unset($GLOBALS['cgPaidActionUploadReservation']);
+        }
+
     }
 
     /*var_dump('$AdditionalFilesArray new');
@@ -1975,15 +2010,15 @@ if(!$isManipulated){
     print_r($AdditionalFilesArray);
     echo "</pre>";*/
 
-    if($InformAdmin==1){
+    if(!cg_paid_actions_is_current_request_preview($galeryID) && $InformAdmin==1){
         include(plugin_dir_path(__FILE__).'mail_admin.php');
     }
 
-    if($InformUserUpload==1){
+    if(!cg_paid_actions_is_current_request_preview($galeryID) && $InformUserUpload==1){
         include(plugin_dir_path(__FILE__).'mail_user_upload.php');
     }
 
-    if($mailConfSettings->SendConfirm==1 && !empty($userMail) && is_user_logged_in()==false){
+    if(!cg_paid_actions_is_current_request_preview($galeryID) && $mailConfSettings->SendConfirm==1 && !empty($userMail) && is_user_logged_in()==false){
         if (filter_var($userMail, FILTER_VALIDATE_EMAIL)) {
             include(plugin_dir_path(__FILE__).'mail_confirm.php');
         }
@@ -2066,6 +2101,10 @@ if(!$isManipulated){
                 var arrayInfoDataForImageAddedEntries = <?php echo json_encode($arrayInfoDataForImageAddedEntries);?>;
                 var dataSlider = <?php echo json_encode($dataSlider);?>;
                 var dataSliderSortedPids = <?php echo json_encode($dataSliderSortedPids);?>;
+
+                if(!isFromUploadSale && cgJsClass.gallery.paidActions && cgJsClass.gallery.paidActions.consumeLocalBalance){
+                    cgJsClass.gallery.paidActions.consumeLocalBalance(gid,'upload',<?php echo json_encode(count($cgCreatedEntryIds));?>);
+                }
 
                 if(!isFromUploadSale){
                     cgJsClass.gallery.upload.functions.handleSuccessfulUpload({

@@ -60,8 +60,10 @@ if(!function_exists('cg_delete_images')){
             // checks can see that this ID changed.
             $jsonFile = $upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/frontend-added-or-removed-images/'.$value.'.txt';
             $fp = fopen($jsonFile, 'w');
-            fwrite($fp, '');
-            fclose($fp);
+            if(is_resource($fp)){
+                fwrite($fp, '');
+                fclose($fp);
+            }
 
             // Reload the row so file paths, attachment IDs and generated page IDs
             // come from the current persisted entry state.

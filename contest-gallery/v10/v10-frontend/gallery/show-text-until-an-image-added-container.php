@@ -6,7 +6,7 @@ if(!empty($options['general']['ShowTextUntilAnImageAdded'])){
 }
 
 $heredoc = <<<HEREDOC
-<div id="cgNoImagesFound$galeryIDuserForJs" class='cg_hide $cgFeControlsStyle cg-no-images-found-container'>
+<div id="cgNoImagesFound$galeryIDuserForJs" class='cg_hide $cgFeControlsStyle cg-no-images-found-container cg-gallery-status-card' role='status' aria-live='polite'>
     <div class='cg-no-images-found'>
     $language_NoEntriesFound
     </div>
@@ -15,7 +15,7 @@ HEREDOC;
 echo $heredoc;
 
 $heredoc = <<<HEREDOC
-<div id="cgShowTextUntilAnImageAdded$galeryIDuserForJs" class='cg_hide $cgFeControlsStyle cg-show-text-until-an-image-added'>
+<div id="cgShowTextUntilAnImageAdded$galeryIDuserForJs" class='cg_hide $cgFeControlsStyle cg-show-text-until-an-image-added cg-gallery-status-card' role='status' aria-live='polite'>
 $ShowTextUntilAnImageAdded
 </div>
 HEREDOC;

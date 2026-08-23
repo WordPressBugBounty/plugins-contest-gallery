@@ -164,7 +164,6 @@ if(floatval($galleryDbVersion)>=22 && $isEditEcommerceOnly){
     $OrderConfirmationMailCc = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->OrderConfirmationMailCc);
     $OrderConfirmationMailSubject = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->OrderConfirmationMailSubject);
     $OCMailOrderSummaryURL = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->OCMailOrderSummaryURL);
-    $BorderRadiusOrder = ($selectSQLecommerceOptions->BorderRadiusOrder==1) ? 'checked' : '';
     $FeControlsStyleWhiteOrder = ($selectSQLecommerceOptions->FeControlsStyleOrder=='white' OR empty($selectSQLecommerceOptions->FeControlsStyleOrder)) ? 'checked' : '';
     $FeControlsStyleBlackOrder = ($selectSQLecommerceOptions->FeControlsStyleOrder=='black') ? 'checked' : '';
     $ForwardAfterPurchaseUrl = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->ForwardAfterPurchaseUrl);
@@ -746,11 +745,8 @@ foreach($selectSQL3 as $value3){
     $ImageViewFullScreen = ($value3->ImageViewFullScreen==1) ? 'checked' : '';
     $SliderThumbNav = ($value3->SliderThumbNav==1) ? 'checked' : '';
     $BorderRadius = ($value3->BorderRadius==1) ? 'checked' : '';
-    $BorderRadiusUpload = ($value3->BorderRadiusUpload==1) ? 'checked' : '';
     $UploadRealWatermarkSettings = cg_upload_options_real_watermark_get_settings($value3);
     $UploadRealWatermarkChecked = cg_upload_options_real_watermark_is_active($value3->UploadRealWatermarkSettings) ? 'checked' : '';
-    $BorderRadiusRegistry = ($value3->BorderRadiusRegistry==1) ? 'checked' : '';
-    $BorderRadiusLogin = ($value3->BorderRadiusLogin==1) ? 'checked' : '';
     $CopyImageLink = ($value3->CopyImageLink==1) ? 'checked' : '';
     $CopyOriginalFileLink = ($value3->CopyOriginalFileLink==1) ? 'checked' : '';
     $ForwardOriginalFile = ($value3->ForwardOriginalFile==1) ? 'checked' : '';
@@ -781,13 +777,9 @@ $OpenAiKey = '';
 if(intval($galleryDbVersion)>=14){
     $optionsForGeneralIDsinceV14 = cg_get_registry_and_login_options_v14();
 
-    $BorderRadiusRegistry = $optionsForGeneralIDsinceV14['visual']['BorderRadiusRegistry'];
-    $BorderRadiusRegistry = ($BorderRadiusRegistry==1) ? 'checked' : '';
     $FeControlsStyleRegistry = $optionsForGeneralIDsinceV14['visual']['FeControlsStyleRegistry'];
     $FeControlsStyleWhiteRegistry = ($FeControlsStyleRegistry=='white' OR empty($FeControlsStyleRegistry)) ? 'checked' : '';
     $FeControlsStyleBlackRegistry = ($FeControlsStyleRegistry=='black') ? 'checked' : '';
-    $BorderRadiusLogin = $optionsForGeneralIDsinceV14['visual']['BorderRadiusLogin'];
-    $BorderRadiusLogin = ($BorderRadiusLogin==1) ? 'checked' : '';
     $FeControlsStyleLogin = $optionsForGeneralIDsinceV14['visual']['FeControlsStyleLogin'];
     $FeControlsStyleWhiteLogin = ($FeControlsStyleLogin=='white' OR empty($FeControlsStyleLogin)) ? 'checked' : '';
     $FeControlsStyleBlackLogin = ($FeControlsStyleLogin=='black') ? 'checked' : '';

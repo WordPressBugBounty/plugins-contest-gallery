@@ -1154,6 +1154,39 @@ if(!function_exists('post_cg1l_verify_pin')){
             // PLUGIN VERSION CHECK HERE
             contest_gal1ery_db_check();
 
+            $cgPinRequestKey = isset($_POST['cglActivationKey']) ? sanitize_text_field(wp_unslash($_POST['cglActivationKey'])) : '';
+            $cgPinMode = isset($_POST['cgPinMode']) ? sanitize_text_field(wp_unslash($_POST['cgPinMode'])) : '';
+            $cgPinChallenge = function_exists('cg_pin_auth_get_challenge') ? cg_pin_auth_get_challenge($cgPinRequestKey) : false;
+            $cgPinChallengeSource = ($cgPinChallenge && !empty($cgPinChallenge['source'])) ? $cgPinChallenge['source'] : '';
+            if($cgPinMode === 'access' || $cgPinChallengeSource === 'users-pin-access' || $cgPinChallengeSource === 'users-pin-login'){
+                $cgPin = isset($_POST['cgl_pin']) ? sanitize_text_field(wp_unslash($_POST['cgl_pin'])) : '';
+                $cgPinAllowedSource = ($cgPinMode === 'access' || $cgPinChallengeSource === 'users-pin-access') ? 'users-pin-access' : 'users-pin-login';
+                $cgPinResult = cg_pin_auth_verify($cgPinRequestKey,$cgPin,$cgPinAllowedSource);
+                if($cgPinResult===false){
+                    ?>
+                    <script data-cg-processing="true">
+                        cgJsClass.gallery.vars.pinMessage = 'expired';
+                    </script>
+                    <?php
+                    exit();
+                }
+                if(is_wp_error($cgPinResult)){
+                    $pinMessage = 'wrong-pin';
+                    if($cgPinResult->get_error_code()==='cg_pin_expired'){$pinMessage = 'expired';}
+                    if($cgPinResult->get_error_code()==='cg_pin_attempts'){$pinMessage = 'too-many-attempts';}
+                    ?>
+                    <script data-cg-processing="true">
+                        cgJsClass.gallery.vars.pinMessage = <?php echo wp_json_encode($pinMessage);?>;
+                    </script>
+                    <?php
+                    exit();
+                }
+                if(is_array($cgPinResult) && !empty($cgPinResult['userId'])){
+                    cg_pin_auth_login_result_script($cgPinResult['userId']);
+                    exit();
+                }
+            }
+
             $cg_users_pin_from_email_check = 1;
 
             include(__DIR__.'/../v10/v10-admin/users/frontend/registry/users-registry.php');
@@ -1182,6 +1215,26 @@ if(!function_exists('post_cg1l_resend_pin')){
             // PLUGIN VERSION CHECK HERE
             contest_gal1ery_db_check();
 
+            $cgPinRequestKey = isset($_POST['cglActivationKeyResend']) ? sanitize_text_field(wp_unslash($_POST['cglActivationKeyResend'])) : '';
+            $cgPinMode = isset($_POST['cgPinMode']) ? sanitize_text_field(wp_unslash($_POST['cgPinMode'])) : '';
+            $cgPinChallenge = function_exists('cg_pin_auth_get_challenge') ? cg_pin_auth_get_challenge($cgPinRequestKey) : false;
+            $cgPinChallengeSource = ($cgPinChallenge && !empty($cgPinChallenge['source'])) ? $cgPinChallenge['source'] : '';
+            if($cgPinMode === 'access' || $cgPinChallengeSource === 'users-pin-access' || $cgPinChallengeSource === 'users-pin-login'){
+                $cgPinResult = cg_pin_auth_resend($cgPinRequestKey);
+                $cgPinErrorData = is_wp_error($cgPinResult) ? $cgPinResult->get_error_data() : array();
+                $cgPinRetryAfter = is_array($cgPinResult) ? absint($cgPinResult['retryAfter']) : (is_array($cgPinErrorData) && !empty($cgPinErrorData['retryAfter']) ? absint($cgPinErrorData['retryAfter']) : 0);
+                $cgPinStatusMessage = is_wp_error($cgPinResult) ? $cgPinResult->get_error_message() : 'A six-digit PIN was sent to your email address.';
+                ?>
+                <script data-cg-processing="true"<?php echo is_array($cgPinResult) ? ' data-cg-success="true"' : ''; ?>>
+                    cgJsClass.gallery.vars.activationKey = <?php echo wp_json_encode(is_array($cgPinResult) ? $cgPinResult['requestKey'] : '');?>;
+                    cgJsClass.gallery.vars.pinMessage = <?php echo wp_json_encode(is_wp_error($cgPinResult) ? $cgPinResult->get_error_code() : '');?>;
+                    cgJsClass.gallery.vars.pinRetryAfter = <?php echo $cgPinRetryAfter;?>;
+                    cgJsClass.gallery.vars.pinStatusMessage = <?php echo wp_json_encode($cgPinStatusMessage);?>;
+                </script>
+                <?php
+                exit();
+            }
+
             include(__DIR__.'/../v10/v10-admin/users/frontend/registry/users-registry-resend-pin.php');
             exit();
 
@@ -1191,6 +1244,34 @@ if(!function_exists('post_cg1l_resend_pin')){
         }
     }
 
+}
+
+add_action('wp_ajax_post_cg1l_pin_access_request','post_cg1l_pin_access_request');
+add_action('wp_ajax_nopriv_post_cg1l_pin_access_request','post_cg1l_pin_access_request');
+if(!function_exists('post_cg1l_pin_access_request')){
+    function post_cg1l_pin_access_request(){
+        cg_check_frontend_nonce();
+        if(is_user_logged_in()){
+            wp_send_json_success(array('alreadyLoggedIn'=>true));
+        }
+        $email = isset($_POST['email']) ? sanitize_email(strtolower(wp_unslash($_POST['email']))) : '';
+        if(!is_email($email)){
+            wp_send_json_error(array('message'=>'Enter a valid email address.','code'=>'cg_pin_invalid_email'),400);
+        }
+        $result = cg_pin_auth_request($email,'users-pin-access',array('source'=>'users-pin-access'));
+        if(is_wp_error($result)){
+            $status = $result->get_error_code()==='cg_pin_rate_limited' ? 429 : 400;
+            $errorData = $result->get_error_data();
+            wp_send_json_error(array(
+                'message'=>$result->get_error_message(),'code'=>$result->get_error_code(),
+                'retryAfter'=>is_array($errorData) && !empty($errorData['retryAfter']) ? absint($errorData['retryAfter']) : 0
+            ),$status);
+        }
+        wp_send_json_success(array(
+            'requestKey'=>$result['requestKey'],'expiresIn'=>$result['expiresIn'],
+            'retryAfter'=>absint($result['retryAfter']),'message'=>'A six-digit PIN was sent to your email address.'
+        ));
+    }
 }
 
 add_action( 'wp_ajax_nopriv_post_cg_ecommerce_payment_processing', 'post_cg_ecommerce_payment_processing' );

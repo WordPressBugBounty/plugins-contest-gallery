@@ -52,7 +52,7 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class="cg_view_option cg_view_option_100_percent cg_border_bottom_none" >
                     <div class="cg_view_option_title" style="width: 100%;">
-                        <p style="margin-left: 0;">Two different user registration shortcode types available</p>
+                        <p style="margin-left: 0;">User registration and passwordless account access shortcodes</p>
                     </div>
                 </div>
            </div>
@@ -68,6 +68,7 @@ echo <<<HEREDOC
                     <div class="cg_view_option_title"  style="width: 100%;">
                         <p><code class="cg_shortcode_copy cg_tooltip"><span>[cg_users_pin]</span></code><br><span class="cg_view_option_title_note">User receives an <b>email with a PIN</b> and 
         <b>confirms it on the same page</b> (<b>no page reload</b>).<br><b>Only the email field is required</b> to fill out.<br>Additional fields can be added in "Edit user form".</span></p>
+                        <p><code class="cg_shortcode_copy cg_tooltip"><span>[cg_users_pin mode="access"]</span></code><br><span class="cg_view_option_title_note"><b>Passwordless account access</b> with email and PIN only.<br>Existing users are signed in. A new email address creates a minimal account after the PIN is confirmed.</span></p>
                     </div>
                 </div>
            </div>
@@ -249,18 +250,8 @@ HEREDOC;
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
         <p class='cg_view_options_rows_container_title'>Registry form shortcode <b>visual</b> configuration</p>
-        <div class="cg_view_options_row">
-            <div class="cg_view_option cg_view_option_100_percent" id="BorderRadiusContainer">
-                <div class="cg_view_option_title">
-                    <p style="margin-right: -30px;">Round borders form container and field inputs</p>
-                </div>
-                <div class="cg_view_option_checkbox cg_view_option_checked">
-                    <input type="checkbox" name="BorderRadiusRegistry" id="BorderRadiusRegistry" $BorderRadiusRegistry>
-                </div>
-            </div>
-    </div>
      <div class='cg_view_options_row '  >
-                <div class='cg_view_option cg_view_option_full_width cg_border_top_none'>
+                <div class='cg_view_option cg_view_option_full_width cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px'>
                     <div class='cg_view_option_title'>
                         <p>Background, fields and font color style</p>
                     </div>
@@ -377,7 +368,7 @@ min="0" max="59" step="1" value="$confirmExpiryMinutes" style="width:60px;" >
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse" id="wp-TextAfterPinConfirmation-wrap-Container">
                 <div class="cg_view_option_title">
-                    <p>Confirmation text after PIN verification<br><span class="cg_view_option_title_note">For [cg_users_pin] shortcode.</span></p>
+                    <p>Confirmation text after PIN verification<br><span class="cg_view_option_title_note">For [cg_users_pin] shortcode and Paid Actions PIN sign-in.</span></p>
                 </div>
                 <div class="cg_view_option_html">
                     <textarea class='cg-wp-editor-template' id='TextAfterPinConfirmation'  name='TextAfterPinConfirmation'>$TextAfterPinConfirmation</textarea>

@@ -896,6 +896,10 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
               }
           }
 
+          $paidActionCommentDetails = function_exists('cg_paid_actions_get_action_payment_details')
+              ? cg_paid_actions_get_action_payment_details($galeryNR,'comment',array_values($commentInsertIdsForLinkedVoteCheck))
+              : array();
+
           $linkedCommentVoteExists = false;
           if(!empty($commentInsertIdsForLinkedVoteCheck)){
               $linkedCommentVotePlaceholders = implode(',',array_fill(0,count($commentInsertIdsForLinkedVoteCheck),'%d'));
@@ -1053,6 +1057,7 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
         echo "<hr>";
 
         $cg_comment_id = '';
+        $commentInsertIdForOutput = 0;
         if(!empty($value['insert_id'])){
             $commentInsertIdForOutput = absint($value['insert_id']);
             if(!empty($commentInsertIdForOutput)){
@@ -1074,6 +1079,11 @@ echo '<input type="hidden"  id="cg_picture_id_comments" value="'.$pid.'">';
         $commentVoteValue = (!empty($value['vote'])) ? absint($value['vote']) : 0;
         if(!empty($commentVoteValue)){
             echo "<span class='cg_comment_vote' title='Vote: ".esc_attr($commentVoteValue)."'><span class='cg_comment_vote_star' aria-hidden='true'>&#9733;</span> ".esc_html($commentVoteValue)."</span>";
+        }
+        $paidActionCommentDetail = !empty($commentInsertIdForOutput) && !empty($paidActionCommentDetails[$commentInsertIdForOutput]) ? $paidActionCommentDetails[$commentInsertIdForOutput] : array();
+        $paidActionCommentBadge = function_exists('cg_paid_actions_admin_payment_badge') ? cg_paid_actions_admin_payment_badge($paidActionCommentDetail,$galeryNR) : '';
+        if($paidActionCommentBadge!==''){
+            echo "<span class='cg_comment_payment'>".$paidActionCommentBadge."</span>";
         }
         if(!empty($value['userIP'])){
             $userIP = esc_html(contest_gal1ery_convert_for_html_output_without_nl2br($value['userIP']));

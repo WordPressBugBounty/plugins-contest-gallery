@@ -37,18 +37,8 @@ HEREDOC;
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container cg_go_to_target'  data-cg-go-to-target="LoginFormShortcodeVisualConfiguration">
         <p class='cg_view_options_rows_container_title'>Login form shortcode <b>visual</b> configuration</p>
-        <div class="cg_view_options_row">
-            <div class="cg_view_option cg_view_option_100_percent" id="BorderRadiusContainer">
-                <div class="cg_view_option_title">
-                    <p style="margin-right: -30px;">Round borders form container and field inputs</p>
-                </div>
-                <div class="cg_view_option_checkbox cg_view_option_checked">
-                    <input type="checkbox" name="BorderRadiusLogin" id="BorderRadiusLogin" $BorderRadiusLogin>
-                </div>
-            </div>
-    </div>
      <div class='cg_view_options_row '  >
-                <div class='cg_view_option cg_view_option_full_width cg_border_top_none'>
+                <div class='cg_view_option cg_view_option_full_width cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px'>
                     <div class='cg_view_option_title'>
                         <p>Background, fields and font color style</p>
                     </div>

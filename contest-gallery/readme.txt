@@ -3,8 +3,9 @@ Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, openai
 Requires at least: 5.6
-Stable tag: 32.0.1
-Tested up to: 7.0.4
+Requires PHP: 5.6
+Stable tag: 33.0.0
+Tested up to: 7.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,6 +30,7 @@ Protect your image entries with real watermarks that are written into the public
 
 == Ecommerce PayPal and Stripe APIs available ==
 * Sell entries as **shipping**, **download** or **service**,  or **charge for uploads**, **via PayPal or Stripe API**. Configure **prices, shipping, taxes and currencies** for your products. Configure checkout notes and agreements. **Watermark image files, add download or service keys**. Selling download or service and charging for uploads only available in PRO version.
+* The separately available Contest Gallery PRO version also adds paid upload, voting and commenting credits directly to regular galleries.
 
 == Different file types upload form ==
 * **Upload form** for **different file types**
@@ -275,11 +277,16 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 
 == Changelog ==
 
-= 32.0.1 =
+= 33.0.0 =
+* IMPROVED: PIN-based registration and access now use six-digit codes, clearer resend countdowns and stronger request limits.
+* IMPROVED: Ecommerce checkout navigation and full-window gallery handling are more stable on desktop and mobile.
+* IMPROVED: General security hardening.
+* FIXED: Security issue.
 * FIXED: Multi-gallery overview shortcodes no longer inherit category filters, controls or empty-gallery text from an unrelated bootstrap gallery.
 * FIXED: Multi-gallery preview cards selected by highest rating or most comments now open the correct gallery reliably.
 * FIXED: One-star galleries with manually added votes now keep the complete visible total immediately after voting or undoing a vote.
 * FIXED: A first vote in a new browser now saves immediately when cookie checking and the vote-and-comment flow are enabled.
+* FIXED: The WordPress Media Library opened from "Add files / Social embed / OpenAI" now keeps the correct attachment grid width and vertical scrollbar.
 
 = 32.0.0 =
 * NEW: Added a modern two-step vote-and-comment dialog for one-star, average and cumulative voting, with required, optional or disabled comments and emoji support.

@@ -170,6 +170,10 @@ foreach($galleryToCopy as $key => $rowObject){
         $valueCollect[$key1] = $value1;
     }
 
+    if(function_exists('cg_paid_actions_normalize_copied_values')){
+        $valueCollect = cg_paid_actions_normalize_copied_values($valueCollect);
+    }
+
     $nextId = cg_copy_table_row('contest_gal1ery',$rowObject->id,['contest_gal1ery' => $valueCollect],$cgCopyType,$columns);
 
     $WpPageTitle = '';
