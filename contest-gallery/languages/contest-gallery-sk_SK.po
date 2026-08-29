@@ -1784,6 +1784,10 @@ msgid "You need an account to buy credits and participate in this gallery. Conti
 msgstr "Na nákup kreditov a účasť v tejto galérii potrebujete účet. Pokračujte v službe Google alebo získajte e-mailom šesťmiestny kód PIN."
 
 #: check-language-paid-actions.php
+msgid "You need an account to buy credits and participate in this gallery. Receive a six-digit PIN by email."
+msgstr "Na nákup kreditov a účasť v tejto galérii potrebujete účet. Nechajte si poslať šesťmiestny PIN e-mailom."
+
+#: check-language-paid-actions.php
 msgid "Email address"
 msgstr "E-mailová adresa"
 
@@ -1818,6 +1822,10 @@ msgstr "Prihlásenie bolo úspešné. Opätovné načítanie galérie…"
 #: check-language-paid-actions.php
 msgid "The sign-in form could not be loaded."
 msgstr "Prihlasovací formulár sa nepodarilo načítať."
+
+#: check-language-paid-actions.php
+msgid "Google sign-in is currently unavailable. Please use email instead."
+msgstr "Prihlásenie cez Google momentálne nie je dostupné. Namiesto toho použite e-mail."
 
 #: check-language-paid-actions.php
 msgid "PIN CONFIRMED"

@@ -4,8 +4,8 @@ Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, openai
 Requires at least: 5.6
 Requires PHP: 5.6
-Stable tag: 33.0.0
-Tested up to: 7.1.0
+Stable tag: 33.0.1
+Tested up to: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,10 +79,6 @@ Service terms: https://www.contest-gallery.net/terms-and-conditions/
 * **(No 100 uploads limitation anymore)**
 * Some options available in PRO version only
 * To have all options available please purchase [PRO version](https://www.contest-gallery.com/pro-version/)
-
-== Frontend video example ==
-
-https://www.youtube.com/watch?v=Us-EYffJtcU
 
 = Upload form and gallery examples =
 * [Different file types upload form and gallery](https://www.contest-gallery.com/different-file-types-upload-form-and-gallery/)
@@ -213,16 +209,14 @@ https://www.youtube.com/watch?v=Us-EYffJtcU
 * **Own translations can be added in backend**
 
 == Screenshots ==
-1. Gallery view
-2. Gallery view - dark style
-3. Opened single entry view
-4. Single entry view - dark style
-5. Upload form example
-6. Upload form - dark style
-7. Upload confirmation
-8. File entries gallery backend view
-9. Options example
-10. Upload form configuration example
+1. Live photo contest gallery with entries, votes, comments and descriptive titles
+2. Frontend upload form with image preview, category, title, description and email
+3. Two-step average rating and required comment dialog
+4. Voting options for rating types, vote-and-comment mode and voter recognition
+5. Backend contest entry management with activation, winners, ratings and comments
+6. Ecommerce product view with rating, price, shipping and purchase actions
+7. PDF and document gallery with previews, ratings and comments
+8. Responsive full-window gallery view captured on a smartphone
 
 == Installation ==
 
@@ -276,6 +270,21 @@ As many you like :)
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= 33.0.1 =
+* FIXED: Regular product sandbox checkouts no longer require a Paid Actions sandbox link.
+* FIXED: Existing download sale settings can be saved after switching galleries without requiring regenerated watermark data.
+* IMPROVED: Upload PIN access now uses the gallery-specific text configured for logged-out visitors.
+* IMPROVED: Voting and upload login prompts now use passwordless email access with optional Google Sign-In.
+* IMPROVED: Custom voting HTML messages now use neutral bright and dark surfaces with vertically aligned content.
+* IMPROVED: Custom voting HTML messages now use bright and dark status cards while preserving interactive links and rich content.
+* FIXED: Visible one-star ratings no longer accept pointer interactions when voting is disabled.
+* NEW: Voting for cg_gallery can be enabled, shown read-only or hidden while other gallery shortcode variants remain independently configurable.
+* FIXED: Paid-action sign-in no longer reserves empty Google button space when Google is not configured and falls back to email when the button cannot load.
+* FIXED: Paid-action email PIN sign-in now places the full-width submit button below the email field.
+* FIXED: Read-only ecommerce rating visibility no longer authorizes direct voting requests.
+* FIXED: Legacy galleries with missing entry-opening settings now fall back to the full-window blog view instead of rendering a broken inline entry view.
+* IMPROVED: Legacy hash-URL galleries now show a clear backend migration notice that support has ended and recommend a complete copy with current entry URLs.
 
 = 33.0.0 =
 * IMPROVED: PIN-based registration and access now use six-digit codes, clearer resend countdowns and stronger request limits.

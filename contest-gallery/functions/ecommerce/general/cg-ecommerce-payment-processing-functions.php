@@ -466,6 +466,14 @@ if(!function_exists('cg_ecommerce_resolve_checkout_environment')) {
 			if(cg_ecommerce_prepare_visitor_product_sandbox_context($authoritativeCart,$paymentType)){
 				return array('success'=>true,'is_test'=>1,'environment'=>'sandbox','paid_actions_sandbox'=>0,'visitor_product_sandbox'=>1);
 			}
+			$requestedMode = !empty($_REQUEST['cg_paid_actions_checkout_mode']) ? sanitize_key(wp_unslash($_REQUEST['cg_paid_actions_checkout_mode'])) : '';
+			if(
+				$requestedMode==='' &&
+				!empty($authoritativeCart['cart_type']) &&
+				$authoritativeCart['cart_type']==='products'
+			){
+				return array('success'=>true,'is_test'=>1,'environment'=>'sandbox','paid_actions_sandbox'=>0,'visitor_product_sandbox'=>0);
+			}
 			if(!is_user_logged_in() || !current_user_can('manage_options')){
 				return array('success'=>false,'message'=>'Sandbox checkout is available only to administrators or through a valid Paid Actions sandbox link.');
 			}

@@ -98,6 +98,7 @@ if(function_exists('cg_entry_watermark_collect_wp_upload_ids_from_rows') && !emp
 }
 echo '<input type="hidden"  id="cgGalleryID" value="'. $GalleryID .'">';
 include(dirname(__FILE__) . "/../nav-gallery.php");
+cg_legacy_gallery_url_notice($GalleryID,$galleryDbVersion,'editor');
 include("header-1.php");
 
 $gmt_offset = get_option('gmt_offset');

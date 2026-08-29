@@ -128,6 +128,7 @@ return array(
         'CommentsOutGallery' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 01.01.2016
         'RatingOutGallery' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),
         'AllowRatingAverage' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 21.07.2026
+        'DisableVotingForGallery' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 28.08.2026
         'VoteCommentMode' => array('COLUMN_TYPE' => 'VARCHAR(10)','DEFAULT' => '"disabled"'),// Update 02.08.2026
         'ForwardToURL' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 1),//  Update ab 05.02.2016
         'ForwardFrom' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 1),

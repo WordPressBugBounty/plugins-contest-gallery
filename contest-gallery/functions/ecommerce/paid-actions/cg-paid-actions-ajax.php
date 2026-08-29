@@ -566,6 +566,7 @@ if(!function_exists('post_cg_paid_actions_state')){
 			}
 		}
 		$googleOptions = function_exists('cg_get_google_options') ? cg_get_google_options() : false;
+		$googleClientId = (!empty($googleOptions) && !empty($googleOptions->ClientId)) ? contest_gal1ery_convert_for_html_output_without_nl2br($googleOptions->ClientId) : '';
 		$googleButtonStyle = (!empty($googleOptions) && !empty($googleOptions->ButtonStyle) && $googleOptions->ButtonStyle==='dark') ? 'dark' : 'bright';
 		$previewJson = cg_paid_actions_preview_for_json($preview);
 		if($previewJson && !$isSandbox){
@@ -580,9 +581,9 @@ if(!function_exists('post_cg_paid_actions_state')){
 			'nonce'=>wp_create_nonce('cg1l_action'),
 			'preview'=>$previewJson,
 			'previewToken'=>$bootstrapToken,
-			'googleClientId'=>!empty($googleOptions->ClientId) ? contest_gal1ery_convert_for_html_output_without_nl2br($googleOptions->ClientId) : '',
+			'googleClientId'=>$googleClientId,
 			'googleButtonStyle'=>$googleButtonStyle,
-			'authHtml'=>cg_pin_auth_render_paid_actions_auth($isSandbox)
+			'authHtml'=>cg_pin_auth_render_paid_actions_auth($isSandbox,!empty($googleClientId))
 		));
 	}
 }

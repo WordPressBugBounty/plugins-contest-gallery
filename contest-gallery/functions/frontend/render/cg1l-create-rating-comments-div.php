@@ -13,23 +13,9 @@ if(!function_exists('cg1l_create_rating_comments_gallery')){
             $ratingOptions['general']['AllowRating'] = absint($fullData['AllowRatingToCheck']);
             $ratingOptions['general']['AllowRatingAverage'] = (!empty($fullData['AllowRatingAverageToCheck'])) ? 1 : 0;
         }
-        $allowRating = (!empty($ratingOptions['general']['AllowRating'])) ? absint($ratingOptions['general']['AllowRating']) : 0;
         $ratingType = cg1l_get_rating_type($ratingOptions);
         $allowComments = (!empty($options['general']['AllowComments'])) ? absint($options['general']['AllowComments']) : 0;
-        $shouldRenderRating = ($allowRating === 1 || $allowRating === 2 || $allowRating >= 12);
-
-        if($shouldRenderRating && $shortcode_name === 'cg_gallery_no_voting' && empty($options['general']['RatingVisibleForGalleryNoVoting'])){
-            $shouldRenderRating = false;
-        }
-
-        if(
-            $shouldRenderRating &&
-            $shortcode_name === 'cg_gallery_ecommerce' &&
-            empty($options['general']['RatingVisibleForGalleryEcommerce']) &&
-            empty($options['general']['AllowRatingForGalleryEcommerce'])
-        ){
-            $shouldRenderRating = false;
-        }
+        $shouldRenderRating = cg1l_is_rating_visible_for_shortcode($shortcode_name,$ratingOptions);
 
         $shouldRenderComments = ($allowComments >= 1);
 

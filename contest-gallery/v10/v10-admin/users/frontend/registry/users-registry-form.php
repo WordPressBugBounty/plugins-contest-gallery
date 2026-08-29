@@ -39,6 +39,17 @@ if(!$intervalConf['shortcodeIsActive']){
     $cgUsersPinModeValue = ($shortcode_name === 'cg_users_pin' && !empty($cgUsersPinMode) && $cgUsersPinMode === 'access') ? 'access' : 'register';
     $cgUsersPinModeClass = $cgUsersPinModeValue === 'access' ? ' cg_users_pin_access' : '';
     $cgUsersPinContainerModeClass = $cgUsersPinModeValue === 'access' ? ' cg_users_pin_access_mode' : '';
+    $cgUsersPinAccessGoogleClientId = '';
+    $cgUsersPinAccessGoogleTheme = 'outline';
+
+    if($cgUsersPinModeValue === 'access' && !empty($isShowPinFormVotingUploading) && function_exists('cg_get_google_options') && function_exists('cg_google_sign_in_lib_checks')){
+        $cgUsersPinAccessGoogleOptions = cg_get_google_options();
+        $cgUsersPinAccessGoogleLibStatus = cg_google_sign_in_lib_checks();
+        if(!empty($cgUsersPinAccessGoogleOptions->ClientId) && empty($cgUsersPinAccessGoogleLibStatus['error'])){
+            $cgUsersPinAccessGoogleClientId = trim((string)$cgUsersPinAccessGoogleOptions->ClientId);
+            $cgUsersPinAccessGoogleTheme = (!empty($cgUsersPinAccessGoogleOptions->ButtonStyle) && $cgUsersPinAccessGoogleOptions->ButtonStyle === 'dark') ? 'filled_blue' : 'outline';
+        }
+    }
 
     echo contest_gal1ery_convert_for_html_output_without_nl2br($intervalConf['TextWhenShortcodeIntervalIsOn']);
 
@@ -54,7 +65,14 @@ if(!$intervalConf['shortcodeIsActive']){
         echo "<div id='cg_user_registry_div_before' class='cg_user_registry_div_before$cgUsersPinBeforeClass'>";
         if($shortcode_name == 'cg_users_pin'){
             if($cgUsersPinModeValue === 'access'){
-                echo '<div class="cg_users_pin_access_intro">'.contest_gal1ery_convert_for_html_output_without_nl2br($registry_and_login_options->TextBeforePinFormBeforeLoggedIn).'</div>';
+                if(!empty($isShowPinFormVotingUploading)){
+                    $cgUsersPinUploadIntroText = !empty($cgUsersPinUploadIntro) ? $cgUsersPinUploadIntro : $registry_and_login_options->TextBeforePinFormBeforeLoggedIn;
+                    echo '<div class="cg_users_pin_access_intro cg_users_pin_access_intro_default">'.contest_gal1ery_convert_for_html_output_without_nl2br($registry_and_login_options->TextBeforePinFormBeforeLoggedIn).'</div>';
+                    echo '<div class="cg_users_pin_access_intro cg_users_pin_access_intro_voting">'.esc_html($language_OnlyRegisteredUsersCanVote).'</div>';
+                    echo '<div class="cg_users_pin_access_intro cg_users_pin_access_intro_upload">'.contest_gal1ery_convert_for_html_output_without_nl2br($cgUsersPinUploadIntroText).'</div>';
+                }else{
+                    echo '<div class="cg_users_pin_access_intro">'.contest_gal1ery_convert_for_html_output_without_nl2br($registry_and_login_options->TextBeforePinFormBeforeLoggedIn).'</div>';
+                }
             }else{
                 echo contest_gal1ery_convert_for_html_output_without_nl2br($registry_and_login_options->TextBeforePinFormBeforeLoggedIn);
             }
@@ -62,6 +80,13 @@ if(!$intervalConf['shortcodeIsActive']){
             echo contest_gal1ery_convert_for_html_output_without_nl2br($registry_and_login_options->TextBeforeRegFormBeforeLoggedIn);
         }
         echo "</div>";
+
+        if($cgUsersPinAccessGoogleClientId !== ''){
+            echo '<div class="cg_users_pin_access_google_sign_in cg_hide" data-cg-google-client-id="'.esc_attr($cgUsersPinAccessGoogleClientId).'" data-cg-google-button-theme="'.esc_attr($cgUsersPinAccessGoogleTheme).'">';
+            echo '<div class="cg_users_pin_access_google_button"></div>';
+            echo '<div class="cg_users_pin_access_or"><span>'.esc_html__('or','contest-gallery').'</span></div>';
+            echo '</div>';
+        }
     }
 
     echo "<input type='hidden' id='cg_check_mail_name_value' class='cg_check_mail_name_value' value='0'>";

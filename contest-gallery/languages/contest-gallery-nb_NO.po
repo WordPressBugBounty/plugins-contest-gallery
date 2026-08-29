@@ -1677,6 +1677,10 @@ msgid "You need an account to buy credits and participate in this gallery. Conti
 msgstr "Du trenger en konto for å kjøpe kreditter og delta i dette galleriet. Fortsett med Google eller motta en sekssifret PIN-kode på e-post."
 
 #: check-language-paid-actions.php
+msgid "You need an account to buy credits and participate in this gallery. Receive a six-digit PIN by email."
+msgstr "Du trenger en konto for å kjøpe kreditter og delta i dette galleriet. Motta en sekssifret PIN-kode på e-post."
+
+#: check-language-paid-actions.php
 msgid "Email address"
 msgstr "E-postadresse"
 
@@ -1711,6 +1715,10 @@ msgstr "Pålogging vellykket. Laster inn galleriet på nytt …"
 #: check-language-paid-actions.php
 msgid "The sign-in form could not be loaded."
 msgstr "Påloggingsskjemaet kunne ikke lastes inn."
+
+#: check-language-paid-actions.php
+msgid "Google sign-in is currently unavailable. Please use email instead."
+msgstr "Google-pålogging er ikke tilgjengelig for øyeblikket. Bruk e-post i stedet."
 
 #: check-language-paid-actions.php
 msgid "PIN CONFIRMED"

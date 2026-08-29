@@ -1,19 +1,5 @@
 <?php
 
-if(!function_exists('cg1l_is_voting_possible_for_shortcode')){
-    function cg1l_is_voting_possible_for_shortcode($shortcode_name, $options = []){
-        if($shortcode_name === 'cg_gallery'){
-            return true;
-        }
-
-        if($shortcode_name === 'cg_gallery_ecommerce' && !empty($options['general']['AllowRatingForGalleryEcommerce'])){
-            return true;
-        }
-
-        return false;
-    }
-}
-
 /**
  * Print the rating UI (single-star style) with accessibility markup only.
  *
@@ -80,6 +66,9 @@ if(!function_exists('cg1l_render_rating_component_entry_one_star')){
         $cg1l_render_center_div_reload = cg1l_render_center_div_reload_one_star($realId,$gid,$realGid,$alreadyVotedUi,$ratingCount,$shortcode_name,$options);
 
         $galleryRatingClass = 'cg_gallery_rating_div cg_gallery_rating_div_one_star';
+        if(!$isVotingPossible){
+            $galleryRatingClass .= ' cg_pointer_events_none';
+        }
 
         return '<div id="' . esc_attr($ratingDivId) . '" class="cg-center-image-rating-div cgHundertPercentWidth" role="group" aria-label="' . esc_attr($ariaLabel) . '">
     <div class="' . esc_attr($galleryRatingClass) . '" id="' . esc_attr($galleryRatingId) . '">

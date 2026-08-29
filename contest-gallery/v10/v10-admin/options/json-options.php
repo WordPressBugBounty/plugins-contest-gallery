@@ -154,6 +154,7 @@ $jsonOptions['general']['VoteCommentMode'] = $VoteCommentMode;
 $jsonOptions['general']['CommentsOutGallery'] = $CommentsOutGallery;
 $jsonOptions['general']['AllowRating'] = $AllowRating;
 $jsonOptions['general']['AllowRatingAverage'] = $AllowRatingAverage;
+$jsonOptions['general']['DisableVotingForGallery'] = $DisableVotingForGallery;
 $jsonOptions['general']['VotesPerUser'] = $VotesPerUser;
 $jsonOptions['general']['RatingOutGallery'] = $RatingOutGallery;
 $jsonOptions['general']['IpBlock'] = $IpBlock;

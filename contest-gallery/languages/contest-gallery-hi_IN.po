@@ -1850,6 +1850,10 @@ msgid "You need an account to buy credits and participate in this gallery. Conti
 msgstr "क्रेडिट खरीदने और इस गैलरी में भाग लेने के लिए आपको एक खाते की आवश्यकता है। Google के साथ जारी रखें या ईमेल द्वारा छह अंकों का पिन प्राप्त करें।"
 
 #: check-language-paid-actions.php
+msgid "You need an account to buy credits and participate in this gallery. Receive a six-digit PIN by email."
+msgstr "क्रेडिट खरीदने और इस गैलरी में भाग लेने के लिए आपको एक खाते की आवश्यकता है। ईमेल द्वारा छह अंकों का पिन प्राप्त करें।"
+
+#: check-language-paid-actions.php
 msgid "Email address"
 msgstr "ईमेल पता"
 
@@ -1884,6 +1888,10 @@ msgstr "साइन-इन सफल. गैलरी पुनः लोड �
 #: check-language-paid-actions.php
 msgid "The sign-in form could not be loaded."
 msgstr "साइन-इन फ़ॉर्म लोड नहीं किया जा सका."
+
+#: check-language-paid-actions.php
+msgid "Google sign-in is currently unavailable. Please use email instead."
+msgstr "Google साइन-इन फ़िलहाल उपलब्ध नहीं है। इसके बजाय ईमेल का उपयोग करें।"
 
 #: check-language-paid-actions.php
 msgid "PIN CONFIRMED"

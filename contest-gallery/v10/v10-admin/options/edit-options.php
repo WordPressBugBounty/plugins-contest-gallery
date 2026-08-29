@@ -466,12 +466,19 @@ $ContentUserVoteMail = contest_gal1ery_convert_for_html_output_without_nl2br($Co
     $selectedCheckComments = ($selectSQL1->AllowComments==1) ? 'checked' : '';
     $AllowRating = $selectSQL1->AllowRating;
     $AllowRatingAverage = (!empty($selectSQL1->AllowRatingAverage)) ? 1 : 0;
+    $DisableVotingForGallery = isset($selectSQL1->DisableVotingForGallery) ? intval($selectSQL1->DisableVotingForGallery) : 0;
+    if(!in_array($DisableVotingForGallery,array(0,1,2),true)){
+        $DisableVotingForGallery = 0;
+    }
     if($AllowRating==1){// because of old logic, where 1 = 5 stars
         $AllowRating = 15;
     }
     $selectedCheckRating = (!$AllowRatingAverage && ($selectSQL1->AllowRating==1 OR ($selectSQL1->AllowRating>=12 && $selectSQL1->AllowRating<=20))) ? 'checked' : '';
     $selectedCheckRatingAverage = ($AllowRatingAverage && ($selectSQL1->AllowRating==1 OR ($selectSQL1->AllowRating>=12 && $selectSQL1->AllowRating<=20))) ? 'checked' : '';
     $selectedCheckRating2 = ($selectSQL1->AllowRating==2) ? 'checked' : '';
+    $selectedDisableVotingForGalleryEnabled = ($DisableVotingForGallery === 0) ? 'checked' : '';
+    $selectedDisableVotingForGalleryVisible = ($DisableVotingForGallery === 1) ? 'checked' : '';
+    $selectedDisableVotingForGalleryHidden = ($DisableVotingForGallery === 2) ? 'checked' : '';
     $VoteCommentMode = (!empty($selectSQL1->VoteCommentMode) && in_array($selectSQL1->VoteCommentMode, array('required','optional','disabled'), true)) ? $selectSQL1->VoteCommentMode : 'disabled';
     $VoteCommentModeRequired = ($VoteCommentMode === 'required') ? 'checked' : '';
     $VoteCommentModeOptional = ($VoteCommentMode === 'optional') ? 'checked' : '';
@@ -1058,6 +1065,8 @@ if(floatval($galleryDbVersion)>=12.10){
 $galleriesOptions = cg_get_galleries_options_all();
 
 require_once(dirname(__FILE__) . "/../nav-menu.php");
+
+cg_legacy_gallery_url_notice($GalleryID,$galleryDbVersion,'editor');
 
 $cgPHPversionClient = phpversion();
 $cgGoogleSignInLibVersionClient = 'built-in verifier';// legacy variable name for Google sign in test page

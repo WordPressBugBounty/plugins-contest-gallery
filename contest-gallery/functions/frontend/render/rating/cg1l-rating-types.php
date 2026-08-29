@@ -26,6 +26,87 @@ if(!function_exists('cg1l_is_average_rating_enabled')){
     }
 }
 
+if(!function_exists('cg1l_get_voting_mode_for_gallery')){
+    function cg1l_get_voting_mode_for_gallery($options){
+        $mode = (!empty($options['general']['DisableVotingForGallery'])) ? intval($options['general']['DisableVotingForGallery']) : 0;
+
+        return in_array($mode,array(0,1,2),true) ? $mode : 0;
+    }
+}
+
+if(!function_exists('cg1l_is_rating_visible_for_shortcode')){
+    function cg1l_is_rating_visible_for_shortcode($shortcode_name,$options = array()){
+        if(cg1l_get_rating_type($options) === 'none'){
+            return false;
+        }
+
+        if($shortcode_name === 'cg_gallery' && cg1l_get_voting_mode_for_gallery($options) === 2){
+            return false;
+        }
+
+        if($shortcode_name === 'cg_gallery_no_voting' && empty($options['general']['RatingVisibleForGalleryNoVoting'])){
+            return false;
+        }
+
+        if(
+            $shortcode_name === 'cg_gallery_ecommerce' &&
+            empty($options['general']['RatingVisibleForGalleryEcommerce']) &&
+            empty($options['general']['AllowRatingForGalleryEcommerce'])
+        ){
+            return false;
+        }
+
+        return true;
+    }
+}
+
+if(!function_exists('cg1l_is_voting_possible_for_shortcode')){
+    function cg1l_is_voting_possible_for_shortcode($shortcode_name,$options = array()){
+        if(cg1l_get_rating_type($options) === 'none'){
+            return false;
+        }
+
+        if($shortcode_name === 'cg_gallery'){
+            return cg1l_get_voting_mode_for_gallery($options) === 0;
+        }
+
+        if($shortcode_name === 'cg_gallery_ecommerce' && !empty($options['general']['AllowRatingForGalleryEcommerce'])){
+            return true;
+        }
+
+        return false;
+    }
+}
+
+if(!function_exists('cg1l_get_shortcode_name_from_gallery_id_user')){
+    function cg1l_get_shortcode_name_from_gallery_id_user($galleryIdUser,$galleryId){
+        $galleryIdUser = (string)$galleryIdUser;
+        $galleryId = (string)absint($galleryId);
+
+        if($galleryIdUser === $galleryId.'-u' || strpos($galleryIdUser,$galleryId.'-u-ext-') === 0){
+            return 'cg_gallery_user';
+        }
+
+        if($galleryIdUser === $galleryId.'-nv' || strpos($galleryIdUser,$galleryId.'-nv-ext-') === 0){
+            return 'cg_gallery_no_voting';
+        }
+
+        if($galleryIdUser === $galleryId.'-w' || strpos($galleryIdUser,$galleryId.'-w-ext-') === 0){
+            return 'cg_gallery_winner';
+        }
+
+        if($galleryIdUser === $galleryId.'-ec' || strpos($galleryIdUser,$galleryId.'-ec-ext-') === 0){
+            return 'cg_gallery_ecommerce';
+        }
+
+        if($galleryIdUser === $galleryId || strpos($galleryIdUser,$galleryId.'-ext-') === 0){
+            return 'cg_gallery';
+        }
+
+        return '';
+    }
+}
+
 if(!function_exists('cg1l_get_multi_star_rating_limit')){
     function cg1l_get_multi_star_rating_limit($options){
         $allowRating = (!empty($options['general']['AllowRating'])) ? intval($options['general']['AllowRating']) : 0;

@@ -71,15 +71,7 @@ if(!function_exists('cg1l_get_entry_aggregate_rating_schema')){
             return array();
         }
 
-        if($shortcodeName === 'cg_gallery_no_voting' && empty($options['general']['RatingVisibleForGalleryNoVoting'])){
-            return array();
-        }
-
-        if(
-            $shortcodeName === 'cg_gallery_ecommerce' &&
-            empty($options['general']['RatingVisibleForGalleryEcommerce']) &&
-            empty($options['general']['AllowRatingForGalleryEcommerce'])
-        ){
+        if(!cg1l_is_rating_visible_for_shortcode($shortcodeName,$options)){
             return array();
         }
 

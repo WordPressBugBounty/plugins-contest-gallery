@@ -1858,6 +1858,10 @@ msgid "You need an account to buy credits and participate in this gallery. Conti
 msgstr "Sie benötigen ein Konto, um Guthaben zu kaufen und an dieser Galerie teilzunehmen. Fahren Sie mit Google fort oder erhalten Sie per E-Mail eine sechsstellige PIN."
 
 #: check-language-paid-actions.php
+msgid "You need an account to buy credits and participate in this gallery. Receive a six-digit PIN by email."
+msgstr "Sie benötigen ein Konto, um Guthaben zu kaufen und an dieser Galerie teilzunehmen. Lassen Sie sich einen sechsstelligen PIN per E-Mail zusenden."
+
+#: check-language-paid-actions.php
 msgid "Email address"
 msgstr "E-Mail-Adresse"
 
@@ -1892,6 +1896,10 @@ msgstr "Anmeldung erfolgreich. Die Galerie wird neu geladen…"
 #: check-language-paid-actions.php
 msgid "The sign-in form could not be loaded."
 msgstr "Das Anmeldeformular konnte nicht geladen werden."
+
+#: check-language-paid-actions.php
+msgid "Google sign-in is currently unavailable. Please use email instead."
+msgstr "Die Google-Anmeldung ist derzeit nicht verfügbar. Bitte verwenden Sie stattdessen E-Mail."
 
 #: check-language-paid-actions.php
 msgid "PIN CONFIRMED"

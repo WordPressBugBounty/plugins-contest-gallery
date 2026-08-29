@@ -1,19 +1,5 @@
 <?php
 
-if(!function_exists('cg1l_is_voting_possible_for_shortcode')){
-    function cg1l_is_voting_possible_for_shortcode($shortcode_name, $options = []){
-        if($shortcode_name === 'cg_gallery'){
-            return true;
-        }
-
-        if($shortcode_name === 'cg_gallery_ecommerce' && !empty($options['general']['AllowRatingForGalleryEcommerce'])){
-            return true;
-        }
-
-        return false;
-    }
-}
-
 if(!function_exists('cg1l_get_rating_gallery_one_star')){
     function cg1l_get_rating_gallery_one_star($galeryIDuserForJs,$fullData,$options,$shortcode_name,$votedUserPids,$isCGalleries = false){
         $ratingCount = cg1l_get_one_star_rating_count($fullData,$options,$votedUserPids,$isCGalleries);

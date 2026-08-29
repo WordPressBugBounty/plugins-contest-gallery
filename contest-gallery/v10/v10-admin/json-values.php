@@ -57,6 +57,7 @@ $VoteCommentMode = 'optional';
 $CommentsOutGallery = 0;
 $AllowRating = 15;
 $AllowRatingAverage = 1;
+$DisableVotingForGallery = 0;
 $VotesPerUser = 0;
 $RatingOutGallery = 0;
 $ShowAlways = 3;

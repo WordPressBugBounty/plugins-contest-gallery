@@ -372,6 +372,8 @@ $unix = time();
 			$backgroundColor = "#ECECEC";
 		}
 
+		cg_legacy_gallery_url_notice($option_id,$galleryDbVersion,'overview');
+
 		echo "<div class='table_gallery_info'>";
 
 		$phpDateOffset = date( 'Z' );

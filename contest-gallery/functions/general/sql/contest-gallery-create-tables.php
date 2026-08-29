@@ -402,6 +402,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		CommentsOutGallery TINYINT DEFAULT 0,
 		AllowRating TINYINT DEFAULT 0,
 		AllowRatingAverage TINYINT DEFAULT 0,
+		DisableVotingForGallery TINYINT DEFAULT 0,
 		VotesPerUser INT(5) DEFAULT 0,
 		RatingOutGallery TINYINT DEFAULT 0,
 		ShowAlways TINYINT DEFAULT 1,

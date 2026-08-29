@@ -112,11 +112,12 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                <div class='cg_view_option cg_view_option_100_percent cg_border_top_none $cgProFalse' id="ShowPinFormVotingContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Show user-friendly PIN-based email verification form for unregistered users<br/>
+                        <p>Show passwordless access options for voting<br/>
                             <span class="cg_view_option_title_note">
-                                When a not-logged-in user clicks on voting, the [cg_users_pin] form appears.<br/>
-                                The user can enter an email address and receive a PIN.<br/>
-                                After entering the PIN, the <b>user can start voting without reloading the page.</b>
+                                When a not-logged-in user clicks on voting, the <code>[cg_users_pin mode="access"]</code> form appears.<br/>
+                                If Google Sign-In is configured, it is shown as an additional sign-in option.<br/>
+                                Existing users sign in by email and PIN. A new email address creates a minimal account after PIN confirmation.<br/>
+                                After PIN confirmation, the <b>user can start voting without reloading the page.</b>
                             </span>
                         </p>
                     </div>
@@ -313,6 +314,33 @@ echo <<<HEREDOC
                                 </div>
                                 <div class='cg_backend_star_on cg_options_show cgl_heart'></div>
                             </div>
+                    </div>
+                </div>
+            </div>
+            <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_view_option_full_width cg_border_bottom_none' id="DisableVotingForGalleryContainer" >
+                    <div class='cg_view_option_title'>
+                        <p>Voting for cg_gallery<br><span class="cg_view_option_title_note"><span class="cg_note_label">NOTE:</span> <span class="cg_note_text" style="font-style: normal;">Rating visibility for cg_gallery_no_voting and cg_gallery_ecommerce remains separately configurable. Voting via cg_gallery_ecommerce will still work if voting is enabled there.</span></span></p>
+                    </div>
+                    <div class='cg_view_option_radio_multiple'>
+                        <div class='cg_view_option_radio_multiple_container'>
+                            <div class='cg_view_option_radio_multiple_title'>Voting enabled</div>
+                            <div class='cg_view_option_radio_multiple_input'>
+                                <input type="radio" name="DisableVotingForGallery" class="DisableVotingForGallery cg_view_option_radio_multiple_input_field" value="0" $selectedDisableVotingForGalleryEnabled>
+                            </div>
+                        </div>
+                        <div class='cg_view_option_radio_multiple_container'>
+                            <div class='cg_view_option_radio_multiple_title'>Voting disabled, rating visible</div>
+                            <div class='cg_view_option_radio_multiple_input'>
+                                <input type="radio" name="DisableVotingForGallery" class="DisableVotingForGallery cg_view_option_radio_multiple_input_field" value="1" $selectedDisableVotingForGalleryVisible>
+                            </div>
+                        </div>
+                        <div class='cg_view_option_radio_multiple_container'>
+                            <div class='cg_view_option_radio_multiple_title'>Voting disabled, rating hidden</div>
+                            <div class='cg_view_option_radio_multiple_input'>
+                                <input type="radio" name="DisableVotingForGallery" class="DisableVotingForGallery cg_view_option_radio_multiple_input_field" value="2" $selectedDisableVotingForGalleryHidden>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

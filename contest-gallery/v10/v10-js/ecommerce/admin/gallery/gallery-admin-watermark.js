@@ -17,6 +17,10 @@ cgJsClassAdmin.gallery.functions.initWatermarkSettings = function($,$cgSellConta
     }
     debugger
     cgJsClassAdmin.gallery.vars.WatermarkSettings = {};
+    cgJsClassAdmin.gallery.vars.base64andAltFileValues = cgJsClassAdmin.gallery.vars.base64andAltFileValues || {};
+    cgJsClassAdmin.gallery.vars.base64andAltFileTypes = cgJsClassAdmin.gallery.vars.base64andAltFileTypes || {};
+    cgJsClassAdmin.gallery.vars.base64andAltFileValues[realId] = cgJsClassAdmin.gallery.vars.base64andAltFileValues[realId] || {};
+    cgJsClassAdmin.gallery.vars.base64andAltFileTypes[realId] = cgJsClassAdmin.gallery.vars.base64andAltFileTypes[realId] || {};
 
     var cg_multiple_files_for_post =  cgJsClassAdmin.gallery.functions.getMultipleFileForPost($sortableDiv,realId);
     if(cg_multiple_files_for_post){

@@ -90,17 +90,23 @@ else {
         <?php
         return;
     }
-	if(isset($optionsSource[$galeryID.'-ec'])){
-		$RatingVisibleForGalleryEcommerce = (!empty($optionsSource[$galeryID.'-ec']['general']['RatingVisibleForGalleryEcommerce'])) ? 1 : 0;
-		$AllowRatingForGalleryEcommerce = (!empty($optionsSource[$galeryID.'-ec']['general']['AllowRatingForGalleryEcommerce'])) ? 1 : 0;
-	}else{
-		$RatingVisibleForGalleryEcommerce = (!empty($optionsSource['general']['RatingVisibleForGalleryEcommerce'])) ? 1 : 0;
-		$AllowRatingForGalleryEcommerce = (!empty($optionsSource['general']['AllowRatingForGalleryEcommerce'])) ? 1 : 0;
-	}
+    $shortcodeNameForVoting = cg1l_get_shortcode_name_from_gallery_id_user($explodeHash[1],$galeryID);
 
-    if(strpos($explodeHash[1],$galeryID.'-ec')!==false &&
-       $RatingVisibleForGalleryEcommerce!=1 &&
-       $AllowRatingForGalleryEcommerce!=1){
+    if($shortcodeNameForVoting === 'cg_gallery_winner'){
+        return;
+    }
+
+    $optionsForVotingPermission = $options;
+    if($shortcodeNameForVoting === 'cg_gallery_ecommerce' && isset($optionsSource[$galeryID.'-ec'])){
+        $optionsForVotingPermission = $optionsSource[$galeryID.'-ec'];
+    }elseif(isset($optionsSource[$galeryID])){
+        $optionsForVotingPermission = $optionsSource[$galeryID];
+    }
+
+    if(
+        !cg1l_is_voting_possible_for_shortcode($shortcodeNameForVoting,$optionsForVotingPermission) ||
+        cg1l_get_rating_type($optionsForVotingPermission) !== 'one-star'
+    ){
         ?>
         <script data-cg-processing="true">
             var ratingFileData = true;
@@ -109,11 +115,6 @@ else {
             cgJsClass.gallery.rating.setRatingOneStar(pictureID,0,false,galeryIDuser,false,false,ratingFileData);
         </script>
         <?php
-        return;
-    }
-
-    //if($explodeHash[1]==$galeryID.'-w'){
-    if(strpos($explodeHash[1],$galeryID.'-w')!==false){
         return;
     }
     $intervalConf = cg_shortcode_interval_check($galeryID,$optionsSource,'cg_gallery');
@@ -863,7 +864,7 @@ else {
             cgJsClass.gallery.rating.setRatingOneStar(pictureID,0,false,galeryIDuser,false,false,ratingFileData);
 
             if(cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive==1 && hasVoteMessageWarningTextContent){
-                cgJsClass.gallery.function.message.showPro(galeryIDuser,cgJsData[galeryIDuser].options.pro.VoteMessageWarningText);
+                cgJsClass.gallery.rating.showCustomVoteHtmlMessage(galeryIDuser,cgJsData[galeryIDuser].options.pro.VoteMessageWarningText,'warning');
             }else{
                 if(cgJsData[galeryIDuser].vars.rawData[pictureID].MultipleFilesParsed){
                     cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].YouHaveAlreadyVotedThisPicture);
@@ -904,9 +905,9 @@ else {
             cgJsClass.gallery.rating.setRatingOneStar(pictureID,0,false,galeryIDuser,true,false,ratingFileData);
 
             if(cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive==1 && hasVoteMessageWarningTextContent){
-                cgJsClass.gallery.function.message.showPro(galeryIDuser,cgJsData[galeryIDuser].options.pro.VoteMessageWarningText);
+                cgJsClass.gallery.rating.showCustomVoteHtmlMessage(galeryIDuser,cgJsData[galeryIDuser].options.pro.VoteMessageWarningText,'warning');
             }else if(hasVotesPerUserAllVotesUsedHtmlMessageContent){
-                cgJsClass.gallery.function.message.showPro(galeryIDuser,cgJsData[galeryIDuser].options.pro.VotesPerUserAllVotesUsedHtmlMessage);
+                cgJsClass.gallery.rating.showCustomVoteHtmlMessage(galeryIDuser,cgJsData[galeryIDuser].options.pro.VotesPerUserAllVotesUsedHtmlMessage,'limit');
             }else{
                 cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].AllVotesUsed);
             }
@@ -935,7 +936,7 @@ else {
             cgJsClass.gallery.rating.setRatingOneStar(pictureID,0,false,galeryIDuser,true,false,ratingFileData);
 
             if(cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive==1 && hasVoteMessageWarningTextContent){
-                cgJsClass.gallery.function.message.showPro(galeryIDuser,cgJsData[galeryIDuser].options.pro.VoteMessageWarningText);
+                cgJsClass.gallery.rating.showCustomVoteHtmlMessage(galeryIDuser,cgJsData[galeryIDuser].options.pro.VoteMessageWarningText,'warning');
             }else{
                 cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].YouHaveAlreadyVotedThisCategory);
             }
@@ -970,7 +971,7 @@ else {
             cgJsClass.gallery.rating.setRatingOneStar(pictureID,0,false,galeryIDuser,true,false,ratingFileData);
 
             if(cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive==1 && hasVoteMessageWarningTextContent){
-                cgJsClass.gallery.function.message.showPro(galeryIDuser,cgJsData[galeryIDuser].options.pro.VoteMessageWarningText);
+                cgJsClass.gallery.rating.showCustomVoteHtmlMessage(galeryIDuser,cgJsData[galeryIDuser].options.pro.VoteMessageWarningText,'warning');
             }else{
                 cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].YouHaveNoMoreVotesInThisCategory);
             }
@@ -1110,7 +1111,7 @@ else {
                 }else if(voteCommentWasSaved){
                     cgJsClass.gallery.rating.showVoteCommentSuccess(galeryIDuser,pictureID,ThankVote,1);
                 }else if(cgJsData[galeryIDuser].options.pro.VoteMessageSuccessActive==1){
-                    cgJsClass.gallery.function.message.showPro(galeryIDuser,cgJsData[galeryIDuser].options.pro.VoteMessageSuccessText);
+                    cgJsClass.gallery.rating.showCustomVoteHtmlMessage(galeryIDuser,cgJsData[galeryIDuser].options.pro.VoteMessageSuccessText,'success');
                 }else{
                     if(ThankVote==1){
                         cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].ThankYouForVoting);

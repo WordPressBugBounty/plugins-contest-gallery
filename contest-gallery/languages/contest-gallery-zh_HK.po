@@ -1774,6 +1774,10 @@ msgid "You need an account to buy credits and participate in this gallery. Conti
 msgstr "您需要一個帳戶才能購買積分並參與此畫廊。繼續使用 Google 或透過電子郵件接收六位數的 PIN 碼。"
 
 #: check-language-paid-actions.php
+msgid "You need an account to buy credits and participate in this gallery. Receive a six-digit PIN by email."
+msgstr "您需要帳戶才能購買點數並參與此圖庫。透過電郵接收六位數 PIN 碼。"
+
+#: check-language-paid-actions.php
 msgid "Email address"
 msgstr "電子郵件地址"
 
@@ -1808,6 +1812,10 @@ msgstr "登入成功。正在重新載入圖庫..."
 #: check-language-paid-actions.php
 msgid "The sign-in form could not be loaded."
 msgstr "無法載入登入表單。"
+
+#: check-language-paid-actions.php
+msgid "Google sign-in is currently unavailable. Please use email instead."
+msgstr "Google 登入目前無法使用。請改用電郵。"
 
 #: check-language-paid-actions.php
 msgid "PIN CONFIRMED"

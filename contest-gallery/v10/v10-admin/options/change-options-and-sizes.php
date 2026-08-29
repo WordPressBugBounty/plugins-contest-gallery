@@ -1253,6 +1253,11 @@ $wp_upload_dir = wp_upload_dir();
 
         $AllowRating = 0;
         $AllowRatingAverage = 0;
+        $DisableVotingForGalleryPost = isset($_POST['DisableVotingForGallery']) ? sanitize_text_field(wp_unslash($_POST['DisableVotingForGallery'])) : '0';
+        $DisableVotingForGallery = ($DisableVotingForGalleryPost === 'on') ? 1 : intval($DisableVotingForGalleryPost);
+        if(!in_array($DisableVotingForGallery,array(0,1,2),true)){
+            $DisableVotingForGallery = 0;
+        }
 
         //var_dump("allow rating 3 post");
         //var_dump($_POST['AllowRating3']);
@@ -1470,7 +1475,7 @@ $wp_upload_dir = wp_upload_dir();
             'MinResPNGheight' => $MinResPNGheight, 'MinResGIFwidth' => $MinResGIFwidth, 'MinResGIFheight' => $MinResGIFheight,
                 'MaxResJPGwidth' => $MaxResJPGwidth, 'MaxResJPGheight' => $MaxResJPGheight, 'MaxResPNGwidth' => $MaxResPNGwidth, 'MaxResPNGheight' => $MaxResPNGheight, 'MaxResGIFwidth' => $MaxResGIFwidth, 'MaxResGIFheight' => $MaxResGIFheight,
                 'OnlyGalleryView' => $OnlyGalleryView, 'SinglePicView' => $SinglePicView, 'ScaleOnly' => $ScaleOnly, 'ScaleAndCut' => $ScaleAndCut, 'FullSize' => $FullSize, 'FullSizeGallery' => $FullSizeGallery, 'FullSizeSlideOutStart' => $FullSizeSlideOutStart, 'AllowSort' => $AllowSort, 'RandomSort' => $RandomSort, 'RandomSortButton' => $RandomSortButton, 'ShowAlways' => $ShowAlways,
-                'AllowComments' => $AllowComments, 'VoteCommentMode' => $VoteCommentMode, 'CommentsOutGallery' => $CommentsOutGallery, 'AllowRating' => $AllowRating, 'AllowRatingAverage' => $AllowRatingAverage, 'VotesPerUser' => $VotesPerUser, 'RatingOutGallery' => $RatingOutGallery, 'IpBlock' => $IpBlock,
+                'AllowComments' => $AllowComments, 'VoteCommentMode' => $VoteCommentMode, 'CommentsOutGallery' => $CommentsOutGallery, 'AllowRating' => $AllowRating, 'AllowRatingAverage' => $AllowRatingAverage, 'DisableVotingForGallery' => $DisableVotingForGallery, 'VotesPerUser' => $VotesPerUser, 'RatingOutGallery' => $RatingOutGallery, 'IpBlock' => $IpBlock,
                 'CheckLogin' => $CheckLogin, 'FbLike' => $FbLike, 'FbLikeGallery' => $FbLikeGallery, 'FbLikeGalleryVote' => $FbLikeGalleryVote,
                 'AllowGalleryScript' => $AllowGalleryScript, 'InfiniteScroll' => $InfiniteScroll, 'FullSizeImageOutGallery' => $FullSizeImageOutGallery, 'FullSizeImageOutGalleryNewTab' => $FullSizeImageOutGalleryNewTab,
                 'Inform' => $Inform, 'ShowAlwaysInfoSlider' => $ShowAlwaysInfoSlider, 'ThumbLook' => $ThumbLook, 'AdjustThumbLook' => $AdjustThumbLook, 'HeightLook' => $HeightLook, 'RowLook' => $RowLook,

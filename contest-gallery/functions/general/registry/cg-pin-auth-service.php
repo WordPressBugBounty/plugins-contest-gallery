@@ -519,20 +519,23 @@ if(!function_exists('cg_pin_auth_login_result_script')){
 }
 
 if(!function_exists('cg_pin_auth_render_paid_actions_auth')){
-	function cg_pin_auth_render_paid_actions_auth($isSandbox = false){
+	function cg_pin_auth_render_paid_actions_auth($isSandbox = false,$hasGoogleSignIn = false){
 		$kicker = $isSandbox ? cg_paid_actions_t('SandboxCheckoutUpper') : cg_paid_actions_t('SecureCheckout');
 		$title = $isSandbox ? cg_paid_actions_t('SignInSandboxCheckout') : cg_paid_actions_t('SignInBuyCredits');
 		$description = $isSandbox ?
 			cg_paid_actions_t('SignInSandboxDescription') :
-			cg_paid_actions_t('SignInBuyDescription');
+			($hasGoogleSignIn ? cg_paid_actions_t('SignInBuyDescription') : cg_paid_actions_t('SignInBuyDescriptionEmailOnly'));
 		ob_start();
 		?>
 		<div class="cg-paid-actions-auth">
 			<div class="cg-paid-actions-modal-kicker"><?php echo esc_html($kicker); ?></div>
 			<h2><?php echo esc_html($title); ?></h2>
 			<p><?php echo esc_html($description); ?></p>
-			<div class="cg-paid-actions-google"></div>
-			<div class="cg-paid-actions-or"><span><?php echo esc_html(cg_paid_actions_t('Or')); ?></span></div>
+			<?php if($hasGoogleSignIn){ ?>
+				<div class="cg-paid-actions-google"></div>
+				<div class="cg-paid-actions-google-unavailable cg_hide" role="status"><?php echo esc_html(cg_paid_actions_t('GoogleSignInUnavailable')); ?></div>
+				<div class="cg-paid-actions-or"><span><?php echo esc_html(cg_paid_actions_t('Or')); ?></span></div>
+			<?php } ?>
 			<form class="cg-paid-actions-code-form">
 				<label><span><?php echo esc_html(cg_paid_actions_t('EmailAddress')); ?></span><input type="email" class="cg-paid-actions-email" autocomplete="email" required></label>
 				<button type="submit" class="cg-paid-actions-primary"><?php echo esc_html(cg_paid_actions_t('EmailMePin')); ?></button>

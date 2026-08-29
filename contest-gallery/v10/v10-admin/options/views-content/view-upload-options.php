@@ -665,11 +665,12 @@ echo <<<HEREDOC
                 </div>
                 <div class='cg_view_option cg_view_option_50_percent cg_border_border_bottom_left_radius_unset cg_border_left_none cg_border_top_none' id="ShowPinFormUploadingContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Show user-friendly PIN-based email verification form for unregistered users<br/>
+                        <p>Show passwordless access options for uploading<br/>
                             <span class="cg_view_option_title_note">
-                                When a not-logged-in user clicks on "In gallery upload form button", the [cg_users_pin] form appears.<br/>
-                                The user can enter an email address and receive a PIN.<br/>
-                                After entering the PIN, the <b>user can start uploading without reloading the page.</b>
+                                When a not-logged-in user clicks on "In gallery upload form button", the <code>[cg_users_pin mode="access"]</code> form appears.<br/>
+                                If Google Sign-In is configured, it is shown as an additional sign-in option.<br/>
+                                Existing users sign in by email and PIN. A new email address creates a minimal account after PIN confirmation.<br/>
+                                After PIN confirmation, the <b>user can start uploading without reloading the page.</b>
                             </span>
                         </p>
                     </div>
