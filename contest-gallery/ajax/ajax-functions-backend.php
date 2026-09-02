@@ -839,25 +839,21 @@ if (!function_exists('post_cg_twitter_get')) {
             ) {
 
                 $post_cg_twitter_url = $_POST['post_cg_twitter_url'];
+	            $oembedUrl = add_query_arg('url', $post_cg_twitter_url, 'https://publish.x.com/oembed');
+	            $response = wp_safe_remote_get($oembedUrl, array(
+		            'timeout' => 15,
+		            'redirection' => 3
+	            ));
+	            $result = false;
 
-	            $ch = curl_init();
-	            //curl_setopt($ch, CURLOPT_URL, "https://publish.twitter.com/oembed?theme=dark&url=".$post_cg_twitter_url);
-	            curl_setopt($ch, CURLOPT_URL, "https://publish.twitter.com/oembed?url=".$post_cg_twitter_url);
-	            curl_setopt($ch, CURLOPT_HEADER, false);
-	            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-	            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-	            curl_setopt($ch, CURLOPT_SSLVERSION , 6); //NEW ADDITION
-	            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	            $result = curl_exec($ch);
-	            $curlErrorNumber = curl_errno($ch);
-	            $error_msg = curl_error($ch);
-	            curl_close($ch);
-	            if ($curlErrorNumber) {
-		            $result = '';
-	            }else{
-		            $result = str_replace('\n', '', $result);
-		            $result = rtrim($result, ',');
-		            $result = json_decode(trim($result),true);
+	            if(!is_wp_error($response)){
+		            $responseCode = wp_remote_retrieve_response_code($response);
+		            if($responseCode >= 200 && $responseCode < 300){
+			            $result = json_decode(wp_remote_retrieve_body($response), true);
+			            if(!is_array($result) || empty($result['html'])){
+				            $result = false;
+			            }
+		            }
 	            }
 
 	            ?>

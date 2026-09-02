@@ -1433,6 +1433,16 @@ if(!function_exists('cg_gallery_transfer_import_option_tables')){
 			'mail_confirmation' => $wpdb->prefix.'contest_gal1ery_mail_confirmation',
 			'comments_notification_options' => $wpdb->prefix.'contest_gal1ery_comments_notification_options',
 		);
+		$from_reply_fields = array(
+			'pro_options' => array('RegMailFrom','RegMailReply'),
+			'mail' => array('FromMail','Reply'),
+			'mail_admin' => array('FromMail','Reply'),
+			'mail_user_upload' => array('FromMail','Reply'),
+			'mail_user_comment' => array('FromMail','Reply'),
+			'mail_user_vote' => array('FromMail','Reply'),
+			'mail_confirmation' => array('FromMail','Reply'),
+			'comments_notification_options' => array('CommNoteFrom','CommNoteReply'),
+		);
 		if(!empty($data['options_visual'])){
 			$table_visual = $wpdb->prefix.'contest_gal1ery_options_visual';
 			foreach($data['options_visual'] as $row){
@@ -1450,6 +1460,10 @@ if(!function_exists('cg_gallery_transfer_import_option_tables')){
 				continue;
 			}
 			foreach($data[$key] as $row){
+				if(isset($from_reply_fields[$key]) && !array_key_exists($from_reply_fields[$key][0],$row)){
+					$reply_field = $from_reply_fields[$key][1];
+					$row[$from_reply_fields[$key][0]] = isset($row[$reply_field]) ? $row[$reply_field] : '';
+				}
 				cg_gallery_transfer_insert_row($table,$row,array('GalleryID'=>$new_gallery_id),true);
 			}
 		}

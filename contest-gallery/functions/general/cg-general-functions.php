@@ -1005,6 +1005,7 @@ if(!function_exists('cg_entry_on_off_send_activation_mail_if_needed')){
 
 		$Subject = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemail->Header);
 		$Admin = $selectSQLemail->Admin;
+		$ConfiguredFromMail = $selectSQLemail->FromMail;
 		$Reply = $selectSQLemail->Reply;
 		$cc = $selectSQLemail->CC;
 		$bcc = $selectSQLemail->BCC;
@@ -1025,8 +1026,8 @@ if(!function_exists('cg_entry_on_off_send_activation_mail_if_needed')){
 		}
 
 		$headers = array();
-		$headers[] = "From: $Admin <". html_entity_decode(strip_tags($Reply)) . ">\r\n";
-		$headers[] = "Reply-To: ". strip_tags($Reply) . "\r\n";
+		$mailAddresses = cg_add_mail_from_reply_headers($headers,$Admin,$ConfiguredFromMail,$Reply);
+		$headers = $mailAddresses['headers'];
 
 		if(strpos($cc,';')){
 			$cc = explode(';',$cc);
@@ -1072,8 +1073,8 @@ if(!function_exists('cg_entry_on_off_send_activation_mail_if_needed')){
 
 		if($mailSent && function_exists('cg_save_sent_mail')){
 			$WpUserId = (!empty($entryRow->WpUserId)) ? $entryRow->WpUserId : 0;
-			$ReplyMail = $Reply;
-			$FromMail = $Reply;
+			$ReplyMail = $mailAddresses['reply_to'];
+			$FromMail = $mailAddresses['from'];
 			$ReplyName = $Admin;
 			$FromName = $Admin;
 			cg_save_sent_mail($GalleryID,$entryID,$WpUserId,$To,$ReplyName,$ReplyMail,$FromName,$FromMail,$ccPlain,$bccPlain,$Subject,$Msg,'entry-backend-inform-image-activation');

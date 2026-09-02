@@ -264,6 +264,156 @@ cgJsClassAdmin.gallery.functions = {
             file_frame.$el.attr('data-cg-wp-upload-to-replace', WpUploadToReplace);
         }
     },
+    addAssignFieldsTab: function (file_frame, gid) {
+        var $router = file_frame.$el.find('.media-frame-router');
+        var $tab = $router.find('#cgAssignFields');
+        var $browseTab = $router.find('#menu-item-browse');
+
+        if (!$tab.length) {
+            $tab = jQuery('<button type="button" class="cg_media_menu_item" id="cgAssignFields" aria-pressed="false" aria-controls="cgMediaAssignFieldsContainerCloned"></button>');
+            $tab.text('Assign fields');
+            $tab.append('<span class="cg_media_assign_fields_tab_badge cg_hide" aria-hidden="true"></span>');
+            $tab.attr('data-cg-gid', gid);
+            if ($browseTab.length) {
+                $tab.insertAfter($browseTab);
+            } else {
+                $router.prepend($tab);
+            }
+        } else {
+            $tab.attr('data-cg-gid', gid);
+        }
+
+        cgJsClassAdmin.gallery.functions.updateMediaAssignFieldsTabBadge(gid, file_frame.$el);
+    },
+    getMediaAssignedFields: function (gid) {
+        var assignedFields = {};
+
+        try {
+            assignedFields = JSON.parse(localStorage.getItem('cgAssignedFields' + gid)) || {};
+        } catch (e) {
+            assignedFields = {};
+        }
+
+        if (!assignedFields.input || typeof assignedFields.input !== 'object') {
+            assignedFields.input = {};
+        }
+
+        return assignedFields;
+    },
+    getMediaAssignedFieldsCount: function (gid) {
+        var assignedFields = cgJsClassAdmin.gallery.functions.getMediaAssignedFields(gid);
+        var count = assignedFields.category ? 1 : 0;
+
+        Object.keys(assignedFields.input).forEach(function (inputId) {
+            if (assignedFields.input[inputId]) {
+                count++;
+            }
+        });
+
+        return count;
+    },
+    updateMediaAssignFieldsTabBadge: function (gid, $mediaFrame) {
+        var count = cgJsClassAdmin.gallery.functions.getMediaAssignedFieldsCount(gid);
+        var $tab = $mediaFrame && $mediaFrame.length ? $mediaFrame.find('#cgAssignFields') : jQuery('.media-frame.cg_backend_area #cgAssignFields');
+        var $badge = $tab.find('.cg_media_assign_fields_tab_badge');
+
+        if (!$tab.length) {
+            return;
+        }
+
+        if (count) {
+            $badge.text(count).removeClass('cg_hide');
+            $tab.attr('aria-label', 'Assign fields, ' + count + ' active assignments');
+        } else {
+            $badge.empty().addClass('cg_hide');
+            $tab.attr('aria-label', 'Assign fields');
+        }
+    },
+    createMediaAssignFieldsPanel: function (gid) {
+        var assignedFields = cgJsClassAdmin.gallery.functions.getMediaAssignedFields(gid);
+        var $panel = jQuery('#cgMediaAssignFieldsContainer').first().clone();
+        var $categoryContainer;
+        var $categorySelect;
+        var hasCategoryField = false;
+        var mappingCount = 0;
+
+        if (!$panel.length) {
+            return $panel;
+        }
+
+        $panel.attr('id', 'cgMediaAssignFieldsContainerCloned');
+        $panel.attr('data-cg-gid', gid);
+        $panel.removeClass('cg_hide').addClass('cg_cloned');
+        $categoryContainer = $panel.find('.cg_media_assign_category');
+        $categorySelect = $categoryContainer.find('select');
+        $categorySelect.attr('id', 'cgMediaAssignCategory-' + gid).attr('data-cg-gid', gid);
+        $categoryContainer.find('.cg_media_assign_category_title').attr('for', 'cgMediaAssignCategory-' + gid);
+        $categorySelect.empty().append(jQuery('<option></option>').val('').text('No category'));
+
+        for (var index in cgJsClassAdmin.gallery.vars.upload_form_inputs) {
+            if (!cgJsClassAdmin.gallery.vars.upload_form_inputs.hasOwnProperty(index)) {
+                continue;
+            }
+
+            var field = cgJsClassAdmin.gallery.vars.upload_form_inputs[index];
+            var fieldType = field['Field_Type'];
+            var id = field['id'];
+            var title = field['Field_Content'] && field['Field_Content']['titel'] ? field['Field_Content']['titel'] : '';
+
+            if (fieldType == 'selectc-f') {
+                hasCategoryField = true;
+            }
+
+            if (fieldType == 'text-f' || fieldType == 'comment-f') {
+                var selectId = 'cgMediaAssignField-' + gid + '-' + id;
+                var $fieldContainer = jQuery('<div class="cg_media_assign_field"></div>');
+                var $label = jQuery('<label class="cg_media_assign_field_title"></label>').attr('for', selectId).text(title);
+                var $selectContainer = jQuery('<div class="cg_media_assign_field_select"></div>');
+                var $select = jQuery('<select></select>')
+                    .attr('id', selectId)
+                    .attr('data-cg-field-type', fieldType)
+                    .attr('data-cg-input-id', id)
+                    .attr('data-cg-gid', gid);
+
+                $select.append(jQuery('<option></option>').val('').text('No assignment'));
+                $select.append(jQuery('<option></option>').val('alt').text('(WP) Alternative text'));
+                $select.append(jQuery('<option></option>').val('title').text('(WP) Title'));
+                $select.append(jQuery('<option></option>').val('caption').text('(WP) Caption'));
+                $select.append(jQuery('<option></option>').val('description').text('(WP) Description'));
+                if (assignedFields.input[id]) {
+                    $select.val(assignedFields.input[id]);
+                }
+
+                $selectContainer.append($select);
+                $fieldContainer.append($label).append($selectContainer);
+                $panel.find('.cg_media_assign_fields').append($fieldContainer);
+                mappingCount++;
+            }
+        }
+
+        if (hasCategoryField) {
+            for (var categoryId in cgJsClassAdmin.gallery.vars.categories) {
+                if (!cgJsClassAdmin.gallery.vars.categories.hasOwnProperty(categoryId)) {
+                    continue;
+                }
+                $categorySelect.append(
+                    jQuery('<option></option>')
+                        .val(categoryId)
+                        .text(cgJsClassAdmin.gallery.vars.categories[categoryId])
+                );
+            }
+            if (assignedFields.category) {
+                $categorySelect.val(assignedFields.category);
+            }
+            $categoryContainer.removeClass('cg_hide');
+        }
+
+        if (mappingCount) {
+            $panel.find('.cg_media_assign_fields_overview').removeClass('cg_hide');
+        }
+
+        return $panel;
+    },
     cgRotateOnLoad: function ($) {
         if ($('#cgImgSource').height() >= $('#cgImgSource').width()) {
             //console.log(0);
@@ -451,7 +601,7 @@ cgJsClassAdmin.gallery.functions = {
         jQuery('.cg_backend_action_container').addClass('cg_hide');
         jQuery('#cg_main_container').removeClass('cg_active cg_pointer_events_none');
         var $cgBackendGalleryDynamicMessage = jQuery('#cgBackendGalleryDynamicMessage');
-        $cgBackendGalleryDynamicMessage.removeClass('cgMediaAssignProcess cg_network_export_modal cg_overflow_y_scroll');// remove potential set classes before
+        $cgBackendGalleryDynamicMessage.removeClass('cg_network_export_modal cg_overflow_y_scroll');// remove potential set classes before
         if ($cgBackendGalleryDynamicMessage.hasClass('cg_no_action_message')) {
             if (isHideSlow) {
                 jQuery('#cgBackendBackgroundDrop').addClass('cg_hide').removeClass('cg_active cg_pointer_events_none');
@@ -933,9 +1083,65 @@ cgJsClassAdmin.gallery.functions = {
             $cg_backend_image_full_size_target.find('.cg_for_sale_price').text(priceToShow);
         });
     },
+    setAddFilesLoaderState: function ($, state, fileCount) {
+        var $loader = $('#cg_uploading_div');
+        var $uploader = $('#cgAddImagesWpUploader');
+        var title = '';
+        var status = '';
+
+        if (!$loader.length) {
+            return false;
+        }
+
+        $loader.stop(true, true).removeAttr('style').removeClass('cg_gallery_backend_uploading_active cg_gallery_backend_uploading_refreshing cg_gallery_backend_uploading_success cg_gallery_backend_uploading_error');
+
+        if (state == 'loading') {
+            title = fileCount == 1 ? 'Adding selected file' : 'Adding selected files';
+            status = fileCount == 1 ? 'Preparing 1 file for your gallery. Large files can take a little longer.' : 'Preparing ' + fileCount + ' files for your gallery. Large files can take a little longer.';
+            $loader.addClass('cg_gallery_backend_uploading_active').attr({'aria-busy': 'true', 'aria-hidden': 'false', 'data-cg-loader-state': state});
+            $uploader.hide();
+        } else if (state == 'refreshing') {
+            title = 'Refreshing gallery';
+            status = 'The files are ready. Updating your gallery view.';
+            $loader.addClass('cg_gallery_backend_uploading_active cg_gallery_backend_uploading_refreshing').attr({'aria-busy': 'true', 'aria-hidden': 'false', 'data-cg-loader-state': state});
+        } else if (state == 'success') {
+            title = 'Files added';
+            status = 'Your gallery is ready.';
+            $loader.addClass('cg_gallery_backend_uploading_success').attr({'aria-busy': 'false', 'aria-hidden': 'false', 'data-cg-loader-state': state});
+            window.setTimeout(function () {
+                if ($loader.attr('data-cg-loader-state') == 'success') {
+                    $loader.fadeOut(180, function () {
+                        $loader.removeClass('cg_gallery_backend_uploading_success').attr({'aria-hidden': 'true', 'data-cg-loader-state': ''});
+                    });
+                }
+            }, 700);
+            $uploader.css('display', 'flex');
+        } else if (state == 'error') {
+            title = 'Files could not be added';
+            status = 'Please try again. The selected media remains available in your media library.';
+            $loader.addClass('cg_gallery_backend_uploading_error').attr({'aria-busy': 'false', 'aria-hidden': 'false', 'data-cg-loader-state': state});
+            $uploader.css('display', 'flex');
+        } else if (state == 'refresh-error') {
+            title = 'Gallery view could not refresh';
+            status = 'The files may already be added. Reload this page to check your gallery.';
+            $loader.addClass('cg_gallery_backend_uploading_error').attr({'aria-busy': 'false', 'aria-hidden': 'false', 'data-cg-loader-state': state});
+            $uploader.css('display', 'flex');
+        } else {
+            $loader.attr({'aria-busy': 'false', 'aria-hidden': 'true', 'data-cg-loader-state': ''}).hide();
+            $uploader.css('display', 'flex');
+            return false;
+        }
+
+        $loader.find('.cg_gallery_backend_uploading_title').text(title);
+        $loader.find('.cg_gallery_backend_uploading_status').text(status);
+
+        return true;
+    },
     reloadAfterAddingEntries: function ($, response, isImagesAdded) {
 
-        $("#cgAddImagesWpUploader").css("display", "block");
+        if (!$('#cg_uploading_div').hasClass('cg_gallery_backend_uploading_active')) {
+            $("#cgAddImagesWpUploader").css("display", "flex");
+        }
         var gid = $('#cgBackendGalleryId').val();
         var $cgOrderSelect = $('#cgGalleryBackendContainer #cgOrderSelect');
         var currentOrder = $cgOrderSelect.val() || 'date_desc';
@@ -1834,6 +2040,29 @@ cgJsClassAdmin.gallery.functions = {
             $element.parent().find('.cg_domain_error').addClass('cg_hide');
         }
     },
+    syncBackendScrollLockState: function ($, isBackendRenderComplete) {
+        var $body = $('body');
+        var $html = $('html');
+        var isBackgroundDropVisible = $('#cgBackendBackgroundDrop').is(':visible');
+
+        $body.toggleClass('cg_overflow_hidden', isBackgroundDropVisible);
+
+        if (!isBackendRenderComplete) {
+            return;
+        }
+
+        var isMediaModalVisible = $('.media-modal:visible, .media-modal-backdrop:visible').length > 0;
+        var isBlockingContainerVisible = $('.cg_backend_action_container:visible').not('.cg_no_action_message').length > 0;
+        var isDatabaseInstallationActive = $('#cg_main_container').hasClass('cg_database_installation_active');
+        var isRedirectPending = $('#cgNewGalleryVersionDetected').length > 0;
+
+        if (isMediaModalVisible || isBackgroundDropVisible || isBlockingContainerVisible || isDatabaseInstallationActive || isRedirectPending) {
+            return;
+        }
+
+        $body.removeClass('modal-open cg_no_scroll cg_overflow_hidden cg_overflow_y_hidden');
+        $html.removeClass('cg_no_scroll cg_overflow_hidden cg_overflow_y_hidden');
+    },
     initOverlayWatcher: function ($) {
         var target = document.getElementById('cgBackendBackgroundDrop');
 
@@ -1847,29 +2076,20 @@ cgJsClassAdmin.gallery.functions = {
             cgJsClassAdmin.gallery.vars.cgOverlayInterval = null;
         }
 
+        cgJsClassAdmin.gallery.functions.syncBackendScrollLockState($, true);
+
         if (!target) {
             return; // kein Element gefunden
         }
 
         if (window.MutationObserver) {
-            cgJsClassAdmin.gallery.vars.cgOverlayObserver = new MutationObserver(function(mutations) {
-                for (var i = 0; i < mutations.length; i++) {
-                    if ($(target).is(':visible')) {
-                        $('body').addClass('cg_overflow_hidden');
-                    } else {
-                        $('body').removeClass('cg_overflow_hidden');
-                    }
-                }
+            cgJsClassAdmin.gallery.vars.cgOverlayObserver = new MutationObserver(function() {
+                cgJsClassAdmin.gallery.functions.syncBackendScrollLockState($, false);
             });
             cgJsClassAdmin.gallery.vars.cgOverlayObserver.observe(target, { attributes: true, attributeFilter: ['style', 'class'] });
         } else {
-            var $drop = $('#cgBackendBackgroundDrop');
             cgJsClassAdmin.gallery.vars.cgOverlayInterval = setInterval(function() {
-                if ($drop.is(':visible')) {
-                    $('body').addClass('cg_overflow_hidden');
-                } else {
-                    $('body').removeClass('cg_overflow_hidden');
-                }
+                cgJsClassAdmin.gallery.functions.syncBackendScrollLockState($, false);
             }, 500);
         }
     },

@@ -256,7 +256,9 @@ jQuery(document).ready(function ($) {
 
             file_frame.$el.closest('.media-modal').addClass('cg_add_files_to_gallery');
             cgJsClassAdmin.gallery.vars.cgNewAiImageToGalleryAdded = 0; // reset here
-            file_frame.$el.addClass('cg_backend_area');
+            file_frame.$el.addClass('cg_backend_area').removeClass('cg_media_assign_fields_mode');
+            file_frame.$el.find('.cg_media_assign_fields_tab_panel.cg_cloned').remove();
+            file_frame.$el.find('#cgAssignFields').removeClass('cg_active').attr('aria-pressed', 'false');
             if($button.hasClass('cg_openai_edit')){
                 $button.removeClass('cg_openai_edit');
                 file_frame.$el.addClass('cg_openai_edit');
@@ -265,12 +267,10 @@ jQuery(document).ready(function ($) {
 
             cgJsClassAdmin.gallery.functions.addSocialTabs(file_frame);
 
-            var cgAssignedFields = JSON.parse(localStorage.getItem('cgAssignedFields' + gid));
-
             var hasFieldsToAdd = false;
             for (var index in cgJsClassAdmin.gallery.vars.upload_form_inputs) {
                 if (!cgJsClassAdmin.gallery.vars.upload_form_inputs.hasOwnProperty(index)) {
-                    break;
+                    continue;
                 }
                 if (
                     cgJsClassAdmin.gallery.vars.upload_form_inputs[index]['Field_Type'] == 'selectc-f' ||
@@ -281,69 +281,7 @@ jQuery(document).ready(function ($) {
                 }
             }
             if (hasFieldsToAdd) {
-                file_frame.$el.find('#media-frame-title').html(
-                    '<div class="cg_media_assigned_fields_container_main">' +
-                    '<div class="cg_media_assigned_field_container_label">' +
-                    '<span class="cg_media_assigned_field_container_label_main" data-cg-gid="' + gid + '">' +
-                    'Assign fields' +
-                    '</span>' +
-                    '<span class="cg_media_assigned_field_container_label_sub">' +
-                    'Assign fields content<br>to added files' +
-                    '</span>' +
-                    '</div>' +
-                    '<div class="cg_media_assigned_fields_container" data-cg-gid="' + gid + '">' +
-                    '</div>' +
-                    '</div>'
-                );
-                for (var index in cgJsClassAdmin.gallery.vars.upload_form_inputs) {
-                    if (!cgJsClassAdmin.gallery.vars.upload_form_inputs.hasOwnProperty(index)) {
-                        break;
-                    }
-                    var id = cgJsClassAdmin.gallery.vars.upload_form_inputs[index]['id'];
-                    var title = cgJsClassAdmin.gallery.vars.upload_form_inputs[index]['Field_Content']['titel'];
-                    if (
-                        cgJsClassAdmin.gallery.vars.upload_form_inputs[index]['Field_Type'] == 'selectc-f' ||
-                        cgJsClassAdmin.gallery.vars.upload_form_inputs[index]['Field_Type'] == 'text-f' ||
-                        cgJsClassAdmin.gallery.vars.upload_form_inputs[index]['Field_Type'] == 'comment-f'
-                    ) {
-                        var cg_media_assigned_field_element_category = '';
-                        var input_id = '';
-                        var text = '';
-                        if (cgJsClassAdmin.gallery.vars.upload_form_inputs[index]['Field_Type'] == 'selectc-f') {
-                            cg_media_assigned_field_element_category = 'cg_media_assigned_field_element_category';
-                            if (cgAssignedFields && cgAssignedFields.category && cgJsClassAdmin.gallery.vars.categories && cgJsClassAdmin.gallery.vars.categories[cgAssignedFields.category]) {
-                                text = cgJsClassAdmin.gallery.vars.categories[cgAssignedFields.category];
-                            }
-                        } else {
-                            if (cgAssignedFields && cgAssignedFields.input && cgAssignedFields.input[id]) {
-                                if (cgAssignedFields.input[id] == 'alt') {
-                                    text = '(WP) Alternative text';
-                                }
-                                if (cgAssignedFields.input[id] == 'title') {
-                                    text = '(WP) Title';
-                                }
-                                if (cgAssignedFields.input[id] == 'caption') {
-                                    text = '(WP) Caption';
-                                }
-                                if (cgAssignedFields.input[id] == 'description') {
-                                    text = '(WP) Description';
-                                }
-                            }
-                            input_id = id;
-                        }
-
-                        var $content = $('<div class="cg_media_assigned_field">' +
-                            '<span class="cg_media_assigned_field_title">' + title + '</span>' +
-                            ' : ' +
-                            '<span class="cg_media_assigned_field_element ' + cg_media_assigned_field_element_category + '" id="inputId' + input_id + '">' + text + '</span>' +
-                            '</div>');
-                        //if(cgJsClassAdmin.gallery.vars.upload_form_inputs[index]['Field_Type']=='selectc-f'){
-                        //file_frame.$el.find('#media-frame-title').find('.cg_media_assigned_fields_container').prepend($content);
-                        //}else{
-                        file_frame.$el.find('#media-frame-title').find('.cg_media_assigned_fields_container').append($content);
-                        //}
-                    }
-                }
+                cgJsClassAdmin.gallery.functions.addAssignFieldsTab(file_frame, gid);
             }
 
         });
@@ -389,13 +327,10 @@ jQuery(document).ready(function ($) {
 
     $(document).on('change', '.cg_media_assign_category_select select', function (event) {
         var gid = $(this).attr('data-cg-gid');
-
         var cgAssignedFields = {};
-        var $cgMediaAssignFieldsContainer = $('#cgMediaAssignFieldsContainer');
-        var text = '-';
+        var $cgMediaAssignFieldsContainer = $(this).closest('.cg_media_assign_fields_tab_panel');
         if ($(this).val()) {
             cgAssignedFields.category = $(this).val();
-            text = $(this).find(':selected').text();
         }
         cgAssignedFields.input = {};
         $cgMediaAssignFieldsContainer.find('.cg_media_assign_fields select').each(function () {
@@ -404,21 +339,16 @@ jQuery(document).ready(function ($) {
             }
         });
         localStorage.setItem('cgAssignedFields' + gid, JSON.stringify(cgAssignedFields));
-        $('.cg_media_assigned_field_element.cg_media_assigned_field_element_category').text(text);
+        cgJsClassAdmin.gallery.functions.updateMediaAssignFieldsTabBadge(gid, $(this).closest('.media-frame'));
     });
 
     $(document).on('change', '.cg_media_assign_field_select select', function (event) {
         var gid = $(this).attr('data-cg-gid');
-        var inputId = $(this).attr('data-cg-input-id');
         var cgAssignedFields = {};
-        var $cgMediaAssignFieldsContainer = $('#cgMediaAssignFieldsContainer');
+        var $cgMediaAssignFieldsContainer = $(this).closest('.cg_media_assign_fields_tab_panel');
         var $catSelect = $cgMediaAssignFieldsContainer.find('.cg_media_assign_category_select select');
         if ($catSelect.length && $catSelect.val()) {
             cgAssignedFields.category = $catSelect.val();
-        }
-        var text = '-';
-        if ($(this).val()) {
-            text = $(this).find(':selected').text();
         }
         cgAssignedFields.input = {};
         $cgMediaAssignFieldsContainer.find('.cg_media_assign_fields select').each(function () {
@@ -428,101 +358,7 @@ jQuery(document).ready(function ($) {
         });
 
         localStorage.setItem('cgAssignedFields' + gid, JSON.stringify(cgAssignedFields));
-        // last() has to be done because doubled in some cases, has to be researched
-        $('.cg_media_assigned_field_element#inputId' + inputId).last().text(text);
-    });
-
-    $(document).on('click', '#cgMediaAssignFieldsSubmitContainerButton', function (event) {
-        $(this).closest('#cgBackendGalleryDynamicMessage').find('.cg_message_close').click();
-    });
-
-    $(document).on('click', '.cg_media_assigned_field_container_label_main, .cg_media_assigned_fields_container', function (event) {
-
-        var gid = $(this).attr('data-cg-gid');
-
-        var cgAssignedFields = JSON.parse(localStorage.getItem('cgAssignedFields' + gid));
-
-        var $cgMediaAssignFieldsContainer = $('<div id="cgMediaAssignFieldsContainer">' +
-            '<div id="cgMediaAssignFieldsTitle">Added files will contain assigned content</div>' +
-            '<div id="cgMediaAssignFieldsTitleSub">Added files can contain here preselected field content from the original post.<br><b>WordPress post fields</b> can be assigned to <b>Input</b> and <b>Textarea</b> field types.' +
-            '<br>Input and Textarea field types can be added in <b>"Edit upload form"</b>.' +
-            '<br>Files can be also assigned to a category.' +
-            '<br><b>Categories</b> can be edit in "Edit upload form".</div>' +
-            '<div class="cg_media_assign_category cg_hide">' +
-            '<div class="cg_media_assign_category_title">' +
-            'Assign to category' +
-            '</div>' +
-            '<div class="cg_media_assign_category_select">' +
-            '<select  data-cg-gid="' + gid + '"><option value="">Please select</option></select>' +
-            '</div>' +
-            '</div>' +
-            '<div class="cg_media_assign_fields_overview cg_hide">' +
-            '<div class="cg_media_assign_fields"></div>' +
-            '<div class="cg_media_assign_fields_image"><div class="cg_media_assign_fields_image_title">Example</div><img src="' + cgJsClassAdmin.gallery.vars.assign_fields_png + '" /></div>' +
-            '</div>' +
-            '<div  id="cgMediaAssignFieldsSubmitContainer" >' +
-            '<div  id="cgMediaAssignFieldsSubmitContainerButton" class="cg_backend_button_gallery_action">Close and go select</div>' +
-            '</div>' +
-            '</div>');
-
-        for (var index in cgJsClassAdmin.gallery.vars.upload_form_inputs) {
-
-            if (!cgJsClassAdmin.gallery.vars.upload_form_inputs.hasOwnProperty(index)) {
-                break;
-            }
-
-            var id = cgJsClassAdmin.gallery.vars.upload_form_inputs[index]['id'];
-            var title = cgJsClassAdmin.gallery.vars.upload_form_inputs[index]['Field_Content']['titel'];
-            var Field_Type = cgJsClassAdmin.gallery.vars.upload_form_inputs[index]['Field_Type'];
-
-            if (cgJsClassAdmin.gallery.vars.upload_form_inputs[index]['Field_Type'] == 'selectc-f') {
-                $cgMediaAssignFieldsContainer.find('.cg_media_assign_category').removeClass('cg_hide');
-                for (var categoryId in cgJsClassAdmin.gallery.vars.categories) {
-                    if (!cgJsClassAdmin.gallery.vars.categories.hasOwnProperty(categoryId)) {
-                        break;
-                    }
-                    var selected = '';
-                    var Name = cgJsClassAdmin.gallery.vars.categories[categoryId];
-                    if (cgAssignedFields && cgAssignedFields.category && cgAssignedFields.category == categoryId) {
-                        selected = 'selected';
-                    }
-                    $cgMediaAssignFieldsContainer.find('.cg_media_assign_category select').append('<option value="' + categoryId + '" ' + selected + '>' + Name + '</option>');
-                }
-            }
-
-            if (cgJsClassAdmin.gallery.vars.upload_form_inputs[index]['Field_Type'] == 'text-f' || cgJsClassAdmin.gallery.vars.upload_form_inputs[index]['Field_Type'] == 'comment-f') {
-                $cgMediaAssignFieldsContainer.find('.cg_media_assign_fields_overview').removeClass('cg_hide');
-                var selectedAlt = '';
-                var selectedTitle = '';
-                var selectedCaption = '';
-                var selectedDescription = '';
-                if (cgAssignedFields && cgAssignedFields.input && cgAssignedFields.input[id] && cgAssignedFields.input[id] == 'alt') {
-                    var selectedAlt = 'selected';
-                }
-                if (cgAssignedFields && cgAssignedFields.input && cgAssignedFields.input[id] && cgAssignedFields.input[id] == 'title') {
-                    var selectedTitle = 'selected';
-                }
-                if (cgAssignedFields && cgAssignedFields.input && cgAssignedFields.input[id] && cgAssignedFields.input[id] == 'caption') {
-                    var selectedCaption = 'selected';
-                }
-                if (cgAssignedFields && cgAssignedFields.input && cgAssignedFields.input[id] && cgAssignedFields.input[id] == 'description') {
-                    var selectedDescription = 'selected';
-                }
-
-                var $selectDiv = $('<div class="cg_media_assign_field"><div class="cg_media_assign_field_title">' + title + '</div><div class="cg_media_assign_field_select"><select data-cg-field-type="' + Field_Type + '" data-cg-input-id="' + id + '"  data-cg-gid="' + gid + '"  >' +
-                    '<option value="">Please select</option>' +
-                    '<option value="alt" ' + selectedAlt + '>(WP) Alternative text</option>' +
-                    '<option value="title" ' + selectedTitle + '>(WP) Title</option>' +
-                    '<option value="caption" ' + selectedCaption + '>(WP) Caption</option>' +
-                    '<option value="description" ' + selectedDescription + '>(WP) Description</option>' +
-                    '</select></div></div>');
-                $cgMediaAssignFieldsContainer.find('.cg_media_assign_fields_overview').removeClass('cg_hide').find('.cg_media_assign_fields').removeClass('cg_hide').append($selectDiv);
-            }
-
-        }
-
-        cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage($cgMediaAssignFieldsContainer, undefined, 'cgMediaAssignProcess cg_overflow_y_scroll');
-
+        cgJsClassAdmin.gallery.functions.updateMediaAssignFieldsTabBadge(gid, $(this).closest('.media-frame'));
     });
 
     // Restore the main ID when the add media button is pressed
@@ -553,9 +389,7 @@ return false;
             return false;
         }
 
-        $("#cg_uploading_gif").css("display", "block");
-        $("#cg_uploading_div").css("display", "block");
-        $("#cgAddImagesWpUploader").css("display", "none");
+        cgJsClassAdmin.gallery.functions.setAddFilesLoaderState($, 'loading', attachment.length);
 
         var i = 0;
         var attachmentIds = [];
@@ -628,10 +462,16 @@ return false;
             },
         }).done(function (response) {
 
+            if (cgJsClassAdmin.index.functions.isInvalidNonce($, response)) {
+                cgJsClassAdmin.gallery.functions.setAddFilesLoaderState($, 'error');
+                return;
+            }
+
             cgJsClassAdmin.gallery.functions.reloadAfterAddingEntries($,response);
 
         }).fail(function (xhr, status, error) {
 
+            cgJsClassAdmin.gallery.functions.setAddFilesLoaderState($, 'error');
             console.log(xhr);
             console.log(status);
             console.log(error);

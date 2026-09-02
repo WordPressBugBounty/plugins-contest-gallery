@@ -84,6 +84,7 @@ if(!empty($_POST['cg_create'])){
     // Determine email of blog admin and variables for email table
     $RegMailAddressor = trim(get_option('blogname'));
     $RegMailReply = get_option('admin_email');
+    $RegMailFrom = $RegMailReply;
     $RegMailSubject = 'Please complete your registration';
     $FeVotingIconType = 'star';
     $VotingCommentNumberFormat = 'dot';
@@ -269,14 +270,14 @@ if(!empty($_POST['cg_create'])){
         "
 				INSERT INTO $tablenameMail
 				( id, GalleryID, Admin,
-				Header,Reply,CC,
+				Header,Reply,FromMail,CC,
 				BCC,Url,Content)
 				VALUES ( %s,%d,%s,
-				%s,%s,%s,
+				%s,%s,%s,%s,
 				%s,%s,%s)
 			",
         '',$nextIDgallery,$from,
-        $HeaderActivationMail,$reply,'',
+        $HeaderActivationMail,$reply,$reply,'',
         '','',$Content
     ));
 
@@ -284,14 +285,14 @@ if(!empty($_POST['cg_create'])){
         "
 				INSERT INTO $tablename_mail_admin
 				( id, GalleryID, Admin, AdminMail,
-				Header,Reply,CC,
+				Header,Reply,FromMail,CC,
 				BCC,Url,Content)
 				VALUES ( %s,%d,%s,%s,
-				%s,%s,%s,
+				%s,%s,%s,%s,
 				%s,%s,%s)
 			",
         '',$nextIDgallery,$from,$AdminMail,
-        $HeaderAdminMail,'','',
+        $HeaderAdminMail,'','','',
         '','',$ContentAdminMail
     ));
 
@@ -299,14 +300,14 @@ if(!empty($_POST['cg_create'])){
         "
 				INSERT INTO $tablename_mail_user_upload
 				( id, GalleryID, InformUserUpload, Header, 
-				Subject,Reply,CC,
+				Subject,Reply,FromMail,CC,
 				BCC,Content,ContentInfoWithoutFileSource)
 				VALUES ( %s,%d,%d,%s,
-				%s,%s,%s,
+				%s,%s,%s,%s,
 				%s,%s,%s)
 			",
         '',$nextIDgallery, 0, $from,
-        $SubjectUserUpload,$reply,'',
+        $SubjectUserUpload,$reply,$reply,'',
         '',$ContentUserMail,0
     ));
 
@@ -317,14 +318,14 @@ if(!empty($_POST['cg_create'])){
         "
 				INSERT INTO $tablename_mail_user_comment
 				( id, GalleryID, InformUserComment, Header, 
-				Subject,Reply,CC,
+				Subject,Reply,FromMail,CC,
 				BCC,Content,URL,MailInterval)
 				VALUES ( %s,%d,%d,%s,
-				%s,%s,%s,
+				%s,%s,%s,%s,
 				%s,%s,%s,%s)
 			",
         '',$nextIDgallery, 0, $from,
-        $SubjectCommentMail,$reply,'',
+        $SubjectCommentMail,$reply,$reply,'',
         '',$ContentCommentMail,'','24h'
     ));
 
@@ -335,14 +336,14 @@ if(!empty($_POST['cg_create'])){
         "
 				INSERT INTO $tablename_mail_user_vote
 				( id, GalleryID, InformUserVote, Header, 
-				Subject,Reply,CC,
+				Subject,Reply,FromMail,CC,
 				BCC,Content,URL,MailInterval)
 				VALUES ( %s,%d,%d,%s,
-				%s,%s,%s,
+				%s,%s,%s,%s,
 				%s,%s,%s,%s)
 			",
         '',$nextIDgallery, 0, $from,
-        $SubjectVoteMail,$reply,'',
+        $SubjectVoteMail,$reply,$reply,'',
         '',$ContentVoteMail,'','24h'
     ));
 
@@ -354,16 +355,16 @@ if(!empty($_POST['cg_create'])){
         "
 				INSERT INTO $tablename_mail_confirmation
 				( id, GalleryID, Admin,
-				Header,Reply,CC,
+				Header,Reply,FromMail,CC,
 				BCC,Content,SendConfirm,
 				ConfirmationText,URL)
 				VALUES ( %s,%d,%s,
-				%s,%s,%s,
+				%s,%s,%s,%s,
 				%s,%s,%d,
 				%s,%s)
 			",
         '',$nextIDgallery,$from,
-        $HeaderConfirmationMail,$reply,'',
+        $HeaderConfirmationMail,$reply,$reply,'',
         '',$ContentConfirmationMail,0,
         $ConfirmationTextConfirmationMail,''
     ));
@@ -584,7 +585,7 @@ if(!empty($_POST['cg_create'])){
 					ForwardAfterLoginUrlCheck,ForwardAfterLoginUrl,
 					ForwardAfterLoginTextCheck,ForwardAfterLoginText,
 					TextEmailConfirmation,TextPinConfirmation,RegPinSubject,TextAfterEmailConfirmation,TextAfterPinConfirmation,
-					RegMailAddressor,RegMailReply,RegMailSubject,RegUserUploadOnly,RegUserUploadOnlyText,
+					RegMailAddressor,RegMailReply,RegMailFrom,RegMailSubject,RegUserUploadOnly,RegUserUploadOnlyText,
 					Manipulate,ShowOther,CatWidget,Search,
 					GalleryUpload,GalleryUploadTextBefore,GalleryUploadTextAfter,GalleryUploadConfirmationText,ShowRefreshButtonAfterUpload,ShowNickname,MinusVote,SlideTransition,
                     VotesInTime,VotesInTimeQuantity,VotesInTimeIntervalReadable,VotesInTimeIntervalSeconds,VotesInTimeIntervalAlertMessage,ShowExif,SliderFullWindow,
@@ -604,7 +605,7 @@ if(!empty($_POST['cg_create'])){
 					%d,%s,
 					%d,%s,
 					%s,%s,%s,%s,%s,
-					%s,%s,%s,%d,%s,
+					%s,%s,%s,%s,%d,%s,
 					%d,%d,%d,%d,
 					%d,%s,%s,%s,%d,%d,%d,%s,
                     %d,%d,%s,%d,%s,%d,%d,
@@ -625,7 +626,7 @@ if(!empty($_POST['cg_create'])){
             $ForwardAfterLoginUrlCheck,$ForwardAfterLoginUrl,
             $ForwardAfterLoginTextCheck,$ForwardAfterLoginText,
             $TextEmailConfirmation,$TextPinConfirmation,$RegPinSubject,$TextAfterEmailConfirmation,$TextAfterPinConfirmation,
-            $RegMailAddressor,$RegMailReply,$RegMailSubject,$RegUserUploadOnly,$RegUserUploadOnlyText,
+            $RegMailAddressor,$RegMailReply,$RegMailFrom,$RegMailSubject,$RegUserUploadOnly,$RegUserUploadOnlyText,
             $Manipulate,$ShowOther,$CatWidget,$Search,
             $GalleryUpload,$GalleryUploadTextBefore,$GalleryUploadTextAfter,$GalleryUploadConfirmationText,$ShowRefreshButtonAfterUpload,$ShowNickname,$MinusVote,$SlideTransition,
             $VotesInTime,$VotesInTimeQuantity,$VotesInTimeIntervalReadable,$VotesInTimeIntervalSeconds,$VotesInTimeIntervalAlertMessage,$ShowExif,$SliderFullWindow,

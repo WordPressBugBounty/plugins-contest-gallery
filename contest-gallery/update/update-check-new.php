@@ -342,6 +342,10 @@ $dtacaoo = $databaseTablesAndColumnsArrayOfObjects;
 
 $dtacaoo[$tablename_email] = $wpdb->get_results( "SHOW COLUMNS FROM $tablename_email" );
 $dtacaoo[$tablename_email_admin] = $wpdb->get_results( "SHOW COLUMNS FROM $tablename_email_admin" );
+$dtacaoo[$tablename_mail_user_upload] = $wpdb->get_results( "SHOW COLUMNS FROM $tablename_mail_user_upload" );
+$dtacaoo[$tablename_mail_user_comment] = $wpdb->get_results( "SHOW COLUMNS FROM $tablename_mail_user_comment" );
+$dtacaoo[$tablename_mail_user_vote] = $wpdb->get_results( "SHOW COLUMNS FROM $tablename_mail_user_vote" );
+$dtacaoo[$tablename_comments_notification_options] = $wpdb->get_results( "SHOW COLUMNS FROM $tablename_comments_notification_options" );
 $dtacaoo[$tablename_options_input] = $wpdb->get_results( "SHOW COLUMNS FROM $tablename_options_input" );
 $dtacaoo[$tablename_comments] = $wpdb->get_results( "SHOW COLUMNS FROM $tablename_comments" );
 $dtacaoo[$tablename_entries] = $wpdb->get_results( "SHOW COLUMNS FROM $tablename_entries" );
@@ -453,6 +457,32 @@ foreach($updateArray as $tableName => $tableData){
 }
 
 cg_update_check_new_handle_indexes($updateIndexArray,$dtacaoo,$isJustCheck,$columnsToRepairArray,$errorsArray);
+
+if(
+    empty($isJustCheck) &&
+    isset($p_cgal1ery_db_installed_ver) &&
+    floatval($p_cgal1ery_db_installed_ver) < 33.02
+){
+    $fromReplyMigrations = array(
+        array($tablename_email,'FromMail','Reply'),
+        array($tablename_email_admin,'FromMail','Reply'),
+        array($tablename_mail_user_upload,'FromMail','Reply'),
+        array($tablename_mail_user_comment,'FromMail','Reply'),
+        array($tablename_mail_user_vote,'FromMail','Reply'),
+        array($tablename_mail_confirmation,'FromMail','Reply'),
+        array($tablename_comments_notification_options,'CommNoteFrom','CommNoteReply'),
+        array($tablename_pro_options,'RegMailFrom','RegMailReply'),
+        array($tablename_registry_and_login_options,'LostPasswordMailFrom','LostPasswordMailReply'),
+        array($tablename_ecommerce_options,'OrderConfirmationMailFrom','OrderConfirmationMailReply')
+    );
+
+    foreach($fromReplyMigrations as $fromReplyMigration){
+        $tableName = cg_update_check_new_quote_identifier($fromReplyMigration[0]);
+        $fromColumn = cg_update_check_new_quote_identifier($fromReplyMigration[1]);
+        $replyColumn = cg_update_check_new_quote_identifier($fromReplyMigration[2]);
+        $wpdb->query("UPDATE $tableName SET $fromColumn = $replyColumn WHERE ($fromColumn IS NULL OR TRIM($fromColumn) = '') AND $replyColumn IS NOT NULL AND TRIM($replyColumn) != ''");
+    }
+}
 
 if(
     empty($isJustCheck) &&

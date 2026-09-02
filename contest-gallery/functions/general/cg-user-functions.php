@@ -173,6 +173,145 @@ if(!function_exists('cg1l_prepare_registry_fields_for_storage')){
     }
 }
 
+if(!function_exists('cg1l_get_registry_activation_browser_binding')){
+    function cg1l_get_registry_activation_browser_binding($createSession = false){
+
+        if($createSession){
+            if(!function_exists('cg1l_get_or_create_frontend_session_id')){
+                return '';
+            }
+            $sessionId = cg1l_get_or_create_frontend_session_id(true);
+        }else{
+            if(!function_exists('cg1l_get_frontend_session_id_from_cookie')){
+                return '';
+            }
+            $sessionId = cg1l_get_frontend_session_id_from_cookie();
+        }
+
+        if(empty($sessionId)){
+            return '';
+        }
+
+        return hash_hmac('sha256','cg1l-registry-activation-browser|'.$sessionId,wp_salt('auth'));
+
+    }
+}
+
+if(!function_exists('cg1l_store_registry_activation_browser_binding')){
+    function cg1l_store_registry_activation_browser_binding($activationKey,$binding,$GalleryID,$wpUserId,$Version,$GeneralID,$Tstamp){
+
+        if(
+            empty($activationKey) ||
+            empty($binding) ||
+            !preg_match('/^[a-f0-9]{64}$/',$binding)
+        ){
+            return false;
+        }
+
+        global $wpdb;
+        $tablenameCreateUserEntries = $wpdb->prefix . "contest_gal1ery_create_user_entries";
+
+        $wpdb->delete(
+            $tablenameCreateUserEntries,
+            array(
+                'activation_key' => $activationKey,
+                'Field_Type' => 'activation-browser-session'
+            ),
+            array('%s','%s')
+        );
+
+        $inserted = $wpdb->insert(
+            $tablenameCreateUserEntries,
+            array(
+                'GalleryID' => absint($GalleryID),
+                'wp_user_id' => absint($wpUserId),
+                'f_input_id' => 0,
+                'Field_Type' => 'activation-browser-session',
+                'Field_Content' => $binding,
+                'activation_key' => $activationKey,
+                'Checked' => 0,
+                'Version' => $Version,
+                'GeneralID' => absint($GeneralID),
+                'Tstamp' => absint($Tstamp)
+            ),
+            array('%d','%d','%d','%s','%s','%s','%d','%s','%d','%d')
+        );
+
+        return ($inserted !== false);
+
+    }
+}
+
+if(!function_exists('cg1l_registry_activation_browser_matches')){
+    function cg1l_registry_activation_browser_matches($userAccountEntries){
+
+        if(empty($userAccountEntries) || !is_array($userAccountEntries)){
+            return false;
+        }
+
+        $storedBindings = array();
+        foreach($userAccountEntries as $entry){
+            if(!empty($entry->Field_Type) && $entry->Field_Type === 'activation-browser-session'){
+                $storedBindings[] = sanitize_text_field($entry->Field_Content);
+            }
+        }
+
+        if(count($storedBindings)!==1 || !preg_match('/^[a-f0-9]{64}$/',$storedBindings[0])){
+            return false;
+        }
+
+        $currentBinding = cg1l_get_registry_activation_browser_binding(false);
+        if(empty($currentBinding)){
+            return false;
+        }
+
+        return cg1l_hash_equals($storedBindings[0],$currentBinding);
+
+    }
+}
+
+if(!function_exists('cg1l_release_registry_activation_lock')){
+    function cg1l_release_registry_activation_lock($lockName){
+
+        if(empty($lockName)){
+            return;
+        }
+
+        global $wpdb;
+        $wpdb->get_var($wpdb->prepare("SELECT RELEASE_LOCK(%s)",$lockName));
+
+    }
+}
+
+if(!function_exists('cg1l_acquire_registry_activation_lock')){
+    function cg1l_acquire_registry_activation_lock($activationKey){
+
+        if(empty($activationKey)){
+            return false;
+        }
+
+        static $acquiredLocks = array();
+        $lockName = 'cg1l-registry-activation-'.md5($activationKey);
+
+        if(!empty($acquiredLocks[$lockName])){
+            return true;
+        }
+
+        global $wpdb;
+        $isAcquired = $wpdb->get_var($wpdb->prepare("SELECT GET_LOCK(%s,0)",$lockName));
+
+        if((string)$isAcquired !== '1'){
+            return false;
+        }
+
+        $acquiredLocks[$lockName] = true;
+        register_shutdown_function('cg1l_release_registry_activation_lock',$lockName);
+
+        return true;
+
+    }
+}
+
 if(!function_exists('cg1l_resolve_unconfirmed_user_for_activation')){
     function cg1l_resolve_unconfirmed_user_for_activation($userAccountEntries,$cgkey){
 
@@ -398,25 +537,11 @@ if(!function_exists('cg1l_resend_unconfirmed_mail')){
         $TextEmailConfirmation = str_ireplace($posUrl, $pageUrlForEmail . "cgkey=$new_activation_key#cg_activation", $resolved_body);
 
         // Build headers (From / Reply-To / CC / BCC)
-        $headers = ['Content-Type: text/html; charset=UTF-8'];
-
-        // From
-        if (!empty($FromMail)) {
-            if (!empty($FromName)) {
-                $headers[] = 'From: ' . sprintf('%s <%s>', $FromName, $FromMail);
-            } else {
-                $headers[] = 'From: ' . $FromMail;
-            }
-        }
-
-        // Reply-To
-        if (!empty($ReplyMail)) {
-            if (!empty($ReplyName)) {
-                $headers[] = 'Reply-To: ' . sprintf('%s <%s>', $ReplyName, $ReplyMail);
-            } else {
-                $headers[] = 'Reply-To: ' . $ReplyMail;
-            }
-        }
+        $headers = array('Content-Type: text/html; charset=UTF-8');
+        $mailAddresses = cg_add_mail_from_reply_headers($headers,$FromName,$FromMail,$ReplyMail,$ReplyName);
+        $headers = $mailAddresses['headers'];
+        $FromMail = $mailAddresses['from'];
+        $ReplyMail = $mailAddresses['reply_to'];
 
         // CC / BCC
         if (!empty($cc)) {
@@ -464,13 +589,6 @@ if(!function_exists('cg1l_resend_unconfirmed_mail')){
 
 if(!function_exists('cg1l_send_registration_mail')){
     function  cg1l_send_registration_mail($proOptions,$GalleryID,$cg_users_pin,$cg_main_mail,$Subject, $TextEmailConfirmation, $activation_key, $posPin = '', $pin = '', $posUrl = '', $currentPageUrl = '' ){
-        // Check if valid mail. Take admin mail if not.
-        if (is_email($proOptions->RegMailReply)) {
-            $cgReply = $proOptions->RegMailReply;
-        } else {
-            $cgReply = get_option('admin_email');
-        }
-
         $RegMailCC = (empty($proOptions->RegMailCC)) ? '' : $proOptions->RegMailCC;
         $ccPlain = $RegMailCC;
         $RegMailBCC = (empty($proOptions->RegMailBCC)) ? '' : $proOptions->RegMailBCC;
@@ -478,12 +596,14 @@ if(!function_exists('cg1l_send_registration_mail')){
         $FromName = html_entity_decode(strip_tags($proOptions->RegMailAddressor));
         $ReplyName = $FromName;
         $WpUserId = 0;
-        $ReplyMail = $cgReply;
-        $FromMail = $cgReply;
+        $ReplyMail = isset($proOptions->RegMailReply) ? $proOptions->RegMailReply : '';
+        $FromMail = isset($proOptions->RegMailFrom) ? $proOptions->RegMailFrom : $ReplyMail;
 
         $headers = array();
-        $headers[] = "From: " . $FromName . " <" . strip_tags($cgReply) . ">";
-        $headers[] = "Reply-To: " . strip_tags($cgReply) . "";
+        $mailAddresses = cg_add_mail_from_reply_headers($headers,$FromName,$FromMail,$ReplyMail);
+        $headers = $mailAddresses['headers'];
+        $FromMail = $mailAddresses['from'];
+        $ReplyMail = $mailAddresses['reply_to'];
 
         if(!empty($RegMailCC)){
             if(strpos($RegMailCC,';')){

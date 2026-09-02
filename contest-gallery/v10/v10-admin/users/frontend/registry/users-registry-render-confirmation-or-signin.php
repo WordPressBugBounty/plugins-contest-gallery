@@ -1,29 +1,26 @@
 <?php
 
-if($LoginAfterConfirm && empty($isAfterLogin)){
-    wp_set_auth_cookie( $newWpId,true );
+$isAfterLoginRequest = !empty($isAfterLogin);
+$targetWpUserId = !empty($newWpId) ? absint($newWpId) : 0;
+$currentWpUserId = is_user_logged_in() ? get_current_user_id() : 0;
+$isCurrentTargetUser = ($targetWpUserId && $currentWpUserId === $targetWpUserId);
+$isCurrentDifferentUser = ($targetWpUserId && $currentWpUserId && $currentWpUserId !== $targetWpUserId);
+$isActivationBrowserMatch = !empty($isActivationBrowserMatch);
+$shouldReloadAfterAutomaticLogin = (
+    $LoginAfterConfirm &&
+    !$isAfterLoginRequest &&
+    $targetWpUserId &&
+    $isActivationBrowserMatch &&
+    !$isCurrentDifferentUser
+);
+
+if($shouldReloadAfterAutomaticLogin){
+    if(!$isCurrentTargetUser){
+        wp_set_auth_cookie( $targetWpUserId,true );
+    }
     ?>
-    <script defer>
-        var isWhite = <?php echo json_encode($isWhite);?>;
-        var isBorderRadius = <?php echo json_encode($isBorderRadius);?>;
-        debugger
-
-        var cg1lCheckInterval = setInterval(function () {
-            if (cgJsClass &&
-                cgJsClass.gallery &&
-                cgJsClass.gallery.vars &&
-                cgJsClass.gallery.vars.cgMessagesContainer) {
-                debugger
-                clearInterval(cg1lCheckInterval);
-                cgJsClass.gallery.function.message.show(undefined, undefined,undefined,undefined,undefined,undefined,
-                    true,undefined,undefined,undefined,isBorderRadius,isWhite);
-                setTimeout(function (){
-                    debugger
-                    location.href = location.origin + location.pathname + '?cg1l_reload_after_login=' + Date.now();
-                },1000);
-            }
-        }, 50); // check every 50ms (fast but safe)
-
+    <script>
+        location.replace(location.origin + location.pathname + '?cg1l_reload_after_login=' + Date.now());
     </script>
     <?php
 }else{
@@ -42,9 +39,31 @@ if($LoginAfterConfirm && empty($isAfterLogin)){
 
     echo "</div>";
 
+    if($LoginAfterConfirm && !$isAfterLoginRequest && $isCurrentDifferentUser){
+        echo "<p class='cg_registry_security_notice'>";
+        echo esc_html__('Your account was confirmed. The account currently signed in to this browser was not changed.',cg_get_version());
+        echo "</p>";
+    }
+
+    if($LoginAfterConfirm && !$isAfterLoginRequest && !$currentWpUserId && !$isActivationBrowserMatch){
+        echo "<p class='cg_registry_security_notice'>";
+        echo esc_html__('Your account was confirmed. For security reasons, automatic login is available only in the browser used for registration. Please log in.',cg_get_version());
+        echo "</p>";
+
+        cg1l_include_scripts_login_form();
+        $cgRegistryAtts = isset($atts) ? $atts : array();
+        $atts = array();
+        include (__DIR__.'/../login/users-login.php');
+        $atts = $cgRegistryAtts;
+    }
+
     ?>
 
     <script defer>
+
+        <?php if(!$isAfterLoginRequest){ ?>
+        window.history.replaceState({}, document.title, location.origin + location.pathname);
+        <?php } ?>
 
         setTimeout(function (){
             jQuery("html, body").animate({ scrollTop: jQuery('#cg_activation').offset().top-60}, 0);

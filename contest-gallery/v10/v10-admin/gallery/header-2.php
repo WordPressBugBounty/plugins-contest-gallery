@@ -22,7 +22,6 @@ if($cgVersion<7){
 }
 
 $admin_url = admin_url();
-$plugins_url = plugins_url();
 
 $cgGalleryDashboardStats = (!empty($cgGalleryDashboardStats) && is_array($cgGalleryDashboardStats)) ? $cgGalleryDashboardStats : [];
 $cgGalleryDashboardUploadsTotal = (!empty($cgGalleryDashboardStats['uploadsTotal'])) ? intval($cgGalleryDashboardStats['uploadsTotal']) : 0;
@@ -127,9 +126,19 @@ echo '<input type="hidden" id="cg_admin_url" value="'. $admin_url .'">';
     </div>
 <?php
 
-echo "<img src='".$plugins_url."/".cg_get_version()."/v10/v10-css/loading.gif' width='25px' class='cg_gallery_backend_uploading_gif' id='cg_uploading_gif'/>
-      <div class='cg_gallery_backend_uploading_div' id='cg_uploading_div'>
-      (adding files please wait)</div>";
+?>
+    <div id="cg_uploading_div" class="cg_gallery_backend_uploading_div" role="status" aria-live="polite" aria-atomic="true" aria-busy="false" aria-hidden="true">
+        <div id="cg_uploading_gif" class="cg_gallery_backend_uploading_visual" aria-hidden="true">
+            <span class="cg_gallery_backend_uploading_orbit"></span>
+            <span class="dashicons dashicons-format-gallery"></span>
+        </div>
+        <div class="cg_gallery_backend_uploading_copy">
+            <strong class="cg_gallery_backend_uploading_title">Adding selected files</strong>
+            <span class="cg_gallery_backend_uploading_status">Preparing the files for your gallery.</span>
+            <span class="cg_gallery_backend_uploading_progress" aria-hidden="true"><span></span></span>
+        </div>
+    </div>
+<?php
 
 echo "</div>";
 
@@ -337,6 +346,8 @@ cg_preview_images_to_delete_container($GalleryID);
 
 cg_social_input_container($GalleryID);
 
+cg_media_assign_fields_container($GalleryID);
+
 cg_openai_container($GalleryID,$cgProFalse);
 
 cg_social_library($GalleryID);
@@ -373,12 +384,9 @@ cg_mails_list();
 
 cg1lCreateTemplateFromBody();
 
-$assign_fields_png = plugins_url('/../../../v10/v10-css/assign-fields.png', __FILE__);
-
 ?>
     <script>
         cgJsClassAdmin.gallery.vars.galleryIDs = <?php echo json_encode($galleryIDs);?>;
-        cgJsClassAdmin.gallery.vars.assign_fields_png = <?php echo json_encode($assign_fields_png);?>;
         cgJsClassAdmin.gallery.vars.categories = <?php echo json_encode($categories);?>;
         if(cgJsClassAdmin.gallery.vars.categories){
             var categoriesObject = {};

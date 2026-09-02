@@ -950,6 +950,7 @@ if(!function_exists('cg_ecommerce_prepare_payment_mail')) {
     function cg_ecommerce_prepare_payment_mail($ecommerce_options, $OrderId, $OrderIdHash, $ordersummaryandpage,$hasDownload,$language_FullOrderDetails,$language_Download){
 
         $header = $ecommerce_options->OrderConfirmationMailHeader;
+        $fromMail = $ecommerce_options->OrderConfirmationMailFrom;
         $reply = $ecommerce_options->OrderConfirmationMailReply;
         $cc = $ecommerce_options->OrderConfirmationMailCc;
         $bcc = $ecommerce_options->OrderConfirmationMailBcc;
@@ -969,8 +970,8 @@ if(!function_exists('cg_ecommerce_prepare_payment_mail')) {
         }
 
         $headers = array();
-        $headers[] = "From: $header <". html_entity_decode(strip_tags($reply)) . ">\r\n";
-        $headers[] = "Reply-To: ". strip_tags($reply) . "\r\n";
+        $mailAddresses = cg_add_mail_from_reply_headers($headers,$header,$fromMail,$reply);
+        $headers = $mailAddresses['headers'];
 
         if(strpos($cc,';')){
             $cc = explode(';',$cc);

@@ -12,6 +12,7 @@ if(!function_exists('cg_create_ecommerce_options')){
 		    // Determine email of blog admin and variables for email table
 		    $OrderConfirmationMailHeader = get_option('blogname');
 		    $OrderConfirmationMailReply = get_option('admin_email');
+		    $OrderConfirmationMailFrom = $OrderConfirmationMailReply;
 		    $OrderConfirmationMailSubject = 'Your order';
 		    $OrderConfirmationMail = 'Dear Sir or Madam<br/>Thank for your order<br>$order$';
 		    $AllowedCountries = serialize(['DE','US','ES','FR','GB','IT','NL','PL','PT']);
@@ -29,7 +30,7 @@ if(!function_exists('cg_create_ecommerce_options')){
 					CurrencyShort,CurrencyPosition,PriceDivider,
 					CreateInvoice,SendInvoice,
 					BorderRadiusOrder,FeControlsStyleOrder,
-                    SendOrderConfirmationMail,OrderConfirmationMailHeader,OrderConfirmationMailReply,
+                    SendOrderConfirmationMail,OrderConfirmationMailHeader,OrderConfirmationMailReply,OrderConfirmationMailFrom,
                     OrderConfirmationMailSubject,OrderConfirmationMail,
                     AllowedCountries, TaxPercentageDefault, ShippingGross,
                     RegUserPurchaseOnlyText, RegUserOrderSummaryOnlyText
@@ -46,7 +47,7 @@ if(!function_exists('cg_create_ecommerce_options')){
 					%s,%s,%s,
 					%d,%d,
 					%d,%s,
-					%d,%s,%s,
+					%d,%s,%s,%s,
 					%s,%s,
 					%s,%d,%d,
 					%s,%s
@@ -62,7 +63,7 @@ if(!function_exists('cg_create_ecommerce_options')){
                 'USD','left','.',
                 0,0,
                 1,'white',
-                0,$OrderConfirmationMailHeader,$OrderConfirmationMailReply,
+                0,$OrderConfirmationMailHeader,$OrderConfirmationMailReply,$OrderConfirmationMailFrom,
                 $OrderConfirmationMailSubject,$OrderConfirmationMail,
                 $AllowedCountries,15,5,
                 'You have to be registered and logged in to be able to purchase.','You have to be registered and logged in to see the order summary.'

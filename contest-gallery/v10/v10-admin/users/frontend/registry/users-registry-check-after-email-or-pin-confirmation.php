@@ -24,7 +24,12 @@ if(strpos($cgkey,'-confirmed')!==false OR strpos($cgkey,'-unconfirmed')!==false)
     return;
 }
 
+if(!cg1l_acquire_registry_activation_lock($cgkey)){
+    return;
+}
+
 $userAccountEntries = $wpdb->get_results( $wpdb->prepare("SELECT Field_Type, Field_Content, Tstamp, wp_user_id FROM $tablenameCreateUserEntries WHERE activation_key=%s", $cgkey) );
+$isActivationBrowserMatch = cg1l_registry_activation_browser_matches($userAccountEntries);
 
 include (__DIR__.'/../../../../../check-language-general.php');
 

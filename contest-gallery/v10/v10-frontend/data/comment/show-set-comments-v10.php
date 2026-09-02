@@ -561,13 +561,14 @@ if(!cg_paid_actions_is_current_request_preview($galeryID) && !empty($options['pr
     $CommNoteAdminMail = contest_gal1ery_convert_for_html_output_without_nl2br($checkCommentsNotificationOptions->CommNoteAdminMail);
     $CommNoteCC = contest_gal1ery_convert_for_html_output_without_nl2br($checkCommentsNotificationOptions->CommNoteCC);
     $CommNoteBCC = contest_gal1ery_convert_for_html_output_without_nl2br($checkCommentsNotificationOptions->CommNoteBCC);
+    $CommNoteFrom = contest_gal1ery_convert_for_html_output_without_nl2br($checkCommentsNotificationOptions->CommNoteFrom);
     $CommNoteReply = contest_gal1ery_convert_for_html_output_without_nl2br($checkCommentsNotificationOptions->CommNoteReply);
     $CommNoteSubject = contest_gal1ery_convert_for_html_output_without_nl2br($checkCommentsNotificationOptions->CommNoteSubject);
     $CommNoteContent = contest_gal1ery_convert_for_html_output_without_nl2br($checkCommentsNotificationOptions->CommNoteContent);
 
     $headers = array();
-    $headers[] = "From: " . html_entity_decode(strip_tags($CommNoteAddressor)) . " <" . strip_tags($CommNoteReply) . ">\r\n";
-    $headers[] = "Reply-To: " . strip_tags($CommNoteReply) . "\r\n";
+    $mailAddresses = cg_add_mail_from_reply_headers($headers,$CommNoteAddressor,$CommNoteFrom,$CommNoteReply);
+    $headers = $mailAddresses['headers'];
 
     if(strpos($CommNoteCC,';')){
         $CommNoteCC = explode(';',$CommNoteCC);

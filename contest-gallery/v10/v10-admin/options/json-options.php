@@ -50,6 +50,7 @@ $TextAfterEmailConfirmation = $TextAfterEmailConfirmation;
 $TextAfterPinConfirmation = $TextAfterPinConfirmation;
 
 $RegMailAddressor = $RegMailAddressor;
+$RegMailFrom = $RegMailFrom;
 $RegMailReply = $RegMailReply;
 $RegMailSubject = $RegMailSubject;
 $RegUserUploadOnlyText = $RegUserUploadOnlyText;
@@ -265,6 +266,7 @@ $jsonOptions['pro']['TextPinConfirmation'] = $TextPinConfirmation;
 $jsonOptions['pro']['TextAfterEmailConfirmation'] = $TextAfterEmailConfirmation;
 $jsonOptions['pro']['TextAfterPinConfirmation'] = $TextAfterPinConfirmation;
 $jsonOptions['pro']['RegMailAddressor'] = $RegMailAddressor;
+$jsonOptions['pro']['RegMailFrom'] = $RegMailFrom;
 $jsonOptions['pro']['RegMailReply'] = $RegMailReply;
 $jsonOptions['pro']['RegMailSubject'] = $RegMailSubject;
 $jsonOptions['pro']['RegUserUploadOnly'] = $RegUserUploadOnly;

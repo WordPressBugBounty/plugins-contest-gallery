@@ -24,6 +24,7 @@ if(strpos($mailExceptions,'E-mail confirmation e-mail') !== false){
 
 $mConfirmAdmin = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLmailConfirmation->Admin);
 $mConfirmReply = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLmailConfirmation->Reply);
+$mConfirmFrom = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLmailConfirmation->FromMail);
 $mConfirmCC = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLmailConfirmation->CC);
 $mConfirmBCC = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLmailConfirmation->BCC);
 $mConfirmHeader = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLmailConfirmation->Header);
@@ -46,6 +47,16 @@ echo <<<HEREDOC
             </div>
         </div>
         <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse' id="mConfirmFromContainer" >
+                    <div class='cg_view_option_title'>
+                        <p>From e-mail<br><span class="cg_view_option_title_note">Falls back to "Reply-To e-mail" when empty.</span></p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input type="text" name="mConfirmFrom" id="mConfirmFrom" value="$mConfirmFrom" maxlength="200" >
+                    </div>
+                </div>
+        </div>
+        <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse' id="mConfirmAdminContainer" >
                     <div class='cg_view_option_title'>
                         <p>Header<br><span class="cg_view_option_title_note">Like your company name or something like that, not an e-mail</span></p>
@@ -58,7 +69,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse' id="mConfirmReplyContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Reply e-mail (address From)<br><span class="cg_view_option_title_note">Should not be empty</span></p>
+                        <p>Reply-To e-mail<br><span class="cg_view_option_title_note">Falls back to "From e-mail" when empty.</span></p>
                     </div>
                     <div class='cg_view_option_input'>
                         <input type="text" name="mConfirmReply" id="mConfirmReply" value="$mConfirmReply"  maxlength="200" >
@@ -134,4 +145,3 @@ HEREDOC;
 echo <<<HEREDOC
 </div>
 HEREDOC;
-

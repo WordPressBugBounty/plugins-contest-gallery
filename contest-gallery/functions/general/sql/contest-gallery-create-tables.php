@@ -343,6 +343,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		Admin VARCHAR(200),
 		Header VARCHAR(200),
 		Reply VARCHAR(200),
+		FromMail VARCHAR(200),
 		CC VARCHAR(200),
 		BCC VARCHAR(200),
 		URL VARCHAR(2000),
@@ -499,6 +500,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		AdminMail VARCHAR(200),
 		Header VARCHAR(200),
 		Reply VARCHAR(200),
+		FromMail VARCHAR(200),
 		CC VARCHAR(200),
 		BCC VARCHAR(200),
 		URL TEXT,
@@ -524,14 +526,14 @@ if(!function_exists('contest_gal1ery_create_table')){
                         "
                                 INSERT INTO $tablename_email_admin
                                 ( id, GalleryID, Admin, AdminMail,
-                                Header,Reply,CC,
+                                Header,Reply,FromMail,CC,
                                 BCC,Url,Content)
                                 VALUES ( %s,%d,%s,%s,
-                                %s,%s,%s,
+                                %s,%s,%s,%s,
                                 %s,%s,%s)
                             ",
                         '',$value,$from,$AdminMail,
-                        $Header,'','',
+                        $Header,'','','',
                         '','',$ContentAdminMail
                     ));
 
@@ -548,6 +550,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		Header TEXT NOT NULL,
 		Subject TEXT NOT NULL,
 		Reply TEXT NOT NULL,
+		FromMail TEXT NOT NULL,
 		CC TEXT NOT NULL,
 		BCC TEXT NOT NULL,
 		Content TEXT NOT NULL,
@@ -572,14 +575,14 @@ if(!function_exists('contest_gal1ery_create_table')){
                         "
                                 INSERT INTO $tablename_mail_user_upload
                                 ( id, GalleryID, InformUserUpload, Header, 
-                                Subject,Reply,CC,
+                                Subject,Reply,FromMail,CC,
                                 BCC,Content,ContentInfoWithoutFileSource)
                                 VALUES ( %s,%d,%d,%s,
-                                %s,%s,%s,
+                                %s,%s,%s,%s,
                                 %s,%s,%d)
                             ",
                         '',$value,0,$from,
-                        $Subject,$reply,'',
+                        $Subject,$reply,$reply,'',
                         '',$ContentAdminMail,0
                     ));
 
@@ -596,6 +599,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		Header TEXT NOT NULL,
 		Subject TEXT NOT NULL,
 		Reply TEXT NOT NULL,
+		FromMail TEXT NOT NULL,
 		CC TEXT NOT NULL,
 		BCC TEXT NOT NULL,
 		Content TEXT NOT NULL,
@@ -621,14 +625,14 @@ if(!function_exists('contest_gal1ery_create_table')){
                         "
                                 INSERT INTO $tablename_mail_user_comment
                                 ( id, GalleryID, InformUserComment, Header, 
-                                Subject,Reply,CC,
+                                Subject,Reply,FromMail,CC,
                                 BCC,Content,URL,MailInterval)
                                 VALUES ( %s,%d,%s,%s,
-                                %s,%s,%s,
+                                %s,%s,%s,%s,
                                 %s,%s,%s,%s)
                             ",
                         '',$value,0,$from,
-                        $Subject,$reply,'',
+                        $Subject,$reply,$reply,'',
                         '',$Content,'','24h'
                     ));
 
@@ -645,6 +649,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		Header TEXT NOT NULL,
 		Subject TEXT NOT NULL,
 		Reply TEXT NOT NULL,
+		FromMail TEXT NOT NULL,
 		CC TEXT NOT NULL,
 		BCC TEXT NOT NULL,
 		Content TEXT NOT NULL,
@@ -670,14 +675,14 @@ if(!function_exists('contest_gal1ery_create_table')){
                         "
                                 INSERT INTO $tablename_mail_user_vote
                                 ( id, GalleryID, InformUserVote, Header, 
-                                Subject,Reply,CC,
+                                Subject,Reply,FromMail,CC,
                                 BCC,Content,URL,MailInterval)
                                 VALUES ( %s,%d,%d,%s,
-                                %s,%s,%s,
+                                %s,%s,%s,%s,
                                 %s,%s,%s,%s)
                             ",
                         '',$value,0,$from,
-                        $Subject,$reply,'',
+                        $Subject,$reply,$reply,'',
                         '',$Content,'','24h'
                     ));
 
@@ -726,6 +731,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 		CommNoteCC TEXT,
 		CommNoteBCC TEXT,
 		CommNoteReply TEXT,
+		CommNoteFrom TEXT,
 		CommNoteSubject TEXT,
 		CommNoteContent TEXT,
         INDEX GalleryID_index (GalleryID)
@@ -959,6 +965,7 @@ if(!function_exists('contest_gal1ery_create_table')){
 			TextAfterPinConfirmation TEXT,
 			RegMailAddressor VARCHAR(200),
 			RegMailReply VARCHAR(200),
+			RegMailFrom VARCHAR(200),
 			RegMailSubject VARCHAR(300),
 			RegPinSubject VARCHAR(300),
 			RegMailCC TEXT NOT NULL,
@@ -1140,7 +1147,7 @@ HEREDOC;
                                 ForwardAfterLoginUrlCheck,ForwardAfterLoginUrl,
                                 ForwardAfterLoginTextCheck,ForwardAfterLoginText,
                                 TextEmailConfirmation,TextPinConfirmation,TextAfterEmailConfirmation,TextAfterPinConfirmation,
-                                RegMailAddressor,RegMailReply,RegMailSubject,RegPinSubject,RegUserUploadOnly,RegUserUploadOnlyText,
+                                RegMailAddressor,RegMailReply,RegMailFrom,RegMailSubject,RegPinSubject,RegUserUploadOnly,RegUserUploadOnlyText,
                                 Manipulate,ShowOther,CatWidget,Search,
                                 GalleryUpload,GalleryUploadTextBefore,GalleryUploadTextAfter,GalleryUploadConfirmationText,ShowRefreshButtonAfterUpload,ShowNickname,MinusVote,SlideTransition,
                                 VotesInTime,VotesInTimeQuantity,VotesInTimeIntervalReadable,VotesInTimeIntervalSeconds,VotesInTimeIntervalAlertMessage,ShowExif,
@@ -1158,7 +1165,7 @@ HEREDOC;
                                 %d,%s,
                                 %d,%s,
                                 %s,%s,%s,%s,
-                                %s,%s,%s,%s,%d,%s,
+                                %s,%s,%s,%s,%s,%d,%s,
                                 %d,%d,%d,%d,
                                 %d,%s,%s,%s,%d,%d,%d,%s,
                                 %d,%d,%s,%d,%s,%d,
@@ -1178,7 +1185,7 @@ HEREDOC;
                         0,'',
                         0,$ForwardAfterLoginText,
                         $TextEmailConfirmation,$TextPinConfirmation,$TextAfterEmailConfirmation,$TextAfterPinConfirmation,
-                        $RegMailAddressor,$RegMailReply,$RegMailSubject,$RegPinSubject,0,$RegUserUploadOnlyText,0,1,$CatWidget,$Search,
+                        $RegMailAddressor,$RegMailReply,$RegMailReply,$RegMailSubject,$RegPinSubject,0,$RegUserUploadOnlyText,0,1,$CatWidget,$Search,
                         $GalleryUpload,$GalleryUploadTextBefore,$GalleryUploadTextAfter,$GalleryUploadConfirmationText,$ShowRefreshButtonAfterUpload,$ShowNickname,$MinusVote,$SlideTransition,
                         $VotesInTime,$VotesInTimeQuantity,$VotesInTimeIntervalReadable,$VotesInTimeIntervalSeconds,$VotesInTimeIntervalAlertMessage,$ShowExif,
                         $HideRegFormAfterLogin,$HideRegFormAfterLoginShowTextInstead,$HideRegFormAfterLoginTextToShow,
@@ -1386,6 +1393,7 @@ HEREDOC;
 		Admin VARCHAR(200),
 		Header VARCHAR(200),
 		Reply VARCHAR(200),
+		FromMail VARCHAR(200),
 		CC VARCHAR(200),
 		BCC VARCHAR(200),
 		Content TEXT,
@@ -1413,16 +1421,16 @@ HEREDOC;
                         "
                         INSERT INTO $tablename_mail_confirmation
                         ( id, GalleryID, Admin,
-                        Header,Reply,CC,
+                        Header,Reply,FromMail,CC,
                         BCC,Content,SendConfirm,
                         ConfirmationText,URL)
                         VALUES ( %s,%d,%s,
-                        %s,%s,%s,
+                        %s,%s,%s,%s,
                         %s,%s,%d,
                         %s,%s)
                     ",
                         '',$value,$from,
-                        $HeaderConfirmationMail,$reply,$reply,
+                        $HeaderConfirmationMail,$reply,$reply,$reply,
                         $reply,$ContentConfirmationMail,0,
                         $ConfirmationTextConfirmationMail,''
                     ));
@@ -1539,6 +1547,7 @@ HEREDOC;
             LostPasswordMailActive TINYINT DEFAULT 0,
             LostPasswordMailAddressor VARCHAR(200) NOT NULL,
             LostPasswordMailReply VARCHAR(200) NOT NULL,
+            LostPasswordMailFrom VARCHAR(200) NOT NULL,
             LostPasswordMailSubject VARCHAR(200) NOT NULL,
             LostPasswordMailConfirmation TEXT NOT NULL,
             TextBeforeLoginForm TEXT NOT NULL,

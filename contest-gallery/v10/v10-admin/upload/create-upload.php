@@ -116,7 +116,6 @@ $heredoc = <<<HEREDOC
 	<span class="cg_save_form_button_parent" >
             <span id="cgSaveContactFormNavButton"  class="cg_save_form_button cg_backend_button_gallery_action" >Save form</span>
 	</span>
-	<div style="flex-basis:100%;height:0;"></div>
 	</div>
 HEREDOC;
 

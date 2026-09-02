@@ -1,19 +1,20 @@
 Contest Gallery
 
+= 33.0.2 =
+* IMPROVED: Redesigned the Add files media modal with clearer tabs, a dedicated Assign fields workflow, modern media cards and progress feedback.
+* IMPROVED: Voting and upload login prompts now support passwordless email access with optional Google Sign-In.
+* FIXED: HTML5 videos in the gallery-only view now show their preview frame and duration immediately.
+* FIXED: X post URLs can be added again.
+* FIXED: Contest Gallery Network export now supports WordPress subdirectory installations.
+* FIXED: Reinstalling after uninstall is faster and removes all Paid Actions tables cleanly.
+* FIXED: Backend scrolling now recovers after completed AJAX navigation.
+* FIXED: Product sandbox checkouts work without Paid Actions links, and download sale settings remain saveable after gallery switches.
+
 = 33.0.1 =
-* FIXED: Regular product sandbox checkouts no longer require a Paid Actions sandbox link.
-* FIXED: Existing download sale settings can be saved after switching galleries without requiring regenerated watermark data.
-* IMPROVED: Upload PIN access now uses the gallery-specific text configured for logged-out visitors.
-* IMPROVED: Voting and upload login prompts now use passwordless email access with optional Google Sign-In.
-* IMPROVED: Custom voting HTML messages now use neutral bright and dark surfaces with vertically aligned content.
-* IMPROVED: Custom voting HTML messages now use bright and dark status cards while preserving interactive links and rich content.
-* FIXED: Visible one-star ratings no longer accept pointer interactions when voting is disabled.
 * NEW: Voting for cg_gallery can be enabled, shown read-only or hidden while other gallery shortcode variants remain independently configurable.
 * FIXED: Paid-action sign-in no longer reserves empty Google button space when Google is not configured and falls back to email when the button cannot load.
-* FIXED: Paid-action email PIN sign-in now places the full-width submit button below the email field.
 * FIXED: Read-only ecommerce rating visibility no longer authorizes direct voting requests.
 * FIXED: Legacy galleries with missing entry-opening settings now fall back to the full-window blog view instead of rendering a broken inline entry view.
-* IMPROVED: Legacy hash-URL galleries now show a clear backend migration notice that support has ended and recommend a complete copy with current entry URLs.
 
 = 33.0.0 =
 * NEW: Sell upload, vote and comment credits directly from any regular gallery, with separate gross prices and a combined quantity checkout.
@@ -1985,108 +1986,3 @@ Contest Gallery
 = V10.4.1 =
 * NEW: Rotate images 90 and 270 degree.
 * FIXED: Broken options. Options can't be saved in some cases.
-
-= V10.4.0 =
-* NEW: Horizontal slide effect when switching images in gallery slider.
-* NEW: Select horizontal or vertical slide effect option.
-* FIXED: "Only gallery view" >>> "Make images unclickable". Images were still clickable.
-* FIXED: In gallery form did not appear if gallery was full window sized.
-
-= V10.3.5.5 =
-* NEW: Drag icons for draggable areas in backend.
-* FIXED: Images on sites with plain page id url couldn't be opened.
-
-= V10.3.5.3 =
-* FIXED: Resizing gallery frontend broken.
-* FIXED: Not all images are displayed in gallery.
-
-= V10.3.5.1 =
-* FIXED: CSS file not included when copying or creating new gallery in backend.
-
-= V10.3.5 =
-* NEW: Google reCAPTCHA as form field available.
-* NEW: Improved CSS alerts form messages.
-* NEW: Instant fields validation upload form.
-* NEW: Improved CSS steps links in backend image area.
-
-= V10.3.1 =
-* NEW: Copying galleries with many images by partial redirect.
-* NEW: Clicking browser back button navigates through gallery images.
-* FIXED: Clicking gallery image opens image but does not jump in the image on mobile.
-* FIXED: Not working image link when activating images in backend and send image activation email option is activated.
-
-= V10.3.0.3 =
-* FIXED: Files names lowercase now how it supposed to be.
-
-= V10.3.0.1 =
-* FIXED: Required files were not loaded.
-
-= V10.3.0 =
-* NEW: Show detailed vote overview for every image and ability to remove votes in backend.
-* NEW: Improved slide out single image view.
-
-= V10.2.5.1 =
-* FIXED: Gallery stopped loading for special kind of sorting.
-
-= V10.2.5 =
-* NEW: Uploaded images added instantly to gallery in frontend, without site reload, if "In gallery upload form" and "Automatically activate users files after frontend upload" is activated and used.
-* NEW: Improved slide out performance single image view.
-* FIXED: Missing information in admin mail.
-* FIXED: Backslash appears when quotes are added in comments area.
-* FIXED: Gallery stopped loading if not existing image tried to be found when site load.
-* FIXED: Image activation mail was not send if url parameter was missing in content mail.
-* FIXED: Multiple images upload and "Automatically activate users files after frontend upload".
-
-= V10.2.3 =
-* NEW: Delete votes. Frontend users can remove their votes and give them to another picture. For galleries created after V10.
-* FIXED: "Show Nickname who uploaded image" showed always nickname of logged in user.
-* FIXED: Gallery view information, rating and comments position couldn't be changed.
-* FIXED: No unnecessary semicolons in filename when exporting data CSV.
-* FIXED: JavaScript error message if only 1 Category is selected.
-* FIXED: Reset votes did not work properly.
-
-= V10.20 =
-* NEW: Light version limit options, instead of upload and registrations amount.
-* NEW: Show Nickname who uploaded image, if registered user uploaded image.
-* NEW: Login via mail only, not mail and username anymore.
-* FIXED: Upload form not running when Autoptimize plugin is activated.
-* FIXED: Max image upload size always 2MB in gallery upload form.
-* FIXED: End activate photo contest saving options logic.
-* FIXED: VARCHAR (65535) changed to TEXT when creating tables. Suitable for more servers.
-
-= V10.1.4 =
-* FIXED: Small images were scaled to full gallery width.
-* FIXED: Automatically activate users files after frontend upload for galleries created after V10.
-
-= V10.1.3 =
-* FIXED: Thumb view width adjustment for galleries created after V10.
-* FIXED: Hide until vote rating handling for galleries created after V10.
-* FIXED: Show only user votes rating handling for galleries created after V10.
-* FIXED: "Enable link to original image source" for galleries created after V10.
-
-= V10.1.2 =
-* NEW: tinymce editors in "Edit options" instead of textareas for galleries created after V10.
-* FIXED: Photo contest is over message was not shown in gallery upload form.
-* FIXED: Fields could not be hidden in gallery upload form.
-* FIXED: Email field was not shown in gallery upload form.
-
-= V10.1.0 =
-* NEW: In gallery upload form for galleries created after V10.
-* FIXED: Gallery CSS not complete loaded on slow pages.
-
-= V10.0.1 =
-* FIXED: Focusing blocks in backend when a shortcode of gallery is inserted created before version 10.
-* FIXED: Jumping slideout of images in last row in full window mode.
-* FIXED: Abrupt appearence of gallery closing full window mode.
-
-= V10.0.0 =
-* NEW: Faster frontend engine
-* NEW: Modern slide out view
-* NEW: Full browser window gallery view
-* NEW: Search option in frontend (by image names, field entries or categories)
-* NEW: Instant search results
-* NEW: Instant pagination switching
-* NEW: Instant sorting and category switching
-* NEW: Instant random sort with random sort button
-* NEW: Multiple gallery shortcodes on one page
-* NEW: End contest date in hours and minutes

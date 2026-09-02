@@ -280,6 +280,9 @@ if(!function_exists('cgDropTables')){
 	    $tablename_ecommerce_invoice_options = $wpdb->prefix . "contest_gal1ery_ecommerce_invoice_options";
 	    $tablename_ecommerce_orders = $wpdb->prefix . "contest_gal1ery_ecommerce_orders";
 	    $tablename_ecommerce_orders_items = $wpdb->prefix . "contest_gal1ery_ecommerce_orders_items";
+	    $tablename_paid_action_settings = $wpdb->prefix . "contest_gal1ery_paid_action_settings";
+	    $tablename_paid_action_entitlements = $wpdb->prefix . "contest_gal1ery_paid_action_entitlements";
+	    $tablename_paid_action_ledger = $wpdb->prefix . "contest_gal1ery_paid_action_ledger";
 
 	    $tablename_contest_gal1ery_pdf_previews = $wpdb->prefix . "contest_gal1ery_pdf_previews";
 
@@ -336,6 +339,9 @@ if(!function_exists('cgDropTables')){
         $sql35 = "DROP TABLE IF EXISTS $tablename_contest_gal1ery_ai_prompts";
         $sql36 = "DROP TABLE IF EXISTS $tablename_contest_gal1ery_mails";
         $sql37 = "DROP TABLE IF EXISTS $tablename_contest_gal1ery_mail_templates";
+        $sql38 = "DROP TABLE IF EXISTS $tablename_paid_action_settings";
+        $sql39 = "DROP TABLE IF EXISTS $tablename_paid_action_entitlements";
+        $sql40 = "DROP TABLE IF EXISTS $tablename_paid_action_ledger";
 
 
         $wpdb->query($sql);
@@ -412,6 +418,9 @@ if(!function_exists('cgDropTables')){
         $wpdb->query($sql35);
         $wpdb->query($sql36);
         $wpdb->query($sql37);
+        $wpdb->query($sql38);
+        $wpdb->query($sql39);
+        $wpdb->query($sql40);
 
 
         delete_option("p_cgal1ery_reg_code");

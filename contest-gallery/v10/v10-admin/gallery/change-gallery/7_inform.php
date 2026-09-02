@@ -47,8 +47,8 @@ if ($informORnot == 1) {
                     }
 
                     $headers = array();
-                    $headers[] = "From: $Admin <" . html_entity_decode(strip_tags($Reply)) . ">\r\n";
-                    $headers[] = "Reply-To: " . strip_tags($Reply) . "\r\n";
+                    $mailAddresses = cg_add_mail_from_reply_headers($headers,$Admin,$ConfiguredFromMail,$Reply);
+                    $headers = $mailAddresses['headers'];
 
 
                     if (strpos($cc, ';')) {
@@ -89,8 +89,8 @@ if ($informORnot == 1) {
                                 $WpUserId = $object->WpUserId;
                             }
                         }
-                        $ReplyMail = $Reply;
-                        $FromMail = $Reply;
+                        $ReplyMail = $mailAddresses['reply_to'];
+                        $FromMail = $mailAddresses['from'];
                         $ReplyName = $Admin;
                         $FromName = $Admin;
                         cg_save_sent_mail($GalleryID,$value,$WpUserId,$To,$ReplyName,$ReplyMail,$FromName,$FromMail,$ccPlain,$bccPlain,$Subject, $Msg, 'entry-backend-inform-image-activation');

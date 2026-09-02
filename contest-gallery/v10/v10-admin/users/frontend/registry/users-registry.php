@@ -64,7 +64,7 @@ $TextAfterEmailConfirmation = html_entity_decode(stripslashes(nl2br($pro_options
 $TextAfterPinConfirmation = html_entity_decode(stripslashes(nl2br($pro_options->TextAfterPinConfirmation)));
 $HideRegFormAfterLogin = $pro_options->HideRegFormAfterLogin;
 include(__DIR__.'/../../../../../v10/v10-frontend/gallery/cg-messages.php');
-if (!empty($_GET["cg1l_reload_after_login"])) {
+if (!empty($_GET["cg1l_reload_after_login"]) && is_user_logged_in()) {
     $isAfterLogin = true;
     include (__DIR__.'/users-registry-render-confirmation-or-signin.php');
     return;

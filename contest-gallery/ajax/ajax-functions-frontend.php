@@ -1095,12 +1095,8 @@ if(!function_exists('post_cg1l_resend_unconfirmed_mail_frontend')){
             $pageUrl = get_permalink($page_id);
             $FromName = html_entity_decode(strip_tags($proOptions->RegMailAddressor));
             $ReplyName = $FromName;
-            if (is_email($proOptions->RegMailReply)) {
-                $ReplyMail = $proOptions->RegMailReply;
-            } else {
-                $ReplyMail = get_option('admin_email');
-            }
-            $FromMail = $ReplyMail;
+            $ReplyMail = isset($proOptions->RegMailReply) ? $proOptions->RegMailReply : '';
+            $FromMail = isset($proOptions->RegMailFrom) ? $proOptions->RegMailFrom : $ReplyMail;
             $RegMailCC = (empty($proOptions->RegMailCC)) ? '' : $proOptions->RegMailCC;
             $RegMailBCC = (empty($proOptions->RegMailBCC)) ? '' : $proOptions->RegMailBCC;
             $body = contest_gal1ery_convert_for_html_output_without_nl2br($proOptions->TextEmailConfirmation);

@@ -5129,15 +5129,26 @@ code.cg_shortcode_copy:after{
 }
 
 .cg_save_form_button_parent{
-	display: none;
+	display: flex;
 	flex-flow: column;
 	align-items: center;
+	align-self: center;
+	flex: 0 0 150px;
 	font-size: 22px;
 	margin-left:auto;
+	margin-right:10px;
 	line-height: 26px;
 }
 
+#cgUploadFieldsSelect > .cg_edit_form_options_label,
+#cgRegFormSelect > .cg_edit_form_options_label{
+	flex: 1 1 auto;
+	min-width: 0;
+	width: auto;
+}
+
 .cg_save_form_button_parent .cg_save_form_button.cg_backend_button_gallery_action{
+	box-sizing: border-box;
 	display: flex;
 	font-weight: bold;
 	justify-content: center;

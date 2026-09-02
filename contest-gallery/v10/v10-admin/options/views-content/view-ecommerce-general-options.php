@@ -451,9 +451,19 @@ echo <<<HEREDOC
     </div>
 </div>
 <div class='cg_view_options_row'>
+    <div class='cg_view_option cg_border_radius_unset $cgProFalse $cg_disabled_send_order_confirmation_mail cg_view_option_full_width cg_border_top_none cg_send_order_confirmation_mail' id="OrderConfirmationMailFromContainer" >
+        <div class='cg_view_option_title'>
+            <p>From e-mail<br><span class="cg_view_option_title_note">Falls back to "Reply-To e-mail" when empty.</span></p>
+        </div>
+        <div class='cg_view_option_input'>
+            <input type="text" name="OrderConfirmationMailFrom" id="OrderConfirmationMailFrom" value="$OrderConfirmationMailFrom" maxlength="1000" >
+        </div>
+    </div>
+</div>
+<div class='cg_view_options_row'>
     <div class='cg_view_option cg_border_radius_unset $cgProFalse $cg_disabled_send_order_confirmation_mail cg_view_option_full_width cg_border_top_none cg_send_order_confirmation_mail' id="OrderConfirmationMailReplyContainer" >
         <div class='cg_view_option_title'>
-            <p>Reply</p>
+            <p>Reply-To e-mail<br><span class="cg_view_option_title_note">Falls back to "From e-mail" when empty.</span></p>
         </div>
         <div class='cg_view_option_input'>
             <input type="text" name="OrderConfirmationMailReply" id="OrderConfirmationMailReply" value="$OrderConfirmationMailReply"  maxlength="1000" >

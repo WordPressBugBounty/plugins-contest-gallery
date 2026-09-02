@@ -120,6 +120,7 @@ if(!function_exists('cg_create_ecommerce_tables')){
             SendOrderConfirmationMail TINYINT DEFAULT 0,
             OrderConfirmationMailHeader TEXT DEFAULT '',
             OrderConfirmationMailReply TEXT DEFAULT '',
+            OrderConfirmationMailFrom TEXT DEFAULT '',
             OrderConfirmationMailBcc TEXT DEFAULT '',
             OrderConfirmationMailCc TEXT DEFAULT '',
             OrderConfirmationMailSubject TEXT DEFAULT '',

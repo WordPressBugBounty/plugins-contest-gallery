@@ -69,8 +69,35 @@ if(!function_exists('cg_sell_ecommerce_container')){
 
 
 
-        echo '<div id="cgSellFormLoaderContainer" class="cg_hide">';
-            echo '<div id="cgSellFormLoader" class="cg-lds-dual-ring-gallery-hide" style="height: 300px;margin: 0;padding-top: 80px;max-height: 220px;"></div>';
+        echo '<div id="cgSellFormLoaderContainer" class="cg_hide" role="status" aria-live="polite" aria-busy="true" aria-label="Loading sales settings">';
+            echo '<div id="cgSellFormLoader" class="cg_sell_form_skeleton">';
+                echo '<div class="cg_sell_form_skeleton_header">';
+                    echo '<div class="cg_skeleton_loader_on_page_load cg_sell_form_skeleton_preview"></div>';
+                    echo '<div class="cg_sell_form_skeleton_header_content">';
+                        echo '<div class="cg_skeleton_loader_on_page_load cg_sell_form_skeleton_title"></div>';
+                        echo '<div class="cg_skeleton_loader_on_page_load cg_sell_form_skeleton_control"></div>';
+                        echo '<div class="cg_skeleton_loader_on_page_load cg_sell_form_skeleton_line cg_sell_form_skeleton_line_short"></div>';
+                    echo '</div>';
+                echo '</div>';
+                echo '<div class="cg_sell_form_skeleton_options">';
+                    echo '<div class="cg_skeleton_loader_on_page_load cg_sell_form_skeleton_option"></div>';
+                    echo '<div class="cg_skeleton_loader_on_page_load cg_sell_form_skeleton_option"></div>';
+                    echo '<div class="cg_skeleton_loader_on_page_load cg_sell_form_skeleton_option"></div>';
+                echo '</div>';
+                echo '<div class="cg_sell_form_skeleton_content">';
+                    echo '<div class="cg_sell_form_skeleton_panel">';
+                        echo '<div class="cg_skeleton_loader_on_page_load cg_sell_form_skeleton_line cg_sell_form_skeleton_line_wide"></div>';
+                        echo '<div class="cg_skeleton_loader_on_page_load cg_sell_form_skeleton_field"></div>';
+                        echo '<div class="cg_skeleton_loader_on_page_load cg_sell_form_skeleton_field"></div>';
+                    echo '</div>';
+                    echo '<div class="cg_sell_form_skeleton_panel">';
+                        echo '<div class="cg_skeleton_loader_on_page_load cg_sell_form_skeleton_line"></div>';
+                        echo '<div class="cg_skeleton_loader_on_page_load cg_sell_form_skeleton_field"></div>';
+                        echo '<div class="cg_skeleton_loader_on_page_load cg_sell_form_skeleton_line cg_sell_form_skeleton_line_short"></div>';
+                    echo '</div>';
+                echo '</div>';
+                echo '<div class="cg_sell_form_skeleton_footer"><div class="cg_skeleton_loader_on_page_load cg_sell_form_skeleton_button"></div></div>';
+            echo '</div>';
         echo '</div>';
 
         echo <<<HEREDOC

@@ -121,9 +121,20 @@ if(!function_exists('cg_is_fresh_install_before_create_table')){
 
         $tablename_prefix = $wpdb->base_prefix . "$i"."contest_gal1ery";
         $table_like = $wpdb->esc_like($tablename_prefix).'%';
-        $existing = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table_like));
+        $existingTables = $wpdb->get_col($wpdb->prepare('SHOW TABLES LIKE %s', $table_like));
+        $knownUninstallRemnants = array(
+            $tablename_prefix.'_paid_action_settings',
+            $tablename_prefix.'_paid_action_entitlements',
+            $tablename_prefix.'_paid_action_ledger'
+        );
 
-        return empty($existing);
+        foreach($existingTables as $existingTable){
+            if(!in_array($existingTable,$knownUninstallRemnants,true)){
+                return false;
+            }
+        }
+
+        return true;
 
     }
 }

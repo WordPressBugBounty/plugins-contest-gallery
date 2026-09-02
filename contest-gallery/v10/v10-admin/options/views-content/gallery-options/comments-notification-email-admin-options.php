@@ -50,11 +50,21 @@ echo <<<HEREDOC
                         <input type="text" class="cg_domain_error_input" name="CommNoteAdminMail" value="$CommNoteAdminMail"  maxlength="200" >
                     </div>
                 </div>
-        </div>
-        <div class='cg_view_options_row'>
+       </div>
+       <div class='cg_view_options_row'>
+            <div class="cg_view_option cg_comm_note_option cg_view_option_full_width cg_border_top_none $cgProFalse" id="CommNoteFrom">
+                <div class="cg_view_option_title">
+                    <p>From e-mail<br><span class="cg_view_option_title_note">Falls back to "Reply-To e-mail" when empty.</span></p>
+                </div>
+                <div class="cg_view_option_input">
+                    <input type="text" name="CommNoteFrom" value="$CommNoteFrom" maxlength="1000" >
+                </div>
+            </div>
+       </div>
+       <div class='cg_view_options_row'>
             <div class="cg_view_option cg_comm_note_option  cg_view_option_full_width cg_border_top_none $cgProFalse" id="CommNoteReply">
                 <div class="cg_view_option_title">
-                    <p>Reply e-mail (address From)<br><span class="cg_view_option_title_note">Should not be empty</span></p>
+                    <p>Reply-To e-mail<br><span class="cg_view_option_title_note">Falls back to "From e-mail" when empty.</span></p>
                 </div>
                 <div class="cg_view_option_input">
                     <input type="text" name="CommNoteReply" value="$CommNoteReply" maxlength="1000" >

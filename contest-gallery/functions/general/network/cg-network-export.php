@@ -554,7 +554,12 @@ if(!function_exists('cg_network_gallery_page_is_allowed')){
 		}
 		$path = wp_parse_url($url,PHP_URL_PATH);
 		$path = '/'.ltrim((string)$path,'/');
-		$expected = '/'.trim($slug,'/').'/';
+		$homePath = wp_parse_url(home_url('/'),PHP_URL_PATH);
+		$homePath = '/'.trim((string)$homePath,'/');
+		if($homePath==='/'){
+			$homePath = '';
+		}
+		$expected = $homePath.'/'.trim($slug,'/').'/';
 		return (strpos($path,$expected)===0 || rtrim($path,'/')===rtrim($expected,'/'));
 	}
 }

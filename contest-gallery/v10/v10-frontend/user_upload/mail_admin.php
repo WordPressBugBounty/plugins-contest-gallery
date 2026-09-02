@@ -9,13 +9,14 @@ if (!function_exists('contest_gal1ery_mail_admin'))   {
         $Subject = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailAdmin->Header);
         $Admin = $selectSQLemailAdmin->Admin;
         $AdminMail = $selectSQLemailAdmin->AdminMail;
+        $FromMail = $selectSQLemailAdmin->FromMail;
         $Reply = $selectSQLemailAdmin->Reply;
         $cc = $selectSQLemailAdmin->CC;
         $bcc = $selectSQLemailAdmin->BCC;
 
         $headers = array();
-        $headers[] = "From: $Admin <". html_entity_decode(strip_tags($Reply)) . ">\r\n";
-        $headers[] = "Reply-To: ". strip_tags($Reply) . "\r\n";
+        $mailAddresses = cg_add_mail_from_reply_headers($headers,$Admin,$FromMail,$Reply);
+        $headers = $mailAddresses['headers'];
 
         if(strpos($cc,';')){
             $cc = explode(';',$cc);

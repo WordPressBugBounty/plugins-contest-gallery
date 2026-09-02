@@ -5,13 +5,14 @@ if (!function_exists('contest_gal1ery_user_comment_mail'))   {
 
         $Subject = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserComment->Subject);
         $Header = $selectSQLemailUserComment->Header;
+        $FromMail = $selectSQLemailUserComment->FromMail;
         $Reply = $selectSQLemailUserComment->Reply;
         $cc = $selectSQLemailUserComment->CC;
         $bcc = $selectSQLemailUserComment->BCC;
 
         $headers = array();
-        $headers[] = "From: $Header <". html_entity_decode(strip_tags($Reply)) . ">\r\n";
-        $headers[] = "Reply-To: ". strip_tags($Reply) . "\r\n";
+        $mailAddresses = cg_add_mail_from_reply_headers($headers,$Header,$FromMail,$Reply);
+        $headers = $mailAddresses['headers'];
 
         if(strpos($cc,';')){
             $cc = explode(';',$cc);

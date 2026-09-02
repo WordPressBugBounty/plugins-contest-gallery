@@ -104,6 +104,7 @@ if (!defined('ABSPATH')) {
     echo "</pre>";*/
 
     $activation_key = md5(time() . wp_generate_password( 32, true, true ));
+    $activationBrowserBinding = cg1l_get_registry_activation_browser_binding(true);
 
     // Validierung und Erstellung von Activation Key
     foreach ($cg_check as $key => $value) {
@@ -243,6 +244,19 @@ if (!defined('ABSPATH')) {
         ));
 
     }
+
+    if(!empty($activationBrowserBinding)){
+        cg1l_store_registry_activation_browser_binding(
+            $activation_key,
+            $activationBrowserBinding,
+            $GalleryID,
+            0,
+            $Version,
+            $GeneralID,
+            $Tstamp
+        );
+    }
+
     if($cg_users_pin){
         $pin = wp_rand(100000, 999999);
         $Subject = str_ireplace($posPin, $pin, contest_gal1ery_convert_for_html_output_without_nl2br($proOptions->RegPinSubject));
@@ -369,6 +383,18 @@ if (!defined('ABSPATH')) {
                 '', $GalleryID, $newWpId, 0, 'unconfirmed-mail',
                 $user_email, $activation_key, 0, $Version, 1, $Tstamp
             ));
+
+            if(!empty($activationBrowserBinding)){
+                cg1l_store_registry_activation_browser_binding(
+                    $activation_key,
+                    $activationBrowserBinding,
+                    $GalleryID,
+                    $newWpId,
+                    $Version,
+                    1,
+                    $Tstamp
+                );
+            }
 
 			if(!empty($attach_id)){
 				cg_registry_add_profile_image('cg_input_image_upload_file',$newWpId,false,false,$attach_id);

@@ -11,9 +11,35 @@ jQuery(document).ready(function ($) {
 
     $(document).on('click','.cg_media_menu_item',function (){
         $mediaFrame = $(this).closest('.media-frame.cg_backend_area');
+        $mediaFrame.removeClass('cg_media_assign_fields_mode');
         $mediaFrame.find('.media-toolbar-primary.search-form').addClass('cg_hide');
         $mediaFrame.find('.media-menu-item.active').removeClass('active').addClass('cg_active');
-        $mediaFrame.find('.cg_media_menu_item.cg_active').removeClass('cg_active');
+        $mediaFrame.find('.cg_media_menu_item.cg_active').removeClass('cg_active').attr('aria-pressed', 'false');
+    });
+
+    $(document).on('click','#cgAssignFields',function (event){
+        event.preventDefault();
+        var $tab = $(this);
+        var $mediaFrame = $tab.closest('.media-frame.cg_backend_area');
+        var $mediaFrameContent = $mediaFrame.find('.media-frame-content');
+        var gid = $tab.attr('data-cg-gid');
+        var $panel;
+
+        $mediaFrame.find('.cg_media_assign_fields_tab_panel.cg_cloned').remove();
+        $mediaFrameContentSub = $mediaFrameContent.children();
+        $mediaFrameContentSub.addClass('cg_hide');
+        $mediaFrameContent.removeAttr('style');
+        $panel = cgJsClassAdmin.gallery.functions.createMediaAssignFieldsPanel(gid);
+
+        if (!$panel.length) {
+            $mediaFrame.find('#menu-item-browse').trigger('click');
+            return;
+        }
+
+        $tab.addClass('cg_active').attr('aria-pressed', 'true');
+        $mediaFrame.addClass('cg_media_assign_fields_mode');
+        $mediaFrameContent.append($panel);
+        $panel.find('.cg_media_assign_fields_tab_title').trigger('focus');
     });
 
     $(document).on('click','#cgAddYoutube',function (){
@@ -818,9 +844,10 @@ jQuery(document).ready(function ($) {
 
     $(document).on('click','.media-frame.cg_backend_area .media-menu-item',function (){
         var $mediaFrame = $(this).closest('.media-frame.cg_backend_area');
+        $mediaFrame.removeClass('cg_media_assign_fields_mode');
         $mediaFrame.find('.media-toolbar-primary.search-form').removeClass('cg_hide');
         $mediaFrame.find('.cg_media_container').remove();
-        $mediaFrame.find('.cg_media_menu_item').removeClass('cg_active');
+        $mediaFrame.find('.cg_media_menu_item').removeClass('cg_active').attr('aria-pressed', 'false');
     });
 
     cgJsClassAdmin.gallery.functions.loadAiCreateEvents($);

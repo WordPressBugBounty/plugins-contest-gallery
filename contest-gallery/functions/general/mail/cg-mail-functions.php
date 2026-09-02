@@ -1,5 +1,57 @@
 <?php
 
+if(!function_exists('cg_resolve_mail_from_reply')){
+    function cg_resolve_mail_from_reply($fromMail,$replyMail){
+        $fromMail = sanitize_email(trim(wp_specialchars_decode((string)$fromMail,ENT_QUOTES)));
+        $replyMail = sanitize_email(trim(wp_specialchars_decode((string)$replyMail,ENT_QUOTES)));
+
+        if(!is_email($fromMail)){
+            $fromMail = '';
+        }
+        if(!is_email($replyMail)){
+            $replyMail = '';
+        }
+
+        if(empty($fromMail) && !empty($replyMail)){
+            $fromMail = $replyMail;
+        }elseif(empty($replyMail) && !empty($fromMail)){
+            $replyMail = $fromMail;
+        }
+
+        return array(
+            'from' => $fromMail,
+            'reply_to' => $replyMail
+        );
+    }
+}
+
+if(!function_exists('cg_add_mail_from_reply_headers')){
+    function cg_add_mail_from_reply_headers($headers,$fromName,$fromMail,$replyMail,$replyName = ''){
+        if(!is_array($headers)){
+            $headers = array();
+        }
+
+        $resolved = cg_resolve_mail_from_reply($fromMail,$replyMail);
+        $fromName = wp_strip_all_tags(wp_specialchars_decode((string)$fromName,ENT_QUOTES));
+        $fromName = trim(str_replace(array("\r","\n"),'',$fromName));
+        $replyName = wp_strip_all_tags(wp_specialchars_decode((string)$replyName,ENT_QUOTES));
+        $replyName = trim(str_replace(array("\r","\n"),'',$replyName));
+
+        if(!empty($resolved['from'])){
+            $headers[] = !empty($fromName) ? 'From: '.$fromName.' <'.$resolved['from'].'>' : 'From: '.$resolved['from'];
+        }
+        if(!empty($resolved['reply_to'])){
+            $headers[] = !empty($replyName) ? 'Reply-To: '.$replyName.' <'.$resolved['reply_to'].'>' : 'Reply-To: '.$resolved['reply_to'];
+        }
+
+        return array(
+            'headers' => $headers,
+            'from' => $resolved['from'],
+            'reply_to' => $resolved['reply_to']
+        );
+    }
+}
+
 if (!function_exists('cg_save_sent_mail'))   {
     function cg_save_sent_mail($gid,$pid,$WpUserId,$ReceiverMail,$ReplyName,$ReplyMail,$FromName,$FromMail,$cc,$bcc,$subject, $body, $MailType) {
 
@@ -80,4 +132,3 @@ if (!function_exists('cg_save_sent_mail'))   {
 
     }
 }
-

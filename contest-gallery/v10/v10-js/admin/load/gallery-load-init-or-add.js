@@ -2,9 +2,12 @@ cgJsClassAdmin.gallery.load = cgJsClassAdmin.gallery.functions || {};
 cgJsClassAdmin.gallery.load = {
     init: function($,isAddImages,$formLinkObject,isImagesAdded,addedImagesResponse,cg_picture_id_to_scroll){
         debugger
+        var isModernAddFilesLoading = false;
         if(isAddImages){
-            $('#cg_uploading_gif').hide();
-            $('#cg_uploading_div').hide();
+            isModernAddFilesLoading = $('#cg_uploading_div').hasClass('cg_gallery_backend_uploading_active');
+            if(isModernAddFilesLoading){
+                cgJsClassAdmin.gallery.functions.setAddFilesLoaderState($, 'refreshing');
+            }
             $('#cgSortable').remove();
             $('#cgGallerySubmitTop').remove();
             $('#cgStepsNavigationTop').remove();
@@ -77,7 +80,11 @@ cgJsClassAdmin.gallery.load = {
             }
         }
 
-        $('#cgGalleryLoader').removeClass('cg_hide');
+        if(isModernAddFilesLoading){
+            $('#cgGalleryLoader').addClass('cg_hide');
+        }else{
+            $('#cgGalleryLoader').removeClass('cg_hide');
+        }
         $('#cgViewControl').removeClass('cg_hide');
 
 
@@ -150,6 +157,9 @@ cgJsClassAdmin.gallery.load = {
 debugger
 
             if(cgJsClassAdmin.index.functions.isInvalidNonce($,response)){
+                if(isModernAddFilesLoading){
+                    cgJsClassAdmin.gallery.functions.setAddFilesLoaderState($, 'refresh-error');
+                }
                 return;
             }
 
@@ -170,7 +180,12 @@ debugger
                 eval(script);
             });
 
-            if(cgJsClassAdmin.gallery.functions.missingRights($,response)){return;}
+            if(cgJsClassAdmin.gallery.functions.missingRights($,response)){
+                if(isModernAddFilesLoading){
+                    cgJsClassAdmin.gallery.functions.setAddFilesLoaderState($, 'refresh-error');
+                }
+                return;
+            }
 
             cgJsClassAdmin.gallery.functions.hideCgBackendBackgroundDropAndContainer();
 
@@ -286,11 +301,17 @@ debugger
 
             cgJsClassAdmin.gallery.functions.loadBlockquote($);
 
+            if(isModernAddFilesLoading){
+                cgJsClassAdmin.gallery.functions.setAddFilesLoaderState($, 'success');
+            }
+
    //         $('#div3887').prepend('<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Sunsets don&#39;t get much better than this one over <a href="https://twitter.com/GrandTetonNPS?ref_src=twsrctfw">@GrandTetonNPS</a>. <a href="https://twitter.com/hashtag/nature?src=hash&amp;ref_src=twsrctfw">#nature</a> <a href="https://twitter.com/hashtag/sunset?src=hash&amp;ref_src=twsrctfw">#sunset</a> <a href="http://t.co/YuKy2rcjyU">pic.twitter.com/YuKy2rcjyU</a></p>&mdash; US Department of the Interior (@Interior) <a href="https://twitter.com/Interior/status/463440424141459456?ref_src=twsrctfw">May 5, 2014</a></blockquote><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>');
 
         }).fail(function(xhr, status, error) {
             debugger
-
+            if(isModernAddFilesLoading){
+                cgJsClassAdmin.gallery.functions.setAddFilesLoaderState($, 'refresh-error');
+            }
         }).always(function() {
 
         }));

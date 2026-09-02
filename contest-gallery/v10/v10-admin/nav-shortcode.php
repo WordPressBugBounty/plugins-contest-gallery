@@ -183,7 +183,7 @@ HEREDOC;
 echo "<div class='td_gallery_info_shortcode'>
     <div>
          <div class='td_gallery_info_name_title'><span class='td_gallery_info_name_title_span $cg_v14_note_caret'>User form</span></div>
-    <div class='td_gallery_info_name_span td_gallery_info_name_span_user_form'><span class='td_gallery_info_name_span_box td_gallery_info_name_span_box_primary cg_shortcode_copy cg_tooltip'>[cg_users_reg]</span><span class='td_gallery_info_name_span_separator'>or</span><span class='td_gallery_info_name_span_box cg_shortcode_copy cg_tooltip'>[cg_users_pin]</span></div>
+    <div class='td_gallery_info_name_span td_gallery_info_name_span_user_form'><span class='td_gallery_info_name_span_box td_gallery_info_name_span_box_primary cg_shortcode_copy cg_tooltip'>[cg_users_reg]</span><span class='td_gallery_info_name_span_separator'>or</span><span class='td_gallery_info_name_span_box cg_shortcode_copy cg_tooltip' data-cg-shortcode='[cg_users_pin mode=\"access\"]'>[cg_users_pin]</span></div>
         <div class='cg-info-icon-parent'>
             <span class=\"cg-info-icon $cg_v14_note_caret\">read info</span>
 <span class=\"cg-info-container cg-info-container-gallery-user\" style=\"display: none;min-width: 350px;\">

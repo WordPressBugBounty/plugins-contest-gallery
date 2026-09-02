@@ -758,6 +758,7 @@ $InformUserUpload = ($selectSQLemailUserUpload->InformUserUpload==1) ? 'checked'
 $InformUserUploadHeader = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserUpload->Header);
 $InformUserUploadSubject = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserUpload->Subject);
 $InformUserUploadReply = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserUpload->Reply);
+$InformUserUploadFrom = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserUpload->FromMail);
 $InformUserUploadCC = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserUpload->CC);
 $InformUserUploadBCC = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserUpload->BCC);
 $ContentUserUploadContent = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserUpload->Content);
@@ -781,6 +782,16 @@ echo <<<HEREDOC
             </div>
         </div>
         <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse cg_inform_user_upload' id="cgInformUserUploadFromMailContainer" >
+                    <div class='cg_view_option_title'>
+                        <p>From e-mail<br><span class="cg_view_option_title_note">Falls back to "Reply-To e-mail" when empty.</span></p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input type="text" name="InformUserUploadFrom" id="cgInformUserUploadFromMail" value="$InformUserUploadFrom" maxlength="200" >
+                    </div>
+                </div>
+        </div>
+        <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse cg_inform_user_upload' id="cgInformUserUploadFromContainer" >
                     <div class='cg_view_option_title'>
                         <p>Header<br><span class="cg_view_option_title_note">Like your company name or something like that, not an e-mail</span></p>
@@ -793,7 +804,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse cg_inform_user_upload' id="cgInformUserUploadReplyContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Reply e-mail (address From)<br><span class="cg_view_option_title_note">Should not be empty</span>
+                        <p>Reply-To e-mail<br><span class="cg_view_option_title_note">Falls back to "From e-mail" when empty.</span>
                         </p>
                     </div>
                     <div class='cg_view_option_input'>

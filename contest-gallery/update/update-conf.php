@@ -2,9 +2,23 @@
 return array(
     $tablename_email => array(
         'Content' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019
+        'FromMail' => array('COLUMN_TYPE' => 'VARCHAR(200)','DEFAULT' => '""'),// Update 02.09.2026
     ),
     $tablename_email_admin => array(
         'Content' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019
+        'FromMail' => array('COLUMN_TYPE' => 'VARCHAR(200)','DEFAULT' => '""'),// Update 02.09.2026
+    ),
+    $tablename_mail_user_upload => array(
+        'FromMail' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 02.09.2026
+    ),
+    $tablename_mail_user_comment => array(
+        'FromMail' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 02.09.2026
+    ),
+    $tablename_mail_user_vote => array(
+        'FromMail' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 02.09.2026
+    ),
+    $tablename_comments_notification_options => array(
+        'CommNoteFrom' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 02.09.2026
     ),
     $tablename_options_input => array(
         'Confirmation_Text' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019
@@ -279,6 +293,7 @@ return array(
         'Field_Content' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""')// Update ab 23.02.2019
     ),
     $tablename_pro_options => array(
+        'RegMailFrom' => array('COLUMN_TYPE' => 'VARCHAR(200)','DEFAULT' => '""'),// Update 02.09.2026
         'ShowOther' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 1),
         'CatWidget' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 1),// Update 22.07.2018,
         'Search' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 1),// Update 01.01.2019
@@ -378,9 +393,11 @@ return array(
     ),
     $tablename_mail_confirmation => array(
         'Content' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019
-        'ConfirmationText' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""')// Update ab 23.02.2019
+        'ConfirmationText' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019
+        'FromMail' => array('COLUMN_TYPE' => 'VARCHAR(200)','DEFAULT' => '""'),// Update 02.09.2026
     ),
     $tablename_registry_and_login_options => array(
+        'LostPasswordMailFrom' => array('COLUMN_TYPE' => 'VARCHAR(200)','DEFAULT' => '""'),// Update 02.09.2026
         'TextBeforeLoginForm' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 22.12.2021
         'EditProfileGroups' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 28.12.2021
         'TextBeforeRegFormBeforeLoggedIn' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 05.01.2022
@@ -395,6 +412,7 @@ return array(
 	    'GooglemailConvert' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0)// Update 25.01.2025
     ),
     $tablename_ecommerce_options => array(
+        'OrderConfirmationMailFrom' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 02.09.2026
         'PayPalApiActive' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 1),// Update 18.01.2025 // with 1 and 0 is activated, PayPalApiActive is 1 because it was activated by default before 26.0.0
         'StripeApiActive' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 2),// Update 18.01.2025 // with 2 is deactivated
         'StripeLiveClientId' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 18.01.2025

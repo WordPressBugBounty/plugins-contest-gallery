@@ -41,13 +41,14 @@ if(!empty($registryAndLoginOptions) && intval($registryAndLoginOptions->LostPass
         $cgLostPasswordSiteUrl = strtok($cgLostPasswordSiteUrl, '#');
 
 	    $LostPasswordMailAddressor = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailAddressor);
+        $LostPasswordMailFrom = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailFrom);
         $LostPasswordMailReply = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailReply);
         $LostPasswordMailSubject = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailSubject);
         $LostPasswordMailConfirmation = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailConfirmation);
 
 	    $headers = array();
-        $headers[] = "From: " . html_entity_decode(strip_tags($LostPasswordMailAddressor)) . " <" . strip_tags($LostPasswordMailReply) . ">";
-        $headers[] = "Reply-To: " . strip_tags($LostPasswordMailReply) . "";
+        $mailAddresses = cg_add_mail_from_reply_headers($headers,$LostPasswordMailAddressor,$LostPasswordMailFrom,$LostPasswordMailReply);
+        $headers = $mailAddresses['headers'];
         $headers[] = "MIME-Version: 1.0";
         $headers[] = "Content-Type: text/html; charset=utf-8";
 

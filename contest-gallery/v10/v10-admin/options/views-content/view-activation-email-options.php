@@ -13,6 +13,7 @@ if(strpos($mailExceptions,'Image activation e-mail frontend') !== false OR strpo
 
 $InformUsersAdmin = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemail->Admin);
 $InformUsersReply = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemail->Reply);
+$InformUsersFrom = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemail->FromMail);
 $InformUsersCC = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemail->CC);
 $InformUsersBCC = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemail->BCC);
 $InformUsersHeader = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemail->Header);
@@ -34,6 +35,16 @@ echo <<<HEREDOC
             </div>
         </div>
         <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_view_option_full_width cg_border_top_none cg_file_activation_email_option $cgProFalse' id="InformUsersFromContainer" >
+                    <div class='cg_view_option_title'>
+                        <p>From e-mail<br><span class="cg_view_option_title_note">Falls back to "Reply-To e-mail" when empty.</span></p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input type="text" name="from_user_mail_address" id="InformUsersFrom" value="$InformUsersFrom" maxlength="200" >
+                    </div>
+                </div>
+        </div>
+        <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none cg_file_activation_email_option $cgProFalse' id="InformUsersAdminContainer" >
                     <div class='cg_view_option_title'>
                         <p>Header<br><span class="cg_view_option_title_note">Like your company name or something like that, not an e-mail</span></p>
@@ -46,7 +57,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none cg_file_activation_email_option $cgProFalse' id="InformUsersReplyContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Reply e-mail (address From)<span class="cg_view_option_title_note">$replyMailNote</span></p>
+                        <p>Reply-To e-mail<span class="cg_view_option_title_note">$replyMailNote<br>Falls back to "From e-mail" when empty.</span></p>
                     </div>
                     <div class='cg_view_option_input'>
                         <input type="text" name="reply_user_mail" id="InformUsersReply" value="$InformUsersReply"  maxlength="200" >
@@ -111,4 +122,3 @@ HEREDOC;
 echo <<<HEREDOC
 </div>
 HEREDOC;
-

@@ -33,6 +33,7 @@ if(!function_exists('cg_ecommerce_change_options_and_sizes')){
         $CheckoutNoteBottom = $unsavingValues->CheckoutNoteBottom;
         $OrderConfirmationMail = $unsavingValues->OrderConfirmationMail;
         $OrderConfirmationMailHeader = $unsavingValues->OrderConfirmationMailHeader;
+        $OrderConfirmationMailFrom = $unsavingValues->OrderConfirmationMailFrom;
         $OrderConfirmationMailReply = $unsavingValues->OrderConfirmationMailReply;
         $OrderConfirmationMailBcc = $unsavingValues->OrderConfirmationMailBcc;
         $OrderConfirmationMailCc = $unsavingValues->OrderConfirmationMailCc;
@@ -102,6 +103,7 @@ if(!function_exists('cg_ecommerce_change_options_and_sizes')){
 
         $SendOrderConfirmationMail = isset($_POST['SendOrderConfirmationMail']) ? 1 : 0;
         $OrderConfirmationMailHeader = sanitize_text_field(isset($_POST['OrderConfirmationMailHeader']) ? $_POST['OrderConfirmationMailHeader'] : $OrderConfirmationMailHeader);
+        $OrderConfirmationMailFrom = sanitize_text_field(isset($_POST['OrderConfirmationMailFrom']) ? $_POST['OrderConfirmationMailFrom'] : $OrderConfirmationMailFrom);
         $OrderConfirmationMailReply = sanitize_text_field(isset($_POST['OrderConfirmationMailReply']) ? $_POST['OrderConfirmationMailReply'] : $OrderConfirmationMailReply);
         $OrderConfirmationMailBcc = sanitize_text_field(isset($_POST['OrderConfirmationMailBcc']) ? $_POST['OrderConfirmationMailBcc'] : $OrderConfirmationMailBcc);
         $OrderConfirmationMailCc = sanitize_text_field(isset($_POST['OrderConfirmationMailCc']) ? $_POST['OrderConfirmationMailCc'] : $OrderConfirmationMailCc);
@@ -174,7 +176,7 @@ if(!function_exists('cg_ecommerce_change_options_and_sizes')){
                  'TaxPercentageDefault' => $TaxPercentageDefault,'ShippingGross'=>$ShippingGross,
                 'CheckoutAgreementOne'=>$CheckoutAgreementOne,'CheckoutAgreementTwo'=>$CheckoutAgreementTwo,
                 'CheckoutAgreementThree'=>$CheckoutAgreementThree,'CheckoutNoteBottom'=>$CheckoutNoteBottom,'CheckoutNoteTop'=>$CheckoutNoteTop,
-                'SendOrderConfirmationMail'=>$SendOrderConfirmationMail,'OrderConfirmationMailHeader'=>$OrderConfirmationMailHeader,'OrderConfirmationMailReply'=>$OrderConfirmationMailReply,'OrderConfirmationMailBcc'=>$OrderConfirmationMailBcc,'OrderConfirmationMailCc'=>$OrderConfirmationMailCc,'OrderConfirmationMailSubject'=>$OrderConfirmationMailSubject,'OCMailOrderSummaryURL'=>$OCMailOrderSummaryURL,'OrderConfirmationMail'=>$OrderConfirmationMail,
+                'SendOrderConfirmationMail'=>$SendOrderConfirmationMail,'OrderConfirmationMailHeader'=>$OrderConfirmationMailHeader,'OrderConfirmationMailFrom'=>$OrderConfirmationMailFrom,'OrderConfirmationMailReply'=>$OrderConfirmationMailReply,'OrderConfirmationMailBcc'=>$OrderConfirmationMailBcc,'OrderConfirmationMailCc'=>$OrderConfirmationMailCc,'OrderConfirmationMailSubject'=>$OrderConfirmationMailSubject,'OCMailOrderSummaryURL'=>$OCMailOrderSummaryURL,'OrderConfirmationMail'=>$OrderConfirmationMail,
                 'ForwardAfterPurchaseUrl'=>$ForwardAfterPurchaseUrl,'AllowedCountriesTranslations'=>$AllowedCountriesTranslations,
                 'AllowedCountries'=>$AllowedCountries,'BorderRadiusOrder'=>$BorderRadiusOrder,'FeControlsStyleOrder'=>$FeControlsStyleOrder,'PayPalDisableFunding'=>$PayPalDisableFunding,
                 'RegUserPurchaseOnlyText'=>$RegUserPurchaseOnlyText,'RegUserOrderSummaryOnlyText'=>$RegUserOrderSummaryOnlyText,
@@ -193,7 +195,7 @@ if(!function_exists('cg_ecommerce_change_options_and_sizes')){
                 '%f', '%f',
                 '%s', '%s',
                 '%s', '%s', '%s',
-                '%d','%s','%s','%s','%s','%s','%s','%s',
+                '%d','%s','%s','%s','%s','%s','%s','%s','%s',
                 '%s','%s',
                 '%s', '%d', '%s', '%s',
                 '%s', '%s',

@@ -13,6 +13,7 @@ $InformUserVote = ($selectSQLemailUserVote->InformUserVote==1) ? 'checked' : '';
 $InformUserVoteHeader = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserVote->Header);
 $InformUserVoteMailInterval = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserVote->MailInterval);
 $InformUserVoteSubject = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserVote->Subject);
+$InformUserVoteFrom = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserVote->FromMail);
 $InformUserVoteReply = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserVote->Reply);
 $InformUserVoteCC = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserVote->CC);
 $InformUserVoteBCC = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserVote->BCC);
@@ -79,9 +80,19 @@ echo <<<HEREDOC
                 </div>
         </div>
         <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_view_option_full_width cg_inform_user_vote cg_border_top_none $cgProFalse' id="cgInformUserVoteFromContainer" >
+                    <div class='cg_view_option_title'>
+                        <p>From e-mail<br><span class="cg_view_option_title_note">Falls back to "Reply-To e-mail" when empty.</span></p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input type="text" name="InformUserVoteFrom" id="cgInformUserVoteFromMail" value="$InformUserVoteFrom" maxlength="200" >
+                    </div>
+                </div>
+        </div>
+        <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_inform_user_vote cg_border_top_none $cgProFalse' id="cgInformUserVoteReplyContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Reply e-mail (address From)<br><span class="cg_view_option_title_note">Should not be empty</span>
+                        <p>Reply-To e-mail<br><span class="cg_view_option_title_note">Falls back to "From e-mail" when empty.</span>
                         </p>
                     </div>
                     <div class='cg_view_option_input'>
@@ -148,4 +159,3 @@ echo <<<HEREDOC
         </div>
 </div>
 HEREDOC;
-

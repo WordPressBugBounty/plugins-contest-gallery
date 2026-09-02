@@ -1916,6 +1916,7 @@ cgJsClassAdmin.options.functions = {
         if($("#mConfirmSendConfirm").prop("checked")){
 
             $( "#mConfirmAdminContainer" ).removeClass("cg_disabled");
+            $( "#mConfirmFromContainer" ).removeClass("cg_disabled");
             $( "#mConfirmReplyContainer" ).removeClass("cg_disabled");
             $( "#mConfirmCCContainer" ).removeClass("cg_disabled");
             $( "#mConfirmBCCContainer" ).removeClass("cg_disabled");
@@ -1929,6 +1930,7 @@ cgJsClassAdmin.options.functions = {
         else{
 
             $( "#mConfirmAdminContainer" ).addClass("cg_disabled");
+            $( "#mConfirmFromContainer" ).addClass("cg_disabled");
             $( "#mConfirmReplyContainer" ).addClass("cg_disabled");
             $( "#mConfirmCCContainer" ).addClass("cg_disabled");
             $( "#mConfirmBCCContainer" ).addClass("cg_disabled");
@@ -2112,11 +2114,13 @@ cgJsClassAdmin.options.functions = {
 
         if($('#LostPasswordMailActive').prop('checked')){
             $('#LostPasswordMailAddressorContainer').removeClass('cg_disabled');
+            $('#LostPasswordMailFromContainer').removeClass('cg_disabled');
             $('#LostPasswordMailReplyContainer').removeClass('cg_disabled');
             $('#LostPasswordMailSubjectContainer').removeClass('cg_disabled');
             $('#wp-LostPasswordMailConfirmation-wrap-Container').removeClass('cg_disabled');
         }else{
             $('#LostPasswordMailAddressorContainer').addClass('cg_disabled');
+            $('#LostPasswordMailFromContainer').addClass('cg_disabled');
             $('#LostPasswordMailReplyContainer').addClass('cg_disabled');
             $('#LostPasswordMailSubjectContainer').addClass('cg_disabled');
             $('#wp-LostPasswordMailConfirmation-wrap-Container').addClass('cg_disabled');

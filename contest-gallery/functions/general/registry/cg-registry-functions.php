@@ -697,6 +697,7 @@ if(!function_exists('cg_get_registry_and_login_options_v14')){
         $optionsForGeneralIDsinceV14['pro']['HideRegFormAfterLoginShowTextInstead'] = $optionsPRO->HideRegFormAfterLoginShowTextInstead;
         $optionsForGeneralIDsinceV14['pro']['HideRegFormAfterLoginTextToShow'] = $optionsPRO->HideRegFormAfterLoginTextToShow;
         $optionsForGeneralIDsinceV14['pro']['RegMailAddressor'] = $optionsPRO->RegMailAddressor;
+        $optionsForGeneralIDsinceV14['pro']['RegMailFrom'] = $optionsPRO->RegMailFrom;
         $optionsForGeneralIDsinceV14['pro']['RegMailReply'] = $optionsPRO->RegMailReply;
         $optionsForGeneralIDsinceV14['pro']['RegMailSubject'] = $optionsPRO->RegMailSubject;
         $optionsForGeneralIDsinceV14['pro']['RegPinSubject'] = $optionsPRO->RegPinSubject;

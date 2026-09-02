@@ -6,6 +6,7 @@
 
     $CommNoteAddressor = get_option('blogname');
     $CommNoteReply = get_option('admin_email');
+    $CommNoteFrom = $CommNoteReply;
     $CommNoteSubject = 'A new comment has been entered';
     $CommNoteContent = 'Dear Sir or Madam<br/>a new comment has been entered<br/><br/>$comment$';
     $CommNoteContent = htmlentities($CommNoteContent, ENT_QUOTES);
@@ -16,17 +17,17 @@
                             ( 
                              id, GalleryID,
                              CommNoteAddressor, CommNoteAdminMail,
-                            CommNoteCC,CommNoteBCC,CommNoteReply,
+                            CommNoteCC,CommNoteBCC,CommNoteReply,CommNoteFrom,
                             CommNoteSubject,CommNoteContent
                             )
                             VALUES ( %s,%d,
                                     %s,%s,
-                            %s,%s,%s,
+                            %s,%s,%s,%s,
                             %s,%s)
                         ",
         '',$nextIDgallery,
         $CommNoteAddressor,'',
-        '','',$CommNoteReply,
+        '','',$CommNoteReply,$CommNoteFrom,
         $CommNoteSubject,$CommNoteContent
     ));
 

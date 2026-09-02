@@ -1552,6 +1552,7 @@ $wp_upload_dir = wp_upload_dir();
         if(function_exists('get_magic_quotes_gpc')){
             if (get_magic_quotes_gpc()) { // eingeschaltet?
                 $_POST["from"] = stripslashes(isset($_POST['from']) ? $_POST['from'] : '');
+                $_POST["from_mail"] = stripslashes(isset($_POST['from_mail']) ? $_POST['from_mail'] : '');
                 $_POST["reply"] = stripslashes(isset($_POST['reply']) ? $_POST['reply'] : '');
                 $_POST["AdminMail"] = stripslashes(isset($_POST['AdminMail']) ? $_POST['AdminMail'] : '');
                 $_POST["cc"] = stripslashes(isset($_POST['cc']) ? $_POST['cc'] : '');
@@ -1562,6 +1563,7 @@ $wp_upload_dir = wp_upload_dir();
 
         // Escape values wordpress sql
         $from = sanitize_text_field(isset($_POST['from']) ? $_POST['from'] : '');
+        $fromMail = sanitize_text_field(isset($_POST['from_mail']) ? $_POST['from_mail'] : '');
         $reply = sanitize_text_field(isset($_POST['reply']) ? $_POST['reply'] : '');
         $AdminMail = sanitize_text_field(isset($_POST['AdminMail']) ? $_POST['AdminMail'] : '');
         $cc = sanitize_text_field(isset($_POST['cc']) ? $_POST['cc'] : '');
@@ -1571,6 +1573,7 @@ $wp_upload_dir = wp_upload_dir();
 
         // Make htmlspecialchars
         htmlentities($from);
+        htmlentities($fromMail);
         htmlentities($reply);
         htmlentities($AdminMail);
         htmlentities($cc);
@@ -1580,11 +1583,11 @@ $wp_upload_dir = wp_upload_dir();
         $wpdb->update(
             "$tablename_mail_admin",
             array(
-                'Admin' => "$from", 'AdminMail' => "$AdminMail", 'Header' => "$header", 'Reply' => "$reply", 'BCC' => "$bcc",
+                'Admin' => "$from", 'AdminMail' => "$AdminMail", 'Header' => "$header", 'FromMail' => "$fromMail", 'Reply' => "$reply", 'BCC' => "$bcc",
                 'CC' => "$cc", 'URL' => "$url", 'Content' => "$content"
             ),
             array('GalleryID' => $id),
-            array('%s', '%s', '%s', '%s', '%s',
+            array('%s', '%s', '%s', '%s', '%s', '%s',
                 '%s', '%s', '%s'),
             array('%d')
         );
@@ -1597,6 +1600,7 @@ $wp_upload_dir = wp_upload_dir();
         // https://stackoverflow.com/questions/30736367/php-how-to-detect-magic-quotes-parameter-on-runtime
         if(function_exists('get_magic_quotes_gpc')){
             if (get_magic_quotes_gpc()) { // eingeschaltet?
+                $_POST["InformUserUploadFrom"] = stripslashes(isset($_POST['InformUserUploadFrom']) ? $_POST['InformUserUploadFrom'] : '');
                 $_POST["InformUserUploadReply"] = stripslashes(isset($_POST['InformUserUploadReply']) ? $_POST['InformUserUploadReply'] : '');
                 $_POST["InformUserUploadCC"] = stripslashes(isset($_POST['InformUserUploadCC']) ? $_POST['InformUserUploadCC'] : '');
                 $_POST["InformUserUploadBCC"] = stripslashes(isset($_POST['InformUserUploadBCC']) ? $_POST['InformUserUploadBCC'] : '');
@@ -1604,6 +1608,7 @@ $wp_upload_dir = wp_upload_dir();
         }
 
         // Escape values wordpress sql
+        $fromMail = sanitize_text_field(isset($_POST['InformUserUploadFrom']) ? $_POST['InformUserUploadFrom'] : '');
         $reply = sanitize_text_field(isset($_POST['InformUserUploadReply']) ? $_POST['InformUserUploadReply'] : '');
         $cc = sanitize_text_field(isset($_POST['InformUserUploadCC']) ? $_POST['InformUserUploadCC'] : '');
         $bcc = sanitize_text_field(isset($_POST['InformUserUploadBCC']) ? $_POST['InformUserUploadBCC'] : '');
@@ -1611,6 +1616,7 @@ $wp_upload_dir = wp_upload_dir();
         $subject = sanitize_text_field(contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['InformUserUploadSubject']) ? $_POST['InformUserUploadSubject'] : ''));
 
         // Make htmlspecialchars
+        htmlentities($fromMail);
         htmlentities($reply);
         htmlentities($cc);
         htmlentities($bcc);
@@ -1622,11 +1628,11 @@ $wp_upload_dir = wp_upload_dir();
             "$tablename_mail_user_upload",
             array(
                 'InformUserUpload' => "$InformUserUpload",  'Header' => "$header",
-                'Subject' => "$subject", 'Reply' => "$reply", 'cc' => "$cc",
+                'Subject' => "$subject", 'FromMail' => "$fromMail", 'Reply' => "$reply", 'cc' => "$cc",
                 'BCC' => "$bcc", 'Content' => "$content", 'ContentInfoWithoutFileSource' => "$InformUserContentInfoWithoutFileSource"
             ),
             array('GalleryID' => $id),
-            array('%s', '%s', '%s', '%s', '%s',
+            array('%s', '%s', '%s', '%s', '%s', '%s',
                 '%s', '%s', '%s'),
             array('%d')
         );
@@ -1636,6 +1642,7 @@ $wp_upload_dir = wp_upload_dir();
 
         if(function_exists('get_magic_quotes_gpc')){
             if (get_magic_quotes_gpc()) { // eingeschaltet?
+                $_POST["InformUserCommentFrom"] = stripslashes(isset($_POST['InformUserCommentFrom']) ? $_POST['InformUserCommentFrom'] : '');
                 $_POST["InformUserCommentReply"] = stripslashes(isset($_POST['InformUserCommentReply']) ? $_POST['InformUserCommentReply'] : '');
                 $_POST["InformUserCommentCC"] = stripslashes(isset($_POST['InformUserCommentCC']) ? $_POST['InformUserCommentCC'] : '');
                 $_POST["InformUserCommentBCC"] = stripslashes(isset($_POST['InformUserCommentBCC']) ? $_POST['InformUserCommentBCC'] : '');
@@ -1643,6 +1650,7 @@ $wp_upload_dir = wp_upload_dir();
         }
 
         // Escape values wordpress sql
+        $fromMail = sanitize_text_field(isset($_POST['InformUserCommentFrom']) ? $_POST['InformUserCommentFrom'] : '');
         $reply = sanitize_text_field(isset($_POST['InformUserCommentReply']) ? $_POST['InformUserCommentReply'] : '');
         $cc = sanitize_text_field(isset($_POST['InformUserCommentCC']) ? $_POST['InformUserCommentCC'] : '');
         $bcc = sanitize_text_field(isset($_POST['InformUserCommentBCC']) ? $_POST['InformUserCommentBCC'] : '');
@@ -1652,6 +1660,7 @@ $wp_upload_dir = wp_upload_dir();
         $InformUserCommentMailInterval = sanitize_text_field(contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['InformUserCommentMailInterval']) ? $_POST['InformUserCommentMailInterval'] : ''));
 
         // Make htmlspecialchars
+        htmlentities($fromMail);
         htmlentities($reply);
         htmlentities($cc);
         htmlentities($bcc);
@@ -1662,11 +1671,11 @@ $wp_upload_dir = wp_upload_dir();
             "$tablename_mail_user_comment",
             array(
                 'InformUserComment' => "$InformUserComment",  'Header' => "$header",
-                'Subject' => "$subject", 'Reply' => "$reply", 'cc' => "$cc",
+                'Subject' => "$subject", 'FromMail' => "$fromMail", 'Reply' => "$reply", 'cc' => "$cc",
                 'BCC' => "$bcc", 'Content' => "$content", 'URL' => "$url", 'MailInterval' => "$InformUserCommentMailInterval"
             ),
             array('GalleryID' => $id),
-            array('%s', '%s', '%s', '%s', '%s',
+            array('%s', '%s', '%s', '%s', '%s', '%s',
                 '%s', '%s', '%s', '%s'),
             array('%d')
         );
@@ -1676,6 +1685,7 @@ $wp_upload_dir = wp_upload_dir();
 
         if(function_exists('get_magic_quotes_gpc')){
             if (get_magic_quotes_gpc()) { // eingeschaltet?
+                $_POST["InformUserVoteFrom"] = stripslashes(isset($_POST['InformUserVoteFrom']) ? $_POST['InformUserVoteFrom'] : '');
                 $_POST["InformUserVoteReply"] = stripslashes(isset($_POST['InformUserVoteReply']) ? $_POST['InformUserVoteReply'] : '');
                 $_POST["InformUserVoteCC"] = stripslashes(isset($_POST['InformUserVoteCC']) ? $_POST['InformUserVoteCC'] : '');
                 $_POST["InformUserVoteBCC"] = stripslashes(isset($_POST['InformUserVoteBCC']) ? $_POST['InformUserVoteBCC'] : '');
@@ -1683,6 +1693,7 @@ $wp_upload_dir = wp_upload_dir();
         }
 
         // Escape values wordpress sql
+        $fromMail = sanitize_text_field(isset($_POST['InformUserVoteFrom']) ? $_POST['InformUserVoteFrom'] : '');
         $reply = sanitize_text_field(isset($_POST['InformUserVoteReply']) ? $_POST['InformUserVoteReply'] : '');
         $cc = sanitize_text_field(isset($_POST['InformUserVoteCC']) ? $_POST['InformUserVoteCC'] : '');
         $bcc = sanitize_text_field(isset($_POST['InformUserVoteBCC']) ? $_POST['InformUserVoteBCC'] : '');
@@ -1692,6 +1703,7 @@ $wp_upload_dir = wp_upload_dir();
         $InformUserVoteMailInterval = sanitize_text_field(contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['InformUserVoteMailInterval']) ? $_POST['InformUserVoteMailInterval'] : ''));
 
         // Make htmlspecialchars
+        htmlentities($fromMail);
         htmlentities($reply);
         htmlentities($cc);
         htmlentities($bcc);
@@ -1702,11 +1714,11 @@ $wp_upload_dir = wp_upload_dir();
             "$tablename_mail_user_vote",
             array(
                 'InformUserVote' => "$InformUserVote",  'Header' => "$header",
-                'Subject' => "$subject", 'Reply' => "$reply", 'cc' => "$cc",
+                'Subject' => "$subject", 'FromMail' => "$fromMail", 'Reply' => "$reply", 'cc' => "$cc",
                 'BCC' => "$bcc", 'Content' => "$InformUserContent", 'URL' => "$url", 'MailInterval' => "$InformUserVoteMailInterval"
             ),
             array('GalleryID' => $id),
-            array('%s', '%s', '%s', '%s', '%s',
+            array('%s', '%s', '%s', '%s', '%s', '%s',
                 '%s', '%s', '%s', '%s'),
             array('%d')
         );
@@ -1753,6 +1765,7 @@ $wp_upload_dir = wp_upload_dir();
             // Magic Quotes on?
             if (get_magic_quotes_gpc()) { // eingeschaltet?
                 $_POST["from_user_mail"] = stripslashes(isset($_POST['from_user_mail']) ? $_POST['from_user_mail'] : '');
+                $_POST["from_user_mail_address"] = stripslashes(isset($_POST['from_user_mail_address']) ? $_POST['from_user_mail_address'] : '');
                 $_POST["reply_user_mail"] = stripslashes(isset($_POST['reply_user_mail']) ? $_POST['reply_user_mail'] : '');
                 $_POST["cc_user_mail"] = stripslashes(isset($_POST['cc_user_mail']) ? $_POST['cc_user_mail'] : '');
                 $_POST["bcc_user_mail"] = stripslashes(isset($_POST['bcc_user_mail']) ? $_POST['bcc_user_mail'] : '');
@@ -1764,6 +1777,7 @@ $wp_upload_dir = wp_upload_dir();
         // Escape values wordpress sql
 
         $from = sanitize_text_field(isset($_POST['from_user_mail']) ? $_POST['from_user_mail'] : '');
+        $fromMail = sanitize_text_field(isset($_POST['from_user_mail_address']) ? $_POST['from_user_mail_address'] : '');
         $reply = sanitize_text_field(isset($_POST['reply_user_mail']) ? $_POST['reply_user_mail'] : '');
         $cc = sanitize_text_field(isset($_POST['cc_user_mail']) ? $_POST['cc_user_mail'] : '');
         $bcc = sanitize_text_field(isset($_POST['bcc_user_mail']) ? $_POST['bcc_user_mail'] : '');
@@ -1774,6 +1788,7 @@ $wp_upload_dir = wp_upload_dir();
         // Make htmlspecialchars
 
         htmlentities($from);
+        htmlentities($fromMail);
         htmlentities($reply);
         htmlentities($cc);
         htmlentities($bcc);
@@ -1788,11 +1803,11 @@ $wp_upload_dir = wp_upload_dir();
         $wpdb->update(
             "$tablenameemail",
             array(
-                'Admin' => "$from", 'Header' => "$header", 'Reply' => "$reply", 'BCC' => "$bcc",
+                'Admin' => "$from", 'Header' => "$header", 'FromMail' => "$fromMail", 'Reply' => "$reply", 'BCC' => "$bcc",
                 'CC' => "$cc", 'URL' => "$url", 'Content' => "$contentUserMail"
             ),
             array('GalleryID' => $id),
-            array('%s', '%s', '%s', '%s',
+            array('%s', '%s', '%s', '%s', '%s',
                 '%s', '%s', '%s'),
             array('%d')
         );
@@ -1839,6 +1854,7 @@ $wp_upload_dir = wp_upload_dir();
         $TextAfterEmailConfirmation = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['TextAfterEmailConfirmation']) ? $_POST['TextAfterEmailConfirmation'] : '');
         $TextAfterPinConfirmation = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['TextAfterPinConfirmation']) ? $_POST['TextAfterPinConfirmation'] : '');
         $RegMailAddressor = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['RegMailAddressor']) ? $_POST['RegMailAddressor'] : '');
+        $RegMailFrom = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['RegMailFrom']) ? $_POST['RegMailFrom'] : '');
         $RegMailReply = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['RegMailReply']) ? $_POST['RegMailReply'] : '');
         $RegMailCC = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['RegMailCC']) ? $_POST['RegMailCC'] : '');
         $RegMailBCC = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['RegMailBCC']) ? $_POST['RegMailBCC'] : '');
@@ -1885,6 +1901,7 @@ $wp_upload_dir = wp_upload_dir();
         $optionsForGeneralIDsinceV14['pro']['HideRegFormAfterLoginShowTextInstead'] = $HideRegFormAfterLoginShowTextInstead;
         $optionsForGeneralIDsinceV14['pro']['HideRegFormAfterLoginTextToShow'] = $HideRegFormAfterLoginTextToShow;
         $optionsForGeneralIDsinceV14['pro']['RegMailAddressor'] = $RegMailAddressor;
+        $optionsForGeneralIDsinceV14['pro']['RegMailFrom'] = $RegMailFrom;
         $optionsForGeneralIDsinceV14['pro']['RegMailReply'] = $RegMailReply;
         $optionsForGeneralIDsinceV14['pro']['RegMailCC'] = $RegMailCC;
         $optionsForGeneralIDsinceV14['pro']['RegMailBCC'] = $RegMailBCC;
@@ -1959,6 +1976,7 @@ $wp_upload_dir = wp_upload_dir();
                 'ForwardAfterRegUrl' => $ForwardAfterRegUrl,
                 'ForwardAfterLoginText' => $ForwardAfterLoginText,'TextEmailConfirmation' => $TextEmailConfirmation,'TextPinConfirmation' => $TextPinConfirmation,
                 'TextAfterEmailConfirmation' => $TextAfterEmailConfirmation,'TextAfterPinConfirmation' => $TextAfterPinConfirmation,'RegMailAddressor' => $RegMailAddressor,
+                'RegMailFrom' => $RegMailFrom,
                 'RegMailReply' => $RegMailReply,'RegMailCC' => $RegMailCC,'RegMailBCC' => $RegMailBCC, 'RegMailSubject' => $RegMailSubject,
                 'RegUserUploadOnlyText' => $RegUserUploadOnlyText,'GalleryUploadTextBefore' => $GalleryUploadTextBefore,
                 'GalleryUploadTextAfter' => $GalleryUploadTextAfter,'GalleryUploadConfirmationText' => $GalleryUploadConfirmationText,
@@ -1976,7 +1994,7 @@ $wp_upload_dir = wp_upload_dir();
                 '%s','%s',
                 '%s',
                 '%s','%s','%s',
-                '%s','%s',
+                '%s','%s','%s',
                 '%s','%s','%s','%s',
                 '%s','%s',
                 '%s','%s',
@@ -2010,6 +2028,7 @@ $wp_upload_dir = wp_upload_dir();
                 // Magic Quotes on?
                 if (get_magic_quotes_gpc()) { // eingeschaltet?
                     $_POST["mConfirmAdmin"] = stripslashes(isset($_POST['mConfirmAdmin']) ? $_POST['mConfirmAdmin'] : '');
+                    $_POST["mConfirmFrom"] = stripslashes(isset($_POST['mConfirmFrom']) ? $_POST['mConfirmFrom'] : '');
                     $_POST["mConfirmReply"] = stripslashes(isset($_POST['mConfirmReply']) ? $_POST['mConfirmReply'] : '');
                     $_POST["mConfirmCC"] = stripslashes(isset($_POST['mConfirmCC']) ? $_POST['mConfirmCC'] : '');
                     $_POST["mConfirmBCC"] = stripslashes(isset($_POST['mConfirmBCC']) ? $_POST['mConfirmBCC'] : '');
@@ -2025,6 +2044,7 @@ $wp_upload_dir = wp_upload_dir();
             // Escape values wordpress sql
 
             $mConfirmAdmin = sanitize_text_field(isset($_POST['mConfirmAdmin']) ? $_POST['mConfirmAdmin'] : '');
+            $mConfirmFrom = sanitize_text_field(isset($_POST['mConfirmFrom']) ? $_POST['mConfirmFrom'] : '');
             $mConfirmReply = sanitize_text_field(isset($_POST['mConfirmReply']) ? $_POST['mConfirmReply'] : '');
             $mConfirmCC = sanitize_text_field(isset($_POST['mConfirmCC']) ? $_POST['mConfirmCC'] : '');
             $mConfirmBCC = sanitize_text_field(isset($_POST['mConfirmBCC']) ? $_POST['mConfirmBCC'] : '');
@@ -2035,6 +2055,7 @@ $wp_upload_dir = wp_upload_dir();
             // Make htmlspecialchars
 
             htmlentities($mConfirmAdmin);
+            htmlentities($mConfirmFrom);
             htmlentities($mConfirmReply);
             htmlentities($mConfirmCC);
             htmlentities($mConfirmBCC);
@@ -2049,12 +2070,12 @@ $wp_upload_dir = wp_upload_dir();
             $wpdb->update(
                 "$tablename_mail_confirmation",
                 array(
-                    'Admin' => "$mConfirmAdmin", 'Header' => "$mConfirmHeader", 'Reply' => "$mConfirmReply", 'BCC' => "$mConfirmBCC",
+                    'Admin' => "$mConfirmAdmin", 'Header' => "$mConfirmHeader", 'FromMail' => "$mConfirmFrom", 'Reply' => "$mConfirmReply", 'BCC' => "$mConfirmBCC",
                     'CC' => "$mConfirmCC", 'URL' => "$mConfirmURL", 'Content' => "$mConfirmContent", 'ConfirmationText' => "$mConfirmConfirmationText",
                     'SendConfirm' => "$mConfirmSendConfirm"
                 ),
                 array('GalleryID' => $id),
-                array('%s', '%s', '%s', '%s',
+                array('%s', '%s', '%s', '%s', '%s',
                     '%s', '%s', '%s', '%s', '%d'),
                 array('%d')
             );
@@ -2100,6 +2121,7 @@ $wp_upload_dir = wp_upload_dir();
         $CommNoteAdminMail = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['CommNoteAdminMail']) ? $_POST['CommNoteAdminMail'] : '');
         $CommNoteCC = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['CommNoteCC']) ? $_POST['CommNoteCC'] : '');
         $CommNoteBCC = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['CommNoteBCC']) ? $_POST['CommNoteBCC'] : '');
+        $CommNoteFrom = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['CommNoteFrom']) ? $_POST['CommNoteFrom'] : '');
         $CommNoteReply = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['CommNoteReply']) ? $_POST['CommNoteReply'] : '');
         $CommNoteSubject = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['CommNoteSubject']) ? $_POST['CommNoteSubject'] : '');
         $CommNoteContent = sanitize_text_field(contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['CommNoteContent']) ? $_POST['CommNoteContent'] : ''));
@@ -2108,13 +2130,13 @@ $wp_upload_dir = wp_upload_dir();
             "$tablename_comments_notification_options",
             array(
                 'CommNoteAddressor' => $CommNoteAddressor,'CommNoteAdminMail' => $CommNoteAdminMail,
-                'CommNoteCC' => $CommNoteCC,'CommNoteBCC' => $CommNoteBCC,'CommNoteReply' => $CommNoteReply,
+                'CommNoteCC' => $CommNoteCC,'CommNoteBCC' => $CommNoteBCC,'CommNoteFrom' => $CommNoteFrom,'CommNoteReply' => $CommNoteReply,
                 'CommNoteSubject' => $CommNoteSubject,'CommNoteContent' => $CommNoteContent
             ),
             array('GalleryID' => $id),
             array(
                 '%s', '%s',
-                '%s', '%s','%s',
+                '%s', '%s','%s','%s',
                 '%s', '%s'
             ),
             array('%d')
@@ -2124,6 +2146,7 @@ $wp_upload_dir = wp_upload_dir();
         $LogoutLink = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['LogoutLink']) ? $_POST['LogoutLink'] : '');
         $BackToGalleryLink = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['BackToGalleryLink']) ? $_POST['BackToGalleryLink'] : '');
         $LostPasswordMailAddressor = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['LostPasswordMailAddressor']) ? $_POST['LostPasswordMailAddressor'] : '');
+        $LostPasswordMailFrom = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['LostPasswordMailFrom']) ? $_POST['LostPasswordMailFrom'] : '');
         $LostPasswordMailReply = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['LostPasswordMailReply']) ? $_POST['LostPasswordMailReply'] : '');
         $LostPasswordMailSubject = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['LostPasswordMailSubject']) ? $_POST['LostPasswordMailSubject'] : '');
         $LostPasswordMailConfirmation = contest_gal1ery_htmlentities_and_preg_replace(isset($_POST['LostPasswordMailConfirmation']) ? $_POST['LostPasswordMailConfirmation'] : '');
@@ -2169,6 +2192,7 @@ $wp_upload_dir = wp_upload_dir();
         $optionsForGeneralIDsinceV14['registry-login']['ConfirmExpiry'] = absint($confirmExpiry);
         $optionsForGeneralIDsinceV14['registry-login']['PinExpiry'] = absint($pinExpiry);
         $optionsForGeneralIDsinceV14['registry-login']['LostPasswordMailAddressor'] = $LostPasswordMailAddressor;
+        $optionsForGeneralIDsinceV14['registry-login']['LostPasswordMailFrom'] = $LostPasswordMailFrom;
         $optionsForGeneralIDsinceV14['registry-login']['LostPasswordMailReply'] = $LostPasswordMailReply;
         $optionsForGeneralIDsinceV14['registry-login']['LostPasswordMailSubject'] = $LostPasswordMailSubject;
         $optionsForGeneralIDsinceV14['registry-login']['LostPasswordMailConfirmation'] = $LostPasswordMailConfirmation;

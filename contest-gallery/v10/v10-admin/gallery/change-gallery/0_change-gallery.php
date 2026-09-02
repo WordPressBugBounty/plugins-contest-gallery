@@ -239,6 +239,7 @@ $DataLayout = ($proOptions->FbLikeOnlyShare==1) ? 'button' : 'button_count';
 
 $Subject = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemail->Header);
 $Admin = $selectSQLemail->Admin;
+$ConfiguredFromMail = $selectSQLemail->FromMail;
 $Reply = $selectSQLemail->Reply;
 $cc = $selectSQLemail->CC;
 $ccPlain = $selectSQLemail->CC;

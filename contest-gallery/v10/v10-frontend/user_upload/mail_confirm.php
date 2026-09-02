@@ -21,6 +21,7 @@ if(empty($checkWpMail) AND $checkCGMailResult==0){
 
         $Subject = contest_gal1ery_convert_for_html_output_without_nl2br($mailConfSettings->Header);
         $Admin = $mailConfSettings->Admin;
+        $FromMail = $mailConfSettings->FromMail;
         $Reply = $mailConfSettings->Reply;
         $cc = $mailConfSettings->CC;
         $bcc = $mailConfSettings->BCC;
@@ -46,8 +47,8 @@ if(empty($checkWpMail) AND $checkCGMailResult==0){
 
 
         $headers = array();
-        $headers[] = "From: $Admin <". html_entity_decode(strip_tags(@$Reply)) . ">\r\n";
-        $headers[] = "Reply-To: ". strip_tags(@$Reply) . "\r\n";
+        $mailAddresses = cg_add_mail_from_reply_headers($headers,$Admin,$FromMail,$Reply);
+        $headers = $mailAddresses['headers'];
 
         if(strpos($cc,';')){
             $cc = explode(';',$cc);

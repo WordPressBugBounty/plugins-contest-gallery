@@ -127,6 +127,7 @@ if(!function_exists('cg_create_registry_and_login_options_v14')){
             include(__DIR__.'/../../../../v10/v10-admin/json-values.php');
             $RegMailAddressor = trim(get_option('blogname'));
             $RegMailReply = get_option('admin_email');
+            $RegMailFrom = $RegMailReply;
             $RegMailSubject = 'Please complete your registration';
             $TextEmailConfirmation = 'Complete your registration by clicking on the link below: <br/><br/> $regurl$';
             $TextPinConfirmation = 'Complete your registration by using the PIN below: <br/><br/> $pin$';
@@ -152,21 +153,21 @@ if(!function_exists('cg_create_registry_and_login_options_v14')){
 				 id, GalleryID, GeneralID, 
 				RegMailOptional, ForwardAfterRegText, TextAfterEmailConfirmation, TextAfterPinConfirmation,
 				HideRegFormAfterLogin, HideRegFormAfterLoginShowTextInstead,HideRegFormAfterLoginTextToShow,
-				RegMailAddressor, RegMailReply, RegMailSubject, TextEmailConfirmation, TextPinConfirmation, RegPinSubject,
+				RegMailAddressor, RegMailReply, RegMailFrom, RegMailSubject, TextEmailConfirmation, TextPinConfirmation, RegPinSubject,
 				ForwardAfterLoginUrlCheck,ForwardAfterLoginUrl, ForwardAfterLoginTextCheck, ForwardAfterLoginText
 				)
 				VALUES (
 				%s,%d,%d,
 				%d,%s,%s,%s,
 				%d,%d,%s,
-				%s,%s,%s,%s,%s,%s,
+				%s,%s,%s,%s,%s,%s,%s,
 				%d,%s,%d,%s
 				)
 			",
                 '',0,1,
                 $RegMailOptional, $ForwardAfterRegText, $TextAfterEmailConfirmation, $TextAfterPinConfirmation,
                 $HideRegFormAfterLogin, $HideRegFormAfterLoginShowTextInstead, $HideRegFormAfterLoginTextToShow,
-                $RegMailAddressor, $RegMailReply, $RegMailSubject, $TextEmailConfirmation, $TextPinConfirmation,$RegPinSubject,
+                $RegMailAddressor, $RegMailReply, $RegMailFrom, $RegMailSubject, $TextEmailConfirmation, $TextPinConfirmation,$RegPinSubject,
                 $ForwardAfterLoginUrlCheck,$ForwardAfterLoginUrl,$ForwardAfterLoginTextCheck,$ForwardAfterLoginText
             ) );
 
@@ -201,6 +202,7 @@ if(!function_exists('cg_create_registry_and_login_options')){
 
         $LostPasswordMailAddressor = trim(get_option('blogname'));
         $LostPasswordMailReply = get_option('admin_email');
+        $LostPasswordMailFrom = $LostPasswordMailReply;
         $LostPasswordMailSubject = 'Reset your password';
         $LostPasswordMailConfirmation = 'Reset your password by using link below: <br><br> $resetpasswordurl$';
         $TextBeforeLoginForm = '';
@@ -215,20 +217,20 @@ if(!function_exists('cg_create_registry_and_login_options')){
             "
 						INSERT INTO $tablename_registry_and_login_options
 						( id, GalleryID, GeneralID, LogoutLink, BackToGalleryLink,RegistryUserRole,
-						 LostPasswordMailAddressor, LostPasswordMailReply,
+						 LostPasswordMailAddressor, LostPasswordMailReply, LostPasswordMailFrom,
 						 LostPasswordMailSubject, LostPasswordMailConfirmation,
 						 TextBeforeLoginForm,TextBeforeRegFormBeforeLoggedIn,TextBeforePinFormBeforeLoggedIn,PermanentTextWhenLoggedIn,
 						 ConfirmExpiry, PinExpiry, LoginAfterConfirm
 						 )
 						VALUES ( %s,%d,%d,%s,%s,%s,
-						        %s,%s,
+						        %s,%s,%s,
 						        %s,%s,
 						        %s,%s,%s,%s,
 						        %d,%d,%d
 						        )
 					",
             '',$GalleryID,$GeneralID,'', '',$RegistryUserRole,
-            $LostPasswordMailAddressor,$LostPasswordMailReply,
+            $LostPasswordMailAddressor,$LostPasswordMailReply,$LostPasswordMailFrom,
             $LostPasswordMailSubject,$LostPasswordMailConfirmation,
             $TextBeforeLoginForm,$TextBeforeRegFormBeforeLoggedIn,$TextBeforePinFormBeforeLoggedIn,$PermanentTextWhenLoggedIn,
             86400,900,$LoginAfterConfirm

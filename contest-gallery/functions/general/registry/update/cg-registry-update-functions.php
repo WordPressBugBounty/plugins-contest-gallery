@@ -107,6 +107,7 @@ if(!function_exists('cg_update_registry_and_login_options_v14')){
         $registryUserRoleGalleryDbVersion = (!empty($GalleryID)) ? 10 : 14;
         $registryUserRole = (isset($options['registry-login']['RegistryUserRole'])) ? $options['registry-login']['RegistryUserRole'] : '';
         $options['registry-login']['RegistryUserRole'] = cg_get_safe_registry_user_role($registryUserRole,$registryUserRoleGalleryDbVersion);
+        $lostPasswordMailFrom = isset($options['registry-login']['LostPasswordMailFrom']) ? $options['registry-login']['LostPasswordMailFrom'] : $options['registry-login']['LostPasswordMailReply'];
 
         $wpdb->update(
             "$tablename_registry_and_login_options",
@@ -119,6 +120,7 @@ if(!function_exists('cg_update_registry_and_login_options_v14')){
                 'ConfirmExpiry' => $options['registry-login']['ConfirmExpiry'],
                 'PinExpiry' => $options['registry-login']['PinExpiry'],
                 'LostPasswordMailAddressor' => $options['registry-login']['LostPasswordMailAddressor'],
+                'LostPasswordMailFrom' => $lostPasswordMailFrom,
                 'LostPasswordMailReply' => $options['registry-login']['LostPasswordMailReply'],
                 'LostPasswordMailSubject' => $options['registry-login']['LostPasswordMailSubject'],
                 'LostPasswordMailConfirmation' => $options['registry-login']['LostPasswordMailConfirmation'],
@@ -130,7 +132,7 @@ if(!function_exists('cg_update_registry_and_login_options_v14')){
             ),
             array($GalleryGeneralIDString => $GalleryGeneralID),
             array(
-                '%s','%s','%s','%d','%d','%d','%s','%s','%s','%s','%s','%s','%s','%s'
+                '%s','%s','%s','%d','%d','%d','%d','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'
             ),
             array('%d')
         );
@@ -160,6 +162,7 @@ if(!function_exists('cg_update_registry_and_login_options_v14')){
             (string)$OpenAiKeyCurrent,
             'OpenAiKey'
         );
+        $regMailFrom = isset($options['pro']['RegMailFrom']) ? $options['pro']['RegMailFrom'] : $options['pro']['RegMailReply'];
 
         $wpdb->update(
             "$tablename_options_pro_options",
@@ -169,7 +172,7 @@ if(!function_exists('cg_update_registry_and_login_options_v14')){
                 'RegMailOptional' => $options['pro']['RegMailOptional'],'ForwardAfterRegText' => $options['pro']['ForwardAfterRegText'],
                 'TextAfterEmailConfirmation' => $options['pro']['TextAfterEmailConfirmation'],'TextAfterPinConfirmation' => $options['pro']['TextAfterPinConfirmation'],'HideRegFormAfterLogin' => $options['pro']['HideRegFormAfterLogin'],
                 'HideRegFormAfterLoginShowTextInstead' => $options['pro']['HideRegFormAfterLoginShowTextInstead'],'HideRegFormAfterLoginTextToShow' => $options['pro']['HideRegFormAfterLoginTextToShow'],
-                'RegMailAddressor' => $options['pro']['RegMailAddressor'],'RegMailReply' => $options['pro']['RegMailReply'],
+                'RegMailAddressor' => $options['pro']['RegMailAddressor'],'RegMailFrom' => $regMailFrom,'RegMailReply' => $options['pro']['RegMailReply'],
                 'RegMailSubject' => $options['pro']['RegMailSubject'],'TextEmailConfirmation' => $options['pro']['TextEmailConfirmation'],'TextPinConfirmation' => $options['pro']['TextPinConfirmation'],'RegPinSubject' => $options['pro']['RegPinSubject'],
                 'RegMailCC' => $options['pro']['RegMailCC'],'RegMailBCC' => $options['pro']['RegMailBCC'],
                 'OpenAiKey' => $OpenAiKey,
@@ -181,7 +184,7 @@ if(!function_exists('cg_update_registry_and_login_options_v14')){
                 '%d','%s',
                 '%s','%s','%d',
                 '%d','%s',
-                '%s','%s',
+                '%s','%s','%s',
                 '%s','%s','%s','%s',
                 '%s','%s',
                 '%s'

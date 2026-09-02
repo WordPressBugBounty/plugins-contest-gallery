@@ -160,6 +160,7 @@ if(floatval($galleryDbVersion)>=22 && $isEditEcommerceOnly){
 	$SendOrderConfirmationMail = ($selectSQLecommerceOptions->SendOrderConfirmationMail==1) ? 'checked' : '';
 	$OrderConfirmationMailHeader = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->OrderConfirmationMailHeader);
     $OrderConfirmationMailReply = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->OrderConfirmationMailReply);
+    $OrderConfirmationMailFrom = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->OrderConfirmationMailFrom);
     $OrderConfirmationMailBcc = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->OrderConfirmationMailBcc);
     $OrderConfirmationMailCc = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->OrderConfirmationMailCc);
     $OrderConfirmationMailSubject = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLecommerceOptions->OrderConfirmationMailSubject);
@@ -296,6 +297,7 @@ foreach($commentsNotificationOptions as $commentsNotificationOption){
     $CommNoteCC = contest_gal1ery_convert_for_html_output_without_nl2br($commentsNotificationOption->CommNoteCC);
     $CommNoteBCC = contest_gal1ery_convert_for_html_output_without_nl2br($commentsNotificationOption->CommNoteBCC);
     $CommNoteReply = contest_gal1ery_convert_for_html_output_without_nl2br($commentsNotificationOption->CommNoteReply);
+    $CommNoteFrom = contest_gal1ery_convert_for_html_output_without_nl2br($commentsNotificationOption->CommNoteFrom);
     $CommNoteSubject = contest_gal1ery_convert_for_html_output_without_nl2br($commentsNotificationOption->CommNoteSubject);
     $CommNoteContent = contest_gal1ery_convert_for_html_output_without_nl2br($commentsNotificationOption->CommNoteContent);
 
@@ -322,6 +324,7 @@ foreach($selectSQL4 as $value4){
     $TextAfterPinConfirmation = contest_gal1ery_convert_for_html_output_without_nl2br($value4->TextAfterPinConfirmation);
     $RegMailAddressor = contest_gal1ery_convert_for_html_output_without_nl2br($value4->RegMailAddressor);
     $RegMailReply = contest_gal1ery_convert_for_html_output_without_nl2br($value4->RegMailReply);
+    $RegMailFrom = contest_gal1ery_convert_for_html_output_without_nl2br($value4->RegMailFrom);
 	$RegMailCC = contest_gal1ery_convert_for_html_output_without_nl2br($value4->RegMailCC);
 	$RegMailBCC = contest_gal1ery_convert_for_html_output_without_nl2br($value4->RegMailBCC);
     $RegMailSubject = contest_gal1ery_convert_for_html_output_without_nl2br($value4->RegMailSubject);
@@ -831,6 +834,9 @@ if(intval($galleryDbVersion)>=14){
     $RegMailReply = $optionsForGeneralIDsinceV14['pro']['RegMailReply'];
     $RegMailReply = contest_gal1ery_convert_for_html_output_without_nl2br($RegMailReply);
 
+    $RegMailFrom = isset($optionsForGeneralIDsinceV14['pro']['RegMailFrom']) ? $optionsForGeneralIDsinceV14['pro']['RegMailFrom'] : $RegMailReply;
+    $RegMailFrom = contest_gal1ery_convert_for_html_output_without_nl2br($RegMailFrom);
+
     $RegMailSubject = $optionsForGeneralIDsinceV14['pro']['RegMailSubject'];
     $RegMailSubject = contest_gal1ery_convert_for_html_output_without_nl2br($RegMailSubject);
 
@@ -851,6 +857,7 @@ $BackToGalleryLink = contest_gal1ery_convert_for_html_output_without_nl2br($regi
 $LostPasswordMailActive = ($registryAndLoginOptions->LostPasswordMailActive==1) ? "checked" : "";
 $LostPasswordMailAddressor = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailAddressor);
 $LostPasswordMailReply = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailReply);
+$LostPasswordMailFrom = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailFrom);
 $LostPasswordMailSubject = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailSubject);
 $LostPasswordMailConfirmation = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->LostPasswordMailConfirmation);
 $TextBeforeLoginForm = contest_gal1ery_convert_for_html_output_without_nl2br($registryAndLoginOptions->TextBeforeLoginForm);

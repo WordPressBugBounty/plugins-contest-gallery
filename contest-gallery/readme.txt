@@ -4,18 +4,33 @@ Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, openai
 Requires at least: 5.6
 Requires PHP: 5.6
-Stable tag: 33.0.1
+Stable tag: 33.0.2
 Tested up to: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-JPG, PNG, MP4, MP3, PDF, ZIP & more. Create voting & uploading galleries for photos & media. Social Share, User Registration & Sell via PayPal/Stripe.
+Create voting and upload galleries for photos, video, audio and files. Gallery monetization, social sharing and user registration.
 
 == All-in-One Photo Contest, Media Voting & File Gallery ==
 
-Photo contest and other file types voting plugin supporting: **JPG, PNG, GIF, PDF, ZIP, WEBM, MP4, MOV, TXT, DOC, DOCX, XLS, XLSX, PPT, PPTX, CSV, MP3, WAV, OGG, M4A**.
+Photo contest and media voting plugin supporting: **JPG, PNG, GIF, ZIP, WEBM, MP4, MOV, TXT, DOC, DOCX, XLS, XLSX, PPT, PPTX, CSV, MP3, WAV, OGG, M4A**. Contest Gallery PRO additionally supports PDF uploads with generated previews.
 
 Create galleries (material, modern, responsive) and allow users to vote and comment on files, photos, or embed social posts from **YouTube, TikTok, X (Twitter)** and more.
+
+= Live WordPress photo contest =
+
+See a responsive photo contest gallery with categories, voting and entry details in 10 seconds.
+
+https://www.youtube.com/watch?v=ndGsyGYV6eg
+
+* [Watch all Contest Gallery 10-second feature demos](https://www.youtube.com/playlist?list=PLIzVwQ6fQfVI)
+
+== Popular WordPress gallery use cases ==
+
+* **Photo Contests:** Collect frontend submissions, organize categories, protect voting and choose winners. [View the live photo contest example](https://www.contest-gallery.com/photo-contests/)
+* **SEO-Friendly Galleries:** Publish descriptive entry pages with unique URLs, controlled indexing and structured media data. [View the SEO-friendly gallery example](https://www.contest-gallery.com/seo-friendly-galleries/)
+* **Video Contests:** Accept video entries and combine focused playback with ratings and comments. [View the video contest example](https://www.contest-gallery.com/video-contest/)
+* **Product Review Galleries:** Combine five-star average ratings with written feedback in a searchable gallery. [View the product review example](https://www.contest-gallery.com/product-reviews/)
 
 == Real Watermark Protection ==
 
@@ -27,20 +42,43 @@ Protect your image entries with real watermarks that are written into the public
 * **User Management:** Includes user registration, login forms, and a **"Google Sign-In button"** for easy access.
 * **Monetization:** Sell entries or digital content directly via **PayPal or Stripe API**.
 * **Social Reach:** Built-in Social Media Share Buttons to boost your contest's visibility.
+* **No 100-entry limit:** The former 100-entry limit was removed in 2019. Contest Gallery does not impose a limit on the number of gallery entries. Hosting storage and server resources still apply.
+
+== Paid uploads, votes and comments (PRO) ==
+* Contest Gallery PRO can sell upload, voting and comment credits directly from regular galleries.
+* Visitors can sign in with Google or a one-time email PIN and purchase credits through PayPal or Stripe.
+* Prices, taxes, currencies, invoices and order emails use the general Ecommerce configuration.
+* [Compare the FREE and PRO versions feature by feature](https://www.contest-gallery.com/pro-version-compare/)
+
+== Average ratings and comments ==
+
+Combine five-star average ratings and comments in one clear two-step interaction.
+
+https://www.youtube.com/watch?v=tBu6kfqG-xs
 
 == Ecommerce PayPal and Stripe APIs available ==
 * Sell entries as **shipping**, **download** or **service**,  or **charge for uploads**, **via PayPal or Stripe API**. Configure **prices, shipping, taxes and currencies** for your products. Configure checkout notes and agreements. **Watermark image files, add download or service keys**. Selling download or service and charging for uploads only available in PRO version.
-* The separately available Contest Gallery PRO version also adds paid upload, voting and commenting credits directly to regular galleries.
 
 == Different file types upload form ==
 * **Upload form** for **different file types**
 * **Manual or Auto-activation**: Instantly display uploaded files in the gallery or review them first.
 * [Different file types upload form and gallery example](https://www.contest-gallery.com/different-file-types-upload-form-and-gallery/)
 
-== PDFs with preview gallery ==
-* Display PDFs in gallery with a preview image for every PDF
-* Create upload form with PDF preview image function
-* **Imagick library** is **NOT required** to be installed on your server
+See how visitors can prepare a complete photo-contest entry directly in the WordPress frontend.
+
+https://www.youtube.com/watch?v=oJ5UMzYd9DE
+
+== Video contest gallery ==
+
+Create responsive video contests with categories, ratings, comments and focused full-window playback.
+
+https://www.youtube.com/watch?v=JqBBMOsPk5E
+
+== PDF galleries with generated previews (PRO) ==
+* PDF uploads and generated preview images are available in Contest Gallery PRO.
+* Create real PDF preview images from the WordPress backend or a frontend upload form.
+* Display PDF entries with ratings, comments and other media files in the same gallery.
+* **No Imagick installation is required.**
 * [PDFs with preview gallery and PDF upload form with preview example](https://www.contest-gallery.com/pdfs-with-preview-gallery/)
 
 == Social Media Share Buttons ==
@@ -74,11 +112,10 @@ Contest Gallery Network may verify domain ownership, review submitted public con
 Service privacy policy: https://www.contest-gallery.net/privacy-policy/
 Service terms: https://www.contest-gallery.net/terms-and-conditions/
 
-== Plugin limitations ==
-* **Since 2019: No uploads limitation anymore**
-* **(No 100 uploads limitation anymore)**
-* Some options available in PRO version only
-* To have all options available please purchase [PRO version](https://www.contest-gallery.com/pro-version/)
+== FREE and PRO versions ==
+* The free version includes the core gallery, frontend upload, voting, commenting and sharing workflows.
+* Advanced workflows, including PDF uploads with generated preview images, are available only in Contest Gallery PRO.
+* [Compare the FREE and PRO versions feature by feature](https://www.contest-gallery.com/pro-version-compare/)
 
 = Upload form and gallery examples =
 * [Different file types upload form and gallery](https://www.contest-gallery.com/different-file-types-upload-form-and-gallery/)
@@ -116,6 +153,12 @@ Service terms: https://www.contest-gallery.net/terms-and-conditions/
 * Activation e-mail to user when his file is activated
 * Registration confirmation e-mail when user create a new account
 
+== Contest management ==
+
+Manage activation, categories, entry details, comments, votes, winners and sales settings from one workspace.
+
+https://www.youtube.com/watch?v=WHP9DTNe56o
+
 == Available options ==
 
 = Upload form options =
@@ -146,8 +189,9 @@ Service terms: https://www.contest-gallery.net/terms-and-conditions/
 * Confirmation Text after login
 
 = Vote options =
-* Allow vote via 1 star
-* Allow vote via 1-10 stars
+* Allow one-star favorite voting
+* Allow cumulative or average star ratings
+* Require a comment for voting, offer it as an optional follow-up or disable vote comments
 * Inform registered user when there was a vote for his entry
 * Show custom message after voting
 * Allow vote out of gallery
@@ -177,15 +221,18 @@ Service terms: https://www.contest-gallery.net/terms-and-conditions/
 * Allow sort
 * Random sort
 * Random sort button
-* Switch between total different gallery views without site reloading
-* Three different views
-* Masonry view
-* Blog view
-* Slider view
+* Configure gallery and entry behavior separately for supported shortcode types
+* Open entries in the responsive full-window blog view
+* Forward directly to the dedicated entry page or original source
+* Make gallery entries unclickable when only the overview should be shown
+
+See the responsive gallery, full-window entry view and comment panel on a smartphone.
+
+https://www.youtube.com/watch?v=lyGNgeLyCAY
 
 = Single entry view options =
-* View entries in blog view full window
-* View entries in a slider view full window
+* View entries in the full-window blog view
+* Forward to the dedicated entry page
 * Link to original file source
 * Only gallery view
 
@@ -215,23 +262,23 @@ Service terms: https://www.contest-gallery.net/terms-and-conditions/
 4. Voting options for rating types, vote-and-comment mode and voter recognition
 5. Backend contest entry management with activation, winners, ratings and comments
 6. Ecommerce product view with rating, price, shipping and purchase actions
-7. PDF and document gallery with previews, ratings and comments
+7. PDF gallery with generated previews, ratings and comments (PRO)
 8. Responsive full-window gallery view captured on a smartphone
 
 == Installation ==
 
-1. Install as usual way via your WordPress installer, uploading/installing/activating.
-2. Contest Gallery menu point appears on the left site.
+1. Install and activate Contest Gallery through the WordPress plugin installer.
+2. The Contest Gallery menu appears on the left side of the WordPress admin area.
 3. Create a new gallery.
-5. Add files or edit upload form for uploading contest entries.
-6. Insert the shortcode `[cg_gallery id="1"]` in a page. This shortcode shows the gallery in frontend.
-7. Insert the shortcode `[cg_users_upload id="1"]` in a page. This shortcode shows the upload form in frontend.
+4. Add entries or configure the frontend upload form.
+5. Insert `[cg_gallery id="1"]` into a page to display the gallery.
+6. Insert `[cg_users_upload id="1"]` into a page to display the upload form.
 
 Documentation to configure different options: [Click here..](https://www.contest-gallery.com/documentation/)
 
 == Frequently Asked Questions ==
 
-= Can I approve files before their appear in gallery? =
+= Can I approve files before they appear in the gallery? =
 Yes.
 
 = I would like to be informed when a file is uploaded. =
@@ -260,522 +307,25 @@ an amount you like. So you are also able to upload multiple files during one upl
 Yes. You decide via "Edit upload form" which information can be added for every file.
 It's also possible to configure which information should appear frontend.
 
-= How many gallery contests can i run? =
+= How many gallery contests can I run? =
 As many you like :)
 
 = How many files can I add to gallery? =
-As many you like :)
+Contest Gallery does not impose a limit on the number of gallery entries. The practical limit depends on your hosting storage and server resources.
 
 = How can I report security bugs? =
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
 
-= 33.0.1 =
-* FIXED: Regular product sandbox checkouts no longer require a Paid Actions sandbox link.
-* FIXED: Existing download sale settings can be saved after switching galleries without requiring regenerated watermark data.
-* IMPROVED: Upload PIN access now uses the gallery-specific text configured for logged-out visitors.
-* IMPROVED: Voting and upload login prompts now use passwordless email access with optional Google Sign-In.
-* IMPROVED: Custom voting HTML messages now use neutral bright and dark surfaces with vertically aligned content.
-* IMPROVED: Custom voting HTML messages now use bright and dark status cards while preserving interactive links and rich content.
-* FIXED: Visible one-star ratings no longer accept pointer interactions when voting is disabled.
-* NEW: Voting for cg_gallery can be enabled, shown read-only or hidden while other gallery shortcode variants remain independently configurable.
-* FIXED: Paid-action sign-in no longer reserves empty Google button space when Google is not configured and falls back to email when the button cannot load.
-* FIXED: Paid-action email PIN sign-in now places the full-width submit button below the email field.
-* FIXED: Read-only ecommerce rating visibility no longer authorizes direct voting requests.
-* FIXED: Legacy galleries with missing entry-opening settings now fall back to the full-window blog view instead of rendering a broken inline entry view.
-* IMPROVED: Legacy hash-URL galleries now show a clear backend migration notice that support has ended and recommend a complete copy with current entry URLs.
-
-= 33.0.0 =
-* IMPROVED: PIN-based registration and access now use six-digit codes, clearer resend countdowns and stronger request limits.
-* IMPROVED: Ecommerce checkout navigation and full-window gallery handling are more stable on desktop and mobile.
-* IMPROVED: General security hardening.
-* FIXED: Security issue.
-* FIXED: Multi-gallery overview shortcodes no longer inherit category filters, controls or empty-gallery text from an unrelated bootstrap gallery.
-* FIXED: Multi-gallery preview cards selected by highest rating or most comments now open the correct gallery reliably.
-* FIXED: One-star galleries with manually added votes now keep the complete visible total immediately after voting or undoing a vote.
-* FIXED: A first vote in a new browser now saves immediately when cookie checking and the vote-and-comment flow are enabled.
-* FIXED: The WordPress Media Library opened from "Add files / Social embed / OpenAI" now keeps the correct attachment grid width and vertical scrollbar.
-
-= 32.0.0 =
-* NEW: Added a modern two-step vote-and-comment dialog for one-star, average and cumulative voting, with required, optional or disabled comments and emoji support.
-* NEW: Added direct commenting from gallery views, including entry previews and consistent success feedback without opening the full entry.
-* IMPROVED: Vote and comment dialogs now show matching previews for images, video, audio, alternative files and consent-aware social embeds in bright and dark styles.
-* IMPROVED: Linked votes and comments are shown together in frontend and backend and are removed together when either linked item is deleted.
-* IMPROVED: New galleries now start with five-star average voting and optional comments for an immediately usable interactive setup.
-* IMPROVED: Responsive voting and commenting now preserves drafts and commenter names per session and uses stable loaders, validation and success states across gallery, entry and full-window views.
-* FIXED: Voting restrictions, PIN and jury checks, vote undo and linked comment cleanup now work consistently for one-star, average and cumulative voting on desktop and mobile.
-* IMPROVED: Frontend uploads now show real percentage progress during file transfer and server processing.
-
-= 31.0.0 =
-* NEW: Added a separate average-rating mode that uses the existing multiple-stars voting flow and displays the effective average with up to one decimal place.
-* NEW: Canonical entry pages can output a matching AggregateRating for publicly visible average ratings, including active manual vote adjustments.
-* NEW: Added a per-gallery option to display voting and comment numbers with a decimal point or decimal comma and matching thousands separators.
-* IMPROVED: Average ratings are now integrated throughout frontend and backend workflows, including sorting and preselection, translations, vote resets and corrections, manipulation previews, vote e-mails, gallery previews, and separate per-gallery star-scale preferences for average and cumulative voting.
-* IMPROVED: Multiple-star ratings now provide a compact value, star and rating-count layout together with percentage bars and the total number of ratings across gallery, full-window and entry views.
-* IMPROVED: Visible average and cumulative ratings remain accessible as a read-only rating overview when voting is disabled.
-* IMPROVED: Backend comment moderation now updates database and frontend data more safely and consistently.
-* IMPROVED: Registered-user data exports now run in AJAX processing steps to handle large user lists more reliably.
-* IMPROVED: Gallery data, vote, ZIP and order exports now use optimized database queries and processing for significantly faster large exports.
-* IMPROVED: Faster first-time plugin activation and Multisite network activation through an optimized setup process.
-* IMPROVED: General security hardening different areas.
-* FIXED: Gallery vote undo controls now respect the "Rating out of gallery" setting in both PHP and JavaScript.
-* FIXED: Security issue.
-
-= 30.0.7 =
-* FIXED: Security issues reported by the security community. Thanks to Muni Nitish Kumar Yaddala, Sai Praneeth Koti, Meher Sudhakar Abbireddi, and Jayant Kamble.
-
-= 30.0.6 =
-* IMPROVED: CSS improvements frontend.
-* FIXED: Security issue.
-
-= 30.0.5 =
-* FIXED: Reviewed comments now update frontend comment data, stats, recent markers and last-update files consistently after backend activation, deactivation or deletion.
-* FIXED: Pending review comments no longer increase the visible frontend comment counter or appear in the initial entry page comment render before activation.
-* IMPROVED: Backend comment review actions and status labels now use modern pill and badge controls.
-* IMPROVED: Backend vote removal and select-all checkboxes now use modern pill controls with synchronized selection states.
-* IMPROVED: Video gallery previews now use a later preview frame to reduce black thumbnails while keeping real video playback starting at the beginning.
-
-= 30.0.4 =
-* FIXED: Social share icon selections in Entry view options were not always saved and displayed correctly for all gallery shortcode types.
-
-= 30.0.3 =
-* FIXED: Security issue related to user role handling.
-* IMPROVED: Security hardening for frontend registration and Google Sign-In.
-
-= 30.0.2 =
-* NEW: Google Sign-In is now available in the free version.
-* NEW: Added real watermarking for gallery images, including protected original storage, restore/unwatermark handling, frontend cache refresh and support for multiple files per entry.
-* NEW: Added backend bulk actions to watermark and unwatermark visible entries with progress display.
-* NEW: Added real watermark options for upload forms and upload options so uploaded images can be watermarked automatically.
- * IMPROVED: Improved upload form builder workflow with faster field selection, clearer drag-and-drop targets and better preservation of empty layout columns.
-* IMPROVED: Real watermarking supports GIF files when server GD GIF support is available and shows clearer GD capability notices.
-* IMPROVED: Improved watermark compatibility with selling downloads, unified watermark size labels and added clearer admin notices.
-* IMPROVED: Hardened watermark handling with safer path validation, field whitelisting, permission handling, GD capability checks and Apache/IIS/Nginx protection guidance.
-
-= 30.0.1 =
-* IMPROVED: iOS Safari/WebKit compatibility for mobile full-window galleries, including more stable viewport, keyboard input, comments, overlays, and image zoom behavior.
-* IMPROVED: Mobile shopping cart scrolling and close handling when opened from full-window galleries.
-* IMPROVED: Security hardening.
-* FIXED: User gallery delete controls could disappear after uploading a new entry until the page was reloaded.
-* FIXED: Multiple-star rating details in user galleries now open read-only for own entries and show the correct own-gallery voting message.
-* FIXED: Multiple-star rating detail rows now match the displayed total when "Show only user votes" or manual vote corrections are used.
-* FIXED: Entry page URLs are cleaner for upload titles containing apostrophes or encoded characters.
-* FIXED: Upload field values with apostrophes are displayed correctly in frontend views.
-* FIXED: Potential security vulnerability.
-* FIXED: Small bugs.
-
-= 30.0.0 =
-* NEW: Added Contest Gallery Network publishing workflow for gallery listings, including update handling for already published galleries.
-* NEW: Added Gallery ZIP export and import to transfer galleries between sites, including entries, media files, votes, comments and user assignment options.
-* IMPROVED: Large gallery transfer handling with progress UI, temporary file cleanup and safer ZIP download/import processing.
-* IMPROVED: Backend user entry filtering can now show user related entry counts instead of only technical user IDs.
-* IMPROVED: Modernized backend option controls for a cleaner and more readable administration experience.
-* FIXED: Mobile full window browser back and edge gesture handling for the compact blog slider popover.
-* FIXED: Imported galleries could fail to render when video data was incomplete.
-* FIXED: "Thank you for voting" translation was not applied in all frontend voting message contexts.
-* FIXED: Registry/PIN form helper content could appear on gallery pages where it should not be visible.
-* FIXED: Backend sale image preview could appear empty in the selling activation area.
-* FIXED: Small bugs.
-
-= 29.0.2 =
-* NEW: Added a compact backend gallery dashboard with activity stats, trend graph and improved AJAX refresh behavior.
-* NEW: New galleries can now track whether entries were added from the frontend or backend.
-* FIXED: Major mobile full window and entry view stability issues, including search, keyboard overlays, browser back/edge-back handling, upload/comment/info modals, zoom and entry landing page behavior.
-* IMPROVED: Full window wheel and swipe navigation now feels faster and more responsive, with smoother input handling on desktop and mobile.
-* FIXED: Additional files now navigate more reliably on mobile in both entry view and full window view.
-* IMPROVED: Rating cards in full window view are now easier to use because the whole visible card can be clicked, while undo/remove still requires the dedicated remove icon.
-* FIXED: Removed invalid rating review schema output that could lead to Google review snippet validation issues.
-* FIXED: Potential security vulnerability.
-
-= 29.0.1 =
-* FIXED: In full window blog view, unfolded category filters could overlap the search and sorting controls in the configuration panel.
-* FIXED: Closing full window blog view now returns to the selected gallery entry with the intended 25px higher viewport position.
-* IMPROVED: The search field is now focused automatically when opening the full window blog view configuration panel.
-* IMPROVED: A filled search field is focused again after closing full window blog view.
-
-= 29.0.0 =
-* NEW: Full window blog view now includes a vertical slider on desktop and mobile with seamless virtual scrolling and no pagination.
-* NEW: Full window blog view now has modern scroll, wheel, touch and buttons handling for desktop and mobile.
-* NEW: Modern comment rendering, modern date display, profile images/avatars, and improved action/link buttons in full window view and on entry pages.
-* NEW: Modernized frontend controls, including category chips, upload dropzone, radio/checkbox fields, agreement checkboxes and checkout agreement checkboxes, for upload/registry forms, full window blog view and entry landing page layouts.
-* NEW: Optimized PHP first rendering for better SEO on gallery and entry pages.
-* NEW: Better SEO output for landing pages, entry pages and ecommerce entries, with improved meta tags, Open Graph and JSON-LD data.
-* NEW: SEO best-practice rendering for media descriptions, ALT text, video/audio accessibility labels and download descriptions.
-* NEW: Cleaner gallery, entry landing page and cg_galleries URLs, canonical URLs, and Back to gallery / Back to galleries / pagination navigation for better SEO.
-* NEW: Added server-side previous/next entry previews on entry landing pages for better SEO and more user-friendly gallery navigation.
-* NEW: Added a separate full window blog view title field in "Edit upload form" options
-* NEW: Option to show or hide the refresh button after in-gallery uploads.
-* REMOVED: Full window slider view, slider view and blog view options, as they are no longer modern, had no real use case, were not ideal for SEO, and required too much maintenance.
-* FIXED: Small bugs.
-* FIXED: Potential security vulnerability.
-* IMPROVED: Security hardening, cookie validation, upload field validation, output escaping, download permission checks and code sanitization.
-* IMPROVED: Internal backend logic and admin workflows, including faster plugin activation, database schema checks, gallery creation performance and more.
-* IMPROVED: Backend styling in several areas.
-
-= 28.1.7 =
-* FIXED: Potential security vulnerability.
-* IMPROVED: Security hardening and code sanitization.
-* IMPROVED: Reduced cg_gallery.min.js size for better frontend loading performance.
-* FIXED: Small bugs.
-
-= 28.1.6 =
-* FIXED: Potential security vulnerability.
-* IMPROVED: Security hardening and code sanitization.
-* FIXED: Small bugs.
-
-= 28.1.5.1 =
-* FIXED: PRO version could not be activated if normal wasn't deactivated.
-
-= 28.1.5 =
-* FIXED: Security issue.
-* IMPROVED: Backend security and stability improvements.
-
-= 28.1.4 =
-* FIXED: Security issue.
-
-= 28.1.3.2 =
-* FIXED: Sort by rating did not work in frontend when "Show only user votes" was activated and multiple galleries shortcodes on same page were inserted.
-
-= 28.1.3.1 =
-* FIXED: Sort by rating did not work in frontend when "Show only user votes" was activated.
-
-= 28.1.3 =
-* FIXED: Security issue.
-
-= 28.1.2.2 =
-* IMPROVED: Backend security and stability improvements.
-* FIXED: Small bug fixes.
-
-= 28.1.2.1 =
-* FIXED: Inserting cg_galleries... type of shortcodes with gallery ids did not show all inserted galleries.
-* FIXED: Small bug fixes.
-
-= 28.1.2 =
-* NEW: Option to change the voting icon style. Choose between "star" (default) and "heart" in the "Voting options".
-* IMPROVED: Backend security and stability improvements.
-* FIXED: Small bug fixes.
-
-= 28.1.1 =
-* NEW: Modernized UI icons. The old orange star has been replaced with a red heart for a clearer and more familiar look, similar to what most modern UIs use on both light and dark backgrounds.
-* NEW: Removed the “Icons” options because they never worked reliably and were too time-intensive to maintain.
-  If custom icons are needed, they can now be added easily via custom CSS.
-* IMPROVED: styles.min.css reduced from 1.5 MB to 0.4 MB by moving large base64-encoded icon data into real icon files stored in wp-content/plugins/contest-gallery/assets/.
-* FIXED: Small bugs.
-
-= 28.1.0.1 =
-* FIXED: “Full order details” link not working correctly.
-* FIXED: Small bugs.
-
-= 28.1.0 =
-* NEW: Added cg_users_pin shortcode.
-* NEW: Added option “Show user-friendly PIN-based email verification form for unregistered users” when “Check if is registered user” is enabled as voting recognition method.
-* NEW: Added option “Show user-friendly PIN-based email verification form for unregistered users” when “Check if is registered user” is enabled as upload recognition method.
-* NEW: Added “Jury (allowed voters)” setting. You can now define email addresses of registered users who are allowed to vote.
-* FIXED: “Users management” area was broken in Firefox.
-* FIXED: Allowed file types of the frontend upload form were not correctly recognized in the sale order area when an upload (charge users for upload) was purchased.
-
-= 28.0.6 =
-* NEW: Registered but unconfirmed users are now listed in the "Users management" area.
-* NEW: "Resend confirmation email", "Show sent emails" and "Delete unconfirmed user" options added to the "Users management" area.
-* NEW: "Login user immediately after email confirmation" option added to "Registration options".
-* NEW: "Confirmation link lifetime" option added to "Registration options".
-* NEW: Frontend users can resend the confirmation email when clicking an expired confirmation link.
-* NEW: Norwegian and Swedish translations completed.
-* NEW: Hindi (hi_IN) translations added.
-* IMPROVED: Registration code mechanics.
-* FIXED: Small bugs.
-
-= 28.0.5 =
-* NEW: Added "Header tracking code on gallery landing page" option.
-* NEW: Added "General text before gallery on gallery landing page" option.
-* NEW: Added "General text after gallery on gallery landing page" option.
-* NEW: Added "Header tracking code on galleries landing page" option.
-* NEW: Added "General text before galleries on galleries landing page" option.
-* NEW: Added "General text after galleries on galleries landing page" option.
-* FIXED: Small bugs.
-
-= 28.0.4 =
-* NEW: Added header tracking code option for entry landing pages.
-* FIXED: Password reset (Lost password) was not functioning correctly.
-
-= V28.0.3 =
-* IMPROVED: General security and stability enhancements in backend operations.
-* FIXED: Unicode slug handling for titles with non-Latin characters (e.g. Chinese, Japanese, Korean).
-* FIXED: Returning via the browser back button to a page containing a cg_gallery... shortcode no longer causes an unnecessary reload.
-* FIXED: Minor bug fixes.
-
-= V28.0.2 =
-* NEW: File upload field title now shown on the "In gallery upload form button".
-* NEW: Larger image previews in "Masonry view" in frontend.
-* NEW: Radio and checkbox field types now available for registration form.
-* NEW: Send entry related custom mail now available in backend if user provided an email.
-* NEW: Create templates for entry related custom mails.
-* FIXED: Different little bugs.
-
-= V28.0.1 =
-* NEW: "Radio buttons" and "Checkboxes" field types added to upload form.
-* NEW: Google sign in button improved.
-* NEW: Security improvements.
-* FIXED: Creating new gallery create new gallery but showed wrong gallery.
-* FIXED: Google sign in button did not work in all cases.
-
-= V28.0.0 =
-* NEW: Multiple columns drag and drop upload form builder for "Edit registration form".
-* NEW: Security improvements.
-
-= V27.0.3 =
-* FIXED: Removing votes for an entry in backend area did not reset the total counter of the votes for the entry.
-* FIXED: "Check by IP and Cookie" did work incorrect.
-
-= V27.0.2 =
-* NEW: Security improvements.
-* FIXED: Bugs frontend registration form area.
-
-= V27.0.1 =
-* NEW: Security improvements.
-* FIXED: Adding certain fields in some cases not possible in "Edit upload form" area.
-
-= V27.0.0 =
-* NEW: Multiple columns drag and drop upload form builder for "Edit upload form".
-* NEW: cg_users_contact shortcode ist renamed in cg_users_upload shortcode, but can still be used like always.
-* NEW: "Contact form" renamed to "Upload form" everywhere for more clarity.
-* FIXED: Deleting "Select categories" upload form field caused issues in some cases.
-
-= V26.1.1 =
-* FIXED: Security issue.
-
-= V26.1.0 =
-* NEW: Edit an image via OpenAI and add edited image to your WordPress media library.
-
-= V26.0.9 =
-* NEW: Successful prompts to OpenAI history.
-* FIXED: Adding HTML field when editing an upload form did not work.
-* FIXED: Security issue.
-
-= V26.0.8 =
-* NEW: Create images via OpenAI API and add them to your WordPress media library.
-
-= V26.0.7.1 =
-* FIXED: Opening the backend URL to check new comment from "New comment notification e-mail for admin" did not work.
-
-= V26.0.7 =
-* NEW: Security improvements.
-* FIXED: Security issue.
-
-= V26.0.6 =
-* NEW: Create real PDF preview image when adding a PDF file in backend or frontend. Options available in "Edit options" >>> "PDF". Imagick library is not required.
-* NEW: "Show or hide back to galleries button on gallery landing page" option added in "Gallery view" options for every type of cg_gallery... shortcode.
-* NEW: "Back to galleries button custom URL on gallery landing page" option added in "Gallery view" options for every type of cg_gallery... shortcode.
-* FIXED: Different little bugs.
-
-= V26.0.5.1 =
-* FIXED: Adding cg_galleries... type of shortcode to a page or post not possible in WordPress version 6.8 and higher.
-
-= V26.0.5 =
-* FIXED: Security issue.
-
-= V26.0.4 =
-* FIXED: Different little bugs.
-* FIXED: Using multiple different upload forms if multiple different "uploads" were purchased, did not work on order summary page.
-
-= V26.0.3 =
-* NEW: Show upload form collapsed option if file upload is required. By default is uncollapsed for new galleries.
-* NEW: Slightly improved borders and shadows for bright gallery color style in frontend in case of very bright monitors.
-* NEW: Enable PayPal and Stripe sandbox testing options. By default is disabled, so not desired test purchases in test environment can be done with PayPal or Stripe credit cards for testing.
-* FIXED: Rotating of upload form on mobile devices did not work properly.
-* FIXED: Different little bugs.
-
-= V26.0.2 =
-* NEW: Larger images in masonry view. Min width raised from around 270px to 370px.
-* NEW: Larger images in entry view. Max width raised from 930px to 1020px.
-* FIXED: Special characters did not appear correctly in cg_gallery_user entry view.
-
-= V26.0.1 =
-* FIXED: Different little bugs.
-* FIXED: Security issue.
-
-= V26.0.0.1 =
-* FIXED: Allow search engines like Google to index or follow the /contest-galleries... pages and subpages options did not work.
-
-= V26.0.0 =
-* NEW: Stripe as payment processing added. Use Stripe payment methods in your ecommerce checkout.
-* NEW: Dynamic up to 10 columns appears now in masonry view, instead of maximum only 3. Depends on container width.
-* NEW: Allow search engines like Google to index or follow the /contest-galleries... pages and subpages, options. For new setups, indexing is disabled by default while link following is enabled.
-* NEW: Allow sort by rating possible if "Show only user votes" or "Hide voting until user vote" is activated, for cg_gallery_no_voting and cg_gallery_winner shortcodes.
-* FIXED: Changing options for "Shortcode interval configuration" stuck if options page not reloaded for a while.
-* FIXED: cg_galleries... shortcodes option "Entry preview to display" >>> "Show highest rated entry" did not work always right.
-
-= V25.1.3 =
-* NEW: Improved frontend shortcodes load visually for slower connections.
-* FIXED: "Export all votes" query took too long.
-
-= V25.1.2 =
-* FIXED: Security issue.
-
-= V25.1.1 =
-* NEW: "Create @googlemail Google Sign In users as @gmail WordPress users in the database" as "Login Google" option.
-* FIXED: Order status might be not always correct on the order summary page.
-
-= V25.1.0 =
-* NEW: Translation of "Buy now" and "Add to cart" now possible.
-* NEW: Maximum "Contact entries for a user per category" removed, due to complicated to implement and never worked right.
-* FIXED: Backend entries search showed sometimes results which doesn't contain the search word.
-* FIXED: "Contact entries total per user" per user current value not corrected if an entry was deleted using cg_gallery_user shortcode.
-
-= V25.0.9.1 =
-* FIXED: If URL field in "Edit upload form"  was activated to be displayed in frontend then additionally not required "https://" was added to inserted URL even if http:// or https:// were already set in the URL.
-
-= V25.0.9 =
-* FIXED: Selected role groups which can edit Contest Gallery "Registration form" will be converted to "Contest Gallery Since V14" user role, caused in update 25.0.8.
-
-= V25.0.8 =
-* NEW: "Field title gallery or entry view" added in "Upload form" to input, textarea, select, select-categories, date and URL types of fields. Will be visible instead of "Upload form field title" in gallery or entry view, if set.
-* NEW: "Forward to the URL by click on an entry in masonry view" added to URL upload form field.
-* NEW: Selected role groups which can edit Contest Gallery "Registration form" fields are now also  use "Logout URL" and "Back to gallery URL" if configured in "Login options".
-* FIXED: "Login form" did not work for all cases.
-
-= V25.0.7 =
-* NEW: CC and BCC added to registration "Confirmation e-mail".
-* FIXED: Registration "Confirmation e-mail" did not work for all cases.
-* FIXED: Contest is over not shown when using cg_galleries... type of shortcode.
-
-= V25.0.6 =
-* FIXED: Sorting in "Masonry view" did not work.
-* FIXED: Agreeing YouTube policies in full window blog view broke the view.
-
-= V25.0.5 =
-* NEW: Deactivate, activate or delete all comments at once checkboxes added in "Show comments" area for an entry.
-* FIXED: Clicking through pagination in frontend cause content below gallery shortcode jumps at the top of gallery area.
-* FIXED: Deactivating and activating an entry causes content that should be visible in frontend for the entry to disappear.
-* FIXED: Position of price tag in frontend gallery area, using cg_gallery_ecommerce shortcode, not always correct.
-
-= V25.0.4 =
-* FIXED: Opening "Slider view" from masonry view in full window mode causes high distance between thumbnails in slider images overview.
-* FIXED: Content not always centered when opening "Blog view" or "Slider view" in full window mode.
-* FIXED: Line break between stars on mobile when voting if 10 stars voting is activated.
-* FIXED: After commenting an image as logged in user and then opening the image again, the nicknames for comments of logged in users disappear.
-* FIXED: Updating Google Sign In library did not always work.
-
-= V25.0.3 =
-* NEW: "Show date entry added/uploaded to gallery" in frontend. Can be configured in "Gallery view" options.
-
-= V25.0.2 =
-* NEW: Attach an entry to a registered user of your choice.
-
-= V25.0.1 =
-* NEW: Long descriptions can be added now as third title for cg_galleries... shortcodes view.
-* FIXED: If no entries for a gallery in cg_galleries... view then gallery was unclickable.
-
-= V25.0.0 =
-* NEW: Masonry cards view for frontend. Modern responsive view with modern look.
-* NEW: Thumb view will be converted in masonry view.
-* NEW: Adding long descriptions now possible in masonry view. Check third title (description) for a field in "Edit upload form" area.
-
-= V24.0.9 =
-* FIXED: Apostrophe was visible as html entity in comments section in frontend after page reload.
-
-= V24.0.8.1 =
-* FIXED: "Text if all uploads were used" after ecommerce entry "Upload" purchase in order summary area was not correct HTML formatted.
-* FIXED: False error message might appear if Google Sign-In lib is installed, that not latest version is used.
-
-= V24.0.8 =
-* NEW: Security improvements.
-
-= V24.0.7 =
-* NEW: Lost password login area logic improved.
-* NEW: PositionNumber changed when creating tables from TINYINT to INT(11).
-
-= V24.0.6 =
-* FIXED: Sorting of entries was only working till 127 entries correctly, due to TINYINT was used as SQL field type. Changed to INT(11).
-
-= V24.0.5 =
-* FIXED: Security issue.
-* FIXED: Sorted images in backend were not all visible in frontend if "Custom sorting" was activated, as preselect or select, in frontend.
-
-= V24.0.4 =
-* FIXED: Security issues.
-
-= V24.0.3 =
-* FIXED: Delete votes and delete comments did not work properly.
-* FIXED: Images counter in opened blog view did not work always properly on scroll if "Number of entries per screen" was higher then 20.
-
-= V24.0.2 =
-* NEW: When using cg_galleries... shortcodes and main title for a gallery is given to appear in galleries view, then the main title is also shown for the gallery if gallery is clicked from cg_galleries... shortcode type.
-* FIXED: cg_galleries... shortcodes were not always displayed correctly.
-* FIXED: When loading a gallery from cg_galleries... view below content jumped to the top of gallery container when loading.
-
-= V24.0.1 =
-* NEW: YouTube media start time is now possible to add when "Add social embed".
-* FIXED: Undefined array key error when adding social embed.
-
-= V24.0.0 =
-* NEW: cg_galleries... shortcode types. Place cg_galleries shortcode on your page and click through galleries without page reload.
-* NEW: Add ids to a cg_galleries... shortcode if you like to display only certain galleries.
-* NEW: Either latest added, highest rated or highest commented entry can be displayed in galleries view as preview for a gallery.
-* NEW: Main title, sub title and third title can be configured as preview for a gallery in galleries view.
-* FIXED: Some special chars were not showing correctly in title of gallery view.
-* FIXED: Gallery title was not displayed in no voting gallery if comments for no voting gallery were deactivated.
-
-= V23.1.8 =
-* FIXED: Wrong entries URLs were displayed in certain cases in backend entries area.
-
-= V23.1.7 =
-* FIXED: Removed not required code witch might cause processing break in rare cases.
-* FIXED: Sending entry activation mail for not registered user did not work if "Automatically activate users entries in frontend after frontend contact" was deactivated.
-
-= V23.1.6 =
-* FIXED: Method setting not required header on init removed.
-
-= V23.1.5 =
-* NEW: Move an entry to another gallery function now available in backend images area.
-
-= V23.1.4 =
-* NEW: Add, manage, replace entry files works with social embed also now.
-* NEW: "Sales settings" for an entry also works with social embed now. An entry with social embed can be set for selling.
-
-= V23.1.3 =
-* FIXED: Improved backend images area handling and look.
-* FIXED: Security issues found by patchstack.com team.
-
-= V23.1.2 =
-* FIXED: Security issue found by patchstack.com team.
-* FIXED: Test environment label was not shown in basket if ecommerce test environment was used and "Buy now" was clicked.
-
-= V23.1.1 =
-* NEW: Add Instagram entries to gallery.
-* NEW: Configure to ask users to agree privacy policy of Instagram to display Instagram content in frontend.
-* NEW: Add TikTok entries to gallery.
-* NEW: Configure to ask users to agree privacy policy of TikTok to display TikTok content in frontend.
-
-= V23.1.0 =
-* NEW: Add Twitter entries to gallery.
-* NEW: Configure to ask users to agree privacy policy of Twitter to display Twitter content in frontend.
-* FIXED: "Export all fields and total rating" did not work in some cases.
-* FIXED: New Files and YouTube entries URLs were not generated in some cases.
-
-= V23.0.1 =
-* FIXED: Sorting by voting did not work in backend.
-
-= V23.0.0 =
-* NEW: Add YouTube entries to gallery.
-* NEW: Configure to ask users to agree privacy policy of YouTube to display YouTube content in frontend.
-
-= V22.1.0 =
-* NEW: Charge for uploads. Configure "Upload" as selling type for an entry.
-* NEW: User will be able to purchase "Upload" via PayPal and then upload files on the order summary page.
-
-= V22.0.0 =
-* NEW: "cg_gallery_ecommerce" shortcode, sell entries via PayPal.
-* NEW: Sell entries as shipping, download or service.
-* NEW: Watermark image files for selling as download.
-* NEW: "Edit ecommerce" options.
-* NEW: Configure currency, PayPal payment methods add PayPal Client ID and Secret for PayPal live or sandbox selling.
-* NEW: Configure checkout options, checkout notes, agreements and allowed shipping countries.
-* NEW: Configure order summary page options.
-* NEW: Configure order confirmation mail.
-* NEW: Configure invoice options and possible invoice number logic.
-* NEW: Show and export ecommerce orders.
-* NEW: All translations are now general and valid for all galleries.
+= 33.0.2 =
+* IMPROVED: Redesigned the Add files media modal with clearer tabs, a dedicated Assign fields workflow, modern media cards and progress feedback.
+* IMPROVED: Voting and upload login prompts now support passwordless email access with optional Google Sign-In.
+* FIXED: HTML5 videos in the gallery-only view now show their preview frame and duration immediately.
+* FIXED: X post URLs can be added again.
+* FIXED: Contest Gallery Network export now supports WordPress subdirectory installations.
+* FIXED: Reinstalling after uninstall is faster and removes all Paid Actions tables cleanly.
+* FIXED: Backend scrolling now recovers after completed AJAX navigation.
+* FIXED: Product sandbox checkouts work without Paid Actions links, and download sale settings remain saveable after gallery switches.
 
 Full updates history can be found in changelog.txt in plugins directory.

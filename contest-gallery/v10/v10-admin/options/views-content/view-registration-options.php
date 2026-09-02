@@ -447,9 +447,19 @@ echo <<<HEREDOC
             </div>
        </div>
         <div class='cg_view_options_row'>
+            <div class="cg_view_option cg_view_option_full_width cg_border_top_none" id="RegMailFromContainer">
+                <div class="cg_view_option_title">
+                    <p>From e-mail<br><span class="cg_view_option_title_note">Falls back to "Reply-To e-mail" when empty.</span></p>
+                </div>
+                <div class="cg_view_option_input">
+                    <input type="text" name="RegMailFrom" value="$RegMailFrom" maxlength="200" >
+                </div>
+            </div>
+       </div>
+        <div class='cg_view_options_row'>
             <div class="cg_view_option cg_view_option_full_width cg_border_top_none" id="RegMailReplyContainer">
                 <div class="cg_view_option_title">
-                    <p>Reply e-mail (address From)<br><span class="cg_view_option_title_note">Should not be empty</span></p>
+                    <p>Reply-To e-mail<br><span class="cg_view_option_title_note">Falls back to "From e-mail" when empty.</span></p>
                 </div>
                 <div class="cg_view_option_input">
                     <input type="text" name="RegMailReply" value="$RegMailReply"  maxlength="200" >
