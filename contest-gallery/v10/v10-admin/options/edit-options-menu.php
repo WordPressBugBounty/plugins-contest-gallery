@@ -33,6 +33,32 @@ if(empty($_POST['cg_edit_translations']) && empty($_POST['cg_edit_ecommerce']) &
 }elseif(!empty($_POST['cg_edit_ecommerce']) || !empty($_GET['cg_edit_ecommerce'])){
     $isEditEcommerceOnly = true;
 }
+$cgOptionsSearchScope = $isEditTranslationsOnly ? 'translations' : ($isEditEcommerceOnly ? 'ecommerce' : 'options');
+$cgOptionsSearchLabel = $isEditTranslationsOnly ? 'Search translations' : ($isEditEcommerceOnly ? 'Search ecommerce options' : 'Search options');
+$cgOptionsSearchResultsLabel = $isEditTranslationsOnly ? 'Matching translations' : 'Matching options';
+$cgOptionsSearchEmptyLabel = $isEditTranslationsOnly ? 'No matching translations found. Try another keyword.' : 'No matching options found. Try another keyword.';
+$cgOptionsSearch = <<<HEREDOC
+                <div id="cgOptionsSearch" class="cg_options_search" role="search" aria-label="$cgOptionsSearchLabel" data-cg-search-scope="$cgOptionsSearchScope">
+                    <div class="cg_options_search_field">
+                        <span class="cg_options_search_icon" aria-hidden="true"></span>
+                        <label class="screen-reader-text" for="cgOptionsSearchInput">$cgOptionsSearchLabel</label>
+                        <input id="cgOptionsSearchInput" type="search" placeholder="{$cgOptionsSearchLabel}…" autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="cgOptionsSearchResults" aria-describedby="cgOptionsSearchStatus">
+                        <div class="cg_options_search_actions">
+                            <div id="cgOptionsSearchNavigation" hidden>
+                                <span id="cgOptionsSearchCount" aria-hidden="true"></span>
+                                <button id="cgOptionsSearchPrevious" class="cg_options_search_step" type="button" aria-label="Previous result" title="Previous result"><span aria-hidden="true">&uarr;</span></button>
+                                <button id="cgOptionsSearchNext" class="cg_options_search_step" type="button" aria-label="Next result" title="Next result"><span aria-hidden="true">&darr;</span></button>
+                            </div>
+                            <button id="cgOptionsSearchClear" type="button" aria-label="Clear search" hidden>&times;</button>
+                        </div>
+                    </div>
+                    <div id="cgOptionsSearchPopup" class="cg_options_search_popup" hidden>
+                        <div id="cgOptionsSearchResults" role="listbox" aria-label="$cgOptionsSearchResultsLabel"></div>
+                        <p id="cgOptionsSearchEmpty" hidden>$cgOptionsSearchEmptyLabel</p>
+                    </div>
+                    <span id="cgOptionsSearchStatus" class="screen-reader-text" role="status" aria-live="polite"></span>
+                </div>
+HEREDOC;
 if($isEditOptionsOnly){
     if(intval($galleryDbVersion)>=14){
         $styleTabContents="style='border-radius:none !important;position:relative;'";
@@ -41,6 +67,7 @@ if($isEditOptionsOnly){
         <div id="cg_main_options_tab">
              <div id="cg_tabs_container" >
             <div class="tabs" data-persist="true">
+                $cgOptionsSearch
                   <div id="cg_main_options_tab_first_row" class="cg_main_options_tab_row" style="margin-bottom: 7px;border-bottom: thin solid #dedede;padding-bottom: 10px;">
                         <div class='cg_view_select cg_selected' cg-data-view="#view1" data-count="1" ><a class="cg_view_select_link" cg-data-view="#view1" cg-data-href="cgViewHelper1">Gallery view</a></div>
                         <div class='cg_view_select' cg-data-view="#view2" data-count="2"><a class="cg_view_select_link" cg-data-view="#view2" cg-data-href="cgViewHelper2">Entry view</a></div>
@@ -81,6 +108,7 @@ echo <<<HEREDOC
         <div id="cg_main_options_tab">
              <div id="cg_tabs_container" >
             <div class="tabs" data-persist="true">
+                $cgOptionsSearch
                   <div id="cg_main_options_tab_first_row" class="cg_main_options_tab_row" style="margin-bottom: 7px;border-bottom: thin solid black;padding-bottom: 10px;border-width: 0.5px;">
                         <div class='cg_view_select cg_selected' cg-data-view="#view1" data-count="1" ><a class="cg_view_select_link" cg-data-view="#view1" cg-data-href="cgViewHelper1">Gallery view</a></div>
                         <div class='cg_view_select' cg-data-view="#view2" data-count="2"><a class="cg_view_select_link" cg-data-view="#view2" cg-data-href="cgViewHelper2">Entry view</a></div>
@@ -117,6 +145,7 @@ HEREDOC;
         <div id="cg_main_options_tab">
              <div id="cg_tabs_container" >
             <div class="tabs" data-persist="true">
+                $cgOptionsSearch
 HEREDOC;
     echo <<<HEREDOC
                 <div id="cg_main_options_tab_second_row" class="cg_ecommerce">
@@ -138,6 +167,7 @@ HEREDOC;
         <div id="cg_main_options_tab">
              <div id="cg_tabs_container" >
             <div class="tabs" data-persist="true">
+                $cgOptionsSearch
 HEREDOC;
 
     echo <<<HEREDOC

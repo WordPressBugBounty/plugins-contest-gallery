@@ -413,20 +413,10 @@ if (count($userAccountEntries)) {
             }
 
             if($pinHash){// login here
-                //wp_set_auth_cookie( $newWpId,true );// will be done ajax
-                $cgGetLoggedInFrontendUserKey = wp_hash_password(wp_generate_password( 32, true, true ));
-                update_user_meta( $newWpId, 'cgGetLoggedInFrontendUserKey', $cgGetLoggedInFrontendUserKey);
                 if(!empty($cgPinRequestKey)){
                     delete_transient('cg_pin_request_key_'.$cgPinRequestKey);
                 }
-				?>
-				<script  data-cg-processing="true" data-cg-success="true">
-					cgJsClass.gallery.vars.pinMessage = 'success';
-					cgJsClass.gallery.vars.pinVerified = true;
-					cgJsClass.gallery.vars.cgGetLoggedInFrontendUserKey = <?php echo json_encode($cgGetLoggedInFrontendUserKey);?>;
-					cgJsClass.gallery.vars.cgJustLoggedInWpUserId = <?php echo json_encode($newWpId);?>;
-				</script>
-                <?php
+                cg_pin_auth_login_result_script($newWpId);
                 die;
             }else{
                 include (__DIR__.'/users-registry-render-confirmation-or-signin.php');

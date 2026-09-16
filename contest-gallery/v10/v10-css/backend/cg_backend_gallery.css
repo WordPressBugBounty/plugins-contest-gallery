@@ -1,6 +1,6 @@
 #media-frame-title .cg-pro-false{
     border: thin solid var(--cg-pro-border-strong, #d4a245);
-    padding: 2px 38px 2px 8px;
+    padding: 2px 54px 2px 8px;
     background-color: var(--cg-pro-surface, #fff4dc);
     position: relative;
     line-height: 20px;
@@ -10564,6 +10564,11 @@ div#cgUnconfirmedSearchReset{
     text-transform: uppercase;
 }
 
+#cgSortable li.cg_sortable_div .cg-center-image-exif-data .cg-exif.cg-pro-false:after{
+    top: -7px;
+    right: -4px;
+}
+
 #cgSortable li.cg_sortable_div .cg-exif .cg-exif-img {
     flex: 0 0 auto;
     margin-bottom: 0;
@@ -11211,7 +11216,7 @@ div#cgUnconfirmedSearchReset{
     width: 1px;
 }
 
-.media-modal.cg_add_files_to_gallery .media-frame-router{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-router{
     align-items: center;
     background: linear-gradient(180deg,#fff 0%,#f6f7f7 100%);
     border-bottom: 0;
@@ -11231,11 +11236,11 @@ div#cgUnconfirmedSearchReset{
     z-index: 5;
 }
 
-.media-modal.cg_add_files_to_gallery .media-frame-router::-webkit-scrollbar{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-router::-webkit-scrollbar{
     height: 0;
 }
 
-.media-modal.cg_add_files_to_gallery .media-frame-router > .media-router{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-router > .media-router{
     column-gap: 6px;
     display: flex;
     flex: 0 0 auto;
@@ -11243,8 +11248,8 @@ div#cgUnconfirmedSearchReset{
     padding: 0;
 }
 
-.media-modal.cg_add_files_to_gallery .media-frame-router .media-menu-item,
-.media-modal.cg_add_files_to_gallery .media-frame-router .cg_media_menu_item{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-router .media-menu-item,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-router .cg_media_menu_item{
     align-items: center;
     background: #fff;
     border: 1px solid #dcdcde;
@@ -11263,16 +11268,16 @@ div#cgUnconfirmedSearchReset{
     transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease, color .15s ease;
 }
 
-.media-modal.cg_add_files_to_gallery .media-frame-router .media-menu-item:not(.active):hover,
-.media-modal.cg_add_files_to_gallery .media-frame-router .cg_media_menu_item:not(.cg_active):hover{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-router .media-menu-item:not(.active):hover,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-router .cg_media_menu_item:not(.cg_active):hover{
     background: #f0f6fc;
     border-color: #8c8f94;
     box-shadow: 0 2px 5px rgba(15,23,42,.09);
     color: var(--wp-admin-theme-color, #2271b1);
 }
 
-.media-modal.cg_add_files_to_gallery .media-frame-router .media-menu-item.active,
-.media-modal.cg_add_files_to_gallery .media-frame-router .cg_media_menu_item.cg_active{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-router .media-menu-item.active,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-router .cg_media_menu_item.cg_active{
     background: var(--wp-admin-theme-color, #2271b1);
     border: 1px solid var(--wp-admin-theme-color, #2271b1);
     box-shadow: 0 3px 8px rgba(15,23,42,.18);
@@ -11281,29 +11286,29 @@ div#cgUnconfirmedSearchReset{
     margin: 0;
 }
 
-.media-modal.cg_add_files_to_gallery .media-frame-router .media-menu-item:focus,
-.media-modal.cg_add_files_to_gallery .media-frame-router .cg_media_menu_item:focus{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-router .media-menu-item:focus,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-router .cg_media_menu_item:focus{
     outline: 2px solid transparent;
 }
 
-.media-modal.cg_add_files_to_gallery .media-frame-router .media-menu-item:focus:not(:focus-visible),
-.media-modal.cg_add_files_to_gallery .media-frame-router .cg_media_menu_item:focus:not(:focus-visible){
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-router .media-menu-item:focus:not(:focus-visible),
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-router .cg_media_menu_item:focus:not(:focus-visible){
     box-shadow: 0 1px 2px rgba(15,23,42,.05);
 }
 
-.media-modal.cg_add_files_to_gallery .media-frame-router .media-menu-item.active:focus:not(:focus-visible),
-.media-modal.cg_add_files_to_gallery .media-frame-router .cg_media_menu_item.cg_active:focus:not(:focus-visible){
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-router .media-menu-item.active:focus:not(:focus-visible),
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-router .cg_media_menu_item.cg_active:focus:not(:focus-visible){
     box-shadow: 0 3px 8px rgba(15,23,42,.18);
 }
 
-.media-modal.cg_add_files_to_gallery .media-frame-router .media-menu-item:focus-visible,
-.media-modal.cg_add_files_to_gallery .media-frame-router .cg_media_menu_item:focus-visible{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-router .media-menu-item:focus-visible,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-router .cg_media_menu_item:focus-visible{
     border-color: var(--wp-admin-theme-color, #2271b1);
     box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--wp-admin-theme-color, #2271b1);
     z-index: 2;
 }
 
-.media-modal.cg_add_files_to_gallery .media-modal-close{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-modal-close{
     align-items: center;
     border: 0;
     border-radius: 6px;
@@ -11315,29 +11320,29 @@ div#cgUnconfirmedSearchReset{
     width: 40px;
 }
 
-.media-modal.cg_add_files_to_gallery .media-modal-close:hover{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-modal-close:hover{
     background: #f0f6fc;
 }
 
-.media-modal.cg_add_files_to_gallery .media-modal-close:focus{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-modal-close:focus{
     border-color: transparent;
     box-shadow: none;
     outline: none;
 }
 
-.media-modal.cg_add_files_to_gallery .media-modal-close:focus-visible{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-modal-close:focus-visible{
     background: #f0f6fc;
     box-shadow: inset 0 0 0 2px var(--wp-admin-theme-color, #2271b1);
     outline: 2px solid transparent;
     outline-offset: -2px;
 }
 
-.media-modal.cg_add_files_to_gallery .media-frame-content{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-content{
     left: 0;
     top: 52px;
 }
 
-.media-modal.cg_add_files_to_gallery .media-frame-toolbar{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-toolbar{
     left: 0;
 }
 
@@ -11363,7 +11368,7 @@ div#cgUnconfirmedSearchReset{
     color: #fff;
 }
 
-.media-modal.cg_add_files_to_gallery .attachments-browser .media-toolbar{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .media-toolbar{
     background: #f6f7f7;
     border-bottom: 1px solid #dcdcde;
     box-sizing: border-box;
@@ -11371,29 +11376,29 @@ div#cgUnconfirmedSearchReset{
     padding: 8px 16px 10px;
 }
 
-.media-modal.cg_add_files_to_gallery .attachments-browser .attachments,
-.media-modal.cg_add_files_to_gallery .attachments-browser .uploader-inline,
-.media-modal.cg_add_files_to_gallery .attachments-browser.has-load-more .attachments-wrapper{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .attachments,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .uploader-inline,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser.has-load-more .attachments-wrapper{
     background: #fbfbfc;
     box-sizing: border-box;
 }
 
-.media-modal.cg_add_files_to_gallery .attachments-browser .attachments,
-.media-modal.cg_add_files_to_gallery .attachments-browser .uploader-inline{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .attachments,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .uploader-inline{
     padding: 12px;
 }
 
-.media-modal.cg_add_files_to_gallery .attachments-browser:not(.has-load-more) .attachments,
-.media-modal.cg_add_files_to_gallery .attachments-browser .uploader-inline,
-.media-modal.cg_add_files_to_gallery .attachments-browser.has-load-more .attachments-wrapper{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser:not(.has-load-more) .attachments,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .uploader-inline,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser.has-load-more .attachments-wrapper{
     top: 68px;
 }
 
-.media-modal.cg_add_files_to_gallery .attachments-browser.has-load-more .attachments-wrapper{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser.has-load-more .attachments-wrapper{
     right: 300px;
 }
 
-.media-modal.cg_add_files_to_gallery .attachments-browser.has-load-more .attachments{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser.has-load-more .attachments{
     bottom: auto;
     left: auto;
     overflow: visible;
@@ -11402,15 +11407,15 @@ div#cgUnconfirmedSearchReset{
     top: auto;
 }
 
-.media-modal.cg_add_files_to_gallery .attachments-browser.has-load-more .load-more-wrapper{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser.has-load-more .load-more-wrapper{
     bottom: auto;
     margin: 0;
     position: static;
     z-index: auto;
 }
 
-.media-modal.cg_add_files_to_gallery .attachments-browser .media-toolbar-primary,
-.media-modal.cg_add_files_to_gallery .attachments-browser .media-toolbar-secondary{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .media-toolbar-primary,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .media-toolbar-secondary{
     align-content: center;
     align-items: center;
     column-gap: 8px;
@@ -11421,16 +11426,16 @@ div#cgUnconfirmedSearchReset{
     row-gap: 4px;
 }
 
-.media-modal.cg_add_files_to_gallery .attachments-browser .media-toolbar-primary{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .media-toolbar-primary{
     width: 260px;
 }
 
-.media-modal.cg_add_files_to_gallery .attachments-browser .media-toolbar-secondary{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .media-toolbar-secondary{
     max-width: calc(100% - 280px);
 }
 
-.media-modal.cg_add_files_to_gallery .media-attachments-filter-heading,
-.media-modal.cg_add_files_to_gallery .media-search-input-label{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-attachments-filter-heading,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-search-input-label{
     color: #50575e;
     display: block;
     flex: 0 0 100%;
@@ -11441,8 +11446,8 @@ div#cgUnconfirmedSearchReset{
     position: static;
 }
 
-.media-modal.cg_add_files_to_gallery .media-frame select.attachment-filters,
-.media-modal.cg_add_files_to_gallery .attachments-browser .search{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame select.attachment-filters,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .search{
     background-color: #fff;
     border: 1px solid #c3c4c7;
     border-radius: 8px;
@@ -11454,30 +11459,30 @@ div#cgUnconfirmedSearchReset{
     min-height: 36px;
 }
 
-.media-modal.cg_add_files_to_gallery .media-frame select.attachment-filters{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame select.attachment-filters{
     border-radius: 8px !important;
     min-width: 170px;
     padding: 0 30px 0 10px;
 }
 
-.media-modal.cg_add_files_to_gallery .attachments-browser .search{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .search{
     padding: 0 10px;
     width: 260px;
 }
 
-.media-modal.cg_add_files_to_gallery .media-frame select.attachment-filters:focus,
-.media-modal.cg_add_files_to_gallery .attachments-browser .search:focus{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame select.attachment-filters:focus,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .search:focus{
     border-color: var(--wp-admin-theme-color, #2271b1);
     box-shadow: 0 0 0 1px var(--wp-admin-theme-color, #2271b1);
     margin: 0;
     outline: 2px solid transparent;
 }
 
-.media-modal.cg_add_files_to_gallery .attachment{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachment{
     border-radius: 10px;
 }
 
-.media-modal.cg_add_files_to_gallery .attachment-preview{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachment-preview{
     background: #fff;
     border: 1px solid #dcdcde;
     border-radius: 8px;
@@ -11489,17 +11494,17 @@ div#cgUnconfirmedSearchReset{
     transition: border-color .15s ease, box-shadow .15s ease;
 }
 
-.media-modal.cg_add_files_to_gallery .attachment:hover .attachment-preview{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachment:hover .attachment-preview{
     border-color: #a7aaad;
     box-shadow: 0 4px 12px rgba(15,23,42,.1);
 }
 
-.media-modal.cg_add_files_to_gallery .attachment .thumbnail,
-.media-modal.cg_add_files_to_gallery .attachment .thumbnail:after{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachment .thumbnail,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachment .thumbnail:after{
     border-radius: 7px;
 }
 
-.media-modal.cg_add_files_to_gallery .attachment .filename{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachment .filename{
     border-top: 1px solid rgba(0,0,0,.1);
     border-radius: 0 0 7px 7px;
     box-shadow: none;
@@ -11507,44 +11512,44 @@ div#cgUnconfirmedSearchReset{
     overflow: hidden;
 }
 
-.media-modal.cg_add_files_to_gallery .attachment:not(:has(.filename)):after{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachment:not(:has(.filename)):after{
     border-radius: 0 0 7px 7px;
     overflow: hidden;
 }
 
-.media-modal.cg_add_files_to_gallery .attachment.selected,
-.media-modal.cg_add_files_to_gallery .attachment.details{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachment.selected,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachment.details{
     border-radius: 10px;
 }
 
-.media-modal.cg_add_files_to_gallery .attachment.selected{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachment.selected{
     box-shadow: inset 0 0 0 5px #fff, inset 0 0 0 7px #c3c4c7;
 }
 
-.media-modal.cg_add_files_to_gallery .attachment.details,
-.media-modal.cg_add_files_to_gallery .attachment.details:focus,
-.media-modal.cg_add_files_to_gallery .attachment.selected:focus{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachment.details,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachment.details:focus,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachment.selected:focus{
     box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px var(--wp-admin-theme-color, #2271b1);
     outline: 2px solid transparent;
 }
 
-.media-modal.cg_add_files_to_gallery .attachment.details .attachment-preview{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachment.details .attachment-preview{
     border-color: var(--wp-admin-theme-color, #2271b1);
 }
 
-.media-modal.cg_add_files_to_gallery .attachment .check{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachment .check{
     border-radius: 6px;
     right: 5px;
     top: 5px;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar{
     background: #f6f7f7;
     border-left-color: #dcdcde;
     box-shadow: -4px 0 16px rgba(15,23,42,.05);
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > h2{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > h2{
     align-items: center;
     color: #3c434a;
     font-size: 12px;
@@ -11552,13 +11557,13 @@ div#cgUnconfirmedSearchReset{
     margin: 16px 0 10px;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .settings-save-status{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .settings-save-status{
     align-items: center;
     color: #646970;
     justify-content: flex-end;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-info{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-info{
     background: #fff;
     border: 1px solid #dcdcde;
     border-radius: 10px;
@@ -11572,7 +11577,7 @@ div#cgUnconfirmedSearchReset{
     padding: 12px;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-info .thumbnail{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-info .thumbnail{
     background: #f0f0f1;
     border-radius: 8px;
     float: none;
@@ -11584,22 +11589,22 @@ div#cgUnconfirmedSearchReset{
     overflow: hidden;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-info .thumbnail-image:after,
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-info .thumbnail img{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-info .thumbnail-image:after,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-info .thumbnail img{
     border-radius: 8px;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-info .thumbnail img{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-info .thumbnail img{
     max-height: 80px;
     max-width: 80px;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-info .thumbnail-image{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-info .thumbnail-image{
     height: 80px;
     width: 80px;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-info .thumbnail-image img{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-info .thumbnail-image img{
     height: 100%;
     max-height: none;
     max-width: none;
@@ -11608,37 +11613,37 @@ div#cgUnconfirmedSearchReset{
     width: 100%;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-info .details{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-info .details{
     float: none;
     grid-column: 2;
     min-width: 0;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-info .filename{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-info .filename{
     color: #1d2327;
     font-weight: 600;
     overflow-wrap: anywhere;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-info .wp-media-wrapper{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-info .wp-media-wrapper{
     grid-column: 1 / -1;
     margin: 0;
     min-width: 0;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-info .wp-media-wrapper + .details{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-info .wp-media-wrapper + .details{
     grid-column: 1 / -1;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-info .edit-attachment,
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-info .delete-attachment,
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-info .trash-attachment,
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-info .untrash-attachment{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-info .edit-attachment,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-info .delete-attachment,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-info .trash-attachment,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-info .untrash-attachment{
     line-height: 1.6;
     text-underline-offset: 2px;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting{
     background: #fff;
     border: 1px solid #dcdcde;
     border-radius: 9px;
@@ -11650,14 +11655,14 @@ div#cgUnconfirmedSearchReset{
     width: 100%;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting.has-description{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting.has-description{
     border-bottom: 0;
     border-radius: 9px 9px 0 0;
     margin-bottom: 0;
     padding-bottom: 8px;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting > .name{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting > .name{
     color: #3c434a;
     display: block;
     float: none;
@@ -11673,15 +11678,15 @@ div#cgUnconfirmedSearchReset{
     width: 100%;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting input[type="text"],
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting input[type="password"],
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting input[type="email"],
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting input[type="number"],
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting input[type="search"],
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting input[type="tel"],
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting input[type="url"],
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting textarea,
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting select{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting input[type="text"],
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting input[type="password"],
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting input[type="email"],
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting input[type="number"],
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting input[type="search"],
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting input[type="tel"],
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting input[type="url"],
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting textarea,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting select{
     background: #fff;
     border: 1px solid #c3c4c7;
     border-radius: 7px !important;
@@ -11697,27 +11702,27 @@ div#cgUnconfirmedSearchReset{
     width: 100%;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting textarea{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting textarea{
     height: 72px;
     min-height: 72px;
     resize: vertical;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting input[readonly],
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting textarea[readonly]{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting input[readonly],
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting textarea[readonly]{
     background: #f6f7f7;
     color: #646970;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting input:focus,
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting textarea:focus,
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting select:focus{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting input:focus,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting textarea:focus,
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting select:focus{
     border-color: var(--wp-admin-theme-color, #2271b1);
     box-shadow: 0 0 0 1px var(--wp-admin-theme-color, #2271b1);
     outline: 2px solid transparent;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting + .description{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting + .description{
     background: #fff;
     border: 1px solid #dcdcde;
     border-radius: 0 0 9px 9px;
@@ -11734,14 +11739,14 @@ div#cgUnconfirmedSearchReset{
     width: 100%;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting[data-setting="url"] .copy-to-clipboard-container{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting[data-setting="url"] .copy-to-clipboard-container{
     display: flex;
     margin: 8px 0 0;
     padding: 0;
     width: 100%;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting[data-setting="url"] .copy-attachment-url{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting[data-setting="url"] .copy-attachment-url{
     border-radius: 7px;
     justify-content: center;
     margin: 0;
@@ -11750,7 +11755,7 @@ div#cgUnconfirmedSearchReset{
     width: 100%;
 }
 
-.media-modal.cg_add_files_to_gallery .media-sidebar .attachment-details > .setting[data-setting="url"] .success{
+.media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-details > .setting[data-setting="url"] .success{
     flex: 0 0 100%;
     min-height: 0;
     padding: 4px 0 0;
@@ -11758,23 +11763,23 @@ div#cgUnconfirmedSearchReset{
 }
 
 @media screen and (max-width: 900px){
-    .media-modal.cg_add_files_to_gallery .attachments-browser.has-load-more .attachments-wrapper{
+    .media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser.has-load-more .attachments-wrapper{
         right: 262px;
     }
 
-    .media-modal.cg_add_files_to_gallery .media-sidebar .attachment-info{
+    .media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-info{
         gap: 8px;
         grid-template-columns: 64px minmax(0,1fr);
         padding: 10px;
     }
 
-    .media-modal.cg_add_files_to_gallery .media-sidebar .attachment-info .thumbnail,
-    .media-modal.cg_add_files_to_gallery .media-sidebar .attachment-info .thumbnail img{
+    .media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-info .thumbnail,
+    .media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-info .thumbnail img{
         max-height: 64px;
         max-width: 64px;
     }
 
-    .media-modal.cg_add_files_to_gallery .media-sidebar .attachment-info .thumbnail-image{
+    .media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-sidebar .attachment-info .thumbnail-image{
         height: 64px;
         width: 64px;
     }
@@ -11915,16 +11920,16 @@ div#cgUnconfirmedSearchReset{
 }
 
 @media screen and (max-width: 640px){
-    .media-modal.cg_add_files_to_gallery .media-frame-router{
+    .media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-router{
         height: 52px;
         padding-left: 8px;
     }
 
-    .media-modal.cg_add_files_to_gallery .media-frame-content{
+    .media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame-content{
         top: 52px;
     }
 
-    .media-modal.cg_add_files_to_gallery .attachments-browser .media-toolbar{
+    .media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .media-toolbar{
         display: flex;
         flex-direction: column;
         gap: 6px;
@@ -11932,8 +11937,8 @@ div#cgUnconfirmedSearchReset{
         padding: 8px 12px;
     }
 
-    .media-modal.cg_add_files_to_gallery .attachments-browser .media-toolbar-primary,
-    .media-modal.cg_add_files_to_gallery .attachments-browser .media-toolbar-secondary{
+    .media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .media-toolbar-primary,
+    .media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .media-toolbar-secondary{
         display: grid;
         float: none;
         gap: 8px;
@@ -11943,28 +11948,28 @@ div#cgUnconfirmedSearchReset{
         width: 100%;
     }
 
-    .media-modal.cg_add_files_to_gallery .media-attachments-filter-heading,
-    .media-modal.cg_add_files_to_gallery .media-search-input-label{
+    .media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-attachments-filter-heading,
+    .media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-search-input-label{
         flex-basis: auto;
     }
 
-    .media-modal.cg_add_files_to_gallery .media-frame select.attachment-filters,
-    .media-modal.cg_add_files_to_gallery .attachments-browser .search{
+    .media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .media-frame select.attachment-filters,
+    .media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .search{
         min-width: 0;
         width: 100%;
     }
 
-    .media-modal.cg_add_files_to_gallery .attachments-browser .attachments,
-    .media-modal.cg_add_files_to_gallery .attachments-browser .uploader-inline{
+    .media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .attachments,
+    .media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .uploader-inline{
         padding: 8px;
     }
 
-    .media-modal.cg_add_files_to_gallery .attachments-browser:not(.has-load-more) .attachments,
-    .media-modal.cg_add_files_to_gallery .attachments-browser .uploader-inline{
+    .media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser:not(.has-load-more) .attachments,
+    .media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser .uploader-inline{
         top: 116px;
     }
 
-    .media-modal.cg_add_files_to_gallery .attachments-browser.has-load-more .attachments-wrapper{
+    .media-modal:is(.cg_add_files_to_gallery, .cg_add_additional_files) .attachments-browser.has-load-more .attachments-wrapper{
         right: 0;
         top: 116px;
     }
@@ -12245,7 +12250,7 @@ div#cgUnconfirmedSearchReset{
 }
 
 .media-modal-content .cg_add_additional_files .media-frame-content{
-    top: 104px;
+    top: 122px;
 }
 
 .media-modal-content .media-frame-title div.cg_media_note{
@@ -12646,11 +12651,11 @@ div#cgUnconfirmedSearchReset{
     padding-left: 10px;
 }
 
-.media-modal #cgOpenAiModels{
+.media-modal .cg_openai_models{
     display: flex;
 }
 
-.media-modal #cgOpenAiModels .cg_openai_model .cg_openai_model_desc{
+.media-modal .cg_openai_models .cg_openai_model .cg_openai_model_desc{
     padding-left: 0;
 }
 
@@ -12665,56 +12670,6 @@ div#cgUnconfirmedSearchReset{
 
 .media-modal .cg_openai_model .cg_openai_model_image{
     margin-right: 5px;
-}
-
-.media-modal  .cg_openai_model .cg_openai_resolutions_container{
-    flex-basis: 100%;
-    margin-top: 15px;
-}
-
-.media-modal  .cg_openai_model .cg_openai_resolutions{
-    display: flex;
-}
-
-.media-modal .cg_openai_model .cg_openai_resolutions .cg_openai_res{
-    display: flex;
-    flex-flow: column;
-    justify-content: center;
-    align-items: start;
-    margin-right: 10px;
-    width: 172px;
-    height: 50px;
-    border: thin solid #dedede;
-    border-radius: 8px;
-    padding: 16px;
-    cursor: pointer;
-    position: relative;
-}
-
-.media-modal .media-frame-content.cg_openai_edit .cg_openai_model .cg_openai_resolutions .cg_openai_res{
-    display: none;
-}
-
-.media-modal .media-frame-content.cg_openai_edit .cg_openai_model .cg_openai_resolutions .cg_openai_res.cg_openai_res_quality{
-    display: flex;
-}
-
-.media-modal .media-frame-content.cg_openai_edit .cg_openai_model .cg_openai_resolutions_container .cg_openai_header{
-    display: none;
-}
-
-.media-modal .cg_openai_model .cg_openai_resolutions .cg_openai_res.cg_selected{
-    border: thin solid black;
-    cursor: auto;
-}
-
-.media-modal .cg_openai_model .cg_openai_resolutions .cg_openai_res .cg_openai_res_size{
-    font-size: 16px;
-    margin-bottom: 10px;
-}
-
-.media-modal .cg_openai_model .cg_openai_resolutions .cg_openai_res .cg_openai_res_price{
-    font-size: 24px;
 }
 
 .media-modal #cgOpenAiPromptContainer{
@@ -12761,6 +12716,7 @@ div#cgUnconfirmedSearchReset{
 }
 
 .media-modal #cgOpenAiGenImageContainer .cg_openai_img #cgOpenAiImg{
+    object-fit: contain;
     width: 100%;
     height: 100%;
 }
@@ -12834,7 +12790,7 @@ div#cgUnconfirmedSearchReset{
 }
 
 .media-frame-content.cg_openai_edit #cgOpenAiBackToModels{
-    display: none;
+    display: inline-block;
 }
 
 .media-frame-content #cgOpenAiEditSelectImages{
@@ -13122,4 +13078,195 @@ select.cg_action_select:focus,
     .cg_paid_actions_order_balance { grid-template-columns: 1fr; }
     .cg_paid_actions_order_balance_controls { flex-wrap: wrap; }
     .cg_paid_actions_order_balance_help { grid-column: 1; }
+}
+
+/* Shared model selection for OpenAI generation and editing. */
+.media-modal #cgOpenAiContainer{
+    align-content: flex-start;
+    box-sizing: border-box;
+    height: 100%;
+    padding: 20px;
+    row-gap: 16px;
+    width: 100%;
+    overflow-y: auto;
+}
+
+.media-modal #cgOpenAiOverview,
+.media-modal #cgOpenAiSelected,
+.media-modal .cg_openai_edit_sources{
+    box-sizing: border-box;
+    flex-basis: 100%;
+    min-width: 0;
+}
+
+.media-modal #cgOpenAiSelected{
+    padding-top: 76px;
+}
+
+.media-modal .cg_openai_edit_mode #cgOpenAiSelected{
+    padding-top: 8px;
+}
+
+.media-modal .cg_openai_edit_mode.cg_openai_model_selected .cg_openai_edit_sources{
+    padding-top: 76px;
+}
+
+.media-modal #cgOpenAiPrompts{
+    left: 20px;
+    right: 20px;
+    top: 20px;
+    width: auto;
+}
+
+.media-modal .cg_openai_model_overview{
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    margin-top: 16px;
+}
+
+.media-modal .cg_openai_model_overview .cg_openai_model_card{
+    box-sizing: border-box;
+    align-content: flex-start;
+    background: #fff;
+    border: 1px solid #dcdcde;
+    border-radius: 10px;
+    box-shadow: 0 2px 7px rgba(15,23,42,.06);
+    color: #1d2327;
+    gap: 14px;
+    min-height: 150px;
+    padding: 20px;
+    text-align: left;
+    width: 100%;
+}
+
+.media-modal .cg_openai_model_card:hover,
+.media-modal .cg_openai_model_card:focus-visible{
+    border-color: var(--wp-admin-theme-color, #2271b1);
+    box-shadow: 0 0 0 2px var(--wp-admin-theme-color, #2271b1);
+}
+
+.media-modal .cg_openai_model_badge{
+    background: #e7f2f8;
+    border-radius: 999px;
+    color: #135e96;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 10px;
+}
+
+.media-modal [data-ai-model-name="gpt-image-2.5-sunburst"] .cg_openai_model_badge{
+    background: #fff0cf;
+    color: #785309;
+}
+
+.media-modal [data-ai-model-name="gpt-image-2.5-flare"] .cg_openai_model_badge{
+    background: #f0eaff;
+    color: #5a3296;
+}
+
+.media-modal .cg_openai_model_card .cg_openai_model_desc{
+    flex-basis: 100%;
+    line-height: 1.5;
+}
+
+.media-modal .cg_openai_selected_models{
+    margin: 16px 0;
+}
+
+.media-modal .cg_openai_model_controls{
+    align-items: start;
+    display: grid;
+    flex-basis: 100%;
+    gap: 16px;
+    grid-template-columns: repeat(2, minmax(0, 260px));
+    margin-top: 18px;
+}
+
+.media-modal .cg_openai_model_controls label{
+    color: #3c434a;
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    gap: 6px;
+    min-width: 0;
+}
+
+.media-modal .cg_openai_model_controls select{
+    border: 1px solid #c3c4c7;
+    border-radius: 8px !important;
+    height: 40px;
+    max-width: 100%;
+    min-width: 0;
+    padding-left: 10px;
+    width: 100%;
+}
+
+.media-modal .cg_openai_cost_note,
+.media-modal .cg_openai_quality_note,
+.media-modal .cg_openai_quality_changed{
+    color: #50575e;
+    flex-basis: 100%;
+    line-height: 1.5;
+    max-width: 720px;
+}
+
+.media-modal .cg_openai_quality_changed{
+    background: #f0f6fc;
+    border-left: 3px solid #2271b1;
+    padding: 10px 12px;
+}
+
+.media-modal #cgOpenAiBackToModels,
+.media-modal #cgOpenAiEditSelectImages,
+.media-modal #cgOpenAiEditSelectedImages{
+    margin: 0 0 16px;
+    padding: 0 16px;
+    width: auto;
+}
+
+.media-modal .cg_openai_image_to_edit img{
+    height: 100%;
+    object-fit: contain;
+    width: 100%;
+}
+
+.media-modal #cgOpenAiPromptInput,
+.media-modal #cgOpenAiImageName,
+.media-modal #cgOpenAiGenImageContainer .cg_openai_img,
+.media-modal #cgOpenAiImageFields .cg_text{
+    max-width: 100%;
+}
+
+@media screen and (max-width: 640px){
+    .media-modal .cg_openai_model_overview,
+    .media-modal .cg_openai_model_controls{
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .media-modal #cgOpenAiContainer{
+        padding: 12px;
+    }
+
+    .media-modal #cgOpenAiPromptContainer .cg_openai_button_container,
+    .media-modal #cgOpenAiImageFields,
+    .media-modal #cgOpenAiImageFields > div > div{
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .media-modal #cgOpenAiImageFields > div,
+    .media-modal #cgOpenAiImageFields > div > div > div{
+        max-width: 100%;
+    }
+
+    .media-modal #cgOpenAiPromptContainer .cg_clear_container{
+        min-width: 0;
+        max-width: 100%;
+        margin-right: 0 !important;
+    }
+
+    .media-modal #cgOpenAiImageFields img{
+        display: none;
+    }
 }

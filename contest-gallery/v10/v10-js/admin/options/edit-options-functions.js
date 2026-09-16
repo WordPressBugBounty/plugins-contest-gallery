@@ -490,6 +490,7 @@ cgJsClassAdmin.options.functions = {
 
         cgJsClassAdmin.options.functions.cgDomainErrorInputsCheck($);
         cgJsClassAdmin.options.functions.cgCenterCheckboxRadioContainerContent($);
+        cgJsClassAdmin.options.search.init();
 
     },
     cgViewOptionCheck: function (element,e){

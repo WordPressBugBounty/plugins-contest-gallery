@@ -400,8 +400,7 @@ if (!defined('ABSPATH')) {
 				cg_registry_add_profile_image('cg_input_image_upload_file',$newWpId,false,false,$attach_id);
 			}
 
-			$cgGetLoggedInFrontendUserKey = wp_hash_password(wp_generate_password( 32, true, true ));
-			update_user_meta( $newWpId, 'cgGetLoggedInFrontendUserKey', $cgGetLoggedInFrontendUserKey);
+			$cgGetLoggedInFrontendUserKey = cg1l_issue_login_handoff($newWpId);
 
 			//wp_set_auth_cookie( $newWpId,true );// will be done ajax
 
@@ -415,7 +414,7 @@ if (!defined('ABSPATH')) {
 				cgJsClass.gallery.vars.cgJustLoggedInWpUserId = <?php echo json_encode($newWpId);?>;
 				var result = cgJsClass.gallery.registry.functions.loginUserByKey(jQuery,0,cgJsClass.gallery.vars.cgGetLoggedInFrontendUserKey);
 				if(result){
-					cgJsClass.gallery.function.general.tools.getCurrentNonce(jQuery);
+					if(!cgJsClass.gallery.vars.currentCgNonce){cgJsClass.gallery.function.general.tools.getCurrentNonce(jQuery);}
 					cgJsClass.gallery.vars.$regFormContainer.find('#cg_check_mail_name_value').val(0);// then success and can be reloaded, val(1) will be set when form submit
 					var url = <?php echo json_encode($url);?>;
                     window._cgLocationUrl = url;

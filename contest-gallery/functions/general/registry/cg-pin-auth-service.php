@@ -507,8 +507,11 @@ if(!function_exists('cg_pin_auth_resend_paid_pending_by_email')){
 
 if(!function_exists('cg_pin_auth_login_result_script')){
 	function cg_pin_auth_login_result_script($userId){
-		$key = wp_hash_password(wp_generate_password(32,true,true));
-		update_user_meta($userId,'cgGetLoggedInFrontendUserKey',$key);
+		$key = cg1l_issue_login_handoff($userId);
+		if(empty($key)){
+			echo '<script data-cg-processing="true">cgJsClass.gallery.vars.pinMessage="login-unavailable";cgJsClass.gallery.vars.pinVerified=false;</script>';
+			return;
+		}
 		echo '<script data-cg-processing="true" data-cg-success="true">';
 		echo 'cgJsClass.gallery.vars.pinMessage="success";';
 		echo 'cgJsClass.gallery.vars.pinVerified=true;';

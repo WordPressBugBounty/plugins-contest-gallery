@@ -1232,7 +1232,7 @@ jQuery(document).ready(function($){
         var height_cg_main_options_tab = $('#cg_main_options_tab').height();
         var $cg_main_options_tab = $('#cg_main_options_tab');
 
-        if($cg_main_options_tab.hasClass('cg_sticky')){
+        if($cg_main_options_tab.hasClass('cg_sticky') || $cg_main_options_tab.hasClass('cg_options_search_enabled')){
             var totalOffset = viewOffsetTop-heightWpadminbar-height_cg_main_options_tab-10;
         }else{
             var totalOffset = viewOffsetTop-heightWpadminbar-height_cg_main_options_tab-10-$cg_main_options_tab.outerHeight();

@@ -703,10 +703,11 @@ if (!function_exists('post_cg1l_current_frontend_nonce')) {
     function post_cg1l_current_frontend_nonce()
     {
         if (defined('DOING_AJAX') && DOING_AJAX) {
-            $WpUserId = absint($_POST['cgJustLoggedInWpUserId']);
-            $cgGetLoggedInFrontendUserKey = sanitize_text_field($_POST['cgGetLoggedInFrontendUserKey']);
-            $cgGetLoggedInFrontendUserKeyToCompare = get_user_meta( $WpUserId,'cgGetLoggedInFrontendUserKey',true);
-            if(!empty($cgGetLoggedInFrontendUserKeyToCompare) && hash_equals((string)$cgGetLoggedInFrontendUserKeyToCompare, (string)$cgGetLoggedInFrontendUserKey)){
+            nocache_headers();
+            cg1l_ajax_reject_bad_origin();
+            // Compatibility endpoint: the current WP session alone authorizes its nonce.
+            // The one-time handoff has already been consumed by the login request.
+            if(is_user_logged_in()){
                 ?>
                 <script data-cg-processing-current-nonce="true">
                     cgJsClass.gallery.vars.currentCgNonce = <?php echo json_encode(wp_create_nonce('cg1l_action')); ?>;
@@ -714,7 +715,6 @@ if (!function_exists('post_cg1l_current_frontend_nonce')) {
                     cgJsClass.gallery.vars.cgJustLoggedInWpUserId = '';
                 </script>
                 <?php
-                delete_user_meta( $WpUserId,'cgGetLoggedInFrontendUserKey');
             }
             exit();
         } else {
@@ -810,25 +810,18 @@ if (!function_exists('post_cg1l_login_user_by_key')) {
     function post_cg1l_login_user_by_key()
     {
         if (defined('DOING_AJAX') && DOING_AJAX) {
+            nocache_headers();
+            cg1l_ajax_reject_bad_origin();
             cg_check_frontend_nonce();
             global $wpdb;
             $tablename = $wpdb->prefix . "contest_gal1ery";
-            $gid = absint($_POST['cgl_gid']);
-            $WpUserId = absint($_POST['cgJustLoggedInWpUserId']);
-            $cgGetLoggedInFrontendUserKey = sanitize_text_field($_POST['cglKey']);
-            if(empty($WpUserId) || empty($cgGetLoggedInFrontendUserKey)){
-                exit();
-            }
-            $cgGetLoggedInFrontendUserKeyToCompare = get_user_meta( $WpUserId,'cgGetLoggedInFrontendUserKey',true);
-            if(!empty($cgGetLoggedInFrontendUserKeyToCompare) && hash_equals((string)$cgGetLoggedInFrontendUserKeyToCompare, (string)$cgGetLoggedInFrontendUserKey)){
-                $userRow = get_userdata($WpUserId);
-                if(empty($userRow)){
-                    exit();
-                }
+            $gid = isset($_POST['cgl_gid']) ? absint($_POST['cgl_gid']) : 0;
+            $WpUserId = isset($_POST['cgJustLoggedInWpUserId']) ? absint($_POST['cgJustLoggedInWpUserId']) : 0;
+            $key = isset($_POST['cglKey']) && is_string($_POST['cglKey']) ? wp_unslash($_POST['cglKey']) : '';
+            $userRow = cg1l_consume_login_handoff($WpUserId,$key);
+            if($userRow){
                 $wpNickname = $userRow->display_name;
                 $WpUserEmail = $userRow->user_email;
-                wp_set_current_user($WpUserId);
-                wp_set_auth_cookie( $WpUserId,true );
                 $profileImage = '';
                 $wpAvatarImage = '';
                 $wpAvatarImageLarge = '';
@@ -848,6 +841,11 @@ if (!function_exists('post_cg1l_login_user_by_key')) {
                 }
                 ?>
                 <script data-cg-processing-current-nonce="true">
+                    // The next request carries the new cookie and can create its matching nonce.
+                    CG1LAction.runtimeNonceFresh = 0;
+                    cgJsClass.gallery.vars.currentCgNonce = '';
+                    cgJsClass.gallery.vars.cgGetLoggedInFrontendUserKey = '';
+                    cgJsClass.gallery.vars.cgJustLoggedInWpUserId = '';
                     var gid = <?php echo json_encode($gid); ?>;
                     cgJsClass.gallery.vars.wpNickname = <?php echo json_encode($wpNickname); ?>;
                     cgJsClass.gallery.vars.WpUserEmail = <?php echo json_encode($WpUserEmail); ?>;

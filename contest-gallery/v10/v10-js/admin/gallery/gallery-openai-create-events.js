@@ -1,120 +1,99 @@
-//jQuery(document).ready(function ($) {
 cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
 
-    var $mediaFrame;
-    var status;
-    var $cgOpenAiContainer;
-    var $mediaFrameContentSub;
-    var statusSelected;
+    cgJsClassAdmin.gallery.functions.openAiShowModels = function($mediaFrame, isEdit){
+        var $content = $mediaFrame.find('.media-frame-content');
+        if ($content.find('#cgOpenAiContainer.cg_cloned').data('request-pending')) { return; }
+        $content.children().addClass('cg_hide');
+        $content.toggleClass('cg_openai_edit', isEdit).css('overflow', 'visible');
+        var $container = $content.find('#cgOpenAiContainer.cg_cloned');
+        if (!$container.length) {
+            $container = $('#cgOpenAiContainer:not(.cg_cloned)').first().clone().addClass('cg_cloned');
+            $content.append($container);
+        }
+        $container.removeClass('cg_hide cg_openai_model_selected').toggleClass('cg_openai_edit_mode', isEdit).data('operation', isEdit ? 'edit' : 'create');
+        $container.find('.cg_openai_main').addClass('cg_hide');
+        $container.find('#cgOpenAiOverview').removeClass('cg_hide');
+        $container.find('.cg_openai_edit_sources, .cg_openai_edit_desc').toggleClass('cg_hide', !isEdit);
+        $container.find('.cg_openai_create_desc').toggleClass('cg_hide', isEdit);
+        $container.find('#cgOpenAiGenLoaderContainer, #cgOpenAiGenError, .cg_openai_quality_changed').addClass('cg_hide');
+        $container.find('#cgOpenAiPromptInput').val(cgJsClassAdmin.gallery.vars.openAiPrompt || '');
+        return $container;
+    };
 
-    $(document).on('click','#cgCreateViaOpenAI',function (){
-        debugger
-        $mediaFrame = $('.media-frame.cg_backend_area');
-
+    $(document).on('click', '#cgCreateViaOpenAI', function(){
         $(this).addClass('cg_active');
-        var $mediaFrameContent =  $mediaFrame.find('.media-frame-content');
-        $mediaFrameContent.removeClass('cg_openai_edit');
-        $mediaFrameContentSub =  $mediaFrame.find('.media-frame-content > *');
-        $mediaFrameContentSub.addClass('cg_hide');
-        $cgOpenAiContainer = $('#cgOpenAiContainer.cg_cloned');
-        if($cgOpenAiContainer.length){
-            $cgOpenAiContainer.removeClass('cg_hide');
-        }else{
-            $cgOpenAiContainer = $('#cgOpenAiContainer').clone().removeClass('cg_hide').addClass('cg_cloned');
-            $mediaFrameContent.append($cgOpenAiContainer);
-        }
-
-        $cgOpenAiContainer.find('.cg_openai_main').addClass('cg_hide');
-        $cgOpenAiContainer.find('#cgOpenAiGenLoaderContainer').addClass('cg_hide');
-        $cgOpenAiContainer.find('#cgOpenAiEditDesc').addClass('cg_hide');
-        $mediaFrameContent.find('.cg_openai_create_desc').removeClass('cg_hide');
-
-        $cgOpenAiContainer.closest('.media-frame-content').css('overflow','visible');// has to otherwise scroll appears twice
-        debugger
-        if(!status || status=='key-verified-and-overview'){
-            $cgOpenAiContainer.find('.cg_openai_main#cgOpenAiOverview').removeClass('cg_hide');
-        }else if(statusSelected){
-            $cgOpenAiContainer.find('.cg_openai_main#cgOpenAiSelected').removeClass('cg_hide');
-        }
-
-        $cgOpenAiContainer.find('#cgOpenAiPromptInput').val(cgJsClassAdmin.gallery.vars.openAiPrompt);
-
-        if(cgJsClassAdmin.gallery.vars.openAiPrompt){
-            $cgOpenAiContainer.find('#cgOpenAiPromptSubmit').removeClass('cg_disabled_one');
-        }else{
-            $cgOpenAiContainer.find('#cgOpenAiPromptSubmit').addClass('cg_disabled_one');
-        }
-
+        cgJsClassAdmin.gallery.functions.openAiShowModels($(this).closest('.media-frame'), false);
     });
 
-    $(document).on('click','.cg_openai_model',function (){
-
-        if($(this).closest('#cgOpenAiSelected').length){
-            return;
-        }
-
-        var cgOpenAiKey = $('#cgOpenAiKeyOption').val();
-        statusSelected = $(this).attr('data-ai-model-name');
-        $cgOpenAiContainer.find('.cg_openai_main').addClass('cg_hide');
-
-        debugger
-    //if(cgOpenAiKey && status == 'key-verified-and-overview' || !cgOpenAiKey){
-  //  if(cgOpenAiKey && status == 'key-verified-and-overview' || !cgOpenAiKey){
-        var $cgOpenAiSelected = $cgOpenAiContainer.find('#cgOpenAiSelected');
-        $cgOpenAiSelected.find('#cgOpenAiAddToWpLoaderContainer,#cgOpenAiAddToWpErrorContainer,#cgOpenAiAddToWpSuccessContainer').addClass('cg_hide');
-        $cgOpenAiSelected.removeClass('cg_hide');
-        $cgOpenAiSelected.find('.cg_openai_model').addClass('cg_hide');
-        $cgOpenAiSelected.find('.cg_openai_model[data-ai-model-name="'+statusSelected+'"]').removeClass('cg_hide');
-        $cgOpenAiSelected.find('#cgOpenAiSupportedLanguages').addClass('cg_hide');
-        $cgOpenAiSelected.find('#cgOpenAiHideMoreSupportedLanguages,#cgOpenAiGenError').addClass('cg_hide');
-        $cgOpenAiSelected.find('#cgOpenAiEditImages').remove();
-        if(cgOpenAiKey){
-            $cgOpenAiSelected.find('#cgOpenAiPromptContainer').removeClass('cg_hide');
-            $cgOpenAiSelected.find('#cgOpenAiGenImageContainer').addClass('cg_hide');
-            $cgOpenAiSelected.find('#cgOpenAiKeyContainer').addClass('cg_hide');
-            $cgOpenAiSelected.find('#cgOpenAiShowMoreSupportedLanguages').removeClass('cg_hide');
-        }else{
-            var $cgOpenAiKeyContainer = $cgOpenAiContainer.find('#cgOpenAiKeyContainer');
-            $cgOpenAiSelected.find('#cgOpenAiPromptContainer').addClass('cg_hide');
-            $cgOpenAiSelected.find('#cgOpenAiGenImageContainer').addClass('cg_hide');
-            $cgOpenAiSelected.find('.cg_openai_resolutions_container').addClass('cg_hide');
-            $cgOpenAiSelected.find('#cgOpenAiModelGpt1Explanation').addClass('cg_hide');
-            $cgOpenAiSelected.find('#cgOpenAiPromptContainer').removeClass('cg_hide').find('#cgOpenAiPromptInput').addClass('cg_disabled_one');
-            $cgOpenAiSelected.find('#cgOpenAiPromptShowCurrentBalance').addClass('cg_hide');
-            $cgOpenAiKeyContainer.removeClass('cg_hide');
-            $cgOpenAiKeyContainer.find('#cgOpenAiKeyError').addClass('cg_hide');
-        }
-
-        $cgOpenAiContainer.find('#cgOpenAiPrompts').removeClass('cg_hide');
-
-        if(cgJsClassAdmin.gallery.vars.openAiPrompts.length){
-            $cgOpenAiContainer.find('#cgOpenAiPromptsEntered').removeClass('cg_hide');
-            $cgOpenAiContainer.find('#cgOpenAiPromptsNotEntered').addClass('cg_hide');
-            //cgJsClassAdmin.gallery.vars.openAiPrompts.forEach(function(item){
-            cgJsClassAdmin.gallery.vars.openAiPrompts.slice().reverse().forEach(function(item){
-                cgJsClassAdmin.gallery.functions.appendAiPrompt($cgOpenAiContainer,item);
-            });
-            if(cgJsClassAdmin.gallery.vars.openAiPromptsAllGot){
-                $cgOpenAiContainer.find('#cgOpenAiMorePrompts').addClass('cg_hide');
-            }
-        }else{
-            $cgOpenAiContainer.find('#cgOpenAiPromptsEntered').addClass('cg_hide');
-            $cgOpenAiContainer.find('#cgOpenAiPromptsNotEntered').removeClass('cg_hide');
-        }
-//     }else if(status == 'key-not-valid'){
-        //var $cgOpenAiKeyNotValid = $cgOpenAiContainer.find('#cgOpenAiKeyNotValid');
-        //$cgOpenAiKeyNotValid.removeClass('cg_hide');
-//     }
-
+    $(document).on('click', '#cgOpenAiContainer.cg_cloned .cg_openai_model_card', function(){
+        var $container = $(this).closest('#cgOpenAiContainer');
+        var isEdit = $container.data('operation') === 'edit';
+        var isFree = $container.attr('data-cg-free') === '1';
+        var model = $(this).attr('data-ai-model-name');
+        var $selected = $container.find('#cgOpenAiSelected');
+        var $model = $selected.find('.cg_openai_model').filter(function(){
+            return $(this).attr('data-ai-model-name') === model;
+        });
+        var quality = $container.data('quality') || 'medium';
+        var $quality = $model.find('.cg_openai_quality');
+        $quality.find('option').each(function(){
+            var locked = isEdit && isFree && $(this).attr('data-cg-pro-edit') === '1';
+            $(this).prop('disabled', locked).text($(this).attr('data-cg-label') + (locked ? ' — PRO' : ''));
+        });
+        var supported = $quality.find('option').filter(function(){ return this.value === quality && !this.disabled; }).length;
+        $container.find('.cg_openai_quality_changed').toggleClass('cg_hide', !!supported);
+        if (!supported) { quality = 'medium'; }
+        $quality.val(quality);
+        $container.data('quality', quality);
+        $model.find('.cg_openai_size').val($container.data('size') || '1024x1024');
+        $selected.find('.cg_openai_model').addClass('cg_hide');
+        $model.removeClass('cg_hide');
+        $container.find('#cgOpenAiOverview').addClass('cg_hide');
+        $selected.removeClass('cg_hide');
+        $container.addClass('cg_openai_model_selected');
+        $selected.find('#cgOpenAiGenImageContainer, #cgOpenAiGenError, #cgOpenAiAddToWpLoaderContainer, #cgOpenAiAddToWpErrorContainer, #cgOpenAiAddToWpSuccessContainer').addClass('cg_hide');
+        var hasKey = $('#cgOpenAiKeyOption').val() === '1';
+        $selected.find('#cgOpenAiKeyContainer').toggleClass('cg_hide', hasKey);
+        $selected.find('#cgOpenAiPromptContainer').removeClass('cg_hide');
+        $selected.find('#cgOpenAiPromptInput').prop('disabled', !hasKey).toggleClass('cg_disabled_one', !hasKey);
+        $selected.find('#cgOpenAiPromptSubmit').prop('disabled', !hasKey || !$selected.find('#cgOpenAiPromptInput').val().trim()).toggleClass('cg_disabled_one', !hasKey || !$selected.find('#cgOpenAiPromptInput').val().trim());
+        $selected.find('#cgOpenAiPromptShowCurrentBalance').toggleClass('cg_hide', !hasKey);
+        $selected.find('#cgOpenAiSupportedLanguages, #cgOpenAiHideMoreSupportedLanguages').addClass('cg_hide');
+        $selected.find('#cgOpenAiShowMoreSupportedLanguages').removeClass('cg_hide');
+        $container.find('#cgOpenAiPrompts').removeClass('cg_hide');
+        var prompts = cgJsClassAdmin.gallery.vars.openAiPrompts || [];
+        $container.find('#cgOpenAiPromptsEntered').toggleClass('cg_hide', !prompts.length);
+        $container.find('#cgOpenAiPromptsNotEntered').toggleClass('cg_hide', !!prompts.length);
+        prompts.slice().reverse().forEach(function(item){
+            cgJsClassAdmin.gallery.functions.appendAiPrompt($container, item);
+        });
+        $container.find('#cgOpenAiMorePrompts').toggleClass('cg_hide', !!cgJsClassAdmin.gallery.vars.openAiPromptsAllGot);
     });
 
-    $(document).on('click','#cgOpenAiBackToModels',function (){
-        var $cgOpenAiContainer = $(this).closest('#cgOpenAiContainer');
-        $cgOpenAiContainer.find('#cgOpenAiOverview').removeClass('cg_hide');
-        $cgOpenAiContainer.find('#cgOpenAiSelected,#cgOpenAiPrompts').addClass('cg_hide');
+    $(document).on('click', '#cgOpenAiBackToModels', function(){
+        var $container = $(this).closest('#cgOpenAiContainer');
+        $container.find('#cgOpenAiOverview').removeClass('cg_hide');
+        $container.find('#cgOpenAiSelected, #cgOpenAiPrompts').addClass('cg_hide');
+        $container.removeClass('cg_openai_model_selected');
+    });
+
+    $(document).on('change', '#cgOpenAiContainer.cg_cloned .cg_openai_quality, #cgOpenAiContainer.cg_cloned .cg_openai_size', function(){
+        var key = $(this).hasClass('cg_openai_quality') ? 'quality' : 'size';
+        $(this).closest('#cgOpenAiContainer').data(key, $(this).val()).find('.cg_openai_quality_changed').addClass('cg_hide');
     });
 
     $(document).on('click','#cgOpenAiPromptSubmit',function (){
+        var $cgOpenAiContainer = $(this).closest('#cgOpenAiContainer');
+        var $mediaFrame = $(this).closest('.media-frame');
+        if ($(this).prop('disabled') || $(this).hasClass('cg_disabled_one') || $cgOpenAiContainer.data('request-pending')) { return; }
+        $cgOpenAiContainer.data('request-pending', true);
+        $(this).prop('disabled', true);
+        $cgOpenAiContainer.find('.cg_openai_model_card, #cgOpenAiBackToModels, #cgOpenAiEditSelectImages, .cg_openai_quality, .cg_openai_size, #cgOpenAiPromptInput').prop('disabled', true);
+        cgJsClassAdmin.gallery.vars.cgOpenAiGenIsValid = false;
+        cgJsClassAdmin.gallery.vars.cgOpenAiGenErrorMessage = 'OpenAI did not return a valid response. Please try again later.';
+        cgJsClassAdmin.gallery.vars.cgOpenAiGenUrl = '';
+        cgJsClassAdmin.gallery.vars.cgOpenAiLastPrompt = false;
+
 
         var $cgOpenAiSelected = $(this).closest('#cgOpenAiSelected');
         var $cgOpenAiGenImageContainer = $cgOpenAiSelected.find('#cgOpenAiGenImageContainer');
@@ -134,7 +113,7 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
         $cgOpenAiGenLoaderContainer.removeClass('cg_hide').get(0).scrollIntoView();
         $cgOpenAiSelected.find('#cgOpenAiPromptSubmit').addClass('cg_disabled_one');
         var $cgOpenAiModel = $cgOpenAiSelected.find('.cg_openai_model:not(.cg_hide)');
-        var $cg_openai_res_quality = $cgOpenAiModel.find('.cg_openai_res_quality.cg_selected');
+        var quality = $cgOpenAiModel.find('.cg_openai_quality').val();
         var $cgOpenAiGenLoader = $cgOpenAiSelected.find('#cgOpenAiGenLoader');
         $cgOpenAiGenLoader.removeClass('cg_horizontal_loader cg_vertical_loader');
         var data = {};
@@ -167,14 +146,10 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
         }
 
         data['cg_ai_model'] = $cgOpenAiModel.attr('data-ai-model-name');
-        var $cg_openai_res_size = $cgOpenAiModel.find('.cg_openai_res:not(.cg_openai_res_quality).cg_selected .cg_openai_res_size');
-        data['cg_ai_res'] = $cg_openai_res_size.attr('data-cg-res');
-        var orientation = $cg_openai_res_size.attr('data-cg-orientation');
-        debugger
-
-        if($cg_openai_res_quality.length){
-            data['cg_ai_quality'] = $cg_openai_res_quality.attr('data-cg-quality');
-        }
+        var size = $cgOpenAiModel.find('.cg_openai_size').val();
+        data['cg_ai_res'] = $cgOpenAiContainer.data('operation') === 'edit' ? 'auto' : size;
+        data['cg_ai_quality'] = quality;
+        var orientation = size === '1536x1024' ? 'horizontal' : (size === '1024x1536' ? 'vertical' : '');
 
         if(orientation=='horizontal'){
             $cgOpenAiGenLoader.addClass('cg_horizontal_loader');
@@ -234,7 +209,7 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
             }else{
                 $cgOpenAiSelected.find('#cgOpenAiGenLoaderContainer').addClass('cg_hide');
                 $cgOpenAiGenImageContainer.addClass('cg_hide');
-                $cgOpenAiSelected.find('#cgOpenAiGenError').html(cgJsClassAdmin.gallery.vars.cgOpenAiGenErrorMessage).removeClass('cg_hide');
+                $cgOpenAiSelected.find('#cgOpenAiGenError').text(cgJsClassAdmin.gallery.vars.cgOpenAiGenErrorMessage).removeClass('cg_hide');
             }
 
             $cgOpenAiGenImageContainer.find('#cgOpenAiAltText, #cgOpenAiCaption, #cgOpenAiDescription').val(data['cgOpenAiPromptInput']);
@@ -256,26 +231,25 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
             $cgOpenAiGenImageContainer.find('#cgOpenAiTitle').val(postTitle);
             $cgOpenAiSelected.find('#cgOpenAiPromptSubmit,#cgOpenAiAddToWpLib').removeClass('cg_disabled_one');
 
-        }).fail(function (xhr, status, error) {
-            debugger
-            console.log('response error');
-            console.log(xhr);
-            console.log('status error');
-            console.log(status);
-            console.log('error error');
-            console.log(error);
-
-            return;
-
+        }).fail(function (xhr, status) {
+            $cgOpenAiSelected.find('#cgOpenAiGenImageContainer').addClass('cg_hide');
+            $cgOpenAiSelected.find('#cgOpenAiGenError').text(status === 'timeout'
+                ? 'The request timed out. Check whether OpenAI completed the request before trying again.'
+                : 'The request could not be completed. Check your connection and login before trying again.').removeClass('cg_hide');
         }).always(function () {
-
-            var test = 1;
-
+            $cgOpenAiContainer.data('request-pending', false);
+            $cgOpenAiContainer.find('.cg_openai_model_card, #cgOpenAiBackToModels, #cgOpenAiEditSelectImages, .cg_openai_quality, .cg_openai_size, #cgOpenAiPromptInput').prop('disabled', false);
+            $cgOpenAiSelected.find('#cgOpenAiGenLoaderContainer').addClass('cg_hide');
+            var disabled = !$cgOpenAiSelected.find('#cgOpenAiPromptInput').val().trim();
+            $cgOpenAiSelected.find('#cgOpenAiPromptSubmit').prop('disabled', disabled).toggleClass('cg_disabled_one', disabled);
         });
 
     });
 
     $(document).on('click','#cgOpenAiAddToWpLib,#cgOpenAiAddToWpLibAndGallery',function (){
+        if ($(this).hasClass('cg_disabled_one')) { return; }
+        cgJsClassAdmin.gallery.vars.cgAddOpenAiImageIsValid = false;
+        cgJsClassAdmin.gallery.vars.cgAddOpenAiImageErrorMessage = 'The image could not be saved. Please check your media library before trying again.';
 
         var $cgOpenAiSelected = $(this).closest('#cgOpenAiSelected');
         var data = {};
@@ -293,6 +267,7 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
         if($(this).attr('id')=='cgOpenAiAddToWpLibAndGallery'){
             data['cg_openai_image_is_add_to_gallery'] = 1;
         }
+        $cgOpenAiSelected.find('#cgOpenAiAddToWpErrorContainer, #cgOpenAiAddToWpSuccessContainer').addClass('cg_hide');
         $cgOpenAiSelected.find('#cgOpenAiGenImageContainer').addClass('cg_hide');
         $cgOpenAiSelected.find('#cgOpenAiAddToWpLoaderContainer').removeClass('cg_hide').get(0).scrollIntoView();
 
@@ -328,26 +303,20 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
             wp.media.frame.content.get().collection._requery(true);
             wp.media.frame.content.get().options.selection.reset();
 
-        }).fail(function (xhr, status, error) {
-            debugger
-            console.log('response error');
-            console.log(xhr);
-            console.log('status error');
-            console.log(status);
-            console.log('error error');
-            console.log(error);
-
-            return;
-
+        }).fail(function () {
+            $cgOpenAiSelected.find('#cgOpenAiGenImageContainer').removeClass('cg_hide');
+            $cgOpenAiSelected.find('#cgOpenAiAddToWpErrorContainer').removeClass('cg_hide').find('#cgOpenAiAddToWpError').text('The save request could not be completed. Check your WordPress media library before trying again.');
         }).always(function () {
-
-            var test = 1;
+            $cgOpenAiSelected.find('#cgOpenAiAddToWpLoaderContainer').addClass('cg_hide');
 
         });
 
     });
 
     $(document).on('input','#cgOpenAiPromptInput',function (){
+        var $container = $(this).closest('#cgOpenAiContainer');
+        $container.find('#cgOpenAiPromptSubmit').prop('disabled', $(this).prop('disabled') || !$(this).val().trim() || !!$container.data('request-pending'));
+
         var $cg_openai_button_container = $(this).closest('.cg_openai_button_container');
         if($(this).val().trim() == ''){
             $cg_openai_button_container.find('#cgOpenAiPromptSubmit').addClass('cg_disabled_one');
@@ -379,22 +348,6 @@ cgJsClassAdmin.gallery.functions.loadAiCreateEvents = function($){
         $(this).addClass('cg_hide');
         $(this).parent().find('#cgOpenAiSupportedLanguages').addClass('cg_hide');
         $(this).parent().find('#cgOpenAiShowMoreSupportedLanguages').removeClass('cg_hide');
-    });
-
-    $(document).on('click','#cgOpenAiModels .cg_openai_resolutions .cg_openai_res',function (e){
-        e.preventDefault();
-        $(this).closest('.cg_openai_model').find('.cg_openai_res:not(.cg_openai_res_quality)').removeClass('cg_selected');
-        $(this).closest('.cg_openai_model').find('.cg_openai_res.cg_openai_res_quality').removeClass('cg_selected');
-        $(this).closest('.cg_openai_resolutions').find('.cg_openai_res.cg_openai_res_quality').addClass('cg_selected');
-        $(this).addClass('cg_selected');
-    });
-
-    $(document).on('click','#cgOpenAiModels .cg_openai_resolutions .cg_openai_res.cg_openai_res_quality',function (e){
-        e.preventDefault();
-        $(this).closest('.cg_openai_model').find('.cg_openai_res.cg_openai_res_quality').removeClass('cg_selected');
-        $(this).closest('.cg_openai_model').find('.cg_openai_res:not(.cg_openai_res_quality)').removeClass('cg_selected');
-        $(this).closest('.cg_openai_resolutions').find('.cg_openai_res:not(.cg_openai_res_quality)').first().addClass('cg_selected');
-        $(this).addClass('cg_selected');
     });
 
     $(document).on('click','#cgOpenAiSelected .cg_clear',function (e){

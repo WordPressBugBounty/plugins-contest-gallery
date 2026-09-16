@@ -1,5 +1,37 @@
 <?php
 
+if(!function_exists('cg_entry_on_off_login_text')){
+    function cg_entry_on_off_login_text($english,$german){
+        $text = __($english,cg_get_version());
+        $locale = function_exists('determine_locale') ? determine_locale() : get_locale();
+        return ($text === $english && strpos($locale,'de_') === 0) ? $german : $text;
+    }
+}
+
+if(!function_exists('cg_entry_on_off_render_login_required')){
+    function cg_entry_on_off_render_login_required($GalleryID,$cgFeControlsStyle,$BorderRadiusClass){
+        if(is_user_logged_in()){
+            $message = cg_entry_on_off_login_text('Your account does not have permission to manage galleries. Please use an account with the required permission.','Ihr Konto darf keine Galerien verwalten. Bitte verwenden Sie ein Konto mit der erforderlichen Berechtigung.');
+        }else{
+            $message = cg_entry_on_off_login_text('This link uses an older confirmation method. For security reasons, please sign in with an account that can manage galleries.','Dieser Link verwendet ein älteres Bestätigungsverfahren. Bitte melden Sie sich aus Sicherheitsgründen mit einem Konto an, das Galerien verwalten darf.');
+        }
+        cg_entry_on_off_render_container_start($GalleryID,$cgFeControlsStyle,$BorderRadiusClass);
+        echo '<div class="cg_entry_on_off_link_header"><p>'.esc_html($message).'</p></div>';
+        if(!is_user_logged_in()){
+            $returnUrl = get_permalink();
+            $requestUri = isset($_SERVER['REQUEST_URI']) ? wp_unslash($_SERVER['REQUEST_URI']) : '';
+            // Preserve the complete old link, using only the configured site's origin.
+            if(is_string($requestUri) && substr($requestUri,0,1) === '/' && substr($requestUri,0,2) !== '//'){
+                $home = wp_parse_url(home_url('/'));
+                $origin = $home['scheme'].'://'.$home['host'].(isset($home['port']) ? ':'.$home['port'] : '');
+                $returnUrl = wp_validate_redirect($origin.$requestUri,$returnUrl);
+            }
+            echo '<p class="cg_entry_on_off_confirm_form"><a class="cg_users_upload_submit cg_entry_on_off_confirm_submit cg_entry_on_off_login" href="'.esc_url(wp_login_url($returnUrl)).'">'.esc_html(cg_entry_on_off_login_text('Log in','Anmelden')).'</a></p>';
+        }
+        echo '</div>';
+    }
+}
+
 if(!function_exists('cg_entry_on_off_render_container_start')){
     function cg_entry_on_off_render_container_start($GalleryID,$cgFeControlsStyle,$BorderRadiusClass){
         echo '<div class="cg_border_radius_controls_and_containers '.$cgFeControlsStyle.' '.$BorderRadiusClass.' mainCGdivUploadForm mainCGdivUploadFormStatic" data-cg-gid="'.$GalleryID.'">';
@@ -238,7 +270,14 @@ if(!function_exists('contest_gal1ery_entry_on_off')){
         }
 
         if($isLegacyLink){
-            // Legacy links only prove knowledge of the old entry-id hash. They may open the confirm page, but the POST receives a new gallery/action scoped hash.
+            // The legacy hash shares a public gallery namespace. Only a gallery manager may exchange it.
+            if(!defined('DONOTCACHEPAGE')){define('DONOTCACHEPAGE',true);}
+            if(!headers_sent()){nocache_headers();}
+            if(!is_user_logged_in() || !cg_user_has_backend_access()){
+                cg_entry_on_off_render_login_required($GalleryID,$cgFeControlsStyle,$BorderRadiusClass);
+                $contest_gal1ery_cg_entry_on_off = ob_get_clean();
+                return $contest_gal1ery_cg_entry_on_off;
+            }
             $hashToCompare = cg_entry_on_off_get_legacy_hash($entryID,$hash);
             if(!cg_hash_equals($hashToCompare,$hash)){
                 cg_entry_on_off_render_message($GalleryID,$cgFeControlsStyle,$BorderRadiusClass,'Invalid activation/deactivation link hash.');

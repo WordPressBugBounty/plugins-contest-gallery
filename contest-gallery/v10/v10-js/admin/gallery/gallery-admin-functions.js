@@ -1954,15 +1954,24 @@ cgJsClassAdmin.gallery.functions = {
 
     },
     appendAiPrompt: function ($cgOpenAiContainer,item,isShowMore) {
-        item.Prompt = jQuery('<textarea />').html(item.Prompt).text();
-        var content = '<div class="cg_openai_prompt" data-cg-Tstamp="'+item.Tstamp+'"  title="Select prompt"><div class="cg_openai_prompt_date">'+item.date+' (WP Timezone: UTC'+item.gmt_offset+')</div><div class="cg_openai_prompt_text">'+item.Prompt+'</div></div>';
-        debugger
-        if(!$cgOpenAiContainer.find('.cg_openai_prompt[data-cg-Tstamp="'+item.Tstamp+'"]').length){
-            if(isShowMore){
-                jQuery(content).insertBefore($cgOpenAiContainer.find('#cgOpenAiShowMoreLoader'));
-            }else{
-                $cgOpenAiContainer.find('#cgOpenAiPromptsEntered').prepend(content);
-            }
+        var timestamp = String(item.Tstamp);
+        if($cgOpenAiContainer.find('.cg_openai_prompt').filter(function () {
+            return jQuery(this).attr('data-cg-Tstamp') === timestamp;
+        }).length){
+            return;
+        }
+
+        // Decode legacy entities once, without parsing markup or changing the stored prompt.
+        var decoder = document.createElement('textarea');
+        decoder.innerHTML = String(item.Prompt == null ? '' : item.Prompt).replace(/</g, '&lt;');
+        var $content = jQuery('<div class="cg_openai_prompt" title="Select prompt"><div class="cg_openai_prompt_date"></div><div class="cg_openai_prompt_text"></div></div>');
+        $content.attr('data-cg-Tstamp',timestamp);
+        $content.find('.cg_openai_prompt_date').text(item.date+' (WP Timezone: UTC'+item.gmt_offset+')');
+        $content.find('.cg_openai_prompt_text').text(decoder.value);
+        if(isShowMore){
+            $content.insertBefore($cgOpenAiContainer.find('#cgOpenAiShowMoreLoader'));
+        }else{
+            $cgOpenAiContainer.find('#cgOpenAiPromptsEntered').prepend($content);
         }
     },
     createMailTemplateButton: function (id,name,scroll) {

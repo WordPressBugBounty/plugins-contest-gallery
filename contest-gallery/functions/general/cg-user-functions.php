@@ -1,5 +1,7 @@
 <?php
 
+include_once(__DIR__.'/registry/cg-login-handoff.php');
+
 if(!function_exists('cg1l_generate_unique_login_from_email')){
     function cg1l_generate_unique_login_from_email($user_email){
 

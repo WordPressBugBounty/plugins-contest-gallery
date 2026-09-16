@@ -1,10 +1,59 @@
 <?php
 
+if (!defined('ABSPATH')) { exit; }
+
+if (!function_exists('cg_openai_models')) {
+    function cg_openai_models($overview) {
+        $isFree = cg_get_version() !== 'contest-gallery-pro';
+        foreach (cg_ai_image_models() as $model => $config) {
+            if ($overview) {
+                ?>
+                <button type="button" class="cg_openai_model cg_openai_model_card" data-ai-model-name="<?php echo esc_attr($model); ?>">
+                    <span class="cg_openai_model_badge" aria-hidden="true"><?php echo esc_html($config['badge']); ?></span>
+                    <span class="cg_openai_model_desc"><b><?php echo esc_html($config['name']); ?></b><br><?php echo esc_html($config['description']); ?></span>
+                </button>
+                <?php
+                continue;
+            }
+            ?>
+            <div class="cg_openai_model cg_hide" data-ai-model-name="<?php echo esc_attr($model); ?>">
+                <div class="cg_openai_model_desc">
+                    <b><?php echo esc_html($config['name']); ?></b><br>
+                    <?php echo esc_html($config['description']); ?><br>
+                    <a href="<?php echo esc_url('https://developers.openai.com/api/docs/models/' . $model); ?>" target="_blank" rel="noopener noreferrer">Model details</a>
+                </div>
+                <div class="cg_openai_model_controls">
+                    <label>Quality
+                        <select class="cg_openai_quality">
+                            <?php foreach ($config['qualities'] as $quality => $label) { ?>
+                                <option value="<?php echo esc_attr($quality); ?>" data-cg-label="<?php echo esc_attr($label); ?>" data-cg-pro-edit="<?php echo !in_array($quality, array('low', 'medium'), true) ? '1' : '0'; ?>" <?php selected($quality, 'medium'); ?>><?php echo esc_html($label); ?></option>
+                            <?php } ?>
+                        </select>
+                    </label>
+                    <label class="cg_openai_create_desc">Image size
+                        <select class="cg_openai_size">
+                            <?php foreach (cg_ai_image_sizes() as $size => $label) {
+                                $requiresPro = $isFree && $size !== '1024x1024'; ?>
+                                <option value="<?php echo esc_attr($size); ?>" <?php disabled($requiresPro); ?>><?php echo esc_html($label . ($requiresPro ? ' — PRO' : '')); ?></option>
+                            <?php } ?>
+                        </select>
+                    </label>
+                    <p class="cg_openai_edit_desc cg_hide">Image size is chosen automatically when editing.</p>
+                </div>
+                <?php if ($isFree) { ?>
+                    <p class="cg_openai_edit_desc cg_openai_quality_note cg_hide">High and higher editing quality levels are available in Contest Gallery PRO.</p>
+                <?php } ?>
+            </div>
+            <?php
+        }
+    }
+}
+
+
 if (!function_exists('cg_openai_container')) {
     function cg_openai_container($GalleryID,$cgProFalse)
     {
 
-        $assetsPath = plugins_url() . "/" . cg_get_version() . "/v10/v10-css/backend/assets";
         $assign_fields_png = plugins_url('/../../../../v10/v10-css/assign-fields.png', __FILE__);
 
         if(cg_user_can_manage_global_settings()){
@@ -13,7 +62,15 @@ if (!function_exists('cg_openai_container')) {
             $openAiKeySettingsMessage = 'Please contact an administrator to configure the OpenAI API key.';
         }
 
-        echo "<div id='cgOpenAiContainer' class='cg_media_container cg_hide' data-cg-gid='$GalleryID'>";
+        ?>
+        <div id="cgOpenAiSelectToEditTemplate" class="cg_hide">
+            <div id="cgOpenAiSelectToEdit">
+                <input class="cg_hide" type="button" id="cgOpenAiEditSelectedImages" value="Edit previously selected image">
+                Select a JPG or PNG image to edit with OpenAI.
+            </div>
+        </div>
+        <?php
+        echo "<div id='cgOpenAiContainer' class='cg_media_container cg_hide' data-cg-free='" . (cg_get_version() !== 'contest-gallery-pro' ? '1' : '0') . "' data-cg-gid='$GalleryID'>";
         ?>
         <div id='cgOpenAiPrompts' class='cg_openai_main' >
             <div class="cg_openai_header" style="text-align: center;">
@@ -42,19 +99,23 @@ if (!function_exists('cg_openai_container')) {
 
             </div>
         </div>
+        <div class="cg_openai_edit_sources cg_hide">
+            <div class="cg_openai_header"><b>Selected image to edit</b></div>
+            <div id="cgOpenAiEditImages"></div>
+            <input type="button" id="cgOpenAiEditSelectImages" value="Select another image">
+        </div>
         <div id='cgOpenAiSelected' class='cg_openai_main cg_hide'>
-            <input type="button" id="cgOpenAiEditSelectImages" value="Select image to edit"
-                   style="margin-bottom: 15px; margin-top: 80px; background-color: white; color: black; width: unset;">
-            <input type="button" id="cgOpenAiBackToModels" value="Back"
-                   style="margin-bottom: 15px; margin-top: 80px; background-color: white; color: black;">
+            <input type="button" id="cgOpenAiBackToModels" value="Change model">
             <div class="cg_openai_header">
                 <b>Selected model</b>
             </div>
-            <div id='cgOpenAiModels' style="margin-bottom: 15px;">
-                <?php include(__DIR__ . '/cg-openai-gpt-image-1.php'); ?>
-                <?php include(__DIR__ . '/cg-openai-dall-e-3.php'); ?>
-                <?php include(__DIR__ . '/cg-openai-dall-e-2.php'); ?>
+            <div class="cg_openai_models cg_openai_selected_models">
+                <?php cg_openai_models(false); ?>
             </div>
+            <p class="cg_openai_quality_changed cg_hide" role="status">Quality was reset to Standard because the previous setting is unavailable for this model or editing mode.</p>
+            <p class="cg_openai_cost_note">OpenAI charges separately for image requests. Costs depend on the model, image size, quality and input images.
+                <a href="https://developers.openai.com/api/docs/pricing#image-generation" target="_blank" rel="noopener noreferrer">View current OpenAI pricing</a>
+            </p>
             <div id="cgOpenAiPromptContainer">
                 <div id="cgOpenAiPromptShowCurrentBalance" class='cg_openai_model_desc' style="padding-left: 0; margin-bottom: 15px; margin-top: -10px;">
                     <a href="https://platform.openai.com/settings/organization/billing/overview" target="_blank">Show
@@ -228,35 +289,11 @@ if (!function_exists('cg_openai_container')) {
         </div>
         <div id='cgOpenAiOverview' class='cg_openai_main cg_hide'>
             <div class="cg_openai_header">
-                <b>Image generation models</b><br>
-                Models that can generate images, given a natural language prompt.<br>
-                Select one of the models offered by OpenAI:
+                <b>Image models</b><br>
+                Choose a model to generate or edit an image.
             </div>
-            <div id='cgOpenAiModels'>
-                <div id="cgOpenAiModelGpt1" class='cg_openai_model' data-ai-model-name="gpt-image-1">
-                    <div class='cg_openai_model_image'>
-                        <img src="<?php echo $assetsPath; ?>/gpt-image-1.png">
-                    </div>
-                    <div class='cg_openai_model_desc'>
-                        <b>GPT Image 1</b><br>State-of-the-art image generation model
-                    </div>
-                </div>
-                <div id="cgOpenAiModelDallE3" class='cg_openai_model' data-ai-model-name="dall-e-3">
-                    <div class='cg_openai_model_image'>
-                        <img src="<?php echo $assetsPath; ?>/dall-e-3.png">
-                    </div>
-                    <div class='cg_openai_model_desc'>
-                        <b>DALL·E 3</b><br>Previous generation image generation model
-                    </div>
-                </div>
-                <div id="cgOpenAiModelDallE2" class='cg_openai_model' data-ai-model-name="dall-e-2">
-                    <div class='cg_openai_model_image'>
-                        <img src="<?php echo $assetsPath; ?>/dall-e-2.png">
-                    </div>
-                    <div class='cg_openai_model_desc'>
-                        <b>DALL·E 2</b><br>First image generation model
-                    </div>
-                </div>
+            <div class="cg_openai_models cg_openai_model_overview">
+                <?php cg_openai_models(true); ?>
             </div>
         </div>
         <div id='cgOpenAiKeyNotValid' class='cg_openai_main cg_hide'>

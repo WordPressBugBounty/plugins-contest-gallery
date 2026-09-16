@@ -31,13 +31,13 @@ wp_enqueue_script( 'cg_gallery_reload_entry', plugins_url( '/v10/v10-js/admin/lo
 wp_enqueue_script( 'cg_gallery_admin_index_load', plugins_url( '/v10/v10-js/admin/load/index-load.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/load/index-load.js') );
 wp_enqueue_script( 'cg_gallery_admin_index_indexeddb', plugins_url( '/v10/v10-js/admin/index-indexeddb.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_script( 'cg_gallery_admin_objects', plugins_url( '/v10/v10-js/admin/gallery/gallery-admin-objects.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
-wp_enqueue_script( 'cg_gallery_admin_functions', plugins_url( '/v10/v10-js/admin/gallery/gallery-admin-functions.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_gallery_admin_functions', plugins_url( '/v10/v10-js/admin/gallery/gallery-admin-functions.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/gallery/gallery-admin-functions.js') );
 wp_enqueue_script( 'cg_gallery_admin_pdf', plugins_url( '/v10/v10-js/admin/gallery/gallery-admin-pdf.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_script( 'cg_gallery_youtube_events', plugins_url( '/v10/v10-js/admin/gallery/gallery-youtube-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 
-wp_enqueue_script( 'cg_gallery_openai_create_events', plugins_url( '/v10/v10-js/admin/gallery/gallery-openai-create-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_gallery_openai_create_events', plugins_url( '/v10/v10-js/admin/gallery/gallery-openai-create-events.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/gallery/gallery-openai-create-events.js') );
 
-wp_enqueue_script( 'cg_gallery_openai_edit_events', plugins_url( '/v10/v10-js/admin/gallery/gallery-openai-edit-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_gallery_openai_edit_events', plugins_url( '/v10/v10-js/admin/gallery/gallery-openai-edit-events.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/gallery/gallery-openai-edit-events.js') );
 
 wp_enqueue_script( 'cg_gallery_admin_gallery_load_init_or_add', plugins_url( '/v10/v10-js/admin/load/gallery-load-init-or-add.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_script( 'cg_gallery_admin_gallery_reload_entry', plugins_url( '/v10/v10-js/admin/load/gallery-reload-entry.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
@@ -71,11 +71,14 @@ wp_enqueue_script( 'cg_general_admin_functions', plugins_url( '/v10/v10-js/admin
 
 wp_enqueue_script( 'cg_js_admin_corrections_and_improvements', plugins_url( '/v10/v10-js/admin/options/corrections-and-improvements.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 
-wp_enqueue_script( 'cg_js_admin_options_edit_options_events', plugins_url( '/v10/v10-js/admin/options/edit-options-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_js_admin_options_edit_options_events', plugins_url( '/v10/v10-js/admin/options/edit-options-events.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/options/edit-options-events.js') );
 
 cg_ecommerce_include_javascript_admin('cg_js_admin_options_edit_options_events_ecommerce','admin/options/edit-options-events-ecommerce.js');
 
-wp_enqueue_script( 'cg_js_admin_options_edit_options_functions', plugins_url( '/v10/v10-js/admin/options/edit-options-functions.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_js_admin_options_edit_options_functions', plugins_url( '/v10/v10-js/admin/options/edit-options-functions.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/options/edit-options-functions.js') );
+
+wp_enqueue_script( 'cg_js_admin_options_search', plugins_url( '/v10/v10-js/admin/options/edit-options-search.js', __FILE__ ), array('cg_js_admin_options_edit_options_functions'), $cgAdminAssetVersion('v10/v10-js/admin/options/edit-options-search.js') );
+wp_enqueue_style( 'cg_backend_options_search', plugins_url( '/v10/v10-css/backend/cg_backend_options_search.css', __FILE__ ), array('cg_options_style_v10'), $cgAdminAssetVersion('v10/v10-css/backend/cg_backend_options_search.css') );
 
 cg_ecommerce_include_javascript_admin('cg_js_admin_options_edit_options_functions_ecommerce','admin/options/edit-options-functions-ecommerce.js');
 

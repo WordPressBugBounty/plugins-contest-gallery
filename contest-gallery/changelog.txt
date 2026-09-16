@@ -1,5 +1,13 @@
 Contest Gallery
 
+= 33.0.3 =
+* NEW: Search backend options, translations and ecommerce settings with result counts, previous/next navigation and highlighted matches.
+* NEW: Generate and edit images with GPT Image 2.5 Sunburst, GPT Image 2.5 Flare and GPT Image 2.
+* IMPROVED: Image model selection, quality controls and error messages.
+* FIXED: Replace and additional-file selection layout, scrolling and the FREE upgrade badge.
+* FIXED: Duplicate translation fields overwriting saved values.
+* SECURITY: Security hardening.
+
 = 33.0.2 =
 * IMPROVED: Redesigned the Add files media modal with clearer tabs, a dedicated Assign fields workflow, modern media cards and progress feedback.
 * IMPROVED: Voting and upload login prompts now support passwordless email access with optional Google Sign-In.

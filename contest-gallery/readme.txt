@@ -4,7 +4,7 @@ Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, openai
 Requires at least: 5.6
 Requires PHP: 5.6
-Stable tag: 33.0.2
+Stable tag: 33.0.3
 Tested up to: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -317,6 +317,14 @@ Contest Gallery does not impose a limit on the number of gallery entries. The pr
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= 33.0.3 =
+* NEW: Search backend options, translations and ecommerce settings with result counts, previous/next navigation and highlighted matches.
+* NEW: Generate and edit images with GPT Image 2.5 Sunburst, GPT Image 2.5 Flare and GPT Image 2.
+* IMPROVED: Image model selection, quality controls and error messages.
+* FIXED: Replace and additional-file selection layout, scrolling and the FREE upgrade badge.
+* FIXED: Duplicate translation fields overwriting saved values.
+* SECURITY: Security hardening.
 
 = 33.0.2 =
 * IMPROVED: Redesigned the Add files media modal with clearer tabs, a dedicated Assign fields workflow, modern media cards and progress feedback.

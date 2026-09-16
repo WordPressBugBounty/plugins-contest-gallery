@@ -131,6 +131,9 @@ if($cgLostPasswordNew!=$cgLostPasswordNewRepeat){
             array('%d')
         );
 
+        cg1l_revoke_login_handoff($wpUserID);
+        clean_user_cache($wpUserID);
+
         delete_user_meta($wpUserID,'cgLostPasswordMailTimestamp');
         delete_user_meta($wpUserID,'cgResetPasswordKey');
 

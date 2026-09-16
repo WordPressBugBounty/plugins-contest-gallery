@@ -21,13 +21,13 @@ echo <<<HEREDOC
         <div  class='cg_view_option cg_view_option_50_percent cg_border_top_right_bottom_none cg_justify_content_center cg_border_radius_unset'>
             <div class='cg_view_option_title cg_flex_flow_column '>
                 <p><span style="display: inline-block;margin: 10px auto 15px auto;font-size:18px;">Invoice number logic "Test Environment"</span></p>
-                 <p style="margin-top:-10px;margin-bottom:20px;">Previous invoice number: $lastInvoiceNumberTest</p>
+                 <p class="cg_options_search_ignore" style="margin-top:-10px;margin-bottom:20px;">Previous invoice number: $lastInvoiceNumberTest</p>
             </div>
         </div>
          <div  class='cg_view_option cg_view_option_50_percent cg_border_top_bottom_none cg_border_border_bottom_left_radius_unset cg_border_border_bottom_right_radius_unset cg_justify_content_center'>
                 <div class='cg_view_option_title cg_flex_flow_column '>
                     <p><span style="display: inline-block;margin: 10px auto 15px auto;font-size:18px;">Invoice number logic "Live Environment"</span></p>
-                 <p style="margin-top:-10px;margin-bottom:20px;">Previous invoice number: $lastInvoiceNumberLive</p>
+                 <p class="cg_options_search_ignore" style="margin-top:-10px;margin-bottom:20px;">Previous invoice number: $lastInvoiceNumberLive</p>
                 </div>
         </div>
 </div>

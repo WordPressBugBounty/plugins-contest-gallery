@@ -188,12 +188,6 @@ echo <<<HEREDOC
 </div>
 <div class='cg_view_options_row'>
     <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
-        <div class='cg_view_option_title'><p>$language_Second / $language_Seconds$cgShortcodeCopy</p></div>
-        <div class='cg_view_option_input'><input type="text" name="translations[$l_Second]" maxlength="50" value="$translations[$l_Second]"><input type="text" name="translations[$l_Seconds]" maxlength="50" value="$translations[$l_Seconds]"></div>
-    </div>
-</div>
-<div class='cg_view_options_row'>
-    <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
         <div class='cg_view_option_title'><p>$language_TooManyPinsRequested$cgShortcodeCopy</p></div>
         <div class='cg_view_option_input'><input type="text" name="translations[$l_TooManyPinsRequested]" maxlength="300" value="$translations[$l_TooManyPinsRequested]"></div>
     </div>

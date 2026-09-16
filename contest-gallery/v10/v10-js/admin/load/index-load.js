@@ -93,6 +93,7 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
             var $cg_main_container = $('#cg_main_container');
             cgJsClassAdmin.index.vars.$cg_main_container = $cg_main_container;
 
+            if (cgJsClassAdmin.options.search) { cgJsClassAdmin.options.search.destroy(); }
             cgJsClassAdmin.index.functions.cgMainContainerEmpty($cg_main_container);
 
             if(!$formLinkObject.hasClass('cg_load_backend_copy_gallery') && submitMessage){
