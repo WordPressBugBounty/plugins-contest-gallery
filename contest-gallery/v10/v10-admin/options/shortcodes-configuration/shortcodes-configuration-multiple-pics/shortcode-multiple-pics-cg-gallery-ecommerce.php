@@ -304,6 +304,8 @@ echo <<<HEREDOC
 
 HEREDOC;
 
+cg_gallery_card_render_options($GalleryID,'cg_gallery_ecommerce',$jsonOptions);
+
 if(empty($jsonOptions[$GalleryID.'-ec'])){
 	$FeControlsStyleWhiteChecked = 'checked';
 }else{
@@ -1068,7 +1070,7 @@ echo <<<HEREDOC
     <div class='cg_view_options_row' style="margin-top: 15px;">
         <div class='cg_view_option cg_view_option_full_width cg_border_border_top_left_radius_8_px  cg_border_border_top_right_radius_8_px cg_go_to_target' data-cg-go-to-target="MainTitleGalleriesViewArea">
             <div class='cg_view_option_title '>
-                <p>Main title cg_galleries_ecommerce view</p>
+                <p>Gallery card title in the galleries overview</p>
             </div>
             <div class='cg_view_option_input '>
                 <input type="text" name='multiple-pics[cg_gallery_ecommerce][pro][MainTitleGalleriesView]' class="MainTitleGalleriesView"  value="$MainTitleGalleriesView"  >
@@ -1087,7 +1089,7 @@ echo <<<HEREDOC
     <div class='cg_view_options_row'>
         <div class='cg_view_option cg_view_option_full_width cg_border_top_none cg_go_to_target' data-cg-go-to-target="SubTitleGalleriesViewArea">
             <div class='cg_view_option_title '>
-                <p>Sub title cg_galleries_ecommerce view</p>
+                <p>Gallery card subtitle in the galleries overview</p>
             </div>
             <div class='cg_view_option_input '>
                 <input type="text" name='multiple-pics[cg_gallery_ecommerce][pro][SubTitleGalleriesView]' class="SubTitleGalleriesView"  value="$SubTitleGalleriesView"  >
@@ -1106,7 +1108,7 @@ echo <<<HEREDOC
     <div class='cg_view_options_row'>
         <div class='cg_view_option cg_view_option_full_width cg_border_top_none  cg_border_border_bottom_left_radius_8_px  cg_border_border_bottom_right_radius_8_px cg_go_to_target $cgProFalse' data-cg-go-to-target="ThirdTitleGalleriesViewArea">
             <div class='cg_view_option_title '>
-                <p>Third title cg_galleries_ecommerce view
+                <p>Gallery card description in the galleries overview
                 <br>
                 <span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">perfect to use as description, 20 text rows will be displayed as preview in masonry galleries view</span></span></p>
             </div>

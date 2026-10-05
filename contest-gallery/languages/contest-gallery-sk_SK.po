@@ -266,13 +266,11 @@ msgid "Account"
 msgstr "Účet"
 
 #: check-language-general.php:42
-#, fuzzy
 #| msgid "Edit Profile"
 msgid "Edit profile"
 msgstr "Upraviť profil"
 
 #: check-language-general.php:44
-#, fuzzy
 #| msgid "Log Out"
 msgid "Log out"
 msgstr "Odhlásiť sa"
@@ -1391,7 +1389,7 @@ msgstr "Načítava sa"
 msgid "or"
 msgstr "alebo"
 
-#: check-language-paid-actions.php
+#: check-language-paid-actions.php check-language.php
 msgid "Cancel"
 msgstr "Zrušiť"
 
@@ -2234,3 +2232,456 @@ msgstr "Platba nebola dokončená. Skúste to znova."
 #: check-language-ecommerce.php
 msgid "Payment canceled. You can try again."
 msgstr "Platba bola zrušená. Môžete to skúsiť znova."
+
+#: check-language-general.php:140
+msgid "Register / Sign in"
+msgstr "Zaregistrovať sa / Prihlásiť sa"
+
+#: check-language-general.php:142
+msgid "Your images. Your gallery."
+msgstr "Vaše obrázky. Vaša galéria."
+
+#: check-language-general.php:144
+msgid "Continue with Google or a code sent to your email. New here? Your account is created when you sign in."
+msgstr "Pokračujte cez Google alebo pomocou kódu odoslaného na váš e-mail. Ste tu prvýkrát? Váš účet sa vytvorí pri prihlásení."
+
+#: check-language-general.php:146
+msgid "Sign in with a code sent to your email. New here? Confirm your email to create your account."
+msgstr "Prihláste sa pomocou kódu odoslaného na váš e-mail. Ste tu prvýkrát? Potvrďte svoju e-mailovú adresu a vytvorte si účet."
+
+#: check-language-general.php:142
+msgid "All images"
+msgstr "Všetky obrázky"
+
+#: check-language-general.php:144
+msgid "My images"
+msgstr "Moje obrázky"
+
+#: check-language-general.php:146
+msgid "Join and show your own images."
+msgstr "Zaregistrujte sa a ukážte svoje obrázky."
+
+#: check-language-general.php:148
+msgid "Show your first image"
+msgstr "Ukážte svoj prvý obrázok"
+
+#: check-language-general.php:150
+msgid "Your uploads will appear here."
+msgstr "Vaše nahrané obrázky sa zobrazia tu."
+
+#: check-language-general.php:146
+msgid "Not published"
+msgstr "Nezverejnené"
+
+#: check-language.php
+msgid "Delete"
+msgstr "Odstrániť"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Entry actions"
+msgstr "Akcie príspevku"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Replace image"
+msgstr "Nahradiť obrázok"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Choose the image to replace."
+msgstr "Vyberte obrázok, ktorý chcete nahradiť."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Replace"
+msgstr "Nahradiť"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Replacing…"
+msgstr "Nahrádza sa…"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "This entry will need approval again after replacement."
+msgstr "Po nahradení bude tento príspevok potrebovať opätovné schválenie."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Image replaced."
+msgstr "Obrázok bol nahradený."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Image replacement is not allowed."
+msgstr "Nahrádzanie obrázkov nie je povolené."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Entries offered for sale cannot be changed here."
+msgstr "Príspevky ponúkané na predaj tu nemožno meniť."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "This entry already has votes. Its images cannot be replaced."
+msgstr "Tento príspevok už má hlasy. Jeho obrázky nemožno nahradiť."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "The time allowed for replacing this image has ended."
+msgstr "Lehota na nahradenie tohto obrázka uplynula."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "The upload period is closed."
+msgstr "Obdobie nahrávania je uzavreté."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "This entry has changed. Reload it and try again."
+msgstr "Tento príspevok sa zmenil. Načítajte ho znova a skúste to ešte raz."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "The image does not meet the gallery upload requirements."
+msgstr "Obrázok nespĺňa požiadavky galérie na nahrávanie."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Delete this entry and all its files?"
+msgstr "Odstrániť tento príspevok aj všetky jeho súbory?"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Share this image"
+msgstr "Zdieľať tento obrázok"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Take a look at this image"
+msgstr "Pozrite si tento obrázok"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Copy link"
+msgstr "Kopírovať odkaz"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "More apps…"
+msgstr "Ďalšie aplikácie…"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Link copied"
+msgstr "Odkaz bol skopírovaný"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Copy this link:"
+msgstr "Skopírujte tento odkaz:"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Sharing is unavailable. You can copy the link instead."
+msgstr "Zdieľanie nie je dostupné. Môžete skopírovať odkaz."
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "File actions"
+msgstr "Akcie súboru"
+
+#: functions/frontend/cg-member-profile.php
+msgid "My profile"
+msgstr "Môj profil"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Additional information"
+msgstr "Ďalšie informácie"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Display name"
+msgstr "Zobrazované meno"
+
+#: functions/frontend/cg-member-profile.php
+msgid "This name is displayed across this website."
+msgstr "Toto meno sa zobrazuje na celom webe."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Choose profile image"
+msgstr "Vybrať profilový obrázok"
+
+#: functions/frontend/cg-member-profile.php
+msgid "JPG, PNG or GIF. Maximum {size} MB."
+msgstr "JPG, PNG alebo GIF. Najviac {size} MB."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Save profile"
+msgstr "Uložiť profil"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Save information"
+msgstr "Uložiť informácie"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Profile saved."
+msgstr "Profil bol uložený."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Information saved."
+msgstr "Informácie boli uložené."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Please enter a display name."
+msgstr "Zadajte zobrazované meno."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Please complete the required fields."
+msgstr "Vyplňte povinné polia."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Please choose a valid option."
+msgstr "Vyberte platnú možnosť."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Your profile has changed. Close and reopen it before saving."
+msgstr "Váš profil sa zmenil. Pred uložením ho zatvorte a znova otvorte."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Discard unsaved profile changes?"
+msgstr "Zahodiť neuložené zmeny profilu?"
+
+#: functions/frontend/cg-member-profile.php
+msgid "The profile image could not be saved."
+msgstr "Profilový obrázok sa nepodarilo uložiť."
+
+#: functions/frontend/cg-member-profile.php
+msgid "You cannot edit these profile fields."
+msgstr "Tieto profilové polia nemôžete upravovať."
+
+#: check-language-general.php
+msgid "Share this entry"
+msgstr "Zdieľať tento príspevok"
+
+#: check-language-general.php
+msgid "My entries"
+msgstr "Moje príspevky"
+
+#: check-language-general.php
+msgid "All entries"
+msgstr "Všetky príspevky"
+
+#: check-language-general.php
+msgid "Your entries. Your gallery."
+msgstr "Vaše príspevky. Vaša galéria."
+
+#: check-language-general.php
+msgid "Join and show your own entries."
+msgstr "Pridajte sa a ukážte svoje príspevky."
+
+#: check-language-general.php
+msgid "Show your first entry"
+msgstr "Ukážte svoj prvý príspevok"
+
+#: check-language-general.php
+msgid "Take a look at this entry"
+msgstr "Pozrite si tento príspevok"
+
+#: check-language-general.php
+msgid "Gallery view"
+msgstr "Zobrazenie galérie"
+
+#: check-language-general.php
+msgid "Please try again."
+msgstr "Skúste to znova."
+
+#: check-language-general.php
+msgid "The connection failed. Please try again."
+msgstr "Pripojenie zlyhalo. Skúste to znova."
+
+#: check-language-general.php
+msgid "Please reload the page and try again."
+msgstr "Obnovte stránku a skúste to znova."
+
+#: check-language-general.php
+msgid "This gallery is not available."
+msgstr "Táto galéria nie je dostupná."
+
+#: check-language-general.php
+msgid "Please allow cookies to sign in."
+msgstr "Ak sa chcete prihlásiť, povoľte súbory cookie."
+
+#: check-language-general.php
+msgid "Please sign in."
+msgstr "Prihláste sa."
+
+#: check-language-general.php
+msgid "Check your email for your code."
+msgstr "Kód nájdete vo svojom e-maile."
+
+#: check-language-general.php
+msgid "Please wait {seconds} seconds before requesting another code."
+msgstr "Pred vyžiadaním ďalšieho kódu počkajte {seconds} sekúnd."
+
+#: check-language-general.php
+msgid "Loading…"
+msgstr "Načítava sa…"
+
+#: check-language-general.php
+msgid "Saved"
+msgstr "Uložené"
+
+#: check-language-general.php
+msgid "Visible on your public profile"
+msgstr "Viditeľné vo vašom verejnom profile"
+
+#: check-language-general.php
+msgid "View profile"
+msgstr "Zobraziť profil"
+
+#: check-language-general.php
+msgid "View profile of {name}"
+msgstr "Zobraziť profil používateľa {name}"
+
+#: check-language-general.php
+msgid "Entry owner"
+msgstr "Autor príspevku"
+
+#: check-language-general.php
+msgid "Participants"
+msgstr "Účastníci"
+
+#: check-language-general.php
+msgid "Back to participants"
+msgstr "Späť na účastníkov"
+
+#: check-language-general.php
+msgid "Search names and profile information"
+msgstr "Hľadať v menách a profilových informáciách"
+
+#: check-language-general.php
+msgid "Name A–Z"
+msgstr "Meno A–Z"
+
+#: check-language-general.php
+msgid "Name Z–A"
+msgstr "Meno Z–A"
+
+#: check-language-general.php
+msgid "No participants found."
+msgstr "Nenašli sa žiadni účastníci."
+
+#: check-language-general.php
+msgid "No participants with a profile yet. Published entries with a profile will appear here."
+msgstr "Zatiaľ žiadni účastníci s profilom. Tu sa zobrazia zverejnené príspevky s profilom."
+
+#: check-language-general.php
+msgid "This profile is no longer available in this gallery."
+msgstr "Tento profil už nie je v tejto galérii dostupný."
+
+#: check-language-general.php
+msgid "1 entry"
+msgstr "1 príspevok"
+
+#: check-language-general.php
+#, php-format
+msgid "%s entries"
+msgstr "Počet príspevkov: %s"
+
+#: check-language-general.php
+msgid "Rating average"
+msgstr "Priemerné hodnotenie"
+
+#: check-language-general.php
+msgid "Rating sum"
+msgstr "Súčet hodnotení"
+
+#: check-language-general.php
+msgid "Gallery"
+msgstr "Galéria"
+
+#: check-language-general.php
+msgid "Galleries"
+msgstr "Galérie"
+
+#: check-language-general.php
+msgid "Entries"
+msgstr "Príspevky"
+
+#: check-language-general.php
+msgid "Discover galleries"
+msgstr "Objavte galérie"
+
+#: check-language-general.php
+msgid "Explore the gallery"
+msgstr "Preskúmajte galériu"
+
+#: check-language-general.php
+msgid "Explore galleries and their entries."
+msgstr "Preskúmajte galérie a ich príspevky."
+
+#: check-language-general.php
+msgid "Explore the entries in this gallery."
+msgstr "Preskúmajte príspevky v tejto galérii."
+
+#: check-language-general.php
+msgid "This participant in this gallery"
+msgstr "Tento účastník v tejto galérii"
+
+#: check-language-general.php
+msgid "Replace file"
+msgstr "Nahradiť súbor"
+
+#: check-language-general.php
+msgid "Choose the file to replace."
+msgstr "Vyberte súbor, ktorý chcete nahradiť."
+
+#: check-language-general.php
+msgid "Replaced"
+msgstr "Nahradené"
+
+#: check-language-general.php
+msgid "File replaced."
+msgstr "Súbor bol nahradený."
+
+#: check-language-general.php
+msgid "The preview could not be refreshed."
+msgstr "Náhľad sa nepodarilo obnoviť."
+
+#: check-language-general.php
+msgid "The file does not meet the gallery upload requirements."
+msgstr "Súbor nespĺňa požiadavky galérie na nahrávanie."
+
+#: check-language-general.php
+msgid "The PDF preview could not be created. Please try again."
+msgstr "Náhľad PDF sa nepodarilo vytvoriť. Skúste to znova."
+
+#: check-language-general.php
+msgid "Too many replacement attempts. Please try again later."
+msgstr "Príliš veľa pokusov o nahradenie. Skúste to neskôr."
+
+#: check-language-general.php
+msgid "Your replacement storage limit has been reached. Please contact the gallery administrator."
+msgstr "Dosiahli ste limit úložiska pre náhradné súbory. Kontaktujte správcu galérie."
+
+#: functions/frontend/cg-upload-jobs.php
+msgid "Continuing image processing…"
+msgstr "Spracovanie obrázka pokračuje…"
+
+#: functions/frontend/cg-upload-jobs.php
+msgid "Check status"
+msgstr "Skontrolovať stav"
+
+#: check-language-general.php
+msgid "Upload completed."
+msgstr "Nahrávanie dokončené."
+
+#: check-language-general.php
+msgid "Refresh"
+msgstr "Obnoviť"
+
+#: check-language.php
+msgid "Slow down, you are too fast. Please wait a moment before sending another comment."
+msgstr "Pred odoslaním ďalšieho komentára chvíľu počkajte."
+
+#: check-language-general.php
+msgid "Your public profile"
+msgstr "Váš verejný profil"
+
+#: check-language-general.php
+msgid "Public profile"
+msgstr "Verejný profil"
+
+#: check-language-general.php
+msgid "View public profile"
+msgstr "Zobraziť verejný profil"
+
+
+#: functions/frontend/cg-participants.php check-language-general.php
+msgid "Votes descend"
+msgstr "Hlasy zostupne"
+
+#: functions/frontend/cg-participants.php check-language-general.php
+msgid "Votes ascend"
+msgstr "Hlasy vzostupne"
+
+msgid "Please use a display name instead of an email address."
+msgstr "Použite zobrazované meno namiesto e-mailovej adresy."

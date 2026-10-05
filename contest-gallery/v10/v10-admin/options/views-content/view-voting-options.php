@@ -445,7 +445,7 @@ echo <<<HEREDOC
                 </div>
             </div>
             <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_view_option_50_percent cg_border_top_right_none' id="RatingOutGalleryContainer" >
+                <div class='cg_view_option cg_view_option_50_percent cg_border_top_right_none cg_go_to_target' id="RatingOutGalleryContainer" data-cg-go-to-target="RatingOutGalleryContainer" >
                     <div class='cg_view_option_title'>
                         <p>Allow vote out of gallery<br/><span class="cg_view_option_title_note">It is not necessary to open entry for voting, just vote out of gallery</span></p>
                     </div>

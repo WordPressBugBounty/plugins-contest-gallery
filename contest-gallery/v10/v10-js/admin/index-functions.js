@@ -162,6 +162,8 @@ cgJsClassAdmin.index.functions = {
         var cgBackendHashVal = $cg_main_container.find('#cgBackendHash').val();
 
         if(!isDoNotEmptyContent){
+            // The loader removes the options before the AJAX response can clean up its handlers.
+            if(cgJsClassAdmin.options.search){cgJsClassAdmin.options.search.destroy();}
             $cg_main_container.find('*').each(function (){
                 if(jQuery(this).hasClass('cg_do_not_remove_when_ajax_load_ignore')){
                     jQuery(this).remove();

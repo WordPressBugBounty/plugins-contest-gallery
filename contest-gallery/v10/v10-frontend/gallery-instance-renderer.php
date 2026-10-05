@@ -159,6 +159,7 @@ if(!function_exists('cg1l_render_gallery_instance_shell')){
 		echo cg1l_render_gallery_view_markup([
 			'images_full_data_to_process' => $imagesFullDataToProcess,
 			'options' => $options,
+			'wp_user_ids_data' => $WpUserIdsData,
 			'shortcode_name' => $shortcode_name,
 			'real_gid' => $realGid,
 			'json_comments_data' => $jsonCommentsData,

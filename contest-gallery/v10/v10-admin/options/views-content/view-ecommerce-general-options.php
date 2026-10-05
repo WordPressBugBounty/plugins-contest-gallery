@@ -417,10 +417,16 @@ if(strpos($mailExceptionsGeneral,'Order confirmation e-mail') !== false OR strpo
 </div>";
 }
 
+$cgMailDeliveryCard = cg_mail_delivery_card('Order confirmation',array(
+    'from'=>array('[name="OrderConfirmationMailFrom"]',$OrderConfirmationMailFrom),
+    'reply'=>array('[name="OrderConfirmationMailReply"]',$OrderConfirmationMailReply)
+),'The buyer’s email address recorded for the order.');
+
 echo <<<HEREDOC
 <br>
 <p class="cg_view_options_rows_container_title ">
-        Order confirmation email options<br><span class="cg_view_options_rows_container_title_note">$cgDomainErrorText</span></p>
+        Order confirmation email options</p>
+        $cgMailDeliveryCard
 $mailExceptionOrderConfirmationl
 HEREDOC;
 

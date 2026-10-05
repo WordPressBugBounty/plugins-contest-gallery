@@ -4,8 +4,8 @@ Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, openai
 Requires at least: 5.6
 Requires PHP: 5.6
-Stable tag: 33.0.3
-Tested up to: 7.1
+Stable tag: 34.0.0
+Tested up to: 7.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -141,7 +141,7 @@ Service terms: https://www.contest-gallery.net/terms-and-conditions/
 
 = Drag & Drop user account registration form creator =
 * Add field types and arrange them
-* Available field types: (WP-Last-Name, WP-First-Name, WP-Username, WP-Nickname, WP-Email, WP-Password, WP-Password-Confirm, Input, Textarea, Select, Check agreement, Profile Image, HTML, Simple Captcha, Google reCAPTCHA)
+* Available field types: (WP-Last-Name, WP-First-Name, WP-Username, WP-Nickname, WP-Email, WP-Password, WP-Password-Confirm, Input, Textarea, Select, URL, Check agreement, Profile Image, HTML, Simple Captcha, Google reCAPTCHA)
 * Allows membership as "Contest Gallery User" WordPress role
 
 = Create login area =
@@ -318,22 +318,22 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 
 == Changelog ==
 
-= 33.0.3 =
-* NEW: Search backend options, translations and ecommerce settings with result counts, previous/next navigation and highlighted matches.
-* NEW: Generate and edit images with GPT Image 2.5 Sunburst, GPT Image 2.5 Flare and GPT Image 2.
-* IMPROVED: Image model selection, quality controls and error messages.
-* FIXED: Replace and additional-file selection layout, scrolling and the FREE upgrade badge.
-* FIXED: Duplicate translation fields overwriting saved values.
+= 34.0.0 =
+* NEW: Browse gallery participants and their public profiles with entries from the current gallery.
+* NEW: Gallery member area with email PIN or Google sign-in, My entries and private access to unpublished entries. Available for galleries created or copied with version 24 or later.
+* NEW: Frontend profile editing with configurable public fields and profile images. Google profile images are used when no other profile image is available.
+* NEW: URL fields for registration and public profiles.
+* NEW: Owners can edit, delete and replace entry files, including individual files in multiple-file entries. Social embeds can be replaced with files. Replacement supports time and vote limits.
+* NEW: Frontend image uploads and file replacements can resume interrupted processing.
+* NEW: Configurable logout redirects and return links from the WordPress profile.
+* IMPROVED: Styled gallery, overview and entry headers with image previews and consistent dark backgrounds.
+* IMPROVED: Unified sharing and file-action dialogs with profile and share buttons on gallery entries. Sharing options include WhatsApp.
+* IMPROVED: Standalone upload forms offer a sign-in card when passwordless upload access is enabled.
+* IMPROVED: Clearer reCAPTCHA key setup for registration and upload forms.
+* FIXED: Gallery navigation, mobile and full-window layouts, pagination, theme consistency, owner entry links and file replacement previews and selection.
+* FIXED: Voting, credit balances, profile updates, registration forms and URL validation.
+* FIXED: PIN resends, confirmation email retries and password resets on cached pages. Improved Wordfence compatibility.
+* FIXED: Social media consent persists across gallery and page changes in the same browser tab.
 * SECURITY: Security hardening.
-
-= 33.0.2 =
-* IMPROVED: Redesigned the Add files media modal with clearer tabs, a dedicated Assign fields workflow, modern media cards and progress feedback.
-* IMPROVED: Voting and upload login prompts now support passwordless email access with optional Google Sign-In.
-* FIXED: HTML5 videos in the gallery-only view now show their preview frame and duration immediately.
-* FIXED: X post URLs can be added again.
-* FIXED: Contest Gallery Network export now supports WordPress subdirectory installations.
-* FIXED: Reinstalling after uninstall is faster and removes all Paid Actions tables cleanly.
-* FIXED: Backend scrolling now recovers after completed AJAX navigation.
-* FIXED: Product sandbox checkouts work without Paid Actions links, and download sale settings remain saveable after gallery switches.
 
 Full updates history can be found in changelog.txt in plugins directory.

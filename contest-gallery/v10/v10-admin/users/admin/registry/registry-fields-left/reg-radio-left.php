@@ -71,6 +71,8 @@ echo <<<HEREDOC
 </div>
 HEREDOC;
 
+cg_public_profile_field_controls($isOnlyPlaceHolder ? null : $value,'user-radio-field',$i,intval($galleryDbVersion)>=14);
+
 
 echo <<<HEREDOC
 <div class='cg_view_options_row'>

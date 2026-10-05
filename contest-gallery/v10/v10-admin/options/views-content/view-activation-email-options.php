@@ -21,13 +21,23 @@ $InformUsersURL = contest_gal1ery_convert_for_html_output_without_nl2br($selectS
 $InformUsersContent = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemail->Content);
 
 
+$cgMailDeliveryCard = cg_mail_delivery_card('Entry activation',array(
+    'from'=>array('[name="from_user_mail_address"]',$InformUsersFrom),
+    'reply'=>array('[name="reply_user_mail"]',$InformUsersReply)
+),'The email address of the entry or its assigned user.');
+
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
+        <p class='cg_view_options_rows_container_title'>Activation email options</p>
+        $cgMailDeliveryCard
         $mailExceptionActivationMail
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px cg_view_option_100_percent $cgProFalse" id="InformUsersContainer">
                 <div class="cg_view_option_title">
-                    <p>Send this activation e-mail when activating user entries<br><span class="cg_view_option_title_note">$cgDomainErrorText</span></p>
+                    <p>Send this activation e-mail when activating user entries
+                        <br><span class="cg_view_option_title_note">Sends an e-mail when an entry is activated, including entries uploaded in the backend.
+                        <br>Requires an e-mail address for the entry or its assigned user.
+                        <br>Also applies to automatic activation after a frontend upload.</span></p>
                 </div>
                 <div class="cg_view_option_checkbox">
                     <input type="checkbox" name="InformUsers" id="InformUsers" value="1" $checkInform >
@@ -57,7 +67,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none cg_file_activation_email_option $cgProFalse' id="InformUsersReplyContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Reply-To e-mail<span class="cg_view_option_title_note">$replyMailNote<br>Falls back to "From e-mail" when empty.</span></p>
+                        <p>Reply-To e-mail<span class="cg_view_option_title_note"><br>Falls back to "From e-mail" when empty.</span></p>
                     </div>
                     <div class='cg_view_option_input'>
                         <input type="text" name="reply_user_mail" id="InformUsersReply" value="$InformUsersReply"  maxlength="200" >

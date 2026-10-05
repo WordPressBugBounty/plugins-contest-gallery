@@ -11,7 +11,11 @@ if(!function_exists('cg1l_email_backend_template')){
             $cgUnconfirmed = 'cg_unconfirmed';
             $cgRegUrlUnconfirmedHide = '';
         }
-        $domainErrorText = cgl1_domain_error_text();
+        $mailDeliveryCard = cg_mail_delivery_card($isForUnconfirmed ? 'Registration confirmation message' : 'Custom message',array(
+            'from'=>array('#cgFromMailToSend',''),
+            'reply'=>array('#cgReplyMailToSend',''),
+            'to'=>array('#cgMailToSend','')
+        ),'',true);
         $replyNameText = cgl1_reply_name_same_as_form_name();
         $replyMailText = cgl1_reply_mail_same_as_form_mail();
 
@@ -22,6 +26,7 @@ echo <<<HEREDOC
              <div class='cg_sel_title' style="margin-bottom: 20px;" >
                 <span class="cg_title_text" >Send custom mail</span>  <span class="cg_entry_id" style="font-weight: normal;"></span> 
             </div>
+            $mailDeliveryCard
 </div>
 HEREDOC;
 if($isForUnconfirmed){
@@ -103,7 +108,6 @@ echo <<<HEREDOC
                    <div class='cg_row_col '>
                         <label for="cgMailToSend">To *</label>
                         <input type="text" id="cgMailToSend" value="" maxlength="256" />
-                        <p class="cg_error cg_domain_error cg_hide">$domainErrorText</p>
                         <p class="cg_error cg_required cg_hide cg_color_red">Required</p>
                     </div>
             </div>

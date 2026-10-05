@@ -2,7 +2,7 @@
 
 echo <<<HEREDOC
 <div class='cg_view_container'>
-        <div class='cg_view_options_rows_container' id="cgGoogleOptionsRowsContainer">
+        <div class='cg_view_options_rows_container cg_go_to_target' id="cgGoogleOptionsRowsContainer" data-cg-go-to-target="GoogleSignInOptions">
 
 <p class="cg_view_options_rows_container_title ">
         <strong class="cg_note_label">* NOTE:</strong> <span class="cg_note_text">Login via Google options are general and valid for all galleries.</span><br>

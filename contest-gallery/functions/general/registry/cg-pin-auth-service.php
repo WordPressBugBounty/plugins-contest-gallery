@@ -1,6 +1,8 @@
 <?php
 
 if(!defined('ABSPATH')){exit;}
+require_once __DIR__.'/cg-member-translations.php';
+require_once dirname(__DIR__).'/cg-frontend-security-state.php';
 
 if(!function_exists('cg_pin_auth_t')){
 	function cg_pin_auth_t($default,$replacements = array()){
@@ -11,7 +13,7 @@ if(!function_exists('cg_pin_auth_t')){
 			$file = $wpUploadDir['basedir'].'/contest-gallery/gallery-general/json/translations.json';
 			if(file_exists($file)){
 				$decoded = json_decode(file_get_contents($file),true);
-				if(is_array($decoded)){$custom = $decoded;}
+				if(is_array($decoded)){$custom = cg_member_translation_values($decoded);}
 			}
 		}
 		$text = !empty($custom[$default]) ? contest_gal1ery_convert_for_html_output_without_nl2br($custom[$default]) : __($default,'contest-gallery');
@@ -45,7 +47,8 @@ if(!function_exists('cg_pin_auth_active_key')){
 
 if(!function_exists('cg_pin_auth_lock_name')){
 	function cg_pin_auth_lock_name($scope,$value){
-		return 'cg_pin_'.substr(md5($scope.'|'.$value),0,48);
+		global $wpdb;
+		return 'cg_pin_'.md5(DB_NAME.'|'.$wpdb->prefix.'|'.$scope.'|'.$value);
 	}
 }
 
@@ -99,8 +102,8 @@ if(!function_exists('cg_pin_auth_reset_rate_limits')){
 		if(!is_email($email)){return false;}
 		$rateLock = cg_pin_auth_acquire_lock('rate',$email);
 		if(!$rateLock){return false;}
-		delete_transient(cg_pin_auth_rate_key($email,'cooldown'));
-		delete_transient(cg_pin_auth_rate_key($email,'hour'));
+		cg_security_state_delete('pin',cg_pin_auth_rate_key($email,'cooldown'));
+		cg_security_state_delete('pin',cg_pin_auth_rate_key($email,'hour'));
 		cg_pin_auth_release_lock($rateLock);
 		return true;
 	}
@@ -110,7 +113,7 @@ if(!function_exists('cg_pin_auth_reserve_request')){
 	function cg_pin_auth_reserve_request($email){
 		$countKey = cg_pin_auth_rate_key($email,'hour');
 		$cooldownKey = cg_pin_auth_rate_key($email,'cooldown');
-		$cooldownUntil = absint(get_transient($cooldownKey));
+		$cooldownUntil = absint(cg_security_state_read('pin',$cooldownKey));
 		if($cooldownUntil){
 			$retryAfter = $cooldownUntil>time() ? $cooldownUntil-time() : cg_pin_auth_cooldown_seconds();
 			$secondsLabel = $retryAfter===1 ? cg_pin_auth_t('second') : cg_pin_auth_t('seconds');
@@ -120,7 +123,7 @@ if(!function_exists('cg_pin_auth_reserve_request')){
 				array('reason'=>'cooldown','retryAfter'=>$retryAfter)
 			);
 		}
-		if(absint(get_transient($countKey))>=5){
+		if(absint(cg_security_state_read('pin',$countKey))>=5){
 			return new WP_Error(
 				'cg_pin_rate_limited',
 				cg_pin_auth_t('Too many PINs were requested. Please try again later.'),
@@ -129,10 +132,10 @@ if(!function_exists('cg_pin_auth_reserve_request')){
 		}
 		$cooldownSeconds = cg_pin_auth_cooldown_seconds();
 		$cooldownValue = time()+$cooldownSeconds;
-		$countValue = absint(get_transient($countKey))+1;
-		set_transient($cooldownKey,$cooldownValue,$cooldownSeconds);
-		set_transient($countKey,$countValue,HOUR_IN_SECONDS);
-		if(absint(get_transient($cooldownKey))!==$cooldownValue || absint(get_transient($countKey))!==$countValue){
+		$countValue = absint(cg_security_state_read('pin',$countKey))+1;
+		cg_security_state_write('pin',$cooldownKey,$cooldownValue,$cooldownSeconds);
+		cg_security_state_write('pin',$countKey,$countValue,HOUR_IN_SECONDS);
+		if(absint(cg_security_state_read('pin',$cooldownKey))!==$cooldownValue || absint(cg_security_state_read('pin',$countKey))!==$countValue){
 			return cg_pin_auth_busy_error();
 		}
 		return true;
@@ -199,7 +202,7 @@ if(!function_exists('cg_pin_auth_pending_data')){
 
 if(!function_exists('cg_pin_auth_source_can_create_user')){
 	function cg_pin_auth_source_can_create_user($source){
-		return in_array($source,array('paid-actions','users-pin-access'),true);
+		return in_array($source,array('paid-actions','users-pin-access','gallery-member'),true);
 	}
 }
 
@@ -275,12 +278,22 @@ if(!function_exists('cg_pin_auth_delete_pending')){
 
 if(!function_exists('cg_pin_auth_clear_challenge')){
 	function cg_pin_auth_clear_challenge($requestKey,$data = array()){
-		delete_transient(cg_pin_auth_transient_key($requestKey));
+		$cleared = cg_security_state_delete('pin',cg_pin_auth_transient_key($requestKey));
 		if(!empty($data['email']) && !empty($data['source'])){
 			$activeKey = cg_pin_auth_active_key($data['email'],$data['source']);
-			if((string)get_transient($activeKey)===(string)$requestKey){delete_transient($activeKey);}
+			if((string)cg_security_state_read('pin',$activeKey)===(string)$requestKey){
+				$cleared = cg_security_state_delete('pin',$activeKey) && $cleared;
+			}
 		}
+		return $cleared;
 	}
+}
+
+function cg_pin_auth_context_matches($data,$expected){
+	foreach($expected as $key=>$value){
+		if(!isset($data['context'][$key]) || !hash_equals((string)$value,(string)$data['context'][$key])){return false;}
+	}
+	return true;
 }
 
 if(!function_exists('cg_pin_auth_build_challenge')){
@@ -296,6 +309,7 @@ if(!function_exists('cg_pin_auth_build_challenge')){
 			'codeHash'=>password_hash($pin,PASSWORD_DEFAULT),'attempts'=>0,
 			'expires'=>time()+$expiry,'context'=>$context
 		);
+		if($userId && !cg1l_auth_eligible_user($userId,$email)){$data['isDecoy'] = 1;}
 		if(!$userId){
 			if(!cg_pin_auth_source_can_create_user($source)){
 				$data['isDecoy'] = 1;
@@ -309,13 +323,13 @@ if(!function_exists('cg_pin_auth_build_challenge')){
 			$data['activationKey'] = $stored;
 		}
 		$activeKey = cg_pin_auth_active_key($email,$source);
-		$previousRequestKey = get_transient($activeKey);
+		$previousRequestKey = cg_security_state_read('pin',$activeKey);
 		if($previousRequestKey && (string)$previousRequestKey!==(string)$requestKey){
-			delete_transient(cg_pin_auth_transient_key($previousRequestKey));
+			cg_security_state_delete('pin',cg_pin_auth_transient_key($previousRequestKey));
 		}
-		$challengeStored = set_transient(cg_pin_auth_transient_key($requestKey),$data,$expiry);
-		set_transient($activeKey,$requestKey,$expiry);
-		if($challengeStored===false || (string)get_transient($activeKey)!==(string)$requestKey){
+		$challengeStored = cg_security_state_write('pin',cg_pin_auth_transient_key($requestKey),$data,$expiry);
+		$activeStored = cg_security_state_write('pin',$activeKey,$requestKey,$expiry);
+		if($activeStored===false || $challengeStored===false || (string)cg_security_state_read('pin',$activeKey)!==(string)$requestKey){
 			cg_pin_auth_clear_challenge($requestKey,$data);
 			if(!empty($data['activationKey'])){cg_pin_auth_delete_pending($data['activationKey']);}
 			return cg_pin_auth_busy_error();
@@ -340,22 +354,13 @@ if(!function_exists('cg_pin_auth_request')){
 		}
 		$rateLock = cg_pin_auth_acquire_lock('rate',$email);
 		if(!$rateLock){return cg_pin_auth_busy_error();}
-		$reserved = cg_pin_auth_reserve_request($email);
-		if(is_wp_error($reserved)){
-			cg_pin_auth_release_lock($rateLock);
-			return $reserved;
-		}
-		$pending = false;
-		if(cg_pin_auth_source_can_create_user($source) && !email_exists($email)){
-			$pending = cg_pin_auth_find_pending($email,$source);
-		}
-		$result = cg_pin_auth_build_challenge(
-			$email,$source,$context,
-			$pending ? $pending['requestKey'] : '',
-			$pending ? $pending['activationKey'] : ''
-		);
-		cg_pin_auth_release_lock($rateLock);
-		return $result;
+		try{
+			$reserved = cg_pin_auth_reserve_request($email);
+			if(is_wp_error($reserved)){return $reserved;}
+			$pending = false;
+			if(cg_pin_auth_source_can_create_user($source) && !email_exists($email)){$pending = cg_pin_auth_find_pending($email,$source);}
+			return cg_pin_auth_build_challenge($email,$source,$context,$pending ? $pending['requestKey'] : '',$pending ? $pending['activationKey'] : '');
+		}finally{cg_pin_auth_release_lock($rateLock);}
 	}
 }
 
@@ -363,7 +368,7 @@ if(!function_exists('cg_pin_auth_get_challenge')){
 	function cg_pin_auth_get_challenge($requestKey){
 		$requestKey = sanitize_text_field($requestKey);
 		if(empty($requestKey)){return false;}
-		$data = get_transient(cg_pin_auth_transient_key($requestKey));
+		$data = cg_security_state_read('pin',cg_pin_auth_transient_key($requestKey));
 		return is_array($data) ? $data : false;
 	}
 }
@@ -390,110 +395,101 @@ if(!function_exists('cg_pin_auth_create_user')){
 }
 
 if(!function_exists('cg_pin_auth_verify')){
-	function cg_pin_auth_verify($requestKey,$pin,$allowedSource = ''){
+	function cg_pin_auth_verify($requestKey,$pin,$allowedSource = '',$expectedContext = array()){
 		$requestKey = sanitize_text_field($requestKey);
 		$pin = preg_replace('/[^0-9]/','',(string)$pin);
-		$challengeLock = cg_pin_auth_acquire_lock('challenge',$requestKey);
-		if(!$challengeLock){return cg_pin_auth_busy_error();}
-		$data = cg_pin_auth_get_challenge($requestKey);
-		if(!$data){cg_pin_auth_release_lock($challengeLock);return false;}
-		$activeRequestKey = get_transient(cg_pin_auth_active_key($data['email'],$data['source']));
-		if((string)$activeRequestKey!==(string)$requestKey){
-			cg_pin_auth_clear_challenge($requestKey,$data);
-			cg_pin_auth_release_lock($challengeLock);
-			return new WP_Error('cg_pin_invalid',cg_pin_auth_t('The PIN is invalid or expired.'));
-		}
-		if($allowedSource && (empty($data['source']) || $data['source']!==$allowedSource)){
-			cg_pin_auth_release_lock($challengeLock);
-			return new WP_Error('cg_pin_invalid',cg_pin_auth_t('The PIN is invalid or expired.'));
-		}
-		if(strlen($pin)!==6 || empty($data['expires']) || absint($data['expires'])<time()){
-			cg_pin_auth_clear_challenge($requestKey,$data);
-			cg_pin_auth_release_lock($challengeLock);
-			return new WP_Error('cg_pin_expired',cg_pin_auth_t('The PIN is invalid or expired.'));
-		}
-		if(absint($data['attempts'])>=5){
-			cg_pin_auth_clear_challenge($requestKey,$data);
-			cg_pin_auth_release_lock($challengeLock);
-			return new WP_Error('cg_pin_attempts',cg_pin_auth_t('Too many attempts. Request a new PIN.'));
-		}
-		if(empty($data['codeHash']) || !password_verify($pin,$data['codeHash'])){
-			$data['attempts'] = absint($data['attempts'])+1;
-			if($data['attempts']>=5){
-				cg_pin_auth_clear_challenge($requestKey,$data);
-				cg_pin_auth_release_lock($challengeLock);
-				return new WP_Error('cg_pin_attempts',cg_pin_auth_t('Too many attempts. Request a new PIN.'));
-			}
-			set_transient(cg_pin_auth_transient_key($requestKey),$data,max(1,absint($data['expires'])-time()));
-			cg_pin_auth_release_lock($challengeLock);
-			return new WP_Error('cg_pin_wrong',cg_pin_auth_t('The PIN is incorrect.'));
-		}
-		if(!empty($data['isDecoy'])){
-			cg_pin_auth_clear_challenge($requestKey,$data);
-			cg_pin_auth_release_lock($challengeLock);
-			return new WP_Error('cg_pin_invalid',cg_pin_auth_t('The PIN is invalid or expired.'));
-		}
-		if(!empty($data['activationKey'])){
-			$pending = cg_pin_auth_pending_data($data['activationKey']);
-			if(!$pending || $pending['requestKey']!==$requestKey || $pending['context']['source']!==$data['source'] || !password_verify($pin,$pending['codeHash'])){
-				cg_pin_auth_clear_challenge($requestKey,$data);
-				cg_pin_auth_release_lock($challengeLock);
+		$before = cg_pin_auth_get_challenge($requestKey);
+		if(!$before){return false;}
+		// Use the same email lock as request/resend. No nested advisory locks.
+		$lock = cg_pin_auth_acquire_lock('rate',$before['email']);
+		if(!$lock){return cg_pin_auth_busy_error();}
+		try{
+			$data = cg_pin_auth_get_challenge($requestKey);
+			if(!$data){return false;}
+			if($data['email']!==$before['email'] || ($allowedSource && $data['source']!==$allowedSource) || !cg_pin_auth_context_matches($data,$expectedContext)){
 				return new WP_Error('cg_pin_invalid',cg_pin_auth_t('The PIN is invalid or expired.'));
 			}
-			cg_pin_auth_clear_challenge($requestKey,$data);
-			$userId = cg_pin_auth_create_user($data['email']);
-			if(is_wp_error($userId)){cg_pin_auth_release_lock($challengeLock);return $userId;}
-			cg1l_delete_unconfirmed_user($data['email']);
-		}else{
-			$userId = !empty($data['userId']) ? absint($data['userId']) : 0;
-			$user = $userId ? get_user_by('id',$userId) : false;
-			if(!$user || strtolower($user->user_email)!==strtolower($data['email'])){
+			$active = cg_security_state_read('pin',cg_pin_auth_active_key($data['email'],$data['source']));
+			if((string)$active!==(string)$requestKey){
 				cg_pin_auth_clear_challenge($requestKey,$data);
-				cg_pin_auth_release_lock($challengeLock);
-				return new WP_Error('cg_pin_user_not_found',cg_pin_auth_t('The user account could not be found.'));
+				return new WP_Error('cg_pin_invalid',cg_pin_auth_t('The PIN is invalid or expired.'));
 			}
-			cg_pin_auth_clear_challenge($requestKey,$data);
-		}
-		cg_pin_auth_release_lock($challengeLock);
-		cg_pin_auth_reset_rate_limits($data['email']);
-		return array('userId'=>absint($userId),'email'=>$data['email'],'source'=>$data['source'],'context'=>$data['context']);
+			if(strlen($pin)!==6 || empty($data['expires']) || absint($data['expires'])<=time()){
+				cg_pin_auth_clear_challenge($requestKey,$data);
+				return new WP_Error('cg_pin_expired',cg_pin_auth_t('The PIN is invalid or expired.'));
+			}
+			if(absint($data['attempts'])>=5){
+				cg_pin_auth_clear_challenge($requestKey,$data);
+				return new WP_Error('cg_pin_attempts',cg_pin_auth_t('Too many attempts. Request a new PIN.'));
+			}
+			if(empty($data['codeHash']) || !password_verify($pin,$data['codeHash'])){
+				$data['attempts'] = absint($data['attempts'])+1;
+				if($data['attempts']>=5){
+					cg_pin_auth_clear_challenge($requestKey,$data);
+					return new WP_Error('cg_pin_attempts',cg_pin_auth_t('Too many attempts. Request a new PIN.'));
+				}
+				if(!cg_security_state_write('pin',cg_pin_auth_transient_key($requestKey),$data,max(1,$data['expires']-time()))){return cg_pin_auth_busy_error();}
+				return new WP_Error('cg_pin_wrong',cg_pin_auth_t('The PIN is incorrect.'));
+			}
+			if(!empty($data['isDecoy'])){
+				cg_pin_auth_clear_challenge($requestKey,$data);
+				return new WP_Error('cg_pin_invalid',cg_pin_auth_t('The PIN is invalid or expired.'));
+			}
+			if(!empty($data['activationKey'])){
+				$pending = cg_pin_auth_pending_data($data['activationKey']);
+				if(!$pending || $pending['requestKey']!==$requestKey || $pending['context']['source']!==$data['source'] || !password_verify($pin,$pending['codeHash'])){
+					cg_pin_auth_clear_challenge($requestKey,$data);
+					return new WP_Error('cg_pin_invalid',cg_pin_auth_t('The PIN is invalid or expired.'));
+				}
+				if(!cg_pin_auth_clear_challenge($requestKey,$data)){return cg_pin_auth_busy_error();}
+				$userId = cg_pin_auth_create_user($data['email']);
+				if(is_wp_error($userId)){return $userId;}
+				cg1l_delete_unconfirmed_user($data['email']);
+			}else{
+				$userId = !empty($data['userId']) ? absint($data['userId']) : 0;
+				if(!$userId || !cg1l_auth_eligible_user($userId,$data['email'])){
+					cg_pin_auth_clear_challenge($requestKey,$data);
+					return new WP_Error('cg_pin_invalid',cg_pin_auth_t('The PIN is invalid or expired.'));
+				}
+				if(!cg_pin_auth_clear_challenge($requestKey,$data)){return cg_pin_auth_busy_error();}
+			}
+			if(!cg1l_auth_eligible_user($userId,$data['email'])){return new WP_Error('cg_pin_invalid',cg_pin_auth_t('The PIN is invalid or expired.'));}
+			cg_security_state_delete('pin',cg_pin_auth_rate_key($data['email'],'cooldown'));
+			cg_security_state_delete('pin',cg_pin_auth_rate_key($data['email'],'hour'));
+			return array('userId'=>absint($userId),'email'=>$data['email'],'source'=>$data['source'],'context'=>$data['context']);
+		}finally{cg_pin_auth_release_lock($lock);}
 	}
 }
 
+function cg_pin_auth_resend_data($requestKey){
+	$data = cg_pin_auth_get_challenge($requestKey);
+	if($data){return $data;}
+	global $wpdb;
+	$table = $wpdb->prefix.'contest_gal1ery_create_user_entries';
+	$activationKey = $wpdb->get_var($wpdb->prepare("SELECT activation_key FROM $table WHERE Field_Type = 'cg-pin-request-key' AND Field_Content = %s ORDER BY id DESC LIMIT 1",$requestKey));
+	$pending = $activationKey ? cg_pin_auth_pending_data($activationKey) : false;
+	if(!$pending){return false;}
+	return array('email'=>$pending['email'],'source'=>$pending['context']['source'],'userId'=>0,'context'=>$pending['context'],'activationKey'=>$pending['activationKey']);
+}
+
 if(!function_exists('cg_pin_auth_resend')){
-	function cg_pin_auth_resend($requestKey){
+	function cg_pin_auth_resend($requestKey,$expectedContext = array()){
 		$requestKey = sanitize_text_field($requestKey);
-		$challengeLock = cg_pin_auth_acquire_lock('challenge',$requestKey);
-		if(!$challengeLock){return cg_pin_auth_busy_error();}
-		$data = cg_pin_auth_get_challenge($requestKey);
-		if(!$data){
-			global $wpdb;
-			$table = $wpdb->prefix.'contest_gal1ery_create_user_entries';
-			$activationKey = $wpdb->get_var($wpdb->prepare(
-				"SELECT activation_key FROM $table WHERE Field_Type = 'cg-pin-request-key' AND Field_Content = %s ORDER BY id DESC LIMIT 1",
-				$requestKey
-			));
-			$pending = $activationKey ? cg_pin_auth_pending_data($activationKey) : false;
-			if(!$pending){cg_pin_auth_release_lock($challengeLock);return new WP_Error('cg_pin_invalid',cg_pin_auth_t('The PIN request is no longer available.'));}
-			$data = array(
-				'email'=>$pending['email'],'source'=>$pending['context']['source'],'userId'=>0,
-				'context'=>$pending['context'],'activationKey'=>$pending['activationKey']
-			);
-		}
-		cg_pin_auth_release_lock($challengeLock);
-		$rateLock = cg_pin_auth_acquire_lock('rate',$data['email']);
-		if(!$rateLock){return cg_pin_auth_busy_error();}
-		$reserved = cg_pin_auth_reserve_request($data['email']);
-		if(is_wp_error($reserved)){
-			cg_pin_auth_release_lock($rateLock);
-			return $reserved;
-		}
-		$result = cg_pin_auth_build_challenge(
-			$data['email'],$data['source'],isset($data['context']) ? $data['context'] : array(),
-			$requestKey,!empty($data['activationKey']) ? $data['activationKey'] : ''
-		);
-		cg_pin_auth_release_lock($rateLock);
-		return $result;
+		$before = cg_pin_auth_resend_data($requestKey);
+		if(!$before){return new WP_Error('cg_pin_invalid',cg_pin_auth_t('The PIN request is no longer available.'));}
+		$lock = cg_pin_auth_acquire_lock('rate',$before['email']);
+		if(!$lock){return cg_pin_auth_busy_error();}
+		try{
+			$data = cg_pin_auth_resend_data($requestKey);
+			if(!$data || $data['email']!==$before['email'] || !cg_pin_auth_context_matches($data,$expectedContext)){
+				return new WP_Error('cg_pin_invalid',cg_pin_auth_t('The PIN request is no longer available.'));
+			}
+			$active = cg_security_state_read('pin',cg_pin_auth_active_key($data['email'],$data['source']));
+			if($active && (string)$active!==(string)$requestKey){return new WP_Error('cg_pin_invalid',cg_pin_auth_t('The PIN request is no longer available.'));}
+			$reserved = cg_pin_auth_reserve_request($data['email']);
+			if(is_wp_error($reserved)){return $reserved;}
+			return cg_pin_auth_build_challenge($data['email'],$data['source'],$data['context'],$requestKey,!empty($data['activationKey']) ? $data['activationKey'] : '');
+		}finally{cg_pin_auth_release_lock($lock);}
 	}
 }
 
@@ -523,16 +519,28 @@ if(!function_exists('cg_pin_auth_login_result_script')){
 
 if(!function_exists('cg_pin_auth_render_paid_actions_auth')){
 	function cg_pin_auth_render_paid_actions_auth($isSandbox = false,$hasGoogleSignIn = false){
+		return cg_pin_auth_render_auth('paid-actions',$isSandbox,$hasGoogleSignIn);
+	}
+}
+
+if(!function_exists('cg_pin_auth_render_auth')){
+	function cg_pin_auth_render_auth($source = 'paid-actions',$isSandbox = false,$hasGoogleSignIn = false){
 		$kicker = $isSandbox ? cg_paid_actions_t('SandboxCheckoutUpper') : cg_paid_actions_t('SecureCheckout');
 		$title = $isSandbox ? cg_paid_actions_t('SignInSandboxCheckout') : cg_paid_actions_t('SignInBuyCredits');
 		$description = $isSandbox ?
 			cg_paid_actions_t('SignInSandboxDescription') :
 			($hasGoogleSignIn ? cg_paid_actions_t('SignInBuyDescription') : cg_paid_actions_t('SignInBuyDescriptionEmailOnly'));
+		$isMember = $source==='gallery-member';
+		if($isMember){
+			$kicker = cg_pin_auth_t('Register / Sign in');
+			$title = cg_pin_auth_t('Your entries. Your gallery.');
+			$description = $hasGoogleSignIn ? cg_pin_auth_t('Continue with Google or a code sent to your email. New here? Your account is created when you sign in.') : cg_pin_auth_t('Sign in with a code sent to your email. New here? Confirm your email to create your account.');
+		}
 		ob_start();
 		?>
-		<div class="cg-paid-actions-auth">
+		<div class="cg-paid-actions-auth" role="dialog" aria-modal="true" aria-labelledby="cgSharedAuthTitle">
 			<div class="cg-paid-actions-modal-kicker"><?php echo esc_html($kicker); ?></div>
-			<h2><?php echo esc_html($title); ?></h2>
+			<h2 id="cgSharedAuthTitle"><?php echo esc_html($title); ?></h2>
 			<p><?php echo esc_html($description); ?></p>
 			<?php if($hasGoogleSignIn){ ?>
 				<div class="cg-paid-actions-google"></div>
@@ -555,6 +563,7 @@ if(!function_exists('cg_pin_auth_render_paid_actions_auth')){
 				</div>
 				<button type="submit" class="cg-paid-actions-primary"><?php echo esc_html(cg_paid_actions_t('ConfirmPin')); ?></button>
 				<button type="button" class="cg-paid-actions-send-new-pin"><?php echo esc_html(cg_paid_actions_t('SendNewPin')); ?></button>
+				<button type="button" class="cg-paid-actions-back-to-email"><?php echo esc_html(cg_pin_auth_t('Back to login form')); ?></button>
 			</form>
 			<div class="cg-paid-actions-auth-message" aria-live="polite"></div>
 		</div>

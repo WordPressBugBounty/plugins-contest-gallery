@@ -138,6 +138,8 @@ if(!function_exists('contest_gal1ery_create_table')){
         $charset_collate = $wpdb->get_charset_collate();
         $existingContestGalleryTables = cg_contest_gallery_create_table_get_existing_tables($wpdb->base_prefix . "$i"."contest_gal1ery");
 
+        $cgAccountNavigationFreshInstall = cg_database_install_is_pending() || cg_is_fresh_install_before_create_table($i,get_option('p_cgal1ery_db_version'));
+
         if($creationScope === 'core'){
             $coreTables = array($tablename,$tablename_options);
             foreach(cg_contest_gallery_get_required_table_names($i) as $requiredTableName){
@@ -1247,6 +1249,7 @@ HEREDOC;
             ColNumber INT(11) DEFAULT 0,
             RowCols INT(11) DEFAULT 0,
 		    PinField TINYINT DEFAULT 0,
+            PublicProfile TINYINT DEFAULT 0,
             INDEX GeneralID_Active_Field_Order_index (GeneralID, Active, Field_Order),
             INDEX GeneralID_Field_Type_Field_Order_index (GeneralID, Field_Type, Field_Order),
             INDEX GalleryID_Active_Field_Order_index (GalleryID, Active, Field_Order),
@@ -1543,6 +1546,14 @@ HEREDOC;
             GeneralID TINYINT DEFAULT 0,
             LogoutLink VARCHAR(1000) NOT NULL,
             BackToGalleryLink VARCHAR(1000) NOT NULL,
+            AccountNavigationVersion TINYINT DEFAULT 0,
+            AccountNavigationRoles TEXT,
+            AccountNavigationNoRole TINYINT DEFAULT 0,
+            LogoutRedirectMode TINYINT DEFAULT 0,
+            LogoutApplyToWpLinks TINYINT DEFAULT 0,
+            LogoutFallbackLink VARCHAR(1000) DEFAULT '',
+            BackToGalleryMode TINYINT DEFAULT 0,
+            BackToGalleryFallbackLink VARCHAR(1000) DEFAULT '',
             RegistryUserRole VARCHAR(1000) NOT NULL,
             LostPasswordMailActive TINYINT DEFAULT 0,
             LostPasswordMailAddressor VARCHAR(200) NOT NULL,
@@ -1562,6 +1573,10 @@ HEREDOC;
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
             cg_echo_last_sql_error($isShowError,$lastError);
+        }
+
+        if($cgAccountNavigationFreshInstall && $creationScope !== 'core'){
+            cg_account_navigation_install_defaults($tablename_registry_and_login_options);
         }
 
         if(cg_contest_gallery_create_table_needs_creation($tablename_google_options,$existingContestGalleryTables)){

@@ -48,7 +48,7 @@ if (!function_exists('contest_gal1ery_mail_user_upload'))   {
         $cgMailGalleryId = $galeryID;
         add_action( 'wp_mail_failed', 'cg_on_wp_mail_error', 10, 1 );
 
-        wp_mail($userMail, $Subject, $Msg, $headers);
+        cg_upload_job_mail($userMail, $Subject, $Msg, $headers);
 
     }
 }

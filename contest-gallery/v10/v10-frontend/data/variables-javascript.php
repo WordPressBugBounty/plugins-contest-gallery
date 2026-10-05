@@ -69,6 +69,20 @@
     $variablesGallery['imageDataLength'] = $jsonImagesCount;
     $variablesGallery['shortcode_name'] = $shortcode_name;
     $variablesGallery['isUserGallery'] = $isUserGallery;
+    $variablesGallery['memberFeaturesAvailable'] = cg_member_features_available($galeryID);
+    $variablesGallery['participantUserId'] = !empty($cgParticipantUserId) ? absint($cgParticipantUserId) : 0;
+    $variablesGallery['memberOwnerActions'] = empty($cgParticipantUserId) && in_array($shortcode_name,array('cg_gallery','cg_gallery_no_voting'),true) && cg_member_enabled($galeryID,$shortcode_name);
+    $variablesGallery['memberPublicShortcode'] = $shortcode_name==='cg_gallery_user' && empty($cgMemberOwnView) ? 'cg_gallery_user' : cg_member_public_shortcode($galeryID,isset($cgMemberPublicShortcode) ? $cgMemberPublicShortcode : $shortcode_name);
+    $variablesGallery['memberCardContext'] = false;
+    $variablesGallery['memberVoting'] = !empty($cgMemberVoting);
+    if(!empty($cgMemberInitialOwnView)){$variablesGallery['memberViewStartStep'] = 1;}
+    if(!empty($cgMemberOwnView)){
+        // Card profiles use the originating public gallery's existing visibility checks.
+        $variablesGallery['memberCardContext'] = array(
+            'token'=>cg1l_create_runtime_context_token(array('realGid'=>$galeryID,'gid'=>$cgMemberPublicInstance,'shortcodeName'=>$cgMemberPublicShortcode,'galleryDataUseAllowedRealIds'=>1)),
+            'accessHash'=>cg1l_get_gallery_data_access_hash($galeryID,$cgMemberPublicShortcode,get_current_user_id(),1)
+        );
+    }
     $variablesGallery['isOnlyGalleryEcommerce'] = $isOnlyGalleryEcommerce;
     $variablesGallery['isEcommerceTest'] = $isEcommerceTest;
     $variablesGallery['isOnlyGalleryNoVoting'] = $isOnlyGalleryNoVoting;
@@ -90,6 +104,8 @@
         'isGalleriesMainPage' => $isGalleriesMainPage,
         'galleryDataUseAllowedRealIds' => (!empty($shouldUseAllowedRealIds)) ? 1 : 0,
         'galleriesIds' => $galleriesIds,
+        'participantUserId' => !empty($cgParticipantUserId) ? absint($cgParticipantUserId) : 0,
+        'pagePresentation' => !empty($GLOBALS['cgPagePresentation']),
     ]);
     $variablesGallery['isCgRuntimeFresh'] = (!empty($isCgRuntimeFresh)) ? true : false;
     $variablesGallery['galleryDataUseAllowedRealIds'] = (!empty($shouldUseAllowedRealIds)) ? 1 : 0;
@@ -118,6 +134,7 @@
     $variablesGallery['hasWpPageParent'] = $hasWpPageParent;
     $variablesGallery['isCgWpPageEntryLandingPage'] = $isCgWpPageEntryLandingPage;
     $variablesGallery['galleryShortCodeEntryId'] = $entryId;
+    $variablesGallery['entryBackUrl'] = !empty($entryPermalink) ? $entryPermalink : '';
     $variablesGallery['openedRealId'] = $entryId;
     $variablesGallery['entryId'] = $entryId;
     $variablesGallery['allowedRealIds'] = $allowedRealIds;

@@ -67,7 +67,9 @@ wp_enqueue_script( 'cg_js_admin_main_menu_events', plugins_url( '/v10/v10-js/adm
 
 wp_enqueue_script( 'cg_js_admin_main_menu_functions', plugins_url( '/v10/v10-js/admin/main-menu-functions.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 
-wp_enqueue_script( 'cg_general_admin_functions', plugins_url( '/v10/v10-js/admin/general_admin_functions.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_general_admin_functions', plugins_url( '/v10/v10-js/admin/general_admin_functions.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/general_admin_functions.js') );
+wp_enqueue_script( 'cg_mail_test', plugins_url('/v10/v10-js/admin/mail-test.js', __FILE__), array('cg_general_admin_functions'), $cgAdminAssetVersion('v10/v10-js/admin/mail-test.js') );
+wp_enqueue_style( 'cg_mail_test', plugins_url('/v10/v10-css/backend/cg_mail_test.css', __FILE__), false, $cgAdminAssetVersion('v10/v10-css/backend/cg_mail_test.css') );
 
 wp_enqueue_script( 'cg_js_admin_corrections_and_improvements', plugins_url( '/v10/v10-js/admin/options/corrections-and-improvements.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 

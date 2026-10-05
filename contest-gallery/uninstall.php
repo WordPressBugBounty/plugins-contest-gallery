@@ -239,10 +239,32 @@ if(!function_exists('cgRemoveGlobalPluginFiles')){
 }
 
 
+if(!function_exists('cgRemoveCustomFieldUserMeta')){
+    function cgRemoveCustomFieldUserMeta($sitePrefix = ''){
+        global $wpdb;
+
+        $metaPrefix = $sitePrefix.'cg_custom_field_id_';
+        $metaKeys = $wpdb->get_col($wpdb->prepare(
+            "SELECT DISTINCT meta_key FROM {$wpdb->usermeta} WHERE meta_key LIKE %s",
+            $wpdb->esc_like($metaPrefix).'%'
+        ));
+        foreach($metaKeys as $metaKey){
+            // Include orphaned field IDs, but never other plugin or WordPress metadata.
+            if(preg_match('/^'.preg_quote($metaPrefix,'/').'[1-9][0-9]*$/D',$metaKey)){
+                delete_metadata('user',0,$metaKey,'',true);
+            }
+        }
+    }
+}
+
+
 if(!function_exists('cgDropTables')){
     function cgDropTables(){
 
         global $wpdb;
+
+        // This path runs per website only after the shared FREE/PRO uninstall guard.
+        delete_metadata('user',0,$wpdb->get_blog_prefix().'cg_member_admin_mail_note_dismissed','',true);
 
         $tablename = $wpdb->prefix . "contest_gal1ery";
         $tablename_ip = $wpdb->prefix . "contest_gal1ery_ip";
@@ -489,12 +511,15 @@ if (is_multisite()) {
             cg_database_install_finalize_state_before_uninstall();
             cgRestoreEntryWatermarksBeforeUninstall();
             cgRestoreEcommerceDownloadFilesBeforeUninstall();
+            cgRemoveCustomFieldUserMeta($wpdb->prefix);
             cgDropTables();
             cgRemoveBlogFiles();
 
             restore_current_blog();
     }
 
+        // Unprefixed legacy values are shared and removed only after all sites.
+        cgRemoveCustomFieldUserMeta();
         cgRemoveGlobalPluginFiles();
 }
 else{
@@ -510,6 +535,7 @@ else{
 	// move entry files to original folder
     cgRestoreEntryWatermarksBeforeUninstall();
     cgRestoreEcommerceDownloadFilesBeforeUninstall();
+    cgRemoveCustomFieldUserMeta();
     cgDropTables();
     cgRemoveBlogFiles();
     cgRemoveGlobalPluginFiles();

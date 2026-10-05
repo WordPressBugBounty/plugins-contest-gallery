@@ -653,6 +653,11 @@ HEREDOC;
 
 echo "</form>";
 
+if(!$isEditTranslationsOnly && !$isEditEcommerceOnly){
+    cg_member_upload_choice_container();
+    cg_view_choice_container();
+}
+
 
 
 ?>

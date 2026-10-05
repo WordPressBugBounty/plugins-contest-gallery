@@ -22,11 +22,11 @@ if(!$cgIsOrderSummaryUpload && $cgIsUsersUploadShortcode && function_exists('cg_
 }
 
 if($cgPaidUploadGateActive){
-    $cgPaidUploadAccessState = is_user_logged_in() ? 'loading' : 'auth';
-    $cgPaidUploadAccessKicker = is_user_logged_in() ? cg_paid_actions_t('UploadCreditsUpper') : cg_paid_actions_t('UploadAccessUpper');
-    $cgPaidUploadAccessTitle = is_user_logged_in() ? cg_paid_actions_t('CheckingUploadCredits') : cg_paid_actions_t('SignInToUpload');
-    $cgPaidUploadAccessDescription = is_user_logged_in() ? cg_paid_actions_t('CheckingUploadCreditsDescription') : cg_paid_actions_t('SignInToUploadDescription');
-    $cgPaidUploadAccessButton = is_user_logged_in() ? '' : cg_paid_actions_t('SignInToContinue');
+    $cgPaidUploadAccessState = 'loading';
+    $cgPaidUploadAccessKicker = cg_paid_actions_t('UploadCreditsUpper');
+    $cgPaidUploadAccessTitle = cg_paid_actions_t('CheckingUploadCredits');
+    $cgPaidUploadAccessDescription = cg_paid_actions_t('CheckingUploadCreditsDescription');
+    $cgPaidUploadAccessButton = '';
     $cgPaidUploadAccessTitleId = 'cgPaidActionsUploadAccessTitle'.preg_replace('/[^A-Za-z0-9_-]/','',(string)$galeryIDuserForJs);
     echo "<div class='cg-paid-actions-upload-access cg-paid-actions-upload-access-".esc_attr($cgPaidUploadAccessState)."' data-cg-state='".esc_attr($cgPaidUploadAccessState)."' role='status' aria-live='polite' aria-labelledby='".esc_attr($cgPaidUploadAccessTitleId)."'>";
     echo "<span class='cg-paid-actions-upload-access-icon'><span class='cg-paid-actions-balance-icon cg-paid-actions-balance-icon-upload' aria-hidden='true'></span></span>";
@@ -105,9 +105,13 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
     $regUserOnlyHide = $cgPaidUploadGateActive ? 'cg_hide' : '';
     if (!$cgPaidUploadGateActive && $options['pro']['RegUserUploadOnly'] == 1 && is_user_logged_in() == false) {
         $regUserOnlyHide = 'cg_hide';
-        echo '<div class="mainCGdivUploadRegUserOnlyText">';
+        if($cgIsUsersUploadShortcode && !$cgIsOrderSummaryUpload && !empty($options['visual']['ShowPinFormUploading'])){
+            cg_member_render_upload_access($galeryID,$galeryIDuserForJs,$options);
+        }else{
+            echo '<div class="mainCGdivUploadRegUserOnlyText">';
             echo contest_gal1ery_convert_for_html_output_without_nl2br($options['pro']['RegUserUploadOnlyText']);
-        echo '</div>';
+            echo '</div>';
+        }
     }
 
     echo '<div class="mainCGdivUploadContent '.$regUserOnlyHide.'" >';
@@ -657,11 +661,8 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
 
                         if (!$isDefinitelyBulkUpload && !$isGoogleRecaptchaAlreadyRendered) {
 
-                            if (empty($cgGlobalGoogleRecaptchaRendered)) {
-                                $cgGlobalGoogleRecaptchaRendered = true;
-                                include('gallery-upload-form-google-recaptcha.php');
-                                $isGoogleRecaptchaAlreadyRendered = true;
-                            }
+                            include('gallery-upload-form-google-recaptcha.php');
+                            $isGoogleRecaptchaAlreadyRendered = true;
                         }
 
                     }

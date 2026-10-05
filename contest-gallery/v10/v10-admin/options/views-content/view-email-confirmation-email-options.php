@@ -32,14 +32,20 @@ $mConfirmURL = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLm
 $mConfirmContent = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLmailConfirmation->Content);
 $mConfirmContentText = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLmailConfirmation->ConfirmationText);
 
+$cgMailDeliveryCard = cg_mail_delivery_card('Legacy email confirmation',array(
+    'from'=>array('[name="mConfirmFrom"]',$mConfirmFrom),
+    'reply'=>array('[name="mConfirmReply"]',$mConfirmReply)
+),'The email address supplied in the upload form.');
+
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
+                $cgMailDeliveryCard
                 <p class='cg_view_options_rows_container_title'>Create e-mail field in "Edit upload form" to send this confirmation e-mail after an upload. After an e-mail address is confirmed this e-mail will not be send anymore.</p>
                 <p class='cg_view_options_rows_container_title'><strong>Use this shortcode on the confirmation page</strong>: <br><span class='cg_shortcode_parent'><span class='cg_shortcode_copy cg_shortcode_copy_mail_confirm cg_tooltip'></span><span class='cg_shortcode_copy_text'>[cg_mail_confirm id="$GalleryID"]</span></span></p>
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_view_option_100_percent $cgProFalse" id="mConfirmSendConfirmContainer">
                 <div class="cg_view_option_title">
-                    <p>Activate this confirmation e-mail<br><span class="cg_view_option_title_note">$cgDomainErrorText</span></p>
+                    <p>Activate this confirmation e-mail</p>
                 </div>
                 <div class="cg_view_option_checkbox">
                     <input type="checkbox" name="mConfirmSendConfirm" id="mConfirmSendConfirm" value="1" $mConfirmSendConfirm >

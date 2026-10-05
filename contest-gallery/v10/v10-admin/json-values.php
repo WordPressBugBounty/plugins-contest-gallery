@@ -191,7 +191,7 @@ $ForwardAfterLoginUrl = '';
 $ForwardAfterLoginTextCheck = 1;
 
 
-$RegUserUploadOnly = 3;// IP tracking
+$RegUserUploadOnly = 1;// Registered uploaders own and manage their entries
 $Manipulate = 1;
 $ShowOther = 1;
 $CatWidget = 1;
@@ -290,9 +290,7 @@ $VoteMessageWarningText = '';
 $VotesPerUserAllVotesUsedHtmlMessage = '';
 
 // JSON only, no database option
-$ShowTextUntilAnImageAdded = '<p><b>This text is visible until first entry appears in the gallery.</b>
-<br/>This text can be configurated in "Edit options" >>> "Gallery view options" >>> "This text is visible until first entry appears in the gallery"
-</p>';
+$ShowTextUntilAnImageAdded = '<p style="text-align: center;">Be the first to add an entry to this gallery.</p>';
 $ShowTextUntilAnImageAdded = htmlentities($ShowTextUntilAnImageAdded, ENT_QUOTES);
 // JSON only, no database option --- END
 
@@ -308,7 +306,8 @@ $SwitchStyleImageViewButtonOnlyImageView = 0;
 
 $ThankVote = 1;
 $ShowPinFormVoting = 0;
-$ShowPinFormUploading = 0;
+$ShowPinFormUploading = 1;
+$MemberArea = 1;
 $AllowedUsersToVote = '';
 
 $GoogleSignInUserUploadOnlyText = 'Please sign in via Google to upload your files.';

@@ -10,6 +10,7 @@ echo "<div id='cgFieldsToCloneAndAppendCloneRight' class='cg_hide'>";
     include (__DIR__.'/registry-fields-right/reg-simple-captcha-right.php');
     include (__DIR__.'/registry-fields-right/reg-google-captcha-right.php');
     include (__DIR__.'/registry-fields-right/reg-input-right.php');
+    if($isOnlyPlaceHolder && intval($galleryDbVersion)>=14){include (__DIR__.'/registry-fields-right/reg-url-right.php');}
     include (__DIR__.'/registry-fields-right/reg-select-right.php');
     include (__DIR__.'/registry-fields-right/reg-check-right.php');
     include (__DIR__.'/registry-fields-right/reg-radio-right.php');
@@ -66,7 +67,7 @@ if(count($selectFormInput)==0){
 
     foreach ($selectFormInput as $key => $value) {
         $echoRowClosed = false;
-        if($previousRowNumber!=-1 && $value ->RowNumber>$previousRowNumber){
+        if($previousRowNumber>0 && $value ->RowNumber>$previousRowNumber){
             $echoRowClosed = true;
             cgEchoClosedRightSide();
         }
@@ -122,6 +123,8 @@ if(count($selectFormInput)==0){
         if($value->Field_Type == 'user-check-field'){
             include (__DIR__.'/registry-fields-right/reg-check-right.php');
         }
+
+        if($value->Field_Type == 'user-url-field'){include (__DIR__.'/registry-fields-right/reg-url-right.php');}
 
         if($value->Field_Type == 'user-text-field'){
             include (__DIR__.'/registry-fields-right/reg-input-right.php');

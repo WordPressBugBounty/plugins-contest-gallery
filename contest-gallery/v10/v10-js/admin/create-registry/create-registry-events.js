@@ -5,6 +5,7 @@ jQuery(document).ready(function ($) {
 
     $(document).on('click', '#ausgabe1.cg_registry_form_container .cg_recaptcha_icon', function () {
         $(this).closest('.formField').find('.cg_reca_key').val($('#cgRecaptchaKey').val());
+        $(this).closest('.formField').find('.cg_reca_secret').val('6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe');
     });
 
     $(document).on('click', "#ausgabe1.cg_registry_form_container .cg-active input[type=\"checkbox\"] ", function () {
@@ -314,6 +315,24 @@ jQuery(document).ready(function ($) {
             }else {
                 var newId = cloneAndAppendNewField('regInputField');
                 cgJsClassAdmin.createUpload.functions.appendCloneRight($,'nf',newId);
+            }
+
+        }
+
+
+        if ($('#dauswahl').val() == "url") {// URL field
+            if ($('select[name="dauswahl"] :selected').hasClass('cg-pro-false')) {
+                alert('Only available in PRO version');
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddRegField');
+                return;
+            }
+            if ($('#cgCreateUploadSortableArea .regUrlField').length == 20) {
+                alert("This field can be added maximum 20 times.");
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddRegField');
+                return;
+            }else {
+                var newId = cloneAndAppendNewField('regUrlField');
+                cgJsClassAdmin.createUpload.functions.appendCloneRight($,'url',newId);
             }
 
         }

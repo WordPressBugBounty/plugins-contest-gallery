@@ -1136,6 +1136,8 @@ if(file_exists($jsonOptionsGalleryPrev)){
     fclose($fp);
 
     $jsonOptionsPrevSource = $jsonOptionsPrev;
+    // MemberArea is JSON-only and must also survive copies of never-saved galleries.
+    $jsonOptions['visual']['MemberArea'] = cg_member_configured($idToCopy,'cg_gallery') ? 1 : 0;
 
     // only then shortcode specific options can be copied
     if(!empty($jsonOptionsPrev[$idToCopy])){
@@ -1421,6 +1423,11 @@ if(file_exists($jsonOptionsGalleryPrev)){
     }else{
 
         // if previous gallery options were never saved before required values will be copied
+        foreach(array('ShowProfileGallery','ShowShareButtonGallery') as $cgCardOption){
+            if(isset($jsonOptionsPrev['visual'][$cgCardOption])){
+                $jsonOptions['visual'][$cgCardOption] = $jsonOptionsPrev['visual'][$cgCardOption];
+            }
+        }
         $jsonOptions['visual']['Field1IdGalleryView'] = $Field1IdGalleryView;
         $jsonOptions['visual']['Field1IdFullWindowBlogView'] = $Field1IdFullWindowBlogView;
         $jsonOptions['visual']['Field2IdGalleryView'] = $Field2IdGalleryView;
@@ -1440,6 +1447,13 @@ if(file_exists($jsonOptionsGalleryPrev)){
 
 }
 
+cg_member_store_options($jsonOptions,$nextIDgallery,cg_member_configured($idToCopy,'cg_gallery'),cg_member_configured($idToCopy,'cg_gallery_no_voting'),cg_member_configured($idToCopy,'cg_gallery_user'));
+// Variant copies already retain these JSON-only header options. Preserve the flat fallback too.
+$cgHeaderSource = isset($jsonOptionsPrevSource[$idToCopy]) ? $jsonOptionsPrevSource[$idToCopy] : (isset($jsonOptionsPrevSource) ? $jsonOptionsPrevSource : array());
+foreach(array('ShowGalleryHeader','GalleryHeaderLabel','GalleryHeaderTitle','GalleryHeaderSubtitle') as $cgHeaderKey){
+    if(isset($cgHeaderSource['visual'][$cgHeaderKey])){$jsonOptions['visual'][$cgHeaderKey] = $cgHeaderSource['visual'][$cgHeaderKey];}
+}
+$jsonOptions['memberReplacement'] = cg_member_replacement_options($idToCopy);
 file_put_contents($galleryUpload . '/json/' . $nextIDgallery . '-options.json',json_encode($jsonOptions));
 
 // Create f_output

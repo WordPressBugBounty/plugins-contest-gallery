@@ -1284,7 +1284,7 @@ msgstr "Laster"
 msgid "or"
 msgstr "eller"
 
-#: check-language-paid-actions.php
+#: check-language-paid-actions.php check-language.php
 msgid "Cancel"
 msgstr "Avbryt"
 
@@ -2127,3 +2127,456 @@ msgstr "Betalingen ble ikke fullført. Prøv igjen."
 #: check-language-ecommerce.php
 msgid "Payment canceled. You can try again."
 msgstr "Betalingen ble avbrutt. Du kan prøve på nytt."
+
+#: check-language-general.php:140
+msgid "Register / Sign in"
+msgstr "Registrer deg / Logg inn"
+
+#: check-language-general.php:142
+msgid "Your images. Your gallery."
+msgstr "Dine bilder. Ditt galleri."
+
+#: check-language-general.php:144
+msgid "Continue with Google or a code sent to your email. New here? Your account is created when you sign in."
+msgstr "Fortsett med Google eller en kode sendt til e-postadressen din. Ny her? Kontoen din opprettes når du logger inn."
+
+#: check-language-general.php:146
+msgid "Sign in with a code sent to your email. New here? Confirm your email to create your account."
+msgstr "Logg inn med en kode sendt til e-postadressen din. Ny her? Bekreft e-postadressen din for å opprette kontoen din."
+
+#: check-language-general.php:142
+msgid "All images"
+msgstr "Alle bilder"
+
+#: check-language-general.php:144
+msgid "My images"
+msgstr "Mine bilder"
+
+#: check-language-general.php:146
+msgid "Join and show your own images."
+msgstr "Registrer deg og vis frem dine egne bilder."
+
+#: check-language-general.php:148
+msgid "Show your first image"
+msgstr "Vis frem ditt første bilde"
+
+#: check-language-general.php:150
+msgid "Your uploads will appear here."
+msgstr "Bildene du laster opp, vises her."
+
+#: check-language-general.php:146
+msgid "Not published"
+msgstr "Ikke publisert"
+
+#: check-language.php
+msgid "Delete"
+msgstr "Slett"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Entry actions"
+msgstr "Handlinger for bidrag"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Replace image"
+msgstr "Bytt bilde"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Choose the image to replace."
+msgstr "Velg bildet du vil bytte."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Replace"
+msgstr "Bytt"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Replacing…"
+msgstr "Bytter…"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "This entry will need approval again after replacement."
+msgstr "Dette bidraget må godkjennes på nytt etter at bildet er byttet."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Image replaced."
+msgstr "Bildet er byttet."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Image replacement is not allowed."
+msgstr "Det er ikke tillatt å bytte bilder."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Entries offered for sale cannot be changed here."
+msgstr "Bidrag som er til salgs, kan ikke endres her."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "This entry already has votes. Its images cannot be replaced."
+msgstr "Dette bidraget har allerede stemmer. Bildene kan ikke byttes."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "The time allowed for replacing this image has ended."
+msgstr "Fristen for å bytte dette bildet er utløpt."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "The upload period is closed."
+msgstr "Opplastingsperioden er avsluttet."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "This entry has changed. Reload it and try again."
+msgstr "Dette bidraget er endret. Last det inn på nytt og prøv igjen."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "The image does not meet the gallery upload requirements."
+msgstr "Bildet oppfyller ikke galleriets krav til opplasting."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Delete this entry and all its files?"
+msgstr "Slette dette bidraget og alle filene som tilhører det?"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Share this image"
+msgstr "Del dette bildet"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Take a look at this image"
+msgstr "Se på dette bildet"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Copy link"
+msgstr "Kopier lenke"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "More apps…"
+msgstr "Flere apper…"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Link copied"
+msgstr "Lenke kopiert"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Copy this link:"
+msgstr "Kopier denne lenken:"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Sharing is unavailable. You can copy the link instead."
+msgstr "Deling er ikke tilgjengelig. Du kan kopiere lenken i stedet."
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "File actions"
+msgstr "Filhandlinger"
+
+#: functions/frontend/cg-member-profile.php
+msgid "My profile"
+msgstr "Min profil"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Additional information"
+msgstr "Tilleggsinformasjon"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Display name"
+msgstr "Visningsnavn"
+
+#: functions/frontend/cg-member-profile.php
+msgid "This name is displayed across this website."
+msgstr "Dette navnet vises på hele nettstedet."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Choose profile image"
+msgstr "Velg profilbilde"
+
+#: functions/frontend/cg-member-profile.php
+msgid "JPG, PNG or GIF. Maximum {size} MB."
+msgstr "JPG, PNG eller GIF. Maksimalt {size} MB."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Save profile"
+msgstr "Lagre profil"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Save information"
+msgstr "Lagre informasjon"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Profile saved."
+msgstr "Profilen er lagret."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Information saved."
+msgstr "Informasjonen er lagret."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Please enter a display name."
+msgstr "Skriv inn et visningsnavn."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Please complete the required fields."
+msgstr "Fyll ut de obligatoriske feltene."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Please choose a valid option."
+msgstr "Velg et gyldig alternativ."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Your profile has changed. Close and reopen it before saving."
+msgstr "Profilen din er endret. Lukk den og åpne den igjen før du lagrer."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Discard unsaved profile changes?"
+msgstr "Forkaste ulagrede profilendringer?"
+
+#: functions/frontend/cg-member-profile.php
+msgid "The profile image could not be saved."
+msgstr "Profilbildet kunne ikke lagres."
+
+#: functions/frontend/cg-member-profile.php
+msgid "You cannot edit these profile fields."
+msgstr "Du kan ikke redigere disse profilfeltene."
+
+#: check-language-general.php
+msgid "Share this entry"
+msgstr "Del dette bidraget"
+
+#: check-language-general.php
+msgid "My entries"
+msgstr "Mine bidrag"
+
+#: check-language-general.php
+msgid "All entries"
+msgstr "Alle bidrag"
+
+#: check-language-general.php
+msgid "Your entries. Your gallery."
+msgstr "Dine bidrag. Ditt galleri."
+
+#: check-language-general.php
+msgid "Join and show your own entries."
+msgstr "Bli med og vis frem dine egne bidrag."
+
+#: check-language-general.php
+msgid "Show your first entry"
+msgstr "Vis frem ditt første bidrag"
+
+#: check-language-general.php
+msgid "Take a look at this entry"
+msgstr "Se på dette bidraget"
+
+#: check-language-general.php
+msgid "Gallery view"
+msgstr "Gallerivisning"
+
+#: check-language-general.php
+msgid "Please try again."
+msgstr "Prøv igjen."
+
+#: check-language-general.php
+msgid "The connection failed. Please try again."
+msgstr "Tilkoblingen mislyktes. Prøv igjen."
+
+#: check-language-general.php
+msgid "Please reload the page and try again."
+msgstr "Last inn siden på nytt og prøv igjen."
+
+#: check-language-general.php
+msgid "This gallery is not available."
+msgstr "Dette galleriet er ikke tilgjengelig."
+
+#: check-language-general.php
+msgid "Please allow cookies to sign in."
+msgstr "Tillat informasjonskapsler for å logge inn."
+
+#: check-language-general.php
+msgid "Please sign in."
+msgstr "Logg inn."
+
+#: check-language-general.php
+msgid "Check your email for your code."
+msgstr "Sjekk e-posten din for å finne koden."
+
+#: check-language-general.php
+msgid "Please wait {seconds} seconds before requesting another code."
+msgstr "Vent {seconds} sekunder før du ber om en ny kode."
+
+#: check-language-general.php
+msgid "Loading…"
+msgstr "Laster…"
+
+#: check-language-general.php
+msgid "Saved"
+msgstr "Lagret"
+
+#: check-language-general.php
+msgid "Visible on your public profile"
+msgstr "Synlig på den offentlige profilen din"
+
+#: check-language-general.php
+msgid "View profile"
+msgstr "Vis profil"
+
+#: check-language-general.php
+msgid "View profile of {name}"
+msgstr "Vis profilen til {name}"
+
+#: check-language-general.php
+msgid "Entry owner"
+msgstr "Bidragets eier"
+
+#: check-language-general.php
+msgid "Participants"
+msgstr "Deltakere"
+
+#: check-language-general.php
+msgid "Back to participants"
+msgstr "Tilbake til deltakerne"
+
+#: check-language-general.php
+msgid "Search names and profile information"
+msgstr "Søk i navn og profilinformasjon"
+
+#: check-language-general.php
+msgid "Name A–Z"
+msgstr "Navn A–Z"
+
+#: check-language-general.php
+msgid "Name Z–A"
+msgstr "Navn Z–A"
+
+#: check-language-general.php
+msgid "No participants found."
+msgstr "Ingen deltakere funnet."
+
+#: check-language-general.php
+msgid "No participants with a profile yet. Published entries with a profile will appear here."
+msgstr "Ingen deltakere med profil ennå. Publiserte bidrag med en profil vises her."
+
+#: check-language-general.php
+msgid "This profile is no longer available in this gallery."
+msgstr "Denne profilen er ikke lenger tilgjengelig i dette galleriet."
+
+#: check-language-general.php
+msgid "1 entry"
+msgstr "1 bidrag"
+
+#: check-language-general.php
+#, php-format
+msgid "%s entries"
+msgstr "%s bidrag"
+
+#: check-language-general.php
+msgid "Rating average"
+msgstr "Gjennomsnittlig vurdering"
+
+#: check-language-general.php
+msgid "Rating sum"
+msgstr "Samlet poengsum"
+
+#: check-language-general.php
+msgid "Gallery"
+msgstr "Galleri"
+
+#: check-language-general.php
+msgid "Galleries"
+msgstr "Gallerier"
+
+#: check-language-general.php
+msgid "Entries"
+msgstr "Bidrag"
+
+#: check-language-general.php
+msgid "Discover galleries"
+msgstr "Oppdag gallerier"
+
+#: check-language-general.php
+msgid "Explore the gallery"
+msgstr "Utforsk galleriet"
+
+#: check-language-general.php
+msgid "Explore galleries and their entries."
+msgstr "Utforsk gallerier og bidragene deres."
+
+#: check-language-general.php
+msgid "Explore the entries in this gallery."
+msgstr "Utforsk bidragene i dette galleriet."
+
+#: check-language-general.php
+msgid "This participant in this gallery"
+msgstr "Denne deltakeren i dette galleriet"
+
+#: check-language-general.php
+msgid "Replace file"
+msgstr "Erstatt fil"
+
+#: check-language-general.php
+msgid "Choose the file to replace."
+msgstr "Velg filen du vil erstatte."
+
+#: check-language-general.php
+msgid "Replaced"
+msgstr "Erstattet"
+
+#: check-language-general.php
+msgid "File replaced."
+msgstr "Filen er erstattet."
+
+#: check-language-general.php
+msgid "The preview could not be refreshed."
+msgstr "Forhåndsvisningen kunne ikke oppdateres."
+
+#: check-language-general.php
+msgid "The file does not meet the gallery upload requirements."
+msgstr "Filen oppfyller ikke galleriets krav til opplasting."
+
+#: check-language-general.php
+msgid "The PDF preview could not be created. Please try again."
+msgstr "Forhåndsvisningen av PDF-filen kunne ikke opprettes. Prøv igjen."
+
+#: check-language-general.php
+msgid "Too many replacement attempts. Please try again later."
+msgstr "For mange forsøk på å erstatte filer. Prøv igjen senere."
+
+#: check-language-general.php
+msgid "Your replacement storage limit has been reached. Please contact the gallery administrator."
+msgstr "Du har nådd lagringsgrensen for erstatningsfiler. Kontakt galleriets administrator."
+
+#: functions/frontend/cg-upload-jobs.php
+msgid "Continuing image processing…"
+msgstr "Fortsetter bildebehandlingen…"
+
+#: functions/frontend/cg-upload-jobs.php
+msgid "Check status"
+msgstr "Sjekk status"
+
+#: check-language-general.php
+msgid "Upload completed."
+msgstr "Opplastingen er fullført."
+
+#: check-language-general.php
+msgid "Refresh"
+msgstr "Oppdater"
+
+#: check-language.php
+msgid "Slow down, you are too fast. Please wait a moment before sending another comment."
+msgstr "Vent litt før du sender en ny kommentar."
+
+#: check-language-general.php
+msgid "Your public profile"
+msgstr "Din offentlige profil"
+
+#: check-language-general.php
+msgid "Public profile"
+msgstr "Offentlig profil"
+
+#: check-language-general.php
+msgid "View public profile"
+msgstr "Vis offentlig profil"
+
+
+#: functions/frontend/cg-participants.php check-language-general.php
+msgid "Votes descend"
+msgstr "Stemmer synkende"
+
+#: functions/frontend/cg-participants.php check-language-general.php
+msgid "Votes ascend"
+msgstr "Stemmer stigende"
+
+msgid "Please use a display name instead of an email address."
+msgstr "Bruk et visningsnavn i stedet for en e-postadresse."

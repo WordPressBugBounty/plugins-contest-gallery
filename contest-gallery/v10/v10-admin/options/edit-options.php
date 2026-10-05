@@ -21,8 +21,6 @@ if($isEditEcommerceOnly){
     cg_require_global_settings_access();
 }
 
-$replyMailNote = '<br><span class="cg_note_label">NOTE FOR TESTING:</span> <span class="cg_note_text">mail is send to and "Reply e-mail" can not be the same</span>';
-
 $tablenameOptions = $wpdb->prefix . "contest_gal1ery_options";
 $tablenameGoogleOptions = $wpdb->prefix . "contest_gal1ery_google_options";
 $tablename_options_input = $wpdb->prefix . "contest_gal1ery_options_input";
@@ -1051,15 +1049,6 @@ $get_site_url = get_site_url();
 
 $MailIntervalArray = ['1 Minute (recommended for testing only)'=>'1m','2 Minutes (recommended for testing only)'=>'2m','1 Hour'=>'1h','2 Hours'=>'2h','4 Hours'=>'4h','6 Hours'=>'6h','12 Hours'=>'12h','24 Hours'=>'24h','48 Hours'=>'48h','1 Week'=>'1week','2 Weeks'=>'2weeks','4 Weeks'=>'4weeks'];
 
-// get possible domain mail ending
-$bloginfo_wpurl = get_bloginfo('wpurl');
-$cgYourDomainName = 'your domain name';
-
-if(strpos($bloginfo_wpurl,'www.')!==false){
-    $cgYourDomainName = 'your domain @'.substr($bloginfo_wpurl,strpos($bloginfo_wpurl,'www.')+4,strlen($bloginfo_wpurl));
-}
-// get possible domain mail ending --- END
-$cgDomainErrorText = cgl1_domain_error_test_text();
 
 $deprecatedGalleryHoverDivText = '';
 $deprecatedGalleryHoverDisabledForever = '';

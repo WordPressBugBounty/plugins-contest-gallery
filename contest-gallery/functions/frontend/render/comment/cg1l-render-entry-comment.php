@@ -72,7 +72,7 @@ if(!function_exists('cg1l_render_center_div_reload_comment_div')){
             }else{
                 $avatar = '<div class="cg-center-image-comments-nickname-avatar"></div>';
             }
-            $nameContainer = '<div class="cg-center-image-comments-user-data">
+            $nameContainer = '<div class="cg-center-image-comments-user-data" data-cg-wp-user-id="'.absint($WpUserId).'">
             '.$backgroundImage.'
             '.$avatar.'
             <div class="cg-center-image-comments-nickname-text">'.$name.'</div>

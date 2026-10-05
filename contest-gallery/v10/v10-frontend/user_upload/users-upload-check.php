@@ -31,22 +31,22 @@ echo "</pre>";
 echo "<pre>";
 print_r($_POST);
 echo "</pre>";
-die;
+return;
 echo "<pre>";
 print_r($_FILES);
 echo "</pre>";
 
-die;*/
+return;*/
 
 /*echo "<pre>";
 print_r($_FILES);
-echo "</pre>";die;*/
+echo "</pre>";return;*/
 
 $galeryID = (!empty($_POST['GalleryID']) && !is_array($_POST['GalleryID'])) ? absint($_POST['GalleryID']) : 0;
 $galeryIDuser = $galeryID;
 
 $_POST = cg1l_sanitize_post($_POST);
-$_FILES = cg1l_sanitize_post($_FILES);// since 21.0.1 can be also done
+// Native upload errors and temporary file paths are validated below, never text-sanitized.
 
 if(!empty($_POST['cg_order_item_id']) && !is_array($_POST['cg_order_item_id'])){
 	$OrderItem = absint($_POST['cg_order_item_id']);
@@ -82,7 +82,7 @@ echo "<pre>";
 print_r($_POST);
 echo "</pre>";
 
-die;*/
+return;*/
 
 if(empty($_POST["cg_upload_action"]) OR empty($_FILES["data"])){
     $isManipulated = true;
@@ -100,40 +100,7 @@ if(empty($_POST["cg_upload_action"]) OR empty($_FILES["data"])){
     $tablename_ecommerce_orders_items = $wpdb->prefix . "contest_gal1ery_ecommerce_orders_items";
 
     if(!empty($OrderItem)){
-        $orderItemRow = $wpdb->get_row($wpdb->prepare(
-            "SELECT * FROM $tablename_ecommerce_orders_items WHERE id = %d LIMIT 1",
-            $OrderItem
-        ));
-        $orderRow = false;
-        $fallbackEcommerceEntry = false;
-
-        if(!empty($orderItemRow) && !empty($orderItemRow->ParentOrder)){
-            $orderRow = $wpdb->get_row($wpdb->prepare(
-                "SELECT * FROM $tablename_ecommerce_orders WHERE id = %d LIMIT 1",
-                absint($orderItemRow->ParentOrder)
-            ));
-            $fallbackEcommerceEntry = $wpdb->get_row($wpdb->prepare(
-                "SELECT UploadGallery, MaxUploads
-                FROM $tablename_ecommerce_entries
-                WHERE GalleryID = %d AND pid = %d AND IsUpload = 1
-                ORDER BY id DESC
-                LIMIT 1",
-                absint($orderItemRow->GalleryID),
-                absint($orderItemRow->pid)
-            ));
-        }
-
-        $orderCookie = (!empty($_COOKIE['cg_order']) && !is_array($_COOKIE['cg_order'])) ? sanitize_text_field(wp_unslash($_COOKIE['cg_order'])) : '';
-        $currentUserCanAccessOrder = (!empty($orderRow)) ? cg_current_user_can_access_ecommerce_order($orderRow) : false;
-        $cgOrderUploadAuthorization = cg1l_validate_order_upload_context(
-            $galeryID,
-            $orderItemRow,
-            $orderRow,
-            $fallbackEcommerceEntry,
-            $providedUploadHash,
-            $orderCookie,
-            $currentUserCanAccessOrder
-        );
+        $cgOrderUploadAuthorization = cg1l_get_order_upload_authorization($galeryID,$OrderItem,$providedUploadHash);
 
         if(empty($cgOrderUploadAuthorization['authorized'])){
             cg1l_reject_frontend_upload($galeryIDuser,'Upload authorization failed. Please reload the order page and try again.');
@@ -145,6 +112,11 @@ if(empty($_POST["cg_upload_action"]) OR empty($_FILES["data"])){
     }
 
     $wp_upload_dir = wp_upload_dir();
+    $cgCaptchaResult = cg_upload_job_phase('finalize') ? true : cg_captcha_validate('upload',$galeryID,$_POST);
+    if(is_wp_error($cgCaptchaResult)){
+        cg1l_reject_frontend_upload($galeryIDuser,$cgCaptchaResult->get_error_message());
+    }
+
     $optionsPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/'.$galeryID.'-options.json';
     if(!file_exists($optionsPath)){
         cg1l_reject_frontend_upload($galeryIDuser,'Upload form configuration could not be found. Please reload the page and try again.');
@@ -203,6 +175,11 @@ if(empty($_POST["cg_upload_action"]) OR empty($_FILES["data"])){
         $selectSQL1->ActivateBulkUpload = 0;
     }
 
+    if(cg_upload_job_phase('finalize')){
+        $cgAssemblyJob = cg_upload_job_context();
+        if((bool)$proOptions->AdditionalFiles !== (bool)$cgAssemblyJob['additional']){throw new Exception('The gallery upload settings have changed. Please reload the page and try again.');}
+    }
+
     if(!$isOnlyContactEntry){
         if(!empty($proOptions->AdditionalFiles)){
             if(!empty($selectSQL1->ActivateBulkUpload)){
@@ -217,13 +194,17 @@ if(empty($_POST["cg_upload_action"]) OR empty($_FILES["data"])){
                         cgJsData[gid].vars.upload.failMessage = <?php echo json_encode("Please don't manipulate upload additional files quantity.");?>;
                     </script>
                     <?php
-                    echo "Please don't manipulate upload additional files quantity.";die;
+                    echo "Please don't manipulate upload additional files quantity.";return;
                 }
-                $_FILES = cg1l_sanitize_files($_FILES, 'data',0,$galeryIDuser,$galeryID,true);
+
             }
-        }else{
-            $_FILES = cg1l_sanitize_files($_FILES, 'data',0,$galeryIDuser,$galeryID,true);
         }
+    }
+
+    if(!$isOnlyContactEntry){
+        $validatedFiles = cg_upload_validate_files(isset($_FILES['data']) ? $_FILES['data'] : null,$galeryID,$options,cg_upload_job_phase('finalize'));
+        if(is_wp_error($validatedFiles)){cg1l_reject_frontend_upload($galeryIDuser,$validatedFiles->get_error_message());}
+        $_FILES['data'] = $validatedFiles;
     }
 
     if(!empty($OrderItem)){
@@ -259,7 +240,7 @@ if(empty($_POST["cg_upload_action"]) OR empty($_FILES["data"])){
 
         if(
             empty($cgOrderUploadAuthorization['is_unlimited']) &&
-            ($orderUploadedEntries + $orderUploadRequestedEntries) > absint($cgOrderUploadAuthorization['max_uploads'])
+            ($orderUploadedEntries + $orderUploadRequestedEntries + cg_upload_job_pending_entries($galeryID,$OrderItem)) > absint($cgOrderUploadAuthorization['max_uploads'])
         ){
             cg1l_reject_frontend_upload($galeryIDuser,'The maximum number of uploads for this order has been reached.');
         }
@@ -321,7 +302,7 @@ if(empty($_POST["cg_upload_action"]) OR empty($_FILES["data"])){
                     </script>
 
                     <?php
-                    die;
+                    return;
                 }
 
             }
@@ -348,7 +329,7 @@ if(empty($_POST["cg_upload_action"]) OR empty($_FILES["data"])){
                 </script>
                 <?php
                 echo 'IP could not be identified, code 504. Please contact administrator.';
-                die;
+                return;
             }
             if(!empty($userIP)){
                 $regUserUploadsCount = $wpdb->get_var("SELECT COUNT(*) FROM $tablename1 WHERE IP = '$userIP' and GalleryID = '$galeryID'");
@@ -363,6 +344,7 @@ if(empty($_POST["cg_upload_action"]) OR empty($_FILES["data"])){
             }else{
                 $uploadedFilesCount = count($_FILES["data"]["name"]);
             }
+            $regUserUploadsCount += cg_upload_job_pending_entries($galeryID,0,$RegUserUploadOnly==1 ? $WpUserId : 0,$RegUserUploadOnly==2 ? $CookieId : '',$RegUserUploadOnly==3 ? $userIP : '');
             $totalUserUploads = $regUserUploadsCount+$uploadedFilesCount;
             if($totalUserUploads>$RegUserMaxUpload){
                 $isManipulated = true;
@@ -488,7 +470,7 @@ if(!$isManipulated){
 
         <?php
 
-        echo "Please don't manipulate upload quantity.";die;
+        echo "Please don't manipulate upload quantity.";return;
     }
 
     if($ActivateBulkUpload==0 && empty($proOptions->AdditionalFiles) && $uploadQuantity > 1){
@@ -505,7 +487,7 @@ if(!$isManipulated){
 
         <?php
 
-        echo "Please don't manipulate upload quantity. Bulk upload deactivated.";die;
+        echo "Please don't manipulate upload quantity. Bulk upload deactivated.";return;
 
     }
 
@@ -566,7 +548,7 @@ if(!$isManipulated){
 
                     <?php
 
-                    echo "Please don't manipulate the form. Field_Type: $fieldType , required manipulated";die;
+                    echo "Please don't manipulate the form. Field_Type: $fieldType , required manipulated";return;
 
                 }
             }
@@ -594,7 +576,7 @@ if(!$isManipulated){
                     <?php
 
 
-                    echo "Please do not manipulate the form. Field_Type: $fieldType , minimum characters manipulated";die;
+                    echo "Please do not manipulate the form. Field_Type: $fieldType , minimum characters manipulated";return;
                 }
             }
 
@@ -614,7 +596,7 @@ if(!$isManipulated){
                     <?php
 
 
-                    echo "Please do not manipulate the form. Field_Type: $fieldType , maximum characters manipulated";die;
+                    echo "Please do not manipulate the form. Field_Type: $fieldType , maximum characters manipulated";return;
                 }
             }
 
@@ -637,8 +619,9 @@ if(!$isManipulated){
 
     // manipulation fields check of fields --- END
 
-    $cgPaidActionUploadReservation = null;
-    if(empty($OrderItem) && function_exists('cg_paid_actions_maybe_reserve')){
+    $cgUploadJobContext = cg_upload_job_context();
+    $cgPaidActionUploadReservation = cg_upload_job_phase('finalize') && !empty($cgUploadJobContext['reservation']) ? $cgUploadJobContext['reservation'] : null;
+    if(empty($OrderItem) && function_exists('cg_paid_actions_maybe_reserve') && !cg_upload_job_phase('finalize')){
         $cgPaidActionUploadQuantity = (!empty($proOptions->AdditionalFiles)) ? 1 : max(1,absint($uploadQuantity));
         $cgPaidActionUploadReservation = cg_paid_actions_maybe_reserve(
             $galeryID,
@@ -661,6 +644,11 @@ if(!$isManipulated){
         if(is_array($cgPaidActionUploadReservation)){
             $GLOBALS['cgPaidActionUploadReservation'] = $cgPaidActionUploadReservation;
         }
+    }
+
+    if(cg_upload_job_phase('receive')){
+        cg_upload_job_accept_gallery(get_defined_vars());
+        return;
     }
 
     $AdditionalFilesArray = [];
@@ -757,7 +745,7 @@ if(!$isManipulated){
                     if(empty($dateityp) || ($dateityp[2] != 1 && $dateityp[2] != 2 && $dateityp[2] != 3 && $dateityp[2] != 17)) {
 
                         // File size is output as 0 if the uploaded file is larger than the server allows. File type and other infos are then also missing.
-                        //   echo "Don't manipulate the upload: wrong file type or file size"; die;
+                        //   echo "Don't manipulate the upload: wrong file type or file size"; return;
 
                         ?>
 
@@ -773,7 +761,7 @@ if(!$isManipulated){
 
                         echo "Don't manipulate the upload: wrong file type";
 
-                        die;
+                        return;
 
                     }
 
@@ -832,10 +820,10 @@ if(!$isManipulated){
                        // 'post_content' => "Contest Gallery ID-$galeryID $time" // removed, 26.0.6
                     );
 
-                    $attach_id = media_handle_upload($file,0,$post_data);
+                    $attach_id = cg_upload_job_phase('finalize') ? cg_upload_job_gallery_attachment($key) : media_handle_upload($file,0,$post_data);
 
                     if ( is_wp_error( $attach_id ) ) {
-                        //    echo "There was an error uploading the image. Please contact site administrator."; die;
+                        //    echo "There was an error uploading the image. Please contact site administrator."; return;
 
                         ?>
 
@@ -852,7 +840,7 @@ if(!$isManipulated){
 
                         echo esc_html( $attach_id->get_error_message());
 
-                        die;
+                        return;
 
                     } else {
                         //echo "The image was uploaded successfully!";
@@ -898,7 +886,7 @@ if(!$isManipulated){
                 // Necessary: is processed like this in convert-several-pics. Must not contain special characters!
                 //$search = array(" ", "!", '"', "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "/", ":", ";", "=", "?", "@", "[","]","�"); // old code, only special signs example
                 //$post_title = str_replace($search,"_",$post_title);
-                // var_dump($post_title); die;
+                // var_dump($post_title); return;
                 $dateiname = $post_title;
 
                 $doNotProcess=0;
@@ -919,8 +907,11 @@ if(!$isManipulated){
                     elseif($post_type=="application/vnd.ms-excel"){$post_type="xls";$imageType="xls";}
                     elseif($post_type=="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){$post_type="xlsx";$imageType="xlsx";}
                     elseif($post_type=="text/csv"){$post_type="csv";$imageType="csv";}
-                    elseif($post_type=="audio/mpeg" && $type=="audio/mpeg"){$post_type="mp3";$imageType="mp3";}
-                    elseif($post_type=="audio/mpeg" && $type=="audio/x-m4a"){$post_type="m4a";$imageType="m4a";}
+                    elseif($post_type=="audio/mpeg" || $post_type=="audio/x-m4a"){
+                        // Use the WordPress-owned file, not the browser MIME, to distinguish M4A.
+                        $audioExtension = strtolower(pathinfo(get_attached_file($wp_image_id),PATHINFO_EXTENSION));
+                        $post_type = $audioExtension==='m4a' ? 'm4a' : 'mp3';$imageType=$post_type;
+                    }
                     elseif($post_type=="audio/ogg"){$post_type="ogg";$imageType="ogg";}
                     elseif($post_type=="audio/wav"){$post_type="wav";$imageType="wav";}
                     elseif($post_type=="video/mp4"){$post_type="mp4";$imageType="mp4";}
@@ -932,7 +923,7 @@ if(!$isManipulated){
                     //elseif($post_type=="video/x-ms-wmv"){$post_type="wmv";$imageType="wmv";}
                     else{
 
-                        //    echo "There was an error uploading the image. Please contact site administrator."; die;
+                        //    echo "There was an error uploading the image. Please contact site administrator."; return;
 
                         ?>
 
@@ -951,7 +942,7 @@ if(!$isManipulated){
                         echo 'The file type '.$post_type.' is not supported. Please contact support@contest-gallery.com 
                             and send the example file you tried to upload.';
 
-                        die;
+                        return;
 
                     }
                 }
@@ -1071,7 +1062,9 @@ if(!$isManipulated){
                 ) );
 
                 $nextId = $wpdb->insert_id;
+                if(cg_upload_job_phase('finalize') && !$nextId){throw new Exception('The gallery entry could not be saved.');}
                 $cgCreatedEntryIds[] = $nextId;
+                cg_upload_job_record_entry($nextId);
 
             //    var_dump('$fileType');
                 //     var_dump($fileType);
@@ -1459,7 +1452,7 @@ if(!$isManipulated){
                                     if($cgMailChecked==false){
                                         $ConfMailId = 0;
 
-                                        // Update of the main table with WpUserId further down
+                                        // Preserve contact/confirmation lookup without assigning an entry owner.
                                         $checkWpMail = $wpdb->get_row($wpdb->prepare("SELECT ID, user_email FROM $wpUsers WHERE user_email = %s",$sendUserMail));
 
                                         if(empty($checkWpMail)){
@@ -1486,17 +1479,7 @@ if(!$isManipulated){
                                     ) );
                                     $inputContents[$wpdb->insert_id] = $content;
 
-                                    if(!empty($checkWpMail)){
-
-                                        $wpdb->update(
-                                            "$tablename1",
-                                            array('WpUserId' => $checkWpMail->ID),
-                                            array('id' => $nextId),
-                                            array('%d'),
-                                            array('%d')
-                                        );
-
-                                    }
+                                    // Contact email never proves ownership. WpUserId is set from the login session only.
 
                                 }
 
@@ -1599,7 +1582,7 @@ if(!$isManipulated){
 
                     }
                 }catch(Exception $e){
-                    print_r('form_input upload error. Please contact administrator.');die;
+                    print_r('form_input upload error. Please contact administrator.');return;
                     echo 'Exception abgefangen: ',  $e->getMessage(), "\n";
                 }
 
@@ -1999,7 +1982,8 @@ if(!$isManipulated){
         }
 
         if(is_array($cgPaidActionUploadReservation)){
-            cg_paid_actions_settle_reservation($cgPaidActionUploadReservation,count($cgCreatedEntryIds),$cgCreatedEntryIds);
+            $cgUploadSettled = cg_paid_actions_settle_reservation($cgPaidActionUploadReservation,count($cgCreatedEntryIds),$cgCreatedEntryIds);
+            if(cg_upload_job_phase('finalize') && !$cgUploadSettled){throw new Exception('The upload credits could not be saved.');}
             unset($GLOBALS['cgPaidActionUploadReservation']);
         }
 
@@ -2022,6 +2006,14 @@ if(!$isManipulated){
         if (filter_var($userMail, FILTER_VALIDATE_EMAIL)) {
             include(plugin_dir_path(__FILE__).'mail_confirm.php');
         }
+    }
+
+    if(cg_upload_job_phase('finalize')){
+        $cgUploadJobContext = cg_upload_job_context();
+        $cgUploadJobContext['entries'] = $collectImageIDs;
+        $cgUploadJobContext['reservation'] = null;
+        cg_upload_job_save($cgUploadJobContext);
+        $GLOBALS['cgUploadJobFinalized'] = true;
     }
 
     // Forward confirmation text after upload
@@ -2051,7 +2043,7 @@ if(!$isManipulated){
 
             if($Forward==1){
                 // will be processed in submit-form.js
-                exit();
+                return;
 
             }
 
@@ -2069,6 +2061,17 @@ if(!$isManipulated){
 
         if(!empty($_POST['isFromUploadSale'])){
             $isFromUploadSale = true;
+        }
+
+        // Keep owner navigation available for uploads awaiting activation as well.
+        if(!$isFromUploadSale && !empty($cgCreatedEntryIds)){
+            ?>
+            <script data-cg-processing="true">
+                if(cgJsClass.gallery.member && cgJsClass.gallery.member.rememberUploadedEntries){
+                    cgJsClass.gallery.member.rememberUploadedEntries(<?php echo json_encode($galeryIDuser);?>, <?php echo json_encode(array_values(array_map('intval',$cgCreatedEntryIds)));?>);
+                }
+            </script>
+            <?php
         }
 
         if($ActivateUpload==1){
@@ -2132,10 +2135,10 @@ if(!$isManipulated){
 
         // confirmation message will be provided from submit-form.js
         if(!empty($_POST['cg_is_in_gallery_form'])){
-            exit('cg_is_in_gallery_form exit');
+            return;
         }else{
             if($Forward!=1){
-                exit('exit normal form if not forward');
+                return;
             }
         }
 
@@ -2157,7 +2160,7 @@ else{
 
     </script>
     <?php
-    die;
+    return;
 
 }
 

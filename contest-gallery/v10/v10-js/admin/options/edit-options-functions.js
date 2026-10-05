@@ -12,35 +12,7 @@ cgJsClassAdmin.options.vars = {
     lastScrollTop: null,
     clickTime: null,
     currentCgShortcodeMultiplePicsActiveClass: 'cg_gallery',
-    focusedInputField: 'cg_gallery',
-    cg_view_options_row_open_file_image_style:  "<div class='cg_view_options_rows_container'>\n" +
-        '<p class="cg_view_options_rows_container_title">Open file image style</p>\n'+
-        "<div class='cg_view_options_row'>\n" +
-        "                <div class='cg_view_option cg_view_option_full_width  cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px' >\n" +
-        "                    <div class='cg_view_option_title'>\n" +
-        "                        <p><span class=\"cg_view_option_title_note\">Select how an entry should be opened on click in a gallery</span></p>\n" +
-        "                    </div>\n" +
-        "                    <div class='cg_view_option_radio_multiple'>\n" +
-        "                        <div class='cg_view_option_radio_multiple_container BlogLookFullWindowContainer' id='BlogLookFullWindowContainerMessage'>\n" +
-        "                            <div class='cg_view_option_radio_multiple_title'>\n" +
-        "                                Full window blog view\n" +
-        "                            </div>\n" +
-        "                            <div class='cg_view_option_radio_multiple_input'>\n" +
-        "                                <input type=\"radio\" name=\"BlogLookFullWindow\" class=\"BlogLookFullWindow cg_view_option_radio_multiple_input_field\"  />\n" +
-        "                            </div>\n" +
-        "                        </div>\n" +
-        "                        <div class='cg_view_option_radio_multiple_container ForwardToWpPageEntryContainer' id='ForwardToWpPageEntryContainerMessage'>\n" +
-        "                            <div class='cg_view_option_radio_multiple_title'>\n" +
-        "                                Forward to entry landing page\n" +
-        "                            </div>\n" +
-        "                            <div class='cg_view_option_radio_multiple_input'>\n" +
-        "                                <input type=\"radio\" name=\"ForwardToWpPageEntry\" class=\"ForwardToWpPageEntry cg_view_option_radio_multiple_input_field\"  />\n" +
-        "                            </div>\n" +
-        "                        </div>\n" +
-        "                </div>\n" +
-        "            </div>\n" +
-        "            </div>\n" +
-        "        </div>"
+    focusedInputField: 'cg_gallery'
 };
 
 cgJsClassAdmin.options.functions = {
@@ -139,12 +111,16 @@ cgJsClassAdmin.options.functions = {
         cgJsClassAdmin.index.functions.setEditorsLazy($,$response.find('#cg_main_options_content .cg-wp-editor-template'));
 
         cgJsClassAdmin.options.functions.initOptionsClickEvents();
+        cgJsClassAdmin.mailDelivery.init($("#cg_main_options_content"));
 
-        var goToArray = ['cgTranslationOther','cgTranslationShippingPossible','cgTranslationLanguageEmail','cgTranslationLanguageEmail','cgEditGalleryNameRow','cgTranslationLanguagePassword','l_ThankVote','l_BackToGallery','l_BackToGalleries','TranslationsCommentFormArea','l_AllVotesUsed','YourCommentWillBeReviewedRow','cgContactFormShortcodeConfigurationArea','l_GalleryDateFormat','cgOpenAiKeyRowColumn'];
+        var goToArray = ['cgTranslationOther','cgTranslationShippingPossible','cgTranslationLanguageEmail','cgTranslationLanguageEmail','cgEditGalleryNameRow','cgTranslationLanguagePassword','l_ThankVote','l_BackToGallery','l_BackToGalleries','TranslationsCommentFormArea','l_AllVotesUsed','YourCommentWillBeReviewedRow','cgContactFormShortcodeConfigurationArea','l_GalleryDateFormat','cgOpenAiKeyRowColumn','cgRegistrationMailOptions'];
         debugger
         $(goToArray).each(function (index,value){
             if(location.hash.indexOf(value) >= 0 || location.search.indexOf(value) >= 0){
-                cgJsClassAdmin.index.functions.correctBrowserHistoryState();
+                // Keep this settings link reloadable at the same gallery and mail section.
+                if(value !== 'cgRegistrationMailOptions'){
+                    cgJsClassAdmin.index.functions.correctBrowserHistoryState();
+                }
                 var $cgGoTo = $('#'+value);
                 if($cgGoTo.length){
                     cgJsClassAdmin.index.functions.cgGoTo($cgGoTo);
@@ -488,10 +464,114 @@ cgJsClassAdmin.options.functions = {
             cgJsClassAdmin.options.functions.setCurrencyShippingFieldOnLoad();
         }
 
-        cgJsClassAdmin.options.functions.cgDomainErrorInputsCheck($);
         cgJsClassAdmin.options.functions.cgCenterCheckboxRadioContainerContent($);
+        cgJsClassAdmin.options.functions.syncMemberProfileOptions();
+        cgJsClassAdmin.options.functions.syncPageHeaderOptions();
         cgJsClassAdmin.options.search.init();
 
+    },
+    syncPageHeaderOptions: function () {
+        var $ = jQuery;
+        $('.cg_page_header_options').each(function () {
+            var $group = $(this), enabled = $group.find('.cg_page_header_toggle').prop('checked');
+            // Keep text values in the form, including edits made before switching off.
+            $group.find('.cg_page_header_texts').attr('inert', enabled ? null : '').attr('aria-disabled', enabled ? null : 'true')
+                .find('.cg_view_option').toggleClass('cg_disabled', !enabled);
+        });
+    },
+    syncMemberProfileOptions: function () {
+        var $ = jQuery;
+        $.each({'cg_gallery':'#MemberArea','cg_gallery_no_voting':'#MemberAreaNoVoting','cg_gallery_user':'#MemberAreaUser'}, function (shortcode, selector) {
+            var $master = $(selector), enabled = $master.prop('checked') && !$master.is(':disabled');
+            if (shortcode === 'cg_gallery') {
+                // Editing follows the switch above this group. Saved rules remain gallery-wide.
+                $master.closest('.cg_member_options_group').find('.cg_member_replace_options')
+                    .attr('inert', enabled ? null : '').attr('aria-disabled', enabled ? null : 'true')
+                    .find('.cg_view_option').toggleClass('cg_disabled', !enabled);
+            }
+            var $views = $('.cg_short_code_multiple_pics_configuration_' + shortcode + '_container, .cg_short_code_single_pic_configuration_' + shortcode + '_container');
+            $views.find('input.ShowProfileGallery, input.ShowNickname, input.ShowProfileImage, #ShowNickname, #ShowProfileImage').each(function () {
+                var $option = $(this).closest('.cg_view_option');
+                if (enabled && !$option.hasClass('cg-member-profile-managed')) {
+                    $option.data('cg-member-was-disabled', $option.hasClass('cg_disabled'));
+                }
+                if (!enabled && $option.hasClass('cg-member-profile-managed')) {
+                    $option.toggleClass('cg_disabled', !!$option.data('cg-member-was-disabled'));
+                }
+                $option.toggleClass('cg-member-profile-managed', !!enabled).attr('inert', enabled ? '' : null).attr('aria-disabled', enabled ? 'true' : null);
+                if (enabled) $option.addClass('cg_disabled');
+                var $note = $option.find('.cg-member-profile-note');
+                if (!$note.length) $note = $('<span class="cg_view_option_title_note cg-member-profile-note">').text('Enabled through Member profile. Your individual setting is kept.').appendTo($option.find('.cg_view_option_title p'));
+                $note.toggle(!!enabled);
+            });
+        });
+    },
+    openMemberUploadChoice: function ($checkbox) {
+        var $ = jQuery, $modal = $('#cgMemberUploadChoice');
+        if (!$checkbox.is('#MemberArea, #MemberAreaNoVoting') || $checkbox.is(':disabled') || $('#CheckLoginUpload').prop('checked') || !$modal.length) return false;
+        // Wait for an explicit choice before activating the requested view.
+        $checkbox.prop('checked', false);
+        $checkbox.closest('.cg_view_option_checkbox').removeClass('cg_view_option_checked').addClass('cg_view_option_unchecked');
+        $checkbox.trigger('change');
+        $modal.data('member-checkbox', $checkbox);
+        cgJsClassAdmin.gallery.functions.showModal('#cgMemberUploadChoice');
+        $('body').addClass('cg_member_upload_choice_open');
+        $modal.find('[data-cg-upload-login="1"]').trigger('focus');
+        return true;
+    },
+    closeMemberUploadChoice: function (requireLogin) {
+        var $ = jQuery, $modal = $('#cgMemberUploadChoice'), $checkbox = $modal.data('member-checkbox');
+        if (!$checkbox) return;
+        $modal.removeData('member-checkbox');
+        if (typeof requireLogin === 'boolean' && $.contains(document.documentElement, $checkbox[0]) && !$checkbox.is(':disabled')) {
+            if (requireLogin) {
+                var $login = $checkbox.closest('form').find('#CheckLoginUpload');
+                cgJsClassAdmin.options.functions.cg_user_recognising_method_upload($, $login);
+                $login.closest('.cg_view_option_radio').removeClass('cg_view_option_unchecked').addClass('cg_view_option_checked');
+                $login.trigger('change');
+            }
+            $checkbox.prop('checked', true);
+            $checkbox.closest('.cg_view_option_checkbox').removeClass('cg_view_option_unchecked').addClass('cg_view_option_checked');
+            // The optional guest-upload choice is intentional. Do not reopen the prompt.
+            $modal.data('applying-choice', true);
+            $checkbox.trigger('change');
+            $modal.removeData('applying-choice');
+        }
+        cgJsClassAdmin.gallery.functions.hideCgBackendBackgroundDropAndContainer();
+        $('body').removeClass('cg_member_upload_choice_open cg_overflow_hidden');
+        $checkbox.trigger('focus');
+    },
+    openViewChoice: function ($trigger) {
+        var $ = jQuery, $modal = $('#cgViewChoice'), $view = $trigger.closest('.cg_view');
+        if (!$modal.length || !$view.length) return;
+        var current = $view.hasClass('cg_FullSizeImageOutGallery_checked') ? 'FullSizeImageOutGallery' : 'OnlyGalleryView';
+        $modal.find('[data-cg-entry-view]').each(function () {
+            var choice = $(this).attr('data-cg-entry-view');
+            $(this).toggleClass('cg_hide', choice === current || (choice === 'ForwardToWpPageEntry' && parseInt($('#cgGalleryDbVersion').val(), 10) < 21));
+        });
+        $modal.data('view-trigger', $trigger);
+        cgJsClassAdmin.gallery.functions.showModal('#cgViewChoice');
+        $('body').addClass('cg_view_choice_open');
+        $modal.find('[data-cg-entry-view]:visible').first().trigger('focus');
+    },
+    closeViewChoice: function (choice) {
+        var $ = jQuery, $modal = $('#cgViewChoice'), $trigger = $modal.data('view-trigger');
+        if (!$trigger) return;
+        $modal.removeData('view-trigger');
+        cgJsClassAdmin.gallery.functions.hideCgBackendBackgroundDropAndContainer();
+        $('body').removeClass('cg_view_choice_open cg_overflow_hidden');
+        if (!$.contains(document.documentElement, $trigger[0])) return;
+        var $view = $trigger.closest('.cg_view'), $focus = $trigger;
+        if ($.inArray(choice, ['BlogLookFullWindow', 'ForwardToWpPageEntry', 'FullSizeImageOutGallery', 'OnlyGalleryView']) !== -1 && $modal.find('[data-cg-entry-view="' + choice + '"]').not('.cg_hide').length) {
+            var $target = $view.find('.' + choice + 'Container').first();
+            // Use the existing option handlers and their dependent controls in the originating view.
+            $target.trigger('click');
+            cgJsClassAdmin.options.functions['cg_' + choice](true, $, $target.find('.' + choice + ':not(.cg_shortcode_checkbox_clone)'));
+            $view.find('.FullSizeImageOutGallery, .OnlyGalleryView').not('.' + choice).prop('checked', false)
+                .closest('.cg_view_option_radio').removeClass('cg_view_option_checked').addClass('cg_view_option_unchecked');
+            $focus = $target;
+        }
+        $focus.attr('tabindex', '-1').trigger('focus');
     },
     cgViewOptionCheck: function (element,e){
         var $ = jQuery;
@@ -514,6 +594,8 @@ cgJsClassAdmin.options.functions = {
         if(!$(element).hasClass('cg_view_option') && !$(element).closest('.cg_view_option').length){
             return;
         }
+
+        if($element.hasClass('cg-member-profile-managed')){return;}
 
         if($element.hasClass('cg_key_upload_option')){
             return;
@@ -581,6 +663,11 @@ cgJsClassAdmin.options.functions = {
         if($element.find('.cg_view_option_checkbox').length){
             var $checkboxInput = $element.find('.cg_view_option_checkbox input[type="checkbox"]');
             var isDirectCheckboxClick = $(e.target).is('input[type="checkbox"]') && $(e.target).closest('.cg_view_option_checkbox').length;
+            var willBeChecked = isDirectCheckboxClick ? $checkboxInput.prop('checked') : !$checkboxInput.prop('checked');
+            if (willBeChecked && cgJsClassAdmin.options.functions.openMemberUploadChoice($checkboxInput)) {
+                e.preventDefault();
+                return;
+            }
             if(!isDirectCheckboxClick){
                 $checkboxInput.prop('checked',!$checkboxInput.prop('checked'));
             }
@@ -595,6 +682,7 @@ cgJsClassAdmin.options.functions = {
                 $element.find('.cg_view_option_checkbox').removeClass('cg_view_option_checked');
             }
             cgJsClassAdmin.options.functions.cgShortcodeCheckboxProcessing($element);
+            cgJsClassAdmin.options.functions.syncMemberProfileOptions();
             return;
         }
 
@@ -2386,21 +2474,6 @@ cgJsClassAdmin.options.functions = {
         }else{
             $cg_view.find('.cg_stripe_api .cg_view_option').addClass('cg_disabled');
         }
-    },
-    cgDomainErrorMethod: function ($el){
-        var ownDomain = window.location.hostname.replace(/^www\./, '');
-        var val = $el.val();
-        var $cg_view_options_row = $el.closest('.cg_view_options_row');
-        if (val.indexOf(ownDomain) !== -1) {
-            $cg_view_options_row.find('.cg_domain_error_test_text').removeClass('cg_hide').find('.cg_domain_error_url').text(val);
-        } else {
-            $cg_view_options_row.find('.cg_domain_error_test_text').addClass('cg_hide');
-        }
-    },
-    cgDomainErrorInputsCheck: function ($){
-        $('.cg_domain_error_input').each(function (){
-            cgJsClassAdmin.options.functions.cgDomainErrorMethod($(this));
-        });
     },
     cgCenterCheckboxRadioContainerContent: function ($){
         $('.cg_view_option_100_percent .cg_view_option_checkbox').each(function (){

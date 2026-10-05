@@ -398,7 +398,7 @@ echo <<<HEREDOC
             <input type="checkbox" $FacebookChecked class="cg_share_button" value="facebook">
         </div>
     </div>
-    <div class="cg_view_option  $cgProFalse cg-pro-false-small  cg_view_option_20_percent cg_border_top_bottom_none cg_border_left_none cg_border_right_none cg_share_button_option">
+    <div class="cg_view_option   cg_view_option_20_percent cg_border_top_bottom_none cg_border_left_none cg_border_right_none cg_share_button_option">
         <div class="cg_view_option_title">
             <p>WhatsApp</p>
         </div>
@@ -734,7 +734,7 @@ HEREDOC;
 
 echo <<<HEREDOC
             <div class='cg_view_options_row'>
-                <div class='cg_view_option $cgProFalse cg_view_option_100_percent  ShowNicknameContainer $cgProFalse'>
+                <div class='cg_view_option  cg_view_option_100_percent  ShowNicknameContainer '>
                     <div class='cg_view_option_title '>
                         <p>Show "Nickname" who added entry<br><span class="cg_view_option_title_note">If a registered user uploaded a file</span></p>
                     </div>
@@ -761,9 +761,9 @@ if(!isset($jsonOptions[$GalleryID.'-ec']['pro']['ShowProfileImage'])){
 
 echo <<<HEREDOC
             <div class='cg_view_options_row'>
-                <div class='cg_view_option $cgProFalse cg_view_option_100_percent cg_border_top_none  ShowProfileImageContainer $cgProFalse$beforeSinceV14Disabled'>
+                <div class='cg_view_option  cg_view_option_100_percent cg_border_top_none  ShowProfileImageContainer '>
                     <div class='cg_view_option_title '>
-                        <p>Show "Profile image" who added entry<br><span class="cg_view_option_title_note">If a registered user uploaded a file<br>"Profile image" form field has to be added in "Edit registration form"$beforeSinceV14Explanation</span></p>
+                        <p>Show "Profile image" who added entry<br><span class="cg_view_option_title_note">If a registered user uploaded a file<br>Users can choose a profile image in their profile.$beforeSinceV14Explanation</span></p>
                     </div>
                     <div class='cg_view_option_checkbox '>
                         <input type="checkbox" name="multiple-pics[cg_gallery_ecommerce][pro][ShowProfileImage]" checked="{$jsonOptions[$GalleryID.'-ec']['pro']['ShowProfileImage']}" class="cg_shortcode_checkbox ShowProfileImage">

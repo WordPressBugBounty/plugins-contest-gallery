@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__.'/../cg-entry-page-urls.php';
 
 add_action('cg_json_upload_form_info_data_files_new','cg_json_upload_form_info_data_files_new');
 if(!function_exists('cg_json_upload_form_info_data_files_new')){
@@ -83,221 +84,23 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 				$entries = $wpdb->get_results("SELECT * FROM $tablename_entries WHERE GalleryID = $GalleryID ORDER BY pid ASC");
 			}
 
-        $Version = intval($options->Version);
-
-	    if($Version>=22 && $IsForWpPageTitleInputId && !empty($isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized)  && empty($IsForWpPageTitleInputDeleted)){
-
-				// var_dump('change 1');
-				if(!empty($pidsArray)){
-					$pidsPlaceholders = implode(',', array_fill(0, count($pidsArray), '%d'));
-					$galleryEntries = $wpdb->get_results($wpdb->prepare("SELECT * FROM $tablename WHERE GalleryID = %d AND id IN ($pidsPlaceholders) ORDER BY id ASC",array_merge(array($GalleryID),$pidsArray)));
-				}else{
-					$galleryEntries = $wpdb->get_results("SELECT * FROM $tablename WHERE GalleryID = $GalleryID ORDER BY id ASC");
-				}
-
-			global $cg_post_names_for_a_title;
-			$cg_post_names_for_a_title = [];
-
-			global $cg_post_names_for_a_title_numbers;
-			$cg_post_names_for_a_title_numbers = [];
-
-			global $cg_processed_post_titles;
-			$cg_processed_post_titles = [];
-
-			$galleryEntriesProcessed = [];
-
-			// creation order explained
-			// if added via backend then post_title set so or so
-			// if input field added that slug with content then content will be set
-			// if content deleted then post_title will be set again
-			// if field deleted that slug then content will be set everywhere again
-			foreach ($entries as $entry){
-				// var_dump('$entry');
-				// var_dump($entry);
-				// echo "<br>";
-				if($entry->f_input_id==$IsForWpPageTitleInputId && !empty($entry->Short_Text)){
-					$field_content = $entry->Short_Text;
-					// example: $field_content = '____------e/$%//\\\'"$%&/-.,;rr_r_____f----f.l-----a___la___----';
-
-					$field_content = cg_pre_process_name_for_url_name($field_content);
-					$field_content = cg_check_first_char_for_url_name_after_pre_processing($field_content);
-					$field_content = cg_check_last_char_for_url_name_after_pre_processing($field_content);
-
-					$field_content_original = $field_content;
-					$field_content_modified = $field_content;
-
-					// var_dump('$field_content_original');
-					// echo "<br>";
-					// var_dump($field_content_original);
-					// echo "<br>";
-					// var_dump('$field_content_modified');
-					// echo "<br>";
-					// var_dump($field_content_modified);
-					// echo "<br>";
-					// echo "<br>";
-
-					foreach ($galleryEntries as $galleryEntry){
-
-						if($galleryEntry->id==$entry->pid){
-							$galleryEntriesProcessed[] = $galleryEntry->id;
-							// var_dump('same pid');
-							if(!empty($galleryEntry->WpPage)){
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPage,$Version,$field_content_original,$field_content_modified,$options->WpPageParent,true,$IsFromCopyGalleryOrActualizeAll);
-							}
-							if(!empty($galleryEntry->WpPageUser)){
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageUser,$Version,$field_content_original,$field_content_modified,$options->WpPageParentUser);
-							}
-							if(!empty($galleryEntry->WpPageNoVoting)){
-
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageNoVoting,$Version,$field_content_original,$field_content_modified,$options->WpPageParentNoVoting);
-							}
-							if(!empty($galleryEntry->WpPageWinner)){
-
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageWinner,$Version,$field_content_original,$field_content_modified,$options->WpPageParentWinner);
-							}
-							if(!empty($galleryEntry->WpPageEcommerce)){
-
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageEcommerce,$Version,$field_content_original,$field_content_modified,$options->WpPageParentEcommerce);
-							}
-						}
-					}
-				}elseif($entry->f_input_id==$IsForWpPageTitleInputId && empty($entry->Short_Text)){
-
-					foreach ($galleryEntries as $galleryEntry){
-						if($galleryEntry->id==$entry->pid){
-							$galleryEntriesProcessed[] = $galleryEntry->id;
-							// var_dump('$galleryEntry->id');
-							// echo "<br>";
-							// var_dump($galleryEntry->id);
-
-							if($galleryEntry->ImgType=='con'){
-								$field_content = 'entry';
-							}else{
-								// example: $field_content = '____------e/$%//\\\'"$%&/-.,;rr_r_____f----f.l-----a___la___----';
-								$field_content = cg_pre_process_name_for_url_name($galleryEntry->NamePic);
-							}
-							$field_content = cg_check_first_char_for_url_name_after_pre_processing($field_content);
-							$field_content = cg_check_last_char_for_url_name_after_pre_processing($field_content);// then like post_name
-
-							$field_content_original = $field_content;
-							$field_content_modified = $field_content;
-
-							// var_dump('empty $entry->Short_Text');
-							// var_dump('$field_content_original');
-							// echo "<br>";
-							// var_dump($field_content_original);
-
-							// var_dump('$galleryEntry->NamePic');
-							// echo "<br>";
-							// var_dump($galleryEntry->NamePic);
-							// echo "<br>";
-							// var_dump('$field_content_modified');
-							// echo "<br>";
-							// var_dump($field_content_modified);
-							// echo "<br>";
-							// echo "<br>";
-
-							if(!empty($galleryEntry->WpPage)){
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPage,$Version,$field_content_original,$field_content_modified,$options->WpPageParent,true,$IsFromCopyGalleryOrActualizeAll);
-							}
-							if(!empty($galleryEntry->WpPageUser)){
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageUser,$Version,$field_content_original,$field_content_modified,$options->WpPageParentUser);
-							}
-							if(!empty($galleryEntry->WpPageNoVoting)){
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageNoVoting,$Version,$field_content_original,$field_content_modified,$options->WpPageParentNoVoting);
-							}
-							if(!empty($galleryEntry->WpPageWinner)){
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageWinner,$Version,$field_content_original,$field_content_modified,$options->WpPageParentWinner);
-							}
-							if(!empty($galleryEntry->WpPageEcommerce)){
-								$field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageEcommerce,$Version,$field_content_original,$field_content_modified,$options->WpPageParentEcommerce);
-							}
-						}
-					}
-
-				}
-			}
-
-			//    var_dump('$galleryEntriesProcessed');
-			//     var_dump($galleryEntriesProcessed);
-			//     var_dump($IsFromCopyGalleryOrActualizeAll);
-
-			// now process all unprocessed
-			if(!empty($IsFromCopyGalleryOrActualizeAll)){
-				foreach ($galleryEntries as $galleryEntry){
-					// then was not processed because no entry was done
-					if(in_array($galleryEntry->id,$galleryEntriesProcessed)===false){
-						//var_dump('check not processed');
-						if($galleryEntry->ImgType=='con'){
-							$field_content = 'entry';
-						}else{
-							// example: $field_content = '____------e/$%//\\\'"$%&/-.,;rr_r_____f----f.l-----a___la___----';
-							$field_content = cg_pre_process_name_for_url_name($galleryEntry->NamePic);
-						}
-						$field_content = cg_check_first_char_for_url_name_after_pre_processing($field_content);
-						$field_content = cg_check_last_char_for_url_name_after_pre_processing($field_content);// then like post_name
-
-						$field_content_original = $field_content;
-						$field_content_modified = $field_content;
-
-						if(!empty($galleryEntry->WpPage)){
-                            $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPage,$Version,$field_content_original,$field_content_modified,$options->WpPageParent,true,$IsFromCopyGalleryOrActualizeAll);
-						}
-						if(!empty($galleryEntry->WpPageUser)){
-                            $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageUser,$Version,$field_content_original,$field_content_modified,$options->WpPageParentUser);
-						}
-						if(!empty($galleryEntry->WpPageNoVoting)){
-                            $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageNoVoting,$Version,$field_content_original,$field_content_modified,$options->WpPageParentNoVoting);
-						}
-						if(!empty($galleryEntry->WpPageWinner)){
-                            $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageWinner,$Version,$field_content_original,$field_content_modified,$options->WpPageParentWinner);
-						}
-						if(!empty($galleryEntry->WpPageEcommerce)){
-                            $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageEcommerce,$Version,$field_content_original,$field_content_modified,$options->WpPageParentEcommerce);
-						}
-					}
-				}
-			}
-
-
+		$galleryEntries = array();
+		if((int)$options->Version>=22 && ($isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized || $IsForWpPageTitleInputDeleted)){
+			if($pidsArray){
+				$pidsPlaceholders = implode(',',array_fill(0,count($pidsArray),'%d'));
+				$rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $tablename WHERE GalleryID=%d AND id IN ($pidsPlaceholders) ORDER BY id ASC",array_merge(array($GalleryID),$pidsArray)));
+			}else{$rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $tablename WHERE GalleryID=%d ORDER BY id ASC",$GalleryID));}
+			$galleryEntries = cg_entry_page_update_urls($rows,$options,$entries,$IsForWpPageTitleInputDeleted ? 0 : $IsForWpPageTitleInputId,$IsFromCopyGalleryOrActualizeAll,$IsFromCopyGalleryOrActualizeAll);
+			if(is_wp_error($galleryEntries)){return $galleryEntries;}
 		}
-		elseif (($Version>=22 && $IsForWpPageTitleInputDeleted) || ($Version>=22 && empty($IsForWpPageTitleInputId) && !empty($isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized) && empty($IsForWpPageTitleInputDeleted))){//  $IsForWpPageTitleInputDeleted can only be from edit upload form
-			// IsForWpPageTitle might be unchecked then this condition here will be used
 
-			// var_dump('change 2');
-
-			$galleryEntries = $wpdb->get_results("SELECT * FROM $tablename WHERE GalleryID = $GalleryID ORDER BY id ASC");
-			foreach ($galleryEntries as $galleryEntry){
-
-				if($galleryEntry->ImgType=='con'){
-					$field_content = 'entry';
-				}else{
-					// example: $field_content = '____------e/$%//\\\'"$%&/-.,;rr_r_____f----f.l-----a___la___----';
-					$field_content = cg_pre_process_name_for_url_name($galleryEntry->NamePic);
-				}
-				$field_content = cg_check_first_char_for_url_name_after_pre_processing($field_content);
-				$field_content = cg_check_last_char_for_url_name_after_pre_processing($field_content);// then like post_name
-
-				$field_content_original = $field_content;
-				$field_content_modified = $field_content;
-
-				if(!empty($galleryEntry->WpPage)){
-				    $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPage,$Version,$field_content_original,$field_content_modified,$options->WpPageParent,true,$IsFromCopyGalleryOrActualizeAll);
-				}
-				if(!empty($galleryEntry->WpPageUser)){
-				    $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageUser,$Version,$field_content_original,$field_content_modified,$options->WpPageParentUser);
-				}
-				if(!empty($galleryEntry->WpPageNoVoting)){
-				    $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageNoVoting,$Version,$field_content_original,$field_content_modified,$options->WpPageParentNoVoting);
-				}
-				if(!empty($galleryEntry->WpPageWinner)){
-				    $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageWinner,$Version,$field_content_original,$field_content_modified,$options->WpPageParentWinner);
-				}
-				if(!empty($galleryEntry->WpPageEcommerce)){
-				    $field_content_modified = cg_update_custom_post_type_name($galleryEntry->WpPageEcommerce,$Version,$field_content_original,$field_content_modified,$options->WpPageParentEcommerce);
-				}
-
+		if(empty($deferFrontendFreshness) && !empty($galleryEntries)){
+			// Entry permalinks changed above. The frontend also derives recent URLs from main IDs.
+			foreach($galleryEntries as $galleryEntry){
+				cg1l_push_recent_id_file($GalleryID,$galleryEntry->id,'image-main-data-last-update');
 			}
+			cg1l_create_last_updated_time_file($GalleryID,'image-main-data-last-update');
+			cg1l_create_last_updated_time_file($GalleryID,'image-urls-data-last-update');
 		}
 
 		$arrayDataForImage = [];

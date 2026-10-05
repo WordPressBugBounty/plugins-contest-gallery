@@ -263,13 +263,11 @@ msgid "Account"
 msgstr "帳戶"
 
 #: check-language-general.php:42
-#, fuzzy
 #| msgid "Edit Profile"
 msgid "Edit profile"
 msgstr "編輯個人資料"
 
 #: check-language-general.php:44
-#, fuzzy
 #| msgid "Log Out"
 msgid "Log out"
 msgstr "登出"
@@ -332,7 +330,6 @@ msgid "Until current tab gets closed"
 msgstr "直到目前選項卡關閉"
 
 #: check-language-general.php:74
-#, fuzzy
 #| msgid "Back To Gallery"
 msgid "Back to gallery"
 msgstr "返回圖庫"
@@ -1381,7 +1378,7 @@ msgstr "載入中"
 msgid "or"
 msgstr "或"
 
-#: check-language-paid-actions.php
+#: check-language-paid-actions.php check-language.php
 msgid "Cancel"
 msgstr "取消"
 
@@ -2224,3 +2221,456 @@ msgstr "付款未完成。請再試一次。"
 #: check-language-ecommerce.php
 msgid "Payment canceled. You can try again."
 msgstr "付款已取消。您可以再試一次。"
+
+#: check-language-general.php:140
+msgid "Register / Sign in"
+msgstr "註冊 / 登入"
+
+#: check-language-general.php:142
+msgid "Your images. Your gallery."
+msgstr "你的圖片。你的相簿。"
+
+#: check-language-general.php:144
+msgid "Continue with Google or a code sent to your email. New here? Your account is created when you sign in."
+msgstr "使用 Google 或傳送到你電郵的驗證碼繼續。首次使用？登入時會為你建立帳戶。"
+
+#: check-language-general.php:146
+msgid "Sign in with a code sent to your email. New here? Confirm your email to create your account."
+msgstr "使用傳送到你電郵的驗證碼登入。首次使用？確認你的電郵地址即可建立帳戶。"
+
+#: check-language-general.php:142
+msgid "All images"
+msgstr "所有圖片"
+
+#: check-language-general.php:144
+msgid "My images"
+msgstr "我的圖片"
+
+#: check-language-general.php:146
+msgid "Join and show your own images."
+msgstr "註冊並展示你的圖片。"
+
+#: check-language-general.php:148
+msgid "Show your first image"
+msgstr "展示你的第一張圖片"
+
+#: check-language-general.php:150
+msgid "Your uploads will appear here."
+msgstr "你上載的圖片會顯示在這裡。"
+
+#: check-language-general.php:146
+msgid "Not published"
+msgstr "尚未發佈"
+
+#: check-language.php
+msgid "Delete"
+msgstr "刪除"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Entry actions"
+msgstr "作品操作"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Replace image"
+msgstr "更換圖片"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Choose the image to replace."
+msgstr "選擇要更換的圖片。"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Replace"
+msgstr "更換"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Replacing…"
+msgstr "正在更換…"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "This entry will need approval again after replacement."
+msgstr "更換後，此作品需要重新審批。"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Image replaced."
+msgstr "圖片已更換。"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Image replacement is not allowed."
+msgstr "不允許更換圖片。"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Entries offered for sale cannot be changed here."
+msgstr "正在出售的作品無法在此更改。"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "This entry already has votes. Its images cannot be replaced."
+msgstr "此作品已有投票，無法更換圖片。"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "The time allowed for replacing this image has ended."
+msgstr "更換此圖片的期限已過。"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "The upload period is closed."
+msgstr "上載時段已結束。"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "This entry has changed. Reload it and try again."
+msgstr "此作品已更改。請重新載入後再試。"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "The image does not meet the gallery upload requirements."
+msgstr "圖片不符合圖庫的上載要求。"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Delete this entry and all its files?"
+msgstr "刪除此作品及其所有檔案？"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Share this image"
+msgstr "分享此圖片"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Take a look at this image"
+msgstr "看看這張圖片"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Copy link"
+msgstr "複製連結"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "More apps…"
+msgstr "更多應用程式…"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Link copied"
+msgstr "已複製連結"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Copy this link:"
+msgstr "複製此連結："
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Sharing is unavailable. You can copy the link instead."
+msgstr "暫時無法分享。你可以複製連結。"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "File actions"
+msgstr "檔案操作"
+
+#: functions/frontend/cg-member-profile.php
+msgid "My profile"
+msgstr "我的個人資料"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Additional information"
+msgstr "其他資料"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Display name"
+msgstr "顯示名稱"
+
+#: functions/frontend/cg-member-profile.php
+msgid "This name is displayed across this website."
+msgstr "此名稱會顯示於整個網站。"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Choose profile image"
+msgstr "選擇個人頭像"
+
+#: functions/frontend/cg-member-profile.php
+msgid "JPG, PNG or GIF. Maximum {size} MB."
+msgstr "JPG、PNG 或 GIF。最大 {size} MB。"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Save profile"
+msgstr "儲存個人資料"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Save information"
+msgstr "儲存資料"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Profile saved."
+msgstr "個人資料已儲存。"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Information saved."
+msgstr "資料已儲存。"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Please enter a display name."
+msgstr "請輸入顯示名稱。"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Please complete the required fields."
+msgstr "請填寫必填欄位。"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Please choose a valid option."
+msgstr "請選擇有效的選項。"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Your profile has changed. Close and reopen it before saving."
+msgstr "你的個人資料已變更。請關閉並重新開啟後再儲存。"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Discard unsaved profile changes?"
+msgstr "捨棄尚未儲存的個人資料變更？"
+
+#: functions/frontend/cg-member-profile.php
+msgid "The profile image could not be saved."
+msgstr "無法儲存個人頭像。"
+
+#: functions/frontend/cg-member-profile.php
+msgid "You cannot edit these profile fields."
+msgstr "你無法編輯這些個人資料欄位。"
+
+#: check-language-general.php
+msgid "Share this entry"
+msgstr "分享此作品"
+
+#: check-language-general.php
+msgid "My entries"
+msgstr "我的作品"
+
+#: check-language-general.php
+msgid "All entries"
+msgstr "所有作品"
+
+#: check-language-general.php
+msgid "Your entries. Your gallery."
+msgstr "你的作品。你的圖庫。"
+
+#: check-language-general.php
+msgid "Join and show your own entries."
+msgstr "加入並展示你的作品。"
+
+#: check-language-general.php
+msgid "Show your first entry"
+msgstr "展示你的第一件作品"
+
+#: check-language-general.php
+msgid "Take a look at this entry"
+msgstr "看看此作品"
+
+#: check-language-general.php
+msgid "Gallery view"
+msgstr "圖庫檢視"
+
+#: check-language-general.php
+msgid "Please try again."
+msgstr "請再試一次。"
+
+#: check-language-general.php
+msgid "The connection failed. Please try again."
+msgstr "連線失敗。請再試一次。"
+
+#: check-language-general.php
+msgid "Please reload the page and try again."
+msgstr "請重新載入頁面後再試。"
+
+#: check-language-general.php
+msgid "This gallery is not available."
+msgstr "此圖庫目前無法使用。"
+
+#: check-language-general.php
+msgid "Please allow cookies to sign in."
+msgstr "請允許使用 Cookie 以登入。"
+
+#: check-language-general.php
+msgid "Please sign in."
+msgstr "請先登入。"
+
+#: check-language-general.php
+msgid "Check your email for your code."
+msgstr "請查看電子郵件以取得驗證碼。"
+
+#: check-language-general.php
+msgid "Please wait {seconds} seconds before requesting another code."
+msgstr "請等待 {seconds} 秒後再索取另一個驗證碼。"
+
+#: check-language-general.php
+msgid "Loading…"
+msgstr "載入中…"
+
+#: check-language-general.php
+msgid "Saved"
+msgstr "已儲存"
+
+#: check-language-general.php
+msgid "Visible on your public profile"
+msgstr "會顯示在你的公開個人資料上"
+
+#: check-language-general.php
+msgid "View profile"
+msgstr "查看個人資料"
+
+#: check-language-general.php
+msgid "View profile of {name}"
+msgstr "查看 {name} 的個人資料"
+
+#: check-language-general.php
+msgid "Entry owner"
+msgstr "作品作者"
+
+#: check-language-general.php
+msgid "Participants"
+msgstr "參加者"
+
+#: check-language-general.php
+msgid "Back to participants"
+msgstr "返回參加者"
+
+#: check-language-general.php
+msgid "Search names and profile information"
+msgstr "搜尋名稱及個人資料"
+
+#: check-language-general.php
+msgid "Name A–Z"
+msgstr "名稱 A–Z"
+
+#: check-language-general.php
+msgid "Name Z–A"
+msgstr "名稱 Z–A"
+
+#: check-language-general.php
+msgid "No participants found."
+msgstr "找不到參加者。"
+
+#: check-language-general.php
+msgid "No participants with a profile yet. Published entries with a profile will appear here."
+msgstr "目前沒有建立個人資料的參加者。與個人資料連結的已發佈作品會顯示在這裡。"
+
+#: check-language-general.php
+msgid "This profile is no longer available in this gallery."
+msgstr "此個人資料已無法在此圖庫中查看。"
+
+#: check-language-general.php
+msgid "1 entry"
+msgstr "1 件作品"
+
+#: check-language-general.php
+#, php-format
+msgid "%s entries"
+msgstr "%s 件作品"
+
+#: check-language-general.php
+msgid "Rating average"
+msgstr "平均評分"
+
+#: check-language-general.php
+msgid "Rating sum"
+msgstr "評分總和"
+
+#: check-language-general.php
+msgid "Gallery"
+msgstr "圖庫"
+
+#: check-language-general.php
+msgid "Galleries"
+msgstr "圖庫"
+
+#: check-language-general.php
+msgid "Entries"
+msgstr "作品"
+
+#: check-language-general.php
+msgid "Discover galleries"
+msgstr "探索圖庫"
+
+#: check-language-general.php
+msgid "Explore the gallery"
+msgstr "瀏覽圖庫"
+
+#: check-language-general.php
+msgid "Explore galleries and their entries."
+msgstr "瀏覽圖庫及其中的作品。"
+
+#: check-language-general.php
+msgid "Explore the entries in this gallery."
+msgstr "瀏覽此圖庫中的作品。"
+
+#: check-language-general.php
+msgid "This participant in this gallery"
+msgstr "此參加者在此圖庫中的資料"
+
+#: check-language-general.php
+msgid "Replace file"
+msgstr "替換檔案"
+
+#: check-language-general.php
+msgid "Choose the file to replace."
+msgstr "選擇要替換的檔案。"
+
+#: check-language-general.php
+msgid "Replaced"
+msgstr "已替換"
+
+#: check-language-general.php
+msgid "File replaced."
+msgstr "檔案已替換。"
+
+#: check-language-general.php
+msgid "The preview could not be refreshed."
+msgstr "無法更新預覽。"
+
+#: check-language-general.php
+msgid "The file does not meet the gallery upload requirements."
+msgstr "檔案不符合圖庫的上載要求。"
+
+#: check-language-general.php
+msgid "The PDF preview could not be created. Please try again."
+msgstr "無法建立 PDF 預覽。請再試一次。"
+
+#: check-language-general.php
+msgid "Too many replacement attempts. Please try again later."
+msgstr "替換嘗試次數過多。請稍後再試。"
+
+#: check-language-general.php
+msgid "Your replacement storage limit has been reached. Please contact the gallery administrator."
+msgstr "你已達到替換檔案的儲存空間上限。請聯絡圖庫管理員。"
+
+#: functions/frontend/cg-upload-jobs.php
+msgid "Continuing image processing…"
+msgstr "正在繼續處理圖片…"
+
+#: functions/frontend/cg-upload-jobs.php
+msgid "Check status"
+msgstr "檢查狀態"
+
+#: check-language-general.php
+msgid "Upload completed."
+msgstr "上載完成。"
+
+#: check-language-general.php
+msgid "Refresh"
+msgstr "重新整理"
+
+#: check-language.php
+msgid "Slow down, you are too fast. Please wait a moment before sending another comment."
+msgstr "請稍候片刻，再發送另一則留言。"
+
+#: check-language-general.php
+msgid "Your public profile"
+msgstr "你的公開個人資料"
+
+#: check-language-general.php
+msgid "Public profile"
+msgstr "公開個人資料"
+
+#: check-language-general.php
+msgid "View public profile"
+msgstr "查看公開個人資料"
+
+
+#: functions/frontend/cg-participants.php check-language-general.php
+msgid "Votes descend"
+msgstr "票數由高至低"
+
+#: functions/frontend/cg-participants.php check-language-general.php
+msgid "Votes ascend"
+msgstr "票數由低至高"
+
+msgid "Please use a display name instead of an email address."
+msgstr "請使用顯示名稱，而非電郵地址。"

@@ -347,9 +347,11 @@
         $content = $('#cg_main_options_content');
         $('#cg_main_options_tab').addClass('cg_options_search_enabled');
         function positionShortcodes() {
+            var mainOptions = document.getElementById('cg_main_options');
+            if (!mainOptions || !$content || !$content.length || !document.documentElement.contains($content[0])) { return; }
             var adminHeight = $('#wpadminbar').outerHeight() || 0;
             var top = adminHeight + ($('#cg_main_options_tab').outerHeight() || 0);
-            $('#cg_main_options')[0].style.setProperty('--cg-options-search-admin-top', adminHeight + 'px');
+            mainOptions.style.setProperty('--cg-options-search-admin-top', adminHeight + 'px');
             $content[0].style.setProperty('--cg-options-search-sticky-top', top + 'px');
             updateNavigation();
             positionPopup();

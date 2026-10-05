@@ -470,7 +470,7 @@ if(!function_exists('cg_user_data_export_registry_value')){
 			return ($entry->Checked==1 || empty($entry->Version)) ? 'checked' : 'not checked';
 		}
 		if(!empty($entry->Field_Content)){
-			return $entry->Field_Content;
+			return $entry->Field_Type==='user-check-field' ? cg_profile_field_text(cg_profile_registry_check_value($entry->Field_Content)) : $entry->Field_Content;
 		}
 		return '';
 	}
@@ -478,6 +478,7 @@ if(!function_exists('cg_user_data_export_registry_value')){
 
 if(!function_exists('cg_user_data_export_meta_value')){
 	function cg_user_data_export_meta_value($value){
+		$value = cg_profile_field_text(maybe_unserialize($value));
 		if(strpos($value,'yes(cg-user-checked) ---')!==false){
 			return 'checked';
 		}
@@ -536,7 +537,7 @@ if(!function_exists('post_cg_user_data_export_step')){
 		$roles = array();
 		$capabilities_key = $wpdb->prefix.'capabilities';
 		$usermeta_table = $wpdb->base_prefix.'usermeta';
-		$meta_args = array_merge($user_ids,array('first_name','last_name',$capabilities_key,'%cg_custom_field_id_%'));
+		$meta_args = array_merge($user_ids,array('first_name','last_name',$capabilities_key,$wpdb->esc_like(cg_profile_meta_prefix()).'%'));
 		$meta_query = "SELECT user_id, meta_key, meta_value
 			FROM $usermeta_table
 			WHERE user_id IN ($user_placeholders)
@@ -565,8 +566,7 @@ if(!function_exists('post_cg_user_data_export_step')){
 						}
 					}
 				}
-			}elseif(preg_match('/cg_custom_field_id_([0-9]+)/',$meta->meta_key,$matches)){
-				$field_id = absint($matches[1]);
+			}elseif($field_id = cg_profile_meta_field_id($meta->meta_key)){
 				if(!empty($meta->meta_value)){
 					$user_values[$user_id]['fields'][$field_id] = cg_user_data_export_meta_value($meta->meta_value);
 				}

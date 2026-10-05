@@ -18,12 +18,25 @@ if(!function_exists('cg1l_login_handoff_unlock')){
     }
 }
 
+if(!function_exists('cg1l_auth_eligible_user')){
+    function cg1l_auth_eligible_user($userId,$email = ''){
+        global $wpdb;
+        // SELECT * also works on single sites without the multisite spam/deleted columns.
+        $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->users WHERE ID = %d",absint($userId)));
+        if(!$row || !empty($row->user_status) || !empty($row->spam) || !empty($row->deleted) ||
+            ($email !== '' && strtolower($row->user_email) !== strtolower($email))){
+            return false;
+        }
+        return $row;
+    }
+}
+
 if(!function_exists('cg1l_login_handoff_account_state')){
     function cg1l_login_handoff_account_state($userId){
         global $wpdb;
         // Read credentials from the database, not a possibly stale WP_User cache.
-        $row = $wpdb->get_row($wpdb->prepare("SELECT user_pass, user_email, user_status FROM $wpdb->users WHERE ID = %d",$userId));
-        if(empty($row) || !empty($row->user_status)){
+        $row = cg1l_auth_eligible_user($userId);
+        if(!$row){
             return '';
         }
         return hash_hmac('sha256',wp_json_encode(array($userId,$row->user_pass,$row->user_email,$row->user_status)),wp_salt('auth'));

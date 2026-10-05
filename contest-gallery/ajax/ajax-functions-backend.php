@@ -1,6 +1,8 @@
 <?php
 include_once(__DIR__.'/../v10/v10-admin/gallery-transfer/gallery-transfer.php');
 include_once(__DIR__.'/../functions/backend/gallery/cg-entry-watermark.php');
+include_once(__DIR__.'/../functions/backend/gallery/cg-entry-page-open.php');
+include_once(__DIR__.'/../functions/backend/cg-mail-test.php');
 
 if (!function_exists('cg_backend_ajax_error_json')) {
     function cg_backend_ajax_error_json($message, $status = 400, $code = 'cg_backend_ajax_error') {
@@ -59,44 +61,25 @@ add_action('wp_ajax_post_cg_get_current_permalinks', 'post_cg_get_current_permal
 if (!function_exists('post_cg_get_current_permalinks')) {
     function post_cg_get_current_permalinks() {
 
-        cg_require_backend_access();
+        $json = isset($_POST['response_format']) && $_POST['response_format']==='json';
+        if($json){cg_backend_ajax_require_access_json();}
+        else{cg_require_backend_access();}
+        nocache_headers();
 
         global $wpdb;
-        $tablename = $wpdb->prefix . "contest_gal1ery";
-        $realId = absint($_POST['cgRealId']);
-        $realIdRow = $wpdb->get_row( "SELECT * FROM $tablename WHERE id='$realId'" );
-
-        $entryPermalinks = [];
-        if(!empty($realIdRow->WpPage)){
-            $permalink = cg_get_guid($realIdRow->WpPage);
-            if(!empty($permalink)){
-                $entryPermalinks['cg_gallery'] = $permalink;
-            }
+        $realId = isset($_POST['cgRealId']) ? absint($_POST['cgRealId']) : 0;
+        $row = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$wpdb->prefix.'contest_gal1ery WHERE id=%d',$realId));
+        if($json && !$row){cg_backend_ajax_error_json('This entry no longer exists. Reload the gallery in the backend.',404,'cg_entry_missing');}
+        $entryPermalinks = array(); $statuses = array();
+        foreach(cg_entry_page_fields() as $shortcode=>$field){
+            $pageId = $row && !empty($row->$field) ? absint($row->$field) : 0;
+            $statuses[$shortcode] = $pageId ? get_post_status($pageId) : false;
+            $permalink = $pageId ? cg_get_guid($pageId) : '';
+            if($permalink){$entryPermalinks[$shortcode]=$permalink;}
         }
-        if(!empty($realIdRow->WpPageWinner)){
-            $permalink = cg_get_guid($realIdRow->WpPageWinner);
-            if(!empty($permalink)){
-                $entryPermalinks['cg_gallery_winner'] = $permalink;
-            }
-        }
-        if(!empty($realIdRow->WpPageUser)){
-            $permalink = cg_get_guid($realIdRow->WpPageUser);
-            if(!empty($permalink)){
-                $entryPermalinks['cg_gallery_user'] = $permalink;
-            }
-        }
-        if(!empty($realIdRow->WpPageNoVoting)){
-            $permalink = cg_get_guid($realIdRow->WpPageNoVoting);
-            if(!empty($permalink)){
-                $entryPermalinks['cg_gallery_no_voting'] = $permalink;
-            }
-        }
-        if(!empty($realIdRow->WpPageEcommerce)){
-            $permalink = cg_get_guid($realIdRow->WpPageEcommerce);
-            if(!empty($permalink)){
-                $entryPermalinks['cg_gallery_ecommerce'] = $permalink.'?test=true';
-            }
-        }
+        if($json){wp_send_json_success(array('permalinks'=>$entryPermalinks,'statuses'=>$statuses));}
+        // Preserve the legacy script response for existing backend callers.
+        if(!empty($entryPermalinks['cg_gallery_ecommerce'])){$entryPermalinks['cg_gallery_ecommerce']=add_query_arg('test','true',$entryPermalinks['cg_gallery_ecommerce']);}
 
         ?>
         <script data-cg-processing-get-current-permalinks="true">
@@ -1808,10 +1791,6 @@ if(!function_exists('post_cg_backend_image_upload')){
             die('do-nothing');
         }
 
-        if(!empty($_FILES) AND !empty($_FILES['cg_input_image_upload_file']) AND !empty($_FILES['cg_input_image_upload_file']['tmp_name']) AND !empty($_FILES['cg_input_image_upload_file']['tmp_name'][0])){
-            $_FILES = cg1l_sanitize_files($_FILES,'cg_input_image_upload_file',2100000);
-        }
-
         $isAdministrator = false;
 
         if(is_super_admin($user->ID) || in_array( 'administrator', (array) $user->roles )){
@@ -1823,24 +1802,30 @@ if(!function_exists('post_cg_backend_image_upload')){
             die('do-nothing');
         }
 
-        if(!empty($_POST['cg_input_image_upload_file_to_delete_wp_id'])){// then image must be removed!
-            $WpProfileImage = $wpdb->get_row($wpdb->prepare("SELECT WpUpload, WpUserId FROM $tablename WHERE WpUserId = %d && IsProfileImage = 1",[$WpUserId]));
-
-            if($WpProfileImage->WpUserId == $user->ID){
-                $wpdb->query($wpdb->prepare(
-                    "
-            DELETE FROM $tablename WHERE WpUserId = %d && IsProfileImage = %d
-        ",
-                    $WpUserId, 1
-                ));
-                // source and database _posts table entry  will be deleted
-                wp_delete_attachment($WpProfileImage->WpUpload);
+        $raw = isset($_FILES['cg_input_image_upload_file']) ? $_FILES['cg_input_image_upload_file'] : null;
+        $file = cg_profile_image_upload_file($raw);
+        $hasFile = $raw!==null && (!is_array($file) || !isset($file['error']) || $file['error']!==UPLOAD_ERR_NO_FILE);
+        if($hasFile){
+            $valid = cg_profile_image_validate_upload($file);
+            if(is_wp_error($valid)){wp_send_json_error(cg_profile_image_upload_response($valid),400);}
+        }
+        $oldRows = $wpdb->get_results($wpdb->prepare("SELECT id,WpUpload FROM $tablename WHERE WpUserId=%d AND IsProfileImage=1",$WpUserId));
+        // Keep the old image until the replacement has been accepted and associated.
+        if($hasFile){
+            $saved = cg_registry_add_profile_image('cg_input_image_upload_file',$WpUserId);
+            if(is_wp_error($saved) || !$saved){
+                $error=is_wp_error($saved) ? $saved : cg_profile_image_upload_error(new WP_Error('image','The profile image could not be saved.'));
+                wp_send_json_error(cg_profile_image_upload_response($error),400);
             }
         }
-
-        if(!empty($_FILES) AND !empty($_FILES['cg_input_image_upload_file']) AND !empty($_FILES['cg_input_image_upload_file']['tmp_name']) AND !empty($_FILES['cg_input_image_upload_file']['tmp_name'][0])){
-            cg_registry_add_profile_image('cg_input_image_upload_file',$WpUserId);
+        if($hasFile || !empty($_POST['cg_input_image_upload_file_to_delete_wp_id'])){
+            foreach($oldRows as $oldRow){
+                if($wpdb->delete($tablename,array('id'=>$oldRow->id,'WpUserId'=>$WpUserId,'IsProfileImage'=>1))===false){wp_send_json_error(array('message'=>cg_member_t('The profile image could not be saved.')),500);}
+                $post=get_post($oldRow->WpUpload);
+                if($post && $post->post_content==='Contest Gallery user profile image' && !$wpdb->get_var($wpdb->prepare("SELECT id FROM $tablename WHERE WpUpload=%d OR MultipleFiles LIKE %s LIMIT 1",$oldRow->WpUpload,'%'.(int)$oldRow->WpUpload.'%'))){wp_delete_attachment($oldRow->WpUpload,true);}
+            }
         }
+        wp_send_json_success();
 
     }
 }

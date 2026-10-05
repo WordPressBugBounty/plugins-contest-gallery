@@ -1,6 +1,7 @@
 <?php
 
 include_once(__DIR__.'/registry/cg-login-handoff.php');
+include_once(__DIR__.'/registry/cg-password-reset.php');
 
 if(!function_exists('cg1l_generate_unique_login_from_email')){
     function cg1l_generate_unique_login_from_email($user_email){
@@ -93,7 +94,7 @@ if(!function_exists('cg1l_wp_insert_user')){
 }
 
 if(!function_exists('cg1l_prepare_registry_fields_for_storage')){
-    function cg1l_prepare_registry_fields_for_storage($cg_check,$galleryDbVersion,$GalleryID){
+    function cg1l_prepare_registry_fields_for_storage($cg_check,$galleryDbVersion,$GalleryID,$isPinForm = false){
 
         if(empty($cg_check) || !is_array($cg_check)){
             return false;
@@ -113,6 +114,7 @@ if(!function_exists('cg1l_prepare_registry_fields_for_storage')){
             'wpfn' => true,
             'wpln' => true,
             'user-text-field' => true,
+            'user-url-field' => true,
             'user-check-field' => true,
             'user-radio-field' => true,
             'user-select-field' => true,
@@ -121,9 +123,9 @@ if(!function_exists('cg1l_prepare_registry_fields_for_storage')){
         );
 
         if(intval($galleryDbVersion)>=14 || empty($GalleryID)){
-            $formRows = $wpdb->get_results("SELECT id, Field_Type, Field_Order FROM $tablenameCreateUserForm WHERE GeneralID = '1' AND Active = '1'");
+            $formRows = $wpdb->get_results("SELECT id, Field_Type, Field_Order, Field_Content, Required, PinField, Min_Char, Max_Char FROM $tablenameCreateUserForm WHERE GeneralID = '1' AND Active = '1'");
         }else{
-            $formRows = $wpdb->get_results($wpdb->prepare("SELECT id, Field_Type, Field_Order FROM $tablenameCreateUserForm WHERE GalleryID = %d AND Active = '1'",absint($GalleryID)));
+            $formRows = $wpdb->get_results($wpdb->prepare("SELECT id, Field_Type, Field_Order, Field_Content, Required, PinField, Min_Char, Max_Char FROM $tablenameCreateUserForm WHERE GalleryID = %d AND Active = '1'",absint($GalleryID)));
         }
 
         if(empty($formRows)){
@@ -137,12 +139,14 @@ if(!function_exists('cg1l_prepare_registry_fields_for_storage')){
 
         $prepared = array();
         $usedFormInputIds = array();
+        $contentsById = array();
 
         foreach($cg_check as $key => $value){
             if(!is_array($value) || !isset($value["Form_Input_ID"]) || !isset($value["Field_Type"]) || !isset($value["Field_Order"])){
                 return false;
             }
 
+            if(!is_scalar($value['Form_Input_ID']) || !is_scalar($value['Field_Type']) || !is_scalar($value['Field_Order'])){return false;}
             $Form_Input_ID = absint($value["Form_Input_ID"]);
 
             if(empty($Form_Input_ID) || empty($formRowsById[$Form_Input_ID]) || !empty($usedFormInputIds[$Form_Input_ID])){
@@ -163,6 +167,22 @@ if(!function_exists('cg1l_prepare_registry_fields_for_storage')){
                 return false;
             }
 
+            if($dbFieldType==='main-nick-name'){
+                $raw = isset($value['Field_Content']) ? $value['Field_Content'] : '';
+                if(!is_string($raw)){return false;}
+                $nickname = trim(sanitize_text_field($raw));
+                if(is_email($nickname)){return new WP_Error('name_email','Please use a display name instead of an email address.');}
+                $value['Field_Content'] = $nickname;
+            }
+            if(in_array($dbFieldType,array('user-url-field','user-check-field','user-select-field','user-radio-field'),true)){
+                $raw = isset($value['Field_Content']) ? $value['Field_Content'] : '';
+                // Cached older registration forms still submit comma-separated checkbox values.
+                if($dbFieldType!=='user-url-field' && is_string($raw)){$raw = cg_profile_field_value($formRow,$raw);}
+                $validated = cg_member_profile_validate_fields(array($Form_Input_ID=>$raw),array($formRow));
+                if(is_wp_error($validated)){return $validated;}
+                $value['Field_Content'] = $validated[cg_profile_meta_key($Form_Input_ID)];
+            }
+            $contentsById[$Form_Input_ID] = isset($value['Field_Content']) ? $value['Field_Content'] : '';
             $usedFormInputIds[$Form_Input_ID] = true;
             $value["Form_Input_ID"] = $Form_Input_ID;
             $value["Field_Type"] = $dbFieldType;
@@ -170,6 +190,29 @@ if(!function_exists('cg1l_prepare_registry_fields_for_storage')){
             $prepared[$key] = $value;
         }
 
+        // Required inputs come from the active server schema, including omitted POST rows.
+        // Match the renderer's PIN form selection. CAPTCHA has its own signed mode/validator.
+        foreach($formRows as $formRow){
+            $type = $formRow->Field_Type;
+            if(empty($allowedFieldTypes[$type]) || $type==='user-robot-field' || (empty($formRow->Required) && $type!=='main-mail')){continue;}
+            if($isPinForm && empty($formRow->PinField) && $type!=='main-mail'){continue;}
+            $id = absint($formRow->id);
+            $requiredError = new WP_Error('required','Required');
+            if(empty($usedFormInputIds[$id])){return $requiredError;}
+            $content = $contentsById[$id];
+            if($type==='profile-image'){
+                $file = isset($_FILES['cg_input_image_upload_file']) ? $_FILES['cg_input_image_upload_file'] : array();
+                if(!isset($file['error'][0]) || $file['error'][0]===UPLOAD_ERR_NO_FILE){return $requiredError;}
+                $validImage = cg_profile_image_validate_upload(cg_profile_image_upload_file($file));
+                if(is_wp_error($validImage)){return $validImage;}
+            }elseif($type==='user-check-agreement-field'){
+                if($content!=='checked'){return $requiredError;}
+            }elseif($type==='user-check-field'){
+                if(!is_array($content) || !$content){return $requiredError;}
+            }elseif(!is_scalar($content) || trim((string)$content)===''){
+                return $requiredError;
+            }
+        }
         return $prepared;
 
     }
@@ -396,7 +439,7 @@ if(!function_exists('cg1l_delete_unconfirmed_user')){
             ));
             foreach($requestKeys as $requestKey){
                 if(function_exists('cg_pin_auth_transient_key')){
-                    delete_transient(cg_pin_auth_transient_key($requestKey));
+                    cg_security_state_delete('pin',cg_pin_auth_transient_key($requestKey));
                 }
             }
             $placeholders = implode(',', array_fill(0, count($activation_keys), '%s'));
@@ -410,9 +453,34 @@ if(!function_exists('cg1l_delete_unconfirmed_user')){
     }
 }
 
-if(!function_exists('cg1l_resend_unconfirmed_mail')){
-    function  cg1l_resend_unconfirmed_mail($gid,$pid,$ReceiverMail,$pageUrl,$ReplyMail,$FromName,$ReplyName,$FromMail,$cc,$bcc,$body,$subject,$old_activation_key = '', $isFrontend = false){
+// Confirmation mail has its own limits. It must not consume a Member/Paid PIN allowance.
+if(!function_exists('cg1l_reserve_confirmation_mail')){
+    function cg1l_reserve_confirmation_mail($email){
+        $email = strtolower(trim($email));
+        $lock = cg_pin_auth_acquire_lock('confirmation-mail',$email);
+        if(!$lock){return new WP_Error('cg_confirmation_busy','Please try again.');}
+        try{
+            $key = 'cg_confirmation_rate_'.md5($email);
+            $now = time();
+            $state = get_transient($key);
+            if(!is_array($state) || empty($state['until']) || $state['until'] <= $now){$state = array('until'=>$now+3600,'count'=>0,'last'=>0);}
+            $wait = max(0,$state['last']+60-$now);
+            if($state['count'] >= 5){$wait = max($wait,$state['until']-$now);}
+            if($wait){return new WP_Error('cg_confirmation_rate_limited',sprintf('Please wait %d seconds before requesting another confirmation email.',$wait),array('retryAfter'=>$wait));}
+            $state['last'] = $now;
+            $state['count']++;
+            set_transient($key,$state,max(1,$state['until']-$now));
+            if(get_transient($key)!==$state){return new WP_Error('cg_confirmation_busy','Please try again.');}
+            return true;
+        }finally{cg_pin_auth_release_lock($lock);}
+    }
+}
 
+if(!function_exists('cg1l_resend_unconfirmed_mail')){
+    function  cg1l_resend_unconfirmed_mail($gid,$pid,$ReceiverMail,$pageUrl,$ReplyMail,$FromName,$ReplyName,$FromMail,$cc,$bcc,$body,$subject,$old_activation_key = '', $isFrontend = false, &$details = null){
+
+        $details = array('message'=>'Resend confirmation mail could not be sent.');
+        if($isFrontend && empty($old_activation_key)){return false;}
         $suffixSource = 'backend';
         if($isFrontend){
             $suffixSource = 'frontend';
@@ -449,6 +517,8 @@ if(!function_exists('cg1l_resend_unconfirmed_mail')){
             $old_activation_key = $row->activation_key;
         }
 
+        if(!cg1l_acquire_registry_activation_lock($old_activation_key)){return false;}
+
         $oldUserAccountEntries = $wpdb->get_results(
             $wpdb->prepare("SELECT Field_Type, Field_Content, wp_user_id, Tstamp FROM $tablenameCreateUserEntries WHERE activation_key=%s",$old_activation_key)
         );
@@ -456,6 +526,17 @@ if(!function_exists('cg1l_resend_unconfirmed_mail')){
         if(empty($oldUserAccountEntries)){
             return false;
         }
+
+        $storedEmails = array();
+        foreach($oldUserAccountEntries as $entry){
+            if($entry->Field_Type==='main-mail' || $entry->Field_Type==='unconfirmed-mail'){
+                $storedEmails[] = sanitize_email(strtolower($entry->Field_Content));
+            }
+        }
+        $storedEmails = array_values(array_unique($storedEmails));
+        if(count($storedEmails)!==1 || !is_email($storedEmails[0])){return false;}
+        // Never let the frontend select the recipient, even with a valid activation key.
+        $ReceiverMail = $storedEmails[0];
 
         $resolvedUnconfirmedUser = false;
         foreach($oldUserAccountEntries as $oldUserAccountEntry){
@@ -468,11 +549,21 @@ if(!function_exists('cg1l_resend_unconfirmed_mail')){
             }
         }
 
+        $reserved = cg1l_reserve_confirmation_mail($ReceiverMail);
+        if(is_wp_error($reserved)){
+            $details = array('code'=>$reserved->get_error_code(),'message'=>$reserved->get_error_message());
+            $rateData = $reserved->get_error_data();
+            if(is_array($rateData)){$details = array_merge($details,$rateData);}
+            return false;
+        }
+
         $password = wp_generate_password( 32, true, true );
 
         $time = time();
 
         $new_activation_key = md5($time . $password);
+
+        if(!cg1l_acquire_registry_activation_lock($new_activation_key)){return false;}
 
         $insertedRows = $wpdb->query(
             $wpdb->prepare("
@@ -491,49 +582,25 @@ if(!function_exists('cg1l_resend_unconfirmed_mail')){
             return false;
         }
 
+        $newWpId = 0;
+        $oldWpKey = '';
         if(!empty($resolvedUnconfirmedUser)){
             $newWpId = absint($resolvedUnconfirmedUser['wp_user_id']);
-            $ReceiverMail = $resolvedUnconfirmedUser['email'];
-
-            $userKeyUpdated = $wpdb->update(
-                $wpdb->users,
-                array(
-                    'user_activation_key' => $new_activation_key,
-                ),
-                array(
-                    'ID' => $newWpId,
-                ),
-                array(
-                    '%s',
-                ),
-                array(
-                    '%d',
-                )
-            );
-
-            if($userKeyUpdated === false){
+            $oldWpKey = $wpdb->get_var($wpdb->prepare("SELECT user_activation_key FROM $wpdb->users WHERE ID = %d",$newWpId));
+            $bound = $wpdb->update($tablenameCreateUserEntries,
+                array('wp_user_id'=>$newWpId,'Field_Content'=>$ReceiverMail),
+                array('activation_key'=>$new_activation_key,'Field_Type'=>'unconfirmed-mail'),array('%d','%s'),array('%s','%s'));
+            if($bound===false || !in_array($oldWpKey,array($old_activation_key,'cg-key---'.$old_activation_key),true)){
+                $wpdb->delete($tablenameCreateUserEntries,array('activation_key'=>$new_activation_key),array('%s'));
                 return false;
             }
-
-            $wpdb->update(
-                $tablenameCreateUserEntries,
-                array(
-                    'wp_user_id' => $newWpId,
-                    'Field_Content' => $ReceiverMail,
-                ),
-                array(
-                    'activation_key' => $new_activation_key,
-                    'Field_Type' => 'unconfirmed-mail',
-                ),
-                array(
-                    '%d',
-                    '%s',
-                ),
-                array(
-                    '%s',
-                    '%s',
-                )
-            );
+            $updated = $wpdb->update($wpdb->users,array('user_activation_key'=>$new_activation_key),
+                array('ID'=>$newWpId,'user_activation_key'=>$oldWpKey),array('%s'),array('%d','%s'));
+            clean_user_cache($newWpId);
+            if($updated!==1){
+                $wpdb->delete($tablenameCreateUserEntries,array('activation_key'=>$new_activation_key),array('%s'));
+                return false;
+            }
         }
 
         $TextEmailConfirmation = str_ireplace($posUrl, $pageUrlForEmail . "cgkey=$new_activation_key#cg_activation", $resolved_body);
@@ -573,10 +640,19 @@ if(!function_exists('cg1l_resend_unconfirmed_mail')){
 
         // Send
         if(wp_mail( $ReceiverMail, $subject, $TextEmailConfirmation, $headers )){
+            $wpdb->delete($tablenameCreateUserEntries,array('activation_key'=>$old_activation_key),array('%s'));
+            $details = array('activationKey'=>$new_activation_key);
             $sent = true;
             $WpUserId = 0;
             cg_save_sent_mail($gid,$pid,$WpUserId,$ReceiverMail,$ReplyName,$ReplyMail,$FromName,$FromMail,$cc,$bcc,$subject,$TextEmailConfirmation, 'registry-resend-'.$suffixSource);
         }else{
+            if($newWpId){
+                // Restore only our own replacement, never a later password reset/confirmation.
+                $restored = $wpdb->update($wpdb->users,array('user_activation_key'=>$oldWpKey),
+                    array('ID'=>$newWpId,'user_activation_key'=>$new_activation_key),array('%s'),array('%d','%s'));
+                clean_user_cache($newWpId);
+                if($restored===false){return false;}
+            }
             $wpdb->delete(
                 $tablenameCreateUserEntries,
                 ['activation_key' => $new_activation_key],

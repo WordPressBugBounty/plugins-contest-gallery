@@ -214,7 +214,7 @@ $editCategoriesLink
     foreach($categories as $category){
 
         $checked = '';
-        $checkedClass = "class='cg_checked'";
+        $checkedClass = 'cg_checked';
 
         $imagesInCategoryCount = 0;
 
@@ -247,12 +247,12 @@ $editCategoriesLink
             $imagesInCategoryCountColor = 'red';
         }
 
-        echo "<div class='cg_category_checkbox_images_area' >".$category->Name." (<span style='color:$imagesInCategoryCountColor;'>$imagesInCategoryCount</span>): <input class='cg-categories-check' data-cg-category-id='".$category->id."' data-cg-images-in-category-count='".$imagesInCategoryCount."' type='checkbox' name='Category[]' $checkedClass $checked value='".$category->id."' style='height:16px;width:16px;'/></div>";
+        echo "<label class='cg_category_checkbox_images_area'><span>".$category->Name." (<span style='color:$imagesInCategoryCountColor;'>$imagesInCategoryCount</span>):</span><input class='cg-categories-check $checkedClass' data-cg-category-id='".$category->id."' data-cg-images-in-category-count='".$imagesInCategoryCount."' type='checkbox' name='Category[]' $checked value='".$category->id."'/></label>";
 
         if($counterCategories==$countCategories){
 
             $checked = '';
-            $checkedClass = "class='cg_checked'";
+            $checkedClass = 'cg_checked';
 
             if($ShowOther==1){
                 $counterCheckedCategories++;
@@ -281,7 +281,7 @@ $editCategoriesLink
                 $imagesInCategoryCountColor = 'red';
             }
 
-            echo "<div class='cg_category_checkbox_images_area' >Other (<span style='color:$imagesInCategoryCountColor;'>$imagesInCategoryCount</span>): <input type='checkbox' class='cg-categories-check'  data-cg-category-id='0' data-cg-images-in-category-count='".$imagesInCategoryCount."' name='Category[ShowOther]' value='1' $checkedClass $checked style='height:16px;width:16px;'/></div> ";
+            echo "<label class='cg_category_checkbox_images_area'><span>Other (<span style='color:$imagesInCategoryCountColor;'>$imagesInCategoryCount</span>):</span><input type='checkbox' class='cg-categories-check $checkedClass' data-cg-category-id='0' data-cg-images-in-category-count='".$imagesInCategoryCount."' name='Category[ShowOther]' value='1' $checked /></label> ";
         }
 
         $counterCategories++;

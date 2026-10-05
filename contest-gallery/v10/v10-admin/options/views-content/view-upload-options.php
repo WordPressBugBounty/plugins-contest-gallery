@@ -1,5 +1,6 @@
 <?php
 
+
 echo <<<HEREDOC
 
 <div class='cg_view_container'>
@@ -23,6 +24,103 @@ echo <<<HEREDOC
                 </div>
             </div>
         </div>
+HEREDOC;
+
+echo <<<HEREDOC
+    <div class='cg_view_options_rows_container' id="cgLimitUploadEntries">
+        <p class='cg_view_options_rows_container_title'>Limit upload entries and user recognition methods</span></p>
+            <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px cg_view_option_full_width $cgProFalse cg_border_radius_unset' id="RegUserMaxUploadContainer" >
+                    <div class='cg_view_option_title'>
+                        <p>Upload entries total per user<br><span class="cg_view_option_title_note">0 or empty = no limit</span></p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input id="RegUserMaxUpload" type="text" name="RegUserMaxUpload" value="$RegUserMaxUpload" maxlength="20" style="max-width: 100px; text-align: center;" >
+                    </div>
+                </div>
+                <div class='cg_view_option cg_view_option_50_percent cg_hide $cgProFalse cg_border_top_right_radius_8_px' id="RegUserMaxUploadPerCategoryContainer" >
+                    <div class='cg_view_option_title'>
+                        <p>Upload entries for a user per category<br><span class="cg_view_option_title_note">0 or empty = no limit</span></p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input id="RegUserMaxUploadPerCategory" type="text" name="RegUserMaxUploadPerCategory" value="$RegUserMaxUploadPerCategory" maxlength="20" >
+                    </div>
+                </div>
+            </div>
+            <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_view_option_100_percent cg_border_top_none CheckMethodUploadContainer $cgProFalse' id="CheckIpUploadContainer" >
+                    <div class='cg_view_option_title'>
+                        <p>Check by IP<br/><span class="cg_view_option_title_note">IP will be tracked always$userIPunknown</span></p>
+                    </div>
+                    <div class='cg_view_option_radio'>
+                        <input type="radio" name="RegUserUploadOnly" class="CheckMethodUpload" id="CheckIpUpload" value="3" $CheckIpUpload $checkIpCheckUpload>
+                    </div>
+                </div>
+            </div>
+            <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_view_option_100_percent CheckMethodUploadContainer cg_border_top_none $cgProFalse'  id="CheckCookieUploadContainer"  >
+                    <div class='cg_view_option_title'>
+                        <p>Check by cookie<br/><span class="cg_view_option_title_note">Cookie will be only set and tracked if this option is activated.<br>Will be not set if administrator uploads files in WordPress backend area.</span></p>
+                    </div>
+                    <div class='cg_view_option_radio'>
+                        <input type="radio" name="RegUserUploadOnly" class="CheckMethodUpload" id="CheckCookieUpload" value="2" $CheckCookieUpload>
+                    </div>
+                </div>
+            </div>
+            <div class='cg_view_options_row cg_hide'>
+                <div class='cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse' id="UploadRequiresCookieMessageContainer">
+                    <div class='cg_view_option_title'>
+                        <p>Check Cookie alert message if user browser does not allow cookies</p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input type="text" class="cg-long-input" placeholder="Please allow cookies to use upload form" id="UploadRequiresCookieMessage" name="UploadRequiresCookieMessage" maxlength="1000" value="$UploadRequiresCookieMessage" >
+                    </div>
+                </div>
+            </div>
+            <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_view_option_100_percent CheckMethodUploadContainer cg_border_bottom_none cg_border_top_none cg_go_to_target' data-cg-go-to-target="CheckLoginUploadContainer" id="CheckLoginUploadContainer"   >
+                    <div class='cg_view_option_title'>
+                        <p>Check if is registered user<br/><span class="cg_view_option_title_note">User have to be registered and logged in to be able to upload.<br>User WordPress ID will be always tracked if user is logged in.
+                        </span>
+                        </p>
+                    </div>
+                    <div class='cg_view_option_radio'>
+                        <input type="radio" name="RegUserUploadOnly" class="CheckMethodUpload" id="CheckLoginUpload" value="1" $CheckLoginUpload>
+                    </div>
+                </div>
+            </div>
+             <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_view_option_50_percent cg_border_border_bottom_left_radius_8_px cg_border_top_none cg_border_right_none' id="RegUserUploadOnlyTextContainer" style="flex-flow: column;" >
+                    <div class='cg_view_option_title'>
+                        <p>Show text instead of upload form<br/><span class="cg_view_option_title_note">if user is not logged in</span></p>
+                    </div>
+                    <div class='cg_view_option_html'>
+                        <textarea class='cg-wp-editor-template' id='RegUserUploadOnlyText'  name='RegUserUploadOnlyText'>$RegUserUploadOnlyText</textarea>
+                    </div>
+                </div>
+                <div class='cg_view_option cg_view_option_50_percent cg_border_border_bottom_left_radius_unset cg_border_left_none cg_border_top_none' id="ShowPinFormUploadingContainer" >
+                    <div class='cg_view_option_title cg_view_option_title_flex_flow_column'>
+                        <p>Offer sign-in before uploading<br/>
+                            <span class="cg_view_option_title_note">Requires "Check if is registered user" for uploads.</span>
+                        </p>
+                        <p>Standalone upload form<br/>
+                            <span class="cg_view_option_title_note">Place this shortcode on your page:</span><br/>
+                            <code class="cg_shortcode_copy cg_tooltip cg_event_link"><span class="cg_event_link">[cg_users_upload id="$GalleryID"]</span></code><br/>
+                            <span class="cg_view_option_title_note">Guests see email PIN sign-in and Google Sign-In if configured.</span>
+                        </p>
+                        <p>
+                            <span class="cg_view_option_title_note">
+                                Also applies to "File upload" in galleries without a member area.<br/>
+                                <b>Member areas and paid uploads handle sign-in independently of this setting.</b>
+                            </span>
+                        </p>
+                    </div>
+                    <div class='cg_view_option_checkbox'>
+                        <input type="checkbox" name="ShowPinFormUploading" id="ShowPinFormUploading" $ShowPinFormUploading>
+                    </div>
+                </div>
+            </div>
+    </div>
 HEREDOC;
 
 cg_upload_options_real_watermark_render($UploadRealWatermarkSettings, $UploadRealWatermarkChecked);
@@ -591,97 +689,6 @@ echo <<<HEREDOC
 </div>
 HEREDOC;
 
-echo <<<HEREDOC
-    <div class='cg_view_options_rows_container' id="cgLimitUploadEntries">
-        <p class='cg_view_options_rows_container_title'>Limit upload entries and user recognition methods</span></p>
-            <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px cg_view_option_full_width $cgProFalse cg_border_radius_unset' id="RegUserMaxUploadContainer" >
-                    <div class='cg_view_option_title'>
-                        <p>Upload entries total per user<br><span class="cg_view_option_title_note">0 or empty = no limit</span></p>
-                    </div>
-                    <div class='cg_view_option_input'>
-                        <input id="RegUserMaxUpload" type="text" name="RegUserMaxUpload" value="$RegUserMaxUpload" maxlength="20" style="max-width: 100px; text-align: center;" >
-                    </div>
-                </div>
-                <div class='cg_view_option cg_view_option_50_percent cg_hide $cgProFalse cg_border_top_right_radius_8_px' id="RegUserMaxUploadPerCategoryContainer" >
-                    <div class='cg_view_option_title'>
-                        <p>Upload entries for a user per category<br><span class="cg_view_option_title_note">0 or empty = no limit</span></p>
-                    </div>
-                    <div class='cg_view_option_input'>
-                        <input id="RegUserMaxUploadPerCategory" type="text" name="RegUserMaxUploadPerCategory" value="$RegUserMaxUploadPerCategory" maxlength="20" >
-                    </div>
-                </div>
-            </div>
-            <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_view_option_100_percent cg_border_top_none CheckMethodUploadContainer $cgProFalse' id="CheckIpUploadContainer" >
-                    <div class='cg_view_option_title'>
-                        <p>Check by IP<br/><span class="cg_view_option_title_note">IP will be tracked always$userIPunknown</span></p>
-                    </div>
-                    <div class='cg_view_option_radio'>
-                        <input type="radio" name="RegUserUploadOnly" class="CheckMethodUpload" id="CheckIpUpload" value="3" $CheckIpUpload $checkIpCheckUpload>
-                    </div>
-                </div>
-            </div>
-            <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_view_option_100_percent CheckMethodUploadContainer cg_border_top_none $cgProFalse'  id="CheckCookieUploadContainer"  >
-                    <div class='cg_view_option_title'>
-                        <p>Check by cookie<br/><span class="cg_view_option_title_note">Cookie will be only set and tracked if this option is activated.<br>Will be not set if administrator uploads files in WordPress backend area.</span></p>
-                    </div>
-                    <div class='cg_view_option_radio'>
-                        <input type="radio" name="RegUserUploadOnly" class="CheckMethodUpload" id="CheckCookieUpload" value="2" $CheckCookieUpload>
-                    </div>
-                </div>
-            </div>
-            <div class='cg_view_options_row cg_hide'>
-                <div class='cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse' id="UploadRequiresCookieMessageContainer">
-                    <div class='cg_view_option_title'>
-                        <p>Check Cookie alert message if user browser does not allow cookies</p>
-                    </div>
-                    <div class='cg_view_option_input'>
-                        <input type="text" class="cg-long-input" placeholder="Please allow cookies to use upload form" id="UploadRequiresCookieMessage" name="UploadRequiresCookieMessage" maxlength="1000" value="$UploadRequiresCookieMessage" >
-                    </div>
-                </div>
-            </div>
-            <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_view_option_100_percent CheckMethodUploadContainer cg_border_bottom_none cg_border_top_none $cgProFalse'   id="CheckLoginUploadContainer"   >
-                    <div class='cg_view_option_title'>
-                        <p>Check if is registered user<br/><span class="cg_view_option_title_note">User have to be registered and logged in to be able to upload.<br>User WordPress ID will be always tracked if user is logged in.
-                        </span>
-                        </p>
-                    </div>
-                    <div class='cg_view_option_radio'>
-                        <input type="radio" name="RegUserUploadOnly" class="CheckMethodUpload" id="CheckLoginUpload" value="1" $CheckLoginUpload>
-                    </div>
-                </div>
-            </div>
-             <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_view_option_50_percent cg_border_border_bottom_left_radius_8_px cg_border_top_none cg_border_right_none $cgProFalse' id="RegUserUploadOnlyTextContainer" style="flex-flow: column;" >
-                    <div class='cg_view_option_title'>
-                        <p>Show text instead of upload form<br/><span class="cg_view_option_title_note">if user is not logged in</span></p>
-                    </div>
-                    <div class='cg_view_option_html'>
-                        <textarea class='cg-wp-editor-template' id='RegUserUploadOnlyText'  name='RegUserUploadOnlyText'>$RegUserUploadOnlyText</textarea>
-                    </div>
-                </div>
-                <div class='cg_view_option cg_view_option_50_percent cg_border_border_bottom_left_radius_unset cg_border_left_none cg_border_top_none' id="ShowPinFormUploadingContainer" >
-                    <div class='cg_view_option_title'>
-                        <p>Show passwordless access options for uploading<br/>
-                            <span class="cg_view_option_title_note">
-                                When a not-logged-in user clicks on "In gallery upload form button", the <code>[cg_users_pin mode="access"]</code> form appears.<br/>
-                                If Google Sign-In is configured, it is shown as an additional sign-in option.<br/>
-                                Existing users sign in by email and PIN. A new email address creates a minimal account after PIN confirmation.<br/>
-                                After PIN confirmation, the <b>user can start uploading without reloading the page.</b>
-                            </span>
-                        </p>
-                    </div>
-                    <div class='cg_view_option_checkbox'>
-                        <input type="checkbox" name="ShowPinFormUploading" id="ShowPinFormUploading" $ShowPinFormUploading>
-                    </div>
-                </div>
-            </div>
-    </div>
-HEREDOC;
-
 
 
 echo <<<HEREDOC
@@ -764,16 +771,24 @@ $InformUserUploadBCC = contest_gal1ery_convert_for_html_output_without_nl2br($se
 $ContentUserUploadContent = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserUpload->Content);
 $InformUserUploadContentInfoWithoutFileSource = ($selectSQLemailUserUpload->ContentInfoWithoutFileSource==1) ? 'checked' : '';
 
+$cgMailDeliveryCard = cg_mail_delivery_card('Upload confirmation',array(
+    'from'=>array('[name="InformUserUploadFrom"]',$InformUserUploadFrom),
+    'reply'=>array('[name="InformUserUploadReply"]',$InformUserUploadReply)
+),'The uploader’s account email or the email address supplied with the upload.');
+
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
         <p class='cg_view_options_rows_container_title'>E-mail to frontend user after frontend upload
-        <br><span class="cg_view_options_rows_container_title_note">$cgDomainErrorText</span></p>
+        </p>
+        $cgMailDeliveryCard
         $mailExceptionUserUploadMail
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px cg_view_option_100_percent $cgProFalse" id="cgInformUserUploadContainer">
                 <div class="cg_view_option_title">
-                    <p>Inform user after successfull upload in frontend
-                        <br><span class="cg_view_option_title_note">If user e-mail exists in form or user is registered and logged in</span>
+                    <p>Inform users after successful frontend upload
+                        <br><span class="cg_view_option_title_note">Sends a confirmation after a successful frontend submission, even if the entry is awaiting activation.
+                        <br>Uses the e-mail address from the upload form or the logged-in user's account.
+                        <br>For notifications when entries are activated, configure Activation mail.</span>
                     </p>
                 </div>
                 <div class="cg_view_option_checkbox">

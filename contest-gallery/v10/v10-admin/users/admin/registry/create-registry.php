@@ -86,17 +86,20 @@ if(intval($galleryDbVersion)<14 AND empty($cgProFalse)){
 }
 
 
+$cgRegistryUrlOption = intval($galleryDbVersion)>=14 ? '<option value="url">URL</option>' : '';
+
 $heredoc = <<<HEREDOC
 	<select name="dauswahl" id="dauswahl" class="cg_hide" >
 		$optGroupWpFields
 		<optgroup label="User fields">
 			<option value="nf">Input</option>
+            $cgRegistryUrlOption
 			<option value="kf">Textarea</option>
 			<option value="se" class="$cgProFalse">Select</option>
             <option value="ra" class="$cgProFalse">Radio</option>
 			<option value="chk" class="$cgProFalse">Checkbox</option>
 			<option value="cb" class="$cgProFalse">Check agreement $cgProFalseText</option>
-			<option value="pi" class="$cgProFalse" $beforeSinceV14Disabled>Profile image $cgProFalseText$beforeSinceV14Explanation</option>
+			<option value="pi" $beforeSinceV14Disabled>Profile image $beforeSinceV14Explanation</option>
 		</optgroup>
 		<optgroup label="Admin fields">
 			<option class="$cgProFalse" value="ht">HTML $cgProFalseText</option>

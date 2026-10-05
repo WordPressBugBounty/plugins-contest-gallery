@@ -32,11 +32,23 @@ if(!function_exists('cg_shortcode_interval_check')){
             $TextWhenShortcodeIntervalIsOn = $options['interval'][$shortcode_name]['TextWhenShortcodeIntervalIsOn'];
             $TextWhenShortcodeIntervalIsOff = $options['interval'][$shortcode_name]['TextWhenShortcodeIntervalIsOff'];
             $isActive = false;
-            $currentYear = date("Y");
+            // Use the WordPress timezone for both calendar dates and comparisons.
+            if(function_exists('wp_timezone')){
+                $timezone = wp_timezone();
+            }else{
+                $timezoneName = get_option('timezone_string');
+                if(!$timezoneName){
+                    $offset = (float)get_option('gmt_offset');
+                    $timezoneName = sprintf('%s%02d:%02d',$offset<0 ? '-' : '+',abs((int)$offset),abs((int)round($offset*60))%60);
+                }
+                $timezone = new DateTimeZone($timezoneName);
+            }
+            $dateNow = new DateTime('now',$timezone);
+            $currentYear = $dateNow->format('Y');
             // selectedIntervalType
             if(isset($options['interval'][$shortcode_name][$currentYear])){
                 $interval = $options['interval'][$shortcode_name][$currentYear]['selectedIntervalType'];
-                $currentMonthName = strtolower(date('F'));
+                $currentMonthName = strtolower($dateNow->format('F'));
                 if(isset($options['interval'][$shortcode_name][$currentYear])){
                     if($interval=='monthly'){
                         $fromDate = $options['interval'][$shortcode_name][$currentYear][$interval][$currentMonthName]['fromDate'];
@@ -48,10 +60,8 @@ if(!function_exists('cg_shortcode_interval_check')){
                             $fromMinutes = $options['interval'][$shortcode_name][$currentYear][$interval][$currentMonthName]['fromMinutes'];
                             $toHours = $options['interval'][$shortcode_name][$currentYear][$interval][$currentMonthName]['toHours'];
                             $toMinutes = $options['interval'][$shortcode_name][$currentYear][$interval][$currentMonthName]['toMinutes'];
-                            $dateNow = cg_get_date_time_object_based_on_wp_timezone_conf((new DateTime('now'))->getTimestamp());
-
-                            $intervalStartDate = new DateTime($fromDate.' '.$fromHours.':'.$fromMinutes.':00');
-                            $intervalEndDate = new DateTime($toDate.' '.$toHours.':'.$toMinutes.':59');
+                            $intervalStartDate = new DateTime($fromDate.' '.$fromHours.':'.$fromMinutes.':00',$timezone);
+                            $intervalEndDate = new DateTime($toDate.' '.$toHours.':'.$toMinutes.':59',$timezone);
 
                             if($intervalStartDate->getTimestamp()<=$dateNow->getTimestamp()
                                 && $intervalEndDate->getTimestamp()>=$dateNow->getTimestamp()){
@@ -69,9 +79,10 @@ if(!function_exists('cg_shortcode_interval_check')){
                             $fromMinutes = $options['interval'][$shortcode_name][$currentYear][$interval]['fromMinutes'];
                             $toHours = $options['interval'][$shortcode_name][$currentYear][$interval]['toHours'];
                             $toMinutes = $options['interval'][$shortcode_name][$currentYear][$interval]['toMinutes'];
-                            $dateNow = cg_get_date_time_object_based_on_wp_timezone_conf((new DateTime('now'))->getTimestamp());
-                            $intervalStartDate = new DateTime(date('Y-m-d', strtotime("$dayStart this week")).' '.$fromHours.':'.$fromMinutes.':00');
-                            $intervalEndDate = new DateTime(date('Y-m-d', strtotime("$dayEnd this week")).' '.$toHours.':'.$toMinutes.':59');
+                            $intervalStartDate = clone $dateNow;
+                            $intervalStartDate->modify("$dayStart this week")->setTime((int)$fromHours,(int)$fromMinutes,0);
+                            $intervalEndDate = clone $dateNow;
+                            $intervalEndDate->modify("$dayEnd this week")->setTime((int)$toHours,(int)$toMinutes,59);
 
                             if($intervalStartDate->getTimestamp()<=$dateNow->getTimestamp()
                                 && $intervalEndDate->getTimestamp()>=$dateNow->getTimestamp()){
@@ -84,10 +95,12 @@ if(!function_exists('cg_shortcode_interval_check')){
                         $fromMinutes = $options['interval'][$shortcode_name][$currentYear][$interval]['fromMinutes'];
                         $toHours = $options['interval'][$shortcode_name][$currentYear][$interval]['toHours'];
                         $toMinutes = $options['interval'][$shortcode_name][$currentYear][$interval]['toMinutes'];
-                        if($fromHours && $toHours && $fromMinutes && $toMinutes){
-                            $dateNow = cg_get_date_time_object_based_on_wp_timezone_conf((new DateTime('now'))->getTimestamp());
-                            $intervalStartDate = new DateTime(date('Y-m-d', strtotime("today")).' '.$fromHours.':'.$fromMinutes.':00');
-                            $intervalEndDate = new DateTime(date('Y-m-d', strtotime("today")).' '.$toHours.':'.$toMinutes.':59');
+                        // The end-minute select stores midnight/full hours as "0".
+                        if(is_numeric($fromHours) && is_numeric($toHours) && is_numeric($fromMinutes) && is_numeric($toMinutes)){
+                            $intervalStartDate = clone $dateNow;
+                            $intervalStartDate->setTime((int)$fromHours,(int)$fromMinutes,0);
+                            $intervalEndDate = clone $dateNow;
+                            $intervalEndDate->setTime((int)$toHours,(int)$toMinutes,59);
                             if($intervalStartDate->getTimestamp()<=$dateNow->getTimestamp()
                                 && $intervalEndDate->getTimestamp()>=$dateNow->getTimestamp()){
                                 $isActive = true;

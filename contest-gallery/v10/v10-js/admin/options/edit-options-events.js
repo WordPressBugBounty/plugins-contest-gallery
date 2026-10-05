@@ -1,5 +1,91 @@
 jQuery(document).ready(function($){
 
+    $(document).on('change', '#cgAccountNavigationOptions .cg_account_navigation_mode', function () {
+        var name = this.name, value = this.value;
+        if (name === 'BackToGalleryMode') {
+            $(this).closest('.cg_view_option').toggleClass('cg_border_border_bottom_left_radius_8_px cg_border_border_bottom_right_radius_8_px', value === '0');
+        }
+        $('#cgAccountNavigationOptions [data-cg-account-mode]').filter(function () {
+            return $(this).attr('data-cg-account-mode') === name;
+        }).each(function () {
+            $(this).toggleClass('cg_hide', $(this).attr('data-cg-account-value') !== value);
+        });
+    });
+
+
+    $(document).on('click change', '.cg_page_header_toggle_container', function () {
+        cgJsClassAdmin.options.functions.syncPageHeaderOptions();
+    });
+
+    $(document).on('change', '#MemberArea, #MemberAreaNoVoting, #MemberAreaUser', function () {
+        cgJsClassAdmin.options.functions.syncMemberProfileOptions();
+        if (this.checked && !$('#cgMemberUploadChoice').data('applying-choice')) {
+            cgJsClassAdmin.options.functions.openMemberUploadChoice($(this));
+        }
+    });
+    $(document).on('click', '#cgMemberUploadChoice [data-cg-upload-login]', function () {
+        cgJsClassAdmin.options.functions.closeMemberUploadChoice($(this).attr('data-cg-upload-login') === '1');
+    });
+    $(document).on('click', '#cgMemberUploadChoice .cg-options-choice-close, #cgMemberUploadChoice .cg-options-choice-cancel, #cgBackendBackgroundDrop', function () {
+        cgJsClassAdmin.options.functions.closeMemberUploadChoice();
+    });
+    document.addEventListener('keydown', function (event) {
+        var $modal = $('#cgMemberUploadChoice');
+        if (!$modal.data('member-checkbox') || $modal.hasClass('cg_hide')) return;
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            cgJsClassAdmin.options.functions.closeMemberUploadChoice();
+        } else if (event.key === 'Tab') {
+            var $buttons = $modal.find('button:visible:enabled'), first = $buttons.first()[0], last = $buttons.last()[0];
+            if (event.shiftKey && (document.activeElement === first || !$.contains($modal[0], document.activeElement))) {
+                event.preventDefault(); last.focus();
+            } else if (!event.shiftKey && (document.activeElement === last || !$.contains($modal[0], document.activeElement))) {
+                event.preventDefault(); first.focus();
+            }
+        }
+    }, true);
+
+    $(document).on('click', '#cgViewChoice [data-cg-entry-view]', function () {
+        cgJsClassAdmin.options.functions.closeViewChoice($(this).attr('data-cg-entry-view'));
+    });
+    $(document).on('click', '#cgViewChoice .cg-options-choice-close, #cgViewChoice .cg-options-choice-cancel, #cgBackendBackgroundDrop', function () {
+        cgJsClassAdmin.options.functions.closeViewChoice();
+    });
+    document.addEventListener('keydown', function (event) {
+        var $modal = $('#cgViewChoice');
+        if (!$modal.data('view-trigger') || $modal.hasClass('cg_hide')) return;
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            cgJsClassAdmin.options.functions.closeViewChoice();
+        } else if (event.key === 'Tab') {
+            var $buttons = $modal.find('button:visible:enabled'), first = $buttons.first()[0], last = $buttons.last()[0];
+            if (event.shiftKey && (document.activeElement === first || !$.contains($modal[0], document.activeElement))) {
+                event.preventDefault(); last.focus();
+            } else if (!event.shiftKey && (document.activeElement === last || !$.contains($modal[0], document.activeElement))) {
+                event.preventDefault(); first.focus();
+            }
+        }
+    }, true);
+
+    $(document).on('click', '.cg_member_replace_upload_times', function (event) {
+        event.preventDefault();
+        $('.td_gallery_info_shortcode_conf[data-cg-shortcode="cg_users_upload"]').first().trigger('click');
+    });
+
+    $(document).on('change', 'select[name="cg_member_replace[mode]"]', function () {
+        var mode = $(this).val();
+        var $group = $(this).closest('.cg_member_options_group');
+        // Hide complete rows without disabling their inputs so saved values survive mode changes.
+        $group.find('.cg_member_replace_duration_row').toggleClass('cg_hide', mode !== 'duration');
+        $group.find('.cg_member_replace_date_row').toggleClass('cg_hide', mode !== 'date');
+        $group.find('.cg_member_replace_votes_row').toggleClass('cg_hide', mode === 'off');
+        $group.find('.cg_member_replace_mode_row > .cg_view_option').toggleClass(
+            'cg_border_border_bottom_left_radius_8_px cg_border_border_bottom_right_radius_8_px', mode === 'off'
+        ).toggleClass('cg_border_bottom_none', mode !== 'off');
+    });
+
 /*    $(document).on('click', '.cg_view_option', function (e) {
         cgViewOptionCheck(this,e);
     });*/
@@ -526,19 +612,7 @@ jQuery(document).ready(function($){
         cgJsClassAdmin.options.functions.cg_BlogLookFullWindow(true,$,$(this).find('.BlogLookFullWindow:not(.cg_shortcode_checkbox_clone)'));
     });
 
-    $(document).on('click',"#cgBackendGalleryDynamicMessage .BlogLookFullWindowContainer",function ( ) {
-        cgJsClassAdmin.gallery.functions.hideCgBackendBackgroundDropAndContainer();
-        var $view = $('.cg_view.cgSinglePicOptions:not(.cg_hide)');
-        var $BlogLookFullWindowContainer = $view.find('.BlogLookFullWindowContainer');
-        var $element  = $BlogLookFullWindowContainer;
-        $BlogLookFullWindowContainer.click();
-        // have to be done additionally in this case after click
-        cgJsClassAdmin.options.functions.cg_BlogLookFullWindow(true,$,$element.find('.BlogLookFullWindow:not(.cg_shortcode_checkbox_clone)'));
-        $BlogLookFullWindowContainer.get(0).scrollIntoView();
-        // has to be done extra
-        $view.find('.FullSizeImageOutGallery').prop('checked',false).closest('.cg_view_option_radio').removeClass('cg_view_option_checked');
-        $view.find('.OnlyGalleryView').prop('checked',false).closest('.cg_view_option_radio').removeClass('cg_view_option_checked').addClass('cg_view_option_unchecked');
-    });
+
 
 // Check if BlogLookFullWindow is activated or not --- END
 
@@ -549,19 +623,7 @@ jQuery(document).ready(function($){
         cgJsClassAdmin.options.functions.cg_ForwardToWpPageEntry(true,$,$(this).find('.ForwardToWpPageEntry:not(.cg_shortcode_checkbox_clone)'));
     });
 
-    $(document).on('click',"#cgBackendGalleryDynamicMessage .ForwardToWpPageEntryContainer",function ( ) {
-        cgJsClassAdmin.gallery.functions.hideCgBackendBackgroundDropAndContainer();
-        var $view = $('.cg_view.cgSinglePicOptions:not(.cg_hide)');
-        var $ForwardToWpPageEntryContainer = $view.find('.ForwardToWpPageEntryContainer');
-        var $element  = $ForwardToWpPageEntryContainer;
-        $ForwardToWpPageEntryContainer.click();
-        // have to be done additionally in this case after click
-        cgJsClassAdmin.options.functions.cg_ForwardToWpPageEntry(true,$,$element.find('.ForwardToWpPageEntry:not(.cg_shortcode_checkbox_clone)'));
-        $ForwardToWpPageEntryContainer.get(0).scrollIntoView();
-        // has to be done extra
-        $view.find('.FullSizeImageOutGallery').prop('checked',false).closest('.cg_view_option_radio').removeClass('cg_view_option_checked').addClass('cg_view_option_unchecked');;
-        $view.find('.OnlyGalleryView').prop('checked',false).closest('.cg_view_option_radio').removeClass('cg_view_option_checked').addClass('cg_view_option_unchecked');
-    });
+
 
 // Check if BlogLookFullWindow is activated or not --- END
 
@@ -571,61 +633,17 @@ jQuery(document).ready(function($){
 
     $(document).on('click',".FullSizeImageOutGalleryContainer",function (e) {
 
+        if($(e.target).closest('a').length){return;}
+
         if($(this).closest('.cg_view').hasClass('cg_FullSizeImageOutGallery_checked')){
-
-            var cgGalleryDbVersion = parseInt($('#cgGalleryDbVersion').val());
-            var customPostTypeHide = '';
-            if(cgGalleryDbVersion<21){
-                customPostTypeHide = 'cg_hide';
-            }
-
-            // find ForwardToWpPageEntryContainer
-            var $message = $("" +
-                "<div class='cg_main_options' id='cgMessageViewSelect' >\n" +
-                "   <div class='cg_view_options_rows_container'>\n" +
-                "        <p class='cg_view_options_rows_container_title' style='font-size: 26px;'>Select another view</p>\n" +
-                "     </div>" +
-                " </div>");
-
-            $message.append(cgJsClassAdmin.options.vars.cg_view_options_row_open_file_image_style);
-            $message.find('.ForwardToWpPageEntryContainer').addClass(customPostTypeHide);
-
-            var cg_view_options_row_OnlyGalleryView = '<div class="cg_view_options_rows_container">\n' +
-                '<p class="cg_view_options_rows_container_title">Only gallery view</p>\n' +
-                '<div class="cg_view_options_row">\n' +
-                '            <div class="cg_view_option cg_view_option_100_percent OnlyGalleryViewContainer cg_border_radius_8_px  ">\n' +
-                '                <div class="cg_view_option_title">\n' +
-                '                    <p>Make entries unclickable<br>Good for displaying entries only<br><span class="cg_view_option_title_note">Files images can not be clicked. Configuration of voting out of gallery is possible.<br>Only for gallery views. Slider and blog view will work as usual.</span></p>\n' +
-                '                </div>\n' +
-                '                <div class="cg_view_option_radio cg_margin_top_5 cg_view_option_unchecked">\n' +
-                '                    <input type="radio" name="OnlyGalleryView" class="OnlyGalleryView">\n' +
-                '                </div>\n' +
-                '            </div>\n' +
-                '       </div>\n' +
-                ' </div>';
-
-            $message.append(cg_view_options_row_OnlyGalleryView);
-
-            cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage($message,undefined,'cg_backend_action_container');
-
+            cgJsClassAdmin.options.functions.openViewChoice($(this));
         }else{
         cgJsClassAdmin.options.functions.cg_FullSizeImageOutGallery(true,$,$(this).find('.FullSizeImageOutGallery:not(.cg_shortcode_checkbox_clone)'));
         }
 
     });
 
-    $(document).on('click',"#cgBackendGalleryDynamicMessage .FullSizeImageOutGalleryContainer",function ( ) {
-        var $view = $('.cg_view.cgSinglePicOptions:not(.cg_hide)');
-        cgJsClassAdmin.gallery.functions.hideCgBackendBackgroundDropAndContainer();
-        var $FullSizeImageOutGalleryContainer = $view.find('.FullSizeImageOutGalleryContainer');
-        var $element  = $FullSizeImageOutGalleryContainer;
-        $FullSizeImageOutGalleryContainer.click();
-        // have to be done additionally in this case after click
-        cgJsClassAdmin.options.functions.cg_FullSizeImageOutGallery(true,$,$element.find('.FullSizeImageOutGallery:not(.cg_shortcode_checkbox_clone)'));
-        $FullSizeImageOutGalleryContainer.get(0).scrollIntoView();
-        // has to be done extra
-        $view.find('.OnlyGalleryView').prop('checked',false).closest('.cg_view_option_radio').removeClass('cg_view_option_checked').addClass('cg_view_option_unchecked');
-    });
+
 
 // Check if Full Size Image is activated or not --- END
 
@@ -642,60 +660,16 @@ jQuery(document).ready(function($){
 
     $(document).on('click',".OnlyGalleryViewContainer",function (e) {
 
+        if($(e.target).closest('a').length){return;}
 
         if($(this).closest('.cg_view').hasClass('cg_OnlyGalleryView_checked')){
-
-            var cgGalleryDbVersion = parseInt($('#cgGalleryDbVersion').val());
-            var customPostTypeHide = '';
-            if(cgGalleryDbVersion<21){
-                customPostTypeHide = 'cg_hide';
-            }
-
-            var $message = $("" +
-                "<div class='cg_main_options' id='cgMessageViewSelect' >\n" +
-                "   <div class='cg_view_options_rows_container'>\n" +
-                "        <p class='cg_view_options_rows_container_title' style='font-size: 26px;'>Select another view</p>\n" +
-                "     </div>" +
-                " </div>");
-
-            $message.append(cgJsClassAdmin.options.vars.cg_view_options_row_open_file_image_style);
-            $message.find('.ForwardToWpPageEntryContainer').addClass(customPostTypeHide);
-
-            var cg_view_options_row_OnlyGalleryView = '<div class="cg_view_options_rows_container">\n' +
-                '<p class="cg_view_options_rows_container_title">Original source link only</p>\n' +
-            '<div class="cg_view_options_row">\n' +
-                '<div class="cg_view_option cg_view_option_100_percent FullSizeImageOutGalleryContainer   cg_border_radius_8_px">\n' +
-                '                <div class="cg_view_option_title">\n' +
-                '                    <p>Forward directly to original source after clicking an entry from in a gallery<br><span class="cg_view_option_title_note">Configuration of voting out of gallery is possible.<br>Only for gallery views. Slider and blog view will work as usual.</span></p>\n' +
-                '                </div>\n' +
-                '                <div class="cg_view_option_radio cg_margin_top_5 cg_view_option_unchecked">\n' +
-                '                    <input type="radio" name="FullSizeImageOutGallery" class="FullSizeImageOutGallery">\n' +
-                '                </div>\n' +
-                '            </div>\n' +
-                '       </div>\n' +
-                ' </div>';
-
-            $message.append(cg_view_options_row_OnlyGalleryView);
-
-            cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage($message,undefined,'cg_backend_action_container');
-
+            cgJsClassAdmin.options.functions.openViewChoice($(this));
         }else{
         cgJsClassAdmin.options.functions.cg_OnlyGalleryView(true,$,$(this).find('.OnlyGalleryView:not(.cg_shortcode_checkbox_clone)'));
         }
     });
 
-    $(document).on('click',"#cgBackendGalleryDynamicMessage .OnlyGalleryViewContainer",function ( ) {
-        var $view = $('.cg_view.cgSinglePicOptions:not(.cg_hide)');
-        cgJsClassAdmin.gallery.functions.hideCgBackendBackgroundDropAndContainer();
-        var $OnlyGalleryViewContainer = $view.find('.OnlyGalleryViewContainer');
-        var $element  = $OnlyGalleryViewContainer;
-        $OnlyGalleryViewContainer.click();
-        // have to be done additionally in this case after click
-        cgJsClassAdmin.options.functions.cg_OnlyGalleryView(true,$,$element.find('.OnlyGalleryView:not(.cg_shortcode_checkbox_clone)'));
-        $OnlyGalleryViewContainer.get(0).scrollIntoView();
-        // has to be done extra
-        $view.find('.FullSizeImageOutGallery').prop('checked',false).closest('.cg_view_option_radio').removeClass('cg_view_option_checked').addClass('cg_view_option_unchecked');
-    });
+
 
 // Check if only gallery view is activated or not --- END
 
@@ -1590,6 +1564,7 @@ jQuery(document).ready(function($){
         e.preventDefault();
         //cgViewOptionCheck(this,e);
         var $cgGoToTarget = $('.cg_go_to_target'+'[data-cg-go-to-target="'+$(this).attr('data-cg-go-to-link')+'"]:visible');
+        if (!$cgGoToTarget.length) return;
         var offsetTop = $cgGoToTarget.offset().top;
         $(window).scrollTop(offsetTop-300);
         $cgGoToTarget.addClass('cg_blink');
@@ -2521,14 +2496,6 @@ $(document).on('click','#RatingVisibleForGalleryEcommerceOption',function (e) {
 
     $(document).on('click', '#StripeApiActiveOption', function (e) {
         cgJsClassAdmin.options.functions.checkStripeApiFields($,$(this).find('#StripeApiActive'));
-    });
-
-    $(document).on('input', '#cg_main_options_content .cg_domain_error_input', function (e) {
-        var $el = $(this);
-        clearTimeout(window._cgDomainErrorMethod);
-        window._cgDomainErrorMethod = setTimeout(function () {
-            cgJsClassAdmin.options.functions.cgDomainErrorMethod($el);
-        }, 300);
     });
 
 });

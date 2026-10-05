@@ -72,12 +72,18 @@ if(($GalleryUpload==1 && !$isUserGallery) OR ($GalleryUpload==1 && $isUserGaller
 // Order of views will be determined
 
 $isEntryOnlyEcommerceHeaderOnlyBasket = !empty($entryId) && !empty($isOnlyGalleryEcommerce) && !empty($isGalleryShortcode);
+$cgMemberIsEmpty = false;
 
 if($isOnlyUploadForm || $isOnlyContactForm){
     echo "<div class='cg_thumbs_and_categories_control cg_gallery_control_element'>";
         include('gallery-upload-form.php');
     echo "</div>";
 }else{
+
+if(empty($isCGalleries) && empty($entryId) && empty($cgParticipantUserId)){
+    $cgMemberIsEmpty = cg_member_render_header($realGid,$galeryIDuserForJs,$shortcode_name,$options,!empty($cgMemberPublicInstance) ? $cgMemberPublicInstance : '',!empty($cgMemberPublicShortcode) ? $cgMemberPublicShortcode : '',$WpUserIdsData,!empty($cgMemberInitialOwnView) ? $cgMemberInitialPublicPage : 0);
+}
+$cgMemberEmptyControlsClass = $cgMemberIsEmpty ? ' cg_hide' : '';
 
 if($isEntryOnlyEcommerceHeaderOnlyBasket){
     echo "<div class='cg_gallery_view_sort_control' id='cgGalleryViewSortControl$galeryIDuserForJs' >";
@@ -134,7 +140,7 @@ if(true){
         }
 
         if($Search==1){
-            echo "<div id='cgSearchInputDiv$galeryIDuserForJs' class='cg_search_input_div cg_gallery_control_element $cgFeControlsStyle'>";
+            echo "<div id='cgSearchInputDiv$galeryIDuserForJs' class='cg_search_input_div cg_gallery_control_element $cgFeControlsStyle$cgMemberEmptyControlsClass'>";
             echo '<div class="cg_skeleton"></div>';
             echo "<input  type='text' id='cgSearchInput$galeryIDuserForJs' autocomplete='off' placeholder='$language_Search' class='cg_search_input' data-cg-gid='$galeryIDuserForJs' />";
             echo "</div>";
@@ -146,7 +152,7 @@ if(true){
             if($AllowSort == 1){
 
                 $selected = '';
-                echo '<label class="cg_select_order_label cg_gallery_control_element cg_hover_effect"><div class="cg_skeleton"></div><select data-cg-tooltip="'.$language_SortBy.'" id="cg_select_order'.$galeryIDuserForJs.'" class="cg_select_order cg_gallery_control_element '.$cgFeControlsStyle.'">';
+                echo '<label class="cg_select_order_label cg_gallery_control_element cg_hover_effect'.$cgMemberEmptyControlsClass.'"><div class="cg_skeleton"></div><select data-cg-tooltip="'.$language_SortBy.'" id="cg_select_order'.$galeryIDuserForJs.'" class="cg_select_order cg_gallery_control_element '.$cgFeControlsStyle.'">';
 
                 if(in_array('date-desc',$AllowSortOptionsArray)){
                     echo '<option value="date-desc" class="cg_date_descend" '.$selected.'>'.$language_DateDescend.'</option>';
@@ -236,7 +242,7 @@ if(true){
             }
 
             if($options['general']['RandomSortButton']==1){
-                echo "<div class='cg-lds-dual-ring cg_random_button_loader $cgFeControlsStyle cg_gallery_control_element'><div class='cg_skeleton'></div></div>";
+                echo "<div class='cg-lds-dual-ring cg_random_button_loader $cgFeControlsStyle cg_gallery_control_element$cgMemberEmptyControlsClass'><div class='cg_skeleton'></div></div>";
                 echo "<div data-cg-tooltip='$language_RandomSortIcon' class='cg_random_button cg_hover_effect cg_hide cg_gallery_control_element $cgFeControlsStyle' data-cg-gid='$galeryIDuserForJs'><div class='cg_skeleton'></div></div>";
             }
 
@@ -247,7 +253,7 @@ if(true){
             if($cgFeControlsStyle == 'cg_fe_controls_style_white'){
                 $switchColorsTooltipStyleText = $language_DarkStyle;
             }
-            echo "<div class='cg_switch_colors cg_gallery_control_element cg_hover_effect'  data-cg-tooltip='$switchColorsTooltipStyleText' data-cg-gid='$galeryIDuserForJs'><div class='cg_skeleton'></div></div>";
+            echo "<div class='cg_switch_colors cg_gallery_control_element cg_hover_effect$cgMemberEmptyControlsClass'  data-cg-tooltip='$switchColorsTooltipStyleText' data-cg-gid='$galeryIDuserForJs'><div class='cg_skeleton'></div></div>";
         }
 
 
@@ -265,7 +271,7 @@ if(true){
     }
 
 
-    echo "<div class='cg_thumbs_and_categories_control cg_gallery_control_element'>";
+    echo "<div class='cg_thumbs_and_categories_control cg_gallery_control_element$cgMemberEmptyControlsClass'>";
 
     if($isCategoryUploadFieldActive){
         include('categories-container.php');
@@ -407,4 +413,8 @@ if(true){
 
 }
 }
+}
+
+if($cgMemberIsEmpty){
+    cg_member_render_empty();
 }

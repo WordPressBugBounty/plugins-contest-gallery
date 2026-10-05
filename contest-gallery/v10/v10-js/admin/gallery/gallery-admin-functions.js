@@ -2040,15 +2040,6 @@ cgJsClassAdmin.gallery.functions = {
 
         });
     },
-    mailDomainCheck: function ($,$element) {
-        var ownDomain = window.location.hostname.replace(/^www\./, '');
-        var val = $element.val();
-        if (val.indexOf(ownDomain) !== -1) {
-            $element.parent().find('.cg_domain_error').removeClass('cg_hide');
-        } else {
-            $element.parent().find('.cg_domain_error').addClass('cg_hide');
-        }
-    },
     syncBackendScrollLockState: function ($, isBackendRenderComplete) {
         var $body = $('body');
         var $html = $('html');

@@ -477,6 +477,10 @@ if (!function_exists('cg1l_get_runtime_instance_state')) {
             }
         }
 
+        if(!empty($context['participantUserId'])){
+            $allowedRealIds = array_values(array_intersect($allowedRealIds,array_keys(cg_participants_rows($realGid,$shortcodeName,$context['participantUserId']))));
+            $options = cg_participants_gallery_options($options);
+        }
         $state['allowedRealIds'] = $allowedRealIds;
         $state['options'] = $options;
         $state['formUploadFullData'] = $formUploadFullData;
@@ -1051,14 +1055,33 @@ if (!function_exists('cg_show_set_comments_v10')) {
 // AJAX Script show comment Slider or out of Gallery ---- ENDE
 
 add_action( 'wp_ajax_nopriv_post_cg_login', 'post_cg_login' );
+add_action( 'wp_ajax_post_cg_login', 'post_cg_login' );
+add_action( 'wp_ajax_nopriv_post_cg_reset_password', 'post_cg_reset_password' );
+add_action( 'wp_ajax_post_cg_reset_password', 'post_cg_reset_password' );
+
+if(!function_exists('post_cg_reset_password')){
+    function post_cg_reset_password(){
+        // Keep the shared request checks, but allow only password reset processing.
+        post_cg_login(true);
+    }
+}
 
 if(!function_exists('post_cg_login')){
 
-    function post_cg_login(){
+    function post_cg_login($cgResetPasswordOnly = false){
 
         global $wpdb;
 
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+
+            nocache_headers();
+            header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+            if(empty($_SERVER['REQUEST_METHOD']) || $_SERVER['REQUEST_METHOD'] !== 'POST'){
+                wp_send_json_error(array('message'=>'cg_login_post_required'),405);
+            }
+            if(is_user_logged_in()){
+                wp_send_json_error(array('message'=>'cg_login_session_changed'),409);
+            }
 
             cg_check_frontend_nonce();
 
@@ -1074,6 +1097,7 @@ if(!function_exists('post_cg_login')){
 }
 
 add_action( 'wp_ajax_nopriv_post_cg1l_resend_unconfirmed_mail_frontend', 'post_cg1l_resend_unconfirmed_mail_frontend' );
+add_action( 'wp_ajax_post_cg1l_resend_unconfirmed_mail_frontend', 'post_cg1l_resend_unconfirmed_mail_frontend' );
 
 if(!function_exists('post_cg1l_resend_unconfirmed_mail_frontend')){
     function post_cg1l_resend_unconfirmed_mail_frontend(){
@@ -1084,12 +1108,12 @@ if(!function_exists('post_cg1l_resend_unconfirmed_mail_frontend')){
             $tablenameProOptions = $wpdb->prefix . "contest_gal1ery_pro_options";
 
             $proOptions = $wpdb->get_row("SELECT * FROM $tablenameProOptions WHERE GeneralID = '1'");
-            $activationKey = sanitize_text_field(wp_unslash($_POST["cgl_activation_key"]));
+            $activationKey = isset($_POST['cgl_activation_key']) && is_string($_POST['cgl_activation_key']) ? sanitize_text_field(wp_unslash($_POST['cgl_activation_key'])) : '';
 
             $gid = 0;
             $pid = 0;
-            $ReceiverMail = sanitize_email($_POST['cgl_mail']);
-            $page_id = intval($_POST['cgl_page_id']);
+            $ReceiverMail = '';
+            $page_id = isset($_POST['cgl_page_id']) && !is_array($_POST['cgl_page_id']) ? absint($_POST['cgl_page_id']) : 0;
             $pageUrl = get_permalink($page_id);
             $FromName = html_entity_decode(strip_tags($proOptions->RegMailAddressor));
             $ReplyName = $FromName;
@@ -1100,11 +1124,13 @@ if(!function_exists('post_cg1l_resend_unconfirmed_mail_frontend')){
             $body = contest_gal1ery_convert_for_html_output_without_nl2br($proOptions->TextEmailConfirmation);
             $Subject = contest_gal1ery_convert_for_html_output_without_nl2br($proOptions->RegMailSubject);
 
-            $sent = cg1l_resend_unconfirmed_mail($gid,$pid,$ReceiverMail,$pageUrl,$ReplyMail,$FromName,$ReplyName,$FromMail,$RegMailCC,$RegMailBCC,$body,$Subject,$activationKey,true);
+            $details = array();
+            $sent = $pageUrl && $activationKey && $proOptions ? cg1l_resend_unconfirmed_mail($gid,$pid,$ReceiverMail,$pageUrl,$ReplyMail,$FromName,$ReplyName,$FromMail,$RegMailCC,$RegMailBCC,$body,$Subject,$activationKey,true,$details) : false;
 
             ?>
             <script data-cg-processing="true">
                 cgJsClass.gallery.vars.resendConfirmationMailSent = <?php echo json_encode($sent);?>;
+                cgJsClass.gallery.vars.resendConfirmationMailResult = <?php echo wp_json_encode($details);?>;
             </script>
             <?php
             die();
@@ -1398,6 +1424,17 @@ if(!function_exists('post_cg1l_get_gallery_data')){
                 }
             }
 
+            if($shortcode_name==='cg_gallery_user' && cg_member_enabled($gid)){
+                $privateTypes = array('images-main-data'=>'main','images-info-data'=>'info','images-query-data'=>'query','images-urls-data'=>'urls','images-stats-data'=>'stats','images-comments-data'=>'comments');
+                if(!isset($privateTypes[$type])){status_header(400); exit;}
+                $privateData = cg_member_owner_data($gid,isset($_POST['publicShortcode']) ? sanitize_key($_POST['publicShortcode']) : '');
+                nocache_headers();
+                header('Cache-Control: private, no-store, max-age=0');
+                header('Content-Type: application/json; charset=utf-8');
+                echo wp_json_encode($privateData[$privateTypes[$type]]);
+                exit;
+            }
+
             cg1l_migrate_image_stats_to_folder($gid, true);// correct first if needs to correct
 
             $imagesFullData = cg1l_build_images_main_data_gzip($gid, true);
@@ -1408,6 +1445,16 @@ if(!function_exists('post_cg1l_get_gallery_data')){
             $allowedRealIds = [];
             if(!empty($galleryDataUseAllowedRealIds)){
                 $allowedRealIds = cg1l_frontend_get_allowed_real_ids($imagesFullData, $shortcode_name, $categoriesFullData, $options, $viewerUserId, $formUploadFullData);
+            }
+
+            $participantContext = false;
+            if(!empty($_POST['participantContextToken']) && is_string($_POST['participantContextToken'])){
+                $participantContext = cg1l_verify_runtime_context_token(wp_unslash($_POST['participantContextToken']));
+                if(!$participantContext || empty($participantContext['participantUserId']) || $participantContext['realGid']!==$gid || $participantContext['shortcodeName']!==$shortcode_name || !cg_participants_context($participantContext)){
+                    cg1l_ajax_frontend_response(false,array('message'=>'cg_invalid_gallery_data_access'));
+                }
+                $galleryDataUseAllowedRealIds = 1;
+                $allowedRealIds = array_keys(cg_participants_rows($gid,$shortcode_name,$participantContext['participantUserId']));
             }
 
             $typeMap = [
@@ -1536,7 +1583,7 @@ if(!function_exists('post_cg1l_get_gallery_data')){
             nocache_headers();
             header('Content-Type: application/json; charset=utf-8');
             header('Vary: Accept-Encoding');
-            header('Cache-Control: no-transform');
+            header($participantContext ? 'Cache-Control: private, no-store, max-age=0, no-transform' : 'Cache-Control: no-transform');
 
             echo $json;
             exit;

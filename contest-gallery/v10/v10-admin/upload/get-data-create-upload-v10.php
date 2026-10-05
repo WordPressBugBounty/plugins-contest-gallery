@@ -76,6 +76,16 @@ if (!empty($_POST['upload'])) {
  //die;
 
     check_admin_referer('cg_admin');
+    $cgCaptchaConfigs = array();
+    foreach($_POST['upload'] as $cgId=>$cgField){
+        if(empty($cgField['type']) || $cgField['type']!=='caRoRe'){continue;}
+        $cgExistingId = empty($cgField['new']) ? absint($cgId) : 0;
+        if($cgExistingId && !$wpdb->get_var($wpdb->prepare("SELECT id FROM $tablename_form_input WHERE id=%d AND GalleryID=%d AND Field_Type='caRoRe-f'",$cgExistingId,$GalleryID))){wp_die('Invalid CAPTCHA field.');}
+        $cgRecord = cg_captcha_prepare_config('upload',$cgExistingId,isset($cgField['ReCaKey']) ? $cgField['ReCaKey'] : '',isset($cgField['ReCaSecret']) ? $cgField['ReCaSecret'] : '',empty($cgField['hide']));
+        if(is_wp_error($cgRecord)){wp_die(esc_html($cgRecord->get_error_message()),'',array('back_link'=>true));}
+        $cgCaptchaConfigs[$cgId] = $cgRecord;
+    }
+
 
     $wp_upload_dir = wp_upload_dir();
 
@@ -1384,6 +1394,9 @@ if (!empty($_POST['upload'])) {
 
 
                 }
+                $cgCaptchaId = empty($field['new']) ? absint($id) : absint($wpdb->insert_id);
+                cg_captcha_store_config('upload',$cgCaptchaId,isset($cgCaptchaConfigs[$id]) ? $cgCaptchaConfigs[$id] : null);
+
             }
 
             if ($field['type'] == 'chk' && $cgProVersion) {

@@ -1,5 +1,23 @@
 Contest Gallery
 
+= 34.0.0 =
+* NEW: Browse gallery participants and their public profiles with entries from the current gallery.
+* NEW: Gallery member area with email PIN or Google sign-in, My entries and private access to unpublished entries. Available for galleries created or copied with version 24 or later.
+* NEW: Frontend profile editing with configurable public fields and profile images. Google profile images are used when no other profile image is available.
+* NEW: URL fields for registration and public profiles.
+* NEW: Owners can edit, delete and replace entry files, including individual files in multiple-file entries. Social embeds can be replaced with files. Replacement supports time and vote limits.
+* NEW: Frontend image uploads and file replacements can resume interrupted processing.
+* NEW: Configurable logout redirects and return links from the WordPress profile.
+* IMPROVED: Styled gallery, overview and entry headers with image previews and consistent dark backgrounds.
+* IMPROVED: Unified sharing and file-action dialogs with profile and share buttons on gallery entries. Sharing options include WhatsApp.
+* IMPROVED: Standalone upload forms offer a sign-in card when passwordless upload access is enabled.
+* IMPROVED: Clearer reCAPTCHA key setup for registration and upload forms.
+* FIXED: Gallery navigation, mobile and full-window layouts, pagination, theme consistency, owner entry links and file replacement previews and selection.
+* FIXED: Voting, credit balances, profile updates, registration forms and URL validation.
+* FIXED: PIN resends, confirmation email retries and password resets on cached pages. Improved Wordfence compatibility.
+* FIXED: Social media consent persists across gallery and page changes in the same browser tab.
+* SECURITY: Security hardening.
+
 = 33.0.3 =
 * NEW: Search backend options, translations and ecommerce settings with result counts, previous/next navigation and highlighted matches.
 * NEW: Generate and edit images with GPT Image 2.5 Sunburst, GPT Image 2.5 Flare and GPT Image 2.

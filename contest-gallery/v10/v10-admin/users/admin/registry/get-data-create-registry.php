@@ -20,7 +20,7 @@ $tablename_create_user_form = $wpdb->prefix . "contest_gal1ery_create_user_form"
 $tablename_create_user_entries = $wpdb->prefix . "contest_gal1ery_create_user_entries";
 $tablename_form_output = $wpdb->prefix . "contest_gal1ery_f_output";
 $tablename_options_visual = $wpdb->prefix . "contest_gal1ery_options_visual";
-$wp_usermeta_table = $wpdb->prefix . "usermeta";
+$wp_usermeta_table = $wpdb->usermeta;
 
 $cgOptions = $wpdb->get_row($wpdb->prepare( "SELECT GalleryName,Version FROM $tablenameoptions WHERE id = %d",[$GalleryID]));
 
@@ -39,6 +39,43 @@ if(intval($galleryDbVersion)>=14){
     $GeneralIDtoInsert = $GalleryID;
 }
 
+// Authenticate before deleting fields or changing their public visibility.
+if(!empty($_POST['submit']) || !empty($_POST['deleteFieldnumber'])){check_admin_referer('cg_admin');}
+
+// Bind every submitted ID to this form and type before deleting or writing any rows.
+if(isset($_POST['Field_Type']) && !is_array($_POST['Field_Type'])){wp_die('Invalid registration fields.');}
+if(isset($_POST['Field_Id']) && !is_array($_POST['Field_Id'])){wp_die('Invalid registration field IDs.');}
+if(!empty($_POST['Field_Type']) && is_array($_POST['Field_Type'])){
+    $seenFieldIds = array();
+    foreach($_POST['Field_Type'] as $fieldIndex=>$fieldType){
+        if(!ctype_digit((string)$fieldIndex) || !$fieldIndex || !is_string($fieldType)){wp_die('Invalid registration fields.');}
+        $rawFieldId = isset($_POST['Field_Id'][$fieldIndex]) ? $_POST['Field_Id'][$fieldIndex] : '';
+        if(!is_scalar($rawFieldId) || ($rawFieldId!=='' && !ctype_digit((string)$rawFieldId))){wp_die('Invalid registration field ID.');}
+        $fieldId = absint($rawFieldId);
+        $existingField = null;
+        if($fieldId){
+            $existingField = $wpdb->get_row($wpdb->prepare("SELECT id,Field_Type FROM $tablename_create_user_form WHERE id=%d AND $GalleryIDorGeneralIDstring=%d",$fieldId,$GalleryIDorGeneralIDnumber));
+            if(!$existingField || $existingField->Field_Type!==$fieldType || isset($seenFieldIds[$fieldId])){wp_die('Invalid registration field assignment.');}
+            $seenFieldIds[$fieldId] = true;
+        }else{unset($_POST['Field_Id'][$fieldIndex]);}
+        if($fieldType==='user-url-field' && !$GeneralID){
+            wp_die('URL fields require the general registration form.');
+        }
+        if($fieldType==='user-url-field'){
+            foreach(array('Field_Name','Field_Content','Min_Char','Max_Char','RowNumber','ColNumber','RowCols') as $part){
+                if(!isset($_POST[$part]) || !is_array($_POST[$part]) || !isset($_POST[$part][$fieldIndex]) || !is_scalar($_POST[$part][$fieldIndex])){wp_die('Invalid URL field data.');}
+            }
+        }
+    }
+}
+if(!empty($_POST['deleteFieldnumber'])){
+    if(!is_array($_POST['deleteFieldnumber'])){wp_die('Invalid registration field deletion.');}
+    foreach($_POST['deleteFieldnumber'] as $fieldId){
+        if(!is_scalar($fieldId) || !ctype_digit((string)$fieldId) || !$wpdb->get_var($wpdb->prepare("SELECT id FROM $tablename_create_user_form WHERE id=%d AND $GalleryIDorGeneralIDstring=%d",absint($fieldId),$GalleryIDorGeneralIDnumber))){wp_die('Invalid registration field deletion.');}
+    }
+}
+
+
 // Check if certain fieldnumber should be deleted
 
 //
@@ -48,6 +85,17 @@ if(intval($galleryDbVersion)>=14){
 
 if(!isset($_POST['deleteFieldnumber'])){
     $_POST['deleteFieldnumber'] = false;
+}
+
+$cgCaptchaConfigs = array();
+if(!empty($_POST['submit']) && !empty($_POST['Field_Type'])){
+    foreach($_POST['Field_Type'] as $cgIndex=>$cgType){
+        if($cgType!=='user-robot-recaptcha-field'){continue;}
+        $cgId = !empty($_POST['Field_Id'][$cgIndex]) ? absint($_POST['Field_Id'][$cgIndex]) : 0;
+        $cgRecord = cg_captcha_prepare_config('registry',$cgId,isset($_POST['ReCaKey']) ? $_POST['ReCaKey'] : '',isset($_POST['ReCaSecret']) ? $_POST['ReCaSecret'] : '',empty($_POST['Hide'][$cgIndex]));
+        if(is_wp_error($cgRecord)){wp_die(esc_html($cgRecord->get_error_message()),'',array('back_link'=>true));}
+        $cgCaptchaConfigs[$cgIndex] = $cgRecord;
+    }
 }
 
 if(!isset($_POST['Necessary'])){
@@ -71,7 +119,7 @@ if(!empty($_POST['deleteFieldnumber'])){
                 "
 				DELETE FROM $wp_usermeta_table WHERE meta_key = %s
 			",
-                'cg_custom_field_id_'.$fieldnumber
+                cg_profile_meta_key($fieldnumber)
             ));
 
             $wpdb->query( $wpdb->prepare(
@@ -153,13 +201,15 @@ $get_Hide = (!empty($_POST['Hide'])) ? $_POST['Hide'] : [];
 $get_PinField = (!empty($_POST['PinField'])) ? $_POST['PinField'] : [];
 
 
-// Dient zur Orientierung zum Abarbeiten
-$i=1;
-
     $fieldOrder = 0;
 
 
+
 foreach($get_Field_Type as $key => $value){
+        // Use the same submitted index as the validation above, including sparse arrays.
+        $i = $key;
+        $wpdb->insert_id = 0;
+        $PublicProfile = $GeneralID && in_array($value,cg_public_profile_field_types(),true) && !empty($_POST['PublicProfile'][$i]) ? 1 : 0;
 
 		// Das gel�schte Feld soll nicht nochmal kreiert werden. Unbedingt auf true pr�fen! Ansonsten bei zwei leeren Werten ist die Bedingung auch erf�llt.
 		if(!empty($deleteFieldnumbersArray) && !empty($get_Field_Id[$i]) && in_array($get_Field_Id[$i],$deleteFieldnumbersArray)!==false){continue;}
@@ -192,11 +242,11 @@ foreach($get_Field_Type as $key => $value){
                     "$tablename_create_user_form",
                     array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
                         'Field_Content' => '','Min_Char' => '','Max_Char' => '', 'Required' => $update_Necessary, 'Active' => $Active,
-                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField
+                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile
                     ),
                     array('id' => $get_Field_Id[$i]),
                     array('%d','%s',
-                        '%s','%s','%s','%d','%d','%d','%d','%d','%d'),
+                        '%s','%s','%s','%d','%d','%d','%d','%d','%d','%d'),
                     array('%d')
                 );
             }
@@ -208,18 +258,17 @@ foreach($get_Field_Type as $key => $value){
                                 ( id, GalleryID, Field_Type, Field_Order,
                                 Field_Name,Field_Content,Min_Char,Max_Char,
                                 Required,Active,GeneralID,
-                                 RowNumber,ColNumber,RowCols,PinField
+                                 RowNumber,ColNumber,RowCols,PinField,PublicProfile
                                  )
                                 VALUES ( %s,%d,%s,%d,
                                 %s,%s,%d,%d,
                                 %d,%d,%d,
-                                %d,%d,%d,%d
-                                )
+                                %d,%d,%d,%d,%d)
                             ",
                     '',$GeneralIDtoInsert,'profile-image',$i,
                     $get_Field_Name[$i],'','','',
                     $update_Necessary,$Active,$GeneralID,
-                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
+                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
                 ) );
 
             }
@@ -254,10 +303,10 @@ foreach($get_Field_Type as $key => $value){
                     "$tablename_create_user_form",
                     array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
                         'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i], 'Required' => $update_Necessary, 'Active' => $Active,
-                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
+                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
                     array('id' => $get_Field_Id[$i]),
                     array('%d','%s',
-                        '%s','%d','%d','%d','%d','%d','%d','%d','%d'),
+                        '%s','%d','%d','%d','%d','%d','%d','%d','%d','%d'),
                     array('%d')
                 );
             }
@@ -269,16 +318,16 @@ foreach($get_Field_Type as $key => $value){
                                 ( id, GalleryID, Field_Type, Field_Order,
                                 Field_Name,Field_Content,Min_Char,Max_Char,
                                 Required,Active,GeneralID,
-                                 RowNumber,ColNumber,RowCols,PinField)
+                                 RowNumber,ColNumber,RowCols,PinField,PublicProfile)
                                 VALUES ( %s,%d,%s,%d,
                                 %s,%s,%d,%d,
                                 %d,%d,%d,
-                                %d,%d,%d,%d)
+                                %d,%d,%d,%d,%d)
                             ",
                     '',$GeneralIDtoInsert,'wpfn',$i,
                     $get_Field_Name[$i],$get_Field_Content[$i],$get_Min_Char[$i],$get_Max_Char[$i],
                     $update_Necessary,$Active,$GeneralID,
-                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
+                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
                 ) );
 
             }
@@ -313,10 +362,10 @@ foreach($get_Field_Type as $key => $value){
                     "$tablename_create_user_form",
                     array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
                         'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i], 'Required' => $update_Necessary, 'Active' => $Active,
-                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
+                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
                     array('id' => $get_Field_Id[$i]),
                     array('%d','%s',
-                        '%s','%d','%d','%d','%d','%d','%d','%d','%d'),
+                        '%s','%d','%d','%d','%d','%d','%d','%d','%d','%d'),
                     array('%d')
                 );
             }
@@ -328,23 +377,23 @@ foreach($get_Field_Type as $key => $value){
                                 ( id,GalleryID , Field_Type, Field_Order,
                                 Field_Name,Field_Content,Min_Char,Max_Char,
                                 Required,Active,GeneralID,
-                                 RowNumber,ColNumber,RowCols,PinField)
+                                 RowNumber,ColNumber,RowCols,PinField,PublicProfile)
                                 VALUES ( %s,%d,%s,%d,
                                 %s,%s,%d,%d,
                                 %d,%d,%d,
-                                %d,%d,%d,%d)
+                                %d,%d,%d,%d,%d)
                             ",
                     '',$GeneralIDtoInsert,'wpln',$i,
                     $get_Field_Name[$i],$get_Field_Content[$i],$get_Min_Char[$i],$get_Max_Char[$i],
                     $update_Necessary,$Active,$GeneralID,
-                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
+                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
                 ) );
 
             }
 
         }
 
-        if($value=="user-text-field"){
+        if($value=="user-text-field" || $value=="user-url-field"){
 
             $fieldOrder++;
             $Active = 1;
@@ -372,10 +421,10 @@ foreach($get_Field_Type as $key => $value){
                     "$tablename_create_user_form",
                     array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
                         'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i], 'Required' => $update_Necessary, 'Active' => $Active,
-                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
+                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
                     array('id' => $get_Field_Id[$i]),
                     array('%d','%s',
-                        '%s','%d','%d','%d','%d','%d','%d','%d','%d'),
+                        '%s','%d','%d','%d','%d','%d','%d','%d','%d','%d'),
                     array('%d')
                 );
             }
@@ -387,16 +436,16 @@ foreach($get_Field_Type as $key => $value){
                                 ( id, GalleryID, Field_Type, Field_Order,
                                 Field_Name,Field_Content,Min_Char,Max_Char,
                                 Required,Active,GeneralID,
-                                 RowNumber,ColNumber,RowCols,PinField)
+                                 RowNumber,ColNumber,RowCols,PinField,PublicProfile)
                                 VALUES ( %s,%d,%s,%d,
                                 %s,%s,%d,%d,
                                 %d,%d,%d,
-                                %d,%d,%d,%d)
+                                %d,%d,%d,%d,%d)
                             ",
-                    '',$GeneralIDtoInsert,'user-text-field',$i,
+                    '',$GeneralIDtoInsert,$value,$i,
                     $get_Field_Name[$i],$get_Field_Content[$i],$get_Min_Char[$i],$get_Max_Char[$i],
                     $update_Necessary,$Active,$GeneralID,
-                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
+                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
                 ) );
 
             }
@@ -430,10 +479,10 @@ foreach($get_Field_Type as $key => $value){
 						"$tablename_create_user_form",
 						array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
 						'Field_Content' => $get_Field_Content[$i],'Min_Char' => 0,'Max_Char' => 0, 'Required' => $update_Necessary, 'Active' => $Active,
-                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
+                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
 						array('id' => $get_Field_Id[$i]),
 						array('%d','%s',
-						'%s','%s','%s','%d','%d','%d','%d','%d','%d'),
+						'%s','%s','%s','%d','%d','%d','%d','%d','%d','%d'),
 						array('%d')
 						);					
 					}
@@ -444,16 +493,16 @@ foreach($get_Field_Type as $key => $value){
 							( id, GalleryID, Field_Type, Field_Order,
 							Field_Name,Field_Content,Min_Char,Max_Char,
 							Required,Active,GeneralID,
-                             RowNumber,ColNumber,RowCols,PinField)
+                             RowNumber,ColNumber,RowCols,PinField,PublicProfile)
 							VALUES ( %s,%d,%s,%d,
 							%s,%s,%d,%d,
 							%d,%d,%d,
-                            %d,%d,%d,%d)
+                            %d,%d,%d,%d,%d)
 						",
 							'',$GeneralIDtoInsert,'user-check-agreement-field',$i,
 							$get_Field_Name[$i],$get_Field_Content[$i],'','',
                             $update_Necessary,$Active,$GeneralID,
-                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
+                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
 						) );						
 					}			
 
@@ -483,10 +532,10 @@ foreach($get_Field_Type as $key => $value){
                             "$tablename_create_user_form",
                             array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
                             'Field_Content' => '','Min_Char' => '','Max_Char' => '', 'Active' => $Active,
-                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
+                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
                             array('id' => $get_Field_Id[$i]),
                             array('%d','%s',
-                            '%s','%s','%s','%d','%d','%d','%d','%d'),
+                            '%s','%s','%s','%d','%d','%d','%d','%d','%d'),
                             array('%d')
 						);
 					}
@@ -498,16 +547,16 @@ foreach($get_Field_Type as $key => $value){
 							( id, GalleryID, Field_Type, Field_Order,
 							Field_Name,Field_Content,Min_Char,Max_Char,
 							Required,Active,GeneralID,
-                             RowNumber,ColNumber,RowCols,PinField)
+                             RowNumber,ColNumber,RowCols,PinField,PublicProfile)
 							VALUES ( %s,%d,%s,%d,
 							%s,%s,%d,%d,
 							%d,%d,%d,
-                            %d,%d,%d,%d)
+                            %d,%d,%d,%d,%d)
 						",
 							'',$GeneralIDtoInsert,'user-robot-field',$i,
 							$get_Field_Name[$i],'','','',
 							1,$Active,$GeneralID,
-                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
+                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
 						) );
 					}
 
@@ -533,10 +582,10 @@ foreach($get_Field_Type as $key => $value){
                             "$tablename_create_user_form",
                             array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
                             'Field_Content' => '','Min_Char' => '','Max_Char' => '', 'Active' => $Active, 'ReCaKey' => $get_ReCaKey, 'ReCaLang' => $get_ReCaLang,
-                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
+                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
                             array('id' => $get_Field_Id[$i]),
                             array('%d','%s',
-                            '%s','%s','%s','%d','%s','%s','%d','%d','%d','%d'),
+                            '%s','%s','%s','%d','%s','%s','%d','%d','%d','%d','%d'),
                             array('%d')
 						);
 					}
@@ -548,18 +597,20 @@ foreach($get_Field_Type as $key => $value){
 							( id, GalleryID, Field_Type, Field_Order,
 							Field_Name,Field_Content,Min_Char,Max_Char,
 							Required,Active,ReCaKey,ReCaLang,GeneralID,
-                                 RowNumber,ColNumber,RowCols,PinField)
+                                 RowNumber,ColNumber,RowCols,PinField,PublicProfile)
 							VALUES ( %s,%d,%s,%d,
 							%s,%s,%d,%d,
 							%d,%d,%s,%s,%d,
-                                %d,%d,%d,%d)
+                                %d,%d,%d,%d,%d)
 						",
 							'',$GeneralIDtoInsert,'user-robot-recaptcha-field',$i,
 							$get_Field_Name[$i],'','','',
 							1,$Active,$get_ReCaKey,$get_ReCaLang,$GeneralID,
-                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
+                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
 						) );
 					}
+            $cgCaptchaId = !empty($get_Field_Id[$i]) ? absint($get_Field_Id[$i]) : absint($wpdb->insert_id);
+            cg_captcha_store_config('registry',$cgCaptchaId,isset($cgCaptchaConfigs[$i]) ? $cgCaptchaConfigs[$i] : null);
 
 		}
 	
@@ -593,10 +644,10 @@ foreach($get_Field_Type as $key => $value){
 						"$tablename_create_user_form",
 						array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
 						'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i], 'Required' => $update_Necessary, 'Active' => $Active,
-                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
+                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
 						array('id' => $get_Field_Id[$i]),
 						array('%d','%s',
-						'%s','%d','%d','%d','%d','%d','%d','%d','%d'),
+						'%s','%d','%d','%d','%d','%d','%d','%d','%d','%d'),
 						array('%d')
 						);							
 					}
@@ -607,16 +658,16 @@ foreach($get_Field_Type as $key => $value){
 							( id, GalleryID, Field_Type, Field_Order,
 							Field_Name,Field_Content,Min_Char,Max_Char,
 							Required,Active,GeneralID,
-                                 RowNumber,ColNumber,RowCols,PinField)
+                                 RowNumber,ColNumber,RowCols,PinField,PublicProfile)
 							VALUES ( %s,%d,%s,%d,
 							%s,%s,%d,%d,
 							%d,%d,%d,
-                                %d,%d,%d,%d)
+                                %d,%d,%d,%d,%d)
 						",
 							'',$GeneralIDtoInsert,'user-comment-field',$i,
 							$get_Field_Name[$i],$get_Field_Content[$i],$get_Min_Char[$i],$get_Max_Char[$i],
 							$update_Necessary,$Active,$GeneralID,
-                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
+                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
 						) );						
 					}
 		
@@ -655,10 +706,10 @@ foreach($get_Field_Type as $key => $value){
                 "$tablename_create_user_form",
                 array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
                 'Field_Content' => $get_Field_Content[$i],'Min_Char' => '','Max_Char' => '', 'Required' => $update_Necessary, 'Active' => $Active,
-                    'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
+                    'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
                 array('id' => $get_Field_Id[$i]),
                 array('%d','%s',
-                '%s','%s','%s','%d','%d','%d','%d','%d','%d'),
+                '%s','%s','%s','%d','%d','%d','%d','%d','%d','%d'),
                 array('%d')
                 );
             }
@@ -669,16 +720,16 @@ foreach($get_Field_Type as $key => $value){
                     ( id, GalleryID, Field_Type, Field_Order,
                     Field_Name,Field_Content,Min_Char,Max_Char,
                     Required,Active,GeneralID,
-                         RowNumber,ColNumber,RowCols,PinField)
+                         RowNumber,ColNumber,RowCols,PinField,PublicProfile)
                     VALUES ( %s,%d,%s,%d,
                     %s,%s,%s,%s,
                     %d,%d,%d,
-                        %d,%d,%d,%d)
+                        %d,%d,%d,%d,%d)
                 ",
                     '',$GeneralIDtoInsert,'user-select-field',$i,
                     $get_Field_Name[$i],$get_Field_Content[$i],'','',
                     $update_Necessary,$Active,$GeneralID,
-                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
+                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
                 ) );
 
             }
@@ -718,10 +769,10 @@ foreach($get_Field_Type as $key => $value){
 						"$tablename_create_user_form",
 						array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
 						'Field_Content' => $get_Field_Content[$i],'Min_Char' => '','Max_Char' => '', 'Required' => $update_Necessary, 'Active' => $Active,
-                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
+                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
 						array('id' => $get_Field_Id[$i]),
 						array('%d','%s',
-						'%s','%s','%s','%d','%d','%d','%d','%d','%d'),
+						'%s','%s','%s','%d','%d','%d','%d','%d','%d','%d'),
 						array('%d')
 						);
 					}
@@ -732,16 +783,16 @@ foreach($get_Field_Type as $key => $value){
 							( id, GalleryID, Field_Type, Field_Order,
 							Field_Name,Field_Content,Min_Char,Max_Char,
 							Required,Active,GeneralID,
-                                 RowNumber,ColNumber,RowCols,PinField)
+                                 RowNumber,ColNumber,RowCols,PinField,PublicProfile)
 							VALUES ( %s,%d,%s,%d,
 							%s,%s,%s,%s,
 							%d,%d,%d,
-                                %d,%d,%d,%d)
+                                %d,%d,%d,%d,%d)
 						",
                     '',$GeneralIDtoInsert,'user-check-field',$i,
                     $get_Field_Name[$i],$get_Field_Content[$i],'','',
                     $update_Necessary,$Active,$GeneralID,
-                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
+                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
                 ) );
 
             }
@@ -775,10 +826,10 @@ foreach($get_Field_Type as $key => $value){
             "$tablename_create_user_form",
             array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
             'Field_Content' => $get_Field_Content[$i],'Min_Char' => '','Max_Char' => '', 'Required' => $update_Necessary, 'Active' => $Active,
-                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
+                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
             array('id' => $get_Field_Id[$i]),
             array('%d','%s',
-            '%s','%s','%s','%d','%d','%d','%d','%d','%d'),
+            '%s','%s','%s','%d','%d','%d','%d','%d','%d','%d'),
             array('%d')
             );
         }
@@ -789,16 +840,16 @@ foreach($get_Field_Type as $key => $value){
                 ( id, GalleryID, Field_Type, Field_Order,
                 Field_Name,Field_Content,Min_Char,Max_Char,
                 Required,Active,GeneralID,
-                     RowNumber,ColNumber,RowCols,PinField)
+                     RowNumber,ColNumber,RowCols,PinField,PublicProfile)
                 VALUES ( %s,%d,%s,%d,
                 %s,%s,%s,%s,
                 %d,%d,%d,
-                    %d,%d,%d,%d)
+                    %d,%d,%d,%d,%d)
             ",
                 '',$GeneralIDtoInsert,'user-radio-field',$i,
 							$get_Field_Name[$i],$get_Field_Content[$i],'','',
 							$update_Necessary,$Active,$GeneralID,
-                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
+                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
 						) );
 
 					}
@@ -822,11 +873,11 @@ foreach($get_Field_Type as $key => $value){
 							"$tablename_create_user_form",
 							array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
 							'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i],
-                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
+                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
 							array('id' => $get_Field_Id[$i]),
 							array('%d','%s',
 							'%s','%s','%s',
-                            '%d','%d','%d','%d'),
+                            '%d','%d','%d','%d','%d'),
 							array('%d')
 							);
 						}
@@ -850,11 +901,11 @@ foreach($get_Field_Type as $key => $value){
 							"$tablename_create_user_form",
 							array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
 							'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i],
-                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
+                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
 							array('id' => $get_Field_Id[$i]),
 							array('%d','%s',
 							'%s','%s','%s',
-                            '%d','%d','%d','%d'),
+                            '%d','%d','%d','%d','%d'),
 							array('%d')
 							);
 						}
@@ -881,11 +932,11 @@ foreach($get_Field_Type as $key => $value){
                 "$tablename_create_user_form",
                 array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
                 'Field_Content' => $get_Field_Content[$i],'Min_Char' => 0,'Max_Char' => 0,
-                    'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
+                    'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
                 array('id' => $get_Field_Id[$i]),
                 array('%d','%s',
                 '%s','%s','%s',
-                    '%d','%d','%d','%d'),
+                    '%d','%d','%d','%d','%d'),
                 array('%d')
                 );
         }
@@ -909,11 +960,11 @@ foreach($get_Field_Type as $key => $value){
 							"$tablename_create_user_form",
 							array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
 							'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i],
-                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
+                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
 							array('id' => $get_Field_Id[$i]),
 							array('%d','%s',
 							'%s','%s','%s',
-                            '%d','%d','%d','%d'),
+                            '%d','%d','%d','%d','%d'),
 							array('%d')
 						);
 
@@ -935,11 +986,11 @@ foreach($get_Field_Type as $key => $value){
 						"$tablename_create_user_form",
 						array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
 						'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i],
-                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
+                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
 						array('id' => $get_Field_Id[$i]),
 						array('%d','%s',
 						'%s','%s','%s',
-                        '%d','%d','%d','%d'),
+                        '%d','%d','%d','%d','%d'),
 						array('%d')
 						);							
 					}
@@ -968,11 +1019,11 @@ foreach($get_Field_Type as $key => $value){
 						"$tablename_create_user_form",
 						array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
 						'Field_Content' => $get_Field_Content[$i],'Min_Char' => '','Max_Char' => '', 'Required' => '', 'Active' => $Active,
-                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField),
+                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
 						array('id' => $get_Field_Id[$i]),
 						array('%d','%s',
 						'%s','%s','%s','%d','%d',
-                        '%d','%d','%d','%d'),
+                        '%d','%d','%d','%d','%d'),
 						array('%d')
 						);
 						
@@ -984,23 +1035,21 @@ foreach($get_Field_Type as $key => $value){
 							( id, GalleryID, Field_Type, Field_Order,
 							Field_Name,Field_Content,Min_Char,Max_Char,
 							Required,Active,GeneralID,
-                                 RowNumber,ColNumber,RowCols,PinField)
+                                 RowNumber,ColNumber,RowCols,PinField,PublicProfile)
 							VALUES ( %s,%d,%s,%d,
 							%s,%s,%d,%d,
 							%d,%d,%d,
-                                %d,%d,%d,%d)
+                                %d,%d,%d,%d,%d)
 						",
 							'',$GeneralIDtoInsert,'user-html-field',$i,
 							$get_Field_Name[$i],$get_Field_Content[$i],'','',
 							'',$Active,$GeneralID,
-                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField
+                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
 						) );						
 					}
 
 		}
 
-// Dient zur Orientierung zum Abarbeiten
-$i++;
 }
 
 }

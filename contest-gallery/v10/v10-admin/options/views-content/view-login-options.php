@@ -117,23 +117,6 @@ echo <<<HEREDOC
             </div>
         </div>
 HEREDOC;
-/*
-$cgLogoutLinkNote = '';
-$cgLogoutLinkClass = '';
-
-if(intval($galleryDbVersion)<14){
-    $cgLogoutLinkNote = '<span class="cg_color_red">NOTE:</span> This option is only available for galleries created or copied after plugin version  14.<br>';
-    $cgLogoutLinkClass = 'cg_disabled';
-}*/
-
-$beforeSinceV14Explanation = '';
-$beforeSinceV14Disabled = '';
-
-if(intval($galleryDbVersion)<14){
-    $beforeSinceV14Disabled = 'cg_disabled';
-    $beforeSinceV14Explanation = '<span class="cg_color_red">NOTE: </span> Available only for galleries created or copied in plugin version 14 or higher<br>';
-}
-
 echo <<<HEREDOC
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse" id="wp-ForwardAfterLoginText-wrap-Container">
@@ -155,28 +138,10 @@ echo <<<HEREDOC
                 </div>
             </div>
         </div>
-        <div class='cg_view_options_row'>
-            <div class="cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse $beforeSinceV14Disabled">
-                <div class="cg_view_option_title">
-                    <p>Logout URL<br>works only for "Contest Gallery User since v14" roles$beforeSinceV14Explanation<br><span class="cg_view_option_title_note">URL where will be redirected when logged in user click on logout<br>If empty then standard WordPress logout URL will be used</span></p>
-                </div>
-                <div class="cg_view_option_input">
-                    <input type="text" name="LogoutLink" maxlength="999" value="$LogoutLink"/>
-                </div>
-            </div>
-        </div>
-        <div class='cg_view_options_row'>
-            <div class="cg_view_option cg_view_option_full_width cg_border_top_none $cgProFalse $beforeSinceV14Disabled">
-                <div class="cg_view_option_title">
-                    <p>Back to gallery URL<br>works only for "Contest Gallery User since v14" roles$beforeSinceV14Explanation<br><span class="cg_view_option_title_note">URL where where you user can be redirected if "Back to gallery" is clicked in "Edit profile" area<br>If empty "Back to gallery" does not appear in "Edit profile"</span></p>
-                </div>
-                <div class="cg_view_option_input">
-                    <input type="text" name="BackToGalleryLink" maxlength="999" value="$BackToGalleryLink"/>
-                </div>
-            </div>
-        </div>
 HEREDOC;
 
+include_once(__DIR__.'/../../../../functions/backend/render/cg-account-navigation.php');
+cg_account_navigation_options_container($registryAndLoginOptions,$galleryDbVersion,$cgProFalse);
 
 echo "</div>";
 
@@ -189,10 +154,15 @@ if($cgBeforeV14NotWorkNoteRequired && empty($cgProFalse)){
 HEREDOC;
 }*/
 
+$cgMailDeliveryCard = cg_mail_delivery_card('Password reset',array(
+    'from'=>array('[name="LostPasswordMailFrom"]',$LostPasswordMailFrom),
+    'reply'=>array('[name="LostPasswordMailReply"]',$LostPasswordMailReply)
+),'The email address of the existing account requesting a password reset.');
+
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
-        <p class='cg_view_options_rows_container_title'>Lost password e-mail options
-        </p>
+        <p class='cg_view_options_rows_container_title'>Lost password e-mail options</p>
+        $cgMailDeliveryCard
 HEREDOC;
 
 
@@ -208,7 +178,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
                 <div class="cg_view_option  cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px cg_view_option_100_percent $cgProFalse" id="LostPasswordMailActiveContainer">
                     <div class="cg_view_option_title">
-                        <p>Lost password reset option in login form<br><span class="cg_view_option_title_note">$cgDomainErrorText</span></p>
+                        <p>Lost password reset option in login form</p>
                     </div>
                     <div class="cg_view_option_checkbox">
                         <input type="checkbox" name="LostPasswordMailActive" id="LostPasswordMailActive" value="1" $LostPasswordMailActive >

@@ -473,3 +473,11 @@ echo <<<HEREDOC
 HEREDOC;
 
 // take care next row has to be after HEREDOC in file end
+
+// Shared dialog wording. File-action names above reuse the existing gallery translations.
+echo '<div class="cg_view_options_rows_container"><p class="cg_view_options_rows_container_title">Sharing</p>';
+foreach(cg1l_share_strings() as $cgShareKey){
+    $cgShareValue = isset($translations[$cgShareKey]) ? $translations[$cgShareKey] : '';
+    echo '<div class="cg_view_options_row"><div class="cg_view_option cg_view_option_full_width"><div class="cg_view_option_title"><p>'.esc_html($cgShareKey).'</p></div><div class="cg_view_option_input"><input type="text" name="translations[general]['.esc_attr($cgShareKey).']" maxlength="250" value="'.esc_attr($cgShareValue).'"></div></div></div>';
+}
+echo '</div>';

@@ -44,6 +44,9 @@ wp_enqueue_script( 'jquery-ui-sortable' );
     wp_enqueue_script( 'cg_v10_js_cg_gallery', plugins_url( '/v10-js-min/cg_gallery.min.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts());
 
 	    wp_localize_script('cg_v10_js_cg_gallery', 'CG1LAction', cg1l_get_frontend_action_data());
+        wp_localize_script('cg_v10_js_cg_gallery', 'CGMemberStrings', cg_member_client_strings());
+        wp_localize_script('cg_v10_js_cg_gallery', 'CGUploadJobStrings', cg_upload_job_strings());
+        wp_localize_script('cg_v10_js_cg_gallery', 'CGShareConfig', cg1l_share_config());
 
 	// Achtung! Nicht von hier verschieben und die Reihenfolge beachten. Wp_enque kommt for wp_localize
     wp_localize_script( 'cg_v10_js_cg_gallery', 'post_cg_rate_v10_oneStar_wordpress_ajax_script_function_name', array(

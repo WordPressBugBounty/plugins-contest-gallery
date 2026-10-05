@@ -1,4 +1,6 @@
 <?php
+if(!defined('ABSPATH')){exit;}
+require_once __DIR__.'/cg-profile-image-upload.php';
 
 add_action('cg_registry_add_profile_image','cg_registry_add_profile_image');
 if(!function_exists('cg_registry_add_profile_image')){
@@ -8,51 +10,19 @@ if(!function_exists('cg_registry_add_profile_image')){
         $table_posts = $wpdb->prefix."posts";
         $tablename = $wpdb->base_prefix . "contest_gal1ery";
 
-        if(empty($attach_id)){
-            $dateityp = GetImageSize($_FILES[$filesKey]["tmp_name"][0]);
+        $created = empty($attach_id);
+        if($created){
+            $file = cg_profile_image_upload_file(isset($_FILES[$filesKey]) ? $_FILES[$filesKey] : null);
+            $valid = cg_profile_image_validate_upload($file);
+            if(is_wp_error($valid)){return $valid;}
+            $_FILES[$filesKey] = $file;
+            require_once ABSPATH.'wp-admin/includes/image.php';
+            require_once ABSPATH.'wp-admin/includes/file.php';
+            require_once ABSPATH.'wp-admin/includes/media.php';
+            $post_data = array('post_author'=>$WpUserId,'post_content'=>'Contest Gallery user profile image');
+            $attach_id = media_handle_upload($filesKey,0,$post_data,array('test_form'=>false,'mimes'=>$valid['mimes']));
+            if(is_wp_error($attach_id)){return cg_profile_image_upload_error($attach_id);}
 
-            /*$imageTypeArray = array
-            (
-                0=>'UNKNOWN',
-                1=>'GIF',
-                2=>'JPEG',
-                3=>'PNG',
-                4=>'SWF',
-                5=>'PSD',
-                6=>'BMP',
-                7=>'TIFF_II',
-                8=>'TIFF_MM',
-                9=>'JPC',
-                10=>'JP2',
-                11=>'JPX',
-                12=>'JB2',
-                13=>'SWC',
-                14=>'IFF',
-                15=>'WBMP',
-                16=>'XBM',
-                17=>'ICO',
-                18=>'COUNT'
-            );*/
-
-            if ($dateityp[2] != 1 && $dateityp[2] != 2 && $dateityp[2] != 3) {
-                return false;
-            }
-
-            $post_data = array(
-                'post_content' => "Contest Gallery user profile image"
-            );
-
-            $file = array(
-                'name' => $_FILES[$filesKey]['name'][0],
-                'type' => $_FILES[$filesKey]['type'][0],
-                'tmp_name' => $_FILES[$filesKey]['tmp_name'][0],
-                'error' => $_FILES[$filesKey]['error'][0],
-                'size' => $_FILES[$filesKey]['size'][0]
-            );
-
-            $_FILES = array ($filesKey => $file);
-
-            $attach_id = media_handle_upload($filesKey,0,$post_data);
         }
 
         if($isMediaHandleUploadOnly){
@@ -93,7 +63,7 @@ if(!function_exists('cg_registry_add_profile_image')){
 
         // updating string after all the 0 at the end does not work. That is why Version is not inserted there
         // default 0 to countr1-5 was added lately on 15.05.2020
-        $wpdb->query( $wpdb->prepare(
+        $inserted = $wpdb->query( $wpdb->prepare(
             "
                 INSERT INTO $tablename
                 ( id, rowid, Timestamp, NamePic,
@@ -111,7 +81,8 @@ if(!function_exists('cg_registry_add_profile_image')){
             0,0,0,0,0,1,$Version
         ) );
 
-        return true;
+        if($inserted===false && $created){wp_delete_attachment($attach_id,true);}
+        return $inserted !== false;
 
         // not required to use this logic in the moment
         //$imgSrcLarge = wp_get_attachment_image_src($wp_image_id, 'large');

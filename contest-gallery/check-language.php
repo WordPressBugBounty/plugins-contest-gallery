@@ -462,6 +462,10 @@ __('Please enter a valid URL');$l_URLnotValid= "Please enter a valid URL";$langu
 
 __('Other');$l_Other= "Other";$language_Other = (!empty($translations[$l_Other]) && $is_frontend) ? $translations[$l_Other] : ((empty(trim(__($l_Other,$domain)))) ? __($l_Other,$domainDefault) : __($l_Other,$domain)); if(empty($translations[$l_Other])){$translations[$l_Other]='';}
 
+// Entry deletion actions
+__('Cancel','contest-gallery');$l_Cancel = "Cancel"; $language_Cancel = (!empty($translations[$l_Cancel]) && $is_frontend) ? $translations[$l_Cancel] : __($l_Cancel,$domain); if(empty($translations[$l_Cancel])){$translations[$l_Cancel]='';}
+__('Delete','contest-gallery');$l_Delete = "Delete"; $language_Delete = (!empty($translations[$l_Delete]) && $is_frontend) ? $translations[$l_Delete] : __($l_Delete,$domain); if(empty($translations[$l_Delete])){$translations[$l_Delete]='';}
+
 // General
 __('Yes');$l_Yes = "Yes"; $language_Yes = (!empty($translations[$l_Yes]) && $is_frontend) ? $translations[$l_Yes] : ((empty(trim(__($l_Yes,$domain)))) ? __($l_Yes,$domainDefault) : __($l_Yes,$domain)); if(empty($translations[$l_Yes])){$translations[$l_Yes]='';}
 __('No');$l_No = "No"; $language_No = (!empty($translations[$l_No]) && $is_frontend) ? $translations[$l_No] : ((empty(trim(__($l_No,$domain)))) ? __($l_No,$domainDefault) : __($l_No,$domain)); if(empty($translations[$l_No])){$translations[$l_No]='';}

@@ -71,15 +71,14 @@ else {
     $tablename = $wpdb->prefix ."contest_gal1ery";
     $tablename_pro_options = $wpdb->prefix . "contest_gal1ery_pro_options";
 
-    // Only active entries that belong to the requesting user may be removed
-    // through the frontend delete flow.
+    // Ownership is mandatory. The member area also allows managing unpublished entries.
     $isUserImage = $wpdb->get_var( $wpdb->prepare(
         "
         SELECT COUNT(*) AS UserImages
         FROM $tablename 
-        WHERE id = %d and GalleryID = %d and WpUserId = %d and Active = %d
+        WHERE id = %d and GalleryID = %d and WpUserId = %d and (Active = %d OR %d = 1)
     ",
-        $pictureID,$galeryID,$userId,1
+        $pictureID,$galeryID,$userId,1,cg_member_enabled($galeryID) ? 1 : 0
     ) );
 
     if(empty($isUserImage)){
@@ -127,6 +126,13 @@ else {
             return;
         }
 
+        $memberBackUrl = '';
+        if(!empty($_POST['cg_member_json'])){
+            $memberRow = cg_member_entry_action_context();
+            if(is_wp_error($memberRow)){wp_send_json_error(array('message'=>cg_member_t($memberRow->get_error_message())));}
+            $memberBackUrl = cg_member_entry_back_url($memberRow);
+        }
+
         $MultipleFilesFromUserFrontendDelete = $entryRow->MultipleFiles;
         $MultipleFilesToDelete = [];
 
@@ -167,6 +173,8 @@ else {
             cg_delete_images_of_deleted_wp_uploads($deletedWpUploads);
         }
 
+        if(!empty($_POST['cg_member_json'])){wp_send_json_success(array('pid'=>$pictureID,'backUrl'=>$memberBackUrl));}
+
         ?>
         <script data-cg-processing="true">
             // The frontend still expects an executable script fragment here so
@@ -175,6 +183,7 @@ else {
             var realIdToDelete = <?php echo json_encode($pictureID);?>;
             var isMultipleFilesDelete = <?php echo json_encode($isMultipleFilesDelete);?>;
             cgJsClass.gallery.getJson.removeImageFromImageData(gid,realIdToDelete,true);
+            if(cgJsClass.gallery.member){cgJsClass.gallery.member.changed(gid, false);}
             cgJsClass.gallery.function.message.show(gid,(isMultipleFilesDelete) ? cgJsClass.gallery.language[gid].DeleteImagesConfirm : cgJsClass.gallery.language[gid].DeleteImageConfirm);
 
         </script>

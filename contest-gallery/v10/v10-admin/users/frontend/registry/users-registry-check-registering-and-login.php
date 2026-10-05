@@ -3,6 +3,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+    $cgRegistryFieldsRaw = !empty($_POST['cg_Fields']) && is_array($_POST['cg_Fields']) ? wp_unslash($_POST['cg_Fields']) : array();
     $_POST = cg1l_sanitize_post($_POST);
 
     global $wpdb;
@@ -32,9 +33,32 @@ if (!defined('ABSPATH')) {
 
     include(__DIR__ . "/../../../../../check-language.php");
 
-    $cg_check = (!empty($_POST['cg_Fields']) && is_array($_POST['cg_Fields'])) ? $_POST['cg_Fields'] : array();
-    $cg_check = cg1l_prepare_registry_fields_for_storage($cg_check,$galleryDbVersion,$GalleryID);
+    $cgCaptchaMode = cg_captcha_registry_mode($GalleryID,$_POST);
+    $cgCaptchaResult = is_wp_error($cgCaptchaMode) ? $cgCaptchaMode : cg_captcha_validate('registry',$GalleryID,$_POST,$cgCaptchaMode,$galleryDbVersion);
+    if(is_wp_error($cgCaptchaResult)){
+        echo '<script data-cg-processing="true" data-cg-processing-error="true">cgJsClass.gallery.vars.$regFormContainer.find("#cg_registry_manipulation_error").text('.wp_json_encode($cgCaptchaResult->get_error_message()).').removeClass("cg_hide");</script>';
+        return;
+    }
+    $cg_users_pin = $cgCaptchaMode ? 1 : 0;
 
+    $cg_check = (!empty($_POST['cg_Fields']) && is_array($_POST['cg_Fields'])) ? $_POST['cg_Fields'] : array();
+    foreach($cg_check as $fieldKey=>$fieldValue){
+        if(is_array($fieldValue) && isset($fieldValue['Field_Type']) && in_array($fieldValue['Field_Type'],array('user-url-field','user-check-field'),true) && isset($cgRegistryFieldsRaw[$fieldKey]['Field_Content'])){
+            $cg_check[$fieldKey]['Field_Content'] = $cgRegistryFieldsRaw[$fieldKey]['Field_Content'];
+        }
+    }
+    $cg_check = cg1l_prepare_registry_fields_for_storage($cg_check,$galleryDbVersion,$GalleryID,!empty($cg_users_pin));
+
+    if(is_wp_error($cg_check)){
+        if($cg_check->get_error_code()==='profile_image'){cg_profile_image_registry_error($cg_check);die;}
+        $cgUrlError = cg_member_t($cg_check->get_error_message());
+        if($cg_check->get_error_code()==='name_email'){
+            echo '<script data-cg-processing="true" data-cg-processing-error="true">cgJsClass.gallery.vars.$regFormContainer.find(".cg-main-nick-name").closest(".cg_form_div").addClass("cg_form_div_error").find(".cg_input_error").text('.wp_json_encode($cgUrlError).').removeClass("cg_hide");</script>';
+            die;
+        }
+        echo '<script data-cg-processing="true" data-cg-processing-error="true">cgJsClass.gallery.vars.$regFormContainer.find("#cg_registry_manipulation_error").text('.wp_json_encode($cgUrlError).').removeClass("cg_hide");</script>';
+        die;
+    }
     if($cg_check===false){
         ?>
         <script  data-cg-processing="true"  data-cg-processing-error="true">
@@ -44,6 +68,15 @@ if (!defined('ABSPATH')) {
         </script>
         <?php
         die;
+    }
+
+    // Validate optional profile uploads too, before creating pending rows or users.
+    foreach($cg_check as $cgProfileField){
+        if($cgProfileField['Field_Type']!=='profile-image' || !isset($_FILES['cg_input_image_upload_file'])){continue;}
+        $cgProfileFile=cg_profile_image_upload_file($_FILES['cg_input_image_upload_file']);
+        if(is_array($cgProfileFile) && isset($cgProfileFile['error']) && $cgProfileFile['error']===UPLOAD_ERR_NO_FILE){continue;}
+        $cgProfileValid=cg_profile_image_validate_upload($cgProfileFile);
+        if(is_wp_error($cgProfileValid)){cg_profile_image_registry_error($cgProfileValid);die;}
     }
 
     $cg_main_mail_in_fields = '';
@@ -184,6 +217,12 @@ if (!defined('ABSPATH')) {
 
     $Tstamp = time();
     $attach_id = 0;
+    // Upload before inserting any pending fields, so media failures leave no partial registration.
+    if(isset($cgProfileValid) && !is_wp_error($cgProfileValid)){
+        $attach_id = cg_registry_add_profile_image('cg_input_image_upload_file',0,true,true);
+        if(is_wp_error($attach_id)){cg_profile_image_registry_error($attach_id);die;}
+    }
+
 
     $Version = cg_get_version_for_scripts();
 
@@ -200,7 +239,7 @@ if (!defined('ABSPATH')) {
         $Field_Type = sanitize_text_field($value["Field_Type"]);
 
         $Field_Order = sanitize_text_field($value["Field_Order"]);
-        $Field_Content = cg1l_sanitize_method((isset($value["Field_Content"]) ? $value["Field_Content"] : ''));
+        $Field_Content = cg_registry_field_storage_content($value);
 
         if ($value["Field_Type"] == "password") {
             $Field_Content = $password;
@@ -209,12 +248,7 @@ if (!defined('ABSPATH')) {
             $Field_Content = $password;
         }
         if ($value["Field_Type"] == "profile-image") {
-            if(!empty($_FILES) AND !empty($_FILES['cg_input_image_upload_file']) AND !empty($_FILES['cg_input_image_upload_file']['tmp_name']) AND !empty($_FILES['cg_input_image_upload_file']['tmp_name'][0])){
-                $Field_Content = cg_registry_add_profile_image('cg_input_image_upload_file',0,true,true);
-                $attach_id = $Field_Content;
-            }else{
-                $Field_Content = '';
-            }
+            $Field_Content = $attach_id ? $attach_id : '';
         }
 
         $Checked = 0;

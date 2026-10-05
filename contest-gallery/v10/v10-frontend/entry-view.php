@@ -45,6 +45,7 @@ if(!function_exists('cg1l_render_single_entry_view')){
             'ecommerce_files_data' => [],
             'ecommerce_options' => [],
             'currencies_array' => [],
+            'compact_share_actions' => false,
         ], $args);
 
         // Shorthands with WP-safe escaping
@@ -62,6 +63,7 @@ if(!function_exists('cg1l_render_single_entry_view')){
         $realGid   = intval($d['real_gid']);
         $cat   = intval($d['cat_id']);
         $ImgType = $fullData['ImgType'];
+        $canManageEntry = cg_member_can_manage_entry($realGid,$shortcode_name,$fullData,$WpUserIdsData);
 
         $imgFull   = esc_url($fullData['guid']);
         $img683x   = esc_url($d['img_src_683x']);
@@ -393,7 +395,7 @@ if(!function_exists('cg1l_render_single_entry_view')){
         $copyOriginalFileDiv = '';
 
         if (isset($options['visual']['CopyOriginalFileLink']) && $options['visual']['CopyOriginalFileLink'] == '1' && $fullData['ImgType'] != 'con' &&  $shortcode_name != 'cg_gallery_ecommerce') {
-            $copyOriginalFileDiv = '<div class="cg-copy-original-file-link" data-cg-tooltip="'.esc_attr($languageNames['gallery']['CopyOriginalFileSourceLink']).'" title="'.esc_attr($languageNames['gallery']['CopyOriginalFileSourceLink']).'" data-cg-gid="'.$gidJs.'" data-cg-real-id="'.$rid.'"></div>';
+            $copyOriginalFileDiv = '<button type="button" class="cg-copy-original-file-link cg-action-button cg-file-action" data-cg-tooltip="'.esc_attr($languageNames['gallery']['CopyOriginalFileSourceLink']).'" title="'.esc_attr($languageNames['gallery']['CopyOriginalFileSourceLink']).'" data-cg-gid="'.$gidJs.'" data-cg-real-id="'.$rid.'">'.cg1l_file_action_content('copyOriginal',$languageNames['gallery']['CopyOriginalFileSourceLink']).'</button>';
         }
         /*
             if (cgJsData[gid].options.visual.ForwardOriginalFile == '1' && ImgType != 'con'  &&  !cgJsData[gid].vars.isOnlyGalleryEcommerce) {
@@ -402,26 +404,26 @@ if(!function_exists('cg1l_render_single_entry_view')){
         $forwardOriginalFileLink = '';
 
         if (isset($options['visual']['ForwardOriginalFile']) && $options['visual']['ForwardOriginalFile'] == '1' && $fullData['ImgType'] != 'con' &&  $shortcode_name != 'cg_gallery_ecommerce') {
-            $forwardOriginalFileLink = '<a href="'.$originalFileHref.'" target="_blank"><div class="cg-forward-original-file" data-cg-tooltip="'.esc_attr($languageNames['gallery']['OpenOriginalFileInNewTab']).'" title="'.esc_attr($languageNames['gallery']['OpenOriginalFileInNewTab']).'"></div></a>';
+            $forwardOriginalFileLink = '<a href="'.$originalFileHref.'" target="_blank"><div class="cg-forward-original-file cg-action-button cg-file-action" data-cg-tooltip="'.esc_attr($languageNames['gallery']['OpenOriginalFileInNewTab']).'" title="'.esc_attr($languageNames['gallery']['OpenOriginalFileInNewTab']).'">'.cg1l_file_action_content('openOriginal',$languageNames['gallery']['OpenOriginalFileInNewTab']).'</div></a>';
         }
 
         $downloadOriginalFileLink = '';
 
         if (isset($options['visual']['OriginalSourceLinkInSlider']) && $options['visual']['OriginalSourceLinkInSlider'] == '1' && $fullData['ImgType'] != 'con' &&  $shortcode_name != 'cg_gallery_ecommerce') {
-            $downloadOriginalFileLink = '<a href="'.$originalFileHref.'" class="cg-center-image-download-link" download="'.$originalFileDownloadName.'" target="_blank"><div class="cg-center-image-download" data-cg-tooltip="'.esc_attr($languageNames['gallery']['DownloadOriginalFile']).'" title="'.esc_attr($languageNames['gallery']['DownloadOriginalFile']).'"></div></a>';
+            $downloadOriginalFileLink = '<a href="'.$originalFileHref.'" class="cg-center-image-download-link" download="'.$originalFileDownloadName.'" target="_blank"><div class="cg-center-image-download cg-action-button cg-file-action" data-cg-tooltip="'.esc_attr($languageNames['gallery']['DownloadOriginalFile']).'" title="'.esc_attr($languageNames['gallery']['DownloadOriginalFile']).'">'.cg1l_file_action_content('download',$languageNames['gallery']['DownloadOriginalFile']).'</div></a>';
         }
 
         $copyImageHref = '';
 
         if (isset($options['visual']['CopyImageLink']) && $options['visual']['CopyImageLink'] == '1' && $fullData['ImgType'] != 'con') {
-            $copyImageHref = '<div class="cg-image-image-href-to-copy cg_gallery_control_element" data-cg-gid="'.$gidJs.'" data-cg-tooltip="'.esc_attr($languageNames['gallery']['CopyGalleryEntryLink']).'" title="'.esc_attr($languageNames['gallery']['CopyGalleryEntryLink']).'" data-cg-real-id="'.$rid.'" style="display: block; margin-right: 0px;"></div>';
+            $copyImageHref = '<button type="button" class="cg-image-image-href-to-copy cg-action-button cg-file-action cg_gallery_control_element" data-cg-gid="'.$gidJs.'" data-cg-tooltip="'.esc_attr($languageNames['gallery']['CopyGalleryEntryLink']).'" title="'.esc_attr($languageNames['gallery']['CopyGalleryEntryLink']).'" data-cg-real-id="'.$rid.'" style="display: block; margin-right: 0px;">'.cg1l_file_action_content('copyLink',$languageNames['gallery']['CopyGalleryEntryLink']).'</button>';
         }
 
         $ratingAndButtonsDiv = '';
         $entryActionButtons = '';
 
-        if($copyOriginalFileDiv || $forwardOriginalFileLink || $downloadOriginalFileLink || $copyImageHref){
-            $entryActionButtons = '<div class="cg_delete_user_image cg_hide" data-cg-gid="'.$gidJs.'"></div>
+        if($canManageEntry || $copyOriginalFileDiv || $forwardOriginalFileLink || $downloadOriginalFileLink || $copyImageHref){
+            $entryActionButtons = ($canManageEntry ? '<div class="cg_delete_user_image" role="button" tabindex="0" aria-haspopup="menu" aria-label="'.esc_attr(cg_member_t('Entry actions')).'" data-cg-gid="'.esc_attr($gidJs).'" data-cg-real-id="'.absint($rid).'"></div>' : '').'
                                     '.$copyOriginalFileDiv.'
                                     '.$forwardOriginalFileLink.'
                                     '.$downloadOriginalFileLink.'
@@ -449,6 +451,20 @@ if(!function_exists('cg1l_render_single_entry_view')){
         $itemTypeObject = cg1l_get_itemtype_object($fullData['ImgType']);
 
         $divSocialShareParent = cg1l_render_sharebuttons($shareParentId,$shareMobileBtnId,$options,$fullData,$jsonInfoData,$languageNames);
+
+        // Standalone entries use the same dialog as thumbnails. Gallery blog/slider
+        // markup keeps its existing action sources for the full-window panels.
+        $compactShareActions = !empty($d['compact_share_actions']);
+        if($compactShareActions){
+            $shareButton = '';
+            if($divSocialShareParent || $copyOriginalFileDiv || $forwardOriginalFileLink || $downloadOriginalFileLink || $copyImageHref){
+                $shareConfig = cg1l_share_config();
+                $shareLabel = cg_member_t($divSocialShareParent ? 'Share this entry' : 'File actions');
+                $shareButton = '<button type="button" class="cg-share-entry" data-cg-gid="'.esc_attr($gidJs).'" data-cg-real-id="'.absint($rid).'" aria-haspopup="dialog" aria-label="'.esc_attr($shareLabel).'" title="'.esc_attr($shareLabel).'">'.$shareConfig['icons']['share'].'</button>';
+            }
+            $entryActionButtons = ($canManageEntry ? '<div class="cg_delete_user_image" role="button" tabindex="0" aria-haspopup="menu" aria-label="'.esc_attr(cg_member_t('Entry actions')).'" data-cg-gid="'.esc_attr($gidJs).'" data-cg-real-id="'.absint($rid).'"></div>' : '').$shareButton;
+            $divSocialShareParent = '';
+        }
 
         $singleViewContent = cg1l_frontend_get_info_data_single_view($fullData,$gid,$jsonInfoData,$singleViewOrderFullData,$categoriesFullData,$languageNames);
         $infoContent = $singleViewContent['infoContent'];
@@ -577,7 +593,7 @@ if(!function_exists('cg1l_render_single_entry_view')){
         }
 
         $infoHeaderContent = '';
-        if($shortcode_name === 'cg_gallery_user' && !empty($dateInfoContent)){
+        if($canManageEntry && !empty($dateInfoContent)){
             $infoHeaderContent = '<div style="padding-left:12px;">'.$dateInfoContent.'</div>';
             $dateInfoContent = '';
         }
@@ -596,8 +612,7 @@ if(!function_exists('cg1l_render_single_entry_view')){
         $infoSaveControls = '';
         if($hasEditableInfoContent){
             $infoSaveControls = '<div id="'.esc_attr($saveIconTextWrapId).'" class="cg-center-image-info-save-icon-text-container">
-                            <div id="'.esc_attr($saveIconId).'" class="cg-center-image-info-save-icon"></div>
-                            <div id="'.esc_attr($saveTextId).'" class="cg-center-image-info-save-text">Save</div>
+                            <button type="button" id="'.esc_attr($saveTextId).'" class="cg-center-image-info-save-text cg-entry-save">'.esc_html(cg_member_t('Save')).'</button>
                         </div>';
         }
 
@@ -797,8 +812,8 @@ if(!function_exists('cg1l_render_single_entry_view')){
 
             $actionCard = '';
             if($entryActionButtons){
-                $actionCard = '<div id="cgCenterImageDivButtons'.$gidJs.$ord.'" class="cg-center-image-div-buttons cg-center-image-action-card cg-center-image-action-card-actions">
-                                    <div class="cg-center-image-div-buttons-second-controls">
+                $actionCard = '<div id="cgCenterImageDivButtons'.$gidJs.$ord.'" class="cg-center-image-div-buttons cg-center-image-action-card cg-center-image-action-card-actions'.($compactShareActions ? ' cg-entry-share-controls' : '').'">
+                                    <div class="cg-center-image-div-buttons-second-controls cg-file-actions">
                                         '.$entryActionButtons.'
                                     </div>
                                 </div>';
@@ -837,7 +852,7 @@ if(!function_exists('cg1l_render_single_entry_view')){
         $showOwnerBadgeProfileImage = (!empty($options['pro']['ShowProfileImage']) && !empty($ownerProfileImageUrl));
         $showOwnerBadgeNickname = (!empty($options['pro']['ShowNickname']) && $ownerNicknameRaw !== '');
 
-        if($showOwnerBadgeProfileImage || $showOwnerBadgeNickname){
+        if(empty($options['visual']['MemberEntryHeaderRendered']) && ($showOwnerBadgeProfileImage || $showOwnerBadgeNickname)){
             $ownerBadgeClasses = [
                 'cg-gallery-owner-badge',
                 'cg-gallery-owner-badge-entry',
@@ -856,30 +871,35 @@ if(!function_exists('cg1l_render_single_entry_view')){
                 $ownerBadgeClasses[] = 'cg-gallery-owner-badge-show-nickname';
             }
 
-            if(!$showOwnerBadgeProfileImage){
-                $ownerBadgeClasses[] = 'cg-gallery-owner-badge-static';
-            }
-
-            $ownerBadgeAriaLabel = 'Entry owner';
+            $ownerProfileAvailable = cg_member_features_available($realGid);
+            if(!$ownerProfileAvailable){$ownerBadgeClasses[] = 'cg-gallery-owner-badge-static';}
+            $ownerBadgeAriaLabel = cg_member_t('Entry owner');
             if($showOwnerBadgeProfileImage && $ownerNicknameRaw !== ''){
-                $ownerBadgeAriaLabel = 'Show profile image of '.$ownerNicknameRaw;
+                $ownerBadgeAriaLabel = cg_member_t('View profile of {name}',array('name'=>$ownerNicknameRaw));
             }elseif($showOwnerBadgeProfileImage){
-                $ownerBadgeAriaLabel = 'Show profile image';
+                $ownerBadgeAriaLabel = cg_member_t('View profile');
             }elseif($showOwnerBadgeNickname){
-                $ownerBadgeAriaLabel = $ownerNicknameRaw;
+                $ownerBadgeAriaLabel = cg_member_t('View profile of {name}',array('name'=>$ownerNicknameRaw));
             }
 
+            if(!$ownerProfileAvailable){$ownerBadgeAriaLabel = $ownerNicknameRaw !== '' ? $ownerNicknameRaw : cg_member_t('Entry owner');}
+            $ownerProfileAttrs = $ownerProfileAvailable ? ' aria-haspopup="dialog"' : ' disabled tabindex="-1"';
             $ownerBadgeTitleAttr = ($ownerNicknameRaw !== '') ? ' title="'.esc_attr($ownerNicknameRaw).'"' : '';
             $ownerBadgeImageStyle = ($showOwnerBadgeProfileImage) ? ' style="'.esc_attr('background-image: url('.$ownerProfileImageUrl.');').'"' : '';
             $ownerBadgeText = ($showOwnerBadgeNickname) ? esc_html($ownerNicknameRaw) : '';
 
-            $ownerBadge = '<button type="button" class="'.esc_attr(implode(' ', array_unique($ownerBadgeClasses))).'" data-cg-real-id="'.esc_attr($rid).'" aria-hidden="false" data-cg-wp-user-id="'.esc_attr($ownerWpUserId).'" aria-label="'.esc_attr($ownerBadgeAriaLabel).'"'.$ownerBadgeTitleAttr.'><span class="cg-gallery-owner-badge-image'.($showOwnerBadgeProfileImage ? '' : ' cg_hide').'"'.$ownerBadgeImageStyle.'></span><span class="cg-gallery-owner-badge-text'.($showOwnerBadgeNickname ? '' : ' cg_hide').'">'.$ownerBadgeText.'</span></button>';
+            $ownerBadge = '<button type="button" class="'.esc_attr(implode(' ', array_unique($ownerBadgeClasses))).'" data-cg-real-id="'.esc_attr($rid).'" aria-hidden="false"'.$ownerProfileAttrs.' data-cg-wp-user-id="'.esc_attr($ownerWpUserId).'" aria-label="'.esc_attr($ownerBadgeAriaLabel).'"'.$ownerBadgeTitleAttr.'><span class="cg-gallery-owner-badge-image skip-lazy'.($showOwnerBadgeProfileImage ? '' : ' cg_hide').'" data-skip-lazy="1"'.$ownerBadgeImageStyle.'></span><span class="cg-gallery-owner-badge-text'.($showOwnerBadgeNickname ? '' : ' cg_hide').'">'.$ownerBadgeText.'</span></button>';
         }
 
         $centerColorClass = (!empty($options['visual']['FeControlsStyle']) && $options['visual']['FeControlsStyle'] === 'black') ? 'cg_center_black' : 'cg_center_white';
         $socialConsentRequiredClass = ($socialConsentRequired) ? ' cg_social_consent_required' : '';
 
-        return '<article id="'.$centerDivId.'" class="cgCenterDiv cg_entry cgCenterDivForBlogView cg_border_top_unset_important cg_fade_in '.esc_attr($centerColorClass).$socialConsentRequiredClass.' cgCenterDivPhpLoad" data-cg-gid="'.$gidJs.'" style="width: 100%; min-height: unset; height: unset; display: block;" data-cg-real-id="'.$rid.'" data-cg-gid-with-order="'.esc_attr("{$gidJs}{$ord}").'" data-cg-order="'.esc_attr($orderAttr).'" data-cg-gid-for-center-div-elements="'.esc_attr("{$gidJs}{$ord}").'" data-cg-cat-id="'.esc_attr($cat).'"
+        $unpublishedBadge = '';
+        if($shortcode_name === 'cg_gallery_user' && isset($fullData['Active']) && intval($fullData['Active']) === 0){
+            $unpublishedBadge = '<span class="cg-member-unpublished">'.esc_html(cg_member_t('Not published')).'</span>';
+        }
+
+        return '<article id="'.$centerDivId.'" class="cgCenterDiv cg_entry cgCenterDivForBlogView cg_border_top_unset_important cg_fade_in '.esc_attr($centerColorClass).($canManageEntry ? ' cg-member-owned-entry' : '').$socialConsentRequiredClass.' cgCenterDivPhpLoad" data-cg-gid="'.$gidJs.'" style="width: 100%; min-height: unset; height: unset; display: block;" data-cg-real-id="'.$rid.'" data-cg-gid-with-order="'.esc_attr("{$gidJs}{$ord}").'" data-cg-order="'.esc_attr($orderAttr).'" data-cg-gid-for-center-div-elements="'.esc_attr("{$gidJs}{$ord}").'" data-cg-cat-id="'.esc_attr($cat).'"
          itemscope itemtype="https://schema.org/'.$itemTypeObject.'Object" >
     '.$meta.' 
     '.$metaComment.' 
@@ -896,6 +916,7 @@ if(!function_exists('cg1l_render_single_entry_view')){
                             '.$additionalFilesButtons.'
                             '.$centerImage.'
                             '.$ownerBadge.'
+                            '.$unpublishedBadge.'
                         </div>
                         '.$exifInfoContent.'
                         '.$ratingAndButtonsDiv.'

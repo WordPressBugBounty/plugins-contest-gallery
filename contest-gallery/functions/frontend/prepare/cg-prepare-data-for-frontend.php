@@ -686,7 +686,7 @@ if (!function_exists('cg1l_frontend_get_allowed_real_ids')) {
                 continue;
             }
 
-            if (!cg1l_frontend_is_category_allowed_for_entry($fullData, $categoriesFullData, $options, $formUploadFullData)) {
+            if (!($shortcode_name==='cg_gallery_user' && !empty($options['visual']['MemberArea'])) && !cg1l_frontend_is_category_allowed_for_entry($fullData, $categoriesFullData, $options, $formUploadFullData)) {
                 continue;
             }
 
@@ -1352,9 +1352,16 @@ if (!function_exists('cg1l_frontend_has_real_gravatar_image')) {
 }
 
 if (!function_exists('cg1l_frontend_get_real_wp_avatar_images')) {
-    function cg1l_frontend_get_real_wp_avatar_images($WpUserId, $smallSize = 96, $largeSize = 400)
+    function cg1l_frontend_get_real_wp_avatar_images($WpUserId, $smallSize = 96, $largeSize = 400, $ignoreProfileOverride = false)
     {
         $WpUserId = absint($WpUserId);
+		// A member's explicit choice overrides the avatar only inside Contest Gallery.
+		if(!$ignoreProfileOverride && $WpUserId && get_user_meta($WpUserId,'cg_member_profile_image_override',true)){
+			$id = cg_member_profile_image_id($WpUserId);
+			$small = $id ? wp_get_attachment_image_src($id,'thumbnail') : false;
+			$large = $id ? wp_get_attachment_image_src($id,'large') : false;
+			if($large){return array('small'=>$small ? $small[0] : $large[0],'large'=>$large[0]);}
+		}
         $smallAvatarData = [];
         $largeAvatarData = [];
         $smallUrl = '';
@@ -1470,6 +1477,10 @@ if (!function_exists('cg1l_frontend_get_wp_users_data')) {
         }
 
         $allUserIds = array_merge($entryUserIds, $commentUserIds);
+        if(!empty($options['visual']['MemberArea']) && is_user_logged_in()){
+            // The member header also needs the current user's profile before their first upload.
+            $allUserIds[] = get_current_user_id();
+        }
         $allUserIds = array_values(
             array_unique(
                 array_filter($allUserIds)
@@ -1482,7 +1493,7 @@ if (!function_exists('cg1l_frontend_get_wp_users_data')) {
             $profileImages = $wpdb->get_results(
                 $wpdb->prepare(
                     "SELECT WpUserId, WpUpload
-                 FROM $tablename
+                 FROM {$wpdb->base_prefix}contest_gal1ery
                  WHERE IsProfileImage = %d AND WpUserId IN ($profileImagePlaceholders)",
                     array_merge([1], $profileImageUserIds)
                 )
@@ -1493,6 +1504,12 @@ if (!function_exists('cg1l_frontend_get_wp_users_data')) {
                 if (!empty($imgSrcLarge[0])) {
                     $profileImagesArray[(int) $profileImage->WpUserId] = $imgSrcLarge[0];
                 }
+            }
+
+            // The existing fallback map is shared by headers, profiles, owners and comments.
+            // Keep legacy CG images above Google, and real WP avatars/explicit overrides above both.
+            foreach(cg_google_sign_in_get_profile_images($profileImageUserIds) as $userId=>$googleImage){
+                if(empty($profileImagesArray[$userId])){$profileImagesArray[$userId]=$googleImage;}
             }
 
             // 3) Bulk fetch WP users in one shot
@@ -1902,6 +1919,7 @@ if (!function_exists('cg1l_get_images_full_data_frontend_for_galleries')) {
 
         $imagesFullData = [];
         $galleryNumbers = [];
+        $galleryNavigation = [];
         $hasOlderVersionsOnMainCGalleriesPage = false;
         $loadedRealGalleriesIds = cg1l_normalize_positive_int_id_list($loadedRealGalleriesIds);
         $galleriesIds = cg1l_normalize_positive_int_id_list($galleriesIds);
@@ -2168,11 +2186,13 @@ if (!function_exists('cg1l_get_images_full_data_frontend_for_galleries')) {
                 }
 
                 $intervalConf = cg_shortcode_interval_check($galleryIdToCheck,$optionsToCheckSource,$shortcode_name,true);
+                $galleryNavigation[$galleryIdToCheck] = cg_page_gallery_navigation_presentation($galleryIdToCheck,$shortcode_name,$optionsToCheckSource,!empty($intervalConf['shortcodeIsActive']));
 
                 if(!$intervalConf['shortcodeIsActive'] || !count($imageIDs)){
                     //var_dump('set no entries');
                     $time = $time+1;// does not work with ++ no clue why
                     $imagesFullData[$time] = cg_get_empty_entry_values();
+                    $imagesFullData[$time]['id'] = $time;// same placeholder ID for PHP cards and the JS runtime
                     $imagesFullData[$time]['PositionNumber'] = $PositionNumber;
                     if(!empty($optionsToCheck['pro']['MainTitleGalleriesView'])){
                         $imagesFullData[$time]['MainTitleGalleriesView'] = $optionsToCheck['pro']['MainTitleGalleriesView'];
@@ -2345,6 +2365,12 @@ if (!function_exists('cg1l_get_images_full_data_frontend_for_galleries')) {
                 }
                 $PositionNumber++;
             }
+        }
+
+        // Include whole-gallery totals for both the initial page and later AJAX pages.
+        foreach($imagesFullData as $coverId=>$cover){
+            $imagesFullData[$coverId]['GalleryStatisticsHtml'] = cg_page_gallery_card_statistics($cover['GalleryIdToCheck'],$shortcode_name);
+            $imagesFullData[$coverId]['GalleryNavigation'] = $galleryNavigation[$cover['GalleryIdToCheck']];
         }
 
         return [

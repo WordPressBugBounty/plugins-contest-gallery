@@ -149,10 +149,40 @@ if(empty($isFromOrderSummary)){// to go sure is initiated
 // for sure, for security
 $galeryID = absint($galeryID);
 
+// Only the server-verified owner of this exact unpublished landing-page entry
+// receives the private runtime. Public gallery lists and other viewers stay public.
+global $cgMemberPrivateEntryContext;
+$cgMemberPrivateEntry = !empty($cgMemberPrivateEntryContext) &&
+    $cgMemberPrivateEntryContext['gid']===$galeryID &&
+    $cgMemberPrivateEntryContext['entryId']===$entryId &&
+    $cgMemberPrivateEntryContext['shortcode']===$shortcode_name;
+if($cgMemberPrivateEntry){
+    $cgMemberPublicShortcode = $shortcode_name;
+    $shortcode_name = 'cg_gallery_user';
+}
+
 $realGid = $galeryID;
 $galeryIDuser = $galeryID;
 $galeryIDuserForJs = $galeryIDuser;
 $galeryIDshort = '';
+
+// Resolve the original public instance before choosing its private owner runtime.
+$cgMemberInitialOwnView = false;
+if(empty($cgMemberInstanceId) && in_array($shortcode_name,array('cg_gallery','cg_gallery_no_voting'),true)){
+    $cgMemberInitialNoVoting = $shortcode_name==='cg_gallery_no_voting';
+    $cgMemberInitialInstance = $galeryID.($cgMemberInitialNoVoting ? '-nv' : '');
+    if($cgMemberInitialNoVoting ? !empty($galeryIDnvset) : !empty($galeryIDset)){
+        $cgMemberInitialInstance .= '-ext-'.($cgMemberInitialNoVoting ? $galeryIDnvextender : $galeryIDextender);
+    }
+    $cgMemberInitialOwnView = cg_member_initial_own_view($galeryID,$cgMemberInitialInstance,$shortcode_name,$entryId,$isCGalleries);
+    if($cgMemberInitialOwnView){
+        $cgMemberPublicInstance = $cgMemberInitialInstance;
+        $cgMemberPublicShortcode = $shortcode_name;
+        $cgMemberInstanceId = $galeryID.'-u-ext-member-'.substr(md5($cgMemberPublicInstance),0,8);
+        $shortcode_name = 'cg_gallery_user';
+        if($cgMemberInitialNoVoting){$galeryIDnvset = true;}else{$galeryIDset = true;}
+    }
+}
 
 $shortcode_name_plural = '';
 if($shortcode_name == 'cg_gallery'){
@@ -205,7 +235,7 @@ if($shortcode_name == 'cg_gallery'){
 	if(!empty($isCGalleries)){
 		$galeryIDuserForJs = 'main';
 	}
-    $galeryIDuset = true;
+    if(!$cgMemberInitialOwnView){$galeryIDuset = true;}
     $WpPageShortCodeType = 'WpPageUser';
     $WpPageParentShortCodeType = 'WpPageParentUser';
     $cg_gallery_shortcode_type = 'cg_gallery_user';
@@ -272,6 +302,16 @@ if($shortcode_name == 'cg_gallery'){
     if(!empty($hasUploadSell) && !empty($OrderItemID)){
         $galeryIDuserForJs = $OrderItemID.'itemId';
     }
+}
+
+// Keep the requested gallery variant for entry and return links.
+if($cgMemberPrivateEntry){
+    $WpPageShortCodeType = $cgMemberPublicShortcode==='cg_gallery_no_voting' ? 'WpPageNoVoting' : 'WpPage';
+    $WpPageParentShortCodeType = $cgMemberPublicShortcode==='cg_gallery_no_voting' ? 'WpPageParentNoVoting' : 'WpPageParent';
+}
+// A member view has its own runtime ID even when the same gallery occurs twice.
+if(!empty($cgMemberInstanceId)){
+    $galeryIDuserForJs = $cgMemberInstanceId;
 }
 
 $currentUrl = cgl_normalize_internal_url(get_permalink());
@@ -359,6 +399,56 @@ if(!empty($isOnlyContactForm)){
 }else{
     // after options were saved, options array will be extended for other gallery ids
     $options = (!empty($options[$galeryIDuser])) ? $options[$galeryIDuser] : $options;
+}
+
+// My images keeps the public gallery's pagination and card controls instead of the standalone
+// user-gallery settings. The private owner data and management options stay in use.
+$cgMemberOwnView = $shortcode_name==='cg_gallery_user' && !empty($cgMemberInstanceId) && !empty($cgMemberPublicShortcode) && in_array($cgMemberPublicShortcode,array('cg_gallery','cg_gallery_no_voting'),true);
+$cgMemberVoting = false;
+if($cgMemberOwnView){
+    $cgMemberCardOptions = cg_member_options($galeryID,$cgMemberPublicShortcode);
+    $cgMemberVoting = cg1l_is_voting_possible_for_shortcode($cgMemberPublicShortcode,$cgMemberCardOptions);
+    foreach(array('AllowRating','AllowRatingAverage','DisableVotingForGallery','RatingOutGallery') as $cgMemberVotingOption){
+        if(isset($cgMemberCardOptions['general'][$cgMemberVotingOption])){
+            $options['general'][$cgMemberVotingOption] = $cgMemberCardOptions['general'][$cgMemberVotingOption];
+        }
+    }
+    if(isset($cgMemberCardOptions['general']['PicsPerSite'])){
+        $options['general']['PicsPerSite'] = $cgMemberCardOptions['general']['PicsPerSite'];
+    }
+    if(isset($cgMemberCardOptions['visual']['FeControlsStyle'])){
+        $options['visual']['FeControlsStyle'] = $cgMemberCardOptions['visual']['FeControlsStyle'];
+    }
+    foreach(array('ShowProfileGallery','ShowShareButtonGallery') as $cgMemberCardOption){
+        $options['visual'][$cgMemberCardOption] = cg_gallery_card_option_enabled($cgMemberCardOptions,$cgMemberCardOption) ? 1 : 0;
+    }
+    $options['visual']['ShareButtons'] = isset($cgMemberCardOptions['visual']['ShareButtons']) ? $cgMemberCardOptions['visual']['ShareButtons'] : '';
+}
+
+$options = cg_member_profile_options($options,$galeryID,$cgMemberOwnView ? $cgMemberPublicShortcode : $shortcode_name);
+
+// Keep owner profile overlays out of the user's own gallery.
+if($shortcode_name==='cg_gallery_user'){
+    $options['visual']['ShowProfileGallery'] = 0;
+    $options['pro']['ShowNickname'] = 0;
+    $options['pro']['ShowProfileImage'] = 0;
+}
+
+if($shortcode_name==='cg_gallery_user' && !empty($options['visual']['MemberArea'])){
+    $options['visual']['MemberArea'] = 1;
+    $options['general']['AllowGalleryScript'] = 1;
+}
+
+if(!empty($cgParticipantUserId)){
+    $options = cg_participants_gallery_options($options);
+}
+
+// Embedded personal management stays in this gallery, including entries awaiting moderation.
+if($shortcode_name==='cg_gallery_user' && !empty($cgMemberInstanceId)){
+    $options['general']['FullSizeImageOutGallery'] = 0;
+    $options['general']['OnlyGalleryView'] = 0;
+    $options['visual']['ForwardToWpPageEntry'] = 0;
+    $options['visual']['BlogLookFullWindow'] = 1;
 }
 
 if(
@@ -504,6 +594,8 @@ $categoriesFullDataFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id
 $formUploadFullDataFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$realGid.'/json/'.$realGid.'-form-upload.json';
 $isCategoryUploadFieldActive = false;
 $currentPageNumber = (!empty($cglCurrentPageNumber)) ? max(1, absint($cglCurrentPageNumber)) : cgl_get_current_page_number();
+$cgMemberInitialPublicPage = $currentPageNumber;
+if($cgMemberInitialOwnView){$currentPageNumber = 1;}
 $backToGalleriesFromPage = cgl_get_from_galleries_page();
 $backToGalleriesFromPageNumber = cgl_get_from_galleries_page(true);
 $backToGalleryFromPageNumber = $currentPageNumber;
@@ -701,6 +793,17 @@ if($isCGalleries){
         }
     }
 
+// Owner data is built privately and refreshed from current ownership in the database.
+    if($shortcode_name==='cg_gallery_user' && !empty($options['visual']['MemberArea']) && empty($isCGalleries)){
+        $cgMemberData = cg_member_owner_data($galeryID,isset($cgMemberPublicShortcode) ? $cgMemberPublicShortcode : $shortcode_name);
+        $imagesFullData = $recentMainData = $cgMemberData['main'];
+        $queryDataArray = $recentQueryData = $cgMemberData['query'];
+        $jsonInfoData = $recentInfoData = $cgMemberData['info'];
+        $recentUrlsData = $cgMemberData['urls'];
+        $recentStatsData = $cgMemberData['stats'];
+        $jsonCommentsData = $recentCommentsData = $cgMemberData['comments'];
+    }
+
 // get stats if not available, because recent might still not exists
     foreach($imagesFullData as $id => $fullData){
         if(!isset($fullData['CountS'])){
@@ -748,6 +851,7 @@ if($isCGalleries){
 
     if($shouldUseAllowedRealIds){
         $allowedRealIds = cg1l_frontend_get_allowed_real_ids($imagesFullData, $shortcode_name, $categoriesFullData, $options, $WpUserId, $formUploadFullData);
+        if(!empty($cgParticipantUserId)){$allowedRealIds = array_values(array_intersect($allowedRealIds,array_keys(cg_participants_rows($galeryID,$shortcode_name,$cgParticipantUserId))));}
         $imagesFullData = cg1l_frontend_filter_id_keyed_data_by_allowed_ids($imagesFullData, $allowedRealIds);
         $queryDataArray = cg1l_frontend_filter_id_keyed_data_by_allowed_ids($queryDataArray, $allowedRealIds);
         $jsonCommentsData = cg1l_frontend_filter_id_keyed_data_by_allowed_ids($jsonCommentsData, $allowedRealIds);
@@ -1106,6 +1210,77 @@ if($isShowGallery == true){
         $cgHideDivContainerClass = 'cg_hide';
     }
 
+    // Resolve once for the entry header and the Back to gallery button.
+    $entryPermalink = '';
+    if(!empty($entryId) && (!empty($options['visual']['ShowBackToGalleryButton']) || cg_member_enabled($galeryID,$shortcode_name))){
+        $configuredBackToGalleryUrl = '';
+        $entryFallbackRootUrl = '';
+        $entryBackOriginUrl = '';
+
+        $options['visual']['BackToGalleryButtonText']=$language_BackToGallery;
+        if(!empty($options['pro']['BackToGalleryButtonURL'])){
+            $configuredBackToGalleryUrl = contest_gal1ery_convert_for_html_output_without_nl2br($options['pro']['BackToGalleryButtonURL']);
+        }
+        if(!empty($imagesFullData[$entryId][$WpPageShortCodeType])){// might happen if original WpUpload was deleted in WP library
+            $entryFallbackRootUrl = get_permalink(wp_get_post_parent_id($imagesFullData[$entryId][$WpPageShortCodeType]));
+        }
+        $entryBackOriginUrl = (!empty($cgFromGalleriesUrl)) ? $cgFromGalleriesUrl : $cglOriginPageUrl;
+        if(
+            !empty($isCgWpPageEntryLandingPage) &&
+            !empty($isMultiGalleryContext) &&
+            empty($cgFromGalleriesUrl) &&
+            empty($cglOriginPageId) &&
+            !empty($entryFallbackRootUrl) &&
+            cgl_strip_navigation_query_args($entryBackOriginUrl) === cgl_strip_navigation_query_args($currentUrl)
+        ){
+            $entryBackOriginUrl = $entryFallbackRootUrl;
+        }
+
+        $entryPermalink = cgl_build_entry_back_url([
+            'has_multi_gallery_context' => (!empty($cglMultiContextGalleryId) && !empty($isMultiGalleryContext)),
+            'multi_gallery_id' => $cglMultiContextGalleryId,
+            'multi_page_number' => max(1, $backToGalleriesFromPageNumber),
+            'origin_page_id' => $cglOriginPageId,
+            'origin_url' => $entryBackOriginUrl,
+            'single_page_number' => $backToGalleryFromPageNumber,
+            'single_back_url' => $configuredBackToGalleryUrl,
+            'fallback_root_url' => $entryFallbackRootUrl,
+        ]);
+        $entryPermalink = cg1l_append_frontend_passthrough_query_args($entryPermalink,[
+            'query_args' => $cgFrontendPassthroughQueryArgs,
+            'is_ecommerce_test' => !empty($isEcommerceTest)
+        ]);
+
+        if(!empty($isCgWpPageEntryLandingPage) && !empty($entryPermalink) && cg_member_enabled($galeryID,$shortcode_name)){$entryPermalink = add_query_arg(cg_participants_navigation_args(),$entryPermalink);}
+    }
+
+    global $cgPagePresentation;
+    // cg_galleries uses the same contained header. Its dataset already respects ids/id.
+    // Version 24 introduced the gallery pages and limits headers on individual galleries.
+    $cgMemberGalleryHeader = !empty($cgMemberOwnView) && empty($entryId) && empty($cgParticipantUserId) && empty($isCGalleries);
+    $cgGalleryHeaderOptions = $cgMemberGalleryHeader ? $cgMemberCardOptions : $options;
+    $cgGalleryHeaderContext = empty($entryId) && ($cgMemberGalleryHeader || in_array($shortcode_name,array('cg_gallery','cg_gallery_no_voting'),true));
+    $cgRenderContainerHeader = $cgGalleryHeaderContext && (!empty($isCGalleries) || (!empty($cgGalleryHeaderOptions['general']['Version']) && intval($cgGalleryHeaderOptions['general']['Version'])>=24));
+    if(!empty($entryId) && cg_member_enabled($galeryID,$shortcode_name)){$cgRenderContainerHeader = true;}
+    $cgRenderPageHeader = $cgRenderContainerHeader || (empty($isCGalleries) && !$cgGalleryHeaderContext && !empty($cgPagePresentation) && !(defined('DOING_AJAX') && DOING_AJAX));
+    if($cgRenderPageHeader){
+        $cgPageHeaderArgs = array('gallery_id'=>$galeryID,'instance'=>$galeryIDuserForJs,'options'=>$options,'entry_id'=>$entryId,'is_overview'=>!empty($isCGalleries),'entries'=>(!empty($isCGalleries) || !empty($intervalConf['shortcodeIsActive'])) ? $imagesFullData : array(),'shortcode'=>$shortcode_name,'comments'=>isset($jsonCommentsData) ? $jsonCommentsData : array(),'back_url'=>$entryPermalink,'contained'=>$cgRenderContainerHeader,'embedded'=>empty($cgPagePresentation),'participant_id'=>!empty($cgParticipantUserId) ? $cgParticipantUserId : 0);
+        $cgPageHeaderArgs['shortcode_active'] = !empty($intervalConf['shortcodeIsActive']);
+        if($cgMemberGalleryHeader){
+            // Header visibility, media and totals belong to the public gallery, not the owner list.
+            $cgMemberHeaderData = cg_page_stats_current_gallery($galeryID,$cgMemberPublicShortcode);
+            $cgPageHeaderArgs['options'] = $cgGalleryHeaderOptions;
+            $cgPageHeaderArgs['shortcode'] = $cgMemberPublicShortcode;
+            $cgPageHeaderArgs['entries'] = $cgMemberHeaderData ? $cgMemberHeaderData['entries'] : array();
+            $cgPageHeaderArgs['comments'] = $cgMemberHeaderData ? $cgMemberHeaderData['comments'] : array();
+            $cgPageHeaderArgs['shortcode_active'] = (bool)$cgMemberHeaderData;
+            $cgPageHeaderArgs['member_gallery_header'] = true;
+        }
+        // Keep configured entry text, including factory copy, ahead of the entry header.
+        if(!empty($options['visual']['TextBeforeWpPageParent']) && cg_page_is_factory_intro($options['visual']['TextBeforeWpPageParent'])){$options['visual']['TextBeforeWpPageParent'] = '';}
+        if(!empty($galleriesOptions['TextBeforeWpPageGalleries']) && cg_page_is_factory_intro($galleriesOptions['TextBeforeWpPageGalleries'])){$galleriesOptions['TextBeforeWpPageGalleries'] = '';}
+    }
+
     if(!empty($entryId) && !empty($options['visual']['TextBeforeWpPageEntry']) && !empty($isCgWpPageEntryLandingPage)){
         echo "<div class='mainCGlanding'>";
             echo contest_gal1ery_convert_for_html_output_without_nl2br($options['visual']['TextBeforeWpPageEntry']);
@@ -1119,6 +1294,8 @@ if($isShowGallery == true){
         echo contest_gal1ery_convert_for_html_output_without_nl2br($galleriesOptions['TextBeforeWpPageGalleries']);
         echo "</div>";
     }
+
+    if($cgRenderPageHeader && !$cgRenderContainerHeader){$cgHeaderRendered = cg_page_render_header($cgPageHeaderArgs); $options['visual']['MemberEntryHeaderRendered'] = !empty($entryId) && $cgHeaderRendered ? 1 : 0;}
 
     $entryLandingNeighborsHtml = '';
 
@@ -1316,8 +1493,16 @@ if(($options['general']['AllowRating']==1 OR $options['general']['AllowRating']>
 
 // --- End Data and Configuration Additions ---
 
-        echo "<div id='mainCGdivContainer$galeryIDuserForJs' class='mainCGdivContainer cg_overflow_hidden  $cgHideDivContainerClass' data-cg-gid='$galeryIDuserForJs'>";
-        echo "<div id='mainCGdivHelperParent$galeryIDuserForJs' class='mainCGdivHelperParent cg_display_block $cgFeControlsStyle $cgl_heart' data-cg-gid='$galeryIDuserForJs'>";
+$cgParticipantInitial = cg_participants_initial_navigation($galeryID,$shortcode_name,$entryId,$isCGalleries);
+$cgParticipantFrameClass = $cgParticipantInitial ? 'cg-participants-frame' : '';
+$cgParticipantStageClass = $cgParticipantInitial ? 'cg-participants-stage' : '';
+
+        $cgOverviewPresentation = '';
+        if(!empty($isCGalleries) || !empty($isFromGalleriesSelect) || !empty($is_from_single_view_for_cg_galleries)){
+            $cgOverviewPresentation = ' data-cg-overview-presentation="'.esc_attr(wp_json_encode(cg_page_galleries_navigation_presentation($shortcode_name))).'"';
+        }
+        echo "<div id='mainCGdivContainer$galeryIDuserForJs' class='mainCGdivContainer cg_overflow_hidden  $cgHideDivContainerClass' data-cg-gid='$galeryIDuserForJs'$cgOverviewPresentation>";
+        echo "<div id='mainCGdivHelperParent$galeryIDuserForJs' class='mainCGdivHelperParent $cgParticipantFrameClass cg_display_block $cgFeControlsStyle $cgl_heart' data-cg-gid='$galeryIDuserForJs'>";
         echo "<div id='cgLdsDualRingDivGalleryHide$galeryIDuserForJs' class='cg_hide cg-lds-dual-ring-div-gallery-hide cg-lds-dual-ring-div-gallery-hide-parent $BorderRadiusClass $cgFeControlsStyle'><div class='cg-lds-dual-ring-gallery-hide $cgFeControlsStyle'></div></div>";
 
         $isOnlyGalleryEcommerceClass = '';
@@ -1364,65 +1549,28 @@ if(($options['general']['AllowRating']==1 OR $options['general']['AllowRating']>
             $sliderViewMainClass = 'cg-slider-view';
         }
 
-        echo "<div id='mainCGdiv$galeryIDuserForJs' class='mainCGdiv $CGalleriesMainPageClass $cgAjaxClass $isOnlyGalleryEcommerceClass $isCgWpPageEntryLandingPageClass $cgFeControlsStyle $BorderRadiusClass $cgl_heart $sliderViewMainClass' data-cg-gid='$galeryIDuserForJs' data-cg-version='$Version'>";
+        echo "<div id='mainCGdiv$galeryIDuserForJs' class='mainCGdiv $cgParticipantStageClass $CGalleriesMainPageClass $cgAjaxClass $isOnlyGalleryEcommerceClass $isCgWpPageEntryLandingPageClass $cgFeControlsStyle $BorderRadiusClass $cgl_heart $sliderViewMainClass' data-cg-gid='$galeryIDuserForJs' data-cg-version='$Version'>";
+        if(!empty($cgRenderContainerHeader)){$cgHeaderRendered = cg_page_render_header($cgPageHeaderArgs); $options['visual']['MemberEntryHeaderRendered'] = !empty($entryId) && $cgHeaderRendered ? 1 : 0;}
 
         $shouldRenderHeader = !($isGalleryShortcode && !empty($entryId)) || (!empty($entryId) && !empty($isOnlyGalleryEcommerce));
-        if(!$shouldRenderHeader && empty($isCGalleries) && $shortcode_name!=='cg_users_upload' && function_exists('cg_paid_actions_render_frontend_bar_shell')){
+        $cgShowPaidActionsBar = !$cgParticipantInitial && (empty($cgParticipantUserId) || absint($cgParticipantUserId)===get_current_user_id());
+        if($cgShowPaidActionsBar && !$shouldRenderHeader && empty($isCGalleries) && $shortcode_name!=='cg_users_upload' && function_exists('cg_paid_actions_render_frontend_bar_shell')){
             cg_paid_actions_render_frontend_bar_shell($galeryID,$galeryIDuserForJs,$options['visual']);
         }
 
-        if($currentLook=='thumb'){
+        if(!$cgParticipantInitial && $currentLook=='thumb'){
             echo '<div id="cglSliderNav'.$galeryIDuserForJs.'" class="cg_hide cgl_nav" data-cg-gid="'.$galeryIDuserForJs.'">
                     <button class="cgl_nav_btn cgl_nav_up" aria-label="Previous">&#9650;</button>
                     <button class="cgl_nav_btn cgl_nav_down" aria-label="Next">&#9660;</button>
             </div>';
         }
 
-        include (__DIR__.'/gallery/gallery-upload-form-options.php');
+        if(!$cgParticipantInitial){include (__DIR__.'/gallery/gallery-upload-form-options.php');}
 
         $cg_skeleton_loader_on_page_load_div_hide = 'cg_hide';
         include("gallery/gallery-loaders.php");
 
 	        if(!empty($entryId) && !empty($options['visual']['ShowBackToGalleryButton'])){
-
-	            $entryPermalink = '';// in case deactivated
-	            $configuredBackToGalleryUrl = '';
-	            $entryFallbackRootUrl = '';
-	            $entryBackOriginUrl = '';
-
-	            $options['visual']['BackToGalleryButtonText']=$language_BackToGallery;
-	            if(!empty($options['pro']['BackToGalleryButtonURL'])){
-	                $configuredBackToGalleryUrl = contest_gal1ery_convert_for_html_output_without_nl2br($options['pro']['BackToGalleryButtonURL']);
-	            }
-	            if(!empty($imagesFullData[$entryId][$WpPageShortCodeType])){// might happen if original WpUpload was deleted in WP library
-		            $entryFallbackRootUrl = get_permalink(wp_get_post_parent_id($imagesFullData[$entryId][$WpPageShortCodeType]));
-	            }
-	            $entryBackOriginUrl = (!empty($cgFromGalleriesUrl)) ? $cgFromGalleriesUrl : $cglOriginPageUrl;
-	            if(
-	                !empty($isCgWpPageEntryLandingPage) &&
-	                !empty($isMultiGalleryContext) &&
-	                empty($cgFromGalleriesUrl) &&
-	                empty($cglOriginPageId) &&
-	                !empty($entryFallbackRootUrl) &&
-	                cgl_strip_navigation_query_args($entryBackOriginUrl) === cgl_strip_navigation_query_args($currentUrl)
-	            ){
-	                $entryBackOriginUrl = $entryFallbackRootUrl;
-	            }
-
-	            $entryPermalink = cgl_build_entry_back_url([
-	                'has_multi_gallery_context' => (!empty($cglMultiContextGalleryId) && !empty($isMultiGalleryContext)),
-	                'multi_gallery_id' => $cglMultiContextGalleryId,
-	                'multi_page_number' => max(1, $backToGalleriesFromPageNumber),
-	                'origin_page_id' => $cglOriginPageId,
-	                'origin_url' => $entryBackOriginUrl,
-	                'single_page_number' => $backToGalleryFromPageNumber,
-	                'single_back_url' => $configuredBackToGalleryUrl,
-	                'fallback_root_url' => $entryFallbackRootUrl,
-	            ]);
-	            $entryPermalink = cg1l_append_frontend_passthrough_query_args($entryPermalink,[
-	                'query_args' => $cgFrontendPassthroughQueryArgs,
-	                'is_ecommerce_test' => !empty($isEcommerceTest)
-	            ]);
 
 	            if(!empty($isCgWpPageEntryLandingPage) && !empty($entryPermalink)){
 		            echo "<div class='mainCGBackToGalleryButtonHrefContainer'>";
@@ -1434,7 +1582,7 @@ if(($options['general']['AllowRating']==1 OR $options['general']['AllowRating']>
 
         }
 
-	        if(!empty($isFromGalleriesSelect) || !empty($is_from_single_view_for_cg_galleries)){
+	        if(empty($cgParticipantUserId) && (!empty($isFromGalleriesSelect) || !empty($is_from_single_view_for_cg_galleries))){
 	            $backToGalleriesHref = '';
 
 	            if(!empty($cgFromGalleriesUrl)){
@@ -1451,7 +1599,7 @@ if(($options['general']['AllowRating']==1 OR $options['general']['AllowRating']>
                 'is_ecommerce_test' => !empty($isEcommerceTest)
             ]);
 
-            if(!empty($options['pro']['MainTitleGalleriesView'])){
+            if(empty($cgRenderPageHeader) && !empty($options['pro']['MainTitleGalleriesView'])){
 	            echo "<div class='cgGalleryName'>";
 	                echo contest_gal1ery_convert_for_html_output_without_nl2br($options['pro']['MainTitleGalleriesView']);
 	            echo "</div>";
@@ -1467,7 +1615,7 @@ if(($options['general']['AllowRating']==1 OR $options['general']['AllowRating']>
                     echo "<div id='mainCGBackToGalleryButton$galeryIDuserForJs' class=' mainCGBackToGalleryButton isCGalleries'>$language_BackToGalleries</div>";
                 echo "</a>";
 	        echo "</div>";
-        }elseif(!empty($isCgParentPage) && intval($options['general']['Version'])>=24 && (!isset($options['visual']['ShowBackToGalleriesButton']) || $options['visual']['ShowBackToGalleriesButton'] == 1)){
+        }elseif(empty($cgParticipantUserId) && !empty($isCgParentPage) && intval($options['general']['Version'])>=24 && (!isset($options['visual']['ShowBackToGalleriesButton']) || $options['visual']['ShowBackToGalleriesButton'] == 1)){
             if(!empty($options['pro']['BackToGalleriesButtonURL'])){
                 $pageGalleries = $options['pro']['BackToGalleriesButtonURL'];
                 $pageGalleries = cg1l_append_frontend_passthrough_query_args($pageGalleries,[
@@ -1547,6 +1695,7 @@ if(($options['general']['AllowRating']==1 OR $options['general']['AllowRating']>
             }
         }
 
+        if(!$cgParticipantInitial){
         echo "<div id='mainCGdivHelperChild$galeryIDuserForJs' class='mainCGdivHelperChild' data-cg-gid='$galeryIDuserForJs'>";
 
         echo "<div id='mainCGdivFullWindowConfigurationArea$galeryIDuserForJs' class='mainCGdivFullWindowConfigurationArea cg-header-controls-show-only-full-window cg_hide $cgFeControlsStyle' data-cg-gid='$galeryIDuserForJs'>";
@@ -1562,7 +1711,7 @@ if(($options['general']['AllowRating']==1 OR $options['general']['AllowRating']>
         echo "<div id='cg_AllVotesUsed_dialog' style='display:none;' class='cg_show_dialog'><p>$language_AllVotesUsed</p></div>";
 
         if($shouldRenderHeader){
-            if(empty($isCGalleries) && $shortcode_name!=='cg_users_upload' && function_exists('cg_paid_actions_render_frontend_bar_shell')){
+            if($cgShowPaidActionsBar && empty($isCGalleries) && $shortcode_name!=='cg_users_upload' && function_exists('cg_paid_actions_render_frontend_bar_shell')){
                 cg_paid_actions_render_frontend_bar_shell($galeryID,$galeryIDuserForJs,$options['visual']);
             }
             echo "<div style='visibility: hidden;'  class='cg_header cg_hide'>";
@@ -1587,6 +1736,7 @@ if(($options['general']['AllowRating']==1 OR $options['general']['AllowRating']>
         echo '<div class="cg-lds-dual-ring-div '.$cgFeControlsStyle.' cg_hide"><div class="cg-lds-dual-ring"></div></div>';
         echo "<div id='cgLdsDualRingMainCGdivHide$galeryIDuserForJs' class='cg-lds-dual-ring-div-gallery-hide cg-lds-dual-ring-div-gallery-hide-mainCGallery $cgFeControlsStyle cg_hide'><div class='cg-lds-dual-ring-gallery-hide $cgFeControlsStyle cg-lds-dual-ring-gallery-hide-mainCGallery'></div></div>";
 
+        }
         include('gallery/cg-messages.php');
 
 
@@ -1601,6 +1751,7 @@ $optionsFullData = json_decode(file_get_contents($wp_upload_dir['basedir'].'/con
 if(!empty($isUserGallery) && empty($optionsFullData[$galeryIDuser])){
     $optionsFullData['visual']['ShareButtons'] = '';// unset share buttons for gallery user, because logged in
 }
+
 
 $singleViewOrderFullData = json_decode(file_get_contents($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$realGid.'/json/'.$realGid.'-single-view-order.json'),true);
 
@@ -1619,6 +1770,10 @@ if(!$isOnlyUploadForm && !$isOnlyContactForm){
 
 include('data/variables-javascript.php');
 include('data/variables-javascript-general.php');
+
+if($cgParticipantInitial){
+    include(__DIR__.'/gallery/participants-view.php');
+}else{
 
 if(!empty($cgFrontendPassthroughQueryArgs)){
     if(isset($imagesFullData) && is_array($imagesFullData)){
@@ -1833,6 +1988,7 @@ if(!empty($cgFrontendPassthroughQueryArgs)){
                 'gid'=> $galeryIDuserForJs,
                 'gid_js' => $galeryIDuserForJs,
                 'real_id' => $entryId,
+                'compact_share_actions' => true,
                 'real_gid' => $realGid,
                 'ecommerce_files_data' => $ecommerceFilesData,
                 'ecommerce_options' => $ecommerceOptions,
@@ -1896,12 +2052,15 @@ if(!empty($cgFrontendPassthroughQueryArgs)){
             ]);
         }
 
+        }// Normal gallery output or server-rendered participant view.
+
         echo "</div>";
         echo "<div id='cgCenterDivAppearenceHelper$galeryIDuserForJs' class='cgCenterDivAppearenceHelper'>
     </div>";
 
         echo "</div>";
 
+        if(!$cgParticipantInitial){
         echo "<noscript>";
 
         echo "<div id='mainCGdivNoScriptContainer$galeryIDuserForJs' class='mainCGdivNoScriptContainer' data-cg-gid='$galeryIDuserForJs'>";
@@ -1913,6 +2072,7 @@ if(!empty($cgFrontendPassthroughQueryArgs)){
         echo "</div>";
 
         echo "</noscript>";
+        }
 
         echo "</div>";
 
@@ -1964,9 +2124,15 @@ else{
         $message = contest_gal1ery_convert_for_html_output_without_nl2br($intervalConf['TextWhenShortcodeIntervalIsOff']);
         echo cg1l_get_gallery_status_card($message, $cgGalleryStatusCardTheme, 'cg-gallery-status-card-interval-off');
     }else{
+        if($shortcode_name==='cg_gallery_user' && !empty($options['visual']['MemberArea'])){
+            echo '<div class="mainCGdivContainer"><div class="mainCGdiv cg_fe_controls_style_white">';
+            cg_member_render_header($galeryID,$galeryIDuserForJs,$shortcode_name,$options);
+            echo '</div></div>';
+        }else{
         echo "<div id='cgRegUserGalleryOnly$galeryIDuserForJs' class='cgRegUserGalleryOnly cg-gallery-status-card $cgGalleryStatusCardTheme' role='status' data-cg-gid='$galeryIDuserForJs'>";
         echo contest_gal1ery_convert_for_html_output_without_nl2br($options['pro']['RegUserGalleryOnlyText']);
         echo "</div>";
+        }
     }
 
     ?>

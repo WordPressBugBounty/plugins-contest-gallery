@@ -359,6 +359,7 @@ HEREDOC;
 
 if(!function_exists('cg_add_reg_field')){
 	function cg_add_reg_field($GalleryID,$cgProFalse,$dbGalleryVersion){
+        $cgRegistryUrlVisibility = intval($dbGalleryVersion)>=14 ? '' : 'display:none;';
         $marginRight = '';
         if($cgProFalse){
             $marginRight = 'margin-right: 15px;';
@@ -441,9 +442,9 @@ echo <<<HEREDOC
                             </div>
                         </div>
                     </div>
-                     <div class='cg_row_col cg_field $cgProFalse'  id="cgAddCheckAgreementField" title="Add check agreement field" data-cg-field="cb" style="$marginRight">
+                     <div class='cg_row_col cg_field'  id="cgAddUrlField" title="Add URL field" data-cg-field="url" style="$cgRegistryUrlVisibility">
                         <div class='cg_sel_col_title' >
-                            Check<br>agreement
+                            URL<br><br>
                         </div>
                         <div class='cg_col_row' >
                             <div class='cg_row_col_row_col cg_border_radius_8_px' >
@@ -455,7 +456,7 @@ HEREDOC;
 
 echo <<<HEREDOC
             <div class='cg_row' style="gap: 60px;justify-content: center;">
-               <div class='cg_row_col cg_field $cgProFalse'  id="cgProfileImageField" title="Add profile image field" data-cg-field="pi">
+               <div class='cg_row_col cg_field'  id="cgProfileImageField" title="Add profile image field" data-cg-field="pi">
                     <div class='cg_sel_col_title' >
                         Profile image<br><br>
                     </div>
@@ -493,15 +494,15 @@ echo <<<HEREDOC
                 </div>                
             </div>
             <div class='cg_row' style="gap: 60px;justify-content: center;">
-               <div class='cg_row_col cg_field cg_visibility_hidden cg_pointer_events_none'  >
-                    <div class='cg_sel_col_title' style="width: max-content;" >
-                        Wp First Name<br><br>
-                    </div>
-                    <div class='cg_col_row' >
-                        <div class='cg_row_col_row_col cg_border_radius_8_px' >
+               <div class='cg_row_col cg_field $cgProFalse'  id="cgAddCheckAgreementField" title="Add check agreement field" data-cg-field="cb" style="$marginRight">
+                        <div class='cg_sel_col_title' >
+                            Check<br>agreement
+                        </div>
+                        <div class='cg_col_row' >
+                            <div class='cg_row_col_row_col cg_border_radius_8_px' >
+                            </div>
                         </div>
                     </div>
-                </div>
                 <div class='cg_row_col cg_field'  id="cgAddSimpleCaptchaField" title="Add simple captcha field" data-cg-field="caRo">
                         <div class='cg_sel_col_title' >
                             Simple<br>captcha

@@ -551,8 +551,6 @@ $wp_upload_dir = wp_upload_dir();
             unset($_POST['InformAdmin']);// bool $tablenameOptions $jsonOptions['general']['InformAdmin']
             unset($_POST['mConfirmSendConfirm']);// bool SendConfirm $tablename_mail_confirmation
             unset($_POST['InformUsers']);// bool Inform is column name $tablenameOptions $jsonOptions['general']['Inform']
-            unset($_POST['ShowNickname']);// bool $tablename_pro_options $jsonOptions['pro']['ShowNickname']
-            unset($_POST['ShowProfileImage']);// bool $tablename_pro_options $jsonOptions['pro']['ShowProfileImage']
             unset($_POST['ShowExifDateTimeOriginal']);// bool no table option $jsonOptions['general']['ShowExifDateTimeOriginal']
             unset($_POST['ShowExifDateTimeOriginalFormat']);// string - not reset
             unset($_POST['VoteMessageSuccessActive']);// bool $tablename_pro_options  $jsonOptions['pro']['VoteMessageSuccessActive']
@@ -584,7 +582,6 @@ $wp_upload_dir = wp_upload_dir();
             $_POST['ConfirmExpiry']=0;// added on 16.11.2025 // unset might break processing in this case
             $_POST['LoginAfterConfirm']=0;// added on 16.11.2025 // unset might break processing in this case
             $_POST['ShowPinFormVoting']=0;// added on 25.11.2025 // unset might break processing in this case
-            $_POST['ShowPinFormUploading']=0;// added on 25.11.2025 // unset might break processing in this case
             $_POST['AllowedUsersToVote']='';// added on 25.11.2025 // unset might break processing in this case
             //unset($_POST['ActivateBulkUpload']);// do not remove!!!! Because user has to be able to deactivate manually!!!! added on 28.04.2021 //
             unset($_POST['AllowUploadPNG']);// added on 03.05.2022 // bool
@@ -592,12 +589,6 @@ $wp_upload_dir = wp_upload_dir();
             unset($_POST['ReviewComm']);// added on 11.09.2022 // bool
             unset($_POST['InformAdminAllowActivateDeactivate']);// added on 03.03.2023 // bool
             $_POST['CustomImageNamePath'] = '';// string - not reset
-            $_POST['multiple-pics']['cg_gallery_user']['pro']['ShowNickname'] = 0; // bool $tablename_pro_options  $jsonOptions['pro']['ShowNickname']
-            $_POST['multiple-pics']['cg_gallery_no_voting']['pro']['ShowNickname'] = 0; // bool
-            $_POST['multiple-pics']['cg_gallery_winner']['pro']['ShowNickname'] = 0; // bool
-            $_POST['multiple-pics']['cg_gallery_user']['pro']['ShowProfileImage'] = 0; // bool $tablename_pro_options  $jsonOptions['pro']['ShowProfileImage']
-            $_POST['multiple-pics']['cg_gallery_no_voting']['pro']['ShowProfileImage'] = 0; // bool
-            $_POST['multiple-pics']['cg_gallery_winner']['pro']['ShowProfileImage'] = 0; // bool
             $_POST['multiple-pics']['cg_gallery']['pro']['CheckLoginComment'] = 0;
             $_POST['multiple-pics']['cg_gallery_user']['pro']['CheckLoginComment'] = 0;
             $_POST['multiple-pics']['cg_gallery_no_voting']['pro']['CheckLoginComment'] = 0;
@@ -967,6 +958,16 @@ $wp_upload_dir = wp_upload_dir();
         $ThankVote = (!empty($_POST['ThankVote'])) ? 1 : 0;
         $ShowPinFormVoting = (!empty($_POST['ShowPinFormVoting'])) ? 1 : 0;
         $ShowPinFormUploading = (!empty($_POST['ShowPinFormUploading'])) ? 1 : 0;
+        // Hidden zero inputs distinguish an unchecked option from a partial/legacy save.
+        $MemberArea = isset($_POST['multiple-pics']['cg_gallery']['visual']['MemberArea']) ? (!empty($_POST['multiple-pics']['cg_gallery']['visual']['MemberArea']) ? 1 : 0) : (isset($_POST['MemberAreaPresent']) ? (!empty($_POST['MemberArea']) ? 1 : 0) : (cg_member_enabled($id,'cg_gallery') ? 1 : 0));
+        $MemberAreaNoVoting = isset($_POST['multiple-pics']['cg_gallery_no_voting']['visual']['MemberArea']) ? (!empty($_POST['multiple-pics']['cg_gallery_no_voting']['visual']['MemberArea']) ? 1 : 0) : (cg_member_enabled($id,'cg_gallery_no_voting') ? 1 : 0);
+        $MemberAreaUser = isset($_POST['multiple-pics']['cg_gallery_user']['visual']['MemberArea']) ? (!empty($_POST['multiple-pics']['cg_gallery_user']['visual']['MemberArea']) ? 1 : 0) : (cg_member_enabled($id,'cg_gallery_user') ? 1 : 0);
+        $cgMemberStoredOptions = cg_member_replacement_source($id);
+        $cgMemberStoredBase = !empty($cgMemberStoredOptions[$id]) ? $cgMemberStoredOptions[$id] : $cgMemberStoredOptions;
+        if($MemberArea && cg_member_features_available($id)){
+            $ShowNickname = !empty($cgMemberStoredBase['pro']['ShowNickname']) ? '1' : '0';
+            $ShowProfileImage = !empty($cgMemberStoredBase['pro']['ShowProfileImage']) ? '1' : '0';
+        }
         $AllowedUsersToVote = (isset($_POST['AllowedUsersToVote'])) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['AllowedUsersToVote']) : '';
         $CopyImageLink = (!empty($_POST['CopyImageLink'])) ? 1 : 0;
         $CopyOriginalFileLink = (!empty($_POST['CopyOriginalFileLink'])) ? 1 : 0;
@@ -2203,6 +2204,11 @@ $wp_upload_dir = wp_upload_dir();
         $optionsForGeneralIDsinceV14['registry-login']['PermanentTextWhenLoggedIn'] = $PermanentTextWhenLoggedIn;
 
         if($dbVersion>=14){
+            foreach(array('AccountNavigationPresent','AccountNavigationRoles','AccountNavigationNoRole','LogoutRedirectMode','LogoutApplyToWpLinks','LogoutFallbackLink','BackToGalleryMode','BackToGalleryFallbackLink') as $accountNavigationKey){
+                if(isset($_POST[$accountNavigationKey])){
+                    $optionsForGeneralIDsinceV14['registry-login'][$accountNavigationKey] = wp_unslash($_POST[$accountNavigationKey]);
+                }
+            }
             cg_update_registry_and_login_options_v14($optionsForGeneralIDsinceV14);
         }else{
             cg_update_registry_and_login_options_v14($optionsForGeneralIDsinceV14,$id);
@@ -3127,6 +3133,17 @@ $wp_upload_dir = wp_upload_dir();
             unset($jsonOptionsAllGalleryVariants[$GalleryID.'-ec']);
 	    }
 
+	    // Master profile options affect rendering, never the saved individual preferences.
+        foreach(array(''=>$MemberArea,'-nv'=>$MemberAreaNoVoting,'-u'=>$MemberAreaUser) as $cgMemberSuffix=>$cgMemberOn){
+            if(!$cgMemberOn || !cg_member_features_available($GalleryID)){continue;}
+            $cgMemberKey = $GalleryID.$cgMemberSuffix;
+            $cgMemberPrevious = !empty($cgMemberStoredOptions[$cgMemberKey]) ? $cgMemberStoredOptions[$cgMemberKey] : $cgMemberStoredBase;
+            if(isset($jsonOptionsAllGalleryVariants[$cgMemberKey])){cg_member_preserve_profile_options($jsonOptionsAllGalleryVariants[$cgMemberKey],$cgMemberPrevious);}
+            if($cgMemberSuffix===''){cg_member_preserve_profile_options($jsonOptionsAllGalleryVariants,$cgMemberStoredBase);}
+        }
+        cg_member_store_options($jsonOptionsAllGalleryVariants,$GalleryID,$MemberArea,$MemberAreaNoVoting,$MemberAreaUser);
+	    cg_page_store_header_options($jsonOptionsAllGalleryVariants,$GalleryID,isset($_POST['multiple-pics']) ? $_POST['multiple-pics'] : array());
+	    cg_member_replacement_save_options($jsonOptionsAllGalleryVariants,$GalleryID,isset($_POST['cg_member_replace']) ? $_POST['cg_member_replace'] : null);
 	    file_put_contents($galleryUploadFolder . '/json/' . $GalleryID . '-options.json',json_encode($jsonOptionsAllGalleryVariants));
 
 	    // save cg_galleries
@@ -3137,7 +3154,7 @@ $wp_upload_dir = wp_upload_dir();
             $namesString    = ['GalleriesPageRedirectURL','FeControlsStyle'];
             $namesTextarea  = ['HeaderWpPageGalleries','TextBeforeWpPageGalleries','TextAfterWpPageGalleries'];
 
-            $allowedKeys = array_merge($namesBool, $namesInt, $namesString, $namesTextarea);
+            $allowedKeys = array_merge($namesBool, $namesInt, $namesString, $namesTextarea, array_keys(cg_page_galleries_header_texts(array())), array('ShowGalleriesHeader'));
 
             foreach ($galleryTypes as $type) {
                 if (empty($_POST['cg_galleries'][$type]) || !is_array($_POST['cg_galleries'][$type])) {
@@ -3190,6 +3207,7 @@ $wp_upload_dir = wp_upload_dir();
             }
 
 	        $galleriesOptionsPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/json/galleries-options.json';
+	        cg_page_store_galleries_header_options($_POST['cg_galleries'],cg_get_galleries_options_all());
 	        file_put_contents($galleriesOptionsPath,json_encode($_POST['cg_galleries']));
         }
         // save cg_galleries --- END

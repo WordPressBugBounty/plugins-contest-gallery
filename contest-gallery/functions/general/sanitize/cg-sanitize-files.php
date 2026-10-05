@@ -84,6 +84,18 @@ if(!function_exists('cg1l_sanitize_files')){
                     $fileExtensionForTypeCheck = strtolower(pathinfo($FILES[$keyFiles]['name'][$key], PATHINFO_EXTENSION));
                 }
 
+                // WordPress may report both MP3 and M4A as audio/mpeg, especially
+                // when a resumable job restores its already accepted attachment.
+                $frontendAudioType = $type;
+                if(in_array($fileExtensionForTypeCheck,array('mp3','m4a'),true)){
+                    $audioPath = is_array($FILES[$keyFiles]['tmp_name'][$key]) ? $FILES[$keyFiles]['tmp_name'][$key][0] : $FILES[$keyFiles]['tmp_name'][$key];
+                    $audioName = is_array($FILES[$keyFiles]['name'][$key]) ? $FILES[$keyFiles]['name'][$key][0] : $FILES[$keyFiles]['name'][$key];
+                    $audioInfo = wp_check_filetype_and_ext($audioPath,$audioName);
+                    if(!empty($audioInfo['type']) && !empty($audioInfo['ext']) && strtolower($audioInfo['ext'])===$fileExtensionForTypeCheck && empty($audioInfo['proper_filename'])){
+                        $frontendAudioType = $fileExtensionForTypeCheck==='m4a' ? 'audio/x-m4a' : 'audio/mpeg';
+                    }
+                }
+
                 $notAllowedFileType = '';
                 if(($type == 'image/jpeg' || $type == 'image/jpg' || $type == 'image/x-citrix-jpeg' || $fileExtensionForTypeCheck == 'jpg' || $fileExtensionForTypeCheck == 'jpeg' || $fileExtensionForTypeCheck == 'jpe') && (!$frontendUploadImageUploadAllowed || empty($frontendUploadAllowUploadJPG))){
                     $notAllowedFileType = 'jpg';
@@ -109,9 +121,9 @@ if(!function_exists('cg1l_sanitize_files')){
                     $notAllowedFileType = 'xlsx';
                 }elseif(empty($frontendUploadFieldContent['alternative-file-type-csv']) && $type == 'text/csv'){
                     $notAllowedFileType = 'csv';
-                }elseif(empty($frontendUploadFieldContent['alternative-file-type-mp3']) && $type == 'audio/mpeg'){
+                }elseif(empty($frontendUploadFieldContent['alternative-file-type-mp3']) && $frontendAudioType == 'audio/mpeg'){
                     $notAllowedFileType = 'mp3';
-                }elseif(empty($frontendUploadFieldContent['alternative-file-type-m4a']) && $type == 'audio/x-m4a'){
+                }elseif(empty($frontendUploadFieldContent['alternative-file-type-m4a']) && $frontendAudioType == 'audio/x-m4a'){
                     $notAllowedFileType = 'm4a';
                 }elseif(empty($frontendUploadFieldContent['alternative-file-type-ogg']) && $type == 'audio/ogg'){
                     $notAllowedFileType = 'ogg';

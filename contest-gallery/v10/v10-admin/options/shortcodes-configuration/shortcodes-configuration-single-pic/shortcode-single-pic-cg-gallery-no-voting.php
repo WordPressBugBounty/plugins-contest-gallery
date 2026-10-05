@@ -398,7 +398,7 @@ echo <<<HEREDOC
             <input type="checkbox" $FacebookChecked class="cg_share_button" value="facebook">
         </div>
     </div>
-    <div class="cg_view_option  $cgProFalse cg-pro-false-small  cg_view_option_20_percent cg_border_top_bottom_none cg_border_left_none cg_border_right_none cg_share_button_option">
+    <div class="cg_view_option   cg_view_option_20_percent cg_border_top_bottom_none cg_border_left_none cg_border_right_none cg_share_button_option">
         <div class="cg_view_option_title">
             <p>WhatsApp</p>
         </div>
@@ -734,7 +734,7 @@ HEREDOC;
 
 echo <<<HEREDOC
             <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_view_option_100_percent  ShowNicknameContainer $cgProFalse'>
+                <div class='cg_view_option cg_view_option_100_percent  ShowNicknameContainer '>
                     <div class='cg_view_option_title '>
                         <p>Show "Nickname" who added entry<br><span class="cg_view_option_title_note">If a registered user uploaded a file</span></p>
                     </div>
@@ -761,9 +761,9 @@ if(!isset($jsonOptions[$GalleryID.'-nv']['pro']['ShowProfileImage'])){
 
 echo <<<HEREDOC
             <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_border_border_bottom_left_radius_unset cg_border_border_bottom_right_radius_unset  cg_view_option_100_percent cg_border_top_none  ShowProfileImageContainer $cgProFalse$beforeSinceV14Disabled'>
+                <div class='cg_view_option cg_border_border_bottom_left_radius_unset cg_border_border_bottom_right_radius_unset  cg_view_option_100_percent cg_border_top_none  ShowProfileImageContainer '>
                     <div class='cg_view_option_title '>
-                        <p>Show "Profile image" who added entry<br><span class="cg_view_option_title_note">If a registered user uploaded a file<br>"Profile image" form field has to be added in "Edit registration form"$beforeSinceV14Explanation</span></p>
+                        <p>Show "Profile image" who added entry<br><span class="cg_view_option_title_note">If a registered user uploaded a file<br>Users can choose a profile image in their profile.$beforeSinceV14Explanation</span></p>
                     </div>
                     <div class='cg_view_option_checkbox '>
                         <input type="checkbox" name="multiple-pics[cg_gallery_no_voting][pro][ShowProfileImage]" checked="{$jsonOptions[$GalleryID.'-nv']['pro']['ShowProfileImage']}" class="cg_shortcode_checkbox ShowProfileImage">
@@ -972,7 +972,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
             <div class='cg_view_option cg_view_option_100_percent FullSizeImageOutGalleryContainer cg_border_radius_8_px'>
                 <div class='cg_view_option_title'>
-                    <p>Forward directly to original source after clicking an entry from in a gallery<br><span class="cg_view_option_title_note">Configuration of voting out of gallery is possible.<br>Only for gallery views. Slider and blog view will work as usual.</span></p>
+                    <p>Forward directly to original source after clicking an entry from in a gallery<br><span class="cg_view_option_title_note">Commenting out of gallery can be enabled when comments are allowed. <a href="#" class="cg_go_to_link cg_no_outline_and_shadow_on_focus" data-cg-go-to-link="CommentsOutGalleryContainer">Configure commenting out of gallery...</a><br>Only for gallery views. Slider and blog view will work as usual.</span></p>
                 </div>
                 <div class='cg_view_option_radio cg_margin_top_5'>
                     <input type="radio" name="multiple-pics[cg_gallery_no_voting][general][FullSizeImageOutGallery]" checked="{$jsonOptions[$GalleryID.'-nv']['general']['FullSizeImageOutGallery']}" class="FullSizeImageOutGallery">
@@ -989,7 +989,7 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
             <div class='cg_view_option cg_view_option_100_percent OnlyGalleryViewContainer cg_border_radius_8_px'>
                 <div class='cg_view_option_title'>
-                    <p>Make entries unclickable<br>Good for displaying entries only<br><span class="cg_view_option_title_note">Files images can not be clicked. Configuration of voting out of gallery is possible.<br>Only for gallery views. Slider and blog view will work as usual.</span></p>
+                    <p>Make entries unclickable<br>Good for displaying entries only<br><span class="cg_view_option_title_note">Files images can not be clicked.<br>Commenting out of gallery can be enabled when comments are allowed. <a href="#" class="cg_go_to_link cg_no_outline_and_shadow_on_focus" data-cg-go-to-link="CommentsOutGalleryContainer">Configure commenting out of gallery...</a><br>Only for gallery views. Slider and blog view will work as usual.</span></p>
                 </div>
                 <div class='cg_view_option_radio cg_margin_top_5'>
                        <input type="radio" name="multiple-pics[cg_gallery_no_voting][general][OnlyGalleryView]" checked="{$jsonOptions[$GalleryID.'-nv']['general']['OnlyGalleryView']}" class="OnlyGalleryView">

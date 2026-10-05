@@ -15,6 +15,7 @@ $wplnCount = 110;
 $piCount = 120;
 $raCount = 130;
 $chkCount = 140;
+$urlCount = 150;
 
 // IDs of the right boxes
 $nfRightCount = 10;
@@ -31,6 +32,7 @@ $wplnRightCount = 110;
 $piRightCount = 120;
 $raRightCount = 130;
 $chkRightCount = 140;
+$urlRightCount = 150;
 
 // Further IDs of the div boxes
 $nfHiddenCount = 100;
@@ -47,6 +49,7 @@ $wplnHiddenCount = 1100;
 $piHiddenCount = 1200;
 $raHiddenCount = 1300;
 $chkHiddenCount = 1400;
+$urlHiddenCount = 1500;
 
 $id_for_editor = 0;
 
@@ -143,6 +146,7 @@ if(true){
     include (__DIR__.'/registry-fields-left/reg-check-agreement-left.php');
 
     include (__DIR__.'/registry-fields-left/reg-input-left.php');
+    if($isOnlyPlaceHolder && intval($galleryDbVersion)>=14){include (__DIR__.'/registry-fields-left/reg-url-left.php');}
 
     include (__DIR__.'/registry-fields-left/reg-profile-image-left.php');
 
@@ -222,6 +226,8 @@ foreach ($selectFormInput as $key => $value) {
     if($value->Field_Type == 'wpln'){
         include (__DIR__.'/registry-fields-left/wp-last-name-left.php');
     }
+
+    if($value->Field_Type == 'user-url-field'){include (__DIR__.'/registry-fields-left/reg-url-left.php');}
 
     if($value->Field_Type == 'user-text-field'){
         include (__DIR__.'/registry-fields-left/reg-input-left.php');

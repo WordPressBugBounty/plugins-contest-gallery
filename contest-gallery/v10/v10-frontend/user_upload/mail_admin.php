@@ -49,7 +49,7 @@ if (!function_exists('contest_gal1ery_mail_admin'))   {
         $cgMailGalleryId = $galeryID;
         add_action( 'wp_mail_failed', 'cg_on_wp_mail_error', 10, 1 );
 
-        wp_mail($AdminMail, $Subject, $Msg, $headers);
+        cg_upload_job_mail($AdminMail, $Subject, $Msg, $headers);
 
     }
 }

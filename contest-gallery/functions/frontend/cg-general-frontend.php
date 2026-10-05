@@ -419,6 +419,8 @@ if (!function_exists('cg1l_normalize_runtime_context')) {
             $normalized['galleriesIds'] = cg1l_normalize_positive_int_id_list($context['galleriesIds']);
         }
 
+        if(!empty($context['participantUserId'])){$normalized['participantUserId'] = absint($context['participantUserId']);}
+        if(!empty($context['pagePresentation'])){$normalized['pagePresentation'] = 1;}
         sort($normalized['galleriesIds']);
 
         return $normalized;
@@ -764,6 +766,19 @@ if (!function_exists('cg1l_validate_order_upload_context')) {
     }
 }
 
+// Shared by job preparation and the full upload validator. No credits are consumed here.
+function cg1l_get_order_upload_authorization($galleryId,$orderItemId,$providedHash){
+    global $wpdb;
+    $item = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}contest_gal1ery_ecommerce_orders_items WHERE id=%d LIMIT 1",absint($orderItemId)));
+    $order = false; $fallback = false;
+    if($item && !empty($item->ParentOrder)){
+        $order = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}contest_gal1ery_ecommerce_orders WHERE id=%d LIMIT 1",absint($item->ParentOrder)));
+        $fallback = $wpdb->get_row($wpdb->prepare("SELECT UploadGallery, MaxUploads FROM {$wpdb->prefix}contest_gal1ery_ecommerce_entries WHERE GalleryID=%d AND pid=%d AND IsUpload=1 ORDER BY id DESC LIMIT 1",absint($item->GalleryID),absint($item->pid)));
+    }
+    $cookie = !empty($_COOKIE['cg_order']) && is_string($_COOKIE['cg_order']) ? sanitize_text_field(wp_unslash($_COOKIE['cg_order'])) : '';
+    return cg1l_validate_order_upload_context($galleryId,$item,$order,$fallback,$providedHash,$cookie,$order ? cg_current_user_can_access_ecommerce_order($order) : false);
+}
+
 if (!function_exists('cg1l_get_order_upload_lock_name')) {
     function cg1l_get_order_upload_lock_name($orderItemId)
     {
@@ -819,6 +834,7 @@ if (!function_exists('cg1l_reject_frontend_upload')) {
     {
         $galleryIdForJs = sanitize_text_field((string)$galleryIdForJs);
         $message = sanitize_text_field((string)$message);
+        if(function_exists('cg_upload_job_phase') && (cg_upload_job_phase('receive') || cg_upload_job_phase('finalize'))){throw new Exception($message);}
         ?>
         <script data-cg-processing="true" data-cg-upload-authorization-failed="true">
             var gid = <?php echo wp_json_encode($galleryIdForJs); ?>;
@@ -944,6 +960,15 @@ if (!function_exists('cgl_get_navigation_query_keys')) {
             'cgl_from_gallery_page',
             'cgl_from_galleries_page',
             'cgl_origin_page_id',
+            'cgl_view',
+            'cgl_profile',
+            'cgl_participants_page',
+            'cgl_profile_page',
+            'cgl_participants_search',
+            'cgl_participants_sort',
+            'cg_member_view',
+            'cg_member_instance',
+            'cg_member_shortcode',
         ];
     }
 }

@@ -398,7 +398,8 @@ if(!empty($_POST['cg_multiple_files_for_post']) && $PdfPreviewBackend == 1){
             }*/
         }
         if($hasPdfPreview){
-            $_POST['cg_multiple_files_for_post'][$id] = json_encode($fileDataForPostArrayNew);
+            // Keep the WordPress-slashed POST format for the later JSON decode.
+            $_POST['cg_multiple_files_for_post'][$id] = wp_slash(wp_json_encode($fileDataForPostArrayNew));
         }
     }
 }

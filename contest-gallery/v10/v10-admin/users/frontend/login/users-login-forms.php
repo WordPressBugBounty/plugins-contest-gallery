@@ -61,40 +61,15 @@ if(!$intervalConf['shortcodeIsActive']){
     $cgResetPasswordLinkNotValidAnymore = false;
     $cgResetPasswordLinkHideLoginFormClass = '';
 
-    if(!empty($_GET['cgResetPassword'])){
-
-	    $cgResetPasswordWpUserID = intval(sanitize_text_field(urldecode($_GET['cgResetPassword'])));
-	    $wpUserID = $wpdb->get_var("SELECT ID FROM $tablenameWpUsers WHERE ID = '".$cgResetPasswordWpUserID."'");
-
-	    if(empty($_GET['cgResetPasswordKey'])){
-		    $cgResetPasswordLinkNotValidAnymore = true;
-		    $cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
-	    }else{
-		    $cgResetPasswordKey = sanitize_text_field(urldecode($_GET['cgResetPasswordKey']));
-		    $cgResetPasswordKeyAuthor = get_the_author_meta( 'cgResetPasswordKey', $wpUserID );
-		    if(empty($cgResetPasswordKeyAuthor) || $cgResetPasswordKey !== $cgResetPasswordKeyAuthor){
-			    $cgResetPasswordLinkNotValidAnymore = true;
-			    $cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
-		    }
-	    }
-
-		if(!$cgResetPasswordLinkNotValidAnymore){
-			$cgLostPasswordMailTimestamp = intval(get_the_author_meta( 'cgLostPasswordMailTimestamp', $wpUserID ) );
-
-			if(empty($cgLostPasswordMailTimestamp)){
-				$cgResetPasswordLinkNotValidAnymore = true;
-				$cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
-			}else{
-				if($cgLostPasswordMailTimestamp+(60*10)<time()){// 10 minutes valid
-					$cgResetPasswordLinkNotValidAnymore = true;
-					$cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
-				}else{
-					$cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
-					include(__DIR__.'/forms/users-login-form-reset-password.php');
-				}
-			}
-		}
-
+    if(isset($_GET['cgResetPassword'])){
+        $cgResetPasswordLinkHideLoginFormClass = 'cg_hide';
+        $cgResetPasswordWpUserID = is_string($_GET['cgResetPassword']) && ctype_digit($_GET['cgResetPassword']) ? absint($_GET['cgResetPassword']) : 0;
+        $cgResetPasswordKey = isset($_GET['cgResetPasswordKey']) && is_string($_GET['cgResetPasswordKey']) ? wp_unslash($_GET['cgResetPasswordKey']) : '';
+        $cgResetUser = $cgResetPasswordWpUserID ? cg1l_password_reset_user($cgResetPasswordWpUserID) : null;
+        $cgResetPasswordLinkNotValidAnymore = !cg1l_password_reset_valid($cgResetUser,$cgResetPasswordKey,cg1l_password_reset_record($cgResetPasswordWpUserID));
+        if(!$cgResetPasswordLinkNotValidAnymore){
+            include(__DIR__.'/forms/users-login-form-reset-password.php');
+        }
     }
 
     if($cgResetPasswordLinkNotValidAnymore){

@@ -161,7 +161,7 @@ if(!function_exists('cg1l_pre_delete_user')){
 		$tablename_user_comment_mails = $wpdb->prefix . "contest_gal1ery_user_comment_mails";
 		$tablename_user_vote_mails = $wpdb->prefix . "contest_gal1ery_user_vote_mails";
 		$tablename_ecommerce_orders = $wpdb->prefix . "contest_gal1ery_ecommerce_orders";
-		$wp_usermeta_table = $wpdb->prefix . "usermeta";
+		$wp_usermeta_table = $wpdb->usermeta;
 
 		$reassign_user_id = (!empty($reassign) && absint($reassign) !== $user_id) ? absint($reassign) : 0;
 		$isDeleteMode = empty($reassign_user_id);
@@ -228,7 +228,7 @@ if(!function_exists('cg1l_pre_delete_user')){
 
 		$wpdb->query($wpdb->prepare(
 			"DELETE FROM $wp_usermeta_table WHERE meta_key LIKE %s AND user_id = %d",
-			'%cg_custom_field_id_%',$user_id
+			$wpdb->esc_like(cg_profile_meta_prefix()).'%',$user_id
 		));
 
 		cg1l_delete_rows_for_wp_user_if_table_exists($tablename_contest_gal1ery_google_users,'WpUserId',$user_id);

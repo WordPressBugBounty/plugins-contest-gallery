@@ -203,6 +203,8 @@ cgJsClassAdmin.createRegistry.functions = {
             $(this).find('.Max_Char').attr("name", "Max_Char[" + v + "]");
             $(this).find('.necessary-check').attr("name", "Necessary[" + v + "]");
             $(this).find('.necessary-hide').attr("name", "Hide[" + v + "]");
+            $(this).find('.cg_pin_field').attr("name", "PinField[" + v + "]");
+            $(this).find('.cg_public_profile_field').attr("name", "PublicProfile[" + v + "]");
 
         });
 

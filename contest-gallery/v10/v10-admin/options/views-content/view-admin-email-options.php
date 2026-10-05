@@ -26,8 +26,16 @@ $informAdminCC = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQ
 $informAdminBCC = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailAdmin->BCC);
 $informAdminHeader = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailAdmin->Header);
 
+$cgMailDeliveryCard = cg_mail_delivery_card('Admin upload / contact notification',array(
+    'from'=>array('[name="from_mail"]',$informAdminFromMail),
+    'reply'=>array('[name="reply"]',$informAdminReply),
+    'to'=>array('[name="AdminMail"]',$informAdminMail)
+),'');
+
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
+        <p class='cg_view_options_rows_container_title'>Admin notification email options</p>
+        $cgMailDeliveryCard
         $mailExceptionAdminMail
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px cg_view_option_100_percent $cgProFalse" id="InformAdminContainer">
@@ -62,20 +70,17 @@ echo <<<HEREDOC
         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_inform_admin  cg_view_option_full_width cg_border_top_none $cgProFalse' id="cgInformAdminMailContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Admin e-mail (To)<br><span class="cg_view_option_title_note">
-                            $cgDomainErrorText
-                            </span>
-                        </p>
+                        <p>Admin e-mail (To)</p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" class="cg_domain_error_input" name="AdminMail" id="cgInformAdminAdminMail" value="$informAdminMail"  maxlength="200" >
+                        <input type="text" name="AdminMail" id="cgInformAdminAdminMail" value="$informAdminMail"  maxlength="200" >
                     </div>
                 </div>
         </div>
         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_inform_admin  cg_view_option_full_width cg_border_top_none $cgProFalse' id="cgInformAdminReplyContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Reply-To e-mail<br><span class="cg_view_option_title_note">Falls back to "From e-mail" when empty.<br>Should not be the same as "Admin e-mail".</span>
+                        <p>Reply-To e-mail<br><span class="cg_view_option_title_note">Falls back to "From e-mail" when empty.</span>
                         </p>
                     </div>
                     <div class='cg_view_option_input'>

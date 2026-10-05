@@ -137,6 +137,135 @@ __('Incorrect PIN. Please try again.');$l_IncorrectPinPleaseTryAgain = "Incorrec
 
 __('PIN has expired. Please request a new one.');$l_PinExpiredRequestNewOne = "PIN has expired. Please request a new one.";$language_PinExpiredRequestNewOne = (!empty($translations[$l_PinExpiredRequestNewOne]) && $is_frontend) ? $translations[$l_PinExpiredRequestNewOne] : ((empty(trim(__($l_PinExpiredRequestNewOne,$domain)))) ? __($l_PinExpiredRequestNewOne,$domainDefault) : __($l_PinExpiredRequestNewOne,$domain)); if(empty($translations[$l_PinExpiredRequestNewOne])){$translations[$l_PinExpiredRequestNewOne]='';}
 
+$translations = cg_member_translation_values($translations);
+
+__('Register / Sign in','contest-gallery');$l_MemberRegisterSignIn = "Register / Sign in";$language_MemberRegisterSignIn = (!empty($translations[$l_MemberRegisterSignIn]) && $is_frontend) ? $translations[$l_MemberRegisterSignIn] : ((empty(trim(__($l_MemberRegisterSignIn,$domain)))) ? __($l_MemberRegisterSignIn,$domainDefault) : __($l_MemberRegisterSignIn,$domain)); if(empty($translations[$l_MemberRegisterSignIn])){$translations[$l_MemberRegisterSignIn]='';}
+
+__('All entries','contest-gallery');$l_MemberAllImages = "All entries";$language_MemberAllImages = (!empty($translations[$l_MemberAllImages]) && $is_frontend) ? $translations[$l_MemberAllImages] : ((empty(trim(__($l_MemberAllImages,$domain)))) ? __($l_MemberAllImages,$domainDefault) : __($l_MemberAllImages,$domain)); if(empty($translations[$l_MemberAllImages])){$translations[$l_MemberAllImages]='';}
+
+__('My entries','contest-gallery');$l_MemberMyImages = "My entries";$language_MemberMyImages = (!empty($translations[$l_MemberMyImages]) && $is_frontend) ? $translations[$l_MemberMyImages] : ((empty(trim(__($l_MemberMyImages,$domain)))) ? __($l_MemberMyImages,$domainDefault) : __($l_MemberMyImages,$domain)); if(empty($translations[$l_MemberMyImages])){$translations[$l_MemberMyImages]='';}
+
+__('Not published','contest-gallery');$l_MemberNotPublished = "Not published";$language_MemberNotPublished = (!empty($translations[$l_MemberNotPublished]) && $is_frontend) ? $translations[$l_MemberNotPublished] : ((empty(trim(__($l_MemberNotPublished,$domain)))) ? __($l_MemberNotPublished,$domainDefault) : __($l_MemberNotPublished,$domain)); if(empty($translations[$l_MemberNotPublished])){$translations[$l_MemberNotPublished]='';}
+
+__('Join and show your own entries.','contest-gallery');$l_MemberIntro = "Join and show your own entries.";$language_MemberIntro = (!empty($translations[$l_MemberIntro]) && $is_frontend) ? $translations[$l_MemberIntro] : ((empty(trim(__($l_MemberIntro,$domain)))) ? __($l_MemberIntro,$domainDefault) : __($l_MemberIntro,$domain)); if(empty($translations[$l_MemberIntro])){$translations[$l_MemberIntro]='';}
+
+__('Show your first entry','contest-gallery');$l_MemberEmptyTitle = "Show your first entry";$language_MemberEmptyTitle = (!empty($translations[$l_MemberEmptyTitle]) && $is_frontend) ? $translations[$l_MemberEmptyTitle] : ((empty(trim(__($l_MemberEmptyTitle,$domain)))) ? __($l_MemberEmptyTitle,$domainDefault) : __($l_MemberEmptyTitle,$domain)); if(empty($translations[$l_MemberEmptyTitle])){$translations[$l_MemberEmptyTitle]='';}
+
+__('Your uploads will appear here.','contest-gallery');$l_MemberEmptyDescription = "Your uploads will appear here.";$language_MemberEmptyDescription = (!empty($translations[$l_MemberEmptyDescription]) && $is_frontend) ? $translations[$l_MemberEmptyDescription] : ((empty(trim(__($l_MemberEmptyDescription,$domain)))) ? __($l_MemberEmptyDescription,$domainDefault) : __($l_MemberEmptyDescription,$domain)); if(empty($translations[$l_MemberEmptyDescription])){$translations[$l_MemberEmptyDescription]='';}
+
+__('Your entries. Your gallery.','contest-gallery');$l_MemberSignInTitle = "Your entries. Your gallery.";$language_MemberSignInTitle = (!empty($translations[$l_MemberSignInTitle]) && $is_frontend) ? $translations[$l_MemberSignInTitle] : ((empty(trim(__($l_MemberSignInTitle,$domain)))) ? __($l_MemberSignInTitle,$domainDefault) : __($l_MemberSignInTitle,$domain)); if(empty($translations[$l_MemberSignInTitle])){$translations[$l_MemberSignInTitle]='';}
+
+__('Continue with Google or a code sent to your email. New here? Your account is created when you sign in.','contest-gallery');$l_MemberSignInDescription = "Continue with Google or a code sent to your email. New here? Your account is created when you sign in.";$language_MemberSignInDescription = (!empty($translations[$l_MemberSignInDescription]) && $is_frontend) ? $translations[$l_MemberSignInDescription] : ((empty(trim(__($l_MemberSignInDescription,$domain)))) ? __($l_MemberSignInDescription,$domainDefault) : __($l_MemberSignInDescription,$domain)); if(empty($translations[$l_MemberSignInDescription])){$translations[$l_MemberSignInDescription]='';}
+
+__('Sign in with a code sent to your email. New here? Confirm your email to create your account.','contest-gallery');$l_MemberSignInDescriptionEmailOnly = "Sign in with a code sent to your email. New here? Confirm your email to create your account.";$language_MemberSignInDescriptionEmailOnly = (!empty($translations[$l_MemberSignInDescriptionEmailOnly]) && $is_frontend) ? $translations[$l_MemberSignInDescriptionEmailOnly] : ((empty(trim(__($l_MemberSignInDescriptionEmailOnly,$domain)))) ? __($l_MemberSignInDescriptionEmailOnly,$domainDefault) : __($l_MemberSignInDescriptionEmailOnly,$domain)); if(empty($translations[$l_MemberSignInDescriptionEmailOnly])){$translations[$l_MemberSignInDescriptionEmailOnly]='';}
+
 __('Only jury members can vote');$l_OnlyJuryMembersCanVote = "Only jury members can vote";$language_OnlyJuryMembersCanVote = (!empty($translations[$l_OnlyJuryMembersCanVote]) && $is_frontend) ? $translations[$l_OnlyJuryMembersCanVote] : ((empty(trim(__($l_OnlyJuryMembersCanVote,$domain)))) ? __($l_OnlyJuryMembersCanVote,$domainDefault) : __($l_OnlyJuryMembersCanVote,$domain)); if(empty($translations[$l_OnlyJuryMembersCanVote])){$translations[$l_OnlyJuryMembersCanVote]='';}
+
+// Member entry action translations use the existing general translation store.
+__("Entry actions",'contest-gallery');
+__("Replace image",'contest-gallery');
+__("Delete entry",'contest-gallery');
+__("Choose the image to replace.",'contest-gallery');
+__("Replace",'contest-gallery');
+__("Replacing…",'contest-gallery');
+__("This entry will need approval again after replacement.",'contest-gallery');
+__("Image replaced.",'contest-gallery');
+__("Image replacement is not allowed.",'contest-gallery');
+__("Entries offered for sale cannot be changed here.",'contest-gallery');
+__("This entry already has votes. Its images cannot be replaced.",'contest-gallery');
+__("The time allowed for replacing this image has ended.",'contest-gallery');
+__("The upload period is closed.",'contest-gallery');
+__("This entry has changed. Reload it and try again.",'contest-gallery');
+__("The image does not meet the gallery upload requirements.",'contest-gallery');
+__("Delete this entry and all its images?",'contest-gallery');
+foreach(cg_member_entry_action_strings() as $cgMemberActionKey){if(!isset($translations[$cgMemberActionKey])){$translations[$cgMemberActionKey]='';}}
+
+
+// Sharing dialog texts use the existing general translation store.
+__("Share this entry",'contest-gallery');
+__("Take a look at this entry",'contest-gallery');
+__("Copy link",'contest-gallery');
+__("More apps…",'contest-gallery');
+__("Link copied",'contest-gallery');
+__("Copy this link:",'contest-gallery');
+__("Sharing is unavailable. You can copy the link instead.",'contest-gallery');
+__("File actions",'contest-gallery');
+foreach(cg1l_share_strings() as $cgShareKey){if(!isset($translations[$cgShareKey])){$translations[$cgShareKey]='';}}
+
+
+// Gallery member profile texts.
+__("My profile",'contest-gallery');
+__("Additional information",'contest-gallery');
+__("Display name",'contest-gallery');
+__("This name is displayed across this website.",'contest-gallery');
+__("Choose profile image",'contest-gallery');
+__("JPG, PNG or GIF. Maximum {size} MB.",'contest-gallery');
+__("Save profile",'contest-gallery');
+__("Save information",'contest-gallery');
+__("Profile saved.",'contest-gallery');
+__("Information saved.",'contest-gallery');
+__("Please enter a display name.",'contest-gallery');
+__("Please use a display name instead of an email address.",'contest-gallery');
+__("Please complete the required fields.",'contest-gallery');
+__("Please choose a valid option.",'contest-gallery');
+__("Your profile has changed. Close and reopen it before saving.",'contest-gallery');
+__("Discard unsaved profile changes?",'contest-gallery');
+__("The profile image could not be saved.",'contest-gallery');
+__("You cannot edit these profile fields.",'contest-gallery');
+foreach(cg_member_profile_strings() as $cgMemberProfileKey){if(!isset($translations[$cgMemberProfileKey])){$translations[$cgMemberProfileKey]='';}}
+
+// New member, participant and gallery presentation texts.
+__('Gallery view','contest-gallery');
+__('Please try again.','contest-gallery');
+__('The connection failed. Please try again.','contest-gallery');
+__('Please reload the page and try again.','contest-gallery');
+__('This gallery is not available.','contest-gallery');
+__('Please allow cookies to sign in.','contest-gallery');
+__('Please sign in.','contest-gallery');
+__('Check your email for your code.','contest-gallery');
+__('Please wait {seconds} seconds before requesting another code.','contest-gallery');
+__('Loading…','contest-gallery');
+__('Saved','contest-gallery');
+__('Visible on your public profile','contest-gallery');
+__('View profile','contest-gallery');
+__('View profile of {name}','contest-gallery');
+__('Your public profile','contest-gallery');
+__('Public profile','contest-gallery');
+__('View public profile','contest-gallery');
+__('Entry owner','contest-gallery');
+__('Participants','contest-gallery');
+__('Back to participants','contest-gallery');
+__('Search names and profile information','contest-gallery');
+__('Name A–Z','contest-gallery');
+__('Name Z–A','contest-gallery');
+__('Votes descend','contest-gallery');
+__('Votes ascend','contest-gallery');
+__('No participants found.','contest-gallery');
+__('No participants with a profile yet. Published entries with a profile will appear here.','contest-gallery');
+__('This profile is no longer available in this gallery.','contest-gallery');
+__('1 entry','contest-gallery');
+__('%s entries','contest-gallery');
+__('Rating average','contest-gallery');
+__('Rating sum','contest-gallery');
+__('Gallery','contest-gallery');
+__('Galleries','contest-gallery');
+__('Entries','contest-gallery');
+__('Discover galleries','contest-gallery');
+__('Explore the gallery','contest-gallery');
+__('Explore galleries and their entries.','contest-gallery');
+__('Explore the entries in this gallery.','contest-gallery');
+__('This participant in this gallery','contest-gallery');
+__('Upload completed.','contest-gallery');
+__('Refresh','contest-gallery');
+__('Replace file','contest-gallery');
+__('Choose the file to replace.','contest-gallery');
+__('Replaced','contest-gallery');
+__('File replaced.','contest-gallery');
+__('The preview could not be refreshed.','contest-gallery');
+__('The file does not meet the gallery upload requirements.','contest-gallery');
+__('The PDF preview could not be created. Please try again.','contest-gallery');
+__('Too many replacement attempts. Please try again later.','contest-gallery');
+__('Your replacement storage limit has been reached. Please contact the gallery administrator.','contest-gallery');
+foreach(cg_member_interface_strings() as $cgMemberInterfaceKey){if(!isset($translations[$cgMemberInterfaceKey])){$translations[$cgMemberInterfaceKey]='';}}
 
 ?>

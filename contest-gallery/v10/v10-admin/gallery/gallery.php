@@ -2371,7 +2371,7 @@ if($isAjaxCall){
 					echo "cg_gallery <b>&nbsp;deleted&nbsp;</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
 					echo "</a>";
 				}else{
-					echo "<span data-cg-shortcode='[cg_gallery id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".$permalink."' target='_blank' class='cg_entry_page_url cg_gallery''>";
+					echo "<span data-cg-shortcode='[cg_gallery id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".esc_url(cg_backend_entry_page_open_url($id,'cg_gallery'))."' target='_blank' rel='noopener' class='cg_entry_page_url cg_gallery'>";
 					echo "cg_gallery";
 					echo "</a> <span class='td_gallery_info_shortcode_edit cg_tooltip'></span></span>";
 				}
@@ -2387,7 +2387,7 @@ if($isAjaxCall){
 					echo "cg_gallery_user <b>&nbsp;deleted&nbsp;</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
 					echo "</a>";
 				}else{
-					echo "<span data-cg-shortcode='[cg_gallery_user id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".$permalink."' target='_blank' class='cg_entry_page_url cg_gallery_user'>";
+					echo "<span data-cg-shortcode='[cg_gallery_user id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".esc_url(cg_backend_entry_page_open_url($id,'cg_gallery_user'))."' target='_blank' rel='noopener' class='cg_entry_page_url cg_gallery_user'>";
 					echo "cg_gallery_user";
 					echo "</a> <span class='td_gallery_info_shortcode_edit cg_tooltip'></span></span>";
 				}
@@ -2403,7 +2403,7 @@ if($isAjaxCall){
 					echo "cg_gallery_no_voting <b>&nbsp;deleted&nbsp;</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
 					echo "</a>";
 				}else{
-					echo "<span data-cg-shortcode='[cg_gallery_no_voting id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".$permalink."' target='_blank' class='cg_entry_page_url cg_gallery_no_voting'>";
+					echo "<span data-cg-shortcode='[cg_gallery_no_voting id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".esc_url(cg_backend_entry_page_open_url($id,'cg_gallery_no_voting'))."' target='_blank' rel='noopener' class='cg_entry_page_url cg_gallery_no_voting'>";
 					echo "cg_gallery_no_voting";
 					echo "</a> <span class='td_gallery_info_shortcode_edit cg_tooltip'></span></span>";
 				}
@@ -2419,7 +2419,7 @@ if($isAjaxCall){
 					echo "cg_gallery_winner <b>&nbsp;deleted&nbsp;</b> - can be corrected in \"Edit options\" >>> \"Status, repair...\"";
 					echo "</a>";
 				}else{
-					echo "<span data-cg-shortcode='[cg_gallery_winner id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".$permalink."' target='_blank' class='cg_entry_page_url cg_gallery_winner'>";
+					echo "<span data-cg-shortcode='[cg_gallery_winner id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".esc_url(cg_backend_entry_page_open_url($id,'cg_gallery_winner'))."' target='_blank' rel='noopener' class='cg_entry_page_url cg_gallery_winner'>";
 					echo "cg_gallery_winner";
 					echo "</a> <span class='td_gallery_info_shortcode_edit cg_tooltip'></span></span>";
 				}
@@ -2437,10 +2437,10 @@ if($isAjaxCall){
 						echo "</a>";
 					}else{
 						if($ImgTypeToShow!='con'){
-							echo "<span data-cg-shortcode='[cg_gallery_ecommerce id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".$permalink."' target='_blank' class='cg_entry_page_url cg_gallery_ecommerce'>";
+							echo "<span data-cg-shortcode='[cg_gallery_ecommerce id=\"$GalleryID\" entry_id=\"$id\"]'><a href='".esc_url(cg_backend_entry_page_open_url($id,'cg_gallery_ecommerce'))."' target='_blank' rel='noopener' class='cg_entry_page_url cg_gallery_ecommerce'>";
 							echo "cg_gallery_ecommerce";
 							echo "</a> <span class='td_gallery_info_shortcode_edit cg_tooltip'></span></span>";
-							echo "<span data-cg-shortcode='[cg_gallery_ecommerce id=\"$GalleryID\" entry_id=\"$id\" test=\"true\"]'><a href='".$permalink."?test=true' target='_blank' class='cg_entry_page_url cg_gallery_ecommerce'>";
+							echo "<span data-cg-shortcode='[cg_gallery_ecommerce id=\"$GalleryID\" entry_id=\"$id\" test=\"true\"]'><a href='".esc_url(cg_backend_entry_page_open_url($id,'cg_gallery_ecommerce',true))."' target='_blank' rel='noopener' class='cg_entry_page_url cg_gallery_ecommerce'>";
 							echo "cg_gallery_ecommerce test";
 							echo "</a> <span class='td_gallery_info_shortcode_edit cg_tooltip'></span></span>";
 						}else{

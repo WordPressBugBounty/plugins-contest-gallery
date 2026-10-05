@@ -1,6 +1,7 @@
 <?php
 
 if(!defined('ABSPATH')){exit;}
+require_once __DIR__.'/cg-paid-actions-recovery.php';
 
 if(!function_exists('cg_paid_actions_table')){
     function cg_paid_actions_table($name){
@@ -1374,9 +1375,9 @@ if(!function_exists('cg_paid_actions_grant_preview_credits')){
             $grantLedgerKey = 'preview-grant:'.cg_paid_actions_preview_token_hash($preview['token']).':'.$requestKey.':'.$actionType;
             $lock = cg_paid_actions_lock($preview['userId'],$actionType);
             if($lock===''){return new WP_Error('cg_paid_action_busy',cg_paid_actions_t('TestCreditsUpdating'));}
-            $wpdb->query('START TRANSACTION');
+            cg_upload_job_db_transaction('START TRANSACTION');
             if($wpdb->get_var($wpdb->prepare("SELECT id FROM ".cg_paid_actions_table('ledger')." WHERE IdempotencyKey = %s LIMIT 1",$grantLedgerKey))){
-                $wpdb->query('COMMIT');
+                cg_upload_job_db_transaction('COMMIT');
                 cg_paid_actions_unlock($lock);
                 continue;
             }
@@ -1400,11 +1401,11 @@ if(!function_exists('cg_paid_actions_grant_preview_credits')){
                 'MetaData'=>array('isPaidActionPreview'=>1)
             )) : false;
             if(!$entitlementId || $ledgerInserted!==1){
-                $wpdb->query('ROLLBACK');
+                cg_upload_job_db_transaction('ROLLBACK');
                 cg_paid_actions_unlock($lock);
                 return new WP_Error('cg_paid_action_preview_grant_failed',cg_paid_actions_t('DemoCreditsAddFailed'));
             }
-            $wpdb->query('COMMIT');
+            cg_upload_job_db_transaction('COMMIT');
             cg_paid_actions_unlock($lock);
         }
         return true;
@@ -1435,7 +1436,14 @@ if(!function_exists('cg_paid_actions_reserve_preview')){
         $legacyKey = cg_paid_actions_preview_legacy_entitlement_key($preview,$actionType);
         $availableSql = cg_paid_actions_available_sql();
         $allocations = array();
-        $wpdb->query('START TRANSACTION');
+        $reservationToken = wp_generate_uuid4();
+        $recovery = cg_paid_actions_recovery_start($preview['userId'],$actionType,$reservationToken);
+        if(is_wp_error($recovery)){
+            cg_paid_actions_unlock($lock);
+            cg_paid_actions_unlock_preview_gallery($galleryId);
+            return $recovery;
+        }
+        cg_paid_actions_recovery_transaction('START TRANSACTION',$recovery);
         $rows = $wpdb->get_results($wpdb->prepare(
             "SELECT * FROM $table
              WHERE WpUserId = %d AND IsTest = 1 AND GrantType = 'preview' AND ActionType = %s
@@ -1454,7 +1462,7 @@ if(!function_exists('cg_paid_actions_reserve_preview')){
             $take = min($available,$remaining);
             $updated = $wpdb->query($wpdb->prepare("UPDATE $table SET Reserved = Reserved + %d, UpdatedAt = %s WHERE id = %d",$take,cg_paid_actions_now(),$row->id));
             if($updated!==1){
-                $wpdb->query('ROLLBACK');
+                cg_paid_actions_recovery_transaction('ROLLBACK',$recovery);
                 cg_paid_actions_unlock($lock);
                 cg_paid_actions_unlock_preview_gallery($galleryId);
                 return new WP_Error('cg_paid_action_reserve_failed',cg_paid_actions_t('DemoCreditsReserveFailed'));
@@ -1466,12 +1474,11 @@ if(!function_exists('cg_paid_actions_reserve_preview')){
             $remaining -= $take;
         }
         if($remaining>0){
-            $wpdb->query('ROLLBACK');
+            cg_paid_actions_recovery_transaction('ROLLBACK',$recovery);
             cg_paid_actions_unlock($lock);
             cg_paid_actions_unlock_preview_gallery($galleryId);
             return new WP_Error('cg_paid_action_credit_required',cg_paid_actions_t('NotEnoughDemoCredits'));
         }
-        $reservationToken = wp_generate_uuid4();
         foreach($allocations as $allocation){
             $ledgerInserted = cg_paid_actions_insert_ledger(array(
                 'WpUserId'=>$preview['userId'],'OriginGalleryID'=>$allocation['originGalleryId'],'TargetGalleryID'=>$galleryId,
@@ -1480,13 +1487,13 @@ if(!function_exists('cg_paid_actions_reserve_preview')){
                 'MetaData'=>array('context'=>$contextKey,'isPaidActionPreview'=>1)
             ));
             if($ledgerInserted!==1){
-                $wpdb->query('ROLLBACK');
+                cg_paid_actions_recovery_transaction('ROLLBACK',$recovery);
                 cg_paid_actions_unlock($lock);
                 cg_paid_actions_unlock_preview_gallery($galleryId);
                 return new WP_Error('cg_paid_action_reserve_failed',cg_paid_actions_t('DemoCreditsReserveFailed'));
             }
         }
-        $wpdb->query('COMMIT');
+        if(cg_paid_actions_recovery_transaction('COMMIT',$recovery)===false){cg_paid_actions_unlock($lock);cg_paid_actions_unlock_preview_gallery($galleryId);return new WP_Error('cg_paid_action_save_failed',cg_paid_actions_t('CreditsReserveFailed'));}
         cg_paid_actions_unlock($lock);
         $reservation = array(
             'token'=>$reservationToken,'userId'=>absint($preview['userId']),'galleryId'=>$galleryId,'actionType'=>$actionType,
@@ -1618,7 +1625,12 @@ if(!function_exists('cg_paid_actions_reserve')){
         $reservationToken = wp_generate_uuid4();
         $allocations = array();
 
-        $wpdb->query('START TRANSACTION');
+        $recovery = cg_paid_actions_recovery_start($userId,$actionType,$reservationToken);
+        if(is_wp_error($recovery)){
+            cg_paid_actions_unlock($lock);
+            return $recovery;
+        }
+        cg_paid_actions_recovery_transaction('START TRANSACTION',$recovery);
         $rows = $wpdb->get_results($wpdb->prepare(
             "SELECT * FROM $table
              WHERE WpUserId = %d AND ActionType = %s AND $environmentWhere
@@ -1640,7 +1652,7 @@ if(!function_exists('cg_paid_actions_reserve')){
                 $take,cg_paid_actions_now(),$row->id
             ));
             if($updated!==1){
-                $wpdb->query('ROLLBACK');
+                cg_paid_actions_recovery_transaction('ROLLBACK',$recovery);
                 cg_paid_actions_unlock($lock);
                 return new WP_Error('cg_paid_action_reserve_failed',cg_paid_actions_t('CreditsReserveFailed'));
             }
@@ -1661,7 +1673,7 @@ if(!function_exists('cg_paid_actions_reserve')){
                 'MetaData'=>array('context'=>$contextKey)
             ));
 			if($ledgerInserted!==1){
-				$wpdb->query('ROLLBACK');
+				cg_paid_actions_recovery_transaction('ROLLBACK',$recovery);
 				cg_paid_actions_unlock($lock);
 				return new WP_Error('cg_paid_action_audit_failed',cg_paid_actions_t('CreditsReserveFailed'));
 			}
@@ -1669,12 +1681,12 @@ if(!function_exists('cg_paid_actions_reserve')){
         }
 
         if($remaining>0){
-            $wpdb->query('ROLLBACK');
+            cg_paid_actions_recovery_transaction('ROLLBACK',$recovery);
             cg_paid_actions_unlock($lock);
             return new WP_Error('cg_paid_action_credit_required',cg_paid_actions_t('NotEnoughCredits'));
         }
 
-        $wpdb->query('COMMIT');
+        if(cg_paid_actions_recovery_transaction('COMMIT',$recovery)===false){cg_paid_actions_unlock($lock);return new WP_Error('cg_paid_action_save_failed',cg_paid_actions_t('CreditsReserveFailed'));}
         cg_paid_actions_unlock($lock);
         $reservation = array(
             'token'=>$reservationToken,'userId'=>$userId,'galleryId'=>$galleryId,'actionType'=>$actionType,
@@ -1710,7 +1722,13 @@ if(!function_exists('cg_paid_actions_settle_reservation')){
         $remainingConsume = $consumeQuantity;
         $objectIds = array_values(array_filter(array_map('absint',(array)$objectIds)));
         $objectIndex = 0;
-        $wpdb->query('START TRANSACTION');
+        $recovery = cg_paid_actions_recovery_start($reservation['userId'],$reservation['actionType'],$reservation['token'],$objectIds);
+        if(is_wp_error($recovery)){
+            cg_paid_actions_unlock($lock);
+            if(!empty($reservation['previewGalleryLock'])){cg_paid_actions_unlock_preview_gallery($reservation['galleryId']);}
+            return false;
+        }
+        cg_paid_actions_recovery_transaction('START TRANSACTION',$recovery);
 
         foreach($reservation['allocations'] as $allocation){
             $reserved = absint($allocation['quantity']);
@@ -1721,7 +1739,7 @@ if(!function_exists('cg_paid_actions_settle_reservation')){
                 $reserved,$consume,cg_paid_actions_now(),$allocation['entitlementId'],$reserved
             ));
             if($updated!==1){
-                $wpdb->query('ROLLBACK');
+                cg_paid_actions_recovery_transaction('ROLLBACK',$recovery);
                 cg_paid_actions_unlock($lock);
                 if(!empty($reservation['previewGalleryLock'])){cg_paid_actions_unlock_preview_gallery($reservation['galleryId']);}
                 return false;
@@ -1737,7 +1755,7 @@ if(!function_exists('cg_paid_actions_settle_reservation')){
 						'MetaData'=>!empty($reservation['isPreview']) ? array('isPaidActionPreview'=>1) : ''
 					));
 					if($ledgerInserted!==1){
-						$wpdb->query('ROLLBACK');
+						cg_paid_actions_recovery_transaction('ROLLBACK',$recovery);
 						cg_paid_actions_unlock($lock);
 						if(!empty($reservation['previewGalleryLock'])){cg_paid_actions_unlock_preview_gallery($reservation['galleryId']);}
 						return false;
@@ -1745,7 +1763,7 @@ if(!function_exists('cg_paid_actions_settle_reservation')){
 					if(!cg_paid_actions_update_object_snapshot(
 						$reservation['galleryId'],$reservation['actionType'],$objectId,$allocation,!empty($reservation['isPreview'])
 					)){
-						$wpdb->query('ROLLBACK');
+						cg_paid_actions_recovery_transaction('ROLLBACK',$recovery);
 						cg_paid_actions_unlock($lock);
 						if(!empty($reservation['previewGalleryLock'])){cg_paid_actions_unlock_preview_gallery($reservation['galleryId']);}
 						return false;
@@ -1762,7 +1780,7 @@ if(!function_exists('cg_paid_actions_settle_reservation')){
                     'MetaData'=>!empty($reservation['isPreview']) ? array('isPaidActionPreview'=>1) : ''
                 ));
 				if($ledgerInserted!==1){
-					$wpdb->query('ROLLBACK');
+					cg_paid_actions_recovery_transaction('ROLLBACK',$recovery);
 					cg_paid_actions_unlock($lock);
 					if(!empty($reservation['previewGalleryLock'])){cg_paid_actions_unlock_preview_gallery($reservation['galleryId']);}
 					return false;
@@ -1771,7 +1789,7 @@ if(!function_exists('cg_paid_actions_settle_reservation')){
             $remainingConsume -= $consume;
         }
 
-        $wpdb->query('COMMIT');
+        if(cg_paid_actions_recovery_transaction('COMMIT',$recovery)===false){cg_paid_actions_unlock($lock);if(!empty($reservation['previewGalleryLock'])){cg_paid_actions_unlock_preview_gallery($reservation['galleryId']);}return false;}
         cg_paid_actions_unlock($lock);
         $pending =& cg_paid_actions_pending_reservations();
         unset($pending[$reservation['token']]);
@@ -1802,21 +1820,21 @@ if(!function_exists('cg_paid_actions_refund_preview_usage')){
             $actionType = cg_paid_actions_normalize_type($consume->ActionType);
             if($actionType===''){continue;}
             $resetKey = 'preview-reset:'.absint($consume->id);
-            $wpdb->query('START TRANSACTION');
+            cg_upload_job_db_transaction('START TRANSACTION');
             if($wpdb->get_var($wpdb->prepare("SELECT id FROM $ledger WHERE IdempotencyKey = %s LIMIT 1",$resetKey))){
-                $wpdb->query('COMMIT');
+                cg_upload_job_db_transaction('COMMIT');
                 continue;
             }
             $entitlement = $wpdb->get_row($wpdb->prepare("SELECT * FROM $entitlements WHERE id = %d AND IsTest = 1 AND GrantType = 'preview' FOR UPDATE",$consume->EntitlementId));
             if(empty($entitlement)){
-                $wpdb->query('ROLLBACK');
+                cg_upload_job_db_transaction('ROLLBACK');
                 return new WP_Error('cg_paid_action_preview_refund_failed',cg_paid_actions_t('PreviewResetFailed'));
             }
             $creditToRestore = intval($entitlement->Consumed)>0 ? 1 : 0;
             if($creditToRestore){
                 $updated = $wpdb->query($wpdb->prepare("UPDATE $entitlements SET Consumed = GREATEST(Consumed - 1,0), UpdatedAt = %s WHERE id = %d",cg_paid_actions_now(),$entitlement->id));
                 if($updated!==1){
-                    $wpdb->query('ROLLBACK');
+                    cg_upload_job_db_transaction('ROLLBACK');
                     return new WP_Error('cg_paid_action_preview_refund_failed',cg_paid_actions_t('PreviewResetFailed'));
                 }
             }
@@ -1828,10 +1846,10 @@ if(!function_exists('cg_paid_actions_refund_preview_usage')){
                 'MetaData'=>array('isPaidActionPreview'=>1,'removedObjectId'=>absint($consume->ObjectId))
             ));
             if($inserted!==1){
-                $wpdb->query('ROLLBACK');
+                cg_upload_job_db_transaction('ROLLBACK');
                 return new WP_Error('cg_paid_action_preview_refund_failed',cg_paid_actions_t('PreviewResetFailed'));
             }
-            $wpdb->query('COMMIT');
+            cg_upload_job_db_transaction('COMMIT');
             $refunded[$actionType]++;
         }
         return $refunded;
@@ -1887,9 +1905,9 @@ if(!function_exists('cg_paid_actions_grant_order')){
             $scope = $row->PaidActionScope==='shared' ? 'shared' : 'local';
             $lock = cg_paid_actions_lock($order->WpUserId,$actionType);
             if($lock===''){return false;}
-            $wpdb->query('START TRANSACTION');
+            cg_upload_job_db_transaction('START TRANSACTION');
 			if($wpdb->get_var($wpdb->prepare("SELECT id FROM $entitlements WHERE IdempotencyKey = %s LIMIT 1 FOR UPDATE",$key))){
-				$wpdb->query('COMMIT');
+				cg_upload_job_db_transaction('COMMIT');
 				cg_paid_actions_unlock($lock);
 				continue;
 			}
@@ -1900,7 +1918,7 @@ if(!function_exists('cg_paid_actions_grant_order')){
                 'CreatedAt'=>cg_paid_actions_now(),'UpdatedAt'=>cg_paid_actions_now()
             ),array('%d','%d','%s','%s','%d','%d','%s','%d','%d','%d','%d','%d','%s','%s','%s'));
             if(!$inserted){
-                $wpdb->query('ROLLBACK');
+                cg_upload_job_db_transaction('ROLLBACK');
                 cg_paid_actions_unlock($lock);
                 return false;
             }
@@ -1912,11 +1930,11 @@ if(!function_exists('cg_paid_actions_grant_order')){
                 'IdempotencyKey'=>'ledger:'.$key
             ));
 			if($ledgerInserted!==1){
-				$wpdb->query('ROLLBACK');
+				cg_upload_job_db_transaction('ROLLBACK');
 				cg_paid_actions_unlock($lock);
 				return false;
 			}
-            $wpdb->query('COMMIT');
+            cg_upload_job_db_transaction('COMMIT');
             cg_paid_actions_unlock($lock);
         }
         if($isSandboxOrder){delete_transient(cg_paid_actions_sandbox_order_transient_key($orderId));}
@@ -1934,11 +1952,11 @@ if(!function_exists('cg_paid_actions_revoke_refunded_order')){
         foreach($rows as $row){
             $lock = cg_paid_actions_lock($row->WpUserId,$row->ActionType);
             if($lock===''){continue;}
-            $wpdb->query('START TRANSACTION');
+            cg_upload_job_db_transaction('START TRANSACTION');
             $currentRow = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE id = %d FOR UPDATE",$row->id));
             $available = !empty($currentRow) ? max(0,intval($currentRow->Granted)-intval($currentRow->Reserved)-intval($currentRow->Consumed)-intval($currentRow->Revoked)) : 0;
             if(!$available){
-                $wpdb->query('COMMIT');
+                cg_upload_job_db_transaction('COMMIT');
                 cg_paid_actions_unlock($lock);
                 continue;
             }
@@ -1950,11 +1968,11 @@ if(!function_exists('cg_paid_actions_revoke_refunded_order')){
                 'IdempotencyKey'=>'refund:entitlement:'.$row->id
 			)) : false;
 			if($updated!==1 || $ledgerInserted!==1){
-				$wpdb->query('ROLLBACK');
+				cg_upload_job_db_transaction('ROLLBACK');
 				cg_paid_actions_unlock($lock);
 				continue;
 			}
-            $wpdb->query('COMMIT');
+            cg_upload_job_db_transaction('COMMIT');
             cg_paid_actions_unlock($lock);
         }
         return true;
@@ -2021,7 +2039,7 @@ if(!function_exists('cg_paid_actions_set_scope_balance')){
             return $newBalance;
         }
 
-        $wpdb->query('START TRANSACTION');
+        cg_upload_job_db_transaction('START TRANSACTION');
         $adjustmentToken = wp_generate_uuid4();
         if($delta>0){
             $key = 'admin:grant:'.$adjustmentToken;
@@ -2032,7 +2050,7 @@ if(!function_exists('cg_paid_actions_set_scope_balance')){
                 'Consumed'=>0,'Revoked'=>0,'IsTest'=>$environment==='sandbox' ? 1 : 0,'IdempotencyKey'=>$key,'CreatedAt'=>cg_paid_actions_now(),'UpdatedAt'=>cg_paid_actions_now()
             ),array('%d','%d','%s','%s','%d','%d','%s','%d','%d','%d','%d','%d','%s','%s','%s'));
 			if($inserted!==1){
-				$wpdb->query('ROLLBACK');
+				cg_upload_job_db_transaction('ROLLBACK');
 				cg_paid_actions_unlock($lock);
 				return new WP_Error('cg_paid_action_adjustment_failed','The requested balance could not be applied.');
 			}
@@ -2044,7 +2062,7 @@ if(!function_exists('cg_paid_actions_set_scope_balance')){
                 'MetaData'=>array('balanceBefore'=>$current,'balanceAfter'=>$newBalance)
             ));
 			if($ledgerInserted!==1){
-				$wpdb->query('ROLLBACK');
+				cg_upload_job_db_transaction('ROLLBACK');
 				cg_paid_actions_unlock($lock);
 				return new WP_Error('cg_paid_action_audit_failed','The requested balance could not be audited.');
 			}
@@ -2070,20 +2088,20 @@ if(!function_exists('cg_paid_actions_set_scope_balance')){
                     'MetaData'=>array('balanceBefore'=>$current,'balanceAfter'=>$newBalance)
 				)) : false;
 				if($updated!==1 || $ledgerInserted!==1){
-					$wpdb->query('ROLLBACK');
+					cg_upload_job_db_transaction('ROLLBACK');
 					cg_paid_actions_unlock($lock);
 					return new WP_Error('cg_paid_action_audit_failed','The requested balance could not be audited.');
 				}
                 $toRevoke -= $take;
             }
             if($toRevoke>0){
-                $wpdb->query('ROLLBACK');
+                cg_upload_job_db_transaction('ROLLBACK');
                 cg_paid_actions_unlock($lock);
                 return new WP_Error('cg_paid_action_adjustment_failed','The requested balance could not be applied.');
             }
         }
 
-        $wpdb->query('COMMIT');
+        cg_upload_job_db_transaction('COMMIT');
         cg_paid_actions_unlock($lock);
         return cg_paid_actions_get_scope_balance($userId,$galleryId,$actionType,$scopeType,$environment);
     }

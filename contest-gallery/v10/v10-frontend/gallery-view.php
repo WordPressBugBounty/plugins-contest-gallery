@@ -215,20 +215,22 @@
             if($isCGalleries){
                 $ratingComments = '';
             }else{
-                $ratingComments = cg1l_create_rating_comments_gallery($galeryIDuserForJs,$fullData,$options,$shortcode_name,$jsonCommentsData,$countUserVotes,$votedUserPids,$isCGalleries,$commentsWrapperClass,$cgGalleryRatingCommentsGroupClass);
+                $ratingShortcode = !empty($cgMemberVoting) && !empty($fullData['Active']) ? 'cg_gallery' : $shortcode_name;
+                $ratingComments = cg1l_create_rating_comments_gallery($galeryIDuserForJs,$fullData,$options,$ratingShortcode,$jsonCommentsData,$countUserVotes,$votedUserPids,$isCGalleries,$commentsWrapperClass,$cgGalleryRatingCommentsGroupClass);
             }
         }
 
         $figCaption = '';
+        $galleryStatistics = $isCGalleries && !empty($fullData['GalleryStatisticsHtml']) ? $fullData['GalleryStatisticsHtml'] : '';
         $deleteUserImage = '';
         $isUserGalleryDeleteButton = ($shortcode_name === 'cg_gallery_user');
 
         if($isUserGalleryDeleteButton){
-            $deleteTooltipText = ($additionalFilesCount > 0) ? $language_DeleteImages : $language_DeleteImage;
-            $deleteUserImage = '<div class="cg_delete_user_image_container" data-cg-tooltip="'.esc_attr($deleteTooltipText).'"><div class="cg_delete_user_image" data-cg-gid="'.esc_attr($galeryIDuserForJs).'" data-cg-real-id="'.(int)$id.'"></div></div>';
+            $deleteTooltipText = cg_member_t('Entry actions');
+            $deleteUserImage = '<div class="cg_delete_user_image_container" data-cg-tooltip="'.esc_attr($deleteTooltipText).'"><div class="cg_delete_user_image" role="button" tabindex="0" aria-label="'.esc_attr($deleteTooltipText).'" aria-haspopup="menu" data-cg-gid="'.esc_attr($galeryIDuserForJs).'" data-cg-real-id="'.(int)$id.'"></div></div>';
         }
 
-        if(!empty($subTitle) || !empty($mainTitle) || !empty($thirdTitle)){
+        if(!empty($subTitle) || !empty($mainTitle) || !empty($thirdTitle) || $galleryStatistics){
             $figCaptionClass = 'cg_gallery_info_title cg_gallery_info_main_title';
             if($isUserGalleryDeleteButton){
                 $figCaptionClass .= ' cg_is_user_gallery';
@@ -239,6 +241,7 @@
                                 '.$mainTitle.'
                                 '.$thirdTitle.'
                                 '.$deleteUserImage.'
+                                '.$galleryStatistics.'
                         </figcaption>
                     ';
         }elseif($deleteUserImage){
@@ -254,7 +257,7 @@
 	        $hasMainTitleContent = trim(wp_strip_all_tags($mainTitle)) !== '';
 	        $hasSubTitleContent = trim(wp_strip_all_tags($subTitle)) !== '';
 	        $hasThirdTitleContent = trim(wp_strip_all_tags($thirdTitle)) !== '';
-	        $hasCaptionContent = $hasMainTitleContent || $hasSubTitleContent || $hasThirdTitleContent || !empty($deleteUserImage);
+	        $hasCaptionContent = $hasMainTitleContent || $hasSubTitleContent || $hasThirdTitleContent || !empty($deleteUserImage) || !empty($galleryStatistics);
 	        $cgGidToShow = (!empty($isCGalleries)) ? $cg_resolve_cgalleries_target_gallery_id($fullData) : 0;
 	        $hasExplicitGalleriesOriginContext = (!empty($cglHasExplicitFromGalleriesPage) || (!empty($backToGalleriesFromPageNumber) && intval($backToGalleriesFromPageNumber) > 1));
 	        $isMultiGalleryEntryContext = (!empty($isFromGalleriesSelect) || !empty($is_from_single_view_for_cg_galleries) || !empty($isMultiGalleryContext) || !empty($hasExplicitGalleriesOriginContext));
@@ -318,6 +321,10 @@
         }
 
         $useOriginalSourceTarget = (!$cgGalleryForceEntryGuidLinks && !$isForwardToUrl && !$isOnlyGalleryView && $isFullSizeImageOutGallery && !empty($originalSourceHref));
+        if(!empty($cgParticipantUserId) && !empty($entryGuid)){
+            $entryGuid = add_query_arg(array_merge(cg_participants_navigation_args(),array('cgl_view'=>'profile','cgl_profile'=>absint($cgParticipantUserId),'cgl_participants_page'=>!empty($cgParticipantListPage) ? absint($cgParticipantListPage) : 1,'cgl_profile_page'=>$currentPageNumber)),$entryGuid);
+        }
+
         $galleryEntryTargetHref = (!empty($embeddedCGalleriesHostHref)) ? $embeddedCGalleriesHostHref : $entryGuid;
         $galleryMediaHref = '';
         if($isForwardToUrl){
@@ -593,6 +600,19 @@
         }
         echo $cg_multiple_files;
         echo $figure;
+        if(empty($isCGalleries) && cg_gallery_card_option_enabled($options,'ShowShareButtonGallery') && !empty($options['visual']['ShareButtons']) && (!isset($fullData['Active']) || intval($fullData['Active'])===1)){
+            $cgShareUrl = isset($fullData['ShareUrl']) ? $fullData['ShareUrl'] : (!empty($fullData['entryGuid']) ? $fullData['entryGuid'] : '');
+            if($cgShareUrl){
+                echo '<button type="button" class="cg-share-thumbnail" data-cg-gid="'.esc_attr($galeryIDuserForJs).'" data-cg-real-id="'.absint($id).'" aria-label="'.esc_attr(cg_member_t('Share this entry')).'" title="'.esc_attr(cg_member_t('Share this entry')).'"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M8.5 10.5l7-4m-7 7l7 4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="5" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="19" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>';
+            }
+        }
+        if(empty($isCGalleries) && cg_gallery_card_option_enabled($options,'ShowProfileGallery') && (empty($cgMemberOwnView) || (isset($fullData['Active']) && intval($fullData['Active'])===1))){
+            cg_gallery_card_render_profile($galeryIDuserForJs,$id,$fullData,$WpUserIdsData);
+        }
+        if(!empty($isUserGallery) && isset($fullData['Active']) && intval($fullData['Active'])===0){
+            echo '<span class="cg-member-unpublished">'.esc_html(cg_member_t('Not published')).'</span>';
+        }
+
         echo "</article>";
         $order++;
 

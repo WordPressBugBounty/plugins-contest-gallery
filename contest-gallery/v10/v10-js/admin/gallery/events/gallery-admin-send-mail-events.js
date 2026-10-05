@@ -80,8 +80,8 @@ jQuery(document).ready(function ($) {
         }
         var mailTo = $cgSortableDiv.find('.cg_email_to_send').val();
         var $cgMailToSend = $box.find('#cgMailToSend');
-        cgJsClassAdmin.gallery.functions.mailDomainCheck($,$cgMailToSend);
         $cgMailToSend.val(mailTo);
+        cgJsClassAdmin.mailDelivery.init($box);
         $cgSortableDiv.find('.cg_fields_div > div:not(.cg_exif_data_container)').each(function () {
             var textString = '';
             var textNode = $(this).contents().filter(function() {
@@ -711,7 +711,6 @@ jQuery(document).ready(function ($) {
 
     $(document).on('input','#cgMailTemplate #cgMailToSend',function (e) {
         var $this = $(this);
-        cgJsClassAdmin.gallery.functions.mailDomainCheck($,$(this));
         if($this.val().trim()==''){
             $this.parent().find('.cg_required').removeClass('cg_hide');
         }else{

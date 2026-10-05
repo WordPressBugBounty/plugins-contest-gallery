@@ -81,7 +81,7 @@ if(empty($checkWpMail) AND $checkCGMailResult==0){
         $cgMailGalleryId = $galeryID;
         add_action( 'wp_mail_failed', 'cg_on_wp_mail_error', 10, 1 );
 
-        wp_mail($userMail, $Subject, $Msg, $headers);
+        cg_upload_job_mail($userMail, $Subject, $Msg, $headers);
      //   var_dump($Subject);
 
         if(!empty($checkCgMail)){

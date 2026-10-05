@@ -399,6 +399,12 @@ if(!function_exists('cg_database_install_current_site_check')){
                 cg_run_update_check_after_create_table($i,$p_cgal1ery_db_installed_ver,$p_cgal1ery_db_new_version);
             }
 
+            require_once __DIR__.'/../../update/update-public-profile-fields.php';
+            global $wpdb;
+            if(!cg_migrate_public_profile_fields($wpdb->prefix.'contest_gal1ery_create_user_form')){
+                return false;
+            }
+
             if($p_cgal1ery_db_installed_ver){update_option( "p_cgal1ery_db_version", $p_cgal1ery_db_new_version );}
             else{add_option( "p_cgal1ery_db_version", $p_cgal1ery_db_new_version );}
 

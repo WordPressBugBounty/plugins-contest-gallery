@@ -1457,7 +1457,7 @@ msgstr "लोड हो रहा है"
 msgid "or"
 msgstr "या"
 
-#: check-language-paid-actions.php
+#: check-language-paid-actions.php check-language.php
 msgid "Cancel"
 msgstr "रद्द करें"
 
@@ -2248,3 +2248,456 @@ msgstr "भुगतान पूरा नहीं हुआ। कृपय�
 #: check-language-ecommerce.php
 msgid "Payment canceled. You can try again."
 msgstr "भुगतान रद्द कर दिया गया। आप फिर से प्रयास कर सकते हैं।"
+
+#: check-language-general.php:140
+msgid "Register / Sign in"
+msgstr "रजिस्टर करें / साइन इन करें"
+
+#: check-language-general.php:142
+msgid "Your images. Your gallery."
+msgstr "आपकी तस्वीरें। आपकी गैलरी।"
+
+#: check-language-general.php:144
+msgid "Continue with Google or a code sent to your email. New here? Your account is created when you sign in."
+msgstr "Google या आपके ईमेल पर भेजे गए कोड से आगे बढ़ें। यहाँ नए हैं? साइन इन करते समय आपका खाता बन जाएगा।"
+
+#: check-language-general.php:146
+msgid "Sign in with a code sent to your email. New here? Confirm your email to create your account."
+msgstr "अपने ईमेल पर भेजे गए कोड से साइन इन करें। यहाँ नए हैं? अपना खाता बनाने के लिए अपने ईमेल की पुष्टि करें।"
+
+#: check-language-general.php:142
+msgid "All images"
+msgstr "सभी तस्वीरें"
+
+#: check-language-general.php:144
+msgid "My images"
+msgstr "मेरी तस्वीरें"
+
+#: check-language-general.php:146
+msgid "Join and show your own images."
+msgstr "जुड़ें और अपनी तस्वीरें दिखाएँ।"
+
+#: check-language-general.php:148
+msgid "Show your first image"
+msgstr "अपनी पहली तस्वीर दिखाएँ"
+
+#: check-language-general.php:150
+msgid "Your uploads will appear here."
+msgstr "आपकी अपलोड की गई तस्वीरें यहाँ दिखाई देंगी।"
+
+#: check-language-general.php:146
+msgid "Not published"
+msgstr "प्रकाशित नहीं"
+
+#: check-language.php
+msgid "Delete"
+msgstr "हटाएँ"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Entry actions"
+msgstr "प्रविष्टि की कार्रवाइयाँ"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Replace image"
+msgstr "छवि बदलें"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Choose the image to replace."
+msgstr "वह छवि चुनें जिसे आप बदलना चाहते हैं।"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Replace"
+msgstr "बदलें"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Replacing…"
+msgstr "बदला जा रहा है…"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "This entry will need approval again after replacement."
+msgstr "छवि बदलने के बाद इस प्रविष्टि को फिर से स्वीकृति की आवश्यकता होगी।"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Image replaced."
+msgstr "छवि बदल दी गई।"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Image replacement is not allowed."
+msgstr "छवियाँ बदलने की अनुमति नहीं है।"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Entries offered for sale cannot be changed here."
+msgstr "बिक्री के लिए उपलब्ध प्रविष्टियाँ यहाँ नहीं बदली जा सकतीं।"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "This entry already has votes. Its images cannot be replaced."
+msgstr "इस प्रविष्टि को पहले ही वोट मिल चुके हैं। इसकी छवियाँ नहीं बदली जा सकतीं।"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "The time allowed for replacing this image has ended."
+msgstr "इस छवि को बदलने की समय सीमा समाप्त हो गई है।"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "The upload period is closed."
+msgstr "अपलोड की अवधि समाप्त हो गई है।"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "This entry has changed. Reload it and try again."
+msgstr "यह प्रविष्टि बदल गई है। इसे फिर से लोड करके दोबारा कोशिश करें।"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "The image does not meet the gallery upload requirements."
+msgstr "यह छवि गैलरी की अपलोड आवश्यकताओं को पूरा नहीं करती।"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Delete this entry and all its files?"
+msgstr "यह प्रविष्टि और इसकी सभी फ़ाइलें मिटाएँ?"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Share this image"
+msgstr "यह चित्र साझा करें"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Take a look at this image"
+msgstr "यह चित्र देखें"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Copy link"
+msgstr "लिंक कॉपी करें"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "More apps…"
+msgstr "और ऐप्स…"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Link copied"
+msgstr "लिंक कॉपी हो गया"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Copy this link:"
+msgstr "यह लिंक कॉपी करें:"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Sharing is unavailable. You can copy the link instead."
+msgstr "साझा करना उपलब्ध नहीं है। आप लिंक कॉपी कर सकते हैं।"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "File actions"
+msgstr "फ़ाइल की कार्रवाइयाँ"
+
+#: functions/frontend/cg-member-profile.php
+msgid "My profile"
+msgstr "मेरी प्रोफ़ाइल"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Additional information"
+msgstr "अतिरिक्त जानकारी"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Display name"
+msgstr "दिखाया जाने वाला नाम"
+
+#: functions/frontend/cg-member-profile.php
+msgid "This name is displayed across this website."
+msgstr "यह नाम पूरी वेबसाइट पर दिखाया जाता है।"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Choose profile image"
+msgstr "प्रोफ़ाइल चित्र चुनें"
+
+#: functions/frontend/cg-member-profile.php
+msgid "JPG, PNG or GIF. Maximum {size} MB."
+msgstr "JPG, PNG या GIF। अधिकतम {size} MB।"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Save profile"
+msgstr "प्रोफ़ाइल सहेजें"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Save information"
+msgstr "जानकारी सहेजें"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Profile saved."
+msgstr "प्रोफ़ाइल सहेजी गई।"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Information saved."
+msgstr "जानकारी सहेजी गई।"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Please enter a display name."
+msgstr "कृपया दिखाया जाने वाला नाम दर्ज करें।"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Please complete the required fields."
+msgstr "कृपया आवश्यक फ़ील्ड भरें।"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Please choose a valid option."
+msgstr "कृपया मान्य विकल्प चुनें।"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Your profile has changed. Close and reopen it before saving."
+msgstr "आपकी प्रोफ़ाइल बदल गई है। सहेजने से पहले इसे बंद करके दोबारा खोलें।"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Discard unsaved profile changes?"
+msgstr "प्रोफ़ाइल के बिना सहेजे बदलाव हटाएँ?"
+
+#: functions/frontend/cg-member-profile.php
+msgid "The profile image could not be saved."
+msgstr "प्रोफ़ाइल चित्र सहेजा नहीं जा सका।"
+
+#: functions/frontend/cg-member-profile.php
+msgid "You cannot edit these profile fields."
+msgstr "आप इन प्रोफ़ाइल फ़ील्ड को संपादित नहीं कर सकते।"
+
+#: check-language-general.php
+msgid "Share this entry"
+msgstr "यह प्रविष्टि साझा करें"
+
+#: check-language-general.php
+msgid "My entries"
+msgstr "मेरी प्रविष्टियाँ"
+
+#: check-language-general.php
+msgid "All entries"
+msgstr "सभी प्रविष्टियाँ"
+
+#: check-language-general.php
+msgid "Your entries. Your gallery."
+msgstr "आपकी प्रविष्टियाँ। आपकी गैलरी।"
+
+#: check-language-general.php
+msgid "Join and show your own entries."
+msgstr "जुड़ें और अपनी प्रविष्टियाँ दिखाएँ।"
+
+#: check-language-general.php
+msgid "Show your first entry"
+msgstr "अपनी पहली प्रविष्टि दिखाएँ"
+
+#: check-language-general.php
+msgid "Take a look at this entry"
+msgstr "यह प्रविष्टि देखें"
+
+#: check-language-general.php
+msgid "Gallery view"
+msgstr "गैलरी दृश्य"
+
+#: check-language-general.php
+msgid "Please try again."
+msgstr "कृपया फिर से कोशिश करें।"
+
+#: check-language-general.php
+msgid "The connection failed. Please try again."
+msgstr "कनेक्शन विफल हुआ। कृपया फिर से कोशिश करें।"
+
+#: check-language-general.php
+msgid "Please reload the page and try again."
+msgstr "कृपया पेज दोबारा लोड करें और फिर कोशिश करें।"
+
+#: check-language-general.php
+msgid "This gallery is not available."
+msgstr "यह गैलरी उपलब्ध नहीं है।"
+
+#: check-language-general.php
+msgid "Please allow cookies to sign in."
+msgstr "साइन इन करने के लिए कृपया कुकीज़ की अनुमति दें।"
+
+#: check-language-general.php
+msgid "Please sign in."
+msgstr "कृपया साइन इन करें।"
+
+#: check-language-general.php
+msgid "Check your email for your code."
+msgstr "कोड के लिए अपना ईमेल देखें।"
+
+#: check-language-general.php
+msgid "Please wait {seconds} seconds before requesting another code."
+msgstr "दूसरा कोड माँगने से पहले कृपया {seconds} सेकंड प्रतीक्षा करें।"
+
+#: check-language-general.php
+msgid "Loading…"
+msgstr "लोड हो रहा है…"
+
+#: check-language-general.php
+msgid "Saved"
+msgstr "सहेजा गया"
+
+#: check-language-general.php
+msgid "Visible on your public profile"
+msgstr "आपकी सार्वजनिक प्रोफ़ाइल पर दिखाई देगा"
+
+#: check-language-general.php
+msgid "View profile"
+msgstr "प्रोफ़ाइल देखें"
+
+#: check-language-general.php
+msgid "View profile of {name}"
+msgstr "{name} की प्रोफ़ाइल देखें"
+
+#: check-language-general.php
+msgid "Entry owner"
+msgstr "प्रविष्टि के स्वामी"
+
+#: check-language-general.php
+msgid "Participants"
+msgstr "प्रतिभागी"
+
+#: check-language-general.php
+msgid "Back to participants"
+msgstr "प्रतिभागियों पर वापस जाएँ"
+
+#: check-language-general.php
+msgid "Search names and profile information"
+msgstr "नाम और प्रोफ़ाइल की जानकारी खोजें"
+
+#: check-language-general.php
+msgid "Name A–Z"
+msgstr "नाम A–Z"
+
+#: check-language-general.php
+msgid "Name Z–A"
+msgstr "नाम Z–A"
+
+#: check-language-general.php
+msgid "No participants found."
+msgstr "कोई प्रतिभागी नहीं मिला।"
+
+#: check-language-general.php
+msgid "No participants with a profile yet. Published entries with a profile will appear here."
+msgstr "अभी प्रोफ़ाइल वाला कोई प्रतिभागी नहीं है। प्रोफ़ाइल से जुड़ी प्रकाशित प्रविष्टियाँ यहाँ दिखाई देंगी।"
+
+#: check-language-general.php
+msgid "This profile is no longer available in this gallery."
+msgstr "यह प्रोफ़ाइल अब इस गैलरी में उपलब्ध नहीं है।"
+
+#: check-language-general.php
+msgid "1 entry"
+msgstr "1 प्रविष्टि"
+
+#: check-language-general.php
+#, php-format
+msgid "%s entries"
+msgstr "%s प्रविष्टियाँ"
+
+#: check-language-general.php
+msgid "Rating average"
+msgstr "औसत रेटिंग"
+
+#: check-language-general.php
+msgid "Rating sum"
+msgstr "रेटिंग का योग"
+
+#: check-language-general.php
+msgid "Gallery"
+msgstr "गैलरी"
+
+#: check-language-general.php
+msgid "Galleries"
+msgstr "गैलरियाँ"
+
+#: check-language-general.php
+msgid "Entries"
+msgstr "प्रविष्टियाँ"
+
+#: check-language-general.php
+msgid "Discover galleries"
+msgstr "गैलरियाँ खोजें"
+
+#: check-language-general.php
+msgid "Explore the gallery"
+msgstr "गैलरी देखें"
+
+#: check-language-general.php
+msgid "Explore galleries and their entries."
+msgstr "गैलरियाँ और उनकी प्रविष्टियाँ देखें।"
+
+#: check-language-general.php
+msgid "Explore the entries in this gallery."
+msgstr "इस गैलरी की प्रविष्टियाँ देखें।"
+
+#: check-language-general.php
+msgid "This participant in this gallery"
+msgstr "इस गैलरी में यह प्रतिभागी"
+
+#: check-language-general.php
+msgid "Replace file"
+msgstr "फ़ाइल बदलें"
+
+#: check-language-general.php
+msgid "Choose the file to replace."
+msgstr "बदलने के लिए फ़ाइल चुनें।"
+
+#: check-language-general.php
+msgid "Replaced"
+msgstr "बदला गया"
+
+#: check-language-general.php
+msgid "File replaced."
+msgstr "फ़ाइल बदल दी गई।"
+
+#: check-language-general.php
+msgid "The preview could not be refreshed."
+msgstr "पूर्वावलोकन रीफ़्रेश नहीं किया जा सका।"
+
+#: check-language-general.php
+msgid "The file does not meet the gallery upload requirements."
+msgstr "फ़ाइल गैलरी की अपलोड आवश्यकताओं को पूरा नहीं करती।"
+
+#: check-language-general.php
+msgid "The PDF preview could not be created. Please try again."
+msgstr "PDF का पूर्वावलोकन नहीं बनाया जा सका। कृपया फिर से कोशिश करें।"
+
+#: check-language-general.php
+msgid "Too many replacement attempts. Please try again later."
+msgstr "बदलने के बहुत अधिक प्रयास किए गए हैं। कृपया बाद में फिर कोशिश करें।"
+
+#: check-language-general.php
+msgid "Your replacement storage limit has been reached. Please contact the gallery administrator."
+msgstr "बदली जाने वाली फ़ाइलों के लिए आपकी संग्रहण सीमा पूरी हो गई है। कृपया गैलरी व्यवस्थापक से संपर्क करें।"
+
+#: functions/frontend/cg-upload-jobs.php
+msgid "Continuing image processing…"
+msgstr "चित्र का प्रसंस्करण जारी है…"
+
+#: functions/frontend/cg-upload-jobs.php
+msgid "Check status"
+msgstr "स्थिति देखें"
+
+#: check-language-general.php
+msgid "Upload completed."
+msgstr "अपलोड पूरा हुआ।"
+
+#: check-language-general.php
+msgid "Refresh"
+msgstr "रीफ़्रेश करें"
+
+#: check-language.php
+msgid "Slow down, you are too fast. Please wait a moment before sending another comment."
+msgstr "कृपया दूसरी टिप्पणी भेजने से पहले थोड़ी देर प्रतीक्षा करें।"
+
+#: check-language-general.php
+msgid "Your public profile"
+msgstr "आपकी सार्वजनिक प्रोफ़ाइल"
+
+#: check-language-general.php
+msgid "Public profile"
+msgstr "सार्वजनिक प्रोफ़ाइल"
+
+#: check-language-general.php
+msgid "View public profile"
+msgstr "सार्वजनिक प्रोफ़ाइल देखें"
+
+
+#: functions/frontend/cg-participants.php check-language-general.php
+msgid "Votes descend"
+msgstr "मत (घटते क्रम में)"
+
+#: functions/frontend/cg-participants.php check-language-general.php
+msgid "Votes ascend"
+msgstr "मत (बढ़ते क्रम में)"
+
+msgid "Please use a display name instead of an email address."
+msgstr "कृपया ईमेल पते के बजाय प्रदर्शित नाम का उपयोग करें।"

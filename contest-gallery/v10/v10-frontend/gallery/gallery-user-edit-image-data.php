@@ -73,9 +73,9 @@ else {
         "
         SELECT COUNT(*) AS UserImages
         FROM $tablename 
-        WHERE id = %d and GalleryID = %d and WpUserId = %d and Active = %d
+        WHERE id = %d and GalleryID = %d and WpUserId = %d and (Active = %d OR %d = 1)
     ",
-        $pictureID,$galeryID,$userId,1
+        $pictureID,$galeryID,$userId,1,cg_member_enabled($galeryID) ? 1 : 0
     ) );
 
     if(empty($isUserImage)){
@@ -148,6 +148,7 @@ else {
             }
         }
 
+        $cgMemberEntryActive = absint($wpdb->get_var($wpdb->prepare("SELECT Active FROM $tablename WHERE id=%d AND GalleryID=%d AND WpUserId=%d",$pictureID,$galeryID,$userId)));
         $collectedFieldIds = '';
 
 
@@ -175,6 +176,7 @@ else {
             }
         }
 
+        if(!$collectedFieldIds){$collectedFieldIds = '0=1';}
         $selectSQL = $wpdb->get_results( "SELECT * FROM $tablename_form_input WHERE (GalleryID = $galeryID AND ($collectedFieldIds)
                     AND (Field_Type = 'text-f' OR Field_Type = 'url-f' OR Field_Type = 'comment-f' OR Field_Type = 'radio-f' OR Field_Type = 'chk-f' OR Field_Type = 'select-f' OR Field_Type = 'date-f') AND Show_Slider = 1)$Field1IdGalleryViewToSelect$Field1IdFullWindowBlogViewToSelect" );
 
@@ -230,20 +232,24 @@ echo "</pre>";
         if($isSetContent){
 	        $infoPidsArray = [];
 	        include(__DIR__.'/../../v10-admin/gallery/change-gallery/1_content.php');
-	        cg_json_upload_form_info_data_files_new($GalleryID,$infoPidsArray,true);
+	        if($cgMemberEntryActive){cg_json_upload_form_info_data_files_new($GalleryID,$infoPidsArray,true);}
         }
 
         $jsonFile = $upload_dir['basedir']."/contest-gallery/gallery-id-".$galeryID."/json/image-data/image-data-".$pictureID.".json";
-        $fp = fopen($jsonFile, 'r');
-        $imageDataArray = json_decode(fread($fp, filesize($jsonFile)),true);
-        fclose($fp);
+        if($cgMemberEntryActive && is_file($jsonFile)){
+            $imageDataArray = json_decode(file_get_contents($jsonFile),true);
+        }else{
+            $privateData = cg_member_owner_data($galeryID);
+            $imageDataArray = isset($privateData['main'][$pictureID]) ? $privateData['main'][$pictureID] : array();
+        }
 
         $categoryId = null;
 
-        if($_REQUEST['cg-cat-id']===0 OR $_REQUEST['cg-cat-id']==='0' OR !empty($_REQUEST['cg-cat-id'])){
+        if(isset($_REQUEST['cg-cat-id']) && ($_REQUEST['cg-cat-id']===0 OR $_REQUEST['cg-cat-id']==='0' OR !empty($_REQUEST['cg-cat-id']))){
             $categoryId = intval(sanitize_text_field($_REQUEST['cg-cat-id']));
             // then must be category changes
-            if($categoryId != $imageDataArray['Category']){
+            $categoryAllowed = !$categoryId || $wpdb->get_var($wpdb->prepare("SELECT id FROM $tablename_categories WHERE id=%d AND GalleryID=%d AND Active=1",$categoryId,$galeryID));
+            if($categoryAllowed && $categoryId != $imageDataArray['Category']){
                 $wpdb->query($wpdb->prepare(
                     "
 				UPDATE $tablename SET Category = %d WHERE GalleryID = %d AND id = %d
@@ -255,7 +261,7 @@ echo "</pre>";
             }
         }
 
-        if($isSetCategory){
+        if($isSetCategory && $cgMemberEntryActive){
             cg_edit_images($galeryID,$pictureID,$imageDataArray,$isSetCategory);
         }
 
@@ -267,13 +273,24 @@ echo "</pre>";
             cg1l_push_recent_id_file($galeryID,$pictureID,'image-info-data-last-update');
             cg1l_create_last_updated_time_file($galeryID,'image-info-data-last-update');
         }
+        if(!$cgMemberEntryActive){
+            $privateData = cg_member_owner_data($galeryID);
+            $imageInfoFileDataArray = isset($privateData['info'][$pictureID]) ? $privateData['info'][$pictureID] : array();
+        }
         if(empty($imageInfoFileDataArray)){
 	        $imageInfoFileDataArray = null;
         }
 
         $entryUrlAfterEdit = '';
+        if(cg_member_enabled($galeryID)){
+            $entryRow = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$tablename.' WHERE id=%d AND GalleryID=%d AND WpUserId=%d',$pictureID,$galeryID,get_current_user_id()));
+            if($entryRow){
+                $entryLinks = cg_member_entry_links($entryRow,isset($_POST['publicShortcode']) ? sanitize_key($_POST['publicShortcode']) : '');
+                $entryUrlAfterEdit = $entryLinks['entryGuid'];
+            }
+        }
 
-        if(!empty($isCgWpPageEntryLandingPage) && !empty($WpPageUser)){
+        if(!$entryUrlAfterEdit && !empty($isCgWpPageEntryLandingPage) && !empty($WpPageUser)){
 	        $domain = get_bloginfo('wpurl');
 	        if(intval($galeryrow->Version)>=24){
 		        $CgEntriesOwnSlugNameGalleriesUser = cg_get_galleries_slug_name('CgEntriesOwnSlugNameGalleriesUser');

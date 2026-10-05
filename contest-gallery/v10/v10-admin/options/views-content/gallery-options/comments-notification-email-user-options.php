@@ -19,10 +19,16 @@ $InformUserCommentBCC = contest_gal1ery_convert_for_html_output_without_nl2br($s
 $InformUserCommentURL = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserComment->URL);
 $ContentUserCommentContent = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserComment->Content);
 
+$cgMailDeliveryCard = cg_mail_delivery_card('Entry comment notification',array(
+    'from'=>array('[name="InformUserCommentFrom"]',$InformUserCommentFrom),
+    'reply'=>array('[name="InformUserCommentReply"]',$InformUserCommentReply)
+),'The email address associated with the entry receiving a comment.');
+
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
         <p class='cg_view_options_rows_container_title'>Comments notification e-mail options for frontend user
-        <br><span class="cg_view_options_rows_container_title_note">$cgDomainErrorText</span></p>
+        </p>
+        $cgMailDeliveryCard
         $mailExceptionUserCommentMail
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_view_option_100_percent $cgProFalse  cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px" id="cgInformUserCommentContainer">

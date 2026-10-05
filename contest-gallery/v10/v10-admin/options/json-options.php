@@ -373,6 +373,17 @@ $jsonOptions['pro']['PdfPreviewFrontend'] = $PdfPreviewFrontend;
 $jsonOptions['visual']['ThankVote'] = $ThankVote;
 $jsonOptions['visual']['ShowPinFormVoting'] = $ShowPinFormVoting;
 $jsonOptions['visual']['ShowPinFormUploading'] = $ShowPinFormUploading;
+$jsonOptions['visual']['MemberArea'] = !empty($MemberArea) ? 1 : 0;
+$jsonOptions['visual']['MemberAreaPerShortcode'] = 2;
+foreach(array('ShowShareButtonGallery','ShowProfileGallery') as $cgCardOption){
+    if(!empty($isNewGallery)){
+        $jsonOptions['visual'][$cgCardOption] = 1;
+    }elseif(isset($_POST['multiple-pics']['cg_gallery']['visual'][$cgCardOption])){
+        $jsonOptions['visual'][$cgCardOption] = !empty($_POST['multiple-pics']['cg_gallery']['visual'][$cgCardOption]) ? 1 : 0;
+    }else{
+        $jsonOptions['visual'][$cgCardOption] = cg_gallery_card_option_enabled($jsonOptions,$cgCardOption) ? 1 : 0;
+    }
+}
 
 $jsonOptions['visual']['EnableSwitchStyleGalleryButton'] = $EnableSwitchStyleGalleryButton;
 $jsonOptions['visual']['SwitchStyleGalleryButtonOnlyTopControls'] = $SwitchStyleGalleryButtonOnlyTopControls;

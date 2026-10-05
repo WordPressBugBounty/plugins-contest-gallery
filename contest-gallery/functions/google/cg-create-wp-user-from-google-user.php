@@ -31,6 +31,26 @@ if(!function_exists('cg_google_sign_in_is_existing_wp_email_auto_link_allowed'))
     }
 }
 
+// Google avatars remain remote URLs. Only expose the image, never account identifiers.
+function cg_google_sign_in_profile_image_url($url){
+    if(!is_string($url) || !preg_match('#^https?://#i',$url)){return '';}
+    return esc_url_raw($url,array('http','https'));
+}
+
+function cg_google_sign_in_get_profile_images($userIds){
+    global $wpdb;
+    $userIds = array_values(array_unique(array_filter(array_map('absint',$userIds))));
+    if(!$userIds){return array();}
+    $placeholders = implode(',',array_fill(0,count($userIds),'%d'));
+    $rows = $wpdb->get_results($wpdb->prepare("SELECT WpUserId, ImageUrl FROM {$wpdb->prefix}contest_gal1ery_google_users WHERE WpUserId IN ($placeholders) ORDER BY id DESC",$userIds));
+    $images = array();
+    foreach($rows as $row){
+        $url = cg_google_sign_in_profile_image_url($row->ImageUrl);
+        if($url && empty($images[$row->WpUserId])){$images[$row->WpUserId]=$url;}
+    }
+    return $images;
+}
+
 if(!function_exists('cg_google_sign_in_link_wp_user')){
     function cg_google_sign_in_link_wp_user($payload,$WpUserId){
 
@@ -39,19 +59,24 @@ if(!function_exists('cg_google_sign_in_link_wp_user')){
         $NickName = (!empty($payload['name'])) ? $payload['name'] : '';
         $GivenName = (!empty($payload['given_name'])) ? $payload['given_name'] : '';
         $FamilyName = (!empty($payload['family_name'])) ? $payload['family_name'] : '';
-        $ImageUrl = (!empty($payload['picture'])) ? $payload['picture'] : '';
+        $ImageUrl = cg_google_sign_in_profile_image_url(isset($payload['picture']) ? $payload['picture'] : '');
         $WpUserId = intval($WpUserId);
 
-        if(empty($GoogleId) || empty($WpUserId)){
+        if(empty($GoogleId) || empty($WpUserId) || !cg1l_auth_eligible_user($WpUserId)){
             return false;
         }
 
         global $wpdb;
 
         $tablename_contest_gal1ery_google_users = $wpdb->prefix."contest_gal1ery_google_users";
-        $googleUserId = $wpdb->get_var($wpdb->prepare("SELECT id FROM $tablename_contest_gal1ery_google_users WHERE GoogleId = %s LIMIT 1",$GoogleId));
+        $googleUser = $wpdb->get_row($wpdb->prepare("SELECT id, WpUserId FROM $tablename_contest_gal1ery_google_users WHERE GoogleId = %s LIMIT 1",$GoogleId));
 
-        if(!empty($googleUserId)){
+        if($googleUser){
+            // A verified repeat login may refresh the photo, never reassign the linked account.
+            if((int)$googleUser->WpUserId!==$WpUserId){return false;}
+            if($ImageUrl){
+                $wpdb->update($tablename_contest_gal1ery_google_users,array('ImageUrl'=>$ImageUrl),array('id'=>$googleUser->id,'WpUserId'=>$WpUserId),array('%s'),array('%d','%d'));
+            }
             return true;
         }
 
@@ -81,6 +106,14 @@ if(!function_exists('cg_google_sign_in_render_public_error')){
         </script>
         <?php
     }
+}
+
+// Recheck the raw account immediately before issuing a Google login cookie.
+function cg_google_sign_in_set_auth_cookie($userId){
+    if(!cg1l_auth_eligible_user($userId) || cg_check_headers_sent()){return false;}
+    update_user_meta($userId,'cgGoogleSignInJustSignedIn',1);
+    wp_set_auth_cookie($userId,true,is_ssl());
+    return true;
 }
 
 if(!function_exists('cg_create_wp_user_from_google_user')){
@@ -148,7 +181,7 @@ if(!function_exists('cg_create_wp_user_from_google_user')){
             $WpUserId = cg1l_wp_insert_user($user_login,$user_nicename,$user_email,$user_registered,$display_name);
 
             if(empty($WpUserId) || is_wp_error($WpUserId)){
-                return;
+                return false;
             }
 
             $wpdb->update(
@@ -185,16 +218,11 @@ if(!function_exists('cg_create_wp_user_from_google_user')){
                 ]
             );
 
-            cg_google_sign_in_link_wp_user($payload,$WpUserId);
-
-            if($isSignOn){
-                if(cg_check_headers_sent()){
-                    return;
-                }
-                update_user_meta( $WpUserId, 'cgGoogleSignInJustSignedIn', 1);
-                wp_set_auth_cookie( $WpUserId,true);
-            }
+            if(!cg_google_sign_in_link_wp_user($payload,$WpUserId)){return false;}
+            if($isSignOn && !cg_google_sign_in_set_auth_cookie($WpUserId)){return false;}
+            return true;
         }
+        return false;
 
     }
 }

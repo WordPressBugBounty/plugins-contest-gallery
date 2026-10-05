@@ -1,5 +1,7 @@
 <?php
 
+include_once(__DIR__.'/cg-account-navigation.php');
+
 add_action('cg_check_if_new_registry_logic_explanation_note_required','cg_check_if_new_registry_logic_explanation_note_required');
 if(!function_exists('cg_check_if_new_registry_logic_explanation_note_required')){
     function cg_check_if_new_registry_logic_explanation_note_required($galleryDbVersion){
@@ -24,6 +26,14 @@ if(!function_exists('cg_modified_logout_url')){
     function cg_modified_logout_url( $default )
     {
         $user = wp_get_current_user();
+        $settings = cg_account_navigation_settings();
+        if($settings['AccountNavigationVersion']){
+            if(cg_account_navigation_pro_available() && $settings['LogoutApplyToWpLinks'] && cg_account_navigation_user_allowed($user,$settings)){
+                $return = cg_account_navigation_return_url();
+                if($return){$default = add_query_arg('cg_account_return',rawurlencode($return),html_entity_decode($default,ENT_QUOTES,'UTF-8'));}
+            }
+            return $default;
+        }
 
         if(in_array('contest_gallery_user_since_v14',(array)$user->roles) OR in_array('contest_gallery_user',(array)$user->roles)){
             $default .= '&cgLogoutLink=true';// modifies url to check if cg logout has to be done in cg_redirect_when_logout function
@@ -37,7 +47,8 @@ if(!function_exists('cg_modified_logout_url')){
 add_action('wp_logout','cg_redirect_when_logout');
 if(!function_exists('cg_redirect_when_logout')){
     function cg_redirect_when_logout(){
-        if(!empty($_GET['cgLogoutLink'])){
+        $settings = cg_account_navigation_settings();
+        if(!$settings['AccountNavigationVersion'] && !empty($_GET['cgLogoutLink'])){
             global $wpdb;
             $tablename_registry_and_login_options = $wpdb->prefix . "contest_gal1ery_registry_and_login_options";
             $LogoutLink = contest_gal1ery_convert_for_html_output_without_nl2br($wpdb->get_var( "SELECT LogoutLink FROM $tablename_registry_and_login_options WHERE GeneralID = '1'" ));
@@ -84,7 +95,7 @@ if(!function_exists('cg_remove_admin_bar_links')){
                 'id'    => 'contest_gallery_user_bar_logout',
                 'parent'    => 'contest_gallery_user_bar',
                 'title' => $LogoutTitle,
-                'href' => wp_logout_url(get_permalink())
+                'href' => cg_account_navigation_logout_url(get_permalink())
             );
             $wp_admin_bar->add_node($args);       // Remove the user details tab
         }
@@ -107,7 +118,7 @@ if(!function_exists('cg_modified_admin_bar_for_contest_gallery_user_v14')){
 
             $is_frontend = true;
             include(__DIR__ . "/../../../check-language-general.php");
-            wp_update_user( array( 'ID' => $user->ID, 'role' => 'contest_gallery_user_since_v14' ) );// so always current capabilities will be used!
+            // Rendering navigation must not replace a member's WordPress roles.
 
             $isHideGeneralAdminMenuPoints = true;
 
@@ -159,7 +170,7 @@ if(!function_exists('cg_modified_admin_bar_for_contest_gallery_user_v14')){
 
                 if($pagenow=='profile.php'){
                     // Add own nodes
-                    $BackToGalleryLink = contest_gal1ery_convert_for_html_output_without_nl2br($wpdb->get_var( "SELECT BackToGalleryLink FROM $tablename_registry_and_login_options WHERE GeneralID = '1'" ));
+                    $BackToGalleryLink = cg_account_navigation_back_url($user);
                     if(!empty($BackToGalleryLink)){
                         $args = array(
                             'id'    => 'contest_gallery_user_bar',
@@ -170,7 +181,8 @@ if(!function_exists('cg_modified_admin_bar_for_contest_gallery_user_v14')){
                         );
                         $wp_admin_bar->add_node($args);
                     }
-                    wp_enqueue_script( 'cg_contest_gallery_edit_profile_js', plugins_url('/../../../v10/v10-js/admin/profile/edit-profile.js', __FILE__), array('jquery'), cg_get_version_for_scripts());
+                    wp_enqueue_script('cg_profile_image_validation',plugins_url('/../../../v10/v10-js/admin/profile/profile-image.js', __FILE__),array('jquery'),cg_get_version_for_scripts());
+                    wp_enqueue_script( 'cg_contest_gallery_edit_profile_js', plugins_url('/../../../v10/v10-js/admin/profile/edit-profile.js', __FILE__), array('jquery','cg_profile_image_validation'), cg_get_version_for_scripts());
                 }else{
                     $args = array(
                         'id'    => 'edit-profile',//wp-admin-edit-profile << full id name in frontend
@@ -188,7 +200,7 @@ if(!function_exists('cg_modified_admin_bar_for_contest_gallery_user_v14')){
                     'parent'    => 'cg_account',//wp-admin-bar-cg_account <<< full id name in frontend
                     //'href' => wp_logout_url(get_permalink()) // EXAMPLE!!! only example how to modify node!!!! Logout url is already modified by recognizer in sthis state in cg_modified_logout_url
                     'title' => $language_LogOut,
-                    'href' => wp_logout_url(get_permalink())
+                    'href' => cg_account_navigation_logout_url(get_permalink())
                 );
                 // Logout url is already modified by recognizer in sthis state in cg_modified_logout_url
                 $wp_admin_bar->add_node($args);
@@ -210,7 +222,8 @@ if(!function_exists('cg_modified_admin_bar_for_contest_gallery_user_v14')){
                     $hasUserGroupAllowedToEdit = cgHasUserGroupAllowedToEdit($user);
 
                     if($hasUserGroupAllowedToEdit){
-                        wp_enqueue_script( 'cg_contest_gallery_edit_profile_js', plugins_url('/../../../v10/v10-js/admin/profile/edit-profile.js', __FILE__), array('jquery'), cg_get_version_for_scripts());
+                        wp_enqueue_script('cg_profile_image_validation',plugins_url('/../../../v10/v10-js/admin/profile/profile-image.js', __FILE__),array('jquery'),cg_get_version_for_scripts());
+                        wp_enqueue_script( 'cg_contest_gallery_edit_profile_js', plugins_url('/../../../v10/v10-js/admin/profile/edit-profile.js', __FILE__), array('jquery','cg_profile_image_validation'), cg_get_version_for_scripts());
                     }
                 }
             }
@@ -263,17 +276,20 @@ if(!function_exists('cgHasUserGroupAllowedToEdit')){
 	    if(function_exists('cg_database_install_is_pending') && cg_database_install_is_pending()){
 		    return false;
 	    }
+	    if(!$user || empty($user->ID)){return false;}
+	    if(user_can($user,'manage_options') || (is_multisite() && is_super_admin($user->ID)) || in_array('contest_gallery_user_since_v14',(array)$user->roles,true)){return true;}
 
 	    global $wpdb;
         $tablename_registry_and_login_options = $wpdb->prefix . "contest_gal1ery_registry_and_login_options";
 
         $registryAndLoginOptions = $wpdb->get_row( "SELECT * FROM $tablename_registry_and_login_options WHERE GeneralID = '1'" );
-        $EditProfileGroups = (!empty($registryAndLoginOptions->EditProfileGroups)) ? unserialize($registryAndLoginOptions->EditProfileGroups) : [];
+        $EditProfileGroups = (!empty($registryAndLoginOptions->EditProfileGroups)) ? maybe_unserialize($registryAndLoginOptions->EditProfileGroups) : [];
+        if(!is_array($EditProfileGroups)){return false;}
 
         $hasUserGroupAllowedToEdit = false;
 
         foreach ($EditProfileGroups as $RoleGroupKey => $value){
-            if(in_array('contest_gallery_user_since_v14',(array)$user->roles) OR in_array($RoleGroupKey,(array)$user->roles)){
+            if(in_array($RoleGroupKey,(array)$user->roles,true)){
                 $hasUserGroupAllowedToEdit = true;
                 break;
             }
@@ -304,6 +320,12 @@ if(!function_exists('cg1l_sync_nickname_display_name')){
         // Get current user data
         $user = get_userdata( $user_id );
         if ( ! $user ) {
+            return;
+        }
+
+        // A gallery member can choose a display name independently of their nickname.
+        // Saving an unchanged WordPress nickname must preserve that choice.
+        if ( $nickname === (string) get_user_meta( $user_id, 'nickname', true ) ) {
             return;
         }
 
@@ -435,7 +457,7 @@ if(!function_exists('cg_edit_additional_registry_form_user_fields')){
                  echo "<input type='hidden' name='cg_user_id' value='".$user->ID."' >";
 
                 $selectUserForm = $wpdb->get_results("SELECT * FROM $tablenameCreateUserForm WHERE GeneralID = '1' && 
-                (Field_Type = 'user-text-field' OR Field_Type = 'user-comment-field' OR Field_Type = 'user-select-field' OR Field_Type = 'user-radio-field' OR Field_Type = 'user-check-field')
+                (Field_Type = 'user-text-field' OR Field_Type = 'user-url-field' OR Field_Type = 'user-comment-field' OR Field_Type = 'user-select-field' OR Field_Type = 'user-radio-field' OR Field_Type = 'user-check-field')
         ORDER BY Field_Order ASC");
 
                 $selectProfileImage = $wpdb->get_row("SELECT * FROM $tablenameCreateUserForm WHERE GeneralID = '1' && 
@@ -466,7 +488,7 @@ if(!function_exists('cg_edit_additional_registry_form_user_fields')){
                             echo '<tr>';
                             echo '<th><label for="cg_input_image_upload_file">'.$selectProfileImage->Field_Name.$required.'</label></th>';
                             echo '<td>';
-                            echo "<input type='file' name='cg_input_image_upload_file[]' id='cg_input_image_upload_file' /><div id='cgShowExistingProfileImage' class='cg_hide'></div>";
+                            echo "<input type='file' name='cg_input_image_upload_file[]' id='cg_input_image_upload_file'".cg_profile_image_upload_attributes()." /><p class='cg-profile-image-hint'>".cg_profile_image_upload_hint()."</p><div id='cgShowExistingProfileImage' class='cg_hide'></div>";
                             if(!empty($imgSrcLarge)){
                                 $imgSrcLarge=$imgSrcLarge[0];
                                 echo "<div id='cg_input_image_upload_file_preview' >";
@@ -489,7 +511,7 @@ if(!function_exists('cg_edit_additional_registry_form_user_fields')){
                             echo '<tr>';
                             echo '<th><label for="cg_input_image_upload_file">'.$selectProfileImage->Field_Name.$required.'</label></th>';
                             echo '<td>';
-                            echo "<input type='file' name='cg_input_image_upload_file[]' id='cg_input_image_upload_file' />";
+                            echo "<input type='file' name='cg_input_image_upload_file[]' id='cg_input_image_upload_file'".cg_profile_image_upload_attributes()." /><p class='cg-profile-image-hint'>".cg_profile_image_upload_hint()."</p>";
                             echo "<div id='cg_input_image_upload_file_preview' class='cg_hide'>";
                             echo "</div>";
                       //      if($selectProfileImage->Required!=1){
@@ -502,18 +524,11 @@ if(!function_exists('cg_edit_additional_registry_form_user_fields')){
 
                     foreach ($selectUserForm as $formField){
 
-                            $fieldId = contest_gal1ery_convert_for_html_output_without_nl2br($formField->id);
-                            $fieldTitle = contest_gal1ery_convert_for_html_output_without_nl2br($formField->Field_Name);
+                            $fieldId = absint($formField->id);
+                            $fieldTitle = esc_html(html_entity_decode(stripslashes($formField->Field_Name),ENT_QUOTES,'UTF-8'));
                             $fieldName = "cg_custom_field_id_".$fieldId;
-
-                            if($formField->Field_Type=="user-comment-field"){
-                                $userValue = esc_textarea(get_the_author_meta( $fieldName, $user->ID ) );
-                            }else{
-                                $userValue = contest_gal1ery_convert_for_html_output_without_nl2br(get_the_author_meta( $fieldName, $user->ID ) );
-
-                            }
-
-                            $fieldContent = html_entity_decode(stripslashes($formField->Field_Content));
+                            $userValue = cg_profile_field_value($formField,get_user_meta($user->ID,cg_profile_meta_key($fieldId),true));
+                            $fieldChoices = cg_member_profile_choices($formField);
 
                             $required = '';
                             $cg_input_field_required = '';
@@ -523,12 +538,12 @@ if(!function_exists('cg_edit_additional_registry_form_user_fields')){
                                 $cg_input_field_required = "cg_input_field_required";
                             }
 
-                            if ($formField->Field_Type == 'user-text-field') {
+                            if ($formField->Field_Type == 'user-text-field' || $formField->Field_Type == 'user-url-field') {
 
                                 echo '<tr>
                                     <th><label for="'.$fieldName.'">'.$fieldTitle.$required.'</label></th>
                                     <td>
-                                        <input type="text" name="'.$fieldName.'" id="'.$fieldName.'" value="'.$userValue.'" class="regular-text cg_input_field '.$cg_input_field_required.'" />
+                                        <input type="text"'.cg_profile_field_length_attributes($formField).($formField->Field_Type==='user-url-field' ? ' inputmode="url" autocomplete="url"' : '').' name="'.$fieldName.'" id="'.$fieldName.'" value="'.esc_attr($userValue).'" class="regular-text cg_input_field '.$cg_input_field_required.'" />
                                     </td>
                                 </tr>';
 
@@ -539,7 +554,7 @@ if(!function_exists('cg_edit_additional_registry_form_user_fields')){
                                 echo '<tr>
                                     <th><label for="'.$fieldName.'">'.$fieldTitle.$required.'</label></th>
                                     <td>
-                                        <textarea name="'.$fieldName.'" id="'.$fieldName.'" rows="5" class="cg_input_field '.$cg_input_field_required.'" >'.$userValue.'</textarea>
+                                        <textarea'.cg_profile_field_length_attributes($formField).' name="'.$fieldName.'" id="'.$fieldName.'" rows="5" class="cg_input_field '.$cg_input_field_required.'" >'.esc_textarea($userValue).'</textarea>
                                     </td>
                                 </tr>';
 
@@ -547,7 +562,7 @@ if(!function_exists('cg_edit_additional_registry_form_user_fields')){
 
                             if ($formField->Field_Type == 'user-select-field') {
 
-                                $textAr = explode("\n", $fieldContent);
+                                $textAr = $fieldChoices;
 
                                 echo '<tr>
                                     <th><label for="'.$fieldName.'">'.$fieldTitle.$required.'</label></th>
@@ -560,7 +575,7 @@ if(!function_exists('cg_edit_additional_registry_form_user_fields')){
                                     if($optionValue==$userValue){
                                         $selected = 'selected';
                                     }
-                                    echo "<option value='$optionValue' $selected>$optionValue</option>";
+                                    echo '<option value="'.esc_attr($optionValue).'" '.$selected.'>'.esc_html($optionValue).'</option>';
                                 }
                                 echo '</select>
                                     </td>
@@ -572,17 +587,16 @@ if(!function_exists('cg_edit_additional_registry_form_user_fields')){
                                 echo '<tr>
                                     <th><label for="'.$fieldName.'">'.$fieldTitle.$required.'</label></th>
                                     <td>';
-                                $textAr = explode("\n", $formField->Field_Content);// sanitazing happens after that in foreach
-                                $cgContentField = '<div class="cg_radio">';
+                                $textAr = $fieldChoices;
+                                $cgContentField = '<div class="cg_radio '.$cg_input_field_required.'">';
                                 foreach ($textAr as $optionKey => $optionValue) {
-                                    $optionValue = sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($optionValue));
                                     $checked = '';
                                     if($optionValue==$userValue){
                                         $checked = 'checked';
                                     }
                                     $cgContentField .= '<div class="cg_radio_button">
-                                <label for="cg_reg_radio_button_'.$formField->id.$optionKey.'">'.$optionValue.'</label>
-                                <input type="radio" id="cg_reg_radio_button_'.$formField->id.$optionKey.'" name="'.$fieldName.'" value="'.$optionValue.'" class="cg_radio_button_input" '.$checked.'>
+                                <label for="cg_reg_radio_button_'.$formField->id.$optionKey.'">'.esc_html($optionValue).'</label>
+                                <input type="radio" id="cg_reg_radio_button_'.$formField->id.$optionKey.'" name="'.$fieldName.'" value="'.esc_attr($optionValue).'" class="cg_radio_button_input" '.$checked.'>
                         </div>';
                                 }
                                 $cgContentField .= '</div>';
@@ -596,21 +610,20 @@ if(!function_exists('cg_edit_additional_registry_form_user_fields')){
                                 echo '<tr>
                                     <th><label for="'.$fieldName.'">'.$fieldTitle.$required.'</label></th>
                                     <td>';
-                                $textAr = explode("\n", $formField->Field_Content);// sanitazing happens after that in foreach
+                                $textAr = $fieldChoices;
                                 $cgContentField = '<div class="cg_check '.$cg_input_field_required.'">';
 
-                                $userValuesArray = array_map('trim', explode(',', $userValue));
+                                $userValuesArray = $userValue;
 
                                 foreach ($textAr as $optionKey => $optionValue) {
-                                    $optionValue = sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($optionValue));
                                     $checked = '';
 
                                     if (in_array($optionValue, $userValuesArray)!==false) {
                                         $checked = 'checked';
                                     }
                                     $cgContentField .= '<div class="cg_check_button">
-                                <label for="cg_reg_check_button_'.$formField->id.$optionKey.'">'.$optionValue.'</label>
-                                <input type="checkbox" id="cg_reg_check_button_'.$formField->id.$optionKey.'" name="'.$fieldName.'" value="'.$optionValue.'" class="cg_check_button_input" '.$checked.'>
+                                <label for="cg_reg_check_button_'.$formField->id.$optionKey.'">'.esc_html($optionValue).'</label>
+                                <input type="checkbox" id="cg_reg_check_button_'.$formField->id.$optionKey.'" name="'.$fieldName.'[]" value="'.esc_attr($optionValue).'" class="cg_check_button_input" '.$checked.'>
                         </div>';
                                 }
                                 $cgContentField .= '</div>';

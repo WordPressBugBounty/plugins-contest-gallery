@@ -54,9 +54,10 @@ foreach($langOptions as $langKey => $lang){
 $pleaseSelectLanguage .= '</select>';
 
 $enterKey = '';
-$enterKey .= "<div style='display:flex;align-items:center;flex-wrap: wrap;'><input type='text' name='ReCaKey' class='cg_reca_key' placeholder='Example Key: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI' size='30' maxlength='1000' value='$ReCaKey'/>";// Titel und Delete M�glichkeit die oben bestimmt wurde
-$enterKey .=  "<span  class='cg_recaptcha_icon' style='width: 100%;margin-left: 0;margin-top: 15px;margin-bottom: 10px;'>Insert Google reCAPTCHA test key</span>";
-$enterKey .=  "</div>";
+$enterKey .= "<div style='display:flex;flex-direction:column;width:100%;'><input type='text' name='ReCaKey' class='cg_reca_key' placeholder='Example Key: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI' size='30' maxlength='1000' value='$ReCaKey'/>";// Titel und Delete M�glichkeit die oben bestimmt wurde
+
+$enterKey .= cg_captcha_secret_input('registry',!$isOnlyPlaceHolder ? $id : 0,$ReCaKey,'ReCaSecret');
+$enterKey .= "<span class='cg_recaptcha_icon' style='margin:16px 0 10px;text-align:center;'>Insert Google reCAPTCHA test key</span></div>";
 
 $captchaNote = "<span class='cg_recaptcha_test_note' ><span>NOTE:</span><br><b>Google reCAPTCHA test key</b> is provided from Google for testing purpose.
                                         <br><b>Create your own \"Site key\"</b> here <a href='https://www.google.com/recaptcha/admin' target='_blank'>www.google.com/recaptcha/admin</a><br>Register your site, create a <b>V2 \"I am not a robot\"</b>  key.</span>";
@@ -88,7 +89,7 @@ echo <<<HEREDOC
                 <p>Google reCAPTCHA - I am not a robot</p>
             </div>
             <div class="cg_view_option_title" style="justify-content: center;padding-bottom: 0;">
-                  <span class="cg_view_option_title_note"><b>NOTE:</b> (can be rendered only 1 time on a page)</span>
+                  <span class="cg_view_option_title_note"><b>NOTE:</b> (each form is verified separately)</span>
             </div>
         </div>
 </div>

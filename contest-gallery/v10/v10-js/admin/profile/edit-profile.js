@@ -87,6 +87,9 @@ jQuery(document).ready(function($){
         $('#submit').prop('disabled',false);
         $('#cg_input_image_upload_file_to_delete_wp_id').prop('disabled',true);
         $('#cg_input_image_upload_file').val('').parent().find('.cg_input_error').remove();
+        cgJsClass.profileImage.cancel($('#cg_input_image_upload_file')[0]);
+        cgProfileImageError('');
+        $('#your-profile #submit').prop('disabled',false);
     });
 
     var cg_input_image_upload_file_changed = false;
@@ -104,119 +107,42 @@ jQuery(document).ready(function($){
         $('#cg_input_image_upload_file_preview_img').remove();
         $('#cg_input_image_upload_file_preview').addClass('cg_hide');
         $('#cg_input_image_upload_file').val('');
+        cgJsClass.profileImage.cancel($('#cg_input_image_upload_file')[0]);
+        cgProfileImageError('');
+        $('#your-profile #submit').prop('disabled',false);
     });
 
-    $(document).on('change',"#cg_input_image_upload_file",function (e) {
+    function cgProfileImageError(message) {
+        var $input = $('#cg_input_image_upload_file'), $error = $('#cg_profile_image_error');
+        if (!$error.length) { $error = $('<p class="cg_input_error" id="cg_profile_image_error" role="status" aria-live="polite">').insertAfter($input); }
+        $error.text(message || '').toggle(!!message);
+        $input.attr('aria-invalid', message ? 'true' : null).attr('aria-describedby', message ? 'cg_profile_image_error' : null);
+    }
+
+    $(document).on('change', '#cg_input_image_upload_file', function () {
         cg_input_image_upload_file_changed = true;
-
-         $('#cg_input_image_upload_file_to_delete_wp_id').prop('disabled',false);
-
-        var $cg_input_image_upload_file_preview = $('#cg_input_image_upload_file_preview');
-
-        $(this).parent().find('.cg_input_error').remove();
-
-        var $form = $(this).closest('form');
-        $form.find('#submit').prop('disabled',false);
-
-        if($(this).get(0).files.length){
-
-            // file validation here first
-            var hasProfileImageError = false;
-
-            var filename = $( this ).val().split('\\').pop();
-
-            var $cgShowExistingProfileImage = $('#cgShowExistingProfileImage');
-
-            if($('#cg_input_image_upload_file_required').length && filename == 0){
-                var errorMessage = $('#cg_language_ChooseYourImage').val();
-                var $errorMessageContainer = $('<p class="cg_input_error" id="cg_input_error_ChooseYourImage">'+errorMessage+'</p>');
-                if($cgShowExistingProfileImage.length){
-                    $errorMessageContainer.insertAfter($cgShowExistingProfileImage);
-                }else{
-                    $errorMessageContainer.insertAfter($( this ));
-                }
-                hasProfileImageError = true;
-            }else{
-                var fileType = $( this ).get(0).files[0].type;
-                var fileTypeEndingString = filename.split('.')[filename.split('.').length - 1].toLowerCase();
-                var allowedFileEndings = ['jpg', 'jpeg', 'gif', 'png'];
-
-                if ((fileType != 'image/jpeg' && fileType != 'image/png' && fileType != 'image/gif') || allowedFileEndings.indexOf(fileTypeEndingString) == -1) {
-                    var errorMessage = $('#cg_language_ThisFileTypeIsNotAllowed').val();
-                    var $errorMessageContainer = $('<p class="cg_input_error" id="cg_input_error_ThisFileTypeIsNotAllowed">'+errorMessage+'</p>');
-                    if($cgShowExistingProfileImage.length){
-                        $errorMessageContainer.insertAfter($cgShowExistingProfileImage);
-                    }else{
-                        $errorMessageContainer.insertAfter($( this ));
-                    }
-                    hasProfileImageError = true;
-                }
-
-                var sizePic = $( this ).get(0).files[0].size;
-                //Umwandeln in MegaByte
-                sizePic = sizePic / 1000000;
-
-                if (sizePic>2) {
-                    var errorMessage = $('#cg_language_TheFileYouChoosedIsToBigMaxAllowedSize').val();
-                    var $errorMessageContainer = $('<p class="cg_input_error" id="cg_input_error_TheFileYouChoosedIsToBigMaxAllowedSize">'+errorMessage+': 2MB</p>');
-                    if($cgShowExistingProfileImage.length){
-                        $errorMessageContainer.insertAfter($cgShowExistingProfileImage);
-                    }else{
-                        $errorMessageContainer.insertAfter($( this ));
-                    }
-                    hasProfileImageError = true;
-                }
-                // file validation here first --- END
-
-                $cg_input_image_upload_file_preview.find('.cg_input_image_upload_file_preview_img_existing').addClass('cg_hide');
-                $cgShowExistingProfileImage.removeClass('cg_hide');// cg_hide will be removed if field exists, can be done generally on change
-                $('#cg_input_image_upload_file_to_delete_button').addClass('cg_hide');// can be generally added if exists
-
-                if(hasProfileImageError){
-                    $form.find('#submit').prop('disabled',true);
-                }else{
-                    var file = $(this).get(0).files[0];
-                    var fileReaderBase64 = new FileReader(file);
-                    fileReaderBase64.readAsDataURL(file);
-                    $cg_input_image_upload_file_preview.find('.cg_input_image_upload_file_preview_img:not(.cg_input_image_upload_file_preview_img_existing)').remove();
-                    $cg_input_image_upload_file_preview.append(
-                        $(
-                            '<div id="cg_input_image_upload_file_preview_skeleton_box">' +
-                            '</div>'
-                        )
-                    ).removeClass('cg_hide');
-                    cgPreviewOnload(fileReaderBase64,$cg_input_image_upload_file_preview);
-                }
-            }
-
-        }else{
-            if($cg_input_image_upload_file_preview.find('.cg_input_image_upload_file_preview_img_existing').length){
-                $cg_input_image_upload_file_preview.removeClass('cg_hide');
-                $cg_input_image_upload_file_preview.find('.cg_input_image_upload_file_preview_img:not(.cg_input_image_upload_file_preview_img_existing)').addClass('cg_hide');
-                $cg_input_image_upload_file_preview.find('.cg_input_image_upload_file_preview_img_existing').removeClass('cg_hide');
-            }else{
-                $cg_input_image_upload_file_preview.addClass('cg_hide');
-            }
-        }
-
+        var input = this, $form = $(input).closest('form'), $preview = $('#cg_input_image_upload_file_preview');
+        cgProfileImageError('');
+        $preview.find('.cg_input_image_upload_file_preview_img:not(.cg_input_image_upload_file_preview_img_existing)').remove();
+        $preview.find('.cg_input_image_upload_file_preview_img_existing').removeClass('cg_hide');
+        $form.find('#submit').prop('disabled', true);
+        cgJsClass.profileImage.check(input).done(function (result) {
+            if (result.stale || !document.contains(input)) { return; }
+            var message = cgJsClass.profileImage.message(input, result.validation, result.message);
+            cgProfileImageError(message);
+            $form.find('#submit').prop('disabled', !!message || !!$form.find('.cg_input_error:visible').length);
+            if (message || !result.file) { return; }
+            var reader = new FileReader();
+            reader.onload = function () {
+                if (cgJsClass.profileImage.state(input) !== result) { return; }
+                $preview.find('.cg_input_image_upload_file_preview_img_existing').addClass('cg_hide');
+                $preview.append($('<div class="cg_input_image_upload_file_preview_img">').css('background', 'url("' + reader.result + '") no-repeat center center')).removeClass('cg_hide');
+                $('#cgShowExistingProfileImage,#cg_input_image_upload_file_to_delete_button').removeClass('cg_hide');
+                $('#cg_input_image_upload_file_to_delete_wp_id').prop('disabled', false);
+            };
+            reader.readAsDataURL(result.file);
+        });
     });
-
-    var cgPreviewOnload = function (fileReaderBase64,$cg_input_image_upload_file_preview) {
-        fileReaderBase64.onload = function () {
-            var base64url = this.result;
-            setTimeout(function () {
-                $cg_input_image_upload_file_preview.find('#cg_input_image_upload_file_preview_skeleton_box').remove();
-                $cg_input_image_upload_file_preview.append(
-                    jQuery('<div class="cg_input_image_upload_file_preview_img" />').css({
-                        'background': 'url("' + base64url + '") no-repeat center center',
-                        'display': 'none'
-                    })
-                );
-                $cg_input_image_upload_file_preview.find('.cg_input_image_upload_file_preview_img:not(.cg_input_image_upload_file_preview_img_existing)').fadeIn();
-                $('#cg_input_image_upload_file_to_delete_button').removeClass('cg_hide');
-            }, 1000);
-        };
-    };
 
     // not required to use this logic in the moment
    /* if(localStorage.getItem('cg_input_image_upload_file')=='changed'){
@@ -257,34 +183,38 @@ jQuery(document).ready(function($){
         localStorage.removeItem('cg_input_image_upload_file_src');
     }*/
 
-    $(document).on('change input',".cg_input_field_required",function (e) {
-        $(this).parent().find('.cg_input_error').remove();
-        var hasRequiredError = false;
-        if($(this).hasClass('cg_check')){
-            if(!$(this).find('input[type="checkbox"]:checked').length){
-                hasRequiredError = true;
-            }
-        }else{
-            if($(this).val().trim()==''){
-                hasRequiredError = true;
-            }
-        }
-        if(hasRequiredError){
-            var errorMessage = $('#cg_language_required').val();
-            var $errorMessageContainer = $('<p class="cg_input_error">'+errorMessage+'</p>');
-            $errorMessageContainer.insertAfter($(this));
-        }
-        var $form = $(this).closest('form');
-        if(!$form.find('.cg_input_error:visible').length){
-            $form.find('#submit').prop('disabled',false);
-        }else{
-            $form.find('#submit').prop('disabled',true);
-        }
+    function cgProfileFieldError($field) {
+        var choices = $field.hasClass('cg_check') || $field.hasClass('cg_radio');
+        var value = choices ? ($field.find('input:checked').length ? 'selected' : '') : String($field.val() || '').trim();
+        if (!value) { return $field.hasClass('cg_input_field_required') ? $('#cg_language_required').val() : ''; }
+        if (choices) { return ''; }
+        var length = Array.from ? Array.from(value).length : value.length;
+        var min = Number($field.attr('data-min-length')), max = Number($field.attr('data-max-length'));
+        return min && length < min ? $field.attr('data-min-message') : (max && length > max ? $field.attr('data-max-message') : '');
+    }
+
+    $(document).on('change input','.cg_input_field_required,[data-min-length],[data-max-length]',function () {
+        var $field = $(this), $form = $field.closest('form');
+        $field.parent().find('.cg_input_error').remove();
+        var message = cgProfileFieldError($field);
+        if (message) { $('<p class="cg_input_error">').text(message).insertAfter($field); }
+        $form.find('#submit').prop('disabled',!!$form.find('.cg_input_error:visible').length);
     });
 
     $(document).on('submit',"#your-profile",function (e) {
 
         var $form = $('#your-profile');
+        var imageInput = $form.find('#cg_input_image_upload_file')[0];
+        if (imageInput && imageInput.files.length) {
+            var imageState = cgJsClass.profileImage.state(imageInput);
+            if (!imageState) { $(imageInput).trigger('change'); imageState = cgJsClass.profileImage.state(imageInput); }
+            var imageMessage = imageState.pending ? cgJsClass.profileImage.message(imageInput, {languageKey: 'pending'}) : cgJsClass.profileImage.message(imageInput, imageState.validation, imageState.message);
+            if (imageMessage) {
+                e.preventDefault(); cgProfileImageError(imageMessage);
+                $form.find('.submit .spinner').removeClass('is-active');
+                return;
+            }
+        }
         $form.find('.cg_input_error').remove();
 
         var hasError = false;
@@ -293,23 +223,9 @@ jQuery(document).ready(function($){
         // remove not required action post, only one is always allowed
         $form.find('#post_cg_check_nickname_edit_profile').remove();
 
-        $form.find('.cg_input_field_required').each(function (){
-            var hasRequiredError = false;
-            if($(this).hasClass('cg_check')){
-                if(!$(this).find('input[type="checkbox"]:checked').length){
-                    hasRequiredError = true;
-                }
-            }else{
-                if($(this).val().trim()==''){
-                    hasRequiredError = true;
-                }
-            }
-            if(hasRequiredError){
-                var errorMessage = $('#cg_language_required').val();
-                var $errorMessageContainer = $('<p class="cg_input_error">'+errorMessage+'</p>');
-                $errorMessageContainer.insertAfter($(this));
-                hasError = true;
-            }
+        $form.find('.cg_input_field_required,[data-min-length],[data-max-length]').each(function () {
+            var message = cgProfileFieldError($(this));
+            if (message) { $('<p class="cg_input_error">').text(message).insertAfter($(this)); hasError = true; }
         });
 
         if($('#cg_input_image_upload_file_required').length && ($('.cg_input_image_upload_file_preview_img_existing').hasClass('cg_hide') ||  !$('.cg_input_image_upload_file_preview_img_existing').length)){
@@ -347,42 +263,24 @@ jQuery(document).ready(function($){
             var form = document.getElementById('your-profile');
             var formPostData = new FormData(form);
 
+            function imageUploadFailed(data) {
+                e.preventDefault();
+                $form.find('input[name="action"]').prop('disabled',false);
+                $form.find('.submit .spinner').removeClass('is-active');
+                var fallback = data && data.message || cgJsClass.profileImage.message(imageInput, {languageKey: 'invalid'});
+                cgProfileImageError(cgJsClass.profileImage.message(imageInput, data && data.uploadValidation, fallback));
+            }
             $.ajax({
-                url: 'admin-ajax.php',
-                method: 'post',
-                data: formPostData,
-                dataType: null,
-                contentType: false,
-                processData: false,
-                async: false,	// Important! Operation has to be done not asynchronous!
+                url: 'admin-ajax.php', method: 'post', data: formPostData, dataType: 'json',
+                contentType: false, processData: false,
+                async: false // The existing core profile submit follows only a successful image save.
             }).done(function (response) {
-
-           //     e.preventDefault();
+                if (!response || !response.success) { imageUploadFailed(response && response.data); return; }
                 cgPrepareForSubmitProfileImageDependant($form);
-                $(this).find('input[name="action"]').prop('disabled',false);// not forget to do this, might be disable after check!
-
-/*                var parser = new DOMParser();
-                var parsedHtml = parser.parseFromString(response, 'text/html');
-                parsedHtml = jQuery(parsedHtml);
-
-                var $scriptDataCgProcessing = parsedHtml.find('script[data-cg-processing="true"]');
-
-                // else, then login data must be uncorrect
-                if($scriptDataCgProcessing.length){
-                    e.preventDefault();
-                    $scriptDataCgProcessing.each(function () {
-                        var script = jQuery(this).html();
-                        eval(script);
-                    });
-                }*/
-
-            }).fail(function (xhr, status, error) {
-                debugger
-             //   e.preventDefault();
-                cgPrepareForSubmitProfileImageDependant($form);
-            }).always(function () {
-
+            }).fail(function (xhr) {
+                imageUploadFailed(xhr.responseJSON && xhr.responseJSON.data);
             });
+
         }else{
             cgPrepareForSubmitProfileImageDependant($form);
             //localStorage.removeItem('cg_input_image_upload_file');

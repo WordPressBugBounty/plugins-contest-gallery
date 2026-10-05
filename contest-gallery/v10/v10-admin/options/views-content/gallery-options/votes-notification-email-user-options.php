@@ -20,10 +20,16 @@ $InformUserVoteBCC = contest_gal1ery_convert_for_html_output_without_nl2br($sele
 $InformUserVoteURL = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserVote->URL);
 $ContentUserVoteContent = contest_gal1ery_convert_for_html_output_without_nl2br($selectSQLemailUserVote->Content);
 
+$cgMailDeliveryCard = cg_mail_delivery_card('Entry vote notification',array(
+    'from'=>array('[name="InformUserVoteFrom"]',$InformUserVoteFrom),
+    'reply'=>array('[name="InformUserVoteReply"]',$InformUserVoteReply)
+),'The email address associated with the entry receiving a vote.');
+
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
         <p class='cg_view_options_rows_container_title'>Votes notification e-mail options for frontend user
-        <br><span class="cg_view_options_rows_container_title_note">$cgDomainErrorText</span></p>
+        </p>
+        $cgMailDeliveryCard
         $mailExceptionUserVoteMail
         <div class='cg_view_options_row'>
             <div class="cg_view_option cg_view_option_100_percent $cgProFalse  cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px" id="cgInformUserVoteContainer">

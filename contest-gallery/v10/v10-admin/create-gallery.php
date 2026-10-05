@@ -80,7 +80,7 @@ if(!empty($_POST['cg_create'])){
     $RegPinSubject = 'Your Verification PIN: $pin$';
     $TextAfterEmailConfirmation = 'Email confirmed — you can now participate in the contest.';
     $TextAfterPinConfirmation = 'PIN verified — you can now participate in the contest.';
-    $RegUserUploadOnlyText = 'You have to be registered and logged in to add an entry.';
+    $RegUserUploadOnlyText = '<p style="text-align: center;">You have to be registered and logged in to add an entry.</p>';
     // Determine email of blog admin and variables for email table
     $RegMailAddressor = trim(get_option('blogname'));
     $RegMailReply = get_option('admin_email');
@@ -90,6 +90,8 @@ if(!empty($_POST['cg_create'])){
     $VotingCommentNumberFormat = 'dot';
 
     include('json-values.php');
+    $ShowNickname = 1;
+    $ShowProfileImage = 1;
     include('create-options.php');
 
     //$nextIDgallery = $wpdb->get_var("SELECT MAX(id) FROM $tablenameOptions");

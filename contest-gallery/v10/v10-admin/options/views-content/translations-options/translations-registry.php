@@ -5,6 +5,36 @@ echo <<<HEREDOC
          <p class='cg_view_options_rows_container_title'>Registration form</p>
 HEREDOC;
 
+$cgMemberTranslationFields = array(
+    array($l_MemberRegisterSignIn, $language_MemberRegisterSignIn, 'Gallery button and sign-in dialog label', 100),
+    array($l_MemberIntro, $language_MemberIntro, 'Text beside the gallery registration button', 300),
+    array($l_MemberSignInTitle, $language_MemberSignInTitle, 'Sign-in dialog title', 100),
+    array($l_MemberSignInDescription, $language_MemberSignInDescription, 'Sign-in description with Google', 500),
+    array($l_MemberSignInDescriptionEmailOnly, $language_MemberSignInDescriptionEmailOnly, 'Sign-in description without Google', 500)
+);
+
+echo '<p class="cg_view_options_rows_container_title">Gallery registration / sign-in</p>';
+
+foreach($cgMemberTranslationFields as $cgMemberTranslationField){
+    $cgMemberTranslationKey = esc_attr($cgMemberTranslationField[0]);
+    $cgMemberTranslationLabel = esc_html($cgMemberTranslationField[1]);
+    $cgMemberTranslationValue = esc_attr($translations[$cgMemberTranslationField[0]]);
+    $cgMemberTranslationHint = esc_html($cgMemberTranslationField[2]);
+    $cgMemberTranslationMaxLength = intval($cgMemberTranslationField[3]);
+    echo <<<HEREDOC
+         <div class='cg_view_options_row'>
+            <div class='cg_view_option cg_view_option_full_width'>
+                <div class='cg_view_option_title'>
+                    <p>$cgMemberTranslationLabel$cgShortcodeCopy<br><span style='font-weight:normal;'>($cgMemberTranslationHint)</span></p>
+                </div>
+                <div class='cg_view_option_input'>
+                    <input type="text" name="translations[general][$cgMemberTranslationKey]" maxlength="$cgMemberTranslationMaxLength" value="$cgMemberTranslationValue">
+                </div>
+            </div>
+         </div>
+HEREDOC;
+}
+
 
 $cgGoToEmailInputField = '<a 
                           href="?page='.cg_get_version().'/index.php&create_user_form=true&option_id='.$GalleryID.'&cg_go_to=cgGoToEmailInputField" target="_blank">Registration form</a>';

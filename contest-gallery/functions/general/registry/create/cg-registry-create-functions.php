@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/../cg-public-profile-fields.php';
 
 if(!function_exists('cg_create_contest_gallery_user_role')){
     function cg_create_contest_gallery_user_role() {
@@ -98,6 +99,24 @@ if(!function_exists('cg_create_general_registration_form_v14')){
                 'Password confirm','',6,100,
                 1,1,1
             ) );
+
+            // Optional profile fields are only seeded with the first general form.
+            $profileFields = array(
+                array('profile-image','Profile image',0),
+                array('user-text-field','City / Region',100),
+                array(cg_registry_url_fields_enabled() ? 'user-url-field' : 'user-text-field','Website / Portfolio',300),
+                array(cg_registry_url_fields_enabled() ? 'user-url-field' : 'user-text-field','Social profile URL',300),
+                array('user-comment-field','About me',2000)
+            );
+            foreach($profileFields as $index=>$profileField){
+                $wpdb->insert($tablename_create_user_form,array(
+                    'GalleryID'=>0,'GeneralID'=>1,'Field_Type'=>$profileField[0],
+                    'Field_Order'=>$index+5,'Field_Name'=>$profileField[1],'Field_Content'=>'',
+                    'Min_Char'=>0,'Max_Char'=>$profileField[2],'Required'=>0,'Active'=>1,
+                    'RowNumber'=>$index+6,'ColNumber'=>1,'RowCols'=>1,'PinField'=>0,
+                    'PublicProfile'=>$profileField[0]==='profile-image' ? 0 : 1
+                ));
+            }
 
         }
 

@@ -26,7 +26,7 @@ if(!defined('ABSPATH')){exit;}
 			echo "To many invalid atempts. Please try few minutes later again";return false;
 		}*/
 
-        $GalleryID = absint(sanitize_text_field($_REQUEST['action4']));
+        $GalleryID = isset($_POST['action4']) && is_string($_POST['action4']) ? absint($_POST['action4']) : 0;
 
         $wp_upload_dir = wp_upload_dir();
         //$optionsPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/'.$GalleryID.'-options.json';
@@ -44,7 +44,7 @@ if(!defined('ABSPATH')){exit;}
             return;
         }
 
-        $cg_check = sanitize_text_field($_REQUEST['action3']);
+        $cg_check = isset($_POST['action3']) && is_string($_POST['action3']) ? sanitize_text_field(wp_unslash($_POST['action3'])) : '';
         $galleryHashToCompare = cg_hash_function('---cglogin---'.$GalleryID, $cg_check);
 
         // Hier geht die Validierung los
@@ -52,13 +52,13 @@ if(!defined('ABSPATH')){exit;}
 
             global $wpdb;
 
-            if(!empty($_REQUEST['cgLostPasswordEmail'])){
-                include (__DIR__.'/ajax/users-login-check-ajax-lost-password.php');
+            if(!empty($cgResetPasswordOnly) || isset($_POST['cgLostPasswordNew']) || isset($_POST['cgLostPasswordNewRepeat']) || isset($_POST['cgResetPasswordKey']) || isset($_POST['cgResetPasswordWpUserID'])){
+                include (__DIR__.'/ajax/users-login-check-ajax-password-reset.php');
                 return;
             }
 
-            if(!empty($_REQUEST['cgLostPasswordNew'])){
-                include (__DIR__.'/ajax/users-login-check-ajax-password-reset.php');
+            if(isset($_POST['cgLostPasswordEmail'])){
+                include (__DIR__.'/ajax/users-login-check-ajax-lost-password.php');
                 return;
             }
 

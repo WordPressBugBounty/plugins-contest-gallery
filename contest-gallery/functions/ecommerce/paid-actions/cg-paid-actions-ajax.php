@@ -856,6 +856,9 @@ add_action('wp_ajax_nopriv_post_cg_paid_actions_email_code_verify','post_cg_paid
 if(!function_exists('post_cg_paid_actions_email_code_verify')){
     function post_cg_paid_actions_email_code_verify(){
         cg_check_frontend_nonce();
+        if(is_user_logged_in()){
+            wp_send_json_success(array('reload'=>true,'sessionChanged'=>true));
+        }
         $requestKey = isset($_POST['requestKey']) ? sanitize_text_field(wp_unslash($_POST['requestKey'])) : '';
         $code = isset($_POST['code']) ? preg_replace('/[^0-9]/','',(string)wp_unslash($_POST['code'])) : '';
 		$result = cg_pin_auth_verify($requestKey,$code,'paid-actions');
@@ -874,6 +877,9 @@ if(!function_exists('post_cg_paid_actions_email_code_verify')){
 			),400);
 		}
 		$userId = absint($result['userId']);
+		if(!cg1l_auth_eligible_user($userId,$result['email'])){
+			wp_send_json_error(array('message'=>cg_paid_actions_t('PinInvalidExpired'),'code'=>'cg_pin_invalid'),400);
+		}
 		$environment = !empty($context['checkoutMode']) && $context['checkoutMode']==='sandbox' ? 'sandbox' : 'live';
 		wp_set_current_user($userId);
 		wp_set_auth_cookie($userId,true,is_ssl());

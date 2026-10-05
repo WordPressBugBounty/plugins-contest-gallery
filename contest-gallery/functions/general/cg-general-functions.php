@@ -404,10 +404,11 @@ if(!function_exists('cg_update_custom_post_type_name')){
             // also post_name has to be updated below for correct count
 			//'guid' => $guid // original has to be set, so count always correct above!!!
 		);
-		wp_update_post( $post_update );
+		$updated = wp_update_post($post_update,true);
+		if(is_wp_error($updated)){return $updated;}
 		//wp_cache_flush();// works but reset the whole cache completely
 
-		$wpdb->update(
+		$updated = $wpdb->update(
 			"$table_posts",
 			array('post_name' => $title_modified,'guid' => $guid),// $title_modified has be set immediately here so it is possible to  count correctly if same title ... cause wp_update_post above don't update immediately...
             // updating post_name above and here combination works
@@ -416,6 +417,9 @@ if(!function_exists('cg_update_custom_post_type_name')){
 			array('%s','%s'),
 			array('%d')
 		);
+
+		clean_post_cache($postId);
+		if($updated===false){return new WP_Error('entry_url','The entry URL could not be updated. Please try again.');}
 
 		//$wpdb->show_errors();
 		//$wpdb->print_error();
@@ -1198,6 +1202,7 @@ if(!function_exists('cg_copy_table_row')){
 		}
 
 		$columnsString = 'NULL';
+		$queryParams = array();
 
 		$ratingFieldsArray = ['CountC','CountR','CountS','Rating','addCountS','addCountR1','addCountR2','addCountR3','addCountR4','addCountR5','addCountR6','addCountR7','addCountR8','addCountR9','addCountR10','CountR1','CountR2','CountR3','CountR4','CountR5','CountR6','CountR7','CountR8','CountR9','CountR10'
 		];
@@ -1205,26 +1210,23 @@ if(!function_exists('cg_copy_table_row')){
 		foreach ($columns as $rowObject){
 			if($rowObject->Field=='id'){continue;}// should be always the first one
 			if($cgCopyType=='cg_copy_type_options_and_images'  && $tableNameStringPart=='contest_gal1ery' && in_array($rowObject->Field,$ratingFieldsArray)){// all rating has to be set on 0
-				// has to be simply in quotes then ""
-				$columnsString .= ', "0"';
+				$columnsString .= ', 0';
 			} elseif(!empty($valueCollect[$tableNameStringPart]) && !empty($valueCollect[$tableNameStringPart][$rowObject->Field])){
-				// has to be simply in quotes then ""#
-				if(is_serialized($valueCollect[$tableNameStringPart][$rowObject->Field])){
-					$columnsString .= ', \''.$valueCollect[$tableNameStringPart][$rowObject->Field].'\'';
-				}else{
-					$columnsString .= ', "'.$valueCollect[$tableNameStringPart][$rowObject->Field].'"';
-				}
+				$columnsString .= ', %s';
+				$queryParams[] = $valueCollect[$tableNameStringPart][$rowObject->Field];
 			}else{
 				$columnsString .= ', '.$rowObject->Field;
 			}
 		}
 
+		$queryParams[] = $oldID;
+
 		if($tableNameStringPart=='contest_gal1ery_options'){
 			$query = "INSERT INTO $tableName 
     SELECT $columnsString 
     FROM $tableName 
-    WHERE id = $oldID";
-			$wpdb->query($query);
+    WHERE id = %d";
+			$wpdb->query($wpdb->prepare($query,$queryParams));
 			$nextId = $wpdb->insert_id;
 			return $nextId;
 		}elseif(
@@ -1239,7 +1241,7 @@ if(!function_exists('cg_copy_table_row')){
 			$query = "INSERT INTO $tableName 
     SELECT $columnsString 
     FROM $tableName
-    WHERE id = $oldID";
+    WHERE id = %d";
 
 			/*if($tableNameStringPart=='contest_gal1ery_f_input'){
 				var_dump($tableName);
@@ -1252,7 +1254,7 @@ if(!function_exists('cg_copy_table_row')){
 				echo "<br>";
 			}*/
 
-			$wpdb->query($query);
+			$wpdb->query($wpdb->prepare($query,$queryParams));
 			$nextId = $wpdb->insert_id;
 
 
@@ -1261,8 +1263,8 @@ if(!function_exists('cg_copy_table_row')){
 			$query = "INSERT INTO $tableName 
     SELECT $columnsString 
     FROM $tableName
-    WHERE GalleryID = $oldID";
-			$wpdb->query($query);
+    WHERE GalleryID = %d";
+			$wpdb->query($wpdb->prepare($query,$queryParams));
 			$nextId = $wpdb->insert_id;
 			return $nextId;
 		}

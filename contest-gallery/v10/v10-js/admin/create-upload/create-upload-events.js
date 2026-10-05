@@ -139,6 +139,7 @@ jQuery(document).ready(function ($) {
 
     $(document).on('click', '#ausgabe1.cg_create_upload .cg_recaptcha_icon', function () {
         $(this).closest('.formField').find('.cg_reca_key').val($('#cgRecaptchaKey').val());
+        $(this).closest('.formField').find('.cg_reca_secret').val('6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe');
     });
 
     // Allow only to press numbers as keys in input boxes

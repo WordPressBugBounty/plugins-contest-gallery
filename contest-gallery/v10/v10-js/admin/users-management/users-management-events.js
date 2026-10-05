@@ -586,6 +586,7 @@ jQuery(document).ready(function($){
         if(cgRegUrlUnconfirmed){
             $box.find('#cgRegUrlUnconfirmed').val(cgRegUrlUnconfirmed);
         }
+        cgJsClassAdmin.mailDelivery.init($box);
 
         var $cgMailBodyToSendContainer = $box.find('#cgMailBodyToSendContainer');
         var valueToSet = '&nbsp;';

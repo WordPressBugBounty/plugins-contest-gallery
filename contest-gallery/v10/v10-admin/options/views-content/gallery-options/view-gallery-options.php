@@ -216,7 +216,7 @@ echo <<<HEREDOC
     <div class='cg_view_options_rows_container'>
         <p class='cg_view_options_rows_container_title'>Commenting out of gallery</p>
         <div class='cg_view_options_row'>
-            <div class='cg_view_option cg_border_radius_8_px cg_view_option_100_percent' id="CommentsOutGalleryContainer">
+            <div class='cg_view_option cg_border_radius_8_px cg_view_option_100_percent cg_go_to_target' id="CommentsOutGalleryContainer" data-cg-go-to-target="CommentsOutGalleryContainer">
                 <div class='cg_view_option_title'>
                     <p>Allow commenting out of gallery<br><span class="cg_view_option_title_note">It is not necessary to open an entry for commenting. Comment directly from the gallery.</span></p>
                 </div>

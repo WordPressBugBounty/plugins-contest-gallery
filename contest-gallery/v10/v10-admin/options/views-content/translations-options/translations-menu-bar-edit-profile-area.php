@@ -2,6 +2,7 @@
 
 $beforeSinceV14Disabled = '';
 $beforeSinceV14Explanation = '';
+$cgLogOutTranslationValue = esc_attr($translations[$l_LogOut]);
 
 if(intval($galleryDbVersion)<14){
     $beforeSinceV14Disabled = 'cg_disabled';
@@ -14,6 +15,46 @@ echo <<<HEREDOC
 <div class='cg_view_options_rows_container'>
          <p class='cg_view_options_rows_container_title'>Logged in user menu bar and edit profile area$beforeSinceV14Explanation</p>
 HEREDOC;
+
+$cgMemberTranslationFields = array(
+    array($l_MemberAllImages, $language_MemberAllImages, 'Gallery tab for all entries', 100),
+    array($l_MemberMyImages, $language_MemberMyImages, 'Gallery tab for your own entries', 100),
+    array($l_MemberNotPublished, $language_MemberNotPublished, 'Label on your entries that are not published', 100),
+    array($l_MemberEmptyTitle, $language_MemberEmptyTitle, 'Heading when you have not uploaded any entries', 200),
+    array($l_MemberEmptyDescription, $language_MemberEmptyDescription, 'Description when you have not uploaded any entries', 500)
+);
+foreach(cg_member_entry_action_strings() as $cgMemberActionKey){
+    if($cgMemberActionKey==='Delete this entry and all its files?'){continue;} // Edited with the other deletion messages in User Gallery.
+    $cgMemberTranslationFields[] = array($cgMemberActionKey,__($cgMemberActionKey,'contest-gallery'),'Own entry actions and image replacement',500);
+}
+foreach(cg_member_profile_strings() as $cgMemberProfileKey){
+    $cgMemberTranslationFields[] = array($cgMemberProfileKey,__($cgMemberProfileKey,'contest-gallery'),'Gallery member profile',500);
+}
+foreach(cg_member_interface_translation_groups() as $cgMemberGroupTitle=>$cgMemberGroupKeys){
+    foreach($cgMemberGroupKeys as $cgMemberGroupKey){
+        $cgMemberTranslationFields[] = array($cgMemberGroupKey,__($cgMemberGroupKey,'contest-gallery'),$cgMemberGroupTitle,500);
+    }
+}
+echo '<p class="cg_view_options_rows_container_title">Gallery member area</p>';
+foreach($cgMemberTranslationFields as $cgMemberTranslationField){
+    $cgMemberTranslationKey = esc_attr($cgMemberTranslationField[0]);
+    $cgMemberTranslationLabel = esc_html($cgMemberTranslationField[1]);
+    $cgMemberTranslationValue = esc_attr($translations[$cgMemberTranslationField[0]]);
+    $cgMemberTranslationHint = esc_html($cgMemberTranslationField[2]);
+    $cgMemberTranslationMaxLength = intval($cgMemberTranslationField[3]);
+    echo <<<HEREDOC
+         <div class='cg_view_options_row'>
+            <div class='cg_view_option cg_view_option_full_width'>
+                <div class='cg_view_option_title'>
+                    <p>$cgMemberTranslationLabel$cgShortcodeCopy<br><span style='font-weight:normal;'>($cgMemberTranslationHint)</span></p>
+                </div>
+                <div class='cg_view_option_input'>
+                    <input type="text" name="translations[general][$cgMemberTranslationKey]" maxlength="$cgMemberTranslationMaxLength" value="$cgMemberTranslationValue">
+                </div>
+            </div>
+         </div>
+HEREDOC;
+}
 
 echo <<<HEREDOC
       <div class='cg_view_options_row' >
@@ -52,7 +93,7 @@ echo <<<HEREDOC
                     <p>$language_LogOut$cgShortcodeCopy</span></p>
                 </div>
                 <div class='cg_view_option_input'>
-                    <input type="text" name="translations[general][$l_LogOut]" maxlength="100" value="$translations[$l_LogOut]">
+                    <input type="text" name="translations[general][$l_LogOut]" maxlength="100" value="$cgLogOutTranslationValue">
                     </div>
                 </div>
       </div>

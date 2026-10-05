@@ -5,6 +5,7 @@ if(!function_exists('cg1l_render_gallery_view_markup')){
 		$d = array_merge([
 			'images_full_data_to_process' => [],
 			'options' => [],
+			'wp_user_ids_data' => [],
 			'shortcode_name' => 'cg_gallery',
 			'real_gid' => 0,
 			'json_comments_data' => [],
@@ -40,6 +41,7 @@ if(!function_exists('cg1l_render_gallery_view_markup')){
 		}
 
 		$options = (!empty($d['options']) && is_array($d['options'])) ? $d['options'] : [];
+		$WpUserIdsData = (!empty($d['wp_user_ids_data']) && is_array($d['wp_user_ids_data'])) ? $d['wp_user_ids_data'] : [];
 		$shortcode_name = (!empty($d['shortcode_name'])) ? $d['shortcode_name'] : 'cg_gallery';
 		$realGid = (!empty($d['real_gid'])) ? absint($d['real_gid']) : 0;
 		$jsonCommentsData = (!empty($d['json_comments_data']) && is_array($d['json_comments_data'])) ? $d['json_comments_data'] : [];

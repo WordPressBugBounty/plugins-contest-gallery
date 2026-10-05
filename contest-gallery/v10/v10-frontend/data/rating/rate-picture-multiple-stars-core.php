@@ -94,8 +94,8 @@ if (($rateValue>10 or $rateValue<1) or ($galleryHash != $galleryHashToCompare)){
 else {
 
     $explodeHash = explode('---cngl1---',$galleryHashDecoded);
-    //if($explodeHash[1]==$galeryID.'-u'){
-    if(strpos($explodeHash[1],$galeryID.'-u')!==false){
+    $isMemberVoting = cg_member_is_public_voting_context($galeryID,$galeryIDuser,$pictureID,isset($_REQUEST['cg_member_vote_context']) ? wp_unslash($_REQUEST['cg_member_vote_context']) : '');
+    if(strpos($explodeHash[1],$galeryID.'-u')!==false && !$isMemberVoting){
         ?>
         <script data-cg-processing="true">
 
@@ -133,7 +133,7 @@ else {
         return;
     }
 
-    $shortcodeNameForVoting = cg1l_get_shortcode_name_from_gallery_id_user($explodeHash[1],$galeryID);
+    $shortcodeNameForVoting = $isMemberVoting ? 'cg_gallery' : cg1l_get_shortcode_name_from_gallery_id_user($explodeHash[1],$galeryID);
 
     if($shortcodeNameForVoting === 'cg_gallery_winner'){
         return;

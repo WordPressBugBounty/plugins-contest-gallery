@@ -465,7 +465,7 @@ HEREDOC;
             if(!empty($cgEntriesCheck)){
                 $contestGalleryEntriesEditLink =  "<span class='cg_entries'><a href='?page=".cg_get_version()."/index.php&users_management=true&option_id=$GalleryID&wp_user_id=$userId&edit_registration_entries=true' class='cg_entry' >Edit Contest Gallery registration form entries</a></span>";
             }else{
-                $cgEntriesCheck = $wpdb->get_var( "SELECT COUNT(*) FROM $table_usermeta WHERE (user_id  = $userId) AND (meta_key LIKE '%cg_custom_field_id_%')");
+                $cgEntriesCheck = $wpdb->get_var( $wpdb->prepare("SELECT COUNT(*) FROM $table_usermeta WHERE user_id = %d AND meta_key LIKE %s",$userId,$wpdb->esc_like(cg_profile_meta_prefix()).'%'));
                 if(!empty($cgEntriesCheck)){
                     $contestGalleryEntriesEditLink =  "<span><a href='?page=".cg_get_version()."/index.php&users_management=true&option_id=$GalleryID&wp_user_id=$userId&edit_registration_entries=true&wp_user_meta_entries=true' class='cg_entry' >Edit Contest Gallery registration form entries</a></span>";
                 }else{

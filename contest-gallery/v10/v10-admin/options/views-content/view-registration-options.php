@@ -30,7 +30,7 @@ $cgV14UserGroupRoleNote = '';
 if(intval($galleryDbVersion)>=14){
     $cgV14UserGroupRoleNote = '<br><span class="cg_view_option_title_note">
                             <span class="cg_color_red">NOTE:</span> For galleries created or copied after version 14 new "Contest Gallery User since v14" will be used.<br>
-                            <b>"Contest Gallery User since v14" allows to edit Contest Gallery registration form fields in user profile when logged in.<br>You can add further groups below which can edit Contest Gallery registration form fields in user profile.</b>
+                            <strong class="cg_display_inline_block" style="margin: 8px 0; font-size: 16px; line-height: 1.5;">Administrators and "Contest Gallery User since v14" can always edit their own additional profile information.<br>These roles are enabled automatically. You can enable other roles below.<br>Profile images and display names can be edited by all signed-in gallery members.</strong>
                             </span>';
 }else{
     $cgV14UserGroupRoleNote = '<br><span class="cg_view_option_title_note">
@@ -142,7 +142,7 @@ echo <<<HEREDOC
     <div class="cg_view_options_row">
             <div class="cg_view_option cg_border_border_bottom_left_radius_8_px cg_view_option_full_width cg_border_top_bottom_none $beforeSinceV14Disabled" style="margin-bottom: -20px;">
                 <div class="cg_view_option_title ">
-                    <p>Role groups which can edit Contest Gallery "Registration form" fields<br>in "Edit profile" when logged in.
+                    <p>Additional roles allowed to edit registration form fields<br><span class="cg_view_option_title_note"><span class="cg_note_label">NOTE:</span> <span class="cg_note_text">Administrators and "Contest Gallery User since v14" can always edit their own additional profile information.<br>This applies to the gallery profile and the WordPress profile.</span></span>
 $beforeSinceV14Explanation
 </p>
                     
@@ -152,10 +152,10 @@ $beforeSinceV14Explanation
 HEREDOC;
 
 $rolesNewArray = [];
-$rolesNewArray['contest_gallery_user_since_v14'] = (!empty($roles['contest_gallery_user_since_v14'])) ? $roles['contest_gallery_user_since_v14'] : array('name' => 'Contest Gallery User since v14');
+
 
 foreach($roles as $keyOfRole => $roleValues){
-    if($keyOfRole=='contest_gallery_user' OR $keyOfRole=='contest_gallery_user_since_v14'){// not selectable if gallery created after v14
+    if($keyOfRole==='administrator' || $keyOfRole==='contest_gallery_user_since_v14' || !empty($roleValues['capabilities']['manage_options'])){
         continue;
     }else{
         $rolesNewArray[$keyOfRole]  = $roleValues;
@@ -174,7 +174,7 @@ $iCount = count($rolesNewArray);
 foreach($rolesNewArray as $keyOfRole => $roleValues){
 
     if(!empty($roleValues['name'])){
-        $roleName = $roleValues['name'];
+        $roleName = esc_html($roleValues['name']);
     }else{
         $roleName = '';
     }
@@ -187,7 +187,6 @@ foreach($rolesNewArray as $keyOfRole => $roleValues){
         $cg_border_left_none = '';
         echo "<div class='cg_view_options_row'>";
     }
-
     if($i==$iCount || ($i  % 4 === 0)){
         $cg_border_right_none = '';
     }
@@ -195,21 +194,9 @@ foreach($rolesNewArray as $keyOfRole => $roleValues){
         $cg_border_top_bottom_none = 'cg_border_top_none';
     }
 
-    if($i==1){
-        echo <<<HEREDOC
-    <div  class='cg_view_option cg_view_option_25_percent $cg_border_top_bottom_none $cg_border_left_none $cg_border_right_none cg_pointer_events_none $beforeSinceV14Disabled'>
-        <div class='cg_view_option_title'>
-            <p>$roleName<br><span class="cg_view_option_title_note">Always possible<br>to edit for this group</span></p>
-        </div>
-        <div class='cg_view_option_checkbox'>
-        <input type="checkbox" name="EditProfileGroups[contest_gallery_user_since_v14]" checked><br/>
-        </div>
-    </div>
-HEREDOC;
-    }else{
-
         if(!empty($roleValues)){
             $checked = (array_key_exists($keyOfRole,$EditProfileGroups) !== false) ? 'checked' : '';
+            $keyOfRole = esc_attr($keyOfRole);
 
             echo <<<HEREDOC
     <div  class='cg_view_option cg_view_option_25_percent $cg_border_top_bottom_none $cg_border_left_none $cg_border_right_none $beforeSinceV14Disabled'>
@@ -233,8 +220,6 @@ HEREDOC;
     </div>
 HEREDOC;
         }
-
-    }
 
     if($i==$iCount || ($i  % 4 === 0)){
         echo "</div>";
@@ -419,11 +404,17 @@ min="0" max="59" step="1" value="$pinExpiryMinutes" style="width:60px;" >
     </div>
 HEREDOC;
 
+$cgMailDeliveryCard = cg_mail_delivery_card('Registration / PIN confirmation',array(
+    'from'=>array('[name="RegMailFrom"]',$RegMailFrom),
+    'reply'=>array('[name="RegMailReply"]',$RegMailReply)
+),'The email address entered by the user during registration or PIN sign-in.');
+
 echo <<<HEREDOC
-    <div class='cg_view_options_rows_container'>
+    <div class='cg_view_options_rows_container' id='cgRegistrationMailOptions'>
         <p class='cg_view_options_rows_container_title'>Confirmation e-mail options
-            <br><span class='cg_view_options_rows_container_title_note'>For [cg_users_reg] and [cg_users_pin] shortcodes.<br>$cgDomainErrorText</span>
+            <br><span class='cg_view_options_rows_container_title_note'>For [cg_users_reg], [cg_users_pin] and gallery member sign-in.</span>
         </p>
+        $cgMailDeliveryCard
 HEREDOC;
 
 

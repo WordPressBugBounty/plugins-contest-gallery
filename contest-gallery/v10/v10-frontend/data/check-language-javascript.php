@@ -166,6 +166,8 @@
 	cgJsClass.gallery.language[index].DeleteImagesConfirm = <?php echo json_encode($language_DeleteImagesConfirm); ?>;
 	cgJsClass.gallery.language[index].ImageDeleted = <?php echo json_encode($language_ImageDeleted); ?>;
 	cgJsClass.gallery.language[index].ImagesDeleted = <?php echo json_encode($language_ImagesDeleted); ?>;
+	cgJsClass.gallery.language[index].Cancel = <?php echo json_encode($language_Cancel); ?>;
+	cgJsClass.gallery.language[index].Delete = <?php echo json_encode($language_Delete); ?>;
 	cgJsClass.gallery.language[index].Yes = <?php echo json_encode($language_Yes); ?>;
 	cgJsClass.gallery.language[index].No = <?php echo json_encode($language_No); ?>;
 	cgJsClass.gallery.language[index].Edit = <?php echo json_encode($language_Edit); ?>;

@@ -107,6 +107,49 @@ jQuery(document).ready(function($){
         document.body.removeChild(textarea);
     };
 
+    cgJsClassAdmin.mailDelivery = {
+        copy: cgCopyTextToClipboard,
+        update: function($card, reset){
+            var $scope = $card.closest('.cg_view_options_rows_container, #cgMailTemplateContainer');
+            var values = [];
+            $.each(['from', 'reply', 'to'], function(index, key){
+                var selector = $card.attr('data-cg-mail-' + key);
+                var value = selector ? ($scope.find(selector).first().val() || '') : ($card.attr('data-cg-mail-recipient') || '');
+                var $row = $card.find('[data-cg-mail-value="' + key + '"]');
+                values.push(value);
+                $row.text($.trim(value) || $row.attr('data-cg-mail-empty'));
+            });
+            var snapshot = JSON.stringify(values);
+            if(reset || typeof $card.data('cgMailInitial') === 'undefined'){
+                $card.data('cgMailInitial', snapshot);
+            }
+            var dirty = $card.attr('data-cg-mail-mode') === 'options' && snapshot !== $card.data('cgMailInitial');
+            $card.find('.cg-mail-delivery-dirty').prop('hidden', !dirty);
+        },
+        init: function($scope){
+            $scope.find('.cg-mail-delivery-card').each(function(){
+                var $card = $(this);
+                cgJsClassAdmin.mailDelivery.update($card, true);
+            });
+        }
+    };
+
+    $(document).on('input change', '#cg_main_options_content input, #cgMailTemplateContainer input', function(){
+        var input = this;
+        $(this).closest('#cg_main_options_content, #cgMailTemplateContainer').find('.cg-mail-delivery-card').each(function(){
+            var $card = $(this);
+            var $scope = $card.closest('.cg_view_options_rows_container, #cgMailTemplateContainer');
+            var affected = false;
+            $.each(['from', 'reply', 'to'], function(index, key){
+                var selector = $card.attr('data-cg-mail-' + key);
+                if(selector && $scope.find(selector).is(input)){affected = true;}
+            });
+            if(affected){
+                cgJsClassAdmin.mailDelivery.update($card);
+            }
+        });
+    });
+
     $(document).on('click', '.cg_nginx_protection_toggle', function(){
         var $button = $(this);
         var $notice = $button.closest('.cg_nginx_protection_notice');

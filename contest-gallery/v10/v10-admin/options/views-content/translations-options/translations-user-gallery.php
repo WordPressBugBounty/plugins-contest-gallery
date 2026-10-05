@@ -1,8 +1,35 @@
 <?php
 
+$cgDeleteCancelValue = esc_attr($translations[$l_Cancel]);
+$cgDeleteActionValue = esc_attr($translations[$l_Delete]);
+$cgDeleteSuccessValue = esc_attr($translations[$l_DeleteImageConfirm]);
+$cgDeleteFilesKey = esc_attr('Delete this entry and all its files?');
+$cgDeleteFilesLabel = esc_html(__('Delete this entry and all its files?','contest-gallery'));
+$cgDeleteFilesValue = esc_attr(isset($translations['Delete this entry and all its files?']) ? $translations['Delete this entry and all its files?'] : '');
+
 echo <<<HEREDOC
 <div class='cg_view_options_rows_container'>
-         <p class='cg_view_options_rows_container_title'>User Gallery<br><span class="cg_view_options_rows_container_title_note">when using cg_gallery_user shortcode</span></p>
+         <p class='cg_view_options_rows_container_title'>User Gallery<br><span class="cg_view_options_rows_container_title_note">for the gallery member area and cg_gallery_user shortcode</span></p>
+         <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_view_option_full_width'>
+                    <div class='cg_view_option_title'>
+                        <p>$language_Cancel$cgShortcodeCopy<br><span class="cg_view_option_title_note">Cancel deletion button</span></p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input type="text" name="translations[$l_Cancel]" maxlength="100" value="$cgDeleteCancelValue">
+                    </div>
+                </div>
+        </div>
+         <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_view_option_full_width'>
+                    <div class='cg_view_option_title'>
+                        <p>$language_Delete$cgShortcodeCopy<br><span class="cg_view_option_title_note">Confirm deletion button</span></p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input type="text" name="translations[$l_Delete]" maxlength="100" value="$cgDeleteActionValue">
+                    </div>
+                </div>
+        </div>
          <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width' >
                     <div class='cg_view_option_title'>
@@ -34,6 +61,16 @@ echo <<<HEREDOC
                 </div>
         </div>
          <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_view_option_full_width cg_border_top_none'>
+                    <div class='cg_view_option_title'>
+                        <p>$cgDeleteFilesLabel$cgShortcodeCopy<br><span class="cg_view_option_title_note">Confirmation before deleting an entry with multiple files</span></p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input type="text" name="translations[general][$cgDeleteFilesKey]" maxlength="500" value="$cgDeleteFilesValue">
+                    </div>
+                </div>
+        </div>
+         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
                         <p>$language_DeleteImagesQuestion$cgShortcodeCopy</p>
@@ -46,10 +83,10 @@ echo <<<HEREDOC
          <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
-                        <p>$language_DeleteImageConfirm$cgShortcodeCopy</p>
+                        <p>$language_DeleteImageConfirm$cgShortcodeCopy<br><span class="cg_view_option_title_note">Shown after deleting one entry, including all its files, and after returning from an entry page</span></p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" name="translations[$l_DeleteImageConfirm]" maxlength="100" value="$translations[$l_DeleteImageConfirm]">
+                        <input type="text" name="translations[$l_DeleteImageConfirm]" maxlength="100" value="$cgDeleteSuccessValue">
                     </div>
                 </div>
         </div>

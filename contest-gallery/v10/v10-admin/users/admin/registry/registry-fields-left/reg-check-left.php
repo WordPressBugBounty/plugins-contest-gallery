@@ -71,6 +71,8 @@ echo <<<HEREDOC
 </div>
 HEREDOC;
 
+cg_public_profile_field_controls($isOnlyPlaceHolder ? null : $value,'user-check-field',$i,intval($galleryDbVersion)>=14);
+
 echo <<<HEREDOC
 <div class='cg_view_options_row'>
      <div class='cg_view_option cg_border_bottom_none cg_view_option_100_percent cg_pin_field_check'>

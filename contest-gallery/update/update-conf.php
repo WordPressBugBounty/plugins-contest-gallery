@@ -390,6 +390,7 @@ return array(
         'ColNumber' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update ab 01.10.2025
         'RowCols' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update ab 01.10.2025
         'PinField' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 21.11.2025
+        'PublicProfile' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Public registration field visibility
     ),
     $tablename_mail_confirmation => array(
         'Content' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019
@@ -397,6 +398,14 @@ return array(
         'FromMail' => array('COLUMN_TYPE' => 'VARCHAR(200)','DEFAULT' => '""'),// Update 02.09.2026
     ),
     $tablename_registry_and_login_options => array(
+        'AccountNavigationVersion' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),
+        'AccountNavigationRoles' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => 'NULL'),
+        'AccountNavigationNoRole' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),
+        'LogoutRedirectMode' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),
+        'LogoutApplyToWpLinks' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),
+        'LogoutFallbackLink' => array('COLUMN_TYPE' => 'VARCHAR(1000)','DEFAULT' => '""'),
+        'BackToGalleryMode' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),
+        'BackToGalleryFallbackLink' => array('COLUMN_TYPE' => 'VARCHAR(1000)','DEFAULT' => '""'),
         'LostPasswordMailFrom' => array('COLUMN_TYPE' => 'VARCHAR(200)','DEFAULT' => '""'),// Update 02.09.2026
         'TextBeforeLoginForm' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 22.12.2021
         'EditProfileGroups' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 28.12.2021

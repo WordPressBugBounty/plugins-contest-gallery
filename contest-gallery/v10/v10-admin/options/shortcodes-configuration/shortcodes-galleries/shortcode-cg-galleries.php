@@ -278,7 +278,7 @@ if(!empty($galleriesOptions['g']['GalleriesPagesNoFollow'])){
 
 echo <<<HEREDOC
        <div class="cg_view_options_row cg_border_top_none">
-            <div class="cg_view_option cg_view_option_100_percent cg_border_top_none" id="GalleriesPagesNoIndexContainer">
+            <div class="cg_view_option cg_view_option_100_percent cg_border_top_none cg_border_border_bottom_left_radius_8_px cg_border_border_bottom_right_radius_8_px" id="GalleriesPagesNoIndexContainer">
                 <div class="cg_view_option_title">
                     <p style="margin-right: -30px;">
                     	Allow search engines like Google to follow links on the /contest-galleries... pages and subpages
@@ -292,25 +292,28 @@ echo <<<HEREDOC
     </div>
 HEREDOC;
 
+require_once __DIR__.'/../../../../../functions/backend/render/cg-gallery-header-options.php';
+cg_galleries_header_options($galleriesOptions,'g');
+
 echo <<<HEREDOC
 <div class="cg_view_options_row">
-	    <div class='cg_view_option cg_view_option_full_width  cg_border_top_none'>
+	    <div class='cg_view_option cg_view_option_full_width  cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px'>
 	        <div class='cg_view_option_title' style="margin-top: 10px;">
-	        	<p>Main title cg_galleries view for this gallery<br><span class="cg_view_option_title_note">Can be configured <a class="cg_go_to_link cg_no_outline_and_shadow_on_focus" href="#" data-cg-go-to-link="MainTitleGalleriesViewArea">here</a></span></p>
+	            <p>Gallery card title<br><span class="cg_view_option_title_note">Shown on this gallery's card in the overview. Configure <a class="cg_go_to_link cg_no_outline_and_shadow_on_focus" href="#" data-cg-go-to-link="MainTitleGalleriesViewArea">here</a></span></p>
 	        </div>
 	    </div>
 </div>
 <div class="cg_view_options_row">
 	    <div class='cg_view_option cg_view_option_full_width  cg_border_top_none'>
 	        <div class='cg_view_option_title'>
-	        	<p>Sub title cg_galleries view for this gallery<br><span class="cg_view_option_title_note">Can be configured <a class="cg_go_to_link cg_no_outline_and_shadow_on_focus" href="#" data-cg-go-to-link="SubTitleGalleriesViewArea">here</a></span></p>
+	            <p>Gallery card subtitle<br><span class="cg_view_option_title_note">Shown on this gallery's card in the overview. Configure <a class="cg_go_to_link cg_no_outline_and_shadow_on_focus" href="#" data-cg-go-to-link="SubTitleGalleriesViewArea">here</a></span></p>
 	        </div>
 	    </div>
 </div>
 <div class="cg_view_options_row">
 	    <div class='cg_view_option cg_view_option_full_width  cg_border_top_none'>
 	        <div class='cg_view_option_title'>
-	        	<p>Third title cg_galleries view for this gallery<br><span class="cg_view_option_title_note">Can be configured <a class="cg_go_to_link cg_no_outline_and_shadow_on_focus" href="#" data-cg-go-to-link="ThirdTitleGalleriesViewArea">here</a></span></p>
+	            <p>Gallery card description<br><span class="cg_view_option_title_note">Shown on this gallery's card in the overview. Configure <a class="cg_go_to_link cg_no_outline_and_shadow_on_focus" href="#" data-cg-go-to-link="ThirdTitleGalleriesViewArea">here</a></span></p>
 	        </div>
 	    </div>
 </div>

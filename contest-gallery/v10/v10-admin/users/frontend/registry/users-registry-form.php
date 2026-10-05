@@ -120,6 +120,7 @@ if(!$intervalConf['shortcodeIsActive']){
 
     echo "<input type='hidden' name='cg_current_page_id' id='cg_current_page_id' value='$cg_current_page_id'>";
     echo "<input type='hidden' name='cg_check' class='cg_check_not_robot_simple' id='cg_check' value='$cg_login_check'>";
+    echo '<input type="hidden" name="cg_captcha_form" value="'.esc_attr(cg_captcha_registry_signature($GalleryID,$shortcode_name==='cg_users_pin')).'">';
     echo "<input type='hidden' name='action' value='post_cg_registry'>";// !important, otherwise wordpress post will not work!!!
 
     echo "<input type='hidden' name='cg_gallery_id_registry' id='cg_gallery_id_registry' value='$GalleryID'>";
@@ -137,7 +138,7 @@ if(!$intervalConf['shortcodeIsActive']){
         // echo rows
         $echoRowClosed = false;
         $isEmptyCol = false;
-        if($previousRowNumber!=-1 && $value->RowNumber > $previousRowNumber){
+        if($previousRowNumber>0 && $value->RowNumber > $previousRowNumber){
             $echoRowClosed = true;
             cg_echo_closed_upload_form();
         }
@@ -187,7 +188,8 @@ if(!$intervalConf['shortcodeIsActive']){
                 $cgCheckUsernameNicknameMail = "id='cg_user_name_check_alert'";
             }
             if ($value->Field_Type == 'main-nick-name') {
-                $cgContentField = "<input type='text' maxlength='" . $value->Max_Char . "' placeholder='$placeholder' class='cg_registry_form_field cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_Fields[$i][Field_Content]'>";
+                $cgNameEmailMessage = esc_attr(cg_member_t('Please use a display name instead of an email address.'));
+                $cgContentField = "<input type='text' maxlength='" . $value->Max_Char . "' placeholder='$placeholder' data-name-email-message='$cgNameEmailMessage' class='cg_registry_form_field cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_Fields[$i][Field_Content]'>";
                 $cgCheckUsernameNicknameMail = "id='cg_nick_name_check_alert'";
             }
             if ($value->Field_Type == 'main-mail') {
@@ -208,7 +210,7 @@ if(!$intervalConf['shortcodeIsActive']){
 
         if ($value->Field_Type == 'profile-image') {
             $placeholder = contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Content);
-            $cgContentField = "<input type='file' class='cg_registry_form_field cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_input_image_upload_file[]'>";
+            $cgContentField = "<input type='file' class='cg_registry_form_field cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_input_image_upload_file[]'".cg_profile_image_upload_attributes()."><p class='cg-profile-image-hint'>".cg_profile_image_upload_hint()."</p>";
         }
 
         if ($value->Field_Type == 'wpfn') {
@@ -221,9 +223,10 @@ if(!$intervalConf['shortcodeIsActive']){
             $cgContentField = "<input maxlength='" . $value->Max_Char . "' type='text' placeholder='$placeholder' class='cg_registry_form_field cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_Fields[$i][Field_Content]'>";
         }
 
-        if ($value->Field_Type == 'user-text-field') {
+        if ($value->Field_Type == 'user-text-field' || $value->Field_Type == 'user-url-field') {
+            $urlAttributes = $value->Field_Type == 'user-url-field' ? ' inputmode="url" autocomplete="url" data-url-message="'.esc_attr($language_URLnotValid).'"' : '';
             $placeholder = contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Content);
-            $cgContentField = "<input maxlength='" . $value->Max_Char . "' type='text' placeholder='$placeholder' class='cg_registry_form_field cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_Fields[$i][Field_Content]'>";
+            $cgContentField = "<input maxlength='" . $value->Max_Char . "' type='text'$urlAttributes placeholder='$placeholder' class='cg_registry_form_field cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_Fields[$i][Field_Content]'>";
         }
 
         if ($value->Field_Type == 'user-check-field') {
@@ -232,8 +235,8 @@ if(!$intervalConf['shortcodeIsActive']){
                 foreach ($textAr as $optionKey => $optionValue) {
                     $optionValue = sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($optionValue));
                     $cgContentField .= '<div class="cg_check_button">
-                            <label for="cg_reg_check_button_'.$value->id.$optionKey.'">'.$optionValue.'</label>
-                            <input type="checkbox" id="cg_reg_check_button_'.$value->id.$optionKey.'" value="'.$optionValue.'" class="cg_check_button_input">
+                            <label for="cg_reg_check_button_'.$value->id.$optionKey.'">'.esc_html($optionValue).'</label>
+                            <input type="checkbox" id="cg_reg_check_button_'.$value->id.$optionKey.'" value="'.esc_attr($optionValue).'" class="cg_check_button_input">
                     </div>';
                 }
             $cgContentField .= '</div>';
@@ -245,8 +248,8 @@ if(!$intervalConf['shortcodeIsActive']){
                 foreach ($textAr as $optionKey => $optionValue) {
                     $optionValue = sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($optionValue));
                     $cgContentField .= '<div class="cg_radio_button">
-                            <label for="cg_reg_radio_button_'.$value->id.$optionKey.'">'.$optionValue.'</label>
-                            <input type="radio" id="cg_reg_radio_button_'.$value->id.$optionKey.'" name="cg_Fields['.$i.'][Field_Content]" value="'.$optionValue.'" class="cg_radio_button_input">
+                            <label for="cg_reg_radio_button_'.$value->id.$optionKey.'">'.esc_html($optionValue).'</label>
+                            <input type="radio" id="cg_reg_radio_button_'.$value->id.$optionKey.'" name="cg_Fields['.$i.'][Field_Content]" value="'.esc_attr($optionValue).'" class="cg_radio_button_input">
                     </div>';
                 }
             $cgContentField .= '</div>';
@@ -325,57 +328,7 @@ if(!$intervalConf['shortcodeIsActive']){
                 // NICHT ENTFERNEN!!!!
                 // Wichtig!!! Empty if clausel muss hier bleiben beim aktullen Aufbau sonst verschieben sich Felder.
 
-                if(!empty($GalleryID)){
-                    $GalleryIDrecaptcha = $GalleryID;
-                }else{
-                    $GalleryIDrecaptcha = 'v14';
-                }
-
-                echo "<div class='cg_recaptcha_reg_form' id='cgRecaptchaRegForm$GalleryIDrecaptcha'>";
-
-                echo "</div>";
-                echo "<p class='cg_input_error cg_hide cg_recaptcha_not_valid_reg_form_error' id='cgRecaptchaNotValidRegFormError$GalleryIDrecaptcha'></p>";
-
-                ?>
-
-                <script type="text/javascript">
-                    var ReCaKey = "<?php echo $value->ReCaKey; ?>";
-                    var cgRecaptchaNotValidRegFormError = "<?php echo 'cgRecaptchaNotValidRegFormError' . $GalleryIDrecaptcha . ''; ?>";
-                    var cgRecaptchaRegForm = "<?php echo 'cgRecaptchaRegForm' . $GalleryIDrecaptcha . ''; ?>";
-
-                    var cgRecaptchaCallbackRegistryFormRendered = false;
-
-                    if(typeof cgRecaptchaCallbackRendered == 'undefined'){
-
-                        cgRecaptchaCallbackRendered = true;
-                        cgRecaptchaCallbackRegistryFormRendered = true;
-
-                        var cgCaRoReRegCallback = function () {
-                            var element = document.getElementById(cgRecaptchaNotValidRegFormError);
-                            //element.parentNode.removeChild(element);
-                            element.classList.remove("cg_recaptcha_not_valid_reg_form_error");
-                            element.classList.add("cg_hide");
-                        };
-
-                        if(typeof cgRecaptchaFormNormalRendered == 'undefined'){
-                            cgRecaptchaFormNormalRendered = true;
-                            var cgOnloadRegCallback = function () {
-                                grecaptcha.render(cgRecaptchaRegForm, {
-                                    'sitekey': ReCaKey,
-                                    'callback': 'cgCaRoReRegCallback'
-                                });
-                            };
-                        }
-
-                    }
-
-
-                </script>
-                <script src="https://www.google.com/recaptcha/api.js?onload=cgOnloadRegCallback&render=explicit&hl=<?php echo $value->ReCaLang; ?>"
-                        async defer>
-                </script>
-
-                <?php
+                cg_captcha_render_widget($value->ReCaKey,$value->ReCaLang,true);
 
             } else {
 
@@ -389,6 +342,8 @@ if(!$intervalConf['shortcodeIsActive']){
             }
 
         }
+
+        echo cg_public_profile_field_hint($value);
 
         if ($value->Field_Type != 'user-robot-recaptcha-field' && $value->Field_Type != 'user-robot-field') {
             echo "<p class='cg_input_error cg_hide' $cgCheckUsernameNicknameMail></p>";// Fehlermeldung erscheint hier

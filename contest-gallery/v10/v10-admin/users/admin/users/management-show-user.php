@@ -44,14 +44,14 @@ $userEntries = [];
 $userEntriesNew = [];
 
 if(!empty($_GET['wp_user_meta_entries']) OR !empty($_POST['wp_user_meta_entries'])){
-    $userEntriesNew = $wpdb->get_results($wpdb->prepare( "SELECT * FROM $table_usermeta WHERE (user_id  = %d) AND (meta_key LIKE '%cg_custom_field_id_%')",[$wpUserId]));
+    $userEntriesNew = $wpdb->get_results($wpdb->prepare( "SELECT * FROM $table_usermeta WHERE (user_id  = %d) AND (meta_key LIKE %s)",array($wpUserId,$wpdb->esc_like(cg_profile_meta_prefix()).'%')));
 
     $selectUserForm = $wpdb->get_results("SELECT * FROM $tablenameCreateUserForm WHERE GeneralID = '1' && 
-                (Field_Type = 'user-text-field' OR Field_Type = 'user-comment-field' OR Field_Type = 'user-select-field' OR Field_Type = 'user-check-field' OR Field_Type = 'user-radio-field') 
+                (Field_Type = 'user-url-field' OR Field_Type = 'user-text-field' OR Field_Type = 'user-comment-field' OR Field_Type = 'user-select-field' OR Field_Type = 'user-check-field' OR Field_Type = 'user-radio-field')
         ORDER BY Field_Order ASC");
     $selectUserFormSorted = [];
     foreach($selectUserForm as $formField){
-        $selectUserFormSorted['cg_custom_field_id_'.$formField->id] = $formField;
+        $selectUserFormSorted[cg_profile_meta_key($formField->id)] = $formField;
     }
 }else{
     $userEntries = $wpdb->get_results($wpdb->prepare( "SELECT * FROM $tablename_contest_gal1ery_create_user_entries WHERE wp_user_id = %d ORDER BY id ASC",[$wpUserId]));
@@ -135,10 +135,10 @@ foreach($userEntriesNew as $entry){
     if(!empty($selectUserFormSorted[$entry->meta_key])){
 
         $fieldTitle = contest_gal1ery_convert_for_html_output_without_nl2br($selectUserFormSorted[$entry->meta_key]->Field_Name);
-        $fieldName = $entry->meta_key;
+        $fieldName = 'cg_custom_field_id_'.$selectUserFormSorted[$entry->meta_key]->id;
         $formFieldType = $selectUserFormSorted[$entry->meta_key]->Field_Type;
 
-        $userFieldContent = contest_gal1ery_convert_for_html_output_without_nl2br($entry->meta_value);
+        $userFieldContent = cg_profile_field_value($selectUserFormSorted[$entry->meta_key],get_user_meta($wpUserId,$entry->meta_key,true));
 
 
         echo "<div style='margin-bottom:10px;'>";
@@ -154,7 +154,12 @@ foreach($userEntriesNew as $entry){
             $userFieldContentDisplay = html_entity_decode(stripslashes($userFieldContent));
         }
 
-        if($formFieldType=="user-comment-field"){
+        if($formFieldType==='user-check-field'){
+            foreach(cg_member_profile_choices($selectUserFormSorted[$entry->meta_key]) as $choice){
+                echo '<label><input type="checkbox" name="'.esc_attr($fieldName).'[]" value="'.esc_attr($choice).'"'.(in_array($choice,$userFieldContent,true) ? ' checked' : '').'> '.esc_html($choice).'</label><br>';
+            }
+            echo '<input type="hidden" name="cg_profile_present['.absint($selectUserFormSorted[$entry->meta_key]->id).']" value="1">';
+        }elseif($formFieldType=="user-comment-field"){
             echo "<textarea name='".esc_attr($fieldName)."' style='width:100%;height:100px;'>".esc_textarea($userFieldContentDisplay)."</textarea>";
         }else{
             echo "<input type='text' name='".esc_attr($fieldName)."' value='".esc_attr($userFieldContentDisplay)."' style='width:100%;' />";
@@ -178,7 +183,7 @@ foreach($userEntries as $entry){
     $formFieldRowContent = $formFieldRow->Field_Content;
     $formFieldChecked = $entry->Checked;
     $formFieldVersion = $entry->Version;
-    $formFieldContent = html_entity_decode(stripslashes($entry->Field_Content));
+    $formFieldContent = $formFieldType==='user-check-field' ? cg_profile_field_text(cg_profile_field_value($formFieldRow,cg_profile_registry_check_value($entry->Field_Content))) : html_entity_decode(stripslashes($entry->Field_Content));
 
     $checkAgreementBorder = ($formFieldType=='user-check-agreement-field') ? "border-bottom: 1px dotted #DFDFDF;" : "";
 

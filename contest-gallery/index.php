@@ -2,7 +2,7 @@
 /*
 Plugin Name: Contest Gallery
 Description: Upload form, files, photos and videos upload contest gallery plugin for WordPress. Create upload forms for entries with or without file/image upload. Create user registration form. Create login form. Create responsive galleries and allow to vote for any kind of entries. Sell entries via PayPal or Stripe API. Create or edit images via OpenAI API.
-Version: 33.0.3
+Version: 34.0.0
 Requires at least: 5.6
 Requires PHP: 5.6
 Author: Contest Gallery
@@ -156,8 +156,11 @@ $cgPaidActionsLanguageFunctionsOnly = true;
 include('check-language-paid-actions.php');
 unset($cgPaidActionsLanguageFunctionsOnly);
 include('functions/general/registry/cg-pin-auth-service.php');
+include('functions/general/cg-captcha.php');
+include('functions/frontend/cg-member-area.php');
 include('functions/general/mail/cg-mail-functions.php');
 include('functions/ecommerce/paid-actions/cg-paid-actions-core.php');
+include(__DIR__.'/functions/frontend/cg-upload-jobs.php');
 include('functions/frontend/cg-paid-actions-bar.php');
 include('ajax/ajax-functions-frontend.php');
 include('ajax/ajax-functions-backend.php');
@@ -460,6 +463,8 @@ include('functions/backend/render/cg-shortcode-interval-configuration-container.
 include('functions/backend/render/cg-preview-images-to-delete-container.php');
 include('functions/backend/render/cg-network-export-modal-container.php');
 include('functions/backend/render/cg-delete-gallery-confirm-container.php');
+include('functions/backend/render/cg-member-upload-choice-container.php');
+include('functions/backend/render/cg-view-choice-container.php');
 include('functions/backend/render/cg-multiple-files-for-post-container.php');
 include('functions/backend/render/cg-entry-watermark-container.php');
 include('functions/backend/render/cg-social-containers.php');
@@ -479,6 +484,8 @@ include('functions/backend/render/cg-paid-actions-order-card.php');
 include('functions/backend/render/cg-total-images-shown-in-frontend-zero.php');
 include('functions/backend/render/cg-add-fields-pressed-after-content-modification.php');
 include('functions/backend/render/templates/cg-create-template-from-body.php');
+include('functions/backend/render/cg-mail-delivery-card.php');
+include('functions/backend/render/cg-mail-test-container.php');
 include('functions/backend/render/templates/cg-email-backend-template.php');
 
 add_action('cg_delete_files_and_folder', 'cg_delete_files_and_folder');
@@ -592,6 +599,7 @@ if (!function_exists('contest_gallery_action')) {
             cg_create_version_input();
             cg_backend_gallery_dynamic_message();
             cg_user_data_export_container();
+            cg_mail_test_container();
             cg_backend_background_drop();
             cg_database_installation_container();
             cg_backend_render_go_to_options();

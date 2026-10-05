@@ -45,15 +45,15 @@ if(!empty($GoogleId) && !empty($GoogleEmail)){
                 return;
             }
 
-            cg_google_sign_in_link_wp_user($payload,$WpUserId);
-
-            if(cg_check_headers_sent()){
+            if(!cg_google_sign_in_link_wp_user($payload,$WpUserId) || !cg_google_sign_in_set_auth_cookie($WpUserId)){
+                cg_google_sign_in_render_public_error('');
                 return;
             }
-            update_user_meta( $WpUserId, 'cgGoogleSignInJustSignedIn', 1);
-            wp_set_auth_cookie( $WpUserId,true  );
         }else{
-            cg_create_wp_user_from_google_user($payload,true);
+            if(!cg_create_wp_user_from_google_user($payload,true)){
+                cg_google_sign_in_render_public_error('');
+                return;
+            }
         }
 
     }else{
@@ -62,13 +62,15 @@ if(!empty($GoogleId) && !empty($GoogleEmail)){
         $WpUserId = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $tablenameWpUsers WHERE ID = %d", $WpUserId));
 
         if(!empty($WpUserId)){
-            if(cg_check_headers_sent()){
+            if(!cg_google_sign_in_link_wp_user($payload,$WpUserId) || !cg_google_sign_in_set_auth_cookie($WpUserId)){
+                cg_google_sign_in_render_public_error('');
                 return;
             }
-            update_user_meta( $WpUserId, 'cgGoogleSignInJustSignedIn', 1);
-            wp_set_auth_cookie( $WpUserId,true );
         }else{
-	        cg_create_wp_user_from_google_user($payload,true);
+	        if(!cg_create_wp_user_from_google_user($payload,true)){
+                cg_google_sign_in_render_public_error('');
+                return;
+            }
         }
 
     }

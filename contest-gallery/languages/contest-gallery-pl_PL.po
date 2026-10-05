@@ -264,13 +264,11 @@ msgid "Account"
 msgstr "Konto"
 
 #: check-language-general.php:42
-#, fuzzy
 #| msgid "Edit Profile"
 msgid "Edit profile"
 msgstr "Edytuj profil"
 
 #: check-language-general.php:44
-#, fuzzy
 #| msgid "Log Out"
 msgid "Log out"
 msgstr "Wyloguj"
@@ -1394,7 +1392,7 @@ msgstr "Ładowanie"
 msgid "or"
 msgstr "lub"
 
-#: check-language-paid-actions.php
+#: check-language-paid-actions.php check-language.php
 msgid "Cancel"
 msgstr "Anuluj"
 
@@ -2237,3 +2235,456 @@ msgstr "Płatność nie została ukończona. Spróbuj ponownie."
 #: check-language-ecommerce.php
 msgid "Payment canceled. You can try again."
 msgstr "Płatność anulowana. Możesz spróbować ponownie."
+
+#: check-language-general.php:140
+msgid "Register / Sign in"
+msgstr "Zarejestruj się / Zaloguj się"
+
+#: check-language-general.php:142
+msgid "Your images. Your gallery."
+msgstr "Twoje zdjęcia. Twoja galeria."
+
+#: check-language-general.php:144
+msgid "Continue with Google or a code sent to your email. New here? Your account is created when you sign in."
+msgstr "Kontynuuj przez Google lub użyj kodu wysłanego na Twój adres e-mail. Jesteś tu pierwszy raz? Twoje konto zostanie utworzone podczas logowania."
+
+#: check-language-general.php:146
+msgid "Sign in with a code sent to your email. New here? Confirm your email to create your account."
+msgstr "Zaloguj się za pomocą kodu wysłanego na Twój adres e-mail. Jesteś tu pierwszy raz? Potwierdź swój adres e-mail, aby utworzyć konto."
+
+#: check-language-general.php:142
+msgid "All images"
+msgstr "Wszystkie zdjęcia"
+
+#: check-language-general.php:144
+msgid "My images"
+msgstr "Moje zdjęcia"
+
+#: check-language-general.php:146
+msgid "Join and show your own images."
+msgstr "Dołącz i pokaż swoje zdjęcia."
+
+#: check-language-general.php:148
+msgid "Show your first image"
+msgstr "Pokaż swoje pierwsze zdjęcie"
+
+#: check-language-general.php:150
+msgid "Your uploads will appear here."
+msgstr "Przesłane zdjęcia pojawią się tutaj."
+
+#: check-language-general.php:146
+msgid "Not published"
+msgstr "Nieopublikowane"
+
+#: check-language.php
+msgid "Delete"
+msgstr "Usuń"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Entry actions"
+msgstr "Działania dotyczące zgłoszenia"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Replace image"
+msgstr "Zastąp obraz"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Choose the image to replace."
+msgstr "Wybierz obraz do zastąpienia."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Replace"
+msgstr "Zastąp"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Replacing…"
+msgstr "Zastępowanie…"
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "This entry will need approval again after replacement."
+msgstr "Po zastąpieniu obrazu to zgłoszenie będzie wymagało ponownego zatwierdzenia."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Image replaced."
+msgstr "Obraz został zastąpiony."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Image replacement is not allowed."
+msgstr "Zastępowanie obrazów jest niedozwolone."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Entries offered for sale cannot be changed here."
+msgstr "Zgłoszeń wystawionych na sprzedaż nie można tutaj zmieniać."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "This entry already has votes. Its images cannot be replaced."
+msgstr "To zgłoszenie ma już głosy. Jego obrazów nie można zastąpić."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "The time allowed for replacing this image has ended."
+msgstr "Upłynął termin zastąpienia tego obrazu."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "The upload period is closed."
+msgstr "Okres przesyłania jest zamknięty."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "This entry has changed. Reload it and try again."
+msgstr "To zgłoszenie uległo zmianie. Wczytaj je ponownie i spróbuj jeszcze raz."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "The image does not meet the gallery upload requirements."
+msgstr "Obraz nie spełnia wymagań przesyłania galerii."
+
+#: functions/frontend/cg-member-entry-actions.php
+msgid "Delete this entry and all its files?"
+msgstr "Usunąć to zgłoszenie i wszystkie jego pliki?"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Share this image"
+msgstr "Udostępnij ten obraz"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Take a look at this image"
+msgstr "Zobacz ten obraz"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Copy link"
+msgstr "Kopiuj link"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "More apps…"
+msgstr "Więcej aplikacji…"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Link copied"
+msgstr "Link skopiowany"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Copy this link:"
+msgstr "Skopiuj ten link:"
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "Sharing is unavailable. You can copy the link instead."
+msgstr "Udostępnianie jest niedostępne. Możesz skopiować link."
+
+#: functions/frontend/render/cg1l-render-frontend-elements.php
+msgid "File actions"
+msgstr "Działania na pliku"
+
+#: functions/frontend/cg-member-profile.php
+msgid "My profile"
+msgstr "Mój profil"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Additional information"
+msgstr "Dodatkowe informacje"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Display name"
+msgstr "Nazwa wyświetlana"
+
+#: functions/frontend/cg-member-profile.php
+msgid "This name is displayed across this website."
+msgstr "Ta nazwa jest wyświetlana w całej witrynie."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Choose profile image"
+msgstr "Wybierz zdjęcie profilowe"
+
+#: functions/frontend/cg-member-profile.php
+msgid "JPG, PNG or GIF. Maximum {size} MB."
+msgstr "JPG, PNG lub GIF. Maksymalnie {size} MB."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Save profile"
+msgstr "Zapisz profil"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Save information"
+msgstr "Zapisz informacje"
+
+#: functions/frontend/cg-member-profile.php
+msgid "Profile saved."
+msgstr "Profil zapisany."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Information saved."
+msgstr "Informacje zapisane."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Please enter a display name."
+msgstr "Wpisz nazwę wyświetlaną."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Please complete the required fields."
+msgstr "Wypełnij wymagane pola."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Please choose a valid option."
+msgstr "Wybierz prawidłową opcję."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Your profile has changed. Close and reopen it before saving."
+msgstr "Twój profil został zmieniony. Zamknij go i otwórz ponownie przed zapisaniem."
+
+#: functions/frontend/cg-member-profile.php
+msgid "Discard unsaved profile changes?"
+msgstr "Odrzucić niezapisane zmiany profilu?"
+
+#: functions/frontend/cg-member-profile.php
+msgid "The profile image could not be saved."
+msgstr "Nie udało się zapisać zdjęcia profilowego."
+
+#: functions/frontend/cg-member-profile.php
+msgid "You cannot edit these profile fields."
+msgstr "Nie możesz edytować tych pól profilu."
+
+#: check-language-general.php
+msgid "Share this entry"
+msgstr "Udostępnij to zgłoszenie"
+
+#: check-language-general.php
+msgid "My entries"
+msgstr "Moje zgłoszenia"
+
+#: check-language-general.php
+msgid "All entries"
+msgstr "Wszystkie zgłoszenia"
+
+#: check-language-general.php
+msgid "Your entries. Your gallery."
+msgstr "Twoje zgłoszenia. Twoja galeria."
+
+#: check-language-general.php
+msgid "Join and show your own entries."
+msgstr "Dołącz i pokaż swoje zgłoszenia."
+
+#: check-language-general.php
+msgid "Show your first entry"
+msgstr "Pokaż swoje pierwsze zgłoszenie"
+
+#: check-language-general.php
+msgid "Take a look at this entry"
+msgstr "Zobacz to zgłoszenie"
+
+#: check-language-general.php
+msgid "Gallery view"
+msgstr "Widok galerii"
+
+#: check-language-general.php
+msgid "Please try again."
+msgstr "Spróbuj ponownie."
+
+#: check-language-general.php
+msgid "The connection failed. Please try again."
+msgstr "Połączenie nie powiodło się. Spróbuj ponownie."
+
+#: check-language-general.php
+msgid "Please reload the page and try again."
+msgstr "Odśwież stronę i spróbuj ponownie."
+
+#: check-language-general.php
+msgid "This gallery is not available."
+msgstr "Ta galeria jest niedostępna."
+
+#: check-language-general.php
+msgid "Please allow cookies to sign in."
+msgstr "Zezwól na pliki cookie, aby się zalogować."
+
+#: check-language-general.php
+msgid "Please sign in."
+msgstr "Zaloguj się."
+
+#: check-language-general.php
+msgid "Check your email for your code."
+msgstr "Sprawdź swoją pocztę, aby znaleźć kod."
+
+#: check-language-general.php
+msgid "Please wait {seconds} seconds before requesting another code."
+msgstr "Odczekaj {seconds} sekund przed wysłaniem prośby o kolejny kod."
+
+#: check-language-general.php
+msgid "Loading…"
+msgstr "Wczytywanie…"
+
+#: check-language-general.php
+msgid "Saved"
+msgstr "Zapisano"
+
+#: check-language-general.php
+msgid "Visible on your public profile"
+msgstr "Widoczne w Twoim publicznym profilu"
+
+#: check-language-general.php
+msgid "View profile"
+msgstr "Zobacz profil"
+
+#: check-language-general.php
+msgid "View profile of {name}"
+msgstr "Zobacz profil użytkownika {name}"
+
+#: check-language-general.php
+msgid "Entry owner"
+msgstr "Autor zgłoszenia"
+
+#: check-language-general.php
+msgid "Participants"
+msgstr "Uczestnicy"
+
+#: check-language-general.php
+msgid "Back to participants"
+msgstr "Powrót do uczestników"
+
+#: check-language-general.php
+msgid "Search names and profile information"
+msgstr "Szukaj w nazwach i informacjach profilowych"
+
+#: check-language-general.php
+msgid "Name A–Z"
+msgstr "Nazwa A–Z"
+
+#: check-language-general.php
+msgid "Name Z–A"
+msgstr "Nazwa Z–A"
+
+#: check-language-general.php
+msgid "No participants found."
+msgstr "Nie znaleziono uczestników."
+
+#: check-language-general.php
+msgid "No participants with a profile yet. Published entries with a profile will appear here."
+msgstr "Nie ma jeszcze uczestników z profilem. Opublikowane zgłoszenia powiązane z profilem pojawią się tutaj."
+
+#: check-language-general.php
+msgid "This profile is no longer available in this gallery."
+msgstr "Ten profil nie jest już dostępny w tej galerii."
+
+#: check-language-general.php
+msgid "1 entry"
+msgstr "1 zgłoszenie"
+
+#: check-language-general.php
+#, php-format
+msgid "%s entries"
+msgstr "Zgłoszenia: %s"
+
+#: check-language-general.php
+msgid "Rating average"
+msgstr "Średnia ocen"
+
+#: check-language-general.php
+msgid "Rating sum"
+msgstr "Suma ocen"
+
+#: check-language-general.php
+msgid "Gallery"
+msgstr "Galeria"
+
+#: check-language-general.php
+msgid "Galleries"
+msgstr "Galerie"
+
+#: check-language-general.php
+msgid "Entries"
+msgstr "Zgłoszenia"
+
+#: check-language-general.php
+msgid "Discover galleries"
+msgstr "Odkryj galerie"
+
+#: check-language-general.php
+msgid "Explore the gallery"
+msgstr "Przeglądaj galerię"
+
+#: check-language-general.php
+msgid "Explore galleries and their entries."
+msgstr "Przeglądaj galerie i ich zgłoszenia."
+
+#: check-language-general.php
+msgid "Explore the entries in this gallery."
+msgstr "Przeglądaj zgłoszenia w tej galerii."
+
+#: check-language-general.php
+msgid "This participant in this gallery"
+msgstr "Ten uczestnik w tej galerii"
+
+#: check-language-general.php
+msgid "Replace file"
+msgstr "Zastąp plik"
+
+#: check-language-general.php
+msgid "Choose the file to replace."
+msgstr "Wybierz plik do zastąpienia."
+
+#: check-language-general.php
+msgid "Replaced"
+msgstr "Zastąpiono"
+
+#: check-language-general.php
+msgid "File replaced."
+msgstr "Plik został zastąpiony."
+
+#: check-language-general.php
+msgid "The preview could not be refreshed."
+msgstr "Nie udało się odświeżyć podglądu."
+
+#: check-language-general.php
+msgid "The file does not meet the gallery upload requirements."
+msgstr "Plik nie spełnia wymagań przesyłania do galerii."
+
+#: check-language-general.php
+msgid "The PDF preview could not be created. Please try again."
+msgstr "Nie udało się utworzyć podglądu PDF. Spróbuj ponownie."
+
+#: check-language-general.php
+msgid "Too many replacement attempts. Please try again later."
+msgstr "Zbyt wiele prób zastąpienia. Spróbuj ponownie później."
+
+#: check-language-general.php
+msgid "Your replacement storage limit has been reached. Please contact the gallery administrator."
+msgstr "Osiągnięto limit miejsca na pliki zastępcze. Skontaktuj się z administratorem galerii."
+
+#: functions/frontend/cg-upload-jobs.php
+msgid "Continuing image processing…"
+msgstr "Wznawianie przetwarzania obrazu…"
+
+#: functions/frontend/cg-upload-jobs.php
+msgid "Check status"
+msgstr "Sprawdź stan"
+
+#: check-language-general.php
+msgid "Upload completed."
+msgstr "Przesyłanie zakończone."
+
+#: check-language-general.php
+msgid "Refresh"
+msgstr "Odśwież"
+
+#: check-language.php
+msgid "Slow down, you are too fast. Please wait a moment before sending another comment."
+msgstr "Poczekaj chwilę, zanim wyślesz kolejny komentarz."
+
+#: check-language-general.php
+msgid "Your public profile"
+msgstr "Twój profil publiczny"
+
+#: check-language-general.php
+msgid "Public profile"
+msgstr "Profil publiczny"
+
+#: check-language-general.php
+msgid "View public profile"
+msgstr "Zobacz profil publiczny"
+
+
+#: functions/frontend/cg-participants.php check-language-general.php
+msgid "Votes descend"
+msgstr "Głosy malejąco"
+
+#: functions/frontend/cg-participants.php check-language-general.php
+msgid "Votes ascend"
+msgstr "Głosy rosnąco"
+
+msgid "Please use a display name instead of an email address."
+msgstr "Użyj nazwy wyświetlanej zamiast adresu e-mail."

@@ -1,10 +1,16 @@
 <?php
 
+$cgMailDeliveryCard = cg_mail_delivery_card('Admin comment notification',array(
+    'from'=>array('[name="CommNoteFrom"]',$CommNoteFrom),
+    'reply'=>array('[name="CommNoteReply"]',$CommNoteReply),
+    'to'=>array('[name="CommNoteAdminMail"]',$CommNoteAdminMail)
+),'');
+
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container cg_go_to_target' data-cg-go-to-target="CommentNotificationArea">
         <p class='cg_view_options_rows_container_title'>Comments notification e-mail options for admin
-            <br><span class='cg_view_options_rows_container_title_note'>$cgDomainErrorText</span>
         </p>
+        $cgMailDeliveryCard
 HEREDOC;
 
 
@@ -42,12 +48,10 @@ echo <<<HEREDOC
        <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_comm_note_option  cg_view_option_full_width cg_border_top_none $cgProFalse' id="CommNoteAdminMail" >
                     <div class='cg_view_option_title'>
-                        <p>Admin e-mail (To)<br><span class="cg_view_option_title_note">
-                            $cgDomainErrorText</span>
-                        </p>
+                        <p>Admin e-mail (To)</p>
                     </div>
                     <div class='cg_view_option_input'>
-                        <input type="text" class="cg_domain_error_input" name="CommNoteAdminMail" value="$CommNoteAdminMail"  maxlength="200" >
+                        <input type="text" name="CommNoteAdminMail" value="$CommNoteAdminMail"  maxlength="200" >
                     </div>
                 </div>
        </div>

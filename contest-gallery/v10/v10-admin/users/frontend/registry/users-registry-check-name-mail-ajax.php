@@ -1,10 +1,6 @@
 <?php
 if(!defined('ABSPATH')){exit;}
 
-if(!empty($_FILES) AND !empty($_FILES['cg_input_image_upload_file']) AND !empty($_FILES['cg_input_image_upload_file']['tmp_name']) AND !empty($_FILES['cg_input_image_upload_file']['tmp_name'][0])){
-    $_FILES = cg1l_sanitize_files($_FILES,'cg_input_image_upload_file',2100000);
-}
-
 $GalleryID = absint(sanitize_text_field($_POST['cg_gallery_id_registry']));
 
 $wp_upload_dir = wp_upload_dir();

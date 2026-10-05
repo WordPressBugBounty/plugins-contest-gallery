@@ -87,7 +87,7 @@ if (!function_exists('contest_gal1ery_mail_image_activation'))   {
         $cgMailGalleryId = $galeryID;
         add_action( 'wp_mail_failed', 'cg_on_wp_mail_error', 10, 1 );
 
-        if(wp_mail($userMail, $Subject, $Msg, $headers)){
+        if(cg_upload_job_mail($userMail, $Subject, $Msg, $headers)){
             $WpUserId = 0;
             if(is_user_logged_in()){
                 $user = wp_get_current_user();

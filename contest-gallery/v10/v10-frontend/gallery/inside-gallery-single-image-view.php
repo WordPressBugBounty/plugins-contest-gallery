@@ -43,8 +43,8 @@ echo <<<HEREDOC
                             <div class="cg-center-arrow cg-center-arrow-right" id="cgCenterArrowRight$galeryIDuserForJs" data-cg-tooltip="$language_NextImage" ></div>
                         </div>
                     </div>
-                   <div class="cg-center-image-div-buttons-second-controls">
-                   <div class="cg_delete_user_image cg_hide" data-cg-gid="$galeryIDuserForJs" ></div>
+                   <div class="cg-center-image-div-buttons-second-controls cg-file-actions">
+                   <div class="cg_delete_user_image cg_hide" role="button" tabindex="0" aria-haspopup="menu" data-cg-gid="$galeryIDuserForJs" ></div>
                    $switchStyleGalleryButton
                           <div class="cg-image-image-href-to-copy cg_gallery_control_element cg_hide" data-cg-gid="$galeryIDuserForJs" data-cg-tooltip="$language_CopyGalleryEntryLink"></div>
                          <div class="cg-center-image-download cg_hide"  data-cg-tooltip="$language_Download"></div>
@@ -88,21 +88,26 @@ echo <<<HEREDOC
                              </div>
 HEREDOC;
 
+$cgFileCopy = cg1l_file_action_content('copyOriginal',$language_CopyOriginalFileSourceLink);
+$cgFileOpen = cg1l_file_action_content('openOriginal',$language_OpenOriginalFileInNewTab);
+$cgFileDownload = cg1l_file_action_content('download',$language_DownloadOriginalFile);
+$cgEntryCopy = cg1l_file_action_content('copyLink',$language_CopyGalleryEntryLink);
+
 echo <<<HEREDOC
                             <div id="cgCenterImageRatingAndButtonsDiv$galeryIDuserForJs" class="cg-center-image-rating-and-buttons-div">
                              <div id="cgCenterImageDivButtonsLeft$galeryIDuserForJs" class="cg-center-image-div-buttons-left">
-                                   <div class="cg-center-image-div-buttons-second-controls">
-                                        <div class="cg_delete_user_image cg_hide" data-cg-gid="$galeryIDuserForJs" ></div>
-                                         <div class="cg-copy-original-file-link cg_hide" data-cg-tooltip="$language_CopyOriginalFileSourceLink" title="$language_CopyOriginalFileSourceLink"></div>
-                                         <div class="cg-forward-original-file cg_hide" data-cg-tooltip="$language_OpenOriginalFileInNewTab" title="$language_OpenOriginalFileInNewTab"></div>
+                                   <div class="cg-center-image-div-buttons-second-controls cg-file-actions">
+                                        <div class="cg_delete_user_image cg_hide" role="button" tabindex="0" aria-haspopup="menu" data-cg-gid="$galeryIDuserForJs" ></div>
+                                         <button type="button" class="cg-copy-original-file-link cg-action-button cg-file-action cg_hide" data-cg-tooltip="$language_CopyOriginalFileSourceLink" title="$language_CopyOriginalFileSourceLink">$cgFileCopy</button>
+                                         <div class="cg-forward-original-file cg-action-button cg-file-action cg_hide" data-cg-tooltip="$language_OpenOriginalFileInNewTab" title="$language_OpenOriginalFileInNewTab">$cgFileOpen</div>
                                     </div>
                                 </div>
                                 <div id="cgCenterImageRatingDiv$galeryIDuserForJs" class="cg-center-image-rating-div">
                                 </div>
                                 <div id="cgCenterImageDivButtons$galeryIDuserForJs" class="cg-center-image-div-buttons">
-                                   <div class="cg-center-image-div-buttons-second-controls">
-                                         <div class="cg-center-image-download cg_hide" data-cg-tooltip="$language_DownloadOriginalFile" title="$language_DownloadOriginalFile"></div>
-                                          <div class="cg-image-image-href-to-copy cg_gallery_control_element cg_hide" data-cg-gid="$galeryIDuserForJs" data-cg-tooltip="$language_CopyGalleryEntryLink" title="$language_CopyGalleryEntryLink"></div>
+                                   <div class="cg-center-image-div-buttons-second-controls cg-file-actions">
+                                         <div class="cg-center-image-download cg-action-button cg-file-action cg_hide" data-cg-tooltip="$language_DownloadOriginalFile" title="$language_DownloadOriginalFile">$cgFileDownload</div>
+                                          <button type="button" class="cg-image-image-href-to-copy cg-action-button cg-file-action cg_gallery_control_element cg_hide" data-cg-gid="$galeryIDuserForJs" data-cg-tooltip="$language_CopyGalleryEntryLink" title="$language_CopyGalleryEntryLink">$cgEntryCopy</button>
                                     </div>
                                 </div>
                             </div>                 
@@ -171,11 +176,7 @@ HEREDOC;
 
 echo <<<HEREDOC
 <div id="cgCenterImageInfoSaveIconTextContainer$galeryIDuserForJs" class="cg-center-image-info-save-icon-text-container">
-                                    <div id="cgCenterImageInfoSaveIcon$galeryIDuserForJs" class="cg-center-image-info-save-icon">                                        
-                                    </div>
-                                    <div id="cgCenterImageInfoSaveText$galeryIDuserForJs" class="cg-center-image-info-save-text">
-                                        $language_Save                                        
-                                    </div>
+                                    <button type="button" id="cgCenterImageInfoSaveText$galeryIDuserForJs" class="cg-center-image-info-save-text cg-entry-save">$language_Save</button>
                                 </div>
                                 
                              <div id="cgCenterImageCommentsDivShowMoreInfo$galeryIDuserForJs" class="cg_hover_effect cg-center-image-comments-div-show-more cg-center-image-comments-div-show-more-info cg_hide">

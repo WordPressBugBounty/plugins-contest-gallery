@@ -932,6 +932,9 @@ if($isEntryLandingPage){
 	]);
 }
 
+global $cgPagePresentation;
+$cgPagePresentation = true;
+$cgPageTheme = $isGalleriesLandingPage ? (!empty($galleriesOptions['FeControlsStyle']) ? $galleriesOptions['FeControlsStyle'] : 'white') : (!empty($options['visual']['FeControlsStyle']) ? $options['visual']['FeControlsStyle'] : 'white');
 ?>
 <!doctype html>
 <html <?php language_attributes(); ?>>
@@ -1048,16 +1051,14 @@ if($isEntryLandingPage){
         echo "</style>";
     }
 
-if(!empty($cgEntryId)){
-	echo "<style>";
+    // Limit automatic gallery pages while keeping entry pages at their existing reading width.
+    echo "<style>";
         echo "#mainCGdivEntryPageContainer{\r\n";
-        echo "max-width: 1000px;\r\n";
-        echo "max-width: 1000px;\r\n";
+        echo "max-width: ".(!empty($cgEntryId) ? '1000px' : '1920px').";\r\n";
         echo "margin-left: auto;\r\n";
         echo "margin-right: auto;\r\n";
         echo "}\r\n";
-	echo "</style>";
-}
+    echo "</style>";
 
     echo "<style>";
     echo "#wp-admin-bar-site-editor {display: none !important;}";
@@ -1074,7 +1075,7 @@ if(!empty($cgEntryId)){
 
     ?>
 </head>
-<body id="body" data-cg-is-logged-in=<?php echo json_encode($is_loggedn_in); ?> >
+<body id="body" class="cg-presentation-page cg-page-<?php echo $cgPageTheme === 'black' ? 'dark' : 'light'; ?>" data-cg-is-logged-in=<?php echo json_encode($is_loggedn_in); ?> >
 	<div id="mainCGdivEntryPageContainer">
 	    <?php
 	    //the_title(); // for later integration
