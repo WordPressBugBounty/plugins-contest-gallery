@@ -27,19 +27,29 @@ foreach(cg_member_entry_action_strings() as $cgMemberActionKey){
     if($cgMemberActionKey==='Delete this entry and all its files?'){continue;} // Edited with the other deletion messages in User Gallery.
     $cgMemberTranslationFields[] = array($cgMemberActionKey,__($cgMemberActionKey,'contest-gallery'),'Own entry actions and image replacement',500);
 }
+$cgMemberTranslationGroups = array('Entry tabs and actions'=>$cgMemberTranslationFields);
+$cgMemberTranslationFields = array();
 foreach(cg_member_profile_strings() as $cgMemberProfileKey){
     $cgMemberTranslationFields[] = array($cgMemberProfileKey,__($cgMemberProfileKey,'contest-gallery'),'Gallery member profile',500);
 }
+$cgMemberTranslationGroups['Profile fields'] = $cgMemberTranslationFields;
 foreach(cg_member_interface_translation_groups() as $cgMemberGroupTitle=>$cgMemberGroupKeys){
+    $cgMemberTranslationFields = array();
     foreach($cgMemberGroupKeys as $cgMemberGroupKey){
         $cgMemberTranslationFields[] = array($cgMemberGroupKey,__($cgMemberGroupKey,'contest-gallery'),$cgMemberGroupTitle,500);
     }
+    $cgMemberTranslationGroups[$cgMemberGroupTitle] = $cgMemberTranslationFields;
 }
-echo '<p class="cg_view_options_rows_container_title">Gallery member area</p>';
+echo '</div><div class="cg_view_options_rows_container"><p class="cg_view_options_rows_container_title">Member area</p></div>';
+$cgMemberTranslationSeen = array();
+foreach($cgMemberTranslationGroups as $cgMemberGroupTitle=>$cgMemberTranslationFields){
+    echo '<div class="cg_view_options_rows_container"><p class="cg_view_options_rows_container_title">Member area: '.esc_html($cgMemberGroupTitle).'</p>';
 foreach($cgMemberTranslationFields as $cgMemberTranslationField){
+    if(isset($cgMemberTranslationSeen[$cgMemberTranslationField[0]])){continue;}
+    $cgMemberTranslationSeen[$cgMemberTranslationField[0]] = true;
     $cgMemberTranslationKey = esc_attr($cgMemberTranslationField[0]);
     $cgMemberTranslationLabel = esc_html($cgMemberTranslationField[1]);
-    $cgMemberTranslationValue = esc_attr($translations[$cgMemberTranslationField[0]]);
+    $cgMemberTranslationValue = esc_attr(isset($translations[$cgMemberTranslationField[0]]) ? $translations[$cgMemberTranslationField[0]] : '');
     $cgMemberTranslationHint = esc_html($cgMemberTranslationField[2]);
     $cgMemberTranslationMaxLength = intval($cgMemberTranslationField[3]);
     echo <<<HEREDOC
@@ -55,8 +65,12 @@ foreach($cgMemberTranslationFields as $cgMemberTranslationField){
          </div>
 HEREDOC;
 }
+    echo '</div>';
+}
 
 echo <<<HEREDOC
+<div class='cg_view_options_rows_container'>
+<p class='cg_view_options_rows_container_title'>Logged in user menu bar and edit profile area</p>
       <div class='cg_view_options_row' >
             <div class='cg_view_option cg_view_option_full_width $beforeSinceV14Disabled' >
                 <div class='cg_view_option_title'>

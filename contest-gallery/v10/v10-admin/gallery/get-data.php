@@ -71,7 +71,7 @@ if(!empty($_GET['option_id'])){
 }
 
 $start = 0; // Startwert setzen (0 = 1. Zeile)
-$step =10;
+$step =20;
 $order ='date_desc';
 
 
@@ -102,7 +102,7 @@ if(isset($_POST['cgStepsChanged'])){
 if (isset($_GET["step"])) {
     $muster = "/^[0-9]+$/"; // reg. Ausdruck f�r Zahlen
     if (preg_match($muster, (isset($_GET["start"]) ? $_GET["start"] : 1)) == 0) {
-        $step = 10; // Bei Manipulation R�ckfall auf 0
+        $step = 20; // Bei Manipulation R�ckfall auf 0
     } else {
         $step = absint(sanitize_text_field($_GET["step"]));
     }
@@ -110,7 +110,7 @@ if (isset($_GET["step"])) {
     if(isset($_POST['cg_step'])){
         $step = absint(sanitize_text_field($_POST['cg_step']));
     }else{
-        $step = 10;
+        $step = 20;
     }
 }
 

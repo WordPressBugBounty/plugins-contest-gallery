@@ -473,6 +473,8 @@ HEREDOC;
                 }
             }
 
+            $cgMemberMessagesLink = current_user_can('manage_options') ? ' | <span><a class="cg_member_admin_messages_open" target="_blank" rel="noopener" href="'.esc_url(cg_member_admin_messages_url($userId,$GalleryID)).'">Messages</a></span>' : '';
+
             // var_dump(get_avatar( 1));
 
             echo " <tr id=\"user-$userId\">
@@ -490,7 +492,7 @@ HEREDOC;
                 echo "<br>
                                     <div class=\"row-actions\"><span><a target='_blank' 
                                             href=\"$editUserWPprofileLink\">Edit WordPress Profile</a> | </span>
-                                            $contestGalleryEntriesEditLink
+                                            $contestGalleryEntriesEditLink$cgMemberMessagesLink
                                             </div>
                                 </td>
                                 <td class=\"email column-email\" data-colname=\"Email\">$user_email

@@ -21,7 +21,7 @@ echo print_r($_POST);
 echo "</pre>";*/
 
 $start = 0; // Startwert setzen (0 = 1. Zeile)
-$step = 10;
+$step = 20;
 
 if (isset($_GET["start"])) {
 	$muster = "/^[0-9]+$/"; // reg. Ausdruck f�r Zahlen
@@ -35,7 +35,7 @@ if (isset($_GET["start"])) {
 if (isset($_GET["step"])) {
 	$muster = "/^[0-9]+$/"; // reg. Ausdruck f�r Zahlen
 	if (preg_match($muster, (isset($_GET["start"]) ? absint($_GET["start"]) : 1)) == 0) {
-		$step = 10; // Bei Manipulation R�ckfall auf 0
+		$step = 20; // Bei Manipulation R�ckfall auf 0
 	} else {
 		$step = absint($_GET["step"]);
 	}

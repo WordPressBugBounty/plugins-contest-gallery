@@ -21,7 +21,7 @@ if(!function_exists('cg1l_get_rating_gallery_one_star')){
         if(!$isVotingPossible){
             $galleryRatingClass .= ' cg_pointer_events_none';
         }
-        return '<div class="'.$galleryRatingClass.'" id="cg_gallery_rating_div'.$fullData['id'].'" aria-label="Ratings">
+        return '<div class="'.$galleryRatingClass.'" id="cg_gallery_rating_div'.$fullData['id'].'" aria-label="'.esc_attr(cg_member_t('ratings')).'">
             '.$cg_gallery_rating_div_child.'
        </div>';
     }

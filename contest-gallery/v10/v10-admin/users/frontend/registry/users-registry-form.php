@@ -55,7 +55,7 @@ if(!$intervalConf['shortcodeIsActive']){
 
     echo "<div id='cg_user_registry_div' class='cg_user_registry_div mainCGdivUploadForm$cgUsersPinContainerModeClass $InGalleryRegistryHide $mainCGdivUploadFormType $cgHideUserAjaxLoginForm $BorderRadiusRegistry $FeControlsStyleRegistry' data-cg-gid='$galeryIDuser' >";
 
-    echo "<div class='cg_hover_effect cg-close-upload-form $FeControlsStyleRegistry $cgHideUserAjaxLoginFormCloseButton' data-cg-gid='$galeryIDuser' data-cg-tooltip='$language_Close'>";
+    echo "<div class='cg_hover_effect cg-close-upload-form $FeControlsStyleRegistry $cgHideUserAjaxLoginFormCloseButton' data-cg-gid='$galeryIDuser' data-cg-tooltip='".esc_attr($language_Close)."'>";
     echo "</div>";
 
     echo "<div style='visibility: hidden;' class='mainCGdivUploadFormContainer' >";
@@ -307,7 +307,7 @@ if(!$intervalConf['shortcodeIsActive']){
 
                 echo "<select name='cg_Fields[$i][Field_Content]' class='cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_Fields[$i][Field_Content]' >";
 
-                echo "<option value=''>$language_pleaseSelect</option>";
+                echo "<option value=''>".esc_html($language_pleaseSelect)."</option>";
 
                 foreach ($textAr as $optionKey => $optionValue) {
 
@@ -381,7 +381,7 @@ if(!$intervalConf['shortcodeIsActive']){
     if($shortcode_name == 'cg_users_pin'){
         $submitText = $language_SendPin;
     }
-    echo '<button type="submit" name="cg_registry_submit" id="cg_users_registry_check" class="cg_users_registry_check cg_form_upload_submit" >' . $submitText . '</button>';
+    echo '<button type="submit" name="cg_registry_submit" id="cg_users_registry_check" class="cg_users_registry_check cg_form_upload_submit" >' . esc_html($submitText) . '</button>';
     echo "<p class='cg_input_error cg_hide' id='cg_registry_manipulation_error'></p>";
     echo '<div class="cg_form_div_image_upload_preview_loader_container cg_hide"><div class="cg_form_div_image_upload_preview_loader cg-lds-dual-ring-gallery-hide cg-lds-dual-ring-gallery-hide-mainCGallery"></div></div>';
     echo "</div>";
@@ -401,7 +401,7 @@ if(!$intervalConf['shortcodeIsActive']){
             <div class="cg_row cglPinContent" id="cglPinContent" >
                 <div class="cg_row_col cg_100">
                     <div class="cg_form_div">
-                        <label for="cglPin" style="text-align: center;">'.$language_EnterPin.'</label>
+                        <label for="cglPin" style="text-align: center;">'.esc_html($language_EnterPin).'</label>
                         <div class="cg-pin-wrapper">
                             <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*"
                                    class="cg-pin-digit" data-index="0">
@@ -423,9 +423,9 @@ if(!$intervalConf['shortcodeIsActive']){
                 </div>
                 <div class="cg_form_upload_submit_div cg_form_div" style="text-align: center;margin-top: 0;">
                     <button type="submit" id="cglPinSubmit" 
-                        class="cglPinSubmit cg_form_upload_submit">'.$language_ConfirmPin.'</button>
+                        class="cglPinSubmit cg_form_upload_submit">'.esc_html($language_ConfirmPin).'</button>
                     <button type="button" class="cglPinSendNewButton cglPinCooldown" data-cg-send-new-pin-label="'.esc_attr($language_SendNewPin).'" data-cg-send-new-pin-countdown="'.esc_attr($language_SendNewPinCountdown).'" data-cg-pin-resend-seconds="'.$cgPinResendSeconds.'" disabled aria-disabled="true">'.esc_html(strtr($language_SendNewPinCountdown,array('{seconds}'=>$cgPinResendSeconds))).'</button>
-                    <div class="cglPinAuthMessage" role="status" aria-live="polite">'.$language_PinSentToYourEmail.'</div>
+                    <div class="cglPinAuthMessage" role="status" aria-live="polite">'.esc_html($language_PinSentToYourEmail).'</div>
                         <p class="cg_input_error cg_hide cglPinSubmitError" id="cglPinSubmitError" style="text-align: center; margin-left: auto; margin-right: auto;"></p>
                 </div>
             </div>
@@ -436,13 +436,13 @@ if(!$intervalConf['shortcodeIsActive']){
             <div class="cg_row">
                 <div class="cg_row_col cg_100">
                     <div class="cg_form_div">
-                        <label for="cglResendPin" style="text-align: center;">'.$language_PinExpiredRequestNewOne.'</label>
+                        <label for="cglResendPin" style="text-align: center;">'.esc_html($language_PinExpiredRequestNewOne).'</label>
                     </div>
                 </div>
             </div>
             <div class="cg_form_upload_submit_div cg_form_div" style="text-align: center;margin-top: 0;">
                 <button type="submit" id="cglResendPinSubmit" 
-                        class="cg_form_upload_submit cglResendPinSubmit">'.$language_SendNewPin.'</button>
+                        class="cg_form_upload_submit cglResendPinSubmit">'.esc_html($language_SendNewPin).'</button>
                         <p class="cg_input_error cg_hide cglResendPinSubmitError" id="cglResendPinSubmitError"></p>
             </div>
         </form>';
@@ -455,53 +455,53 @@ if(!$intervalConf['shortcodeIsActive']){
     echo "<input type='hidden' id='cg_show_upload' value='1'>";
 
 //echo "language_ThisFileTypeIsNotAllowed: $language_ThisFileTypeIsNotAllowed";
-    echo "<input type='hidden' id='cg_file_not_allowed_1' value='$language_ThisFileTypeIsNotAllowed'>";
-    echo "<input type='hidden' id='cg_file_size_to_big' value='$language_TheFileYouChoosedIsToBigMaxAllowedSize'>";
+    echo "<input type='hidden' id='cg_file_not_allowed_1' value='".esc_attr($language_ThisFileTypeIsNotAllowed)."'>";
+    echo "<input type='hidden' id='cg_file_size_to_big' value='".esc_attr($language_TheFileYouChoosedIsToBigMaxAllowedSize)."'>";
 //echo "<input type='hidden' id='cg_post_size' value='$post_max_sizeMB'>";
 
-    echo "<input type='hidden' id='cg_to_high_resolution' value='$language_TheResolutionOfThisPicIs'>";
+    echo "<input type='hidden' id='cg_to_high_resolution' value='".esc_attr($language_TheResolutionOfThisPicIs)."'>";
 
-    echo "<input type='hidden' id='cg_max_allowed_resolution_jpg' value='$language_MaximumAllowedResolutionForJPGsIs'>";
-    echo "<input type='hidden' id='cg_max_allowed_width_jpg' value='$language_MaximumAllowedWidthForJPGsIs'>";
-    echo "<input type='hidden' id='cg_max_allowed_height_jpg' value='$language_MaximumAllowedHeightForJPGsIs'>";
+    echo "<input type='hidden' id='cg_max_allowed_resolution_jpg' value='".esc_attr($language_MaximumAllowedResolutionForJPGsIs)."'>";
+    echo "<input type='hidden' id='cg_max_allowed_width_jpg' value='".esc_attr($language_MaximumAllowedWidthForJPGsIs)."'>";
+    echo "<input type='hidden' id='cg_max_allowed_height_jpg' value='".esc_attr($language_MaximumAllowedHeightForJPGsIs)."'>";
 
-    echo "<input type='hidden' id='cg_max_allowed_resolution_png' value='$language_MaximumAllowedResolutionForPNGsIs'>";
-    echo "<input type='hidden' id='cg_max_allowed_width_png' value='$language_MaximumAllowedWidthForPNGsIs'>";
-    echo "<input type='hidden' id='cg_max_allowed_height_png' value='$language_MaximumAllowedHeightForPNGsIs'>";
+    echo "<input type='hidden' id='cg_max_allowed_resolution_png' value='".esc_attr($language_MaximumAllowedResolutionForPNGsIs)."'>";
+    echo "<input type='hidden' id='cg_max_allowed_width_png' value='".esc_attr($language_MaximumAllowedWidthForPNGsIs)."'>";
+    echo "<input type='hidden' id='cg_max_allowed_height_png' value='".esc_attr($language_MaximumAllowedHeightForPNGsIs)."'>";
 
-    echo "<input type='hidden' id='cg_max_allowed_resolution_gif' value='$language_MaximumAllowedResolutionForGIFsIs'>";
-    echo "<input type='hidden' id='cg_max_allowed_width_gif' value='$language_MaximumAllowedWidthForGIFsIs'>";
-    echo "<input type='hidden' id='cg_max_allowed_height_gif' value='$language_MaximumAllowedHeightForGIFsIs'>";
+    echo "<input type='hidden' id='cg_max_allowed_resolution_gif' value='".esc_attr($language_MaximumAllowedResolutionForGIFsIs)."'>";
+    echo "<input type='hidden' id='cg_max_allowed_width_gif' value='".esc_attr($language_MaximumAllowedWidthForGIFsIs)."'>";
+    echo "<input type='hidden' id='cg_max_allowed_height_gif' value='".esc_attr($language_MaximumAllowedHeightForGIFsIs)."'>";
 
-    echo "<input type='hidden' id='cg_check_agreement' value='$language_YouHaveToCheckThisAgreement '>";
-    echo "<input type='hidden' id='cg_check_email_upload' value='$language_EmailAddressHasToBeValid'>";
-    echo "<input type='hidden' id='cg_min_characters_text' value='$language_MinAmountOfCharacters'>";
-    echo "<input type='hidden' id='cg_max_characters_text' value='$language_MaxAmountOfCharacters'>";
-    echo "<input type='hidden' id='cg_no_picture_is_choosed' value='$language_ChooseYourImage'>";
+    echo "<input type='hidden' id='cg_check_agreement' value='".esc_attr($language_YouHaveToCheckThisAgreement." ")."'>";
+    echo "<input type='hidden' id='cg_check_email_upload' value='".esc_attr($language_EmailAddressHasToBeValid)."'>";
+    echo "<input type='hidden' id='cg_min_characters_text' value='".esc_attr($language_MinAmountOfCharacters)."'>";
+    echo "<input type='hidden' id='cg_max_characters_text' value='".esc_attr($language_MaxAmountOfCharacters)."'>";
+    echo "<input type='hidden' id='cg_no_picture_is_choosed' value='".esc_attr($language_ChooseYourImage)."'>";
 
-    echo "<input type='hidden' id='cg_language_BulkUploadQuantityIs' value='$language_BulkUploadQuantityIs'>";
-    echo "<input type='hidden' id='cg_language_BulkUploadLowQuantityIs' value='$language_BulkUploadLowQuantityIs'>";
+    echo "<input type='hidden' id='cg_language_BulkUploadQuantityIs' value='".esc_attr($language_BulkUploadQuantityIs)."'>";
+    echo "<input type='hidden' id='cg_language_BulkUploadLowQuantityIs' value='".esc_attr($language_BulkUploadLowQuantityIs)."'>";
 
-    echo "<input type='hidden' id='cg_language_BulkUploadLowQuantityIs' value='$language_BulkUploadLowQuantityIs'>";
-    echo "<input type='hidden' id='cg_language_ThisMailAlreadyExists' value='$language_ThisMailAlreadyExists'>";
-    echo "<input type='hidden' id='cg_language_ThisNicknameAlreadyExists' value='$language_ThisNicknameAlreadyExists'>";
-    echo "<input type='hidden' id='cg_language_ThisUsernameAlreadyExists' value='$language_ThisUsernameAlreadyExists'>";
+    echo "<input type='hidden' id='cg_language_BulkUploadLowQuantityIs' value='".esc_attr($language_BulkUploadLowQuantityIs)."'>";
+    echo "<input type='hidden' id='cg_language_ThisMailAlreadyExists' value='".esc_attr($language_ThisMailAlreadyExists)."'>";
+    echo "<input type='hidden' id='cg_language_ThisNicknameAlreadyExists' value='".esc_attr($language_ThisNicknameAlreadyExists)."'>";
+    echo "<input type='hidden' id='cg_language_ThisUsernameAlreadyExists' value='".esc_attr($language_ThisUsernameAlreadyExists)."'>";
 
-    echo "<input type='hidden' id='cg_language_PleaseFillOut' value='$language_PleaseFillOut'>";
-    echo "<input type='hidden' id='cg_language_Required' value='$language_Required'>";
-    echo "<input type='hidden' id='cg_language_youHaveNotSelected' value='$language_youHaveNotSelected'>";
+    echo "<input type='hidden' id='cg_language_PleaseFillOut' value='".esc_attr($language_PleaseFillOut)."'>";
+    echo "<input type='hidden' id='cg_language_Required' value='".esc_attr($language_Required)."'>";
+    echo "<input type='hidden' id='cg_language_youHaveNotSelected' value='".esc_attr($language_youHaveNotSelected)."'>";
 
-    echo "<input type='hidden' id='cg_language_PasswordsDoNotMatch' value='$language_PasswordsDoNotMatch'>";
-    echo "<input type='hidden' id='cg_language_ChooseYourImage' value='$language_ChooseYourImage'>";
+    echo "<input type='hidden' id='cg_language_PasswordsDoNotMatch' value='".esc_attr($language_PasswordsDoNotMatch)."'>";
+    echo "<input type='hidden' id='cg_language_ChooseYourImage' value='".esc_attr($language_ChooseYourImage)."'>";
 
-    echo "<input type='hidden' id='cg_language_pleaseConfirm' value='$language_pleaseConfirm'>";
-    echo "<input type='hidden' id='cg_language_ThisFileTypeIsNotAllowed' value='$language_ThisFileTypeIsNotAllowed'>";
-    echo "<input type='hidden' id='cg_language_TheFileYouChoosedIsToBigMaxAllowedSize' value='$language_TheFileYouChoosedIsToBigMaxAllowedSize'>";
+    echo "<input type='hidden' id='cg_language_pleaseConfirm' value='".esc_attr($language_pleaseConfirm)."'>";
+    echo "<input type='hidden' id='cg_language_ThisFileTypeIsNotAllowed' value='".esc_attr($language_ThisFileTypeIsNotAllowed)."'>";
+    echo "<input type='hidden' id='cg_language_TheFileYouChoosedIsToBigMaxAllowedSize' value='".esc_attr($language_TheFileYouChoosedIsToBigMaxAllowedSize)."'>";
 
-    echo "<input type='hidden' id='cg_language_ActivationKeyNotFound' value='$language_ActivationKeyNotFound'>";
+    echo "<input type='hidden' id='cg_language_ActivationKeyNotFound' value='".esc_attr($language_ActivationKeyNotFound)."'>";
 
-    echo "<input type='hidden' id='cg_users_registry_check_submit_language' value='$language_sendRegistry'>";
-    echo "<input type='hidden' id='cg_language_IncorrectPinPleaseTryAgain' value='$language_IncorrectPinPleaseTryAgain'>";
+    echo "<input type='hidden' id='cg_users_registry_check_submit_language' value='".esc_attr($language_sendRegistry)."'>";
+    echo "<input type='hidden' id='cg_language_IncorrectPinPleaseTryAgain' value='".esc_attr($language_IncorrectPinPleaseTryAgain)."'>";
 
     echo "</div>";
     echo "</div>";

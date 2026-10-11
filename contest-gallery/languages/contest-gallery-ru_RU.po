@@ -2680,3 +2680,412 @@ msgstr "Голоса по возрастанию"
 
 msgid "Please use a display name instead of an email address."
 msgstr "Используйте отображаемое имя вместо адреса электронной почты."
+
+
+#: check-language-general.php
+msgid "Member area"
+msgstr "Личный кабинет"
+
+
+#: check-language-general.php
+msgid "Overview"
+msgstr "Обзор"
+
+
+#: check-language-general.php
+msgid "Messages"
+msgstr "Сообщения"
+
+
+#: check-language-general.php
+msgid "Friends"
+msgstr "Друзья"
+
+
+#: check-language-general.php
+msgid "Latest entries"
+msgstr "Последние записи"
+
+
+#: check-language-general.php
+msgid "Back"
+msgstr "Назад"
+
+
+#: check-language-general.php
+msgid "Back to friends"
+msgstr "Назад к друзьям"
+
+
+#: check-language-general.php
+msgid "Back to overview"
+msgstr "Назад к обзору"
+
+
+#: check-language-general.php
+msgid "Back to received requests"
+msgstr "Назад к полученным запросам"
+
+
+#: check-language-general.php
+msgid "Load more"
+msgstr "Загрузить ещё"
+
+
+#: check-language-general.php
+msgid "Contact"
+msgstr "Контакт"
+
+
+#: check-language-general.php
+msgid "Message"
+msgstr "Сообщение"
+
+
+#: check-language-general.php
+msgid "Send message"
+msgstr "Отправить сообщение"
+
+
+#: check-language-general.php
+msgid "Write a message…"
+msgstr "Напишите сообщение…"
+
+
+#: check-language-general.php
+msgid "Up to 5,000 characters"
+msgstr "До 5 000 символов"
+
+
+#: check-language-general.php
+msgid "Earlier messages"
+msgstr "Предыдущие сообщения"
+
+
+#: check-language-general.php
+msgid "Your conversations"
+msgstr "Ваши беседы"
+
+
+#: check-language-general.php
+msgid "You"
+msgstr "Вы"
+
+
+#: check-language-general.php
+msgid "Sending…"
+msgstr "Отправка…"
+
+
+#: check-language-general.php
+msgid "Saving…"
+msgstr "Сохранение…"
+
+
+#: check-language-general.php
+msgid "No messages yet. Open a participant’s profile to start a conversation."
+msgstr "Сообщений пока нет. Откройте профиль участника, чтобы начать беседу."
+
+
+#: check-language-general.php
+msgid "Discard your unsent message?"
+msgstr "Удалить неотправленное сообщение?"
+
+
+#: check-language-general.php
+msgid "{count} new messages and requests"
+msgstr "Новые сообщения и запросы: {count}"
+
+
+#: check-language-general.php
+msgid "Add friend"
+msgstr "Добавить в друзья"
+
+
+#: check-language-general.php
+msgid "Add friend - {name}"
+msgstr "Добавить в друзья - {name}"
+
+
+#: check-language-general.php
+msgid "Remove friend"
+msgstr "Удалить из друзей"
+
+
+#: check-language-general.php
+msgid "Remove friend - {name}"
+msgstr "Удалить из друзей - {name}"
+
+
+#: check-language-general.php
+msgid "Remove this friend?"
+msgstr "Удалить этого пользователя из друзей?"
+
+
+#: check-language-general.php
+msgid "Remove this friend - {name}?"
+msgstr "Удалить этого пользователя из друзей - {name}?"
+
+
+#: check-language-general.php
+msgid "Accept request"
+msgstr "Принять запрос"
+
+
+#: check-language-general.php
+msgid "Decline"
+msgstr "Отклонить"
+
+
+#: check-language-general.php
+msgid "Cancel request"
+msgstr "Отменить запрос"
+
+
+#: check-language-general.php
+msgid "Received requests"
+msgstr "Полученные запросы"
+
+
+#: check-language-general.php
+msgid "Sent requests"
+msgstr "Отправленные запросы"
+
+
+#: check-language-general.php
+msgid "Blocked"
+msgstr "Заблокированные"
+
+
+#: check-language-general.php
+msgid "Unblock"
+msgstr "Разблокировать"
+
+
+#: check-language-general.php
+msgid "Block"
+msgstr "Заблокировать"
+
+
+#: check-language-general.php
+msgid "Review request"
+msgstr "Посмотреть запрос"
+
+
+#: check-language-general.php
+msgid "Request sent"
+msgstr "Запрос отправлен"
+
+
+#: check-language-general.php
+msgid "Friend request sent."
+msgstr "Запрос в друзья отправлен."
+
+
+#: check-language-general.php
+msgid "Friend request received."
+msgstr "Запрос в друзья получен."
+
+
+#: check-language-general.php
+msgid "Block this member? This stops messages and requests and ends your friendship."
+msgstr "Заблокировать этого участника? Это прекратит сообщения и запросы и завершит вашу дружбу."
+
+
+#: check-language-general.php
+msgid "Block this member? This stops messages and requests and ends your friendship. Public entries remain visible."
+msgstr "Заблокировать этого участника? Это прекратит сообщения и запросы и завершит вашу дружбу. Открытые записи останутся видимыми."
+
+
+#: check-language-general.php
+msgid "Unblock this member? This allows messages and friend requests again. Your previous friendship will not be restored."
+msgstr "Разблокировать этого участника? Сообщения и запросы в друзья снова будут разрешены. Прежняя дружба не будет восстановлена."
+
+
+#: check-language-general.php
+msgid "No accessible entries yet."
+msgstr "Доступных записей пока нет."
+
+
+#: check-language-general.php
+msgid "No accessible galleries yet."
+msgstr "Доступных галерей пока нет."
+
+
+#: check-language-general.php
+msgid "No friends yet."
+msgstr "Друзей пока нет."
+
+
+#: check-language-general.php
+msgid "No friends yet. Send a request from a participant’s profile."
+msgstr "Друзей пока нет. Отправьте запрос из профиля участника."
+
+
+#: check-language-general.php
+msgid "No participants with a profile yet."
+msgstr "Участников с профилем пока нет."
+
+
+#: check-language-general.php
+msgid "Nothing here yet."
+msgstr "Здесь пока ничего нет."
+
+
+#: check-language-general.php
+msgid "Account unavailable"
+msgstr "Учётная запись недоступна"
+
+
+#: check-language-general.php
+msgid "Enter a message of 1 to 5,000 characters."
+msgstr "Введите сообщение длиной от 1 до 5 000 символов."
+
+
+#: check-language-general.php
+msgid "Invalid page."
+msgstr "Недопустимая страница."
+
+
+#: check-language-general.php
+msgid "Messaging is unavailable for this contact."
+msgstr "Сообщения для этого контакта недоступны."
+
+
+#: check-language-general.php
+msgid "Please reopen the conversation and try again."
+msgstr "Откройте беседу заново и попробуйте ещё раз."
+
+
+#: check-language-general.php
+msgid "Please sign in to view friends."
+msgstr "Войдите, чтобы посмотреть друзей."
+
+
+#: check-language-general.php
+msgid "Please wait before sending more messages."
+msgstr "Подождите, прежде чем отправлять новые сообщения."
+
+
+#: check-language-general.php
+msgid "Please wait before sending more requests."
+msgstr "Подождите, прежде чем отправлять новые запросы."
+
+
+#: check-language-general.php
+msgid "The entry could not be loaded. Please try again."
+msgstr "Не удалось загрузить запись. Попробуйте ещё раз."
+
+
+#: check-language-general.php
+msgid "The member area is not available."
+msgstr "Личный кабинет недоступен."
+
+
+#: check-language-general.php
+msgid "The message could not be saved. Please try again."
+msgstr "Не удалось сохранить сообщение. Попробуйте ещё раз."
+
+
+#: check-language-general.php
+msgid "This action is not available."
+msgstr "Это действие недоступно."
+
+
+#: check-language-general.php
+msgid "This entry is no longer available."
+msgstr "Эта запись больше недоступна."
+
+
+#: check-language-general.php
+msgid "This member is no longer available."
+msgstr "Этот участник больше недоступен."
+
+
+#: check-language-general.php
+msgid "This participant list is no longer available."
+msgstr "Этот список участников больше недоступен."
+
+
+#: check-language-general.php
+msgid "This request has already been used."
+msgstr "Этот запрос уже использован."
+
+
+#: check-language-general.php
+msgid "The PIN request is being processed. Please try again."
+msgstr "Запрос PIN-кода обрабатывается. Попробуйте ещё раз."
+
+
+#: check-language-general.php
+msgid "Gallery entries"
+msgstr "Записи галереи"
+
+
+#: check-language-general.php
+msgid "View gallery entries"
+msgstr "Посмотреть записи галереи"
+
+
+#: check-language-general.php
+msgid "View gallery entries: {name}"
+msgstr "Посмотреть записи галереи: {name}"
+
+
+#: check-language-general.php
+msgid "Browse entries"
+msgstr "Просмотреть записи"
+
+
+#: check-language-general.php
+msgid "Entry"
+msgstr "Запись"
+
+
+#: check-language-general.php
+msgid "{entries} by {name}"
+msgstr "{entries} от {name}"
+
+
+#: check-language-general.php
+msgid "Paid actions are available on the entry page."
+msgstr "Платные действия доступны на странице записи."
+
+
+#: check-language-general.php
+msgid "Open entry page"
+msgstr "Открыть страницу записи"
+
+
+#: check-language-general.php
+msgid "Open entry page in a new tab"
+msgstr "Открыть страницу записи в новой вкладке"
+
+
+#: check-language-general.php
+msgid "Maximum resolution"
+msgstr "Максимальное разрешение"
+
+
+#: check-language-general.php
+msgid "Please allow cookies and reload the page to be able to vote."
+msgstr "Разрешите файлы cookie и перезагрузите страницу, чтобы проголосовать."
+
+
+#: check-language-general.php
+msgid "Your vote could not be saved. Please try again."
+msgstr "Не удалось сохранить ваш голос. Попробуйте ещё раз."
+
+
+#: check-language-general.php
+msgid "Vote and linked comment could not be removed."
+msgstr "Не удалось удалить голос и связанный комментарий."
+
+
+#: check-language-general.php
+msgid "An administrator has disabled your ability to send messages and friend requests."
+msgstr "Администратор отключил для вас отправку сообщений и запросов в друзья."
+
+#: check-language.php
+msgid "Ratings and comments"
+msgstr "Оценки и комментарии"

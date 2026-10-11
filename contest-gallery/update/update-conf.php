@@ -1,5 +1,5 @@
 <?php
-return array(
+$cgUpdateColumns = array(
     $tablename_email => array(
         'Content' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update ab 23.02.2019
         'FromMail' => array('COLUMN_TYPE' => 'VARCHAR(200)','DEFAULT' => '""'),// Update 02.09.2026
@@ -457,6 +457,5 @@ return array(
     $tablename_paid_action_ledger => array(
         'ReferenceLedgerId' => array('COLUMN_TYPE' => 'BIGINT(20)','DEFAULT' => 0),// Update 33.0.0
     )
-)
-
-?>
+);
+return array_merge($cgUpdateColumns,cg_community_schema_columns($wpdb->base_prefix."$i"));

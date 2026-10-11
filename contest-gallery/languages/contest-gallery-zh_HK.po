@@ -2674,3 +2674,412 @@ msgstr "票數由低至高"
 
 msgid "Please use a display name instead of an email address."
 msgstr "請使用顯示名稱，而非電郵地址。"
+
+
+#: check-language-general.php
+msgid "Member area"
+msgstr "會員區"
+
+
+#: check-language-general.php
+msgid "Overview"
+msgstr "總覽"
+
+
+#: check-language-general.php
+msgid "Messages"
+msgstr "訊息"
+
+
+#: check-language-general.php
+msgid "Friends"
+msgstr "朋友"
+
+
+#: check-language-general.php
+msgid "Latest entries"
+msgstr "最新作品"
+
+
+#: check-language-general.php
+msgid "Back"
+msgstr "返回"
+
+
+#: check-language-general.php
+msgid "Back to friends"
+msgstr "返回朋友列表"
+
+
+#: check-language-general.php
+msgid "Back to overview"
+msgstr "返回總覽"
+
+
+#: check-language-general.php
+msgid "Back to received requests"
+msgstr "返回收到的邀請"
+
+
+#: check-language-general.php
+msgid "Load more"
+msgstr "載入更多"
+
+
+#: check-language-general.php
+msgid "Contact"
+msgstr "聯絡"
+
+
+#: check-language-general.php
+msgid "Message"
+msgstr "訊息"
+
+
+#: check-language-general.php
+msgid "Send message"
+msgstr "傳送訊息"
+
+
+#: check-language-general.php
+msgid "Write a message…"
+msgstr "撰寫訊息…"
+
+
+#: check-language-general.php
+msgid "Up to 5,000 characters"
+msgstr "最多 5,000 個字元"
+
+
+#: check-language-general.php
+msgid "Earlier messages"
+msgstr "較早的訊息"
+
+
+#: check-language-general.php
+msgid "Your conversations"
+msgstr "你的對話"
+
+
+#: check-language-general.php
+msgid "You"
+msgstr "你"
+
+
+#: check-language-general.php
+msgid "Sending…"
+msgstr "正在傳送…"
+
+
+#: check-language-general.php
+msgid "Saving…"
+msgstr "正在儲存…"
+
+
+#: check-language-general.php
+msgid "No messages yet. Open a participant’s profile to start a conversation."
+msgstr "暫時沒有訊息。開啟參加者的個人資料以開始對話。"
+
+
+#: check-language-general.php
+msgid "Discard your unsent message?"
+msgstr "放棄未傳送的訊息？"
+
+
+#: check-language-general.php
+msgid "{count} new messages and requests"
+msgstr "{count} 則新訊息及邀請"
+
+
+#: check-language-general.php
+msgid "Add friend"
+msgstr "加為朋友"
+
+
+#: check-language-general.php
+msgid "Add friend - {name}"
+msgstr "加為朋友 - {name}"
+
+
+#: check-language-general.php
+msgid "Remove friend"
+msgstr "移除朋友"
+
+
+#: check-language-general.php
+msgid "Remove friend - {name}"
+msgstr "移除朋友 - {name}"
+
+
+#: check-language-general.php
+msgid "Remove this friend?"
+msgstr "移除這位朋友？"
+
+
+#: check-language-general.php
+msgid "Remove this friend - {name}?"
+msgstr "移除這位朋友 - {name}？"
+
+
+#: check-language-general.php
+msgid "Accept request"
+msgstr "接受邀請"
+
+
+#: check-language-general.php
+msgid "Decline"
+msgstr "拒絕"
+
+
+#: check-language-general.php
+msgid "Cancel request"
+msgstr "取消邀請"
+
+
+#: check-language-general.php
+msgid "Received requests"
+msgstr "收到的邀請"
+
+
+#: check-language-general.php
+msgid "Sent requests"
+msgstr "已傳送的邀請"
+
+
+#: check-language-general.php
+msgid "Blocked"
+msgstr "已封鎖"
+
+
+#: check-language-general.php
+msgid "Unblock"
+msgstr "解除封鎖"
+
+
+#: check-language-general.php
+msgid "Block"
+msgstr "封鎖"
+
+
+#: check-language-general.php
+msgid "Review request"
+msgstr "查看邀請"
+
+
+#: check-language-general.php
+msgid "Request sent"
+msgstr "邀請已傳送"
+
+
+#: check-language-general.php
+msgid "Friend request sent."
+msgstr "交友邀請已傳送。"
+
+
+#: check-language-general.php
+msgid "Friend request received."
+msgstr "已收到交友邀請。"
+
+
+#: check-language-general.php
+msgid "Block this member? This stops messages and requests and ends your friendship."
+msgstr "封鎖這位會員？這會停止訊息及邀請，並結束你們的朋友關係。"
+
+
+#: check-language-general.php
+msgid "Block this member? This stops messages and requests and ends your friendship. Public entries remain visible."
+msgstr "封鎖這位會員？這會停止訊息及邀請，並結束你們的朋友關係。公開作品仍然可見。"
+
+
+#: check-language-general.php
+msgid "Unblock this member? This allows messages and friend requests again. Your previous friendship will not be restored."
+msgstr "解除封鎖這位會員？這會重新允許訊息及交友邀請。之前的朋友關係不會恢復。"
+
+
+#: check-language-general.php
+msgid "No accessible entries yet."
+msgstr "暫時沒有可存取的作品。"
+
+
+#: check-language-general.php
+msgid "No accessible galleries yet."
+msgstr "暫時沒有可存取的圖庫。"
+
+
+#: check-language-general.php
+msgid "No friends yet."
+msgstr "暫時沒有朋友。"
+
+
+#: check-language-general.php
+msgid "No friends yet. Send a request from a participant’s profile."
+msgstr "暫時沒有朋友。請從參加者的個人資料傳送邀請。"
+
+
+#: check-language-general.php
+msgid "No participants with a profile yet."
+msgstr "暫時沒有設有個人資料的參加者。"
+
+
+#: check-language-general.php
+msgid "Nothing here yet."
+msgstr "這裏暫時沒有內容。"
+
+
+#: check-language-general.php
+msgid "Account unavailable"
+msgstr "帳戶無法使用"
+
+
+#: check-language-general.php
+msgid "Enter a message of 1 to 5,000 characters."
+msgstr "請輸入 1 至 5,000 個字元的訊息。"
+
+
+#: check-language-general.php
+msgid "Invalid page."
+msgstr "無效的頁面。"
+
+
+#: check-language-general.php
+msgid "Messaging is unavailable for this contact."
+msgstr "此聯絡人無法使用訊息功能。"
+
+
+#: check-language-general.php
+msgid "Please reopen the conversation and try again."
+msgstr "請重新開啟對話並再試一次。"
+
+
+#: check-language-general.php
+msgid "Please sign in to view friends."
+msgstr "請登入以查看朋友。"
+
+
+#: check-language-general.php
+msgid "Please wait before sending more messages."
+msgstr "請稍候再傳送更多訊息。"
+
+
+#: check-language-general.php
+msgid "Please wait before sending more requests."
+msgstr "請稍候再傳送更多邀請。"
+
+
+#: check-language-general.php
+msgid "The entry could not be loaded. Please try again."
+msgstr "無法載入作品。請再試一次。"
+
+
+#: check-language-general.php
+msgid "The member area is not available."
+msgstr "會員區無法使用。"
+
+
+#: check-language-general.php
+msgid "The message could not be saved. Please try again."
+msgstr "無法儲存訊息。請再試一次。"
+
+
+#: check-language-general.php
+msgid "This action is not available."
+msgstr "此操作無法使用。"
+
+
+#: check-language-general.php
+msgid "This entry is no longer available."
+msgstr "此作品已無法使用。"
+
+
+#: check-language-general.php
+msgid "This member is no longer available."
+msgstr "此會員已無法使用。"
+
+
+#: check-language-general.php
+msgid "This participant list is no longer available."
+msgstr "此參加者列表已無法使用。"
+
+
+#: check-language-general.php
+msgid "This request has already been used."
+msgstr "此邀請已被使用。"
+
+
+#: check-language-general.php
+msgid "The PIN request is being processed. Please try again."
+msgstr "正在處理 PIN 要求。請再試一次。"
+
+
+#: check-language-general.php
+msgid "Gallery entries"
+msgstr "圖庫作品"
+
+
+#: check-language-general.php
+msgid "View gallery entries"
+msgstr "查看圖庫作品"
+
+
+#: check-language-general.php
+msgid "View gallery entries: {name}"
+msgstr "查看圖庫作品：{name}"
+
+
+#: check-language-general.php
+msgid "Browse entries"
+msgstr "瀏覽作品"
+
+
+#: check-language-general.php
+msgid "Entry"
+msgstr "作品"
+
+
+#: check-language-general.php
+msgid "{entries} by {name}"
+msgstr "{name} 的{entries}"
+
+
+#: check-language-general.php
+msgid "Paid actions are available on the entry page."
+msgstr "付費操作可在作品頁面使用。"
+
+
+#: check-language-general.php
+msgid "Open entry page"
+msgstr "開啟作品頁面"
+
+
+#: check-language-general.php
+msgid "Open entry page in a new tab"
+msgstr "在新分頁開啟作品頁面"
+
+
+#: check-language-general.php
+msgid "Maximum resolution"
+msgstr "最高解像度"
+
+
+#: check-language-general.php
+msgid "Please allow cookies and reload the page to be able to vote."
+msgstr "請允許 Cookie 並重新載入頁面，才能投票。"
+
+
+#: check-language-general.php
+msgid "Your vote could not be saved. Please try again."
+msgstr "無法儲存你的投票。請再試一次。"
+
+
+#: check-language-general.php
+msgid "Vote and linked comment could not be removed."
+msgstr "無法移除投票及相關留言。"
+
+
+#: check-language-general.php
+msgid "An administrator has disabled your ability to send messages and friend requests."
+msgstr "管理員已停用你傳送訊息及交友邀請的功能。"
+
+#: check-language.php
+msgid "Ratings and comments"
+msgstr "評分及留言"

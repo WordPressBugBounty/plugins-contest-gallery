@@ -15,6 +15,16 @@ if(!function_exists('cg_pin_auth_t')){
 				$decoded = json_decode(file_get_contents($file),true);
 				if(is_array($decoded)){$custom = cg_member_translation_values($decoded);}
 			}
+			// Reuse the existing editor fields for shared gallery controls.
+			$previousFile = $wpUploadDir['basedir'].'/contest-gallery/gallery-general/json/translations-previous.json';
+			if(file_exists($previousFile)){
+				$previous = json_decode(file_get_contents($previousFile),true);
+				if(is_array($previous)){
+					foreach(array('Close','Cancel','Comments','ratings','Ratings and comments','Previous entry','Next entry','Close view') as $key){
+						if(!array_key_exists($key,$custom) && isset($previous[$key]) && is_string($previous[$key])){$custom[$key] = $previous[$key];}
+					}
+				}
+			}
 		}
 		$text = !empty($custom[$default]) ? contest_gal1ery_convert_for_html_output_without_nl2br($custom[$default]) : __($default,'contest-gallery');
 		if($text===''){$text = $default;}

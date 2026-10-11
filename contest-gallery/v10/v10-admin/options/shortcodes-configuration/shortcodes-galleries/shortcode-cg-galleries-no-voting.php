@@ -5,6 +5,11 @@ echo <<<HEREDOC
 <div class="cg_view cgGalleriesOptions cg_short_code_galleries_configuration_cg_gallery_no_voting_container cg_short_code_galleries_configuration_container cgViewHelper1 cg_hide">
 <div class='cg_view_container'>
 HEREDOC;
+require_once __DIR__.'/../../../../../functions/backend/render/cg-galleries-member-options.php';
+require_once __DIR__.'/../../../../../functions/backend/render/cg-gallery-header-options.php';
+cg_galleries_member_options($galleriesOptions,'nv');
+cg_galleries_header_options($galleriesOptions,'nv');
+
 echo <<<HEREDOC
 <div class="cg_view_options_row">
 	    <div class='cg_view_option cg_view_option_full_width   cg_border_bottom_none'>
@@ -66,7 +71,7 @@ echo <<<HEREDOC
 <div class='cg_view_options_row'>
         <div class='cg_view_option cg_view_option_full_width cg_border_top_none cg_border_top_bottom_none'>
             <div class='cg_view_option_title'>
-            <p>Gallery color style</p>
+            <p>Galleries area color style</p>
             </div>
             <div class='cg_view_option_radio_multiple'>
                 <div class='cg_view_option_radio_multiple_container'>
@@ -92,7 +97,7 @@ HEREDOC;
 
 echo <<<HEREDOC
 <div class="cg_view_options_row">
-        <div class="cg_view_option cg_view_option_100_percent">
+        <div class="cg_view_option cg_view_option_full_width">
             <div class="cg_view_option_title">
                 <p>Masonry view is always activated for cg_galleries... shortcodes</p>
             </div>
@@ -267,11 +272,9 @@ echo <<<HEREDOC
 HEREDOC;
 
 
-require_once __DIR__.'/../../../../../functions/backend/render/cg-gallery-header-options.php';
-cg_galleries_header_options($galleriesOptions,'nv');
 
 echo <<<HEREDOC
-<div class="cg_view_options_row">
+<div class="cg_view_options_row cg_margin_top_15">
 	    <div class='cg_view_option cg_view_option_full_width  cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px'>
 	        <div class='cg_view_option_title' style="margin-top: 10px;">
 	            <p>Gallery card title<br><span class="cg_view_option_title_note">Shown on this gallery's card in the overview. Configure <a class="cg_go_to_link cg_no_outline_and_shadow_on_focus" href="#" data-cg-go-to-link="MainTitleGalleriesViewArea">here</a></span></p>

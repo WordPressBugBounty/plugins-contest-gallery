@@ -370,8 +370,8 @@
 
         if(!empty($fullData['Timestamp']) && $showDateInGalleryView && empty($isCGalleries)){
             $dateTimeInvisibleSeo = cg_get_time_based_on_wp_timezone_conf($fullData['Timestamp'],'Y-m-d\TH:i:sP');
-            $dateTimeVisibleSeo = cg_get_time_based_on_wp_timezone_conf($fullData['Timestamp'],'j. F Y');
-            $cg_date = '<div class="cg_date cg_opacity_0" data-cg-timestamp="'.absint($fullData['Timestamp']).'"><time datetime="'.$dateTimeInvisibleSeo.'">'.$dateTimeVisibleSeo.'</time></div>';
+            $dateTimeVisibleSeo = wp_date('j. F Y',(int)$fullData['Timestamp']);
+            $cg_date = '<div class="cg_date cg_opacity_0" data-cg-timestamp="'.absint($fullData['Timestamp']).'"><time datetime="'.esc_attr($dateTimeInvisibleSeo).'">'.esc_html($dateTimeVisibleSeo).'</time></div>';
         }
 
         $cg_sale_price_markup = '';
@@ -430,8 +430,7 @@
             $figure = '<figure class="cg_figure" itemscope itemtype="https://schema.org/'.$itemTypeObject.'Object">
                 '.$meta.'
                 '.$metaComment.'
-                '.$cg_wrap_gallery_media_shell($cg_render_gallery_media_link($imageContent,$galleryMediaHref,$galleryMediaTargetAttr,$galleryMediaLinkClass),$isSmallMasonryImage ? 'cg_masonry_media_shell_small_image' : '').'
-                '.$watermarkMarkup.'
+                '.$cg_wrap_gallery_media_shell($cg_render_gallery_media_link($imageContent,$galleryMediaHref,$galleryMediaTargetAttr,$galleryMediaLinkClass).$watermarkMarkup,$isSmallMasonryImage ? 'cg_masonry_media_shell_small_image' : '').'
                 '.$cg_gallery_info.'
               </figure>';
         }elseif(cg_is_alternative_file_type_video($ImgType)){
@@ -606,7 +605,7 @@
                 echo '<button type="button" class="cg-share-thumbnail" data-cg-gid="'.esc_attr($galeryIDuserForJs).'" data-cg-real-id="'.absint($id).'" aria-label="'.esc_attr(cg_member_t('Share this entry')).'" title="'.esc_attr(cg_member_t('Share this entry')).'"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M8.5 10.5l7-4m-7 7l7 4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="5" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="19" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>';
             }
         }
-        if(empty($isCGalleries) && cg_gallery_card_option_enabled($options,'ShowProfileGallery') && (empty($cgMemberOwnView) || (isset($fullData['Active']) && intval($fullData['Active'])===1))){
+        if(empty($isCGalleries) && cg_gallery_card_profile_supported($shortcode_name) && cg_gallery_card_option_enabled($options,'ShowProfileGallery') && (empty($cgMemberOwnView) || (isset($fullData['Active']) && intval($fullData['Active'])===1))){
             cg_gallery_card_render_profile($galeryIDuserForJs,$id,$fullData,$WpUserIdsData);
         }
         if(!empty($isUserGallery) && isset($fullData['Active']) && intval($fullData['Active'])===0){

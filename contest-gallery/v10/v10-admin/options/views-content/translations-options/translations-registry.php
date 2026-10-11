@@ -41,6 +41,12 @@ $cgGoToEmailInputField = '<a
 
 echo <<<HEREDOC
          <div class='cg_view_options_row'>
+            <div class='cg_view_option cg_view_option_full_width'>
+                <div class='cg_view_option_title'><p>$language_ThisUsernameAlreadyExists$cgShortcodeCopy</p></div>
+                <div class='cg_view_option_input'><input type="text" name="translations[$l_ThisUsernameAlreadyExists]" maxlength="100" value="$translations[$l_ThisUsernameAlreadyExists]"></div>
+            </div>
+         </div>
+         <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width' >
                     <div class='cg_view_option_title'>
                         <p>$language_ThisNicknameAlreadyExists$cgShortcodeCopy</p>

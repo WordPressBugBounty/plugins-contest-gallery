@@ -51,7 +51,7 @@ if(!$intervalConf['shortcodeIsActive']){
 
     echo "<div id='cg_user_login_div' class='mainCGdivUploadForm mainCGdivLoginForm $mainCGdivUploadFormType $cgHideUserAjaxLoginForm $FeControlsStyleLogin $BorderRadiusLogin' data-cg-gid='$galeryIDuser' >";
 
-    echo "<div class='cg_hover_effect cg-close-upload-form $FeControlsStyleLogin $cgHideUserAjaxLoginFormCloseButton' data-cg-gid='$galeryIDuser' data-cg-tooltip='$language_Close'>";
+    echo "<div class='cg_hover_effect cg-close-upload-form $FeControlsStyleLogin $cgHideUserAjaxLoginFormCloseButton' data-cg-gid='$galeryIDuser' data-cg-tooltip='".esc_attr($language_Close)."'>";
     echo "</div>";
 
 //$check = wp_create_nonce("check");
@@ -91,53 +91,53 @@ if(!$intervalConf['shortcodeIsActive']){
     echo "<input type='hidden' id='cg_show_upload' value='1'>";
 
 //echo "language_ThisFileTypeIsNotAllowed: $language_ThisFileTypeIsNotAllowed";
-    echo "<input type='hidden' id='cg_file_not_allowed_1' value='$language_ThisFileTypeIsNotAllowed'>";
-    echo "<input type='hidden' id='cg_file_size_to_big' value='$language_TheFileYouChoosedIsToBigMaxAllowedSize'>";
+    echo "<input type='hidden' id='cg_file_not_allowed_1' value='".esc_attr($language_ThisFileTypeIsNotAllowed)."'>";
+    echo "<input type='hidden' id='cg_file_size_to_big' value='".esc_attr($language_TheFileYouChoosedIsToBigMaxAllowedSize)."'>";
 //echo "<input type='hidden' id='cg_post_size' value='$post_max_sizeMB'>";
 
-    echo "<input type='hidden' id='cg_to_high_resolution' value='$language_TheResolutionOfThisPicIs'>";
+    echo "<input type='hidden' id='cg_to_high_resolution' value='".esc_attr($language_TheResolutionOfThisPicIs)."'>";
 
-    echo "<input type='hidden' id='cg_max_allowed_resolution_jpg' value='$language_MaximumAllowedResolutionForJPGsIs'>";
-    echo "<input type='hidden' id='cg_max_allowed_width_jpg' value='$language_MaximumAllowedWidthForJPGsIs'>";
-    echo "<input type='hidden' id='cg_max_allowed_height_jpg' value='$language_MaximumAllowedHeightForJPGsIs'>";
+    echo "<input type='hidden' id='cg_max_allowed_resolution_jpg' value='".esc_attr($language_MaximumAllowedResolutionForJPGsIs)."'>";
+    echo "<input type='hidden' id='cg_max_allowed_width_jpg' value='".esc_attr($language_MaximumAllowedWidthForJPGsIs)."'>";
+    echo "<input type='hidden' id='cg_max_allowed_height_jpg' value='".esc_attr($language_MaximumAllowedHeightForJPGsIs)."'>";
 
-    echo "<input type='hidden' id='cg_max_allowed_resolution_png' value='$language_MaximumAllowedResolutionForPNGsIs'>";
-    echo "<input type='hidden' id='cg_max_allowed_width_png' value='$language_MaximumAllowedWidthForPNGsIs'>";
-    echo "<input type='hidden' id='cg_max_allowed_height_png' value='$language_MaximumAllowedHeightForPNGsIs'>";
+    echo "<input type='hidden' id='cg_max_allowed_resolution_png' value='".esc_attr($language_MaximumAllowedResolutionForPNGsIs)."'>";
+    echo "<input type='hidden' id='cg_max_allowed_width_png' value='".esc_attr($language_MaximumAllowedWidthForPNGsIs)."'>";
+    echo "<input type='hidden' id='cg_max_allowed_height_png' value='".esc_attr($language_MaximumAllowedHeightForPNGsIs)."'>";
 
-    echo "<input type='hidden' id='cg_max_allowed_resolution_gif' value='$language_MaximumAllowedResolutionForGIFsIs'>";
-    echo "<input type='hidden' id='cg_max_allowed_width_gif' value='$language_MaximumAllowedWidthForGIFsIs'>";
-    echo "<input type='hidden' id='cg_max_allowed_height_gif' value='$language_MaximumAllowedHeightForGIFsIs'>";
+    echo "<input type='hidden' id='cg_max_allowed_resolution_gif' value='".esc_attr($language_MaximumAllowedResolutionForGIFsIs)."'>";
+    echo "<input type='hidden' id='cg_max_allowed_width_gif' value='".esc_attr($language_MaximumAllowedWidthForGIFsIs)."'>";
+    echo "<input type='hidden' id='cg_max_allowed_height_gif' value='".esc_attr($language_MaximumAllowedHeightForGIFsIs)."'>";
 
-    echo "<input type='hidden' id='cg_check_agreement' value='$language_YouHaveToCheckThisAgreement '>";
-    echo "<input type='hidden' id='cg_check_email_upload_for_login' value=' $language_EmailAddressHasToBeValid'>";
-    echo "<input type='hidden' id='cg_min_characters_text' value='$language_MinAmountOfCharacters'>";
-    echo "<input type='hidden' id='cg_max_characters_text' value='$language_MaxAmountOfCharacters'>";
-    echo "<input type='hidden' id='cg_no_picture_is_choosed' value='$language_ChooseYourImage'>";
+    echo "<input type='hidden' id='cg_check_agreement' value='".esc_attr($language_YouHaveToCheckThisAgreement." ")."'>";
+    echo "<input type='hidden' id='cg_check_email_upload_for_login' value='".esc_attr(" ".$language_EmailAddressHasToBeValid)."'>";
+    echo "<input type='hidden' id='cg_min_characters_text' value='".esc_attr($language_MinAmountOfCharacters)."'>";
+    echo "<input type='hidden' id='cg_max_characters_text' value='".esc_attr($language_MaxAmountOfCharacters)."'>";
+    echo "<input type='hidden' id='cg_no_picture_is_choosed' value='".esc_attr($language_ChooseYourImage)."'>";
 
 
-    echo "<input type='hidden' id='cg_language_BulkUploadQuantityIs' value='$language_BulkUploadQuantityIs'>";
-    echo "<input type='hidden' id='cg_language_BulkUploadLowQuantityIs' value='$language_BulkUploadLowQuantityIs'>";
+    echo "<input type='hidden' id='cg_language_BulkUploadQuantityIs' value='".esc_attr($language_BulkUploadQuantityIs)."'>";
+    echo "<input type='hidden' id='cg_language_BulkUploadLowQuantityIs' value='".esc_attr($language_BulkUploadLowQuantityIs)."'>";
 
-    echo "<input type='hidden' id='cg_language_BulkUploadLowQuantityIs' value='$language_BulkUploadLowQuantityIs'>";
+    echo "<input type='hidden' id='cg_language_BulkUploadLowQuantityIs' value='".esc_attr($language_BulkUploadLowQuantityIs)."'>";
 
-    echo "<input type='hidden' id='cg_language_ThisMailAlreadyExists' value='$language_ThisMailAlreadyExists'>";
-    echo "<input type='hidden' id='cg_language_ThisNicknameAlreadyExists' value='$language_ThisNicknameAlreadyExists'>";
-    echo "<input type='hidden' id='cg_language_ThisUsernameAlreadyExists' value='$language_ThisUsernameAlreadyExists'>";
+    echo "<input type='hidden' id='cg_language_ThisMailAlreadyExists' value='".esc_attr($language_ThisMailAlreadyExists)."'>";
+    echo "<input type='hidden' id='cg_language_ThisNicknameAlreadyExists' value='".esc_attr($language_ThisNicknameAlreadyExists)."'>";
+    echo "<input type='hidden' id='cg_language_ThisUsernameAlreadyExists' value='".esc_attr($language_ThisUsernameAlreadyExists)."'>";
 
-    echo "<input type='hidden' id='cg_language_PasswordRequired' value='$language_PasswordRequired'>";
-    echo "<input type='hidden' id='cg_language_UsernameOrEmailRequired' value='$language_UsernameOrEmailRequired'>";
-    echo "<input type='hidden' id='cg_language_EmailRequired' value='$language_EmailRequired'>";
-    echo "<input type='hidden' id='cg_language_EmailAddressHasToBeValid' value='$language_EmailAddressHasToBeValid'>";
+    echo "<input type='hidden' id='cg_language_PasswordRequired' value='".esc_attr($language_PasswordRequired)."'>";
+    echo "<input type='hidden' id='cg_language_UsernameOrEmailRequired' value='".esc_attr($language_UsernameOrEmailRequired)."'>";
+    echo "<input type='hidden' id='cg_language_EmailRequired' value='".esc_attr($language_EmailRequired)."'>";
+    echo "<input type='hidden' id='cg_language_EmailAddressHasToBeValid' value='".esc_attr($language_EmailAddressHasToBeValid)."'>";
 
-    echo "<input type='hidden' id='cg_language_EmailAndPasswordDoNotMatch' value='$language_EmailAndPasswordDoNotMatch'>";
-    echo "<input type='hidden' id='cg_language_LoginAndPasswordDoNotMatch' value='$language_LoginAndPasswordDoNotMatch'>";
-    echo "<input type='hidden' id='cg_language_PleaseFillOut' value='$language_PleaseFillOut'>";
-    echo "<input type='hidden' id='cg_language_Required' value='$language_Required'>";
-    echo "<input type='hidden' id='cg_language_PasswordsDoNotMatch' value='$language_PasswordsDoNotMatch'>";
-    echo "<input type='hidden' id='cg_language_LostPasswordUrlIsNotValidAnymore' value='$language_LostPasswordUrlIsNotValidAnymore'>";
-    echo "<input type='hidden' id='cg_language_ResetPasswordSuccessfully' value='$language_ResetPasswordSuccessfully'>";
-    echo "<input type='hidden' id='cg_language_MinAmountOfCharacters' value='$language_MinAmountOfCharacters'>";
+    echo "<input type='hidden' id='cg_language_EmailAndPasswordDoNotMatch' value='".esc_attr($language_EmailAndPasswordDoNotMatch)."'>";
+    echo "<input type='hidden' id='cg_language_LoginAndPasswordDoNotMatch' value='".esc_attr($language_LoginAndPasswordDoNotMatch)."'>";
+    echo "<input type='hidden' id='cg_language_PleaseFillOut' value='".esc_attr($language_PleaseFillOut)."'>";
+    echo "<input type='hidden' id='cg_language_Required' value='".esc_attr($language_Required)."'>";
+    echo "<input type='hidden' id='cg_language_PasswordsDoNotMatch' value='".esc_attr($language_PasswordsDoNotMatch)."'>";
+    echo "<input type='hidden' id='cg_language_LostPasswordUrlIsNotValidAnymore' value='".esc_attr($language_LostPasswordUrlIsNotValidAnymore)."'>";
+    echo "<input type='hidden' id='cg_language_ResetPasswordSuccessfully' value='".esc_attr($language_ResetPasswordSuccessfully)."'>";
+    echo "<input type='hidden' id='cg_language_MinAmountOfCharacters' value='".esc_attr($language_MinAmountOfCharacters)."'>";
 
     echo "</div>";
 

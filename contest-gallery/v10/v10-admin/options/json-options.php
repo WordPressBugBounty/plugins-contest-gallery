@@ -279,6 +279,7 @@ $jsonOptions['pro']['GalleryUploadConfirmationText'] = $GalleryUploadConfirmatio
 $jsonOptions['pro']['ShowRefreshButtonAfterUpload'] = $ShowRefreshButtonAfterUpload;
 $jsonOptions['pro']['GalleryUploadTextBefore'] = $GalleryUploadTextBefore;
 $jsonOptions['pro']['GalleryUploadTextAfter'] = $GalleryUploadTextAfter;
+$jsonOptions['visual']['ShowProfileEntry'] = !empty($isNewGallery) ? 1 : (isset($ShowProfileEntry) ? (int)$ShowProfileEntry : (cg_uploader_profile_entry_enabled($jsonOptions,'cg_gallery') ? 1 : 0));
 $jsonOptions['pro']['ShowNickname'] = $ShowNickname;
 $jsonOptions['pro']['ShowProfileImage'] = $ShowProfileImage;
 $jsonOptions['pro']['MinusVote'] = $MinusVote;

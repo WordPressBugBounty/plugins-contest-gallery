@@ -762,46 +762,7 @@ HEREDOC;
 
 
 
-echo <<<HEREDOC
-            <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_view_option_100_percent  ShowNicknameContainer '>
-                    <div class='cg_view_option_title '>
-                        <p>Show "Nickname" who added entry<br><span class="cg_view_option_title_note">If a registered user uploaded a file</span></p>
-                    </div>
-                    <div class='cg_view_option_checkbox '>
-                        <input type="checkbox" name="multiple-pics[cg_gallery_user][pro][ShowNickname]" checked="{$jsonOptions[$GalleryID.'-u']['pro']['ShowNickname']}" class="cg_shortcode_checkbox ShowNickname">
-                    </div>
-                </div>
-            </div>
-HEREDOC;
-
-$beforeSinceV14Explanation = '';
-$beforeSinceV14Disabled = '';
-
-// is ok if it works for old galleries also, only registered user has to have new since v14 role  or role configured in reg options since v14
-if(intval($galleryDbVersion)<14 AND empty($cgProFalse)){
-    //  $beforeSinceV14Disabled = 'cg_disabled';
-    //  $beforeSinceV14Explanation = '<br><span class="cg_color_red">NOTE: </span> Available only for galleries created or copied in plugin version 14 or higher';
-}
-
-if(!isset($jsonOptions[$GalleryID.'-u']['pro']['ShowProfileImage'])){
-    $jsonOptions[$GalleryID.'-u']['pro']['ShowProfileImage'] = 0;
-}
-
-echo <<<HEREDOC
-            <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_border_border_bottom_left_radius_unset cg_border_border_bottom_right_radius_unset cg_view_option_100_percent cg_border_top_none  ShowProfileImageContainer '>
-                    <div class='cg_view_option_title '>
-                        <p>Show "Profile image" who added entry<br><span class="cg_view_option_title_note">If a registered user uploaded a file<br>Users can choose a profile image in their profile.$beforeSinceV14Explanation</span></p>
-                    </div>
-                    <div class='cg_view_option_checkbox '>
-                        <input type="checkbox" name="multiple-pics[cg_gallery_user][pro][ShowProfileImage]" checked="{$jsonOptions[$GalleryID.'-u']['pro']['ShowProfileImage']}" class="cg_shortcode_checkbox ShowProfileImage">
-                    </div>
-                </div>
-            </div>
-        </div>
-HEREDOC;
-
+echo '</div>';
 
 if(floatval($galleryDbVersion)>=21){
     if(!isset($jsonOptions[$GalleryID.'-u']['visual']['BackToGalleryButtonText'])){

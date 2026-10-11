@@ -58,6 +58,8 @@ function cg_captcha_secret_input($scope,$id,$siteKey,$name){
 }
 function cg_captcha_admin_notice(){
     if(!current_user_can('manage_options')){return;}
+    $screen=get_current_screen();
+    if(!$screen || $screen->id!==get_plugin_page_hookname(cg_get_version().'/index.php','')){return;}
     global $wpdb;
     $links=array();
     foreach(cg_captcha_tables() as $scope=>$definition){

@@ -1,5 +1,15 @@
 Contest Gallery
 
+= 34.0.1 =
+* NEW: Private member messages and friendships.
+* NEW: Participant directories and public profiles with friends and entries across galleries.
+* NEW: Configurable member notification emails with optional message previews.
+* NEW: Administrator message overview and per-user communication controls.
+* IMPROVED: Profile loading, mobile layouts and backend status and repair controls.
+* IMPROVED: Plugin data cleanup on full uninstall.
+* FIXED: Voting result visibility, vote and comment updates, profile navigation and entry scrolling.
+* SECURITY: Security hardening. Reported by Nicat Sultanov.
+
 = 34.0.0 =
 * NEW: Browse gallery participants and their public profiles with entries from the current gallery.
 * NEW: Gallery member area with email PIN or Google sign-in, My entries and private access to unpublished entries. Available for galleries created or copied with version 24 or later.

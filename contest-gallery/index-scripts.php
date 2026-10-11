@@ -71,7 +71,7 @@ wp_enqueue_script( 'cg_general_admin_functions', plugins_url( '/v10/v10-js/admin
 wp_enqueue_script( 'cg_mail_test', plugins_url('/v10/v10-js/admin/mail-test.js', __FILE__), array('cg_general_admin_functions'), $cgAdminAssetVersion('v10/v10-js/admin/mail-test.js') );
 wp_enqueue_style( 'cg_mail_test', plugins_url('/v10/v10-css/backend/cg_mail_test.css', __FILE__), false, $cgAdminAssetVersion('v10/v10-css/backend/cg_mail_test.css') );
 
-wp_enqueue_script( 'cg_js_admin_corrections_and_improvements', plugins_url( '/v10/v10-js/admin/options/corrections-and-improvements.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_js_admin_corrections_and_improvements', plugins_url( '/v10/v10-js/admin/options/corrections-and-improvements.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/options/corrections-and-improvements.js') );
 
 wp_enqueue_script( 'cg_js_admin_options_edit_options_events', plugins_url( '/v10/v10-js/admin/options/edit-options-events.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/options/edit-options-events.js') );
 
@@ -98,7 +98,7 @@ wp_enqueue_script( 'cg_js_admin_options_show_votes', plugins_url( '/v10/v10-js/a
 
 wp_enqueue_style( 'cg_css_general_rotate_image', plugins_url('/v10/v10-css/backend/cg_rotate_image.css', __FILE__), false, cg_get_version_for_scripts() );
 
-wp_enqueue_style( 'cg_options_style_v10', plugins_url('/v10/v10-css/cg_options_style.css', __FILE__), false , cg_get_version_for_scripts() );
+wp_enqueue_style( 'cg_options_style_v10', plugins_url('/v10/v10-css/cg_options_style.css', __FILE__), false , $cgAdminAssetVersion('v10/v10-css/cg_options_style.css') );
 wp_enqueue_script( 'cg_admin_create_upload_create_upload_v10', plugins_url( '/v10/v10-js/admin/create-upload/create-upload-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_script( 'cg_admin_create_form_events_v10', plugins_url( '/v10/v10-js/admin/create-form/create-form-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_script( 'cg_admin_create_form_drag_and_drop_v10', plugins_url( '/v10/v10-js/admin/create-form/create-form-drag-and-drop-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
@@ -112,6 +112,8 @@ wp_enqueue_script( 'cg_create_registry_events', plugins_url( '/v10/v10-js/admin/
 wp_enqueue_script( 'cg_create_registry_functions', plugins_url( '/v10/v10-js/admin/create-registry/create-registry-functions.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 
 wp_enqueue_style( 'cg_backend_gallery', plugins_url('v10-css/backend/cg_backend_gallery.css', __FILE__), false, cg_get_version_for_scripts() );
+wp_enqueue_script('cg_member_messages_admin', plugins_url('/v10/v10-js/admin/users-management/member-messages-admin.js', __FILE__), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/users-management/member-messages-admin.js'));
+wp_enqueue_style('cg_member_messages_admin', plugins_url('/v10/v10-css/backend/cg_member_messages_admin.css', __FILE__), false, $cgAdminAssetVersion('v10/v10-css/backend/cg_member_messages_admin.css'));
 wp_enqueue_script( 'cg_admin_users_management_users_management_v10', plugins_url( '/v10/v10-js/admin/users-management/users-management-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 
 wp_enqueue_script( 'cg_check_wp_admin_upload_v10', plugins_url( '/v10/v10-js/admin/gallery/cg_check_wp_admin_upload.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );

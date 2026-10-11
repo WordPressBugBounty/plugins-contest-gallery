@@ -3,6 +3,9 @@
 include_once(__DIR__.'/../../../vars/general/emojis.php');
 
 $emojisDiv = cg1l_render_emojis_div();
+$cgPreviousEntryLabel = esc_attr($languageNames['gallery']['PreviousImage']);
+$cgNextEntryLabel = esc_attr($languageNames['gallery']['NextImage']);
+$cgCloseViewLabel = esc_attr($languageNames['gallery']['CloseView']);
 
 $switchStyleGalleryButton = '';
 $addCommentTooltipAttribute = '';
@@ -31,16 +34,14 @@ echo <<<HEREDOC
     <div id="cgCenterDivChild$galeryIDuserForJs" class="cgCenterDivChild" data-cg-gid="$galeryIDuserForJs">
             <div id="cgCenterOrientation$galeryIDuserForJs" class="cg-center-orientation cg_hide"></div>
          <div id="cgCenterDivHelper$galeryIDuserForJs" class="cg-center-div-helper" data-cg-gid="$galeryIDuserForJs">
-             <div id="cgCenterSliderPositionInfo$galeryIDuserForJs" class="cg-center-slider-position-info">
-                    1 of 100
-             </div>
+             <div id="cgCenterSliderPositionInfo$galeryIDuserForJs" class="cg-center-slider-position-info cg_hide"></div>
              <div id="cgCenterImageDivButtons$galeryIDuserForJs" class="cg-center-image-div-buttons">
                     <div  class="cg-center-image-div-buttons-first-controls">
                         <div class="cg-center-go-up-button cg_hide" id="cgCenterGoUpButton$galeryIDuserForJs" data-cg-gid="$galeryIDuserForJs" data-cg-tooltip="$language_GoToTopOfTheGallery" ></div>
                         <div class="cg_hover_effect cg-fullwindow-configuration-button cg-header-controls-show-only-full-window cg_hide" id="cgCenterDivCenterImageFullWindowConfiguration$galeryIDuser" data-cg-gid="$galeryIDuserForJs" data-cg-tooltip="$language_SearchOrSort"></div>
                          <div  class="cg-center-image-div-buttons-first-controls-arrows">
-                            <div class="cg-center-arrow cg-center-arrow-left" id="cgCenterArrowLeft$galeryIDuserForJs" data-cg-tooltip="$language_PreviousImage" ></div>
-                            <div class="cg-center-arrow cg-center-arrow-right" id="cgCenterArrowRight$galeryIDuserForJs" data-cg-tooltip="$language_NextImage" ></div>
+                            <div class="cg-center-arrow cg-center-arrow-left" id="cgCenterArrowLeft$galeryIDuserForJs" data-cg-tooltip="$cgPreviousEntryLabel" aria-label="$cgPreviousEntryLabel" ></div>
+                            <div class="cg-center-arrow cg-center-arrow-right" id="cgCenterArrowRight$galeryIDuserForJs" data-cg-tooltip="$cgNextEntryLabel" aria-label="$cgNextEntryLabel" ></div>
                         </div>
                     </div>
                    <div class="cg-center-image-div-buttons-second-controls cg-file-actions">
@@ -50,7 +51,7 @@ echo <<<HEREDOC
                          <div class="cg-center-image-download cg_hide"  data-cg-tooltip="$language_Download"></div>
                          <div class="cg-gallery-upload cg_gallery_control_element" data-cg-gid="$galeryIDuserForJs" data-cg-tooltip="$language_ImageUpload"></div>
                         <div class="cg-fullscreen-button cg-header-controls-show-only-full-window cg_hide" id="cgCenterImageFullScreenButton$galeryIDuser" data-cg-gid="$galeryIDuserForJs" data-cg-tooltip="$language_FullScreen"></div>
-                    <div id="cgCenterImageClose$galeryIDuserForJs" class="cg-center-image-close cg_hide"></div>
+                    <div id="cgCenterImageClose$galeryIDuserForJs" class="cg-center-image-close cg_hide" aria-label="$cgCloseViewLabel" title="$cgCloseViewLabel"></div>
                         <div class="cg-center-image-fullwindow cg-inside-center-image-div" id="cgCenterImageFullwindow$galeryIDuserForJs" data-cg-gid="$galeryIDuserForJs" data-cg-tooltip="$language_FullWindow"></div>
                     </div>
             </div>

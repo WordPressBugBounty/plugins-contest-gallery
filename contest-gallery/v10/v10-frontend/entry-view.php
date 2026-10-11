@@ -46,6 +46,7 @@ if(!function_exists('cg1l_render_single_entry_view')){
             'ecommerce_options' => [],
             'currencies_array' => [],
             'compact_share_actions' => false,
+            'is_community_entry' => false,
         ], $args);
 
         // Shorthands with WP-safe escaping
@@ -63,7 +64,8 @@ if(!function_exists('cg1l_render_single_entry_view')){
         $realGid   = intval($d['real_gid']);
         $cat   = intval($d['cat_id']);
         $ImgType = $fullData['ImgType'];
-        $canManageEntry = cg_member_can_manage_entry($realGid,$shortcode_name,$fullData,$WpUserIdsData);
+        // Profile modal entries retain public actions even when the viewer owns them.
+        $canManageEntry = empty($d['is_community_entry']) && cg_member_can_manage_entry($realGid,$shortcode_name,$fullData,$WpUserIdsData);
 
         $imgFull   = esc_url($fullData['guid']);
         $img683x   = esc_url($d['img_src_683x']);
@@ -154,7 +156,7 @@ if(!function_exists('cg1l_render_single_entry_view')){
             }
 
             $phpFormat = (!empty($dateFormatMap[$format])) ? $dateFormatMap[$format] : $format;
-            return cg_get_time_based_on_wp_timezone_conf($timestamp, $phpFormat);
+            return wp_date($phpFormat, $timestamp);
         };
 
         $formatExifDateTimeOriginal = function($dateTimeOriginal, $format) {
@@ -585,7 +587,7 @@ if(!function_exists('cg1l_render_single_entry_view')){
         }
 
         $infoEditControls = '';
-        if($hasEditableInfoContent){
+        if($hasEditableInfoContent && empty($d['is_community_entry'])){
             $infoEditControls = '<div id="'.esc_attr($infoEditIconWrapId).'" class="cg-center-image-info-edit-icon-container">
                             <div id="'.esc_attr($infoEditIconId).'" class="cg-center-image-info-edit-icon"></div>
                             <div id="'.esc_attr($infoEditTextId).'" class="cg-center-image-info-edit-text">Edit</div>
@@ -610,7 +612,7 @@ if(!function_exists('cg1l_render_single_entry_view')){
         }
 
         $infoSaveControls = '';
-        if($hasEditableInfoContent){
+        if($hasEditableInfoContent && empty($d['is_community_entry'])){
             $infoSaveControls = '<div id="'.esc_attr($saveIconTextWrapId).'" class="cg-center-image-info-save-icon-text-container">
                             <button type="button" id="'.esc_attr($saveTextId).'" class="cg-center-image-info-save-text cg-entry-save">'.esc_html(cg_member_t('Save')).'</button>
                         </div>';
@@ -743,8 +745,8 @@ if(!function_exists('cg1l_render_single_entry_view')){
             $sliderButtons = '<div id="cgCenterImageDivButtons'.$gidJs.$ord.'" class="cg-center-image-div-buttons cgHundertPercentWidth">
                 <div class="cg-center-image-div-buttons-first-controls">
                      <div class="cg-center-image-div-buttons-first-controls-arrows">
-                        <div class="cg-center-arrow cg-center-arrow-left cg_hide" id="cgCenterArrowLeft'.$gidJs.$ord.'" data-cg-tooltip="Previous entry" data-cg-actual-realid="116"></div>
-                        <div class="cg-center-arrow cg-center-arrow-right" id="cgCenterArrowRight'.$gidJs.$ord.'" data-cg-tooltip="Next entry" data-cg-actual-realid="116"></div>
+                        <div class="cg-center-arrow cg-center-arrow-left cg_hide" id="cgCenterArrowLeft'.$gidJs.$ord.'" data-cg-tooltip="'.esc_attr($getGalleryLanguageName('PreviousImage','Previous entry')).'" aria-label="'.esc_attr($getGalleryLanguageName('PreviousImage','Previous entry')).'" data-cg-actual-realid="116"></div>
+                        <div class="cg-center-arrow cg-center-arrow-right" id="cgCenterArrowRight'.$gidJs.$ord.'" data-cg-tooltip="'.esc_attr($getGalleryLanguageName('NextImage','Next entry')).'" aria-label="'.esc_attr($getGalleryLanguageName('NextImage','Next entry')).'" data-cg-actual-realid="116"></div>
                     </div>
                 </div>
         </div>';
@@ -906,7 +908,7 @@ if(!function_exists('cg1l_render_single_entry_view')){
     <div id="'.esc_attr($centerDivChildId).'" class="cgCenterDivChild" data-cg-gid="'.$gidJs.'">
         <div id="'.esc_attr($centerOrientationId).'" class="cg-center-orientation cg_hide"></div>
         <div id="'.esc_attr($centerHelperId).'" class="cg-center-div-helper '.$cgSliderViewClass.'" data-cg-gid="'.$gidJs.'">
-            <div id="'.esc_attr($sliderInfoId).'" class="cg-center-slider-position-info '.$posInfoCgHide.'" >'.$posInfo.'</div>
+            <div id="'.esc_attr($sliderInfoId).'" class="cg-center-slider-position-info '.$posInfoCgHide.'" >'.esc_html($posInfo).'</div>
             '.$sliderButtons.'
                 <div id="'.esc_attr($helperHelperId).'" class="cg-center-div-helper-helper" data-cg-gid="'.$gidJs.'">
                     <div id="'.esc_attr($helper3Id).'" class="cg-center-div-helper-helper-helper" data-cg-gid="'.$gidJs.'">

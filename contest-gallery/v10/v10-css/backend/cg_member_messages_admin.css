@@ -1,0 +1,33 @@
+#cgMemberAdminMessages { max-width: 1400px; margin: 24px auto; padding: 24px; background: #fff; border: 1px solid #dcdcde; border-radius: 8px; box-sizing: border-box; }
+#cgMemberAdminMessages *, #cgMemberAdminMessages *::before, #cgMemberAdminMessages *::after { box-sizing: border-box; }
+#cgMemberAdminMessages button, #cgMemberAdminMessages button:hover, #cgMemberAdminMessages button:focus, #cgMemberAdminMessages button:focus-visible, #cgMemberAdminMessages button:active { outline: none !important; box-shadow: none !important; }
+#cgMemberAdminMessages [hidden] { display: none !important; }
+.cg-member-admin-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
+.cg-member-admin-header h1 { margin: 6px 0 10px; font-size: 24px; line-height: 1.3; }
+.cg-member-admin-header p { margin: 0; color: #646970; }
+.cg-member-admin-kicker { color: #646970; font-size: 12px; }
+.cg-member-admin-columns { display: grid; grid-template-columns: minmax(220px, 30%) minmax(0, 1fr); gap: 24px; }
+.cg-member-admin-columns h2 { margin: 0 0 16px; font-size: 17px; }
+.cg-member-admin-conversations { border-right: 1px solid #dcdcde; padding-right: 24px; min-width: 0; }
+.cg-member-admin-thread-list { display: grid; gap: 8px; }
+#cgMemberAdminMessages .cg-member-admin-thread { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%; border: 1px solid #dcdcde; border-radius: 8px; background: #fff; color: #1d2327; padding: 14px; cursor: pointer; text-align: left; overflow-wrap: anywhere; }
+#cgMemberAdminMessages .cg-member-admin-thread[aria-pressed="true"] { border-color: #2271b1; background: #f0f6fc; }
+.cg-member-admin-thread time, .cg-member-admin-message time { color: #646970; font-size: 12px; }
+.cg-member-admin-history { display: flex; flex-direction: column; gap: 12px; max-height: 65vh; overflow: auto; padding: 4px 10px 4px 0; }
+.cg-member-admin-message { align-self: flex-start; max-width: 85%; min-width: 140px; padding: 14px; border: 1px solid #dcdcde; border-radius: 8px; background: #f6f7f7; overflow-wrap: anywhere; }
+.cg-member-admin-message.is-selected-user { align-self: flex-end; background: #fff; }
+.cg-member-admin-message p { margin: 10px 0; white-space: pre-wrap; }
+.cg-member-admin-more-threads, .cg-member-admin-older { margin-top: 16px !important; }
+.cg-member-admin-status { margin: 16px 0 0; min-height: 20px; }
+.cg-member-admin-status[role="alert"] { color: #b32d2e; }
+@media (max-width: 782px) {
+    #cgMemberAdminMessages { padding: 16px; margin: 16px 0; }
+    .cg-member-admin-header { flex-wrap: wrap; }
+    .cg-member-admin-columns { grid-template-columns: minmax(0, 1fr); }
+    .cg-member-admin-conversations { border-right: 0; border-bottom: 1px solid #dcdcde; padding-right: 0; padding-bottom: 20px; }
+    .cg-member-admin-history { max-height: 55vh; }
+    .cg-member-admin-message { max-width: 95%; }
+}
+
+.cg-member-admin-communication { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; max-width: 340px; }
+.cg-member-admin-communication p { font-size: 12px; }

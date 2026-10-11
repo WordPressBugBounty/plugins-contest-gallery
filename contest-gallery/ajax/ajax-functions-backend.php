@@ -3,6 +3,7 @@ include_once(__DIR__.'/../v10/v10-admin/gallery-transfer/gallery-transfer.php');
 include_once(__DIR__.'/../functions/backend/gallery/cg-entry-watermark.php');
 include_once(__DIR__.'/../functions/backend/gallery/cg-entry-page-open.php');
 include_once(__DIR__.'/../functions/backend/cg-mail-test.php');
+include_once(__DIR__.'/../functions/backend/cg-member-messages-admin.php');
 
 if (!function_exists('cg_backend_ajax_error_json')) {
     function cg_backend_ajax_error_json($message, $status = 400, $code = 'cg_backend_ajax_error') {

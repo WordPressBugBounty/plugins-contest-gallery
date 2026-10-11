@@ -7,6 +7,7 @@ exit ();
 if(include('uninstall-check.php')){return;}
 
 ignore_user_abort(true);
+require_once __DIR__.'/functions/general/cg-uninstall-member-data.php';
 
 if(!function_exists('cg_database_install_cancel_worker_before_uninstall')){
     function cg_database_install_cancel_worker_before_uninstall(){
@@ -85,7 +86,7 @@ if(!function_exists('cg_database_install_workers_are_inactive_before_uninstall')
                     }
 
                     switch_to_blog($blogId);
-                    $siteHasActiveWorker = cg_database_install_has_active_worker_before_uninstall();
+                    $siteHasActiveWorker = cg_database_install_has_active_worker_before_uninstall() || !cg_uninstall_member_workers_inactive();
                     restore_current_blog();
 
                     if($siteHasActiveWorker){
@@ -93,7 +94,7 @@ if(!function_exists('cg_database_install_workers_are_inactive_before_uninstall')
                     }
                 }
             }else{
-                $hasActiveWorker = cg_database_install_has_active_worker_before_uninstall();
+                $hasActiveWorker = cg_database_install_has_active_worker_before_uninstall() || !cg_uninstall_member_workers_inactive();
             }
 
             if(!$hasActiveWorker){
@@ -112,7 +113,7 @@ if(!function_exists('cg_database_install_workers_are_inactive_before_uninstall')
 if(!function_exists('cg_database_install_abort_uninstall_for_active_worker')){
     function cg_database_install_abort_uninstall_for_active_worker(){
         wp_die(
-            '<p>'.esc_html__('Contest Gallery is still finishing a one-time setup task. No plugin data was deleted. Please wait a moment, return to the Plugins page, and try Delete again.','contest-gallery').'</p>',
+            '<p>'.esc_html__('Contest Gallery is still finishing a setup, profile or upload task. No member data was deleted. Please wait a moment, return to the Plugins page, and try Delete again.','contest-gallery').'</p>',
             esc_html__('Contest Gallery uninstall paused','contest-gallery'),
             array('response'=>409,'back_link'=>true)
         );
@@ -263,8 +264,10 @@ if(!function_exists('cgDropTables')){
 
         global $wpdb;
 
-        // This path runs per website only after the shared FREE/PRO uninstall guard.
-        delete_metadata('user',0,$wpdb->get_blog_prefix().'cg_member_admin_mail_note_dismissed','',true);
+        delete_option('cg_member_community');
+        foreach(array('threads','messages','friends','blocks') as $cgCommunitySuffix){
+            $wpdb->query('DROP TABLE IF EXISTS '.$wpdb->prefix.'contest_gal1ery_member_'.$cgCommunitySuffix);
+        }
 
         $tablename = $wpdb->prefix . "contest_gal1ery";
         $tablename_ip = $wpdb->prefix . "contest_gal1ery_ip";
@@ -500,6 +503,8 @@ if (is_multisite()) {
             cg_database_install_abort_uninstall_for_active_worker();
         }
 
+	    $cgMemberImages = cg_uninstall_member_image_inventory($getBlogIDs);
+
 	    foreach($getBlogIDs as $blogId){
 	        $blogId = absint($blogId);
 	        if(empty($blogId)){
@@ -511,6 +516,8 @@ if (is_multisite()) {
             cg_database_install_finalize_state_before_uninstall();
             cgRestoreEntryWatermarksBeforeUninstall();
             cgRestoreEcommerceDownloadFilesBeforeUninstall();
+            cg_uninstall_member_delete_images(isset($cgMemberImages[$blogId]) ? $cgMemberImages[$blogId] : array(),$getBlogIDs);
+            cg_uninstall_member_site_data();
             cgRemoveCustomFieldUserMeta($wpdb->prefix);
             cgDropTables();
             cgRemoveBlogFiles();
@@ -520,6 +527,7 @@ if (is_multisite()) {
 
         // Unprefixed legacy values are shared and removed only after all sites.
         cgRemoveCustomFieldUserMeta();
+        cg_uninstall_member_global_data();
         cgRemoveGlobalPluginFiles();
 }
 else{
@@ -530,11 +538,16 @@ else{
     if(!cg_database_install_workers_are_inactive_before_uninstall(array())){
         cg_database_install_abort_uninstall_for_active_worker();
     }
+	$cgMemberBlogIds = array(get_current_blog_id());
+    $cgMemberImages = cg_uninstall_member_image_inventory($cgMemberBlogIds);
 	cg_database_install_finalize_state_before_uninstall();
 
 	// move entry files to original folder
     cgRestoreEntryWatermarksBeforeUninstall();
     cgRestoreEcommerceDownloadFilesBeforeUninstall();
+    cg_uninstall_member_delete_images(isset($cgMemberImages[$cgMemberBlogIds[0]]) ? $cgMemberImages[$cgMemberBlogIds[0]] : array(),$cgMemberBlogIds);
+    cg_uninstall_member_site_data();
+    cg_uninstall_member_global_data();
     cgRemoveCustomFieldUserMeta();
     cgDropTables();
     cgRemoveBlogFiles();

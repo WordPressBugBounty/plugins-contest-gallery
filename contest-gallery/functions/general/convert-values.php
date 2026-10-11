@@ -176,6 +176,17 @@ if(!function_exists('contest_gal1ery_convert_for_html_output_without_nl2br')){
     }
 }
 
+// Attribute-safe presentation copy. Stored translations remain unmodified.
+if(!function_exists('cg_translation_form_values')){
+    function cg_translation_form_values($values){
+        foreach($values as $key=>$value){
+            if(is_array($value)){$values[$key]=cg_translation_form_values($value);}
+            elseif(is_string($value)){$values[$key]=esc_attr($value);}
+        }
+        return $values;
+    }
+}
+
 if(!function_exists('contest_gal1ery_convert_for_html_header_output')){
     function contest_gal1ery_convert_for_html_header_output ($content){
         if(!empty($content)){

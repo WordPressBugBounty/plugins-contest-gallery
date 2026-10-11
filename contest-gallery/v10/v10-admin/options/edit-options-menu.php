@@ -87,6 +87,7 @@ HEREDOC;
                       <div class='cg_view_select cg_view_select_icons' cg-data-view="#view20" data-count="20"><a class="cg_view_select_link" cg-data-view="#view20" cg-data-href="cgViewHelper20">Social embed</a></div>
                         <div class='cg_view_select cg_view_select_general cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view10" data-count="10"><a class="cg_view_select_link" cg-data-view="#view10" cg-data-href="cgViewHelper10">Galleries</a></div>
                       <div class='cg_view_select cg_view_select_status_repair cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#statusRepairMail" data-count="16"><a class="cg_view_select_link" cg-data-view="#statusRepairMail" cg-data-href="statusRepairMail">Status, repair, mail</a></div>
+                      <div class='cg_view_select cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#cgMemberNotifications" data-count="34"><a class="cg_view_select_link" cg-data-view="#cgMemberNotifications" cg-data-href="cgMemberNotifications">Member notifications</a></div>
                       <div class='cg_view_select cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view11" data-count="11"><a class="cg_view_select_link" cg-data-view="#view11" cg-data-href="cgViewHelper11">Registration</a></div>
                       <div class='cg_view_select cg_after_v14 $cg_v14_note_caret $cg_v22_caret' cg-data-view="#view12" data-count="12"><a class="cg_view_select_link" cg-data-view="#view12" cg-data-href="cgViewHelper12">Login</a></div>
 HEREDOC;
@@ -532,6 +533,10 @@ HEREDOC;
 HEREDOC;
         echo "</div>";
         // status, repair, mail --- END
+
+        echo '<h4 id="cgMemberNotifications" class="cg_view_header">Member notifications (general)</h4><div class="cg_view cgMemberNotifications cgViewHelper34">';
+        cg_community_admin_render();
+        echo '</div>';
 
         echo <<<HEREDOC
         <h4 id="view11" class="cg_view_header">Registration$cg_v14_general_options_title_string</h4>

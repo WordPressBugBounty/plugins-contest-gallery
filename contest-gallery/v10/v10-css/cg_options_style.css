@@ -5289,113 +5289,232 @@ code.cg_shortcode_copy:after{
 }
 
 #cgCorrections{
-	width:100%;
+	box-sizing: border-box;
+	width: 100%;
+	padding: 24px;
+	background: #fff;
 	box-shadow: 2px 4px 12px rgba(0,0,0,.08);
-	background-color:#ffffff;
-	font-size: 14px;
 	border-radius: 8px;
+	color: #1f2937;
+	font-size: 14px;
 }
 
-#cgCorrections .cg_corrections_action.cg_corrections_container_exception{
-	background-color:#ffd400;
+#cgCorrections .cg_corrections_header{
+	margin-bottom: 20px;
+}
+
+#cgCorrections .cg_corrections_header h2{
+	margin: 0 0 6px;
+	font-size: 22px;
+	line-height: 1.3;
+}
+
+#cgCorrections .cg_corrections_header p{
+	margin: 0;
+	color: #64748b;
+	font-size: 14px;
 }
 
 #cgCorrections .cg_corrections_container{
 	display: flex;
 	flex-wrap: wrap;
-	flex-direction: row;
-	border: thin solid #dedede;
+	align-items: flex-start;
+	gap: 18px;
+	border: 1px solid #e2e8f0;
 	border-radius: 8px;
-	margin: 20px 25px;
-	padding: 20px;
+	padding: 22px;
+}
+
+#cgCorrections .cg_corrections_container + .cg_corrections_container{
+	margin-top: 16px;
+}
+
+#cgCorrections .cg_corrections_icon{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 44px;
+	width: 44px;
+	height: 44px;
+	border-radius: 8px;
+	background: #f1f5f9;
+	color: #475569;
+	font-size: 22px;
 }
 
 #cgCorrections .cg_corrections_explanation{
-	width: 70%;
+	flex: 1 1 300px;
+	min-width: 0;
 }
 
 #cgCorrections .cg_corrections_title{
-	font-size: 20px;
-	padding: 10px 0;
-	font-weight: bold;
+	margin: 0 0 6px;
+	font-size: 16px;
+	line-height: 1.4;
+	font-weight: 600;
 }
 
 #cgCorrections .cg_corrections_description{
-	font-size: 16px;
-	padding: 10px 0;
+	color: #64748b;
+	font-size: 14px;
+	line-height: 1.6;
+	overflow-wrap: anywhere;
 }
+
 #cgCorrections .cg_corrections_action{
-	font-size: 30px;
-	margin: auto;
-	padding: 30px 45px;
-	line-height: 30px;
-	cursor: pointer;
-	-webkit-touch-callout: none; /* iOS Safari */
-	-webkit-user-select: none; /* Safari */
-	-moz-user-select: none; /* Old versions of Firefox */
-	-ms-user-select: none; /* Internet Explorer/Edge */
-	user-select: none;
-	font-weight: bold;
-	border: thin solid #dedede;
-	box-shadow: 2px 4px 12px rgba(0,0,0,.08);
+	align-self: center;
+	flex: 0 0 auto;
+	max-width: 100%;
+	margin-left: auto;
+}
+
+#cgCorrections form{
+	margin: 0;
+}
+
+#cgCorrections .cg_corrections_action_submit{
+	box-sizing: border-box;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 100%;
+	min-height: 40px;
+	padding: 10px 18px;
+	border: 1px solid #176b3b;
 	border-radius: 8px;
-}
-
-#cgCorrections .cg_corrections_action .cg_corrections_action_submit{
-	min-width: 145px;
-	display: block;
+	background: #176b3b;
+	color: #fff;
+	font: inherit;
+	font-weight: 600;
+	line-height: 1.4;
 	text-align: center;
+	cursor: pointer;
+	outline: none;
+	box-shadow: none;
 }
 
-#cgCorrections .cg_corrections_action.cg_corrected{
-	pointer-events: none;
-	background-color: #2d7400;
-	color: white;
+#cgCorrections .cg_corrections_action_submit:hover,
+#cgCorrections .cg_corrections_action_submit:focus,
+#cgCorrections .cg_corrections_action_submit:focus-visible,
+#cgCorrections .cg_corrections_action_submit:active{
+	border-color: #10532d;
+	background: #10532d;
+	outline: none;
+	box-shadow: none;
 }
 
+#cgCorrections .cg_corrections_action_secondary{
+	border-color: #cbd5e1;
+	background: #fff;
+	color: #334155;
+}
 
-#cgCorrections .cg_database_improve_title{
+#cgCorrections .cg_corrections_action_secondary:hover,
+#cgCorrections .cg_corrections_action_secondary:focus,
+#cgCorrections .cg_corrections_action_secondary:focus-visible,
+#cgCorrections .cg_corrections_action_secondary:active{
+	border-color: #94a3b8;
+	background: #f8fafc;
+}
+
+#cgCorrections .cg_corrections_status{
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 12px;
+	border: 1px solid #cce5d5;
+	border-radius: 8px;
+	background: #eff8f2;
+	color: #176b3b;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+#cgCorrections .cg_corrections_status .dashicons{
 	font-size: 18px;
-	margin-bottom: 20px;
+	width: 18px;
+	height: 18px;
+}
+
+#cgCorrections #cgCorrect7exceptions{
+	flex: 0 0 100%;
+	min-width: 0;
+	padding-top: 16px;
+	border-top: 1px solid #e2e8f0;
+}
+
+#cgCorrections .cg_corrections_log{
+	max-height: 320px;
+	overflow: auto;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+	padding: 14px;
+	background: #f8fafc;
+}
+
+#cgCorrections .cg_corrections_log pre{
+	margin: 0;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+#cgCorrections .cg_corrections_log pre + pre{
+	margin-top: 14px;
+}
+
+#cgCorrections .cg_corrections_log_actions{
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 14px;
+}
+
+#cgCorrections .cg_database_improve_title,
+#cgCorrections .cg_database_improve_mysql_version,
+#cgCorrections .cg_database_error_message{
 	display: block;
-	line-height: 22px;
+	margin-bottom: 10px;
 }
 
 #cgCorrections .cg_database_improve_table_name{
-	font-size: 14px;
-	font-weight: bold;
-}
-
-#cgCorrections .cg_database_improve_mysql_version{
-	margin-bottom: 5px;
-	display: block;
-}
-
-#cgCorrections .cg_database_error_message{
-	margin-bottom: 5px;
-	display: block;
+	font-weight: 600;
 }
 
 #cgCorrections table{
-	margin-bottom: 20px;
+	width: 100%;
+	margin: 8px 0 16px;
+	border-collapse: collapse;
 	text-align: left;
 }
 
-#cgCorrections table th{
-	font-size: 14px;
-	font-weight: normal;
-	text-decoration: underline;
-	padding: 2px 0;
-}
-
+#cgCorrections table th,
 #cgCorrections table td{
-	font-size: 14px;
-	font-weight: normal;
-	padding: 1px 0;
+	padding: 8px;
+	border-bottom: 1px solid #e2e8f0;
+	font-size: 13px;
+	vertical-align: top;
+	overflow-wrap: anywhere;
 }
 
-#cgCorrections table tr td:first-child{
-	padding-right: 20px;
+#cgCorrections table th{
+	font-weight: 600;
+	background: #f8fafc;
+}
+
+@media (max-width: 782px){
+	#cgCorrections{
+		padding: 16px;
+	}
+	#cgCorrections .cg_corrections_container{
+		padding: 16px;
+		gap: 12px;
+	}
+	#cgCorrections .cg_corrections_explanation{
+		flex-basis: calc(100% - 56px);
+	}
+	#cgCorrections .cg_corrections_action{
+		margin: 0 0 0 56px;
+	}
 }
 
 #cg_changes_saved{

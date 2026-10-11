@@ -78,7 +78,7 @@ function cg_participants_collect($gid,$shortcode,$options,$userId = 0){
 	foreach($rows as $entryId=>$row){
 		$id = absint($row['WpUserId']);
 		if(!isset($users[$id])){
-			$users[$id] = array('id'=>$id,'name'=>$row['display_name'],'count'=>0,'date'=>0,'comments'=>0,'votes'=>0,'rating'=>0,'distribution'=>array());
+			$users[$id] = array('id'=>$id,'entry'=>absint($entryId),'name'=>$row['display_name'],'count'=>0,'date'=>0,'comments'=>0,'votes'=>0,'rating'=>0,'distribution'=>array());
 		}
 		$user =& $users[$id];
 		$user['count']++;
@@ -198,7 +198,7 @@ function cg_participants_list_data($context,$options,$request){
 		echo '<div class="cg-participants-grid cg_grid"><div class="cg_grid_sizer"></div><div class="cg_gutter_sizer"></div>';
 		foreach(array_slice($users,($page-1)*$perPage,$perPage) as $user){
 			$profile = cg_member_profile_data($user['id']);
-			echo '<article class="cg-participant-card cg_grid_item" data-cg-wp-user-id="'.absint($user['id']).'"><button type="button" class="cg-participant-open" data-cg-profile="'.$user['id'].'"><span class="cg-participant-photo">'.cg_participants_profile_image($profile,true).'</span><span class="cg-participant-name">'.esc_html($profile['name']).'</span></button>'.cg_participants_metrics($user,$options,$context['shortcodeName'],true).cg_public_profile_render_fields($user['id'],2).'</article>';
+			echo '<article class="cg-participant-card cg_grid_item" data-cg-wp-user-id="'.absint($user['id']).'"'.cg_public_member_profile_attributes($user['id'],$context,$user['entry']).'><button type="button" class="cg-participant-open" data-cg-profile="'.$user['id'].'" aria-haspopup="dialog"><span class="cg-participant-photo">'.cg_participants_profile_image($profile,true).'</span><span class="cg-participant-name">'.esc_html($profile['name']).'</span></button>'.cg_participants_metrics($user,$options,$context['shortcodeName'],true).cg_public_profile_render_fields($user['id'],2).'<div class="cg-participant-actions"><button type="button" class="cg-participant-open" aria-haspopup="dialog">'.esc_html(cg_member_t('View profile')).'</button><button type="button" class="cg-participant-gallery-open" data-cg-profile="'.$user['id'].'">'.esc_html(cg_member_t('View gallery entries')).'</button></div></article>';
 		}
 		echo '</div>';
 	}
@@ -224,9 +224,9 @@ function cg_participants_profile_data($context,$request){
 	$profileOptions = cg_member_options($context['realGid'],$context['shortcodeName']);
 	$profileStats = cg_participants_collect($context['realGid'],$context['shortcodeName'],$profileOptions,$userId);
 	$profileStatsHtml = cg_participants_metrics($profileStats[$userId],$profileOptions,$context['shortcodeName']);
-	$profileViewLabel = get_current_user_id()===$userId ? 'Your public profile' : 'Public profile';
+	$profileViewLabel = cg_member_t('Gallery entries');
 	$profileHtml = '<nav class="cg-participant-breadcrumb" aria-label="'.esc_attr(cg_member_t('Gallery view')).'"><button type="button" class="cg-participant-list-link">'.esc_html(cg_member_t('Participants')).'</button><span aria-hidden="true">&#8250;</span><span aria-current="page">'.esc_html(cg_member_t($profileViewLabel)).'</span></nav>';
-	$profileHtml .= '<section class="cg-participant-profile" data-cg-wp-user-id="'.absint($userId).'"><div class="cg-participant-profile-title"><div class="cg-participant-photo">'.cg_participants_profile_image($profile).'</div><h2 tabindex="-1">'.esc_html($profile['name']).'</h2></div>'.$profileStatsHtml.cg_public_profile_render_fields($userId).'</section>';
+	$profileHtml .= '<section class="cg-participant-profile" data-cg-wp-user-id="'.absint($userId).'"'.cg_public_member_profile_attributes($userId,$context,key($entries)).'><div class="cg-participant-profile-title"><div class="cg-participant-photo">'.cg_participants_profile_image($profile).'</div><h2 tabindex="-1">'.esc_html($profile['name']).'</h2></div>'.$profileStatsHtml.cg_public_profile_render_fields($userId).'<div class="cg-participant-actions"><button type="button" class="cg-participant-open" aria-haspopup="dialog">'.esc_html(cg_member_t('View profile')).'</button></div></section>';
 	$galeryID = absint($context['realGid']);
 	$cgParticipantUserId = $userId;
 	$cgParticipantListPage = max(1,isset($request['listPage']) && is_scalar($request['listPage']) ? absint($request['listPage']) : 1);

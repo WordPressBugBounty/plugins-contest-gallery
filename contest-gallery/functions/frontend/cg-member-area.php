@@ -7,6 +7,7 @@ require_once __DIR__.'/cg-gallery-card-controls.php';
 require_once __DIR__.'/cg-public-profile.php';
 require_once __DIR__.'/cg-page-presentation.php';
 require_once __DIR__.'/cg-participants.php';
+require_once __DIR__.'/cg-galleries-participants.php';
 
 // Read defaults without rewriting existing galleries or changing upload access.
 function cg_member_options_from_source($data,$gid,$shortcode){
@@ -31,26 +32,14 @@ function cg_member_options($gid,$shortcode = 'cg_gallery'){
 	return cg_member_options_from_source(cg_member_replacement_source($gid),$gid,$shortcode);
 }
 
-// Effective profile flags belong to this render only. Stored individual choices survive.
+// Member profile availability is separate from the stored owner display preferences.
 function cg_member_profile_options($options,$gid,$shortcode){
+	$options['visual']['ShowProfileEntry'] = cg_uploader_profile_entry_enabled($options,$shortcode) ? 1 : 0;
+	$options['pro']['ShowNickname'] = $options['visual']['ShowProfileEntry'];
+	$options['pro']['ShowProfileImage'] = $options['visual']['ShowProfileEntry'];
 	$options['visual']['MemberArea'] = cg_member_enabled($gid,$shortcode) ? 1 : 0;
-	if(!empty($options['visual']['MemberArea'])){
-		$options['visual']['ShowProfileGallery'] = 1;
-		$options['pro']['ShowNickname'] = 1;
-		$options['pro']['ShowProfileImage'] = 1;
-	}
-	if(!cg_member_features_available($gid)){$options['visual']['ShowProfileGallery'] = 0;}
+	if(!cg_member_features_available($gid) || !cg_gallery_card_profile_supported($shortcode)){$options['visual']['ShowProfileGallery'] = 0;}
 	return $options;
-}
-
-// Disabled profile controls must retain their underlying values, including absent fields.
-function cg_member_preserve_profile_options(&$options,$previous){
-	foreach(array('visual'=>array('ShowProfileGallery'),'pro'=>array('ShowNickname','ShowProfileImage')) as $section=>$fields){
-		foreach($fields as $field){
-			if(isset($previous[$section][$field])){$options[$section][$field] = $previous[$section][$field];}
-			else{unset($options[$section][$field]);}
-		}
-	}
 }
 
 // Availability follows the stored gallery generation and its actual page type.
@@ -127,7 +116,7 @@ function cg_member_render_option($gid,$shortcode){
 	$available = cg_member_features_available($gid);
 	$suffix = $shortcode==='cg_gallery_no_voting' ? 'NoVoting' : ($shortcode==='cg_gallery_user' ? 'User' : '');
 	$name = 'multiple-pics['.$shortcode.'][visual][MemberArea]';
-	$description = $shortcode==='cg_gallery_user' ? 'A personal area for signed-in members to manage their own entries and profile. Other members and their entries are not shown.' : 'Let visitors register, sign in and manage their entries and profile. Includes uploader profiles in the gallery and full window view.';
+	$description = $shortcode==='cg_gallery_user' ? 'A personal area for signed-in members to manage their own entries and profile. Other members and their entries are not shown.' : 'Let visitors register, sign in and manage their entries and profile. Uploader profiles in gallery and entry view are set separately.';
 	$bottomRadius = $shortcode==='cg_gallery' ? '' : ' cg_border_border_bottom_left_radius_8_px cg_border_border_bottom_right_radius_8_px';
 	echo '<div class="cg_member_options_group cg_margin_bottom_30">';
 	if(!$available){echo '<p class="cg-member-unavailable-note">'.esc_html(cg_member_unavailable_note()).'</p>';}
@@ -238,10 +227,17 @@ function cg_member_client_strings(){
 		'Close',
 		'Not published',
 		'All entries',
-		'Loading…'
+		'Loading…',
+		'Back to gallery',
+		'Back to galleries',
+		'Cancel',
+		'Comments',
+		'ratings',
+		'Ratings and comments',
+		'Vote'
 	);
 	$result = array();
-	foreach(array_merge($strings,cg_member_interface_strings(),cg_member_entry_action_strings(),cg_member_profile_strings(),array('Edit profile','Remove profile image','Close'),cg1l_share_strings()) as $string){$result[$string] = cg_member_t($string);}
+	foreach(array_merge($strings,cg_member_interface_strings(),cg_member_voting_translation_strings(),cg_member_entry_action_strings(),cg_member_profile_strings(),array('Edit profile','Remove profile image','Close'),cg1l_share_strings()) as $string){$result[$string] = cg_member_t($string);}
 	return $result;
 }
 
@@ -278,7 +274,7 @@ function cg_member_render_header($gid,$instance,$shortcode,$options,$publicInsta
 	$token = cg1l_create_runtime_context_token(array('realGid'=>$gid,'gid'=>$publicInstance,'shortcodeName'=>$publicShortcode,'pagePresentation'=>$showParticipants));
 	$count = $user->ID ? absint($wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM '.$wpdb->prefix.'contest_gal1ery WHERE GalleryID=%d AND WpUserId=%d',$gid,$user->ID))) : 0;
 	$participantsCount = $showParticipants ? cg_participants_count($gid,$publicShortcode) : 0;
-	echo '<section class="cg-member-area" data-cg-gid="'.esc_attr($instance).'" data-cg-real-gid="'.absint($gid).'" data-cg-public-instance="'.esc_attr($publicInstance).'" data-cg-public-shortcode="'.esc_attr($publicShortcode).'" data-cg-member-token="'.esc_attr($token).'" data-cg-member-user="'.absint($user->ID).'" data-cg-member-view="'.($own ? 'own' : 'all').'"'.($initialOwnPage ? ' data-cg-member-initial-own="1" data-public-step="'.absint($initialOwnPage).'"' : '').'>';
+	echo '<section class="cg-member-area" data-cg-gid="'.esc_attr($instance).'" data-cg-real-gid="'.absint($gid).'" data-cg-public-instance="'.esc_attr($publicInstance).'" data-cg-public-shortcode="'.esc_attr($publicShortcode).'" data-cg-member-token="'.esc_attr($token).'" data-cg-community="'.(cg_community_enabled() ? '1' : '0').'" data-cg-member-user="'.absint($user->ID).'" data-cg-member-view="'.($own ? 'own' : 'all').'"'.($initialOwnPage ? ' data-cg-member-initial-own="1" data-public-step="'.absint($initialOwnPage).'"' : '').'>';
 	echo '<div class="cg-member-toolbar">';
 	if(!$user->ID && $participantsActive){echo '<button type="button" class="cg-participants-all">'.esc_html(cg_member_t('All entries')).'</button>';}
 	if($user->ID){
@@ -289,7 +285,7 @@ function cg_member_render_header($gid,$instance,$shortcode,$options,$publicInsta
 		echo '</div>';
 		$profileImage = cg1l_frontend_get_preferred_wp_user_avatar_url($user->ID,$wpUserIdsData);
 		echo '<div class="cg-member-account">';
-		echo '<button type="button" class="cg-member-profile" data-cg-wp-user-id="'.absint($user->ID).'" title="'.esc_attr(cg_member_t('Edit profile')).'" aria-label="'.esc_attr(cg_member_t('Edit profile').': '.$user->display_name).'" aria-haspopup="dialog"><img class="cg-member-avatar skip-lazy" data-skip-lazy="1" loading="eager"'.($profileImage ? ' src="'.esc_url($profileImage).'"' : ' hidden').' alt=""><span class="cg-member-name">'.esc_html($user->display_name).'</span><span class="cg-member-profile-edit" aria-hidden="true">&#9998;</span></button>';
+		echo '<button type="button" class="cg-member-profile" data-cg-wp-user-id="'.absint($user->ID).'" title="'.esc_attr(cg_member_t(cg_community_enabled() ? 'Member area' : 'Edit profile')).'" aria-label="'.esc_attr(cg_member_t(cg_community_enabled() ? 'Member area' : 'Edit profile').': '.$user->display_name).'" aria-haspopup="dialog"><img class="cg-member-avatar skip-lazy" data-skip-lazy="1" loading="eager"'.($profileImage ? ' src="'.esc_url($profileImage).'"' : ' hidden').' alt=""><span class="cg-member-name">'.esc_html($user->display_name).'</span><span class="cg-member-profile-edit" aria-hidden="true">&#9998;</span><span class="cg-community-badge" hidden></span></button>';
 		echo '</div>';
 	}else{
 		echo '<button type="button" class="cg-member-login">'.esc_html(cg_member_t('Register / Sign in')).'</button><span class="cg-member-intro">'.esc_html(cg_member_t('Join and show your own entries.')).'</span>';

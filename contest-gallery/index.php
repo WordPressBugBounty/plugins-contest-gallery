@@ -2,7 +2,7 @@
 /*
 Plugin Name: Contest Gallery
 Description: Upload form, files, photos and videos upload contest gallery plugin for WordPress. Create upload forms for entries with or without file/image upload. Create user registration form. Create login form. Create responsive galleries and allow to vote for any kind of entries. Sell entries via PayPal or Stripe API. Create or edit images via OpenAI API.
-Version: 34.0.0
+Version: 34.0.1
 Requires at least: 5.6
 Requires PHP: 5.6
 Author: Contest Gallery
@@ -158,6 +158,7 @@ unset($cgPaidActionsLanguageFunctionsOnly);
 include('functions/general/registry/cg-pin-auth-service.php');
 include('functions/general/cg-captcha.php');
 include('functions/frontend/cg-member-area.php');
+include('functions/community/cg-community.php');
 include('functions/general/mail/cg-mail-functions.php');
 include('functions/ecommerce/paid-actions/cg-paid-actions-core.php');
 include(__DIR__.'/functions/frontend/cg-upload-jobs.php');

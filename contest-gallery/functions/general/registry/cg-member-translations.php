@@ -29,7 +29,95 @@ function cg_member_translation_values($values){
 // The same catalogue drives Edit translations and the frontend JS dictionary.
 function cg_member_interface_translation_groups(){
 	return array(
-		'Member access and messages'=>array(
+		'Navigation'=>array(
+			'Member area',
+			'Overview',
+			'Messages',
+			'Friends',
+			'Latest entries',
+			'Back',
+			'Back to friends',
+			'Back to overview',
+			'Back to received requests',
+			'Load more'
+		),
+		'Messages'=>array(
+			'Contact',
+			'Message',
+			'Send message',
+			'Write a message…',
+			'Up to 5,000 characters',
+			'Earlier messages',
+			'Your conversations',
+			'You',
+			'Sending…',
+			'Saving…',
+			'No messages yet. Open a participant’s profile to start a conversation.',
+			'Discard your unsent message?',
+			'{count} new messages and requests'
+		),
+		'Friends and requests'=>array(
+			'Add friend',
+			'Add friend - {name}',
+			'Remove friend',
+			'Remove friend - {name}',
+			'Remove this friend?',
+			'Remove this friend - {name}?',
+			'Accept request',
+			'Decline',
+			'Cancel request',
+			'Received requests',
+			'Sent requests',
+			'Blocked',
+			'Unblock',
+			'Block',
+			'Review request',
+			'Request sent',
+			'Friend request sent.',
+			'Friend request received.',
+			'Block this member? This stops messages and requests and ends your friendship.',
+			'Block this member? This stops messages and requests and ends your friendship. Public entries remain visible.',
+			'Unblock this member? This allows messages and friend requests again. Your previous friendship will not be restored.'
+		),
+		'Status and errors'=>array(
+			'An administrator has disabled your ability to send messages and friend requests.',
+			'Try again',
+			'No accessible entries yet.',
+			'No accessible galleries yet.',
+			'No friends yet.',
+			'No friends yet. Send a request from a participant’s profile.',
+			'No participants with a profile yet.',
+			'Nothing here yet.',
+			'Account unavailable',
+			'Enter a message of 1 to 5,000 characters.',
+			'Invalid page.',
+			'Messaging is unavailable for this contact.',
+			'Please reopen the conversation and try again.',
+			'Please sign in to view friends.',
+			'Please wait before sending more messages.',
+			'Please wait before sending more requests.',
+			'The entry could not be loaded. Please try again.',
+			'The member area is not available.',
+			'The message could not be saved. Please try again.',
+			'This action is not available.',
+			'This entry is no longer available.',
+			'This member is no longer available.',
+			'This participant list is no longer available.',
+			'This request has already been used.',
+			'The PIN request is being processed. Please try again.'
+		),
+		'Entries and paid actions'=>array(
+			'Gallery entries',
+			'View gallery entries',
+			'View gallery entries: {name}',
+			'Browse entries',
+			'Entry',
+			'{entries} by {name}',
+			'Paid actions are available on the entry page.',
+			'Open entry page',
+			'Open entry page in a new tab'
+		),
+		'Sign-in and access'=>array(
 			'Gallery view',
 			'Please try again.',
 			'The connection failed. Please try again.',
@@ -49,7 +137,8 @@ function cg_member_interface_translation_groups(){
 			'Your public profile',
 			'Public profile',
 			'View public profile',
-			'Entry owner'
+			'Entry owner',
+			'Maximum resolution'
 		),
 		'Participants and their entries'=>array(
 			'Participants',
@@ -100,5 +189,15 @@ function cg_member_interface_translation_groups(){
 function cg_member_interface_strings(){
 	$strings = array();
 	foreach(cg_member_interface_translation_groups() as $group){$strings = array_merge($strings,$group);}
-	return $strings;
+	return array_values(array_unique($strings));
+}
+
+// General wording, edited with the other gallery voting messages.
+function cg_member_voting_translation_strings(){
+	return array(
+		'Vote',
+		'Please allow cookies and reload the page to be able to vote.',
+		'Your vote could not be saved. Please try again.',
+		'Vote and linked comment could not be removed.'
+	);
 }

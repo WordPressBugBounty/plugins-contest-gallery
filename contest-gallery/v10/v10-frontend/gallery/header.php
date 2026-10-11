@@ -101,7 +101,8 @@ if($isEntryOnlyEcommerceHeaderOnlyBasket){
 if(true){
 //if($GalleryUpload==1 OR $AllowSort == 1 OR $LooksCount>1 or $categoriesCheck or $Search==1 or $FullSizeGallery==1 OR $options['general']['RandomSortButton']==1){
     // cgCenterImageClose will be used to be cloned and te be inserted in cg_sort_div_mobile_right via JS
-    echo "<div class='cg_hover_effect cg-center-image-close-fullwindow cg_hide $cgFeControlsStyle' id='cgCenterImageClose$galeryIDuserForJs' data-cg-gid='$galeryIDuserForJs' data-cg-tooltip='$language_CloseView'></div>";
+    $cgCloseViewLabel = esc_attr(cg_member_t('Close view'));
+    echo "<div class='cg_hover_effect cg-center-image-close-fullwindow cg_hide $cgFeControlsStyle' id='cgCenterImageClose$galeryIDuserForJs' data-cg-gid='$galeryIDuserForJs' data-cg-tooltip='$cgCloseViewLabel' aria-label='$cgCloseViewLabel' title='$cgCloseViewLabel'></div>";
 
     if($GalleryUpload==1 OR $AllowSort == 1 OR $LooksCount>1 or $FullSizeGallery==1 OR $options['general']['RandomSortButton']==1 or $Search==1 OR !empty($isOnlyGalleryEcommerce) OR !empty($options['visual']['EnableSwitchStyleGalleryButton'])){
 

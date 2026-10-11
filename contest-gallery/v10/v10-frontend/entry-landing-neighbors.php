@@ -145,6 +145,7 @@ if(!function_exists('cg1l_render_entry_landing_neighbors')){
 
 		$variablesGallery = (!empty($d['variables_gallery']) && is_array($d['variables_gallery'])) ? $d['variables_gallery'] : [];
 		$variablesGallery['gidReal'] = $realGid;
+		$variablesGallery['votingCookieBlogId'] = get_current_blog_id();
 		$variablesGallery['currentLook'] = 'thumb';
 		$variablesGallery['galleryLoaded'] = false;
 		$variablesGallery['galleryAlreadyFullWindow'] = false;

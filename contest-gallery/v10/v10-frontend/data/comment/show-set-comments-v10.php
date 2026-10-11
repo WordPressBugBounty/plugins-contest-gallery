@@ -59,7 +59,13 @@ $fp = fopen($options, 'r');
 $options =json_decode(fread($fp,filesize($options)),true);
 
 $optionsSource = $options;
-$intervalConf = cg_shortcode_interval_check($galeryID,$optionsSource,'cg_gallery');
+fclose($fp);
+if(!is_array($optionsSource)){return;}
+// The signed instance ID selects the same canonical variant as its renderer.
+$shortcodeNameForComments = cg1l_get_shortcode_name_from_gallery_id_user($galeryIDuser,$galeryID);
+if($shortcodeNameForComments===''){return;}
+$options = cg_member_options_from_source($optionsSource,$galeryID,$shortcodeNameForComments);
+$intervalConf = cg_shortcode_interval_check($galeryID,$optionsSource,$shortcodeNameForComments);
 if(!$intervalConf['shortcodeIsActive']){
     ?>
     <script data-cg-processing="true">
@@ -72,11 +78,6 @@ if(!$intervalConf['shortcodeIsActive']){
     return;
 }
 
-
-if(!empty($options[$galeryIDuser])){
-    $options = $options[$galeryIDuser];
-}
-fclose($fp);
 
 if($options['general']['AllowComments']!=1){
     return;

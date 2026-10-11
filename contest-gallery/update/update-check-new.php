@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__).'/functions/general/sql/cg-community-schema.php';
 
 global $wpdb;
 
@@ -378,6 +379,10 @@ print_r($dtacaoo);
 echo "</pre>";*/
 
 
+foreach(cg_community_schema($wpdb->base_prefix."$i") as $cgCommunityTable=>$cgCommunityDefinition){
+    $dtacaoo[$cgCommunityTable]=$wpdb->get_results("SHOW COLUMNS FROM $cgCommunityTable");
+}
+
 foreach($updateArray as $tableName => $tableData){
 
     foreach($tableData as $columnName => $columnData){
@@ -410,7 +415,7 @@ foreach($updateArray as $tableName => $tableData){
             }else{
                 $columnType = trim(strtolower($columnData['COLUMN_TYPE']));
 
-                $DEFAULT = "DEFAULT ".$columnData['DEFAULT'];
+                $DEFAULT = isset($columnData['DEFAULT']) ? "DEFAULT ".$columnData['DEFAULT'] : '';
                 $query = "ALTER TABLE $tableName ADD COLUMN $columnName $columnType $DEFAULT";
 
                 if(!$wpdb->query($query)){
@@ -439,7 +444,7 @@ foreach($updateArray as $tableName => $tableData){
                 }else{
                     // check if type is same
                     // if not then modify
-                    $DEFAULT = "DEFAULT ".$columnData['DEFAULT'];
+                    $DEFAULT = isset($columnData['DEFAULT']) ? "DEFAULT ".$columnData['DEFAULT'] : '';
                     $query = "ALTER TABLE $tableName MODIFY COLUMN $columnName $columnType $DEFAULT";
                     if(!$wpdb->query($query)){
                         $wpdb->show_errors();

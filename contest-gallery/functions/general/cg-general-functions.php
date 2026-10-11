@@ -1460,8 +1460,13 @@ if(!function_exists('cg_set_json_data_of_row_objects')){
 	}
 }
 
+include_once(__DIR__.'/cg-voting-identity.php');
+
 if(!function_exists('cg_set_cookie')){
 	function cg_set_cookie($galeryID,$type){
+		$galeryID = absint($galeryID);
+		if(!$galeryID || !in_array($type,array('upload','voting'),true)){return '';}
+		if($type==='voting'){return cg_bootstrap_voting_cookie($galeryID);}
 		$cookieValue = md5(uniqid('cg',true)).time();
 		if(!headers_sent()){
 			setcookie('contest-gal1ery-'.$galeryID.'-'.$type, $cookieValue, time() + (20 * 365 * 24 * 60 * 60), "/");
@@ -1478,7 +1483,8 @@ if(!function_exists('cg_is_valid_frontend_cookie_value')){
 
 		$cookieValue = wp_unslash($cookieValue);
 
-		return (bool) preg_match('/^[a-f0-9]{32}[0-9]{10,}$/', $cookieValue);
+		// Legacy/upload format only. Never use this check to authorize voting.
+		return (bool) preg_match('/^[a-f0-9]{32}[0-9]{10,67}$/D', $cookieValue);
 	}
 }
 
@@ -1494,6 +1500,11 @@ if(!function_exists('cg_get_valid_frontend_cookie')){
 		}
 
 		$cookieName = 'contest-gal1ery-'.$galeryID.'-'.$type;
+		if($type==='voting'){
+			$identity = cg_get_voting_cookie_identity($galeryID);
+			if($setIfMissing){cg_bootstrap_voting_cookie($galeryID);}
+			return !empty($identity) ? $identity['id'] : '';
+		}
 
 		if(!empty($_COOKIE[$cookieName])){
 			$cookieValue = wp_unslash($_COOKIE[$cookieName]);

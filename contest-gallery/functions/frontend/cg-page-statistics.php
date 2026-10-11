@@ -173,7 +173,7 @@ function cg_page_stats_current($context,&$previews = null,$previewLimit = 3,$pre
 		}
 	}
 	if($overviewParticipantIds!==null){
-		$participants = $overviewParticipantIds ? count(get_users(array('include'=>array_values($overviewParticipantIds),'fields'=>'ID'))) : 0;
+		$participants = count(cg_galleries_participant_rows($context));
 		$totals = array('galleries'=>$totals['galleries'],'entries'=>$totals['entries'],'participants'=>$participants) + $totals;
 	}
 	if(is_array($previews)){

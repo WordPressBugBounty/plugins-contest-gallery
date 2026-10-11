@@ -36,13 +36,13 @@ if(!function_exists('cg1l_create_rating_comments_gallery')){
             if($ratingDiv === ''){
                 $groupLabel = 'Comments';
             }elseif($commentsDiv === ''){
-                $groupLabel = 'Ratings';
+                $groupLabel = 'ratings';
             }
             $ratingCommentsGroupClass = trim((string)$ratingCommentsGroupClass);
             if($ratingCommentsGroupClass){
                 $ratingCommentsGroupClass = ' '.$ratingCommentsGroupClass;
             }
-            return '<div class="cg_gallery_info_rating_comments'.$ratingCommentsGroupClass.'" role="group" aria-label="'.esc_attr($groupLabel).'">
+            return '<div class="cg_gallery_info_rating_comments'.$ratingCommentsGroupClass.'" role="group" aria-label="'.esc_attr(cg_member_t($groupLabel)).'">
                         '.$ratingDiv.'
                         '.$commentsDiv.'
                     </div>';
@@ -75,7 +75,7 @@ if(!function_exists('cg1l_get_comments_gallery_reload')){
             }*/
 
             //<div class="stat comments" aria-label="Comments">💬 <span>34</span></div>
-            return '<div class="cg_gallery_comments_div'.$commentsWrapperClass.'"><div class="cg_gallery_comments_div_child "><div class="cg_gallery_comments_div_icon '.$commentsStat.' cg_gallery_comments_div_icon'.$realId.'"></div><div class="cg_gallery_comments_div_count'.$realId.' cg_gallery_comments_div_count" data-cg-number-value="'.esc_attr($commentsCount).'" aria-label="Comments">'.esc_html($commentsCountFormatted).'</div></div></div>';
+            return '<div class="cg_gallery_comments_div'.$commentsWrapperClass.'"><div class="cg_gallery_comments_div_child "><div class="cg_gallery_comments_div_icon '.$commentsStat.' cg_gallery_comments_div_icon'.$realId.'"></div><div class="cg_gallery_comments_div_count'.$realId.' cg_gallery_comments_div_count" data-cg-number-value="'.esc_attr($commentsCount).'" aria-label="'.esc_attr(cg_member_t('Comments')).'">'.esc_html($commentsCountFormatted).'</div></div></div>';
         }
     }
 }

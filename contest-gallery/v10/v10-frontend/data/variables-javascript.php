@@ -10,6 +10,7 @@
      * See CODE_STRUCTURE_PHP_JS_RELATION.md for more details.
      */
     $variablesGallery['gidReal'] = $galeryID;
+    $variablesGallery['votingCookieBlogId'] = get_current_blog_id();
     $variablesGallery['currentLook'] = $currentLook;
     $variablesGallery['versionDatabaseGallery'] = $options['general']['Version'];
     $variablesGallery['versionDatabaseGeneral'] = $p_cgal1ery_db_version;
@@ -71,7 +72,7 @@
     $variablesGallery['isUserGallery'] = $isUserGallery;
     $variablesGallery['memberFeaturesAvailable'] = cg_member_features_available($galeryID);
     $variablesGallery['participantUserId'] = !empty($cgParticipantUserId) ? absint($cgParticipantUserId) : 0;
-    $variablesGallery['memberOwnerActions'] = empty($cgParticipantUserId) && in_array($shortcode_name,array('cg_gallery','cg_gallery_no_voting'),true) && cg_member_enabled($galeryID,$shortcode_name);
+    $variablesGallery['memberOwnerActions'] = empty($cgCommunityEntryInstanceId) && empty($cgParticipantUserId) && in_array($shortcode_name,array('cg_gallery','cg_gallery_no_voting'),true) && cg_member_enabled($galeryID,$shortcode_name);
     $variablesGallery['memberPublicShortcode'] = $shortcode_name==='cg_gallery_user' && empty($cgMemberOwnView) ? 'cg_gallery_user' : cg_member_public_shortcode($galeryID,isset($cgMemberPublicShortcode) ? $cgMemberPublicShortcode : $shortcode_name);
     $variablesGallery['memberCardContext'] = false;
     $variablesGallery['memberVoting'] = !empty($cgMemberVoting);
@@ -108,6 +109,8 @@
         'pagePresentation' => !empty($GLOBALS['cgPagePresentation']),
     ]);
     $variablesGallery['isCgRuntimeFresh'] = (!empty($isCgRuntimeFresh)) ? true : false;
+    $variablesGallery['isCommunityEntry'] = !empty($cgCommunityEntryInstanceId);
+    if(!empty($cgCommunityEntryDisplayTheme)){$variablesGallery['communityDisplayTheme'] = $cgCommunityEntryDisplayTheme;}
     $variablesGallery['galleryDataUseAllowedRealIds'] = (!empty($shouldUseAllowedRealIds)) ? 1 : 0;
     $variablesGallery['galleryDataAccessHash'] = cg1l_get_gallery_data_access_hash(
         $galeryID,

@@ -111,7 +111,7 @@ __('Close view');$l_CloseView= "Close view";$language_CloseView = (!empty($trans
 
 __('Full screen mode');$l_FullScreen = "Full screen mode"; $language_FullScreen = (!empty($translations[$l_FullScreen]) && $is_frontend) ? $translations[$l_FullScreen] : ((empty(trim(__($l_FullScreen,$domain)))) ? __($l_FullScreen,$domainDefault) : __($l_FullScreen,$domain)); if(empty($translations[$l_FullScreen])){$translations[$l_FullScreen]='';}
 
-__('Close full screen mode');$l_CloseFullScreen = "Close full screen"; $language_CloseFullScreen = (!empty($translations[$l_CloseFullScreen]) && $is_frontend) ? $translations[$l_CloseFullScreen] : ((empty(trim(__($l_CloseFullScreen,$domain)))) ? __($l_CloseFullScreen,$domainDefault) : __($l_CloseFullScreen,$domain)); if(empty($translations[$l_CloseFullScreen])){$translations[$l_CloseFullScreen]='';}
+__('Close full screen mode');$l_CloseFullScreen = "Close full screen"; $language_CloseFullScreen = (!empty($translations[$l_CloseFullScreen]) && $is_frontend) ? $translations[$l_CloseFullScreen] : ((empty(trim(__('Close full screen mode',$domain)))) ? __('Close full screen mode',$domainDefault) : __('Close full screen mode',$domain)); if(empty($translations[$l_CloseFullScreen])){$translations[$l_CloseFullScreen]='';}
 
 __('Copy gallery file link');$l_CopyGalleryFileLink = "Copy gallery file link"; $language_CopyGalleryFileLink = (!empty($translations[$l_CopyGalleryFileLink]) && $is_frontend) ? $translations[$l_CopyGalleryFileLink] : ((empty(trim(__($l_CopyGalleryFileLink,$domain)))) ? __($l_CopyGalleryFileLink,$domainDefault) : __($l_CopyGalleryFileLink,$domain)); if(empty($translations[$l_CopyGalleryFileLink])){$translations[$l_CopyGalleryFileLink]='';}
 
@@ -193,6 +193,8 @@ __('Full size');$l_FullSize = "Full size"; $language_FullSize = (!empty($transla
 __('Picture comments');$l_PictureComments = "Picture comments"; $language_PictureComments = (!empty($translations[$l_PictureComments]) && $is_frontend) ? $translations[$l_PictureComments] : ((empty(trim(__($l_PictureComments,$domain)))) ? __($l_PictureComments,$domainDefault) : __($l_PictureComments,$domain)); if(empty($translations[$l_PictureComments])){$translations[$l_PictureComments]='';}
 
 __('Comments');$l_PictureComments = "Comments"; $language_PictureComments = (!empty($translations[$l_PictureComments]) && $is_frontend) ? $translations[$l_PictureComments] : ((empty(trim(__($l_PictureComments,$domain)))) ? __($l_PictureComments,$domainDefault) : __($l_PictureComments,$domain)); if(empty($translations[$l_PictureComments])){$translations[$l_PictureComments]='';}
+
+__('Ratings and comments');$l_RatingsAndComments = "Ratings and comments"; $language_RatingsAndComments = (!empty($translations[$l_RatingsAndComments]) && $is_frontend) ? $translations[$l_RatingsAndComments] : ((empty(trim(__($l_RatingsAndComments,$domain)))) ? __($l_RatingsAndComments,$domainDefault) : __($l_RatingsAndComments,$domain)); if(empty($translations[$l_RatingsAndComments])){$translations[$l_RatingsAndComments]='';}
 
 __('Your comment');$l_YourComment = "Your comment"; $language_YourComment = (!empty($translations[$l_YourComment]) && $is_frontend) ? $translations[$l_YourComment] : ((empty(trim(__($l_YourComment,$domain)))) ? __($l_YourComment,$domainDefault) : __($l_YourComment,$domain)); if(empty($translations[$l_YourComment])){$translations[$l_YourComment]='';}
 
@@ -404,15 +406,27 @@ __('Lost password?');$l_LostPassword = "Lost password?";$language_LostPassword =
 
 __('This email address is already registered');$l_ThisMailAlreadyExists= "This email address is already registered";$language_ThisMailAlreadyExists = (!empty($translations[$l_ThisMailAlreadyExists]) && $is_frontend) ? $translations[$l_ThisMailAlreadyExists] : ((empty(trim(__($l_ThisMailAlreadyExists,$domain)))) ? __($l_ThisMailAlreadyExists,$domainDefault) : __($l_ThisMailAlreadyExists,$domain)); if(empty($translations[$l_ThisMailAlreadyExists])){$translations[$l_ThisMailAlreadyExists]='';}
 
-__('This username is already taken');$l_ThisUsernameAlreadyExists= "This username is already taken";$language_ThisUsernameAlreadyExists = (!empty($translations[$l_ThisUsernameAlreadyExists]) && $is_frontend) ? $translations[$l_ThisUsernameAlreadyExists] : ((empty(trim(__($l_ThisUsernameAlreadyExists,$domain)))) ? __($l_ThisUsernameAlreadyExists,$domainDefault) : __($l_ThisUsernameAlreadyExists,$domain)); if(empty($translations[$l_ThisUsernameAlreadyExists])){$translations[$l_ThisUsernameAlreadyExists]='';}
+__('This username is already taken');
+// Keep the established custom-translation key, with the correctly catalogued default.
+$l_ThisUsernameAlreadyExists = 'This username already taken';
+if(!array_key_exists($l_ThisUsernameAlreadyExists,$translations)){
+    foreach(array('This username is already taken','This username already exists') as $cgUsernameTranslationAlias){
+        if(!empty($translations[$cgUsernameTranslationAlias]) && is_string($translations[$cgUsernameTranslationAlias])){
+            $translations[$l_ThisUsernameAlreadyExists]=$translations[$cgUsernameTranslationAlias];
+            break;
+        }
+    }
+}
+$cgUsernameTranslationDefault = __('This username is already taken',$domain);
+if(empty(trim($cgUsernameTranslationDefault))){$cgUsernameTranslationDefault = __('This username is already taken',$domainDefault);}
+$language_ThisUsernameAlreadyExists = (!empty($translations[$l_ThisUsernameAlreadyExists]) && $is_frontend) ? $translations[$l_ThisUsernameAlreadyExists] : $cgUsernameTranslationDefault;
+if(empty($translations[$l_ThisUsernameAlreadyExists])){$translations[$l_ThisUsernameAlreadyExists]='';}
 
 __('Username or email');$l_UsernameOrEmail= "Username or email";$language_UsernameOrEmail = (!empty($translations[$l_UsernameOrEmail]) && $is_frontend) ? $translations[$l_UsernameOrEmail] : ((empty(trim(__($l_UsernameOrEmail,$domain)))) ? __($l_UsernameOrEmail,$domainDefault) : __($l_UsernameOrEmail,$domain)); if(empty($translations[$l_UsernameOrEmail])){$translations[$l_UsernameOrEmail]='';}
 
 __('Username or email required');$l_UsernameOrEmailRequired= "Username or email required";$language_UsernameOrEmailRequired = (!empty($translations[$l_UsernameOrEmailRequired]) && $is_frontend) ? $translations[$l_UsernameOrEmailRequired] : ((empty(trim(__($l_UsernameOrEmailRequired,$domain)))) ? __($l_UsernameOrEmailRequired,$domainDefault) : __($l_UsernameOrEmailRequired,$domain)); if(empty($translations[$l_UsernameOrEmailRequired])){$translations[$l_UsernameOrEmailRequired]='';}
 
 __('Username or email does not exist');$l_UsernameOrEmailDoesNotExist= "Username or email does not exist";$language_UsernameOrEmailDoesNotExist = (!empty($translations[$l_UsernameOrEmailDoesNotExist]) && $is_frontend) ? $translations[$l_UsernameOrEmailDoesNotExist] : ((empty(trim(__($l_UsernameOrEmailDoesNotExist,$domain)))) ? __($l_UsernameOrEmailDoesNotExist,$domainDefault) : __($l_UsernameOrEmailDoesNotExist,$domain)); if(empty($translations[$l_UsernameOrEmailDoesNotExist])){$translations[$l_UsernameOrEmailDoesNotExist]='';}
-
-__('This username already exists');$l_ThisUsernameAlreadyExists= "This username already taken";$language_ThisUsernameAlreadyExists = (!empty($translations[$l_ThisUsernameAlreadyExists]) && $is_frontend) ? $translations[$l_ThisUsernameAlreadyExists] : ((empty(trim(__($l_ThisUsernameAlreadyExists,$domain)))) ? __($l_ThisUsernameAlreadyExists,$domainDefault) : __($l_ThisUsernameAlreadyExists,$domain)); if(empty($translations[$l_ThisUsernameAlreadyExists])){$translations[$l_ThisUsernameAlreadyExists]='';}
 
 __('This nickname is already taken');$l_ThisNicknameAlreadyExists= "This nickname is already taken";$language_ThisNicknameAlreadyExists = (!empty($translations[$l_ThisNicknameAlreadyExists]) && $is_frontend) ? $translations[$l_ThisNicknameAlreadyExists] : ((empty(trim(__($l_ThisNicknameAlreadyExists,$domain)))) ? __($l_ThisNicknameAlreadyExists,$domainDefault) : __($l_ThisNicknameAlreadyExists,$domain)); if(empty($translations[$l_ThisNicknameAlreadyExists])){$translations[$l_ThisNicknameAlreadyExists]='';}
 
@@ -470,5 +484,13 @@ __('Delete','contest-gallery');$l_Delete = "Delete"; $language_Delete = (!empty(
 __('Yes');$l_Yes = "Yes"; $language_Yes = (!empty($translations[$l_Yes]) && $is_frontend) ? $translations[$l_Yes] : ((empty(trim(__($l_Yes,$domain)))) ? __($l_Yes,$domainDefault) : __($l_Yes,$domain)); if(empty($translations[$l_Yes])){$translations[$l_Yes]='';}
 __('No');$l_No = "No"; $language_No = (!empty($translations[$l_No]) && $is_frontend) ? $translations[$l_No] : ((empty(trim(__($l_No,$domain)))) ? __($l_No,$domainDefault) : __($l_No,$domain)); if(empty($translations[$l_No])){$translations[$l_No]='';}
 
+
+// Shared controls use the same existing editor values in gallery and member renderers.
+if($is_frontend && function_exists('cg_member_t')){
+	foreach(array('PictureComments'=>'Comments','Ratings'=>'ratings','RatingsAndComments'=>'Ratings and comments','PreviousImage'=>'Previous entry','NextImage'=>'Next entry','Close'=>'Close','CloseView'=>'Close view') as $cgControlVariable=>$cgControlKey){
+		${'language_'.$cgControlVariable} = cg_member_t($cgControlKey);
+	}
+	unset($cgControlVariable,$cgControlKey);
+}
 
 ?>

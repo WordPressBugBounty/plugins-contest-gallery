@@ -64,7 +64,7 @@ echo <<<HEREDOC
 <div class='cg_view_options_row'>
         <div class='cg_view_option cg_view_option_full_width cg_border_top_none cg_border_top_bottom_none'>
             <div class='cg_view_option_title'>
-            <p>Gallery color style</p>
+            <p>Galleries area color style</p>
             </div>
             <div class='cg_view_option_radio_multiple'>
                 <div class='cg_view_option_radio_multiple_container'>
@@ -90,7 +90,7 @@ HEREDOC;
 
 echo <<<HEREDOC
 <div class="cg_view_options_row">
-        <div class="cg_view_option cg_view_option_100_percent">
+        <div class="cg_view_option cg_view_option_full_width">
             <div class="cg_view_option_title">
                 <p>Masonry view is always activated for cg_galleries... shortcodes</p>
             </div>
@@ -267,7 +267,7 @@ HEREDOC;
 
 
 echo <<<HEREDOC
-<div class="cg_view_options_row">
+<div class="cg_view_options_row cg_margin_top_15">
 	    <div class='cg_view_option cg_view_option_full_width  cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px'>
 	        <div class='cg_view_option_title' style="margin-top: 10px;">
 	            <p>Gallery card title<br><span class="cg_view_option_title_note">Shown on this gallery's card in the overview. Configure <a class="cg_go_to_link cg_no_outline_and_shadow_on_focus" href="#" data-cg-go-to-link="MainTitleGalleriesViewArea">here</a></span></p>

@@ -54,7 +54,7 @@ if (($rateValue>5 or $rateValue<1) or ($galleryHash != $galleryHashToCompare)){
         var pictureID = <?php echo json_encode($pictureID);?>;
         var ratingFileData = true;
         cgJsClass.gallery.rating.setRatingOneStar(pictureID,0,false,galeryIDuser,false,false,ratingFileData);
-        cgJsClass.gallery.function.message.show(galeryIDuser,message);
+        cgJsClass.gallery.rating.showVotingMessage(galeryIDuser,message);
 
     </script>
     <?php
@@ -71,7 +71,7 @@ else {
             var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
             var pictureID = <?php echo json_encode($pictureID);?>;
             cgJsClass.gallery.rating.setRatingOneStar(pictureID,0,false,galeryIDuser,false,false,ratingFileData);
-            cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].YouCanNotVoteInOwnGallery);
+            cgJsClass.gallery.rating.showVotingMessage(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].YouCanNotVoteInOwnGallery);
         </script>
         <?php
 
@@ -153,6 +153,7 @@ else {
     $CheckLogin = $options['general']['CheckLogin'];
     $CheckIp= (!empty($options['general']['CheckIp'])) ? 1 : 0;
     $CheckCookie = (!empty($options['general']['CheckCookie'])) ? 1 : 0;
+    if(!$CheckLogin && !$CheckCookie && !$CheckIp){$CheckIp = 1;}
     $CheckCookieAlertMessage = (!empty($options['general']['CheckCookieAlertMessage'])) ? $options['general']['CheckCookieAlertMessage'] : 'Please allow cookies and reload the page to be able to vote.';
     $AllowRating = $options['general']['AllowRating'];
     $OneVotePerPicture = $options['general']['IpBlock'];// ATTENTION! IpBlock means show only vote per Picture Configuration
@@ -354,7 +355,7 @@ else {
                 var ratingFileData = true;
                 cgJsClass.gallery.rating.closeVoteInteractionForRestriction(galeryIDuser);
                 cgJsClass.gallery.rating.setRatingOneStar(pictureID,0,false,galeryIDuser,false,false,ratingFileData);
-                cgJsClass.gallery.function.message.show(galeryIDuser,<?php echo json_encode($language_OnlyJuryMembersCanVote);?>);
+                cgJsClass.gallery.rating.showVotingMessage(galeryIDuser,<?php echo json_encode($language_OnlyJuryMembersCanVote);?>);
             </script>
             <?php
             return;
@@ -364,16 +365,43 @@ else {
     $userIP = cg1l_sanitize_method(cg_get_user_ip());
     //$userIP = 1234;
 
-    if(empty($userIP) OR $userIP == 'unknown'){
+    if($CheckLogin!=1 && $CheckIp==1 && cg_normalize_user_ip($userIP)===''){
         ?>
         <script data-cg-processing="true">
             var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
-            cgJsClass.gallery.function.message.show(galeryIDuser,"IP could not be identified, code 506. Please contact administrator.");
+            cgJsClass.gallery.rating.showVotingMessage(galeryIDuser,"IP could not be identified, code 506. Please contact administrator.");
         </script>
         <?php
         echo 'IP could not be identified, code 506. Please contact administrator.';
         return;
     }
+
+    $CookieId = '';
+    if($CheckCookie==1 && $CheckLogin!=1){
+        $CookieId = cg_get_valid_frontend_cookie($galeryID,'voting');
+        if($CookieId===''){
+            $ratingFileData = true;
+            ?>
+            <script data-cg-processing="true">
+
+                var ContestEndTimeFromPhp = <?php echo json_encode($ContestEndTime);?>;
+                var ContestEnd = <?php echo json_encode($ContestEnd);?>;
+                var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
+                var pictureID = <?php echo json_encode($pictureID);?>;
+                var CheckCookieAlertMessage = <?php echo json_encode($CheckCookieAlertMessage);?>;
+                var ratingFileData = <?php echo json_encode($ratingFileData);?>;
+
+                cgJsClass.gallery.rating.showVotingMessage(galeryIDuser,CheckCookieAlertMessage);
+                    cgJsClass.gallery.rating.setRatingOneStar(pictureID,0,false,galeryIDuser,false,false,ratingFileData);
+                cgJsClass.gallery.vars.cookiesNotAllowed = true;
+
+            </script>
+
+            <?php
+            return;
+        }
+    }
+    $voterRestrictionWhere = cg_get_voting_identity_where($galeryID,$CheckLogin,$CheckCookie,$CheckIp,$wpUserId,$userIP,$CookieId,true);
 
     cg1l_migrate_image_stats_to_folder($galeryID, true);// correct first if needs to correct
     $imageData = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$galeryID.'/json/image-data/image-data-'.$pictureID.'.json';
@@ -407,7 +435,7 @@ else {
                 var pictureID = <?php echo json_encode($pictureID);?>;
 
                 cgJsClass.gallery.rating.setRatingOneStar(pictureID,0,false,galeryIDuser,true);
-                cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].ItIsNotAllowedToVoteForYourOwnPicture);
+                cgJsClass.gallery.rating.showVotingMessage(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].ItIsNotAllowedToVoteForYourOwnPicture);
 
             </script>
             <?php
@@ -415,213 +443,13 @@ else {
         }
 
     }
-    $CookieId = '';
-    if($CheckCookie==1) {
-        $CookieId = cg_get_valid_frontend_cookie($galeryID,'voting');
-        if(empty($CookieId)) {
-            $cookieValue = cg_set_cookie($galeryID,'voting');
-            cg1l_release_stats_lock($lockFp);
-
-            ?>
-            <script data-cg-processing="true">
-
-                var ContestEndTimeFromPhp = <?php echo json_encode($ContestEndTime);?>;
-                var ContestEnd = <?php echo json_encode($ContestEnd);?>;
-                var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
-                var pictureID = <?php echo json_encode($pictureID);?>;
-                var CheckCookieAlertMessage = <?php echo json_encode($CheckCookieAlertMessage);?>;
-                var ratingFileData = <?php echo json_encode($ratingFileData);?>;
-
-                cgJsClass.gallery.function.message.show(galeryIDuser,CheckCookieAlertMessage);
-                    cgJsClass.gallery.rating.setRatingOneStar(pictureID,0,false,galeryIDuser,false,false,ratingFileData);
-                cgJsClass.gallery.vars.cookiesNotAllowed = true;
-
-                // cookie value will be get via getCookie before request
-                //var cookieValue = <?php //echo json_encode($cookieValue);?>;
-                //cgJsClass.gallery.vars.cookieValue = cookieValue;
-
-            </script>
-
-            <?php
-
-        }
-    }
-
-
-    $getRatingPicture = 0;
-    $countVotesOfUserPerGallery = 0;
-
-    // Check if a specific picture was rated by the user
-    if ($CheckLogin == 1 && $wpUserId>0)
-    {
-        if(is_user_logged_in()){
-            $getRatingPicture = $wpdb->get_var( $wpdb->prepare(
-                "
-			SELECT COUNT(*) AS NumberOfRows
-			FROM $tablenameIP 
-			WHERE pid = %d and GalleryID = %d and WpUserId = %s and RatingS = %s
-		",
-                $pictureID,$galeryID,$wpUserId,1
-            ) );
-        }
-    }
-    elseif ($CheckCookie == 1 && $CheckIp!=1)
-    {
-        if(!empty($CookieId)) {
-
-            $getRatingPicture = $wpdb->get_var( $wpdb->prepare(
-                "
-        SELECT COUNT(*) AS NumberOfRows
-        FROM $tablenameIP 
-        WHERE pid = %d and GalleryID = %d and CookieId = %s and RatingS = %s
-    ",
-                $pictureID,$galeryID,$CookieId,1
-            ) );
-        }
-
-    }
-    elseif ($CheckIp == 1 && $CheckCookie != 1){
-        $getRatingPicture = $wpdb->get_var( $wpdb->prepare(
-            "
-            SELECT COUNT(*) AS NumberOfRows
-            FROM $tablenameIP 
-            WHERE pid = %d and GalleryID = %d and IP = %s and RatingS = %s
-        ",
-            $pictureID,$galeryID,$userIP,1
-        ) );
-    } elseif ($CheckIp == 1 && $CheckCookie == 1){
-
-        if(!empty($CookieId)) {
-            $getRatingPicture = $wpdb->get_var( $wpdb->prepare(
-                "
-        SELECT COUNT(*) AS NumberOfRows
-        FROM $tablenameIP 
-        WHERE pid = %d and GalleryID = %d and IP = %s and CookieId = %s and RatingS = %s
-    ",
-                $pictureID,$galeryID,$userIP,$CookieId,1
-            ) );
-        } else{
-            $getRatingPicture = 0;
-        }
-    }
-
-    // Check how many votings a certail user has
-    if(!empty($VotesPerUser)){
-
-        if ($CheckLogin == 1 && $wpUserId>0)
-        {
-            if(is_user_logged_in()){
-                $countVotesOfUserPerGallery = $wpdb->get_var( $wpdb->prepare(
-                    "
-                    SELECT COUNT(*) AS NumberOfRows
-                    FROM $tablenameIP 
-                    WHERE GalleryID = %d and WpUserId = %s and RatingS > %d
-                ",
-                    $galeryID,$wpUserId,0
-                ) );
-            }
-
-        }
-        elseif ($CheckCookie == 1 && $CheckIp!=1)
-        {
-            if(!empty($CookieId)) {
-                $countVotesOfUserPerGallery = $wpdb->get_var( $wpdb->prepare(
-                    "
-                    SELECT COUNT(*) AS NumberOfRows
-                    FROM $tablenameIP 
-                    WHERE GalleryID = %d and CookieId = %s and RatingS > %d
-                ",
-                    $galeryID,$CookieId,0
-                ) );
-            }
-        }
-        elseif ($CheckIp == 1 && $CheckCookie!=1) {
-            $countVotesOfUserPerGallery = $wpdb->get_var( $wpdb->prepare(
-                "
-						SELECT COUNT(*) AS NumberOfRows
-						FROM $tablenameIP 
-						WHERE GalleryID = %d and IP = %s and RatingS = %d
-					",
-                $galeryID,$userIP,1
-            ) );
-        }
-        elseif ($CheckIp == 1 && $CheckCookie==1) {
-
-            if(!empty($CookieId)) {
-                $countVotesOfUserPerGallery = $wpdb->get_var( $wpdb->prepare(
-                    "
-                    SELECT COUNT(*) AS NumberOfRows
-                    FROM $tablenameIP
-                    WHERE GalleryID = %d and IP = %s and CookieId = %s and RatingS = %d
-                ",
-                    $galeryID,$userIP,$CookieId,1
-                ) );
-            }else{
-                $countVotesOfUserPerGallery = 0;
-            }
-
-        }
-
-    }
-
+    // The signed identity can carry a legacy restriction, but never legacy ownership.
+    $getRatingPicture = cg_count_voter_votes($galeryID,true,$voterRestrictionWhere,$pictureID);
+    $countVotesOfUserPerGallery = !empty($VotesPerUser) ? cg_count_voter_votes($galeryID,true,$voterRestrictionWhere) : 0;
     $countVotesOfUserPerCategory = 0;
-
-    if(!empty($VotePerCategory) OR !empty($VotesPerCategory)){
-
-        if ($CheckLogin == 1 && $wpUserId>0)
-        {
-            if(is_user_logged_in()){
-                $countVotesOfUserPerCategory = $wpdb->get_var( $wpdb->prepare(
-                    "
-                    SELECT COUNT(*) AS NumberOfRows
-                    FROM $tablenameIP 
-                    WHERE GalleryID = %d and WpUserId = %s and RatingS > %d and Category = %d and CategoriesOn = %d
-                ",
-                    $galeryID,$wpUserId,0,$imageData['Category'],1
-                ) );
-            }
-
-        }
-        elseif ($CheckCookie == 1 && $CheckIp != 1)
-        {
-            if(!empty($CookieId)) {
-                $countVotesOfUserPerCategory = $wpdb->get_var( $wpdb->prepare(
-                    "
-                    SELECT COUNT(*) AS NumberOfRows
-                    FROM $tablenameIP 
-                    WHERE GalleryID = %d and CookieId = %s and RatingS > %d and Category = %d and CategoriesOn = %d
-                ",
-                    $galeryID,$CookieId,0,$imageData['Category'],1
-                ) );
-            }
-        }
-        elseif ($CheckIp == 1 && $CheckCookie!=1) {
-            $countVotesOfUserPerCategory = $wpdb->get_var( $wpdb->prepare(
-                "
-						SELECT COUNT(*) AS NumberOfRows
-						FROM $tablenameIP 
-						WHERE GalleryID = %d and IP = %s and RatingS = %d and Category = %d and CategoriesOn = %d
-					",
-                $galeryID,$userIP,1,$imageData['Category'],1
-            ) );
-        }
-        elseif ($CheckIp == 1 && $CheckCookie==1) {
-            if(!empty($CookieId)) {
-                $countVotesOfUserPerCategory = $wpdb->get_var( $wpdb->prepare(
-                    "
-							SELECT COUNT(*) AS NumberOfRows
-							FROM $tablenameIP
-							WHERE GalleryID = %d and IP = %s and CookieId = %s and RatingS = %d and Category = %d and CategoriesOn = %d
-						",
-                    $galeryID,$userIP,$CookieId,1,$imageData['Category'],1
-                ) );
-            }else{
-                $countVotesOfUserPerCategory = 0;
-            }
-        }
-
-     }
-
+    if(!empty($VotePerCategory) || !empty($VotesPerCategory)){
+        $countVotesOfUserPerCategory = cg_count_voter_votes($galeryID,true,$voterRestrictionWhere,0,$imageData['Category']);
+    }
 
     $allVotesUsed = 0;
     if(($countVotesOfUserPerGallery >= $VotesPerUser) && ($VotesPerUser!=0)){
@@ -690,7 +518,7 @@ else {
                 cg1l_release_stats_lock($lockFp);
                 ?>
                 <script data-cg-processing="true">
-                    cgJsClass.gallery.function.message.show(<?php echo json_encode($galeryIDuser);?>,'Vote and linked comment could not be removed.');
+                    cgJsClass.gallery.rating.showVotingMessage(<?php echo json_encode($galeryIDuser);?>,<?php echo wp_json_encode(cg_member_t('Vote and linked comment could not be removed.')); ?>);
                 </script>
                 <?php
                 return;
@@ -779,36 +607,7 @@ else {
 
         $TstampToCompare = $Tstamp-$VotesInTimeIntervalSeconds;
 
-        if($CheckLogin==1  && $wpUserId>0){
-            if(is_user_logged_in()){
-                $VotesUserInTstamp = $wpdb->get_var( "SELECT COUNT(*) FROM $tablenameIP WHERE Tstamp > '$TstampToCompare' && WpUserId='$wpUserId' && GalleryID = '$galeryID' && RatingS='1'");
-            }
-        }
-        elseif($CheckIp==1 && $CheckCookie==1){
-            if(!empty($CookieId)) {
-                $VotesUserInTstamp = $wpdb->get_var($wpdb->prepare(
-                    "SELECT COUNT(*) FROM $tablenameIP WHERE Tstamp > %d AND IP = %s AND CookieId = %s AND GalleryID = %d AND RatingS = %d",
-                    $TstampToCompare,
-                    $userIP,
-                    $CookieId,
-                    $galeryID,
-                    1
-                ));
-            }
-        }
-        elseif($CheckCookie){
-            if(!empty($CookieId)) {
-                $VotesUserInTstamp = $wpdb->get_var($wpdb->prepare(
-                    "SELECT COUNT(*) FROM $tablenameIP WHERE Tstamp > %d AND CookieId = %s AND GalleryID = %d AND RatingS = %d",
-                    $TstampToCompare,
-                    $CookieId,
-                    $galeryID,
-                    1
-                ));
-            }
-        }else{
-            $VotesUserInTstamp = $wpdb->get_var( "SELECT COUNT(*) FROM $tablenameIP WHERE Tstamp > '$TstampToCompare' && IP='$userIP' && GalleryID = '$galeryID' && RatingS='1'");
-        }
+        $VotesUserInTstamp = cg_count_voter_votes($galeryID,true,$voterRestrictionWhere,0,false,$TstampToCompare);
 
         if($VotesInTime == 1 && ($VotesUserInTstamp>=$VotesInTimeQuantity)){
             cg1l_release_stats_lock($lockFp);
@@ -867,9 +666,9 @@ else {
                 cgJsClass.gallery.rating.showCustomVoteHtmlMessage(galeryIDuser,cgJsData[galeryIDuser].options.pro.VoteMessageWarningText,'warning');
             }else{
                 if(cgJsData[galeryIDuser].vars.rawData[pictureID].MultipleFilesParsed){
-                    cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].YouHaveAlreadyVotedThisPicture);
+                    cgJsClass.gallery.rating.showVotingMessage(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].YouHaveAlreadyVotedThisPicture);
                 }else{
-                cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].YouHaveAlreadyVotedThisPicture);
+                cgJsClass.gallery.rating.showVotingMessage(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].YouHaveAlreadyVotedThisPicture);
             }
             }
 
@@ -909,7 +708,7 @@ else {
             }else if(hasVotesPerUserAllVotesUsedHtmlMessageContent){
                 cgJsClass.gallery.rating.showCustomVoteHtmlMessage(galeryIDuser,cgJsData[galeryIDuser].options.pro.VotesPerUserAllVotesUsedHtmlMessage,'limit');
             }else{
-                cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].AllVotesUsed);
+                cgJsClass.gallery.rating.showVotingMessage(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].AllVotesUsed);
             }
 
             cgJsData[galeryIDuser].vars.allVotesUsed = 1;
@@ -938,7 +737,7 @@ else {
             if(cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive==1 && hasVoteMessageWarningTextContent){
                 cgJsClass.gallery.rating.showCustomVoteHtmlMessage(galeryIDuser,cgJsData[galeryIDuser].options.pro.VoteMessageWarningText,'warning');
             }else{
-                cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].YouHaveAlreadyVotedThisCategory);
+                cgJsClass.gallery.rating.showVotingMessage(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].YouHaveAlreadyVotedThisCategory);
             }
             //    cgJsData[galeryIDuser].vars.allVotesUsed = 1;
 
@@ -973,7 +772,7 @@ else {
             if(cgJsData[galeryIDuser].options.pro.VoteMessageWarningActive==1 && hasVoteMessageWarningTextContent){
                 cgJsClass.gallery.rating.showCustomVoteHtmlMessage(galeryIDuser,cgJsData[galeryIDuser].options.pro.VoteMessageWarningText,'warning');
             }else{
-                cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].YouHaveNoMoreVotesInThisCategory);
+                cgJsClass.gallery.rating.showVotingMessage(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].YouHaveNoMoreVotesInThisCategory);
             }
             //    cgJsData[galeryIDuser].vars.allVotesUsed = 1;
 
@@ -985,8 +784,8 @@ else {
 
         // CAN ONLY HAPPEN IF OPTIONS WERE JUST CHANGED AND NO PAGE RELOAD HAPPENED
         // IT SHOULD NOT BE PROCESSED BECAUSE IT COULD BE THAT COOKIES WERE NOT ALLOWED FOR THE USER,
-        if($CheckCookie==1) {
-            if(!isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {
+        if($CheckCookie==1 && $CheckLogin!=1) {
+            if($CookieId==='') {
                 //  return;
                 $cookieVotingJustActivated = true;
             }
@@ -1098,7 +897,7 @@ else {
                 }
 
                 if(voteCommentModeActive && !voteCommentFollowUpToken && !voteCommentWasSaved){
-                    cgJsClass.gallery.function.message.close(true);
+                    cgJsClass.gallery.rating.closeVoteMessage(galeryIDuser);
                 }
 
                 var allVotesUsed = <?php echo json_encode($allVotesUsed);?>;
@@ -1114,13 +913,13 @@ else {
                     cgJsClass.gallery.rating.showCustomVoteHtmlMessage(galeryIDuser,cgJsData[galeryIDuser].options.pro.VoteMessageSuccessText,'success');
                 }else{
                     if(ThankVote==1){
-                        cgJsClass.gallery.function.message.show(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].ThankYouForVoting);
+                        cgJsClass.gallery.rating.showVotingMessage(galeryIDuser,cgJsClass.gallery.language[galeryIDuser].ThankYouForVoting);
                     }
                 }
 
             }else{
                 cgJsClass.gallery.rating.setRatingOneStar(pictureID,0,false,galeryIDuser);
-                cgJsClass.gallery.function.message.show(galeryIDuser,'Check Cookie voting activated');
+                cgJsClass.gallery.rating.showVotingMessage(galeryIDuser,'Check Cookie voting activated');
             }
 
 

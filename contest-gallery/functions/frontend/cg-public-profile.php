@@ -1,5 +1,6 @@
 <?php
 if(!defined('ABSPATH')){exit;}
+require_once __DIR__.'/cg-public-member-profile.php';
 
 // Resolve an entry visible in this signed gallery context, then derive its owner.
 function cg_public_profile_owner($context,$entryId,$accessHash,$surface){
@@ -8,11 +9,24 @@ function cg_public_profile_owner($context,$entryId,$accessHash,$surface){
 	$suffixes = array('cg_gallery'=>'','cg_gallery_user'=>'-u','cg_gallery_no_voting'=>'-nv','cg_gallery_winner'=>'-w','cg_gallery_ecommerce'=>'-ec');
 	if(!$context || !empty($context['isCGalleries']) || empty($context['realGid']) || !isset($suffixes[$context['shortcodeName']]) || !in_array($surface,array('card','entry'),true)){return $error;}
 	$gid = absint($context['realGid']);
-	if(!cg_member_features_available($gid)){return $error;}
+	if(!cg_member_features_available($gid) || !cg_gallery_card_profile_supported($context['shortcodeName'])){return $error;}
 	$viewer = get_current_user_id();
 	$shortcode = $context['shortcodeName'];
 	$expected = cg1l_get_gallery_data_access_hash($gid,$shortcode,$viewer,$context['galleryDataUseAllowedRealIds']);
 	if(!cg1l_hash_equals($expected,$accessHash)){return $error;}
+	return cg_public_profile_visible_owner($context,$entryId,$surface);
+}
+
+// Visibility is shared with signed public read grants. The entrypoint above still checks the access hash.
+function cg_public_profile_visible_owner($context,$entryId,$surface){
+	global $wpdb;
+	$error = new WP_Error('profile','This gallery is not available.');
+	$suffixes = array('cg_gallery'=>'','cg_gallery_user'=>'-u','cg_gallery_no_voting'=>'-nv','cg_gallery_winner'=>'-w','cg_gallery_ecommerce'=>'-ec');
+	if(!$context || !empty($context['isCGalleries']) || empty($context['realGid']) || !isset($suffixes[$context['shortcodeName']]) || !in_array($surface,array('card','entry'),true)){return $error;}
+	$gid = absint($context['realGid']);
+	if(!cg_member_features_available($gid) || !cg_gallery_card_profile_supported($context['shortcodeName'])){return $error;}
+	$viewer = get_current_user_id();
+	$shortcode = $context['shortcodeName'];
 	$uploads = wp_upload_dir();
 	$base = $uploads['basedir'].'/contest-gallery/gallery-id-'.$gid.'/json/'.$gid;
 	$all = is_file($base.'-options.json') ? json_decode(file_get_contents($base.'-options.json'),true) : array();
@@ -22,7 +36,7 @@ function cg_public_profile_owner($context,$entryId,$accessHash,$surface){
 	$options = cg_member_profile_options($options,$gid,$shortcode);
 	$interval = cg_shortcode_interval_check($gid,$all,$shortcode);
 	if(empty($interval['shortcodeIsActive'])){return $error;}
-	if($surface==='card' ? !cg_gallery_card_option_enabled($options,'ShowProfileGallery') : (empty($options['pro']['ShowNickname']) && empty($options['pro']['ShowProfileImage']))){return $error;}
+	if($surface==='card' ? !cg_gallery_card_option_enabled($options,'ShowProfileGallery') : !cg_uploader_profile_entry_enabled($options,$shortcode)){return $error;}
 	$entry = $wpdb->get_row($wpdb->prepare("SELECT id,WpUserId,Active,Category,Winner,EcommerceEntry,IsProfileImage FROM {$wpdb->prefix}contest_gal1ery WHERE id=%d AND GalleryID=%d",$entryId,$gid),ARRAY_A);
 	if(!$entry || !empty($entry['IsProfileImage']) || empty($entry['WpUserId'])){return $error;}
 	$own = $shortcode==='cg_gallery_user' && $viewer && (int)$entry['WpUserId']===$viewer && cg_member_enabled($gid);
@@ -62,17 +76,16 @@ function cg_public_profile_render_fields($userId,$limit = 0){
 	return $html.'</dl>';
 }
 
-function cg_public_profile_render($userId){
-	$profile = cg_member_profile_data($userId);
-	$image = $profile['largeImage'];
-	ob_start();
-	echo '<div class="cg-member-profile-dialog cg-member-public-profile-dialog" role="dialog" aria-modal="true" aria-labelledby="cgMemberPublicProfileName" tabindex="-1"><div class="cg-member-profile-photo"><div class="cg-member-profile-preview">';
-	if($image){echo '<img src="'.esc_url($image).'" alt="">';}
-	else{echo '<span class="cg-member-profile-placeholder" aria-hidden="true">'.esc_html(mb_substr($profile['name'],0,1)).'</span>';}
-	echo '</div><h2 id="cgMemberPublicProfileName">'.esc_html($profile['name']).'</h2></div>';
-	echo cg_public_profile_render_fields($userId);
-	echo '</div>';
-	return ob_get_clean();
+function cg_public_profile_render($userId,$context = array(),$entryId = 0,$surface='card'){
+	// Preserve trusted PHP calls without a gallery entry. They do not issue a public read grant.
+	if(empty($context['realGid']) || empty($context['shortcodeName']) || !$entryId){
+		$profile=cg_member_profile_data($userId);
+		$html='<div class="cg-member-profile-dialog cg-member-public-profile-dialog" role="dialog" aria-modal="true" aria-labelledby="cgMemberPublicProfileName" tabindex="-1"><div class="cg-member-profile-photo"><div class="cg-member-profile-preview">';
+		$html.=$profile['largeImage'] ? '<img src="'.esc_url($profile['largeImage']).'" alt="">' : '<span class="cg-member-profile-placeholder" aria-hidden="true">'.esc_html(mb_substr($profile['name'],0,1)).'</span>';
+		return $html.'</div><h2 id="cgMemberPublicProfileName">'.esc_html($profile['name']).'</h2></div>'.cg_public_profile_render_fields($userId).'</div>';
+	}
+	$source=cg_public_member_profile_source($userId,$context,$entryId,$surface);
+	return cg_public_member_profile_render($userId,$context,$entryId,$source);
 }
 
 function cg_public_profile_ajax(){
@@ -84,9 +97,13 @@ function cg_public_profile_ajax(){
 	$hash = isset($_POST['galleryDataAccessHash']) && is_string($_POST['galleryDataAccessHash']) ? wp_unslash($_POST['galleryDataAccessHash']) : '';
 	$surface = isset($_POST['surface']) && is_string($_POST['surface']) ? sanitize_key($_POST['surface']) : '';
 	$entryId = isset($_POST['entryId']) && is_scalar($_POST['entryId']) ? absint($_POST['entryId']) : 0;
-	$owner = cg_public_profile_owner(cg1l_verify_runtime_context_token($token),$entryId,$hash,$surface);
+	$context = cg1l_verify_runtime_context_token($token);
+	$owner = cg_public_profile_owner($context,$entryId,$hash,$surface);
 	if(is_wp_error($owner)){wp_send_json_error(array('message'=>cg_member_t($owner->get_error_message())));}
-	wp_send_json_success(array('html'=>cg_public_profile_render($owner)));
+	$source=cg_public_member_profile_source($owner,$context,$entryId,$surface);
+	$origin=cg_public_member_profile_origin($source);
+	if(is_wp_error($origin)){wp_send_json_error(array('message'=>cg_member_t($origin->get_error_message())));}
+	wp_send_json_success(array('html'=>cg_public_member_profile_render($owner,$context,$entryId,$source)));
 }
 add_action('wp_ajax_cg_public_profile','cg_public_profile_ajax');
 add_action('wp_ajax_nopriv_cg_public_profile','cg_public_profile_ajax');

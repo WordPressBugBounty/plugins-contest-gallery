@@ -2683,3 +2683,412 @@ msgstr "Stemmen oplopend"
 
 msgid "Please use a display name instead of an email address."
 msgstr "Gebruik een weergavenaam in plaats van een e-mailadres."
+
+
+#: check-language-general.php
+msgid "Member area"
+msgstr "Ledenruimte"
+
+
+#: check-language-general.php
+msgid "Overview"
+msgstr "Overzicht"
+
+
+#: check-language-general.php
+msgid "Messages"
+msgstr "Berichten"
+
+
+#: check-language-general.php
+msgid "Friends"
+msgstr "Vrienden"
+
+
+#: check-language-general.php
+msgid "Latest entries"
+msgstr "Nieuwste inzendingen"
+
+
+#: check-language-general.php
+msgid "Back"
+msgstr "Terug"
+
+
+#: check-language-general.php
+msgid "Back to friends"
+msgstr "Terug naar vrienden"
+
+
+#: check-language-general.php
+msgid "Back to overview"
+msgstr "Terug naar overzicht"
+
+
+#: check-language-general.php
+msgid "Back to received requests"
+msgstr "Terug naar ontvangen verzoeken"
+
+
+#: check-language-general.php
+msgid "Load more"
+msgstr "Meer laden"
+
+
+#: check-language-general.php
+msgid "Contact"
+msgstr "Contact"
+
+
+#: check-language-general.php
+msgid "Message"
+msgstr "Bericht"
+
+
+#: check-language-general.php
+msgid "Send message"
+msgstr "Bericht versturen"
+
+
+#: check-language-general.php
+msgid "Write a message…"
+msgstr "Schrijf een bericht…"
+
+
+#: check-language-general.php
+msgid "Up to 5,000 characters"
+msgstr "Maximaal 5.000 tekens"
+
+
+#: check-language-general.php
+msgid "Earlier messages"
+msgstr "Eerdere berichten"
+
+
+#: check-language-general.php
+msgid "Your conversations"
+msgstr "Je gesprekken"
+
+
+#: check-language-general.php
+msgid "You"
+msgstr "Jij"
+
+
+#: check-language-general.php
+msgid "Sending…"
+msgstr "Versturen…"
+
+
+#: check-language-general.php
+msgid "Saving…"
+msgstr "Opslaan…"
+
+
+#: check-language-general.php
+msgid "No messages yet. Open a participant’s profile to start a conversation."
+msgstr "Nog geen berichten. Open het profiel van een deelnemer om een gesprek te beginnen."
+
+
+#: check-language-general.php
+msgid "Discard your unsent message?"
+msgstr "Je niet-verstuurde bericht verwijderen?"
+
+
+#: check-language-general.php
+msgid "{count} new messages and requests"
+msgstr "{count} nieuwe berichten en verzoeken"
+
+
+#: check-language-general.php
+msgid "Add friend"
+msgstr "Vriend toevoegen"
+
+
+#: check-language-general.php
+msgid "Add friend - {name}"
+msgstr "Vriend toevoegen - {name}"
+
+
+#: check-language-general.php
+msgid "Remove friend"
+msgstr "Vriend verwijderen"
+
+
+#: check-language-general.php
+msgid "Remove friend - {name}"
+msgstr "Vriend verwijderen - {name}"
+
+
+#: check-language-general.php
+msgid "Remove this friend?"
+msgstr "Deze vriend verwijderen?"
+
+
+#: check-language-general.php
+msgid "Remove this friend - {name}?"
+msgstr "Deze vriend verwijderen - {name}?"
+
+
+#: check-language-general.php
+msgid "Accept request"
+msgstr "Verzoek accepteren"
+
+
+#: check-language-general.php
+msgid "Decline"
+msgstr "Afwijzen"
+
+
+#: check-language-general.php
+msgid "Cancel request"
+msgstr "Verzoek annuleren"
+
+
+#: check-language-general.php
+msgid "Received requests"
+msgstr "Ontvangen verzoeken"
+
+
+#: check-language-general.php
+msgid "Sent requests"
+msgstr "Verstuurde verzoeken"
+
+
+#: check-language-general.php
+msgid "Blocked"
+msgstr "Geblokkeerd"
+
+
+#: check-language-general.php
+msgid "Unblock"
+msgstr "Deblokkeren"
+
+
+#: check-language-general.php
+msgid "Block"
+msgstr "Blokkeren"
+
+
+#: check-language-general.php
+msgid "Review request"
+msgstr "Verzoek bekijken"
+
+
+#: check-language-general.php
+msgid "Request sent"
+msgstr "Verzoek verstuurd"
+
+
+#: check-language-general.php
+msgid "Friend request sent."
+msgstr "Vriendschapsverzoek verstuurd."
+
+
+#: check-language-general.php
+msgid "Friend request received."
+msgstr "Vriendschapsverzoek ontvangen."
+
+
+#: check-language-general.php
+msgid "Block this member? This stops messages and requests and ends your friendship."
+msgstr "Dit lid blokkeren? Hierdoor stoppen berichten en verzoeken en wordt jullie vriendschap beëindigd."
+
+
+#: check-language-general.php
+msgid "Block this member? This stops messages and requests and ends your friendship. Public entries remain visible."
+msgstr "Dit lid blokkeren? Hierdoor stoppen berichten en verzoeken en wordt jullie vriendschap beëindigd. Openbare inzendingen blijven zichtbaar."
+
+
+#: check-language-general.php
+msgid "Unblock this member? This allows messages and friend requests again. Your previous friendship will not be restored."
+msgstr "Dit lid deblokkeren? Hierdoor zijn berichten en vriendschapsverzoeken weer mogelijk. Jullie eerdere vriendschap wordt niet hersteld."
+
+
+#: check-language-general.php
+msgid "No accessible entries yet."
+msgstr "Nog geen toegankelijke inzendingen."
+
+
+#: check-language-general.php
+msgid "No accessible galleries yet."
+msgstr "Nog geen toegankelijke galerijen."
+
+
+#: check-language-general.php
+msgid "No friends yet."
+msgstr "Nog geen vrienden."
+
+
+#: check-language-general.php
+msgid "No friends yet. Send a request from a participant’s profile."
+msgstr "Nog geen vrienden. Verstuur een verzoek vanuit het profiel van een deelnemer."
+
+
+#: check-language-general.php
+msgid "No participants with a profile yet."
+msgstr "Nog geen deelnemers met een profiel."
+
+
+#: check-language-general.php
+msgid "Nothing here yet."
+msgstr "Hier is nog niets."
+
+
+#: check-language-general.php
+msgid "Account unavailable"
+msgstr "Account niet beschikbaar"
+
+
+#: check-language-general.php
+msgid "Enter a message of 1 to 5,000 characters."
+msgstr "Voer een bericht van 1 tot 5.000 tekens in."
+
+
+#: check-language-general.php
+msgid "Invalid page."
+msgstr "Ongeldige pagina."
+
+
+#: check-language-general.php
+msgid "Messaging is unavailable for this contact."
+msgstr "Berichten zijn niet beschikbaar voor dit contact."
+
+
+#: check-language-general.php
+msgid "Please reopen the conversation and try again."
+msgstr "Open het gesprek opnieuw en probeer het nog eens."
+
+
+#: check-language-general.php
+msgid "Please sign in to view friends."
+msgstr "Log in om vrienden te bekijken."
+
+
+#: check-language-general.php
+msgid "Please wait before sending more messages."
+msgstr "Wacht voordat je meer berichten verstuurt."
+
+
+#: check-language-general.php
+msgid "Please wait before sending more requests."
+msgstr "Wacht voordat je meer verzoeken verstuurt."
+
+
+#: check-language-general.php
+msgid "The entry could not be loaded. Please try again."
+msgstr "De inzending kon niet worden geladen. Probeer het opnieuw."
+
+
+#: check-language-general.php
+msgid "The member area is not available."
+msgstr "De ledenruimte is niet beschikbaar."
+
+
+#: check-language-general.php
+msgid "The message could not be saved. Please try again."
+msgstr "Het bericht kon niet worden opgeslagen. Probeer het opnieuw."
+
+
+#: check-language-general.php
+msgid "This action is not available."
+msgstr "Deze actie is niet beschikbaar."
+
+
+#: check-language-general.php
+msgid "This entry is no longer available."
+msgstr "Deze inzending is niet meer beschikbaar."
+
+
+#: check-language-general.php
+msgid "This member is no longer available."
+msgstr "Dit lid is niet meer beschikbaar."
+
+
+#: check-language-general.php
+msgid "This participant list is no longer available."
+msgstr "Deze deelnemerslijst is niet meer beschikbaar."
+
+
+#: check-language-general.php
+msgid "This request has already been used."
+msgstr "Dit verzoek is al gebruikt."
+
+
+#: check-language-general.php
+msgid "The PIN request is being processed. Please try again."
+msgstr "Het PIN-verzoek wordt verwerkt. Probeer het opnieuw."
+
+
+#: check-language-general.php
+msgid "Gallery entries"
+msgstr "Galerij-inzendingen"
+
+
+#: check-language-general.php
+msgid "View gallery entries"
+msgstr "Galerij-inzendingen bekijken"
+
+
+#: check-language-general.php
+msgid "View gallery entries: {name}"
+msgstr "Galerij-inzendingen bekijken: {name}"
+
+
+#: check-language-general.php
+msgid "Browse entries"
+msgstr "Inzendingen bekijken"
+
+
+#: check-language-general.php
+msgid "Entry"
+msgstr "Inzending"
+
+
+#: check-language-general.php
+msgid "{entries} by {name}"
+msgstr "{entries} van {name}"
+
+
+#: check-language-general.php
+msgid "Paid actions are available on the entry page."
+msgstr "Betaalde acties zijn beschikbaar op de inzendingspagina."
+
+
+#: check-language-general.php
+msgid "Open entry page"
+msgstr "Inzendingspagina openen"
+
+
+#: check-language-general.php
+msgid "Open entry page in a new tab"
+msgstr "Inzendingspagina in een nieuw tabblad openen"
+
+
+#: check-language-general.php
+msgid "Maximum resolution"
+msgstr "Maximale resolutie"
+
+
+#: check-language-general.php
+msgid "Please allow cookies and reload the page to be able to vote."
+msgstr "Sta cookies toe en laad de pagina opnieuw om te kunnen stemmen."
+
+
+#: check-language-general.php
+msgid "Your vote could not be saved. Please try again."
+msgstr "Je stem kon niet worden opgeslagen. Probeer het opnieuw."
+
+
+#: check-language-general.php
+msgid "Vote and linked comment could not be removed."
+msgstr "De stem en de bijbehorende reactie konden niet worden verwijderd."
+
+
+#: check-language-general.php
+msgid "An administrator has disabled your ability to send messages and friend requests."
+msgstr "Een beheerder heeft het versturen van berichten en vriendschapsverzoeken voor je uitgeschakeld."
+
+#: check-language.php
+msgid "Ratings and comments"
+msgstr "Beoordelingen en reacties"

@@ -102,7 +102,7 @@ var cg_check_mail_name_value_for_login = document.getElementById('cg_check_mail_
 cg_check_mail_name_value_for_login.value = 1;
 
 var cg_append_login_and_password_do_not_match = document.getElementById('cg_append_login_and_password_do_not_match');
-cg_append_login_and_password_do_not_match.innerHTML = cg_append_login_and_password_do_not_match.innerHTML + cg_language_LoginAndPasswordDoNotMatch;
+cg_append_login_and_password_do_not_match.textContent = cg_language_LoginAndPasswordDoNotMatch;
 cg_append_login_and_password_do_not_match.classList.remove('cg_hide');
 
 // Password Feld leer machen

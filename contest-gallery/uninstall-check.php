@@ -6,6 +6,9 @@ require_once ABSPATH . 'wp-admin/includes/plugin.php';
 // checks if there is normal version left or PRO version left if one of that left
 // uninstall does not continues
 
+// A preceding FREE/PRO deletion in the same request can leave this cache stale.
+wp_cache_delete('plugins','plugins');
+clearstatcache();
 $plugins_list = get_plugins();
 /**###NORMAL###**/
 if(!empty($plugins_list['contest-gallery-pro/index.php'])){

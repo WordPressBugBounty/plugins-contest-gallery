@@ -2704,3 +2704,412 @@ msgstr "Röster stigande"
 
 msgid "Please use a display name instead of an email address."
 msgstr "Använd ett visningsnamn i stället för en e-postadress."
+
+
+#: check-language-general.php
+msgid "Member area"
+msgstr "Medlemsområde"
+
+
+#: check-language-general.php
+msgid "Overview"
+msgstr "Översikt"
+
+
+#: check-language-general.php
+msgid "Messages"
+msgstr "Meddelanden"
+
+
+#: check-language-general.php
+msgid "Friends"
+msgstr "Vänner"
+
+
+#: check-language-general.php
+msgid "Latest entries"
+msgstr "Senaste bidragen"
+
+
+#: check-language-general.php
+msgid "Back"
+msgstr "Tillbaka"
+
+
+#: check-language-general.php
+msgid "Back to friends"
+msgstr "Tillbaka till vänner"
+
+
+#: check-language-general.php
+msgid "Back to overview"
+msgstr "Tillbaka till översikten"
+
+
+#: check-language-general.php
+msgid "Back to received requests"
+msgstr "Tillbaka till mottagna förfrågningar"
+
+
+#: check-language-general.php
+msgid "Load more"
+msgstr "Ladda fler"
+
+
+#: check-language-general.php
+msgid "Contact"
+msgstr "Kontakt"
+
+
+#: check-language-general.php
+msgid "Message"
+msgstr "Meddelande"
+
+
+#: check-language-general.php
+msgid "Send message"
+msgstr "Skicka meddelande"
+
+
+#: check-language-general.php
+msgid "Write a message…"
+msgstr "Skriv ett meddelande…"
+
+
+#: check-language-general.php
+msgid "Up to 5,000 characters"
+msgstr "Upp till 5 000 tecken"
+
+
+#: check-language-general.php
+msgid "Earlier messages"
+msgstr "Tidigare meddelanden"
+
+
+#: check-language-general.php
+msgid "Your conversations"
+msgstr "Dina konversationer"
+
+
+#: check-language-general.php
+msgid "You"
+msgstr "Du"
+
+
+#: check-language-general.php
+msgid "Sending…"
+msgstr "Skickar…"
+
+
+#: check-language-general.php
+msgid "Saving…"
+msgstr "Sparar…"
+
+
+#: check-language-general.php
+msgid "No messages yet. Open a participant’s profile to start a conversation."
+msgstr "Inga meddelanden ännu. Öppna en deltagares profil för att starta en konversation."
+
+
+#: check-language-general.php
+msgid "Discard your unsent message?"
+msgstr "Kasta ditt oskickade meddelande?"
+
+
+#: check-language-general.php
+msgid "{count} new messages and requests"
+msgstr "{count} nya meddelanden och förfrågningar"
+
+
+#: check-language-general.php
+msgid "Add friend"
+msgstr "Lägg till vän"
+
+
+#: check-language-general.php
+msgid "Add friend - {name}"
+msgstr "Lägg till vän - {name}"
+
+
+#: check-language-general.php
+msgid "Remove friend"
+msgstr "Ta bort vän"
+
+
+#: check-language-general.php
+msgid "Remove friend - {name}"
+msgstr "Ta bort vän - {name}"
+
+
+#: check-language-general.php
+msgid "Remove this friend?"
+msgstr "Ta bort den här vännen?"
+
+
+#: check-language-general.php
+msgid "Remove this friend - {name}?"
+msgstr "Ta bort den här vännen - {name}?"
+
+
+#: check-language-general.php
+msgid "Accept request"
+msgstr "Acceptera förfrågan"
+
+
+#: check-language-general.php
+msgid "Decline"
+msgstr "Avböj"
+
+
+#: check-language-general.php
+msgid "Cancel request"
+msgstr "Avbryt förfrågan"
+
+
+#: check-language-general.php
+msgid "Received requests"
+msgstr "Mottagna förfrågningar"
+
+
+#: check-language-general.php
+msgid "Sent requests"
+msgstr "Skickade förfrågningar"
+
+
+#: check-language-general.php
+msgid "Blocked"
+msgstr "Blockerade"
+
+
+#: check-language-general.php
+msgid "Unblock"
+msgstr "Avblockera"
+
+
+#: check-language-general.php
+msgid "Block"
+msgstr "Blockera"
+
+
+#: check-language-general.php
+msgid "Review request"
+msgstr "Visa förfrågan"
+
+
+#: check-language-general.php
+msgid "Request sent"
+msgstr "Förfrågan skickad"
+
+
+#: check-language-general.php
+msgid "Friend request sent."
+msgstr "Vänförfrågan skickad."
+
+
+#: check-language-general.php
+msgid "Friend request received."
+msgstr "Vänförfrågan mottagen."
+
+
+#: check-language-general.php
+msgid "Block this member? This stops messages and requests and ends your friendship."
+msgstr "Blockera den här medlemmen? Det stoppar meddelanden och förfrågningar och avslutar er vänskap."
+
+
+#: check-language-general.php
+msgid "Block this member? This stops messages and requests and ends your friendship. Public entries remain visible."
+msgstr "Blockera den här medlemmen? Det stoppar meddelanden och förfrågningar och avslutar er vänskap. Offentliga bidrag förblir synliga."
+
+
+#: check-language-general.php
+msgid "Unblock this member? This allows messages and friend requests again. Your previous friendship will not be restored."
+msgstr "Avblockera den här medlemmen? Det tillåter meddelanden och vänförfrågningar igen. Er tidigare vänskap återställs inte."
+
+
+#: check-language-general.php
+msgid "No accessible entries yet."
+msgstr "Inga tillgängliga bidrag ännu."
+
+
+#: check-language-general.php
+msgid "No accessible galleries yet."
+msgstr "Inga tillgängliga gallerier ännu."
+
+
+#: check-language-general.php
+msgid "No friends yet."
+msgstr "Inga vänner ännu."
+
+
+#: check-language-general.php
+msgid "No friends yet. Send a request from a participant’s profile."
+msgstr "Inga vänner ännu. Skicka en förfrågan från en deltagares profil."
+
+
+#: check-language-general.php
+msgid "No participants with a profile yet."
+msgstr "Inga deltagare med en profil ännu."
+
+
+#: check-language-general.php
+msgid "Nothing here yet."
+msgstr "Inget här ännu."
+
+
+#: check-language-general.php
+msgid "Account unavailable"
+msgstr "Kontot är inte tillgängligt"
+
+
+#: check-language-general.php
+msgid "Enter a message of 1 to 5,000 characters."
+msgstr "Skriv ett meddelande med 1 till 5 000 tecken."
+
+
+#: check-language-general.php
+msgid "Invalid page."
+msgstr "Ogiltig sida."
+
+
+#: check-language-general.php
+msgid "Messaging is unavailable for this contact."
+msgstr "Meddelanden är inte tillgängliga för den här kontakten."
+
+
+#: check-language-general.php
+msgid "Please reopen the conversation and try again."
+msgstr "Öppna konversationen igen och försök på nytt."
+
+
+#: check-language-general.php
+msgid "Please sign in to view friends."
+msgstr "Logga in för att visa vänner."
+
+
+#: check-language-general.php
+msgid "Please wait before sending more messages."
+msgstr "Vänta innan du skickar fler meddelanden."
+
+
+#: check-language-general.php
+msgid "Please wait before sending more requests."
+msgstr "Vänta innan du skickar fler förfrågningar."
+
+
+#: check-language-general.php
+msgid "The entry could not be loaded. Please try again."
+msgstr "Bidraget kunde inte laddas. Försök igen."
+
+
+#: check-language-general.php
+msgid "The member area is not available."
+msgstr "Medlemsområdet är inte tillgängligt."
+
+
+#: check-language-general.php
+msgid "The message could not be saved. Please try again."
+msgstr "Meddelandet kunde inte sparas. Försök igen."
+
+
+#: check-language-general.php
+msgid "This action is not available."
+msgstr "Den här åtgärden är inte tillgänglig."
+
+
+#: check-language-general.php
+msgid "This entry is no longer available."
+msgstr "Det här bidraget är inte längre tillgängligt."
+
+
+#: check-language-general.php
+msgid "This member is no longer available."
+msgstr "Den här medlemmen är inte längre tillgänglig."
+
+
+#: check-language-general.php
+msgid "This participant list is no longer available."
+msgstr "Den här deltagarlistan är inte längre tillgänglig."
+
+
+#: check-language-general.php
+msgid "This request has already been used."
+msgstr "Den här förfrågan har redan använts."
+
+
+#: check-language-general.php
+msgid "The PIN request is being processed. Please try again."
+msgstr "PIN-förfrågan behandlas. Försök igen."
+
+
+#: check-language-general.php
+msgid "Gallery entries"
+msgstr "Galleribidrag"
+
+
+#: check-language-general.php
+msgid "View gallery entries"
+msgstr "Visa galleribidrag"
+
+
+#: check-language-general.php
+msgid "View gallery entries: {name}"
+msgstr "Visa galleribidrag: {name}"
+
+
+#: check-language-general.php
+msgid "Browse entries"
+msgstr "Bläddra bland bidrag"
+
+
+#: check-language-general.php
+msgid "Entry"
+msgstr "Bidrag"
+
+
+#: check-language-general.php
+msgid "{entries} by {name}"
+msgstr "{entries} av {name}"
+
+
+#: check-language-general.php
+msgid "Paid actions are available on the entry page."
+msgstr "Betalda åtgärder finns på bidragets sida."
+
+
+#: check-language-general.php
+msgid "Open entry page"
+msgstr "Öppna bidragets sida"
+
+
+#: check-language-general.php
+msgid "Open entry page in a new tab"
+msgstr "Öppna bidragets sida i en ny flik"
+
+
+#: check-language-general.php
+msgid "Maximum resolution"
+msgstr "Maximal upplösning"
+
+
+#: check-language-general.php
+msgid "Please allow cookies and reload the page to be able to vote."
+msgstr "Tillåt cookies och ladda om sidan för att kunna rösta."
+
+
+#: check-language-general.php
+msgid "Your vote could not be saved. Please try again."
+msgstr "Din röst kunde inte sparas. Försök igen."
+
+
+#: check-language-general.php
+msgid "Vote and linked comment could not be removed."
+msgstr "Rösten och den tillhörande kommentaren kunde inte tas bort."
+
+
+#: check-language-general.php
+msgid "An administrator has disabled your ability to send messages and friend requests."
+msgstr "En administratör har stängt av din möjlighet att skicka meddelanden och vänförfrågningar."
+
+#: check-language.php
+msgid "Ratings and comments"
+msgstr "Betyg och kommentarer"

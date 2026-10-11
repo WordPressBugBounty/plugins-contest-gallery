@@ -144,7 +144,7 @@ if (count($userAccountEntries)) {
     }else{
         if($currentTime>($regTime+$ConfirmExpiry)){
             $page_id = get_the_ID();
-            echo "<div id='cglExpired' class='cglExpired $FeControlsStyleRegistry $BorderRadiusRegistry' ><input type='hidden' class='cglEmailSent' id='cglEmailSent' value='$language_EmailSent' >$language_ConfirmationLinkExpired<button id='cglResendRegMailButton' data-cgl-mail='$mainMail' data-cgl-page-id='$page_id' data-cgl-key='$cgkey' class='cglResendRegMailButton'>$language_ResendConfirmationEmail</button></div>";
+            echo "<div id='cglExpired' class='cglExpired ".esc_attr($FeControlsStyleRegistry.' '.$BorderRadiusRegistry)."' ><input type='hidden' class='cglEmailSent' id='cglEmailSent' value='".esc_attr($language_EmailSent)."' >".esc_html($language_ConfirmationLinkExpired)."<button id='cglResendRegMailButton' data-cgl-mail='".esc_attr($mainMail)."' data-cgl-page-id='".absint($page_id)."' data-cgl-key='".esc_attr($cgkey)."' class='cglResendRegMailButton'>".esc_html($language_ResendConfirmationEmail)."</button></div>";
 
             ?>
 
@@ -503,7 +503,7 @@ if (count($userAccountEntries)) {
         <?php
     }else{
         echo "<div id='cg_activation'  class='mainCGdivUploadForm mainCGdivUploadFormStatic $FeControlsStyleRegistry $BorderRadiusRegistry'>";
-        echo "<p>$language_ActivationKeyNotFound</p>";
+        echo "<p>".esc_html($language_ActivationKeyNotFound)."</p>";
         echo "</div>";
         ?>
         <script>

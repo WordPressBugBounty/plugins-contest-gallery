@@ -769,7 +769,7 @@ if($max_input_vars>=2000){
         var cgStep_BG = localStorage.getItem('cgStep_BG_'+gid);
 
         if(!cgStep_BG){
-            cgStep_BG = 10;
+            cgStep_BG = 20;
         }
 
         var id = 'cg_step_'+cgStep_BG;

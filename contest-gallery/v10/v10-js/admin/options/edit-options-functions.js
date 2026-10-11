@@ -480,31 +480,12 @@ cgJsClassAdmin.options.functions = {
         });
     },
     syncMemberProfileOptions: function () {
-        var $ = jQuery;
-        $.each({'cg_gallery':'#MemberArea','cg_gallery_no_voting':'#MemberAreaNoVoting','cg_gallery_user':'#MemberAreaUser'}, function (shortcode, selector) {
-            var $master = $(selector), enabled = $master.prop('checked') && !$master.is(':disabled');
-            if (shortcode === 'cg_gallery') {
-                // Editing follows the switch above this group. Saved rules remain gallery-wide.
-                $master.closest('.cg_member_options_group').find('.cg_member_replace_options')
-                    .attr('inert', enabled ? null : '').attr('aria-disabled', enabled ? null : 'true')
-                    .find('.cg_view_option').toggleClass('cg_disabled', !enabled);
-            }
-            var $views = $('.cg_short_code_multiple_pics_configuration_' + shortcode + '_container, .cg_short_code_single_pic_configuration_' + shortcode + '_container');
-            $views.find('input.ShowProfileGallery, input.ShowNickname, input.ShowProfileImage, #ShowNickname, #ShowProfileImage').each(function () {
-                var $option = $(this).closest('.cg_view_option');
-                if (enabled && !$option.hasClass('cg-member-profile-managed')) {
-                    $option.data('cg-member-was-disabled', $option.hasClass('cg_disabled'));
-                }
-                if (!enabled && $option.hasClass('cg-member-profile-managed')) {
-                    $option.toggleClass('cg_disabled', !!$option.data('cg-member-was-disabled'));
-                }
-                $option.toggleClass('cg-member-profile-managed', !!enabled).attr('inert', enabled ? '' : null).attr('aria-disabled', enabled ? 'true' : null);
-                if (enabled) $option.addClass('cg_disabled');
-                var $note = $option.find('.cg-member-profile-note');
-                if (!$note.length) $note = $('<span class="cg_view_option_title_note cg-member-profile-note">').text('Enabled through Member profile. Your individual setting is kept.').appendTo($option.find('.cg_view_option_title p'));
-                $note.toggle(!!enabled);
-            });
-        });
+        var $ = jQuery, $master = $('#MemberArea');
+        var enabled = $master.prop('checked') && !$master.is(':disabled');
+        // Editing follows the switch above this group. Saved rules remain gallery-wide.
+        $master.closest('.cg_member_options_group').find('.cg_member_replace_options')
+            .attr('inert', enabled ? null : '').attr('aria-disabled', enabled ? null : 'true')
+            .find('.cg_view_option').toggleClass('cg_disabled', !enabled);
     },
     openMemberUploadChoice: function ($checkbox) {
         var $ = jQuery, $modal = $('#cgMemberUploadChoice');
@@ -594,8 +575,6 @@ cgJsClassAdmin.options.functions = {
         if(!$(element).hasClass('cg_view_option') && !$(element).closest('.cg_view_option').length){
             return;
         }
-
-        if($element.hasClass('cg-member-profile-managed')){return;}
 
         if($element.hasClass('cg_key_upload_option')){
             return;

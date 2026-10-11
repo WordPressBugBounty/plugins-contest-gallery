@@ -570,6 +570,7 @@ cgJsClassAdmin.index.functions = {
         }
 
         $textarea.data('cg_editor_initialized',true).attr('data-cg-editor-initialized','true');
+        var tinymceSettings = $textarea.is(':disabled') ? {readonly: true} : true;
 
         if(cgJsClassAdmin.index.functions.getWpVersionAsInteger()){
             if(cgJsClassAdmin.index.functions.getWpVersionAsInteger()>=cgJsClassAdmin.index.vars.wpVersionForTinyMCE){// then tinymce can be initialized
@@ -577,14 +578,14 @@ cgJsClassAdmin.index.functions = {
                 if(typeof wp !== 'undefined' && wp.editor && wp.editor.hasOwnProperty('remove') && wp.editor.hasOwnProperty('initialize')){
                     wp.editor.remove(id);
                     wp.editor.initialize(id, {
-                        tinymce: true,
+                        tinymce: tinymceSettings,
                         quicktags: true
                     });
 
                 }else if(typeof wp !== 'undefined' && wp.oldEditor && wp.oldEditor.hasOwnProperty('remove') && wp.oldEditor.hasOwnProperty('initialize')){
                     wp.oldEditor.remove(id);
                     wp.oldEditor.initialize(id, {
-                        tinymce: true,
+                        tinymce: tinymceSettings,
                         quicktags: true
                     });
                 }

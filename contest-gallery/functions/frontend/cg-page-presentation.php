@@ -267,7 +267,7 @@ function cg_page_render_header($args){
 	$entryId = absint($args['entry_id']);
 	// Participant entry lists keep the original gallery header and its preview selection.
 	if(!$entryId && !empty($args['participant_id'])){return;}
-	if($entryId && !cg_member_enabled($gid,$args['shortcode'])){return;}
+	if($entryId && (!cg_uploader_profile_entry_enabled($options,$args['shortcode']) || !cg_member_features_available($gid))){return;}
 	$isOverview = !empty($args['is_overview']);
 	if(!$isOverview && isset($args['shortcode_active']) && !$args['shortcode_active']){return;}
 	$overviewOptions = $isOverview ? cg_galleries_options($args['shortcode']) : array();
@@ -339,7 +339,7 @@ function cg_page_render_header($args){
 	cg_page_render_statistics($statistics,$scope,$options);
 	if($entryId){
 		echo '</div>';
-		echo cg_participants_entry_link($gid,$args['shortcode'],$owner,isset($args['back_url']) ? $args['back_url'] : '');
+		echo cg_uploader_profile_entry_links($args,$owner,$profile);
 	}
 	echo '</div>';
 	if($previews){

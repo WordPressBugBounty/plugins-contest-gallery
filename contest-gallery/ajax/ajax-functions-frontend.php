@@ -159,9 +159,7 @@ if (!function_exists('post_cg_set_frontend_cookie')) {
 
         if (defined('DOING_AJAX') && DOING_AJAX) {
 
-			if(!empty($_REQUEST['gid'])){
-				$galeryID = intval(sanitize_text_field($_REQUEST['gid']));// is gidReal
-			}
+			$galeryID = (!empty($_REQUEST['gid']) && is_scalar($_REQUEST['gid'])) ? absint($_REQUEST['gid']) : 0;
 
 	        if(!empty($_POST['cgIsUpload'])){
 		        if(!isset($_COOKIE['contest-gal1ery-'.$galeryID.'-upload'])) {
@@ -171,9 +169,11 @@ if (!function_exists('post_cg_set_frontend_cookie')) {
 	        }elseif(!empty($_POST['cgOrderIdHash'])){
 		        setcookie('cg_order',  cg_hash_function('---cg_order---'.sanitize_text_field($_POST['cgOrderIdHash'])), time() + ( 7 * 24 * 60 * 60), "/");
 	        }else{
-	            if(!isset($_COOKIE['contest-gal1ery-'.$galeryID.'-voting'])) {
-	                cg_set_cookie($galeryID,'voting');
-	                // thats it cookie is set... after that cookie is available in browser
+	            cg1l_ajax_reject_bad_origin();
+	            $optionsTable = $wpdb->prefix.'contest_gal1ery_options';
+	            $cookieVotingGallery = $galeryID ? $wpdb->get_var($wpdb->prepare("SELECT id FROM $optionsTable WHERE id = %d AND CheckCookie = 1",$galeryID)) : 0;
+	            if(!$cookieVotingGallery || cg_bootstrap_voting_cookie($galeryID)===''){
+	                cg1l_ajax_frontend_response(false,array('message'=>'cg_invalid_cookie','code'=>'cg_invalid_cookie'));
 	            }
 	        }
             exit();
@@ -218,131 +218,30 @@ if (!function_exists('cg1l_get_runtime_voted_user_pids')) {
     function cg1l_get_runtime_voted_user_pids($realGid, $options)
     {
         global $wpdb;
-
         $realGid = absint($realGid);
-        $votedUserPids = [];
-        $allowRating = (!empty($options['general']['AllowRating'])) ? absint($options['general']['AllowRating']) : 0;
-        $checkLogin = (!empty($options['general']['CheckLogin'])) ? 1 : 0;
-        $checkCookie = (!empty($options['general']['CheckCookie'])) ? 1 : 0;
-        $checkIp = (!empty($options['general']['CheckIp'])) ? 1 : 0;
+        $votedUserPids = array();
+        $allowRating = !empty($options['general']['AllowRating']) ? absint($options['general']['AllowRating']) : 0;
+        if(!$realGid || !($allowRating===1 || $allowRating===2 || $allowRating>=12)){return $votedUserPids;}
+        $checkLogin = !empty($options['general']['CheckLogin']);
+        $checkCookie = !empty($options['general']['CheckCookie']);
+        $checkIp = !empty($options['general']['CheckIp']);
         $viewerUserId = is_user_logged_in() ? get_current_user_id() : 0;
-        $cookieId = '';
-        $userIp = '';
-        $rows = [];
-        $tablenameIp = $wpdb->prefix . 'contest_gal1ery_ip';
-
-        if (empty($realGid) || !($allowRating === 1 || $allowRating === 2 || $allowRating >= 12)) {
-            return $votedUserPids;
-        }
-
-        if ($checkCookie) {
-            $cookieName = 'contest-gal1ery-' . $realGid . '-voting';
-            if (!empty($_COOKIE[$cookieName])) {
-                $cookieCandidate = wp_unslash($_COOKIE[$cookieName]);
-                if (function_exists('cg_is_valid_frontend_cookie_value') && cg_is_valid_frontend_cookie_value($cookieCandidate)) {
-                    $cookieId = $cookieCandidate;
-                }
-            }
-        }
-
-        if ($checkIp) {
-            $userIp = cg1l_sanitize_method(cg_get_user_ip());
-            if (empty($userIp) || $userIp === 'unknown') {
-                return $votedUserPids;
-            }
-        }
-
-        if ($allowRating === 2) {
-            if ($checkLogin && $viewerUserId) {
-                $rows = $wpdb->get_results($wpdb->prepare(
-                    "SELECT pid FROM $tablenameIp WHERE GalleryID = %d AND WpUserId = %d AND RatingS = %d",
-                    $realGid,
-                    $viewerUserId,
-                    1
-                ));
-            } elseif ($checkCookie && !$checkIp && $cookieId !== '') {
-                $rows = $wpdb->get_results($wpdb->prepare(
-                    "SELECT pid FROM $tablenameIp WHERE GalleryID = %d AND CookieId = %s AND RatingS = %d",
-                    $realGid,
-                    $cookieId,
-                    1
-                ));
-            } elseif ($checkIp && !$checkCookie) {
-                $rows = $wpdb->get_results($wpdb->prepare(
-                    "SELECT pid FROM $tablenameIp WHERE GalleryID = %d AND IP = %s AND RatingS = %d",
-                    $realGid,
-                    $userIp,
-                    1
-                ));
-            } elseif ($checkIp && $checkCookie && $cookieId !== '') {
-                $rows = $wpdb->get_results($wpdb->prepare(
-                    "SELECT pid FROM $tablenameIp WHERE GalleryID = %d AND IP = %s AND CookieId = %s AND RatingS = %d",
-                    $realGid,
-                    $userIp,
-                    $cookieId,
-                    1
-                ));
-            }
-
-            if (!empty($rows)) {
-                foreach ($rows as $row) {
-                    $votedUserPids[] = intval($row->pid);
-                }
-            }
-
-            return $votedUserPids;
-        }
-
-        $allowRatingMax = ($allowRating === 1) ? 5 : ($allowRating - 10);
-        if ($allowRatingMax < 1) {
-            return $votedUserPids;
-        }
-
-        if ($checkLogin && $viewerUserId) {
-            $rows = $wpdb->get_results($wpdb->prepare(
-                "SELECT pid, Rating FROM $tablenameIp WHERE GalleryID = %d AND WpUserId = %d AND Rating >= %d AND Rating <= %d",
-                $realGid,
-                $viewerUserId,
-                1,
-                $allowRatingMax
-            ));
-        } elseif ($checkCookie && !$checkIp && $cookieId !== '') {
-            $rows = $wpdb->get_results($wpdb->prepare(
-                "SELECT pid, Rating FROM $tablenameIp WHERE GalleryID = %d AND CookieId = %s AND Rating >= %d AND Rating <= %d",
-                $realGid,
-                $cookieId,
-                1,
-                $allowRatingMax
-            ));
-        } elseif ($checkIp && !$checkCookie) {
-            $rows = $wpdb->get_results($wpdb->prepare(
-                "SELECT pid, Rating FROM $tablenameIp WHERE GalleryID = %d AND IP = %s AND Rating >= %d AND Rating <= %d",
-                $realGid,
-                $userIp,
-                1,
-                $allowRatingMax
-            ));
-        } elseif ($checkIp && $checkCookie && $cookieId !== '') {
-            $rows = $wpdb->get_results($wpdb->prepare(
-                "SELECT pid, Rating FROM $tablenameIp WHERE GalleryID = %d AND IP = %s AND CookieId = %s AND Rating >= %d AND Rating <= %d",
-                $realGid,
-                $userIp,
-                $cookieId,
-                1,
-                $allowRatingMax
-            ));
-        }
-
-        if (!empty($rows)) {
-            foreach ($rows as $row) {
+        $cookieId = $checkCookie && !$checkLogin ? cg_get_valid_frontend_cookie($realGid,'voting') : '';
+        $userIp = cg_get_user_ip();
+        $ownerWhere = cg_get_voting_identity_where($realGid,$checkLogin,$checkCookie,$checkIp,$viewerUserId,$userIp,$cookieId);
+        $tablenameIp = $wpdb->prefix.'contest_gal1ery_ip';
+        if($allowRating===2){
+            $rows = $wpdb->get_results($wpdb->prepare("SELECT pid FROM $tablenameIp WHERE GalleryID = %d AND ($ownerWhere) AND RatingS = 1",$realGid));
+            foreach($rows as $row){$votedUserPids[] = intval($row->pid);}
+        }else{
+            $allowRatingMax = $allowRating===1 ? 5 : $allowRating-10;
+            $rows = $wpdb->get_results($wpdb->prepare("SELECT pid, Rating FROM $tablenameIp WHERE GalleryID = %d AND ($ownerWhere) AND Rating >= 1 AND Rating <= %d",$realGid,$allowRatingMax));
+            foreach($rows as $row){
                 $pid = intval($row->pid);
-                if (!isset($votedUserPids[$pid])) {
-                    $votedUserPids[$pid] = [];
-                }
+                if(!isset($votedUserPids[$pid])){$votedUserPids[$pid] = array();}
                 $votedUserPids[$pid][] = intval($row->Rating);
             }
         }
-
         return $votedUserPids;
     }
 }

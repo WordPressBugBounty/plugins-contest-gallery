@@ -345,6 +345,26 @@ echo <<<HEREDOC
                     </div>
                 </div>
         </div>
+         <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_view_option_full_width cg_border_top_none'>
+                    <div class='cg_view_option_title'>
+                        <p>$language_PictureComments$cgShortcodeCopy<br><span class="cg_view_option_title_note">Also used in gallery headers.</span></p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input type="text" name="translations[general][$l_PictureComments]" maxlength="100" value="$translations[$l_PictureComments]">
+                    </div>
+                </div>
+        </div>
+         <div class='cg_view_options_row'>
+                <div class='cg_view_option cg_view_option_full_width cg_border_top_none'>
+                    <div class='cg_view_option_title'>
+                        <p>$language_RatingsAndComments$cgShortcodeCopy<br><span class="cg_view_option_title_note">Accessible label for entry statistics.</span></p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input type="text" name="translations[general][$l_RatingsAndComments]" maxlength="100" value="$translations[$l_RatingsAndComments]">
+                    </div>
+                </div>
+        </div>
          <div class='cg_view_options_row' >
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
@@ -366,6 +386,14 @@ echo <<<HEREDOC
             </div>
         </div>
 HEREDOC;
+
+// Shared frontend voting errors use the general translation store.
+foreach(cg_member_voting_translation_strings() as $cgVotingKey){
+    $cgVotingLabel = esc_html(__($cgVotingKey,'contest-gallery'));
+    $cgVotingName = esc_attr($cgVotingKey);
+    $cgVotingValue = esc_attr(isset($translations[$cgVotingKey]) ? $translations[$cgVotingKey] : '');
+    echo '<div class="cg_view_options_row"><div class="cg_view_option cg_view_option_full_width cg_border_top_none"><div class="cg_view_option_title"><p>'.$cgVotingLabel.$cgShortcodeCopy.'</p></div><div class="cg_view_option_input"><input type="text" name="translations[general]['.$cgVotingName.']" maxlength="500" value="'.$cgVotingValue.'"></div></div></div>';
+}
 
 echo <<<HEREDOC
 </div>

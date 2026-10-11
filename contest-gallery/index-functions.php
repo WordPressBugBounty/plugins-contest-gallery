@@ -54,6 +54,10 @@ include('index-hash-backend.php');
 
 // if is not ajax it does not execute further not necessary processing
 if(!empty($isAjaxCall)){
+    if(!empty($_GET['users_management']) && !empty($_GET['cg_member_messages'])){
+        cg_member_admin_messages_page(isset($_GET['wp_user_id']) && is_scalar($_GET['wp_user_id']) ? absint($_GET['wp_user_id']) : 0);
+        return;
+    }
 //------------------------------------------------------------
 // ----------------------------------------------------------- Neue Galerie kreieren ----------------------------------------------------------
 //------------------------------------------------------------

@@ -2685,3 +2685,412 @@ msgstr "Hlasy vzostupne"
 
 msgid "Please use a display name instead of an email address."
 msgstr "Použite zobrazované meno namiesto e-mailovej adresy."
+
+
+#: check-language-general.php
+msgid "Member area"
+msgstr "Členská sekcia"
+
+
+#: check-language-general.php
+msgid "Overview"
+msgstr "Prehľad"
+
+
+#: check-language-general.php
+msgid "Messages"
+msgstr "Správy"
+
+
+#: check-language-general.php
+msgid "Friends"
+msgstr "Priatelia"
+
+
+#: check-language-general.php
+msgid "Latest entries"
+msgstr "Najnovšie príspevky"
+
+
+#: check-language-general.php
+msgid "Back"
+msgstr "Späť"
+
+
+#: check-language-general.php
+msgid "Back to friends"
+msgstr "Späť k priateľom"
+
+
+#: check-language-general.php
+msgid "Back to overview"
+msgstr "Späť na prehľad"
+
+
+#: check-language-general.php
+msgid "Back to received requests"
+msgstr "Späť na prijaté žiadosti"
+
+
+#: check-language-general.php
+msgid "Load more"
+msgstr "Načítať viac"
+
+
+#: check-language-general.php
+msgid "Contact"
+msgstr "Kontakt"
+
+
+#: check-language-general.php
+msgid "Message"
+msgstr "Správa"
+
+
+#: check-language-general.php
+msgid "Send message"
+msgstr "Odoslať správu"
+
+
+#: check-language-general.php
+msgid "Write a message…"
+msgstr "Napíšte správu…"
+
+
+#: check-language-general.php
+msgid "Up to 5,000 characters"
+msgstr "Najviac 5 000 znakov"
+
+
+#: check-language-general.php
+msgid "Earlier messages"
+msgstr "Staršie správy"
+
+
+#: check-language-general.php
+msgid "Your conversations"
+msgstr "Vaše konverzácie"
+
+
+#: check-language-general.php
+msgid "You"
+msgstr "Vy"
+
+
+#: check-language-general.php
+msgid "Sending…"
+msgstr "Odosielanie…"
+
+
+#: check-language-general.php
+msgid "Saving…"
+msgstr "Ukladanie…"
+
+
+#: check-language-general.php
+msgid "No messages yet. Open a participant’s profile to start a conversation."
+msgstr "Zatiaľ žiadne správy. Otvorte profil účastníka a začnite konverzáciu."
+
+
+#: check-language-general.php
+msgid "Discard your unsent message?"
+msgstr "Zahodiť neodoslanú správu?"
+
+
+#: check-language-general.php
+msgid "{count} new messages and requests"
+msgstr "Nové správy a žiadosti: {count}"
+
+
+#: check-language-general.php
+msgid "Add friend"
+msgstr "Pridať priateľa"
+
+
+#: check-language-general.php
+msgid "Add friend - {name}"
+msgstr "Pridať priateľa - {name}"
+
+
+#: check-language-general.php
+msgid "Remove friend"
+msgstr "Odstrániť priateľa"
+
+
+#: check-language-general.php
+msgid "Remove friend - {name}"
+msgstr "Odstrániť priateľa - {name}"
+
+
+#: check-language-general.php
+msgid "Remove this friend?"
+msgstr "Odstrániť tohto priateľa?"
+
+
+#: check-language-general.php
+msgid "Remove this friend - {name}?"
+msgstr "Odstrániť tohto priateľa - {name}?"
+
+
+#: check-language-general.php
+msgid "Accept request"
+msgstr "Prijať žiadosť"
+
+
+#: check-language-general.php
+msgid "Decline"
+msgstr "Odmietnuť"
+
+
+#: check-language-general.php
+msgid "Cancel request"
+msgstr "Zrušiť žiadosť"
+
+
+#: check-language-general.php
+msgid "Received requests"
+msgstr "Prijaté žiadosti"
+
+
+#: check-language-general.php
+msgid "Sent requests"
+msgstr "Odoslané žiadosti"
+
+
+#: check-language-general.php
+msgid "Blocked"
+msgstr "Zablokovaní"
+
+
+#: check-language-general.php
+msgid "Unblock"
+msgstr "Odblokovať"
+
+
+#: check-language-general.php
+msgid "Block"
+msgstr "Zablokovať"
+
+
+#: check-language-general.php
+msgid "Review request"
+msgstr "Zobraziť žiadosť"
+
+
+#: check-language-general.php
+msgid "Request sent"
+msgstr "Žiadosť odoslaná"
+
+
+#: check-language-general.php
+msgid "Friend request sent."
+msgstr "Žiadosť o priateľstvo bola odoslaná."
+
+
+#: check-language-general.php
+msgid "Friend request received."
+msgstr "Žiadosť o priateľstvo bola prijatá."
+
+
+#: check-language-general.php
+msgid "Block this member? This stops messages and requests and ends your friendship."
+msgstr "Zablokovať tohto člena? Zastavia sa tým správy a žiadosti a ukončí sa vaše priateľstvo."
+
+
+#: check-language-general.php
+msgid "Block this member? This stops messages and requests and ends your friendship. Public entries remain visible."
+msgstr "Zablokovať tohto člena? Zastavia sa tým správy a žiadosti a ukončí sa vaše priateľstvo. Verejné príspevky zostanú viditeľné."
+
+
+#: check-language-general.php
+msgid "Unblock this member? This allows messages and friend requests again. Your previous friendship will not be restored."
+msgstr "Odblokovať tohto člena? Správy a žiadosti o priateľstvo budú opäť povolené. Vaše predchádzajúce priateľstvo sa neobnoví."
+
+
+#: check-language-general.php
+msgid "No accessible entries yet."
+msgstr "Zatiaľ žiadne dostupné príspevky."
+
+
+#: check-language-general.php
+msgid "No accessible galleries yet."
+msgstr "Zatiaľ žiadne dostupné galérie."
+
+
+#: check-language-general.php
+msgid "No friends yet."
+msgstr "Zatiaľ žiadni priatelia."
+
+
+#: check-language-general.php
+msgid "No friends yet. Send a request from a participant’s profile."
+msgstr "Zatiaľ žiadni priatelia. Odošlite žiadosť z profilu účastníka."
+
+
+#: check-language-general.php
+msgid "No participants with a profile yet."
+msgstr "Zatiaľ žiadni účastníci s profilom."
+
+
+#: check-language-general.php
+msgid "Nothing here yet."
+msgstr "Zatiaľ tu nič nie je."
+
+
+#: check-language-general.php
+msgid "Account unavailable"
+msgstr "Účet nie je dostupný"
+
+
+#: check-language-general.php
+msgid "Enter a message of 1 to 5,000 characters."
+msgstr "Zadajte správu s dĺžkou 1 až 5 000 znakov."
+
+
+#: check-language-general.php
+msgid "Invalid page."
+msgstr "Neplatná stránka."
+
+
+#: check-language-general.php
+msgid "Messaging is unavailable for this contact."
+msgstr "Správy pre tento kontakt nie sú dostupné."
+
+
+#: check-language-general.php
+msgid "Please reopen the conversation and try again."
+msgstr "Znova otvorte konverzáciu a skúste to ešte raz."
+
+
+#: check-language-general.php
+msgid "Please sign in to view friends."
+msgstr "Prihláste sa, aby ste mohli zobraziť priateľov."
+
+
+#: check-language-general.php
+msgid "Please wait before sending more messages."
+msgstr "Pred odoslaním ďalších správ počkajte."
+
+
+#: check-language-general.php
+msgid "Please wait before sending more requests."
+msgstr "Pred odoslaním ďalších žiadostí počkajte."
+
+
+#: check-language-general.php
+msgid "The entry could not be loaded. Please try again."
+msgstr "Príspevok sa nepodarilo načítať. Skúste to znova."
+
+
+#: check-language-general.php
+msgid "The member area is not available."
+msgstr "Členská sekcia nie je dostupná."
+
+
+#: check-language-general.php
+msgid "The message could not be saved. Please try again."
+msgstr "Správu sa nepodarilo uložiť. Skúste to znova."
+
+
+#: check-language-general.php
+msgid "This action is not available."
+msgstr "Táto akcia nie je dostupná."
+
+
+#: check-language-general.php
+msgid "This entry is no longer available."
+msgstr "Tento príspevok už nie je dostupný."
+
+
+#: check-language-general.php
+msgid "This member is no longer available."
+msgstr "Tento člen už nie je dostupný."
+
+
+#: check-language-general.php
+msgid "This participant list is no longer available."
+msgstr "Tento zoznam účastníkov už nie je dostupný."
+
+
+#: check-language-general.php
+msgid "This request has already been used."
+msgstr "Táto žiadosť už bola použitá."
+
+
+#: check-language-general.php
+msgid "The PIN request is being processed. Please try again."
+msgstr "Žiadosť o PIN sa spracováva. Skúste to znova."
+
+
+#: check-language-general.php
+msgid "Gallery entries"
+msgstr "Príspevky v galérii"
+
+
+#: check-language-general.php
+msgid "View gallery entries"
+msgstr "Zobraziť príspevky v galérii"
+
+
+#: check-language-general.php
+msgid "View gallery entries: {name}"
+msgstr "Zobraziť príspevky v galérii: {name}"
+
+
+#: check-language-general.php
+msgid "Browse entries"
+msgstr "Prehliadať príspevky"
+
+
+#: check-language-general.php
+msgid "Entry"
+msgstr "Príspevok"
+
+
+#: check-language-general.php
+msgid "{entries} by {name}"
+msgstr "{entries} od {name}"
+
+
+#: check-language-general.php
+msgid "Paid actions are available on the entry page."
+msgstr "Platené akcie sú dostupné na stránke príspevku."
+
+
+#: check-language-general.php
+msgid "Open entry page"
+msgstr "Otvoriť stránku príspevku"
+
+
+#: check-language-general.php
+msgid "Open entry page in a new tab"
+msgstr "Otvoriť stránku príspevku na novej karte"
+
+
+#: check-language-general.php
+msgid "Maximum resolution"
+msgstr "Maximálne rozlíšenie"
+
+
+#: check-language-general.php
+msgid "Please allow cookies and reload the page to be able to vote."
+msgstr "Povoľte súbory cookie a znova načítajte stránku, aby ste mohli hlasovať."
+
+
+#: check-language-general.php
+msgid "Your vote could not be saved. Please try again."
+msgstr "Váš hlas sa nepodarilo uložiť. Skúste to znova."
+
+
+#: check-language-general.php
+msgid "Vote and linked comment could not be removed."
+msgstr "Hlas a priradený komentár sa nepodarilo odstrániť."
+
+
+#: check-language-general.php
+msgid "An administrator has disabled your ability to send messages and friend requests."
+msgstr "Správca vám zakázal odosielať správy a žiadosti o priateľstvo."
+
+#: check-language.php
+msgid "Ratings and comments"
+msgstr "Hodnotenia a komentáre"

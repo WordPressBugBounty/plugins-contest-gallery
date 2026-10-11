@@ -8,7 +8,7 @@ if(!function_exists('cg1l_get_vote_comment_mode')){
         if(!empty($options['general']['VoteCommentMode'])){
             $mode = $options['general']['VoteCommentMode'];
         }
-        if(!in_array($mode, array('required','optional'), true) || empty($options['general']['AllowComments'])){
+        if(!in_array($mode, array('required','optional'), true) || empty($options['general']['AllowComments']) || intval($options['general']['AllowComments'])!==1){
             return 'disabled';
         }
         return $mode;

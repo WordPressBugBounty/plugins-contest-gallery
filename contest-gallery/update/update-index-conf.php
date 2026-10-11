@@ -1,11 +1,12 @@
 <?php
 
-return array(
+$cgUpdateIndexes = array(
     $tablename_categories => array(
         'GalleryID_Field_Order_id_index' => array('columns' => array('GalleryID','Field_Order','id')),
         'GalleryID_Active_Field_Order_index' => array('columns' => array('GalleryID','Active','Field_Order'))
     ),
     $tablename => array(
+        'MemberFeed' => array('columns'=>array('WpUserId','Active','IsProfileImage','Timestamp','id')),
         'WpUpload_index' => array('columns' => array('WpUpload')),
         'WpUserId_index' => array('columns' => array('WpUserId')),
         'GalleryID_index' => array('columns' => array('GalleryID')),
@@ -149,3 +150,5 @@ return array(
         'WpPage_index' => array('columns' => array('WpPage'))
     )
 );
+
+return array_merge($cgUpdateIndexes,cg_community_schema_indexes($wpdb->base_prefix."$i"));

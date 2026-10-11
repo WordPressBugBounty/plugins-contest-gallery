@@ -1,12 +1,13 @@
 <?php
 
 $cgHideFurtherImagesDiv = '';
+$cgGalleriesMemberControlsClass=!empty($cgGalleriesParticipantControl) ? 'cg-galleries-member-controls' : '';
 if(!empty($entryId)){
     $cgHideFurtherImagesDiv = 'cg_hide';
 }
 
 echo <<<HEREDOC
-<div id="cgFurtherImagesAndTopControlsContainerDiv$galeryIDuserForJs" class='$cgHideFurtherImagesDiv cg_further_images_and_top_controls_container $cgFeControlsStyle'>
+<div id="cgFurtherImagesAndTopControlsContainerDiv$galeryIDuserForJs" class='$cgHideFurtherImagesDiv cg_further_images_and_top_controls_container $cgFeControlsStyle $cgGalleriesMemberControlsClass'>
 <div id="cgFurtherImagesContainerDiv$galeryIDuserForJs" class='cg_further_images_container $cgFeControlsStyle'>
 HEREDOC;
 
@@ -97,7 +98,8 @@ HEREDOC;
 
 echo <<<HEREDOC
 </div>
-</div>
 HEREDOC;
+if(!empty($cgGalleriesParticipantControl)){echo $cgGalleriesParticipantControl;}
+echo '</div>';
 
 ?>

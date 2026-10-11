@@ -986,6 +986,9 @@ foreach ($galleryToCopy as $key => $value) {
 
 }
 
+// Keep the original SQL flags as the fallback for galleries without options JSON.
+$cgUploaderCopySource = $jsonOptions;
+
 // v10 adaption
 if ($cgVersion < 10) {
     $valueCollect['Search'] = 1;
@@ -1121,6 +1124,11 @@ $jsonOptions['pro']['FbLikeOnlyShare'] = 0;
     )// InformAdminActivationURL was last one
 );*/
 //cg_copy_table_row('contest_gal1ery_pro_options',$idToCopy,$nextIDgallery);
+
+// Keep legacy SQL readers in sync with the combined entry preference.
+$cgUploaderCopyStored = cg_member_replacement_source($idToCopy);
+$cgUploaderCopyBase = $cgUploaderCopyStored ? cg_member_options_from_source($cgUploaderCopyStored,$idToCopy,'cg_gallery') : $cgUploaderCopySource;
+$valueCollect['ShowNickname'] = $valueCollect['ShowProfileImage'] = cg_uploader_profile_entry_enabled($cgUploaderCopyBase,'cg_gallery') ? 1 : 0;
 
 cg_copy_table_row('contest_gal1ery_pro_options',$idToCopy,['contest_gal1ery_pro_options' => $valueCollect]);
 
@@ -1447,6 +1455,13 @@ if(file_exists($jsonOptionsGalleryPrev)){
 
 }
 
+// Resolve the original preference before legacy copy defaults can replace it.
+if(isset($jsonOptionsPrevSource) && is_array($jsonOptionsPrevSource)){$cgUploaderCopySource = $jsonOptionsPrevSource;}
+$cgUploaderCopyOptions = array();
+foreach(array('cg_gallery','cg_gallery_no_voting') as $cgUploaderShortcode){
+    $cgUploaderCopyOptions[$cgUploaderShortcode]['visual']['ShowProfileEntry'] = cg_uploader_profile_entry_enabled(cg_member_options_from_source($cgUploaderCopySource,$idToCopy,$cgUploaderShortcode),$cgUploaderShortcode) ? 1 : 0;
+}
+cg_uploader_profile_store_entry_options($jsonOptions,$nextIDgallery,$cgUploaderCopyOptions);
 cg_member_store_options($jsonOptions,$nextIDgallery,cg_member_configured($idToCopy,'cg_gallery'),cg_member_configured($idToCopy,'cg_gallery_no_voting'),cg_member_configured($idToCopy,'cg_gallery_user'));
 // Variant copies already retain these JSON-only header options. Preserve the flat fallback too.
 $cgHeaderSource = isset($jsonOptionsPrevSource[$idToCopy]) ? $jsonOptionsPrevSource[$idToCopy] : (isset($jsonOptionsPrevSource) ? $jsonOptionsPrevSource : array());

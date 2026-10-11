@@ -109,9 +109,9 @@ if(isset($_POST['action_correct_not_shown_for_frontend'])){
 // Correct 4 from HERE
 
 
-$correctStatusText4 = 'Nothing to repair';
+$correctStatusText4 = 'Up to date';
 $correctStatusClass4 = '';
-$correctStatusTextFull4 = 'All required columns available!';
+$correctStatusTextFull4 = 'The required database structure is available.';
 
 if(!function_exists('cg_corrections_database_issue_status')){
 	function cg_corrections_database_issue_status($tableName,$columnData,$errorsArray,$isRepairResult){
@@ -241,7 +241,7 @@ try {
 
 		}else{
 
-			$correctStatusText4 = 'Nothing to repair';
+			$correctStatusText4 = 'Up to date';
 			$correctStatusClass4 = 'cg_corrected';
 
 		}
@@ -263,8 +263,8 @@ $correctStatusClass5 = '';
 include ('corrections/correction-not-visibile-frontend.php');
 
 
-$correctStatusTextFull7 = 'No mail exceptions so far';
-$correctStatusText7 = 'Everything correct';
+$correctStatusTextFull7 = 'No mail errors recorded. This does not confirm delivery.';
+$correctStatusText7 = 'No errors recorded';
 $correctStatusClass7 = 'cg_corrected';
 $correctStatusDownloadClass7 = 'cg_corrected';
 $correctStatusExceptions7 = '';
@@ -280,8 +280,8 @@ if(file_exists($file)){
 	if(!empty($_POST['cg_remove_mail_exceptions_log'])){
 		unlink($file);
 	}else{
-		$correctStatusTextFull7 = 'Some mail exceptions happend';
-		$correctStatusText7 = 'Show exceptions';
+		$correctStatusTextFull7 = 'Mail errors were recorded. Open the log for details.';
+		$correctStatusText7 = 'Show mail log';
 		$correctStatusClass7 = 'cg_corrections_container_exception';
 		$correctStatusDownloadClass7 = '';
 		$fp = fopen($file, 'r');
@@ -290,7 +290,7 @@ if(file_exists($file)){
 
 		ob_start();
 		echo "<pre>";
-		print_r($correctStatusExceptions7);
+		echo esc_html($correctStatusExceptions7);
 		echo "</pre>";
 		$correctStatusExceptionsReturn7 = ob_get_clean();
 	}
@@ -310,11 +310,12 @@ if(file_exists($fileGeneral)){
 			$fp = fopen($fileGeneral, 'r');
 			$exceptionGeneral = fread($fp, 30000);
 			$correctStatusExceptionsReturn7 .= "\r\n";
-			$correctStatusExceptionsReturn7 .= $exceptionGeneral;
+			$correctStatusExceptionsReturn7 .= '<pre>'.esc_html($exceptionGeneral).'</pre>';
+			fclose($fp);
 		}else{
 			$cg_file_name_mail_log_general = $fileNameGeneral;
-			$correctStatusTextFull7 = 'Some mail exceptions happend';
-			$correctStatusText7 = 'Show exceptions';
+			$correctStatusTextFull7 = 'Mail errors were recorded. Open the log for details.';
+			$correctStatusText7 = 'Show mail log';
 			$correctStatusClass7 = 'cg_corrections_container_exception';
 			$correctStatusDownloadClass7 = '';
 			$fp = fopen($fileGeneral, 'r');
@@ -322,7 +323,7 @@ if(file_exists($fileGeneral)){
 			fclose($fp);
 			ob_start();
 			echo "<pre>";
-			print_r($correctStatusExceptions7);
+			echo esc_html($correctStatusExceptions7);
 			echo "</pre>";
 			$correctStatusExceptionsReturn7 = ob_get_clean();
 		}
@@ -333,69 +334,88 @@ if(file_exists($fileGeneral)){
 $cgGetVersion = cg_get_version();
 $pagesRepairText = '';
 if(intval($options->Version)>=21){
-	$pagesRepairText = '<br><b>If Contest Gallery Custom Type Pages were deleted then will be recreated.</b>';
+	$pagesRepairText = '<br>Missing generated gallery and entry pages are recreated.';
+}
+
+$frontendAction = '<span class="cg_corrections_status" role="status"><span class="dashicons dashicons-yes-alt" aria-hidden="true"></span>Frontend repaired</span>';
+if(empty($correctStatusClass6)){
+	$frontendAction = <<<HEREDOC
+            <form method="POST" action="?page=$cgGetVersion/index.php&amp;corrections_and_improvements=true&amp;option_id=$GalleryID" data-cg-submit-message="Frontend repaired" class="cg_load_backend_submit">
+                <input type="hidden" name="action_correct_not_visible_for_frontend" value="true">
+                <input type="hidden" name="option_id" value="$GalleryID">
+                <button type="submit" class="cg_corrections_action_submit">Repair frontend</button>
+            </form>
+HEREDOC;
+}
+
+$databaseAction = '<span class="cg_corrections_status" role="status"><span class="dashicons dashicons-yes-alt" aria-hidden="true"></span>'.esc_html($correctStatusText4).'</span>';
+if(empty($correctStatusClass4)){
+	$databaseAction = <<<HEREDOC
+            <form method="POST" action="?page=$cgGetVersion/index.php&amp;corrections_and_improvements=true&amp;option_id=$GalleryID" class="cg_load_backend_submit">
+                <input type="hidden" name="action_check_and_correct_database" value="true">
+                <input type="hidden" name="option_id" value="$GalleryID">
+                <button type="submit" class="cg_corrections_action_submit">Repair database</button>
+            </form>
+HEREDOC;
+}
+
+$mailAction = '<span class="cg_corrections_status" role="status"><span class="dashicons dashicons-yes-alt" aria-hidden="true"></span>No errors recorded</span>';
+if($correctStatusClass7==='cg_corrections_container_exception'){
+	$mailAction = '<button type="button" class="cg_corrections_action_submit cg_corrections_action_secondary" id="cgCorrect7showExceptionsButton" aria-controls="cgCorrect7exceptions" aria-expanded="false">Show mail log</button>';
 }
 
 echo <<<HEREDOC
 <div id="cgCorrections">
+    <div class="cg_corrections_header">
+        <h2>Status and repair</h2>
+        <p>Check this gallery and rebuild its frontend data.</p>
+    </div>
     <div class="cg_corrections_container">
+        <span class="cg_corrections_icon dashicons dashicons-admin-tools" aria-hidden="true"></span>
         <div class="cg_corrections_explanation">
-            <div class="cg_corrections_title">Repair frontend?</div>
-            <div class="cg_corrections_description">Many of the data is cached in json files.<br>If there were some changes done in database manually or json files were deleted then json files can be renewed here again.$pagesRepairText</div>
+            <h3 class="cg_corrections_title">Frontend data</h3>
+            <div class="cg_corrections_description">Rebuild this gallery's cached data if entries are missing or outdated.$pagesRepairText</div>
         </div>
-        <div class="cg_corrections_action $correctStatusClass6">                
-            <form method="POST" action="?page=$cgGetVersion/index.php&amp;corrections_and_improvements=true&amp;option_id=$GalleryID" data-cg-submit-message="Frontend repaired"  class="cg_load_backend_submit">
-                <input type="hidden" name="action_correct_not_visible_for_frontend" value="true">
-                <input type="hidden" name="option_id" value="$GalleryID">
-                <span class="cg_corrections_action_submit">$correctStatusText6</span>
-            </form>
+        <div class="cg_corrections_action">
+            $frontendAction
         </div>
     </div>
     <div class="cg_corrections_container">
+        <span class="cg_corrections_icon dashicons dashicons-database" aria-hidden="true"></span>
         <div class="cg_corrections_explanation">
-            <div class="cg_corrections_title">Database status</div>
+            <h3 class="cg_corrections_title">Database status</h3>
             <div class="cg_corrections_description">$correctStatusTextFull4</div>
         </div>
-        <div class="cg_corrections_action $correctStatusClass4">                
-            <form method="POST" action="?page=$cgGetVersion/index.php&amp;corrections_and_improvements=true&amp;option_id=$GalleryID" class="cg_load_backend_submit">
-                <input type="hidden" name="action_check_and_correct_database" value="true">
-                <input type="hidden" name="option_id" value="$GalleryID">
-                <span class="cg_corrections_action_submit">$correctStatusText4</span>
-            </form>
+        <div class="cg_corrections_action">
+            $databaseAction
         </div>
     </div>
     <div class="cg_corrections_container">
+        <span class="cg_corrections_icon dashicons dashicons-email-alt" aria-hidden="true"></span>
         <div class="cg_corrections_explanation">
-            <div class="cg_corrections_title">Mailing status</div>
+            <h3 class="cg_corrections_title">Mail status</h3>
             <div class="cg_corrections_description">$correctStatusTextFull7</div>
         </div>
-        <div class="cg_corrections_action $correctStatusClass7" id="cgCorrect7showExceptionsButton" style="width:40%;text-align:center;">
-            $correctStatusText7         
+        <div class="cg_corrections_action">
+            $mailAction
         </div>
-        <div id="cgCorrect7exceptions" class="cg_hide" style="width:100%;">
-            <div>$correctStatusExceptionsReturn7</div>
-            <div class="cg_corrections_action $correctStatusDownloadClass7" style="width:40%;text-align:center;">
-                 <form method="POST" action="?page=$cgGetVersion/index.php&amp;corrections_and_improvements=true&amp;option_id=$GalleryID">
+        <div id="cgCorrect7exceptions" class="cg_hide">
+            <div class="cg_corrections_log">$correctStatusExceptionsReturn7</div>
+            <div class="cg_corrections_log_actions">
+                <form method="POST" action="?page=$cgGetVersion/index.php&amp;corrections_and_improvements=true&amp;option_id=$GalleryID">
                     <input type="hidden" name="cg_action_check_and_download_mail_log_for_gallery" value="true">
                     <input type="hidden" name="cg_file_name_mail_log" value="$cg_file_name_mail_log">
                     <input type="hidden" name="cg_file_name_mail_log_general" value="$cg_file_name_mail_log_general">
                     <input type="hidden" name="option_id" value="$GalleryID">
-                    <span class="cg_corrections_action_submit">Download full log</span>
+                    <button type="submit" class="cg_corrections_action_submit cg_corrections_action_secondary">Download full log</button>
                 </form>
-            </div>
-            <div class="cg_corrections_action $correctStatusClass7" style="width:40%;text-align:center;margin-top:30px;">
                 <form method="POST" action="?page=$cgGetVersion/index.php&amp;corrections_and_improvements=true&amp;option_id=$GalleryID" class="cg_load_backend_submit">
                     <input type="hidden" name="cg_remove_mail_exceptions_log" value="true">
                     <input type="hidden" name="option_id" value="$GalleryID">
-                    <span class="cg_corrections_action_submit">Remove exceptions log</span>
+                    <button type="submit" class="cg_corrections_action_submit cg_corrections_action_secondary">Clear mail log</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 HEREDOC;
-
-
-
-
-?>

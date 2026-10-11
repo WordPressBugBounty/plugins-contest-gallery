@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/cg-community-schema.php';
 
 if(!function_exists('cg_contest_gallery_create_table_get_existing_tables')){
     function cg_contest_gallery_create_table_get_existing_tables($tablePrefix){
@@ -69,7 +70,11 @@ if(!function_exists('cg_contest_gallery_get_required_table_names')){
             $tablePrefix . '_ecommerce_orders_items',
             $tablePrefix . '_paid_action_settings',
             $tablePrefix . '_paid_action_entitlements',
-            $tablePrefix . '_paid_action_ledger'
+            $tablePrefix . '_paid_action_ledger',
+            $tablePrefix . '_member_threads',
+            $tablePrefix . '_member_messages',
+            $tablePrefix . '_member_friends',
+            $tablePrefix . '_member_blocks'
         );
     }
 }
@@ -148,6 +153,8 @@ if(!function_exists('contest_gal1ery_create_table')){
                 }
             }
         }
+
+        if($creationScope!=='core'){cg_community_create_tables($wpdb->base_prefix."$i",$existingContestGalleryTables);}
 
         if(cg_contest_gallery_create_table_needs_creation($tablename_categories,$existingContestGalleryTables)){
             $sql = "CREATE TABLE $tablename_categories (
@@ -252,7 +259,8 @@ if(!function_exists('contest_gal1ery_create_table')){
         INDEX GalleryID_WpUserId_id_index (GalleryID, WpUserId, id),
         INDEX GalleryID_PositionNumber_id_index (GalleryID, PositionNumber, id),
         INDEX GalleryID_Active_Category_index (GalleryID, Active, Category),
-        INDEX GalleryID_IsPaidActionPreview_id_index (GalleryID, IsPaidActionPreview, id)
+        INDEX GalleryID_IsPaidActionPreview_id_index (GalleryID, IsPaidActionPreview, id),
+        INDEX MemberFeed (WpUserId, Active, IsProfileImage, Timestamp, id)
 		) $charset_collate;"; // WordPress $charset_collate was added in 21.0.1
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);

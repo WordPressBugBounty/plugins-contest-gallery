@@ -18,7 +18,9 @@ if(!function_exists('cg_options_tabcontent_v10')){
 
         #wp_enqueue_style( 'cg_options_tabcontent_v10', plugins_url('/v10-admin/options/cg_options_tabcontent.css', __FILE__), false , cg_get_version_for_scripts() );
         wp_enqueue_style( 'cg_wp_styles_v10', plugins_url('/v10-css/wp-styles.css', __FILE__), false , cg_get_version_for_scripts() );
-        wp_enqueue_style( 'cg_options_style_v10', plugins_url('/v10-css/cg_options_style.css', __FILE__), false , cg_get_version_for_scripts() );
+        $cgOptionsCssPath = __DIR__ . '/v10-css/cg_options_style.css';
+        $cgOptionsCssModifiedTime = file_exists($cgOptionsCssPath) ? filemtime($cgOptionsCssPath) : 0;
+        wp_enqueue_style( 'cg_options_style_v10', plugins_url('/v10-css/cg_options_style.css', __FILE__), false, cg_get_version_for_scripts() . '-' . $cgOptionsCssModifiedTime );
 
         $cgBackendGalleryCssPath = __DIR__ . '/v10-css/backend/cg_backend_gallery.css';
         $cgBackendGalleryCssModifiedTime = file_exists($cgBackendGalleryCssPath) ? filemtime($cgBackendGalleryCssPath) : 0;

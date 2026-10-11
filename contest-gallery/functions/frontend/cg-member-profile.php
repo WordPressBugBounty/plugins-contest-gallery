@@ -44,6 +44,7 @@ function cg_member_profile_render($userId){
 	$fields = cgHasUserGroupAllowedToEdit(get_userdata($userId)) ? cg_member_profile_fields() : array();
 	ob_start();
 	echo '<div class="cg-member-profile-dialog" role="dialog" aria-modal="true" aria-label="'.esc_attr(cg_member_t('Edit profile')).'" tabindex="-1">';
+	if(cg_community_enabled()){echo cg_community_render_nav('profile');}
 	echo '<form class="cg-member-profile-form" novalidate data-required-message="'.esc_attr(cg_member_t('Required')).'"><section class="cg-member-profile-section" data-section="basic"><h2>'.esc_html(cg_member_t('My profile')).'</h2>';
 	echo '<input type="hidden" name="revision" value="'.esc_attr(cg_member_profile_revision($userId,'basic')).'">';
 	echo '<div class="cg-member-profile-photo cg-member-profile-field" data-profile-field="profile_image"><div class="cg-member-profile-preview"><img alt=""'.($data['image'] ? ' src="'.esc_url($data['image']).'"' : ' hidden').'><span class="cg-member-profile-placeholder" aria-hidden="true"'.($data['image'] ? ' hidden' : '').'>'.esc_html(mb_substr($data['name'],0,1)).'</span></div><div>';

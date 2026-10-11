@@ -1,5 +1,7 @@
 <?php
 
+$bloginfo_wpurl = esc_html(untrailingslashit(home_url()));
+
 echo <<<HEREDOC
 <div class='cg_view_container'>
 HEREDOC;

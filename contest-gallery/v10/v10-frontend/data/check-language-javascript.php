@@ -81,6 +81,7 @@
 	cgJsClass.gallery.language[index].RatingAscend = <?php echo json_encode($language_RatingAscend); ?>;
 	cgJsClass.gallery.language[index].FullSize = <?php echo json_encode($language_FullSize); ?>;
 	cgJsClass.gallery.language[index].PictureComments = <?php echo json_encode($language_PictureComments); ?>;
+	cgJsClass.gallery.language[index].RatingsAndComments = <?php echo json_encode($language_RatingsAndComments); ?>;
 	cgJsClass.gallery.language[index].YourComment = <?php echo json_encode($language_YourComment); ?>;
 	cgJsClass.gallery.language[index].Name = <?php echo json_encode($language_Name); ?>;
 	cgJsClass.gallery.language[index].Comment = <?php echo json_encode($language_Comment); ?>;

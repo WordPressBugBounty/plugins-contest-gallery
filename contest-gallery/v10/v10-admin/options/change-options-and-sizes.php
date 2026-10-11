@@ -18,6 +18,7 @@ if(!is_user_logged_in() || !current_user_can('publish_posts') || !cg_user_has_ba
 }
 
 check_admin_referer('cg_admin');
+if(empty($_POST['cg_edit_translations']) && empty($_POST['cg_edit_ecommerce'])){cg_community_admin_save();}
 
 $id = absint($_GET['option_id']);
 
@@ -52,7 +53,13 @@ if(!empty($_POST['cg_edit_translations'])){
 
 // Save translations
 
+    cg_convert_previous_translation_to_general_translations($wp_upload_dir);
+    $translationsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/json/translations-previous.json';
     $translations = array();
+    if(file_exists($translationsFile)){
+        $translations = json_decode(file_get_contents($translationsFile),true);
+        if(!is_array($translations)){wp_die(esc_html__('Please try again.','contest-gallery'));}
+    }
     $postedTranslations = (!empty($_POST['translations']) && is_array($_POST['translations'])) ? $_POST['translations'] : array();
 
     foreach ($postedTranslations as $defaultKey => $translation) {
@@ -78,14 +85,13 @@ if(!empty($_POST['cg_edit_translations'])){
         }
     }*/
 
-	cg_convert_previous_translation_to_general_translations($wp_upload_dir);
-	//$translationsFile = $wp_upload_dir["basedir"] . "/contest-gallery/gallery-id-$id/json/$id-translations.json";
-	$translationsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/json/translations-previous.json';
 	file_put_contents($translationsFile,json_encode($translations));
 
     if(!empty( $postedTranslations['general'] )){
         if(is_array( $postedTranslations['general'])){
-            $translations= array();
+            $translationsFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/json/translations.json';
+            $translations = file_exists($translationsFile) ? json_decode(file_get_contents($translationsFile),true) : array();
+            if(!is_array($translations)){wp_die(esc_html__('Please try again.','contest-gallery'));}
 
             foreach ($postedTranslations['general'] as $defaultKey => $translation) {
                 if(!is_string($translation)){
@@ -712,9 +718,10 @@ $wp_upload_dir = wp_upload_dir();
             $PreviewInSlider = (isset($_POST['PreviewInSlider'])) ? '1' : '0';
         }
 
-        $ShowNickname = (!empty($_POST['ShowNickname'])) ? '1' : '0';
-
-        $ShowProfileImage = (!empty($_POST['ShowProfileImage'])) ? '1' : '0';
+        $cgUploaderOptionsSource = cg_member_replacement_source($id);
+        $cgUploaderMainOptions = cg_member_options_from_source($cgUploaderOptionsSource,$id,'cg_gallery');
+        $ShowProfileEntry = cg_uploader_profile_entry_posted($cgUploaderMainOptions,'cg_gallery',isset($_POST['multiple-pics']) ? $_POST['multiple-pics'] : array()) ? 1 : 0;
+        $ShowNickname = $ShowProfileImage = $ShowProfileEntry;
 
         /*    $BulkUploadType = intval($_POST['BulkUploadType']);
 
@@ -962,12 +969,6 @@ $wp_upload_dir = wp_upload_dir();
         $MemberArea = isset($_POST['multiple-pics']['cg_gallery']['visual']['MemberArea']) ? (!empty($_POST['multiple-pics']['cg_gallery']['visual']['MemberArea']) ? 1 : 0) : (isset($_POST['MemberAreaPresent']) ? (!empty($_POST['MemberArea']) ? 1 : 0) : (cg_member_enabled($id,'cg_gallery') ? 1 : 0));
         $MemberAreaNoVoting = isset($_POST['multiple-pics']['cg_gallery_no_voting']['visual']['MemberArea']) ? (!empty($_POST['multiple-pics']['cg_gallery_no_voting']['visual']['MemberArea']) ? 1 : 0) : (cg_member_enabled($id,'cg_gallery_no_voting') ? 1 : 0);
         $MemberAreaUser = isset($_POST['multiple-pics']['cg_gallery_user']['visual']['MemberArea']) ? (!empty($_POST['multiple-pics']['cg_gallery_user']['visual']['MemberArea']) ? 1 : 0) : (cg_member_enabled($id,'cg_gallery_user') ? 1 : 0);
-        $cgMemberStoredOptions = cg_member_replacement_source($id);
-        $cgMemberStoredBase = !empty($cgMemberStoredOptions[$id]) ? $cgMemberStoredOptions[$id] : $cgMemberStoredOptions;
-        if($MemberArea && cg_member_features_available($id)){
-            $ShowNickname = !empty($cgMemberStoredBase['pro']['ShowNickname']) ? '1' : '0';
-            $ShowProfileImage = !empty($cgMemberStoredBase['pro']['ShowProfileImage']) ? '1' : '0';
-        }
         $AllowedUsersToVote = (isset($_POST['AllowedUsersToVote'])) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['AllowedUsersToVote']) : '';
         $CopyImageLink = (!empty($_POST['CopyImageLink'])) ? 1 : 0;
         $CopyOriginalFileLink = (!empty($_POST['CopyOriginalFileLink'])) ? 1 : 0;
@@ -1003,7 +1004,7 @@ $wp_upload_dir = wp_upload_dir();
         $TextDeactivatedEntry = (isset($_POST['TextDeactivatedEntry'])) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['TextDeactivatedEntry']) : '';
 
         $BackToGalleryButtonURL = (isset($_POST['BackToGalleryButtonURL'])) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['BackToGalleryButtonURL']) : '';
-        $BackToGalleriesButtonURL = (isset($_POST['BackToGalleriesButtonURL'])) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['BackToGalleriesButtonURL']) : '';
+        $BackToGalleriesButtonURL = (isset($_POST['BackToGalleriesButtonURL'])) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['BackToGalleriesButtonURL']) : (isset($cgUploaderMainOptions['pro']['BackToGalleriesButtonURL']) ? $cgUploaderMainOptions['pro']['BackToGalleriesButtonURL'] : '');
 
         $WpPageParentRedirectURL = (isset($_POST['WpPageParentRedirectURL'])) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['WpPageParentRedirectURL']) : '';
 
@@ -2554,12 +2555,12 @@ $wp_upload_dir = wp_upload_dir();
 	        }
 
             $_POST['multiple-pics']['cg_gallery']['pro']['BackToGalleriesButtonURL'] = $BackToGalleriesButtonURL;
-            $_POST['multiple-pics']['cg_gallery_user']['pro']['BackToGalleriesButtonURL'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_user']['pro']['BackToGalleriesButtonURL']);
-            $_POST['multiple-pics']['cg_gallery_no_voting']['pro']['BackToGalleriesButtonURL'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_no_voting']['pro']['BackToGalleriesButtonURL']);
-            $_POST['multiple-pics']['cg_gallery_winner']['pro']['BackToGalleriesButtonURL'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_winner']['pro']['BackToGalleriesButtonURL']);
-	        if($dbVersion>=22){
-		        $_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['BackToGalleriesButtonURL'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_ecommerce']['pro']['BackToGalleriesButtonURL']);
-	        }
+            $cgBackToGalleriesShortcodes = array('cg_gallery_user','cg_gallery_no_voting','cg_gallery_winner');
+            if($dbVersion>=22){$cgBackToGalleriesShortcodes[] = 'cg_gallery_ecommerce';}
+            foreach($cgBackToGalleriesShortcodes as $cgBackToGalleriesShortcode){
+                $cgBackToGalleriesOptions = cg_member_options_from_source($cgUploaderOptionsSource,$id,$cgBackToGalleriesShortcode);
+                $_POST['multiple-pics'][$cgBackToGalleriesShortcode]['pro']['BackToGalleriesButtonURL'] = isset($_POST['multiple-pics'][$cgBackToGalleriesShortcode]['pro']['BackToGalleriesButtonURL']) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics'][$cgBackToGalleriesShortcode]['pro']['BackToGalleriesButtonURL']) : (isset($cgBackToGalleriesOptions['pro']['BackToGalleriesButtonURL']) ? $cgBackToGalleriesOptions['pro']['BackToGalleriesButtonURL'] : '');
+            }
 
             $_POST['multiple-pics']['cg_gallery']['pro']['WpPageParentRedirectURL'] = $WpPageParentRedirectURL;
             $_POST['multiple-pics']['cg_gallery_user']['pro']['WpPageParentRedirectURL'] = contest_gal1ery_htmlentities_and_preg_replace($_POST['multiple-pics']['cg_gallery_user']['pro']['WpPageParentRedirectURL']);
@@ -3133,14 +3134,7 @@ $wp_upload_dir = wp_upload_dir();
             unset($jsonOptionsAllGalleryVariants[$GalleryID.'-ec']);
 	    }
 
-	    // Master profile options affect rendering, never the saved individual preferences.
-        foreach(array(''=>$MemberArea,'-nv'=>$MemberAreaNoVoting,'-u'=>$MemberAreaUser) as $cgMemberSuffix=>$cgMemberOn){
-            if(!$cgMemberOn || !cg_member_features_available($GalleryID)){continue;}
-            $cgMemberKey = $GalleryID.$cgMemberSuffix;
-            $cgMemberPrevious = !empty($cgMemberStoredOptions[$cgMemberKey]) ? $cgMemberStoredOptions[$cgMemberKey] : $cgMemberStoredBase;
-            if(isset($jsonOptionsAllGalleryVariants[$cgMemberKey])){cg_member_preserve_profile_options($jsonOptionsAllGalleryVariants[$cgMemberKey],$cgMemberPrevious);}
-            if($cgMemberSuffix===''){cg_member_preserve_profile_options($jsonOptionsAllGalleryVariants,$cgMemberStoredBase);}
-        }
+        cg_uploader_profile_store_entry_options($jsonOptionsAllGalleryVariants,$GalleryID,isset($_POST['multiple-pics']) ? $_POST['multiple-pics'] : array(),$cgUploaderOptionsSource);
         cg_member_store_options($jsonOptionsAllGalleryVariants,$GalleryID,$MemberArea,$MemberAreaNoVoting,$MemberAreaUser);
 	    cg_page_store_header_options($jsonOptionsAllGalleryVariants,$GalleryID,isset($_POST['multiple-pics']) ? $_POST['multiple-pics'] : array());
 	    cg_member_replacement_save_options($jsonOptionsAllGalleryVariants,$GalleryID,isset($_POST['cg_member_replace']) ? $_POST['cg_member_replace'] : null);
@@ -3154,7 +3148,7 @@ $wp_upload_dir = wp_upload_dir();
             $namesString    = ['GalleriesPageRedirectURL','FeControlsStyle'];
             $namesTextarea  = ['HeaderWpPageGalleries','TextBeforeWpPageGalleries','TextAfterWpPageGalleries'];
 
-            $allowedKeys = array_merge($namesBool, $namesInt, $namesString, $namesTextarea, array_keys(cg_page_galleries_header_texts(array())), array('ShowGalleriesHeader'));
+            $allowedKeys = array_merge($namesBool, $namesInt, $namesString, $namesTextarea, array_keys(cg_page_galleries_header_texts(array())), array('ShowGalleriesHeader','MemberArea'));
 
             foreach ($galleryTypes as $type) {
                 if (empty($_POST['cg_galleries'][$type]) || !is_array($_POST['cg_galleries'][$type])) {
@@ -3208,6 +3202,7 @@ $wp_upload_dir = wp_upload_dir();
 
 	        $galleriesOptionsPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/json/galleries-options.json';
 	        cg_page_store_galleries_header_options($_POST['cg_galleries'],cg_get_galleries_options_all());
+	        cg_member_store_galleries_options($_POST['cg_galleries'],cg_get_galleries_options_all());
 	        file_put_contents($galleriesOptionsPath,json_encode($_POST['cg_galleries']));
         }
         // save cg_galleries --- END

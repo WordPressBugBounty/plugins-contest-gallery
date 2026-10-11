@@ -27,6 +27,8 @@ if(!function_exists('cg1l_render_vertical_scroll_slider')){
         $slider_items_id = $suffix !== '' ? 'cglSliderItems'.$suffix : 'cglSliderItems';
         $slider_nav_id = $suffix !== '' ? 'cglSliderNav'.$suffix : 'cglSliderNav';
         $gid_attr = $gid !== '' ? ' data-cg-gid="'.esc_attr($gid).'"' : '';
+        $previousLabel = esc_attr(cg_member_t('Previous entry'));
+        $nextLabel = esc_attr(cg_member_t('Next entry'));
 
         echo '
         <div class="'.esc_attr(implode(' ', $loader_classes)).'"'.$gid_attr.'>
@@ -57,8 +59,8 @@ if(!function_exists('cg1l_render_vertical_scroll_slider')){
         if($include_nav){
             echo '
         <div id="'.esc_attr($slider_nav_id).'" class="cgl_nav cg_hide"'.$gid_attr.'>
-            <button class="cgl_nav_btn cgl_nav_up" aria-label="Previous">&#9650;</button>
-            <button class="cgl_nav_btn cgl_nav_down" aria-label="Next">&#9660;</button>
+            <button class="cgl_nav_btn cgl_nav_up" aria-label="'.$previousLabel.'" title="'.$previousLabel.'">&#9650;</button>
+            <button class="cgl_nav_btn cgl_nav_down" aria-label="'.$nextLabel.'" title="'.$nextLabel.'">&#9660;</button>
         </div>';
         }
 
@@ -83,6 +85,8 @@ if(!function_exists('cg1l_render_full_main_parent')){
         $gid_data_attr = ' data-cg-gid="'.$gid_attr.'"';
         $skeleton_height_attr = 50;
         $shortcode_name = sanitize_text_field($shortcode_name);
+        $previousLabel = esc_attr(cg_member_t('Previous entry'));
+        $nextLabel = esc_attr(cg_member_t('Next entry'));
 
         echo '
     <div id="mainCGdivParent" class="mainCGdivHelperParent cg_hide mainCGwindow"'.$gid_data_attr.'>
@@ -100,8 +104,8 @@ if(!function_exists('cg1l_render_full_main_parent')){
                 </div>                
             </div>
             <div id="cglSliderNav" class="cgl_nav"'.$gid_data_attr.'>
-                <button class="cgl_nav_btn cgl_nav_up" aria-label="Previous">&#9650;</button>
-                <button class="cgl_nav_btn cgl_nav_down" aria-label="Next">&#9660;</button>
+                <button class="cgl_nav_btn cgl_nav_up" aria-label="'.$previousLabel.'" title="'.$previousLabel.'">&#9650;</button>
+                <button class="cgl_nav_btn cgl_nav_down" aria-label="'.$nextLabel.'" title="'.$nextLabel.'">&#9660;</button>
             </div>
         </div>
         <div class="mainCGdivSliderLoader"'.$gid_data_attr.'>

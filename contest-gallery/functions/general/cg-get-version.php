@@ -10,14 +10,14 @@ if(!function_exists('cg_get_version')){
 
 if(!function_exists('cg_get_db_version')){
     function cg_get_db_version () {
-        return '34.00';// Decimal schema version. Increase only when a database update is required.
+        return '34.01';// Decimal schema version. Increase only when a database update is required.
     }
 }
 
 if(!function_exists('cg_get_version_for_scripts')){
     function cg_get_version_for_scripts () {
         /**###NORMAL###**/
-        return '34.0.0';
+        return '34.0.1';
         /**###NORMAL-END###**/
     }
 }
