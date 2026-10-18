@@ -62,6 +62,7 @@
 		cgJsClass.gallery.language.ecommerce.GoToBasket = <?php echo json_encode($language_GoToBasket); ?>;
 		cgJsClass.gallery.language.ecommerce.ShoppingCart = <?php echo json_encode($language_ShoppingCart); ?>;
 		cgJsClass.gallery.language.ecommerce.CloseShoppingCart = <?php echo json_encode($language_CloseShoppingCart); ?>;
+		cgJsClass.gallery.language.ecommerce.SettingsPath = <?php echo json_encode($language_SettingsPath); ?>;
 		cgJsClass.gallery.language.ecommerce.PaymentDate = <?php echo json_encode($language_PaymentDate); ?>;
 		cgJsClass.gallery.language.ecommerce.InvoiceDate = <?php echo json_encode($language_InvoiceDate); ?>;
 		cgJsClass.gallery.language.ecommerce.CheckoutImpossibleNoInternet = <?php echo json_encode($language_CheckoutImpossibleNoInternet); ?>;

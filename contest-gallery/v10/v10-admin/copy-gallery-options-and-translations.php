@@ -1458,7 +1458,7 @@ if(file_exists($jsonOptionsGalleryPrev)){
 // Resolve the original preference before legacy copy defaults can replace it.
 if(isset($jsonOptionsPrevSource) && is_array($jsonOptionsPrevSource)){$cgUploaderCopySource = $jsonOptionsPrevSource;}
 $cgUploaderCopyOptions = array();
-foreach(array('cg_gallery','cg_gallery_no_voting') as $cgUploaderShortcode){
+foreach(array('cg_gallery','cg_gallery_no_voting','cg_gallery_winner') as $cgUploaderShortcode){
     $cgUploaderCopyOptions[$cgUploaderShortcode]['visual']['ShowProfileEntry'] = cg_uploader_profile_entry_enabled(cg_member_options_from_source($cgUploaderCopySource,$idToCopy,$cgUploaderShortcode),$cgUploaderShortcode) ? 1 : 0;
 }
 cg_uploader_profile_store_entry_options($jsonOptions,$nextIDgallery,$cgUploaderCopyOptions);

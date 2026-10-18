@@ -379,6 +379,8 @@ cg_download_ecommerce_form($GalleryID, $ecommerceOptions);
 
 
 cg1l_email_backend_template();
+cg_participant_mail_container($GalleryID);
+cg_mail_history_container();
 
 cg_mails_list();
 
@@ -475,7 +477,9 @@ $cgVersionScripts = cg_get_version_for_scripts();
 
 echo "<input type='hidden' name='cgVersionScripts' id='cgVersionScripts' value='$cgVersionScripts'>";
 
-echo "<div class='cgViewControl $cg_hide_is_new_gallery' id='cgViewControl'>";
+echo "<div class='cgViewControl cg_pmail_view_control $cg_hide_is_new_gallery' id='cgViewControl'>";
+
+echo "<div class='cg_pmail_filter_content'>";
 
 echo "<div id='cg_view_control_top'>";
 
@@ -862,6 +866,12 @@ echo "</div>";
 echo "<div id='cgShowOnlyInactive' class='cg_show_only'>";
 echo "<label class='cg_show_only_label' for='cgShowOnlyInactiveCheckbox'><span class='cg_show_only_text'>Show inactive only:</span><input type='checkbox' id='cgShowOnlyInactiveCheckbox' name='cg_show_only_inactive' value='true' /></label>";
 echo "</div>";
+echo '</div>';
+echo '<section class="cg_pmail_launch_card" aria-label="Participant emails">';
+echo '<button type="button" id="cgEmailParticipants" class="cg_backend_button_gallery_action" data-gallery-id="'.absint($GalleryID).'" aria-describedby="cgParticipantMailLaunchDescription"><span class="dashicons dashicons-email-alt" aria-hidden="true"></span><span>Email participants</span></button>';
+echo '<p id="cgParticipantMailLaunchDescription">Keep your participants up to date</p>';
+echo '<button type="button" class="cg_mail_history_open" data-context="gallery" data-gallery-id="'.absint($GalleryID).'">Email history</button>';
+echo '</section>';
 
 echo "<div class='cg_image_checkbox_container_view_control '>
 <div class=\"cg_hover_effect cg_image_action_href cg_image_checkbox cg_image_checkbox_activate_all\">

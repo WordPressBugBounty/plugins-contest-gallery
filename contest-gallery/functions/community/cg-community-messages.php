@@ -1,19 +1,26 @@
 <?php
 if(!defined('ABSPATH')){exit;}
 
+if(!function_exists('cg_community_thread')){
 function cg_community_thread($viewer,$id){
 	global $wpdb;$table=cg_community_table('threads');
 	return $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE id=%d AND (UserLow=%d OR UserHigh=%d)",$id,$viewer,$viewer));
 }
+}
+if(!function_exists('cg_community_other')){
 function cg_community_other($thread,$viewer){return (int)$thread->UserLow===$viewer ? (int)$thread->UserHigh : (int)$thread->UserLow;}
+}
 // This proves that the contact was offered by an authorized public profile render.
 // It carries no login authority and survives sign-in. Every use still requires the
 // current account's nonce and checks the entry's current visibility again.
+if(!function_exists('cg_community_contact_proof')){
 function cg_community_contact_proof($target,$gid,$shortcode,$entry){
 	global $wpdb;
 	$payload=base64_encode(wp_json_encode(array('user'=>absint($target),'gallery'=>absint($gid),'shortcode'=>$shortcode,'entry'=>absint($entry),'expires'=>time()+2*HOUR_IN_SECONDS,'site'=>$wpdb->prefix)));
 	return $payload.'.'.hash_hmac('sha256','cg-community-contact|'.$payload,wp_salt('auth'));
 }
+}
+if(!function_exists('cg_community_verify_contact_proof')){
 function cg_community_verify_contact_proof($target,$request){
 	global $wpdb;
 	$parts=explode('.',isset($request['source']) ? $request['source'] : '');
@@ -21,6 +28,8 @@ function cg_community_verify_contact_proof($target,$request){
 	$data=json_decode(base64_decode($parts[0],true),true);
 	return is_array($data) && isset($data['expires'],$data['site'],$data['user'],$data['gallery'],$data['entry'],$data['shortcode']) && $data['expires']>=time() && $data['site']===$wpdb->prefix && (int)$data['user']===$target && (int)$data['gallery']===$request['gallery'] && (int)$data['entry']===$request['entry'] && $data['shortcode']===$request['shortcode'];
 }
+}
+if(!function_exists('cg_community_contact_allowed')){
 function cg_community_contact_allowed($viewer,$target,$request){
 	if(!$target || $viewer===$target || !cg_community_user($target)){return false;}
 	if(cg_community_pair_row('threads',$viewer,$target)){return true;}
@@ -37,6 +46,8 @@ function cg_community_contact_allowed($viewer,$target,$request){
 	$categories=json_decode(file_get_contents($base.'-categories.json'),true);$form=json_decode(file_get_contents($base.'-form-upload.json'),true);
 	return is_array($categories) && is_array($form) && cg1l_frontend_is_category_allowed_for_entry((array)$entry,$categories,cg_member_options($request['gallery'],$request['shortcode']),$form);
 }
+}
+if(!function_exists('cg_community_contact')){
 function cg_community_contact($viewer,$request){
 	$thread=!empty($request['conversation']) ? cg_community_thread($viewer,$request['conversation']) : false;
 	if(!empty($request['conversation']) && !$thread){return cg_community_error();}
@@ -48,9 +59,13 @@ function cg_community_contact($viewer,$request){
 		'profileFields'=>!empty($relationship['blocked']) ? '' : cg_public_profile_render_fields($target),
 		'profile'=>cg_public_member_profile_contact_source($viewer,$target,$request['gallery'],$request['shortcode'],$thread ? (int)$thread->id : 0));
 }
+}
+if(!function_exists('cg_community_message_date')){
 function cg_community_message_date($timestamp){
 	return wp_date(get_option('date_format').' '.get_option('time_format'),(int)$timestamp);
 }
+}
+if(!function_exists('cg_community_threads')){
 function cg_community_threads($viewer,$request){
 	global $wpdb;$table=cg_community_table('threads');$messages=cg_community_table('messages');
 	$offset=(max(1,$request['page'])-1)*20;
@@ -63,6 +78,8 @@ function cg_community_threads($viewer,$request){
 	}
 	return array('items'=>$items,'more'=>$more);
 }
+}
+if(!function_exists('cg_community_messages')){
 function cg_community_messages($viewer,$request){
 	global $wpdb;$thread=cg_community_thread($viewer,$request['conversation']);
 	if(!$thread){return cg_community_error();}
@@ -76,6 +93,8 @@ function cg_community_messages($viewer,$request){
 	foreach($rows as $row){$items[]=array('id'=>(int)$row->id,'mine'=>(int)$row->SenderID===$viewer,'body'=>$row->Body,'time'=>(int)$row->CreatedAt,'dateText'=>cg_community_message_date($row->CreatedAt));}
 	return array('items'=>$items,'more'=>$more,'relationship'=>cg_community_relationship($viewer,cg_community_other($thread,$viewer)));
 }
+}
+if(!function_exists('cg_community_send')){
 function cg_community_send($viewer,$request){
 	global $wpdb;
 	$body=trim(wp_check_invalid_utf8($request['body']));
@@ -109,6 +128,8 @@ function cg_community_send($viewer,$request){
 	if(empty($thread->$notified)){$result['_mail']=array('type'=>'message','sender'=>$viewer,'recipient'=>$target,'gallery'=>(int)$thread->GalleryID,'conversation'=>(int)$thread->id,'event'=>$id);}
 	return $result;
 }
+}
+if(!function_exists('cg_community_read')){
 function cg_community_read($viewer,$request){
 	global $wpdb;$thread=cg_community_thread($viewer,$request['conversation']);
 	if(!$thread){return cg_community_error();}
@@ -120,4 +141,5 @@ function cg_community_read($viewer,$request){
 	$changes=array($field=>$read);if(!$remaining){$changes[$notified]=0;}
 	if($wpdb->update($threads,$changes,array('id'=>$thread->id))===false){return cg_community_error('Please try again.',500);}
 	return array('read'=>$read);
+}
 }

@@ -1,6 +1,7 @@
 <?php
 if(!defined('ABSPATH')){exit;}
 
+if(!function_exists('cg_community_render_nav')){
 function cg_community_render_nav($selected='overview'){
 	$html='<nav class="cg-community-nav" role="tablist" aria-label="'.esc_attr(cg_member_t('Member area')).'">';
 	foreach(array('overview'=>'Overview','messages'=>'Messages','friends'=>'Friends','profile'=>'Edit profile') as $key=>$label){
@@ -8,6 +9,8 @@ function cg_community_render_nav($selected='overview'){
 	}
 	return $html.'</nav>';
 }
+}
+if(!function_exists('cg_community_render_hub')){
 function cg_community_render_hub($viewer){
 	$person=cg_community_person($viewer);ob_start();
 	echo '<div class="cg-member-profile-dialog cg-community-dialog cg-community-account-dialog" role="dialog" aria-modal="true" aria-label="'.esc_attr(cg_member_t('Member area')).'" tabindex="-1">';
@@ -19,12 +22,16 @@ function cg_community_render_hub($viewer){
 	echo '<template class="cg-community-compose-template"><section class="cg-community-conversation"><div class="cg-public-profile-panel-actions cg-community-contact-toolbar"><div class="cg-community-contact-heading"></div><div class="cg-public-profile-friend-management cg-community-contact-actions cg-community-contact-management"></div></div><button type="button" class="cg-community-older" hidden>'.esc_html(cg_member_t('Earlier messages')).'</button><div class="cg-community-history" role="log" aria-label="'.esc_attr(cg_member_t('Messages')).'" aria-live="polite" aria-relevant="additions"></div><form class="cg-community-compose"><label>'.esc_html(cg_member_t('Message')).'<textarea name="body" rows="3" maxlength="5000" required placeholder="'.esc_attr(cg_member_t('Write a message…')).'"></textarea></label><small class="cg-community-compose-hint">'.esc_html(cg_member_t('Up to 5,000 characters')).'</small><div class="cg-community-compose-footer"><button type="submit">'.esc_html(cg_member_t('Send message')).'</button></div></form></section></template>';
 	echo '</div>';return ob_get_clean();
 }
+}
+if(!function_exists('cg_community_render_participants')){
 function cg_community_render_participants($count){
 	ob_start();
 	echo '<div class="cg-member-profile-dialog cg-community-dialog cg-galleries-participants-dialog" role="dialog" aria-modal="true" aria-labelledby="cgGalleriesParticipantsTitle" tabindex="-1"><header class="cg-community-header"><div><span class="cg-community-kicker">'.esc_html(cg_member_t('Galleries')).'</span><h2 id="cgGalleriesParticipantsTitle">'.esc_html(cg_member_t('Participants')).' (<span class="cg-directory-participant-count">'.esc_html(number_format_i18n($count)).'</span>)</h2></div><button type="button" class="cg-community-close" aria-label="'.esc_attr(cg_member_t('Close')).'">&#215;</button></header><div class="cg-directory-controls"><label>'.esc_html(cg_member_t('Search')).'<input type="search" class="cg-directory-search" maxlength="120" autocomplete="off" placeholder="'.esc_attr(cg_member_t('Search')).'"></label></div><div class="cg-community-content"></div><p class="cg-community-status" role="status" aria-live="polite"></p>';
 	echo cg_community_render_view_templates(array('participants'));
 	echo '</div>';return ob_get_clean();
 }
+}
+if(!function_exists('cg_community_render_view_templates')){
 function cg_community_render_view_templates($kinds=array('overview','messages','friends','conversation','profile')){
 	ob_start();
 	foreach($kinds as $kind){
@@ -54,6 +61,8 @@ function cg_community_render_view_templates($kinds=array('overview','messages','
 	}
 	return ob_get_clean();
 }
+}
+if(!function_exists('cg_community_render_feed_skeleton_cards')){
 function cg_community_render_feed_skeleton_cards($galleries=false){
 	ob_start();
 	for($i=0;$i<6;$i++){
@@ -71,6 +80,8 @@ function cg_community_render_feed_skeleton_cards($galleries=false){
 	}
 	return ob_get_clean();
 }
+}
+if(!function_exists('cg_community_render_entry_templates')){
 function cg_community_render_entry_templates(){
 	ob_start();
 	echo '<template class="cg-community-skeleton-template">';
@@ -84,6 +95,8 @@ function cg_community_render_entry_templates(){
 	echo '<template class="cg-community-entry-skeleton-template"><div class="cg-community-entry-skeleton" aria-hidden="true"><span class="cg-community-skeleton-media"></span><span class="cg-community-skeleton-line"></span><span class="cg-community-skeleton-line cg-community-skeleton-line-short"></span></div></template>';
 	return ob_get_clean();
 }
+}
+if(!function_exists('cg_community_profile_actions')){
 function cg_community_profile_actions($target,$gid,$shortcode,$entryId,$messageLabel='Contact',$guestFriend=false,$publicPanel=false,$contactProof=''){
 	if(!cg_community_enabled() || !$target || (!$publicPanel && $target===get_current_user_id()) || !cg_member_enabled($gid,$shortcode) || !in_array($shortcode,array('cg_gallery','cg_gallery_no_voting'),true)){return '';}
 	$attrs=' data-community-source="'.esc_attr($contactProof!=='' ? $contactProof : cg_community_contact_proof($target,$gid,$shortcode,$entryId)).'" data-community-target="'.absint($target).'" data-community-gallery="'.absint($gid).'" data-community-entry="'.absint($entryId).'" data-community-shortcode="'.esc_attr($shortcode).'"';
@@ -111,12 +124,15 @@ function cg_community_profile_actions($target,$gid,$shortcode,$entryId,$messageL
 	}
 	return $html.'</div>';
 }
+}
 
 // Renew the existing profile editor's signed context after an authentication reload.
+if(!function_exists('cg_community_origin')){
 function cg_community_origin($gid,$shortcode){
 	$gallery=cg_community_gallery($gid,$shortcode);
 	if(!$gallery){return array();}
 	$instance=absint($gid).($gallery['shortcode']==='cg_gallery_no_voting' ? '-nv' : '');
 	return array('gid'=>$instance,'realGid'=>absint($gid),'shortcode'=>$gallery['shortcode'],'user'=>get_current_user_id(),
 		'token'=>cg1l_create_runtime_context_token(array('realGid'=>absint($gid),'gid'=>$instance,'shortcodeName'=>$gallery['shortcode'])));
+}
 }

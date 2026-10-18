@@ -4,10 +4,13 @@ include_once __DIR__.'/cg-member-replacement-upload.php';
 include_once __DIR__.'/cg-member-replacement-limits.php';
 include_once __DIR__.'/cg-member-replacement-recovery.php';
 
+if(!function_exists('cg_member_entry_action_strings')){
 function cg_member_entry_action_strings(){
 	return array('Entry actions','Replace image','Delete entry','Choose the image to replace.','Replace','Replacing…','This entry will need approval again after replacement.','Image replaced.','Image replacement is not allowed.','Entries offered for sale cannot be changed here.','This entry already has votes. Its images cannot be replaced.','The time allowed for replacing this image has ended.','The upload period is closed.','This entry has changed. Reload it and try again.','The image does not meet the gallery upload requirements.','Delete this entry and all its files?');
 }
+}
 
+if(!function_exists('cg_member_entry_action_context')){
 function cg_member_entry_action_context(){
 	global $wpdb;
 	if(!is_user_logged_in() || $_SERVER['REQUEST_METHOD']!=='POST'){return new WP_Error('access','Please reload the page and try again.');}
@@ -21,28 +24,38 @@ function cg_member_entry_action_context(){
 	if(!$row || (empty($row->Active) && !cg_member_enabled($gid))){return new WP_Error('access','This gallery is not available.');}
 	return $row;
 }
+}
 
+if(!function_exists('cg_member_entry_revision')){
 function cg_member_entry_revision($row){
 	return wp_hash(implode('|',array($row->id,$row->GalleryID,$row->WpUserId,$row->WpUpload,$row->MultipleFiles,$row->Active,$row->EcommerceEntry)),'nonce');
 }
+}
 
+if(!function_exists('cg_member_entry_files')){
 function cg_member_entry_files($row){
 	$files = maybe_unserialize($row->MultipleFiles);
 	if(!is_array($files) || !$files){$files = array(0=>array('WpUpload'=>$row->WpUpload,'isRealIdSource'=>true));}
 	return $files;
 }
+}
 
+if(!function_exists('cg_member_entry_back_url')){
 function cg_member_entry_back_url($row){
 	// Always compute the destination before deletion removes the entry pages.
 	$parent = !empty($row->WpPageUser) ? wp_get_post_parent_id($row->WpPageUser) : 0;
 	return $parent ? get_permalink($parent) : home_url('/');
 }
+}
 
+if(!function_exists('cg_member_replacement_auto_activate')){
 function cg_member_replacement_auto_activate($gid){
 	global $wpdb;
 	return (int)$wpdb->get_var($wpdb->prepare('SELECT ActivateUpload FROM '.$wpdb->prefix.'contest_gal1ery_options WHERE id=%d',$gid))===1;
 }
+}
 
+if(!function_exists('cg_member_entry_action_bootstrap')){
 function cg_member_entry_action_bootstrap($row){
 	$gid = absint($row->GalleryID);
 	$rules = cg_member_replacement_options($gid);
@@ -67,7 +80,9 @@ function cg_member_entry_action_bootstrap($row){
 	if(!$reason && !$uploadRules['mimes']){$reason = 'The file does not meet the gallery upload requirements.';}
 	return array('enabled'=>$rules['mode']!=='off' && !empty($files),'allowed'=>$reason==='' && !empty($files),'reason'=>$reason ? cg_member_t($reason) : '', 'files'=>$files,'accept'=>implode(',',array_map('cg_member_replacement_accept_extension',array_keys($uploadRules['mimes']))),'pdfPreview'=>$uploadRules['pdfPreview'],'uploadMaxBytes'=>$uploadMaxBytes,'revision'=>cg_member_entry_revision($row),'approval'=>!empty($row->Active) && !cg_member_replacement_auto_activate($gid),'backUrl'=>cg_member_entry_back_url($row),'canDelete'=>empty($row->EcommerceEntry));
 }
+}
 
+if(!function_exists('cg_member_replace_file')){
 function cg_member_replace_file($initial,$slot,$revision){
 	global $wpdb;
 	$user = get_current_user_id();
@@ -80,7 +95,9 @@ function cg_member_replace_file($initial,$slot,$revision){
 		return cg_member_replace_file_locked($row,$slot,$revision);
 	}finally{$wpdb->get_var($wpdb->prepare('SELECT RELEASE_LOCK(%s)',$lock));}
 }
+}
 
+if(!function_exists('cg_member_replace_file_locked')){
 function cg_member_replace_file_locked($initial,$slot,$revision){
 	global $wpdb;
 	$gid = absint($initial->GalleryID); $pid = absint($initial->id);
@@ -190,8 +207,10 @@ function cg_member_replace_file_locked($initial,$slot,$revision){
 		cg_member_replacement_cleanup($attachment,$preview,$cachePath,$cacheBackup,!$committed && $restored,$statsLock);
 	}
 }
+}
 
 add_action('wp_ajax_cg_member_entry_action','cg_member_entry_action_ajax');
+if(!function_exists('cg_member_entry_action_ajax')){
 function cg_member_entry_action_ajax(){
 	nocache_headers();
 	cg1l_ajax_reject_bad_origin();
@@ -219,4 +238,5 @@ function cg_member_entry_action_ajax(){
 		wp_send_json_error($error);
 	}
 	wp_send_json_success($result);
+}
 }

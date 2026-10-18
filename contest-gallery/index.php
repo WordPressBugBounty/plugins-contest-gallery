@@ -2,7 +2,7 @@
 /*
 Plugin Name: Contest Gallery
 Description: Upload form, files, photos and videos upload contest gallery plugin for WordPress. Create upload forms for entries with or without file/image upload. Create user registration form. Create login form. Create responsive galleries and allow to vote for any kind of entries. Sell entries via PayPal or Stripe API. Create or edit images via OpenAI API.
-Version: 34.0.1
+Version: 34.0.2
 Requires at least: 5.6
 Requires PHP: 5.6
 Author: Contest Gallery
@@ -160,6 +160,9 @@ include('functions/general/cg-captcha.php');
 include('functions/frontend/cg-member-area.php');
 include('functions/community/cg-community.php');
 include('functions/general/mail/cg-mail-functions.php');
+include('functions/backend/gallery/cg-backend-gallery-filters.php');
+include('functions/general/mail/cg-participant-mail-campaigns.php');
+include('functions/backend/cg-mail-history.php');
 include('functions/ecommerce/paid-actions/cg-paid-actions-core.php');
 include(__DIR__.'/functions/frontend/cg-upload-jobs.php');
 include('functions/frontend/cg-paid-actions-bar.php');
@@ -478,6 +481,8 @@ include('functions/backend/render/cg-database-installation-container.php');
 include('functions/backend/render/cg-backend-gallery-general.php');
 include('functions/backend/render/cg-backend-gallery-dynamic-message.php');
 include('functions/backend/render/cg-user-data-export-container.php');
+include('functions/backend/render/cg-participant-mail-container.php');
+include('functions/backend/render/cg-mail-history-container.php');
 include('functions/backend/render/cg-backend-render-go-top-options.php');
 include('functions/backend/render/cg-legacy-gallery-url-notice.php');
 include('functions/backend/render/cg-paid-actions-gallery-card.php');

@@ -2,6 +2,7 @@
 if(!defined('ABSPATH')){exit;}
 
 // Header totals follow public display permissions, never private/viewer-only ratings.
+if(!function_exists('cg_page_stats_votes_visible')){
 function cg_page_stats_votes_visible($options,$shortcode,$overview = false){
 	// No-voting/winner display rules apply equally to single pages and overview totals.
 	if($shortcode==='cg_gallery_no_voting' || $shortcode==='cg_gallery_winner'){
@@ -10,7 +11,9 @@ function cg_page_stats_votes_visible($options,$shortcode,$overview = false){
 	}
 	return cg1l_is_rating_visible_for_shortcode($shortcode,$options) && empty($options['general']['HideUntilVote']) && empty($options['general']['ShowOnlyUsersVotes']);
 }
+}
 
+if(!function_exists('cg_page_stats_count')){
 function cg_page_stats_count($entries,$comments,$options,$shortcode,$participants = false,$owner = 0,$overview = false){
 	$totals = array('entries'=>0);
 	if($participants){$totals['participants'] = 0;}
@@ -34,7 +37,9 @@ function cg_page_stats_count($entries,$comments,$options,$shortcode,$participant
 	if($users){$totals['participants'] = count(get_users(array('include'=>array_values($users),'fields'=>'ID')));}
 	return $totals;
 }
+}
 
+if(!function_exists('cg_page_stats_recent')){
 function cg_page_stats_recent($gid,$entries,$comments){
 	$stats = cg1l_get_recent_json_by_ids($gid,'image-stats-data-last-update','image-stats','image-stats-');
 	foreach($entries as $id=>$entry){
@@ -44,7 +49,9 @@ function cg_page_stats_recent($gid,$entries,$comments){
 	foreach($recentComments as $id=>$data){$comments[$id] = $data;}
 	return array($entries,$comments);
 }
+}
 
+if(!function_exists('cg_page_stats_overview')){
 function cg_page_stats_overview($covers,$shortcode){
 	$suffixes = array('cg_gallery'=>'','cg_gallery_user'=>'-u','cg_gallery_no_voting'=>'-nv','cg_gallery_winner'=>'-w','cg_gallery_ecommerce'=>'-ec');
 	$totals = array('galleries'=>0,'entries'=>0);
@@ -58,8 +65,10 @@ function cg_page_stats_overview($covers,$shortcode){
 	// totals would otherwise trigger an immediate random preview refresh on load.
 	return cg_page_stats_current(array('isCGalleries'=>true,'galleriesIds'=>array_values($galleries),'shortcodeName'=>$shortcode));
 }
+}
 
 // Sign the header's original scope, independently of pagination or the currently open view.
+if(!function_exists('cg_page_stats_live_attributes')){
 function cg_page_stats_live_attributes($args,$owner){
 	$gids = array(absint($args['gallery_id']));
 	if(!empty($args['is_overview'])){
@@ -75,8 +84,10 @@ function cg_page_stats_live_attributes($args,$owner){
 	$hash = cg1l_get_gallery_data_access_hash($context['realGid'],$context['shortcodeName'],get_current_user_id(),false);
 	return ' data-cg-stats-token="'.esc_attr(cg1l_create_runtime_context_token($context)).'" data-cg-stats-access="'.esc_attr($hash).'" data-cg-stats-gids="'.esc_attr(wp_json_encode($gids)).'"';
 }
+}
 
 // Current database membership excludes deleted/pending entries even during the gzip build delay.
+if(!function_exists('cg_page_stats_current_gallery')){
 function cg_page_stats_current_gallery($gid,$shortcode,$overview = false){
 	// Share a read-only request snapshot between overview cards and their header.
 	static $snapshots = array();
@@ -118,7 +129,9 @@ function cg_page_stats_current_gallery($gid,$shortcode,$overview = false){
 	$snapshots[$snapshotKey] = array('entries'=>$entries,'comments'=>$comments,'options'=>$options);
 	return $snapshots[$snapshotKey];
 }
+}
 
+if(!function_exists('cg_page_gallery_card_statistics')){
 function cg_page_gallery_card_statistics($gid,$shortcode){
 	if($shortcode!=='cg_gallery' && $shortcode!=='cg_gallery_no_voting'){return '';}
 	$data = cg_page_stats_current_gallery($gid,$shortcode,true);
@@ -128,7 +141,9 @@ function cg_page_gallery_card_statistics($gid,$shortcode){
 	cg_page_render_statistics($totals,'',$data['options'],true);
 	return ob_get_clean();
 }
+}
 
+if(!function_exists('cg_page_stats_current')){
 function cg_page_stats_current($context,&$previews = null,$previewLimit = 3,$previewEntryIds = null,$previewGalleryIds = null){
 	$previewLimit = max(1,min(24,absint($previewLimit)));
 	$overview = !empty($context['isCGalleries']);
@@ -185,8 +200,10 @@ function cg_page_stats_current($context,&$previews = null,$previewLimit = 3,$pre
 	}
 	return $totals;
 }
+}
 
 // These optional lists only narrow the signed, server-authorized preview scope.
+if(!function_exists('cg_page_preview_requested_ids')){
 function cg_page_preview_requested_ids($key){
 	if(!isset($_POST[$key])){return null;}
 	$values = is_string($_POST[$key]) ? json_decode(wp_unslash($_POST[$key]),true) : null;
@@ -199,7 +216,9 @@ function cg_page_preview_requested_ids($key){
 	}
 	return $ids;
 }
+}
 
+if(!function_exists('cg_page_stats_ajax')){
 function cg_page_stats_ajax(){
 	nocache_headers();
 	header('Cache-Control: private, no-store, max-age=0');
@@ -222,9 +241,11 @@ function cg_page_stats_ajax(){
 	}
 	wp_send_json_success($result);
 }
+}
 add_action('wp_ajax_cg_page_statistics','cg_page_stats_ajax');
 add_action('wp_ajax_nopriv_cg_page_statistics','cg_page_stats_ajax');
 
+if(!function_exists('cg_page_render_statistics')){
 function cg_page_render_statistics($totals,$scope = '',$options = array(),$card = false){
 	if(!$totals){return;}
 	$labels = array('galleries'=>'Galleries','entries'=>'Entries','participants'=>'Participants','votes'=>'Votes','comments'=>'Comments');
@@ -246,4 +267,5 @@ function cg_page_render_statistics($totals,$scope = '',$options = array(),$card 
 		echo '<div class="cg-page-stat cg-page-stat-'.esc_attr($metric).'" data-cg-stat="'.esc_attr($metric).'"><dt><span class="cg-page-stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'.$icons[$metric].'</svg></span><span class="cg-page-stat-label">'.esc_html(cg_member_t($labels[$metric])).'</span></dt><dd>'.esc_html(number_format_i18n($count)).'</dd></div>';
 	}
 	echo '</dl></div>';
+}
 }

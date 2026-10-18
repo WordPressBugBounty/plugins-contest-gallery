@@ -1,0 +1,35 @@
+#cgViewControl .cg_pmail_launch_card .cg_mail_history_open{display:block;width:100%;margin:6px 0 0;padding:3px 6px;border:0;border-radius:5px;background:transparent;color:#187744;font:inherit;font-size:12px;text-align:center;text-decoration:underline;cursor:pointer;}
+#cgMailHistoryContainer.cg_mail_history_modal{box-sizing:border-box;width:960px;max-width:calc(100vw - 220px);min-height:0;max-height:82vh;overflow-y:auto;scrollbar-gutter:stable;padding:28px;text-align:left;border:1px solid #dae7df;border-radius:18px;background:#f7faf8;color:#22362a;}
+#cgMailHistoryContainer .cg_mail_history_close{position:sticky;float:right;top:0;right:0;z-index:5;width:34px;height:34px;margin:-8px -8px 0 0;padding:0;border:1px solid #dce5df;border-radius:50%;background:#fff!important;cursor:pointer;}
+#cgMailHistoryContainer .cg_mail_history_close:before,#cgMailHistoryContainer .cg_mail_history_close:after{content:"";position:absolute;top:15px;left:9px;width:14px;height:2px;background:#22362a;border-radius:2px;}
+#cgMailHistoryContainer .cg_mail_history_close:before{transform:rotate(45deg);}
+#cgMailHistoryContainer .cg_mail_history_close:after{transform:rotate(-45deg);}
+.cg_mail_history_modal .cg_mail_history_heading{padding-right:30px;margin-bottom:20px;}
+.cg_mail_history_modal .cg_mail_history_return:not(.cg_hide)+.cg_mail_history_heading{margin-top:20px;}
+.cg_mail_history_modal h2{font-size:25px;line-height:1.25;margin:8px 0 12px;color:inherit;}
+.cg_mail_history_modal h3{font-size:17px;margin:0 0 12px;overflow-wrap:anywhere;color:inherit;}
+.cg_mail_history_modal p{font-size:13px;line-height:1.6;color:#54675a;}
+.cg_mail_history_modal button{max-width:100%;padding:8px 12px;border:1px solid #ccd9d0;border-radius:8px;background:#fff;color:#22362a;font:inherit;font-size:12px;font-weight:600;line-height:1.5;overflow-wrap:anywhere;text-align:left;cursor:pointer;}
+.cg_mail_history_modal button:hover{background:#eff5f1;border-color:#93bba0;}
+.cg_mail_history_modal button:disabled{opacity:.5;cursor:wait;}
+.cg_mail_history_modal .cg_mail_history_tabs,.cg_mail_history_modal .cg_mail_history_pager{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:16px 0;}
+.cg_mail_history_modal .cg_mail_history_pager{justify-content:flex-end;font-size:12px;}
+.cg_mail_history_modal .cg_mail_history_table_wrap{overflow-x:auto;margin-top:16px;}
+.cg_mail_history_modal .cg_mail_history_table{width:100%;border-spacing:0;table-layout:fixed;border:1px solid #dce5df;border-radius:10px;background:#fff;font-size:12px;}
+.cg_mail_history_modal .cg_mail_history_table th,.cg_mail_history_modal .cg_mail_history_table td{padding:12px;text-align:left;vertical-align:top;overflow-wrap:anywhere;border-bottom:1px solid #e3ebe6;}
+.cg_mail_history_modal .cg_mail_history_table tr:last-child td{border-bottom:0;}
+.cg_mail_history_modal .cg_mail_history_table th{color:#54675a;background:#f0f6f2;}
+.cg_mail_history_modal .cg_mail_history_table td small{display:block;margin-top:6px;color:#65776b;}
+.cg_mail_history_modal .cg_mail_history_badge{display:inline-block;padding:3px 7px;border:1px solid #dce5df;border-radius:7px;background:#f0f6f2;}
+.cg_mail_history_modal .cg_mail_history_card,.cg_mail_history_modal .cg_mail_history_empty{padding:20px;margin-top:16px;border:1px solid #dce5df;border-radius:12px;background:#fff;}
+.cg_mail_history_modal dl{display:grid;grid-template-columns:110px minmax(0,1fr);gap:8px 14px;font-size:13px;}
+.cg_mail_history_modal dt{font-weight:600;}
+.cg_mail_history_modal dd{margin:0;overflow-wrap:anywhere;}
+.cg_mail_history_modal .cg_mail_history_frame{display:block;box-sizing:border-box;width:100%;height:400px;margin-top:16px;border:1px solid #dce5df;border-radius:10px;background:#fff;}
+.cg_mail_history_modal .cg_mail_history_notice{padding:12px;border:1px solid #c7e4d0;border-radius:9px;background:#eaf7ee;overflow-wrap:anywhere;}
+.cg_mail_history_modal .cg_mail_history_error{border-color:#efcdc7;background:#fff2f0;color:#963f35;}
+#cgMailHistoryContainer button,#cgMailHistoryContainer button:focus,#cgMailHistoryContainer button:focus-visible,.cg_mail_history_open,.cg_mail_history_open:focus,.cg_mail_history_open:focus-visible{outline:none!important;box-shadow:none!important;}
+@media(max-width:960px){#cgMailHistoryContainer.cg_mail_history_modal{left:50%;transform:translate(-50%,-50%);max-width:calc(100vw - 32px);max-height:calc(100vh - 48px);padding:22px;}}
+@media(max-width:600px){.cg_mail_history_modal .cg_mail_history_table th,.cg_mail_history_modal .cg_mail_history_table td{padding:8px 5px;font-size:11px;}.cg_mail_history_modal h2{font-size:22px;}.cg_mail_history_modal dl{grid-template-columns:1fr;gap:4px;}.cg_mail_history_modal dd{margin-bottom:8px;}}
+
+@supports not (scrollbar-gutter:stable){#cgMailHistoryContainer.cg_mail_history_modal{overflow-y:scroll;}}

@@ -1,10 +1,13 @@
 <?php
 if(!defined('ABSPATH')){exit;}
 
+if(!function_exists('cg_community_can_edit_mail_templates')){
 function cg_community_can_edit_mail_templates(){
 	$editable=false;
 	return $editable;
 }
+}
+if(!function_exists('cg_community_admin_render')){
 function cg_community_admin_render(){
 	$settings=cg_community_settings();
 	$canEditTemplates=cg_community_can_edit_mail_templates();
@@ -33,6 +36,8 @@ function cg_community_admin_render(){
 		echo '<div class="cg_view_options_row"><div class="cg_view_option cg_view_option_full_width cg_border_top_none'.$proClass.'"><div class="cg_view_option_title cg_copyable"><p>Email content<br><span class="cg_view_option_title_note">Placeholders: '.implode(', ',$placeholders).'. The URL opens the member area after sign-in.'.$previewNote.'</span></p></div><div class="cg_view_option_html"><textarea class="'.$editorClass.'" id="cgMemberMail'.ucfirst($type).'" name="'.esc_attr($base.'[content]').'"'.$editorAttrs.'>'.esc_textarea($values['content']).'</textarea></div></div></div></div>';
 	}
 }
+}
+if(!function_exists('cg_community_admin_save')){
 function cg_community_admin_save(){
 	if(empty($_POST['cg_member_community_present'])){return;}
 	if(!is_user_logged_in() || !current_user_can('publish_posts') || !cg_user_has_backend_access()){return;}
@@ -55,4 +60,5 @@ function cg_community_admin_save(){
 		}
 	}
 	update_option('cg_member_community',$settings,false);
+}
 }

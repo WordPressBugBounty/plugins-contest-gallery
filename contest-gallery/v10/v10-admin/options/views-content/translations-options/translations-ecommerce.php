@@ -14,6 +14,19 @@ echo <<<HEREDOC
 <div class='cg_view_options_rows_container'>
 HEREDOC;
 
+$cgSettingsPathLabel = esc_html($language_SettingsPath);
+$cgSettingsPathValue = esc_attr($translations[$l_SettingsPath]);
+echo <<<HEREDOC
+      <div class='cg_view_options_row'>
+            <div class='cg_view_option cg_view_option_full_width'>
+                <div class='cg_view_option_title'><p>$cgSettingsPathLabel$cgShortcodeCopy</p></div>
+                <div class='cg_view_option_input'>
+                    <input type="text" name="translations[ecommerce][Settings path]" maxlength="300" value="$cgSettingsPathValue">
+                </div>
+            </div>
+      </div>
+HEREDOC;
+
 echo <<<HEREDOC
       <div class='cg_view_options_row' >
             <div class='cg_view_option cg_view_option_full_width' >

@@ -528,26 +528,13 @@ if($cgGalleryDashboardIsFreshNewGallery){
 
 }elseif($search===''){
 
-    $selectWinnersOnly = '';
-    if(!empty($_POST['cg_show_only_winners'])){
-        $selectWinnersOnly = " AND Winner = 1 ";
-    }
-
-    $selectActiveOnly = '';
-
-    if(!empty($_POST['cg_show_only_active'])){
-        $selectActiveOnly = " AND Active = 1 ";
-    }
-
-    $selectInactiveOnly = '';
-
-    if(!empty($_POST['cg_show_only_inactive'])){
-        $selectInactiveOnly = " AND Active = 0 ";
-    }
-
-    $rows = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) AS NumberOfRows FROM $tablename WHERE GalleryID = %d $selectWinnersOnly$selectActiveOnly$selectInactiveOnly$cgWpUserIdFilterSql" ,[
-        $GalleryID
-    ]));
+    $cgGalleryCountFilters = cg_backend_gallery_filters($_POST);
+    $cgGalleryCountFilters['user'] = $cgWpUserIdFilterValue;
+    $cgGalleryCountQuery = cg_backend_gallery_filter_query($GalleryID,$cgGalleryCountFilters);
+    $rows = $wpdb->get_var($wpdb->prepare(
+        "SELECT COUNT(*) FROM $tablename AS cgGallery WHERE cgGallery.GalleryID = %d ".$cgGalleryCountQuery['filter_sql'],
+        array($GalleryID)
+    ));
 
 }else{
     $rows = $countSearchSQL;

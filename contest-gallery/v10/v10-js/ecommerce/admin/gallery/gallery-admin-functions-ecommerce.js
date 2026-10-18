@@ -124,7 +124,7 @@ cgJsClassAdmin.gallery.functions.initDownloadSale = function($,$cgSellContainer,
                 }
                 var cg_file_video = '';
                 if(cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].type=='video') {cg_file_video = 'cg_file_video';}
-                $cgSellContainer.find( '#cgSellSelectFilesForSaleSelectContainer').append($('<div class="cg_file_container '+cg_is_embed+entryWatermarkLockedClass+'" data-cg-real-id="'+realId+'" data-cg-order="'+order+'"  data-cg-wp-upload="'+WpUpload+'" data-cg-type="'+cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].type+'" data-cg-watermark-supported="0"><div class="cg_file cg_file_'+fileType+' '+cg_file_video+' " ></div><div  class="cg_file_checkbox '+cg_file_check+'"></div><span class="cg_post_title">'+NamePic+'</span>'+entryWatermarkLockedText+'</div>'));
+                $cgSellContainer.find( '#cgSellSelectFilesForSaleSelectContainer').append($('<div class="cg_file_container '+cg_is_embed+entryWatermarkLockedClass+'" data-cg-real-id="'+realId+'" data-cg-order="'+order+'"  data-cg-wp-upload="'+WpUpload+'" data-cg-type="'+cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order].type+'" data-cg-watermark-supported="0"><div class="cg_file cg_file_'+fileType+' '+cg_file_video+' " ></div><div  class="cg_file_checkbox '+cg_file_check+'"></div><span class="cg_post_title"></span>'+entryWatermarkLockedText+'</div>').find('.cg_post_title').text(NamePic).end());
             }
 
         }
@@ -175,7 +175,7 @@ cgJsClassAdmin.gallery.functions.initDownloadSale = function($,$cgSellContainer,
         }else{
             var cg_file_video = '';
             if(cg_type=='video') {cg_file_video = 'cg_file_video';}
-            $cgSellContainer.find( '#cgSellSelectFilesForSaleSelectContainer').append($('<div class="cg_file_container'+entryWatermarkLockedClass+'" data-cg-real-id="'+realId+'" data-cg-order="1"  data-cg-wp-upload="'+WpUpload+'" data-cg-type="'+fileType+'" data-cg-is-image="'+IsImageType+'" data-cg-watermark-supported="0"><div class="cg_file cg_file_'+fileType+'  '+cg_file_video+' " ></div><div  class="cg_file_checkbox '+cg_file_check+'"></div><span class="cg_post_title">'+cg_wp_post_title+'</span>'+entryWatermarkLockedText+'</div>'));
+            $cgSellContainer.find( '#cgSellSelectFilesForSaleSelectContainer').append($('<div class="cg_file_container'+entryWatermarkLockedClass+'" data-cg-real-id="'+realId+'" data-cg-order="1"  data-cg-wp-upload="'+WpUpload+'" data-cg-type="'+fileType+'" data-cg-is-image="'+IsImageType+'" data-cg-watermark-supported="0"><div class="cg_file cg_file_'+fileType+'  '+cg_file_video+' " ></div><div  class="cg_file_checkbox '+cg_file_check+'"></div><span class="cg_post_title"></span>'+entryWatermarkLockedText+'</div>').find('.cg_post_title').text(cg_wp_post_title).end());
         }
 
         if(cg_file_check=='cg_checked'){

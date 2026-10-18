@@ -1638,37 +1638,11 @@ jQuery(document).ready(function ($) {
         var $cgPurchaseLinkAndProVersionKeyEnter = $('#cgPurchaseLinkAndProVersionKeyEnter');
         if($cgPurchaseLinkAndProVersionKeyEnter.hasClass('cg_hide')){
             $cgPurchaseLinkAndProVersionKeyEnter.removeClass('cg_hide');
-            $('#cgSwitchKeyToAnotherDomainFormContainer').addClass('cg_hide');
         }else{
             $cgPurchaseLinkAndProVersionKeyEnter.addClass('cg_hide');
         }
+        $(this).attr('aria-expanded', !$cgPurchaseLinkAndProVersionKeyEnter.hasClass('cg_hide'));
     });
 
-    $(document).on('click','#cgSwitchKeyToAnotherDomainFormButton',function (e) {
-        e.preventDefault(e);
-        var $cgSwitchKeyToAnotherDomainFormContainer = $('#cgSwitchKeyToAnotherDomainFormContainer');
-        if($cgSwitchKeyToAnotherDomainFormContainer.hasClass('cg_hide')){
-            $cgSwitchKeyToAnotherDomainFormContainer.removeClass('cg_hide');
-            $('#cgPurchaseLinkAndProVersionKeyEnter').addClass('cg_hide');
-        }else{
-            $cgSwitchKeyToAnotherDomainFormContainer.addClass('cg_hide');
-        }
-    });
-
-    $(document).on('click','#cgSubmitDomainSwitch',function (e) {
-        var $cgSubmitDomainSwitchCheck = $('#cgSubmitDomainSwitchCheck');
-        if(!$cgSubmitDomainSwitchCheck.prop('checked')){
-            e.preventDefault(e);
-            $('#cgSubmitDomainSwitchCheckError').removeClass('cg_hide');
-        }
-    });
-
-    $(document).on('click','#cgSubmitDomainSwitchCheck',function (e) {
-        if($(this).prop('checked')){
-            $('#cgSubmitDomainSwitchCheckError').addClass('cg_hide');
-        } else{
-            $('#cgSubmitDomainSwitchCheckError').removeClass('cg_hide');
-        }
-    });
 
 });

@@ -110,7 +110,7 @@ jQuery(document).ready(function($){
     cgJsClassAdmin.mailDelivery = {
         copy: cgCopyTextToClipboard,
         update: function($card, reset){
-            var $scope = $card.closest('.cg_view_options_rows_container, #cgMailTemplateContainer');
+            var $scope = $card.closest('.cg_view_options_rows_container, #cgMailTemplateContainer, #cgParticipantMailContainer');
             var values = [];
             $.each(['from', 'reply', 'to'], function(index, key){
                 var selector = $card.attr('data-cg-mail-' + key);
@@ -134,11 +134,11 @@ jQuery(document).ready(function($){
         }
     };
 
-    $(document).on('input change', '#cg_main_options_content input, #cgMailTemplateContainer input', function(){
+    $(document).on('input change', '#cg_main_options_content input, #cgMailTemplateContainer input, #cgParticipantMailContainer input', function(){
         var input = this;
-        $(this).closest('#cg_main_options_content, #cgMailTemplateContainer').find('.cg-mail-delivery-card').each(function(){
+        $(this).closest('#cg_main_options_content, #cgMailTemplateContainer, #cgParticipantMailContainer').find('.cg-mail-delivery-card').each(function(){
             var $card = $(this);
-            var $scope = $card.closest('.cg_view_options_rows_container, #cgMailTemplateContainer');
+            var $scope = $card.closest('.cg_view_options_rows_container, #cgMailTemplateContainer, #cgParticipantMailContainer');
             var affected = false;
             $.each(['from', 'reply', 'to'], function(index, key){
                 var selector = $card.attr('data-cg-mail-' + key);

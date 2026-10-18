@@ -46,6 +46,8 @@ __('Shopping cart');$l_ShoppingCart = "Shopping cart";$language_ShoppingCart = (
 
 __('Close shopping cart');$l_CloseShoppingCart = "Close shopping cart";$language_CloseShoppingCart = (!empty($translations[$l_CloseShoppingCart]) && $is_frontend) ? $translations[$l_CloseShoppingCart] : ((empty(trim(__($l_CloseShoppingCart,$domain)))) ? __($l_CloseShoppingCart,$domainDefault) : __($l_CloseShoppingCart,$domain)); if(empty($translations[$l_CloseShoppingCart])){$translations[$l_CloseShoppingCart]='';}
 
+__('Settings path','contest-gallery');$l_SettingsPath = "Settings path";$language_SettingsPath = (!empty($translations[$l_SettingsPath]) && $is_frontend) ? $translations[$l_SettingsPath] : ((empty(trim(__($l_SettingsPath,$domain)))) ? __($l_SettingsPath,$domainDefault) : __($l_SettingsPath,$domain)); if(empty($translations[$l_SettingsPath])){$translations[$l_SettingsPath]='';}
+
 __('Invoice');$l_Invoice = "Invoice";$language_Invoice = (!empty($translations[$l_Invoice]) && $is_frontend) ? $translations[$l_Invoice] : ((empty(trim(__($l_Invoice,$domain)))) ? __($l_Invoice,$domainDefault) : __($l_Invoice,$domain)); if(empty($translations[$l_Invoice])){$translations[$l_Invoice]='';}
 
 __('Download invoice');$l_DownloadInvoice = "Download invoice";$language_DownloadInvoice = (!empty($translations[$l_DownloadInvoice]) && $is_frontend) ? $translations[$l_DownloadInvoice] : ((empty(trim(__($l_DownloadInvoice,$domain)))) ? __($l_DownloadInvoice,$domainDefault) : __($l_DownloadInvoice,$domain)); if(empty($translations[$l_DownloadInvoice])){$translations[$l_DownloadInvoice]='';}

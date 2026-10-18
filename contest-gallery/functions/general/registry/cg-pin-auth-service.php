@@ -3,11 +3,14 @@
 if(!defined('ABSPATH')){exit;}
 require_once __DIR__.'/cg-member-translations.php';
 require_once dirname(__DIR__).'/cg-frontend-security-state.php';
+require_once __DIR__.'/cg-registration-agreements.php';
+require_once __DIR__.'/cg-member-sign-in-text.php';
 
 if(!function_exists('cg_pin_auth_t')){
 	function cg_pin_auth_t($default,$replacements = array()){
-		static $custom = null;
-		if($custom===null){
+		static $customBySite = array();
+		$siteId = get_current_blog_id();
+		if(!isset($customBySite[$siteId])){
 			$custom = array();
 			$wpUploadDir = wp_upload_dir();
 			$file = $wpUploadDir['basedir'].'/contest-gallery/gallery-general/json/translations.json';
@@ -20,12 +23,15 @@ if(!function_exists('cg_pin_auth_t')){
 			if(file_exists($previousFile)){
 				$previous = json_decode(file_get_contents($previousFile),true);
 				if(is_array($previous)){
-					foreach(array('Close','Cancel','Comments','ratings','Ratings and comments','Previous entry','Next entry','Close view') as $key){
+					$previous = cg_member_translation_values($previous);
+					foreach(array('Maximum number of uploads for this category','Close','Cancel','Comments','ratings','Ratings and comments','Previous entry','Next entry','Close view') as $key){
 						if(!array_key_exists($key,$custom) && isset($previous[$key]) && is_string($previous[$key])){$custom[$key] = $previous[$key];}
 					}
 				}
 			}
+			$customBySite[$siteId] = $custom;
 		}
+		$custom = $customBySite[$siteId];
 		$text = !empty($custom[$default]) ? contest_gal1ery_convert_for_html_output_without_nl2br($custom[$default]) : __($default,'contest-gallery');
 		if($text===''){$text = $default;}
 		if(is_array($replacements) && count($replacements)){
@@ -299,11 +305,13 @@ if(!function_exists('cg_pin_auth_clear_challenge')){
 	}
 }
 
+if(!function_exists('cg_pin_auth_context_matches')){
 function cg_pin_auth_context_matches($data,$expected){
 	foreach($expected as $key=>$value){
 		if(!isset($data['context'][$key]) || !hash_equals((string)$value,(string)$data['context'][$key])){return false;}
 	}
 	return true;
+}
 }
 
 if(!function_exists('cg_pin_auth_build_challenge')){
@@ -362,6 +370,10 @@ if(!function_exists('cg_pin_auth_request')){
 		if(!is_email($email)){
 			return new WP_Error('cg_pin_invalid_email',cg_pin_auth_t('Enter a valid email address.'));
 		}
+		if(cg_pin_auth_source_can_create_user($source) && cg_registration_agreements_active()){
+			$context['registrationBrowserBinding'] = cg1l_get_registry_activation_browser_binding(true);
+			if(!$context['registrationBrowserBinding']){return new WP_Error('cg_pin_browser',cg_pin_auth_t('Please allow cookies to sign in.'));}
+		}
 		$rateLock = cg_pin_auth_acquire_lock('rate',$email);
 		if(!$rateLock){return cg_pin_auth_busy_error();}
 		try{
@@ -384,9 +396,9 @@ if(!function_exists('cg_pin_auth_get_challenge')){
 }
 
 if(!function_exists('cg_pin_auth_create_user')){
-	function cg_pin_auth_create_user($email){
+	function cg_pin_auth_create_user($email,$requireNew = false){
 		$existing = email_exists($email);
-		if($existing){return absint($existing);}
+		if($existing){return $requireNew ? new WP_Error('cg_pin_existing',cg_pin_auth_t('Please sign in with your existing account.')) : absint($existing);}
 		$parts = explode('@',$email);
 		$displayName = sanitize_text_field($parts[0]);
 		$login = cg1l_generate_unique_login_from_email($email);
@@ -419,6 +431,7 @@ if(!function_exists('cg_pin_auth_verify')){
 			if($data['email']!==$before['email'] || ($allowedSource && $data['source']!==$allowedSource) || !cg_pin_auth_context_matches($data,$expectedContext)){
 				return new WP_Error('cg_pin_invalid',cg_pin_auth_t('The PIN is invalid or expired.'));
 			}
+			if(!empty($data['context']['registrationBrowserBinding']) && !cg1l_hash_equals($data['context']['registrationBrowserBinding'],cg1l_get_registry_activation_browser_binding(false))){return new WP_Error('cg_pin_invalid',cg_pin_auth_t('The PIN is invalid or expired.'));}
 			$active = cg_security_state_read('pin',cg_pin_auth_active_key($data['email'],$data['source']));
 			if((string)$active!==(string)$requestKey){
 				cg_pin_auth_clear_challenge($requestKey,$data);
@@ -452,6 +465,13 @@ if(!function_exists('cg_pin_auth_verify')){
 					return new WP_Error('cg_pin_invalid',cg_pin_auth_t('The PIN is invalid or expired.'));
 				}
 				if(!cg_pin_auth_clear_challenge($requestKey,$data)){return cg_pin_auth_busy_error();}
+				if(!email_exists($data['email'])){
+					$registration = cg_registration_agreements_begin(array('email'=>$data['email']),$data['source'],$data['context']);
+					if($registration!==false){
+						if(!is_wp_error($registration)){cg_pin_auth_delete_pending($data['activationKey']);}
+						return $registration;
+					}
+				}
 				$userId = cg_pin_auth_create_user($data['email']);
 				if(is_wp_error($userId)){return $userId;}
 				cg1l_delete_unconfirmed_user($data['email']);
@@ -471,6 +491,7 @@ if(!function_exists('cg_pin_auth_verify')){
 	}
 }
 
+if(!function_exists('cg_pin_auth_resend_data')){
 function cg_pin_auth_resend_data($requestKey){
 	$data = cg_pin_auth_get_challenge($requestKey);
 	if($data){return $data;}
@@ -480,6 +501,7 @@ function cg_pin_auth_resend_data($requestKey){
 	$pending = $activationKey ? cg_pin_auth_pending_data($activationKey) : false;
 	if(!$pending){return false;}
 	return array('email'=>$pending['email'],'source'=>$pending['context']['source'],'userId'=>0,'context'=>$pending['context'],'activationKey'=>$pending['activationKey']);
+}
 }
 
 if(!function_exists('cg_pin_auth_resend')){
@@ -541,6 +563,7 @@ if(!function_exists('cg_pin_auth_render_auth')){
 			cg_paid_actions_t('SignInSandboxDescription') :
 			($hasGoogleSignIn ? cg_paid_actions_t('SignInBuyDescription') : cg_paid_actions_t('SignInBuyDescriptionEmailOnly'));
 		$isMember = $source==='gallery-member';
+		$customSignInText = $isMember ? cg_member_sign_in_text_html() : '';
 		if($isMember){
 			$kicker = cg_pin_auth_t('Register / Sign in');
 			$title = cg_pin_auth_t('Your entries. Your gallery.');
@@ -548,10 +571,14 @@ if(!function_exists('cg_pin_auth_render_auth')){
 		}
 		ob_start();
 		?>
-		<div class="cg-paid-actions-auth" role="dialog" aria-modal="true" aria-labelledby="cgSharedAuthTitle">
-			<div class="cg-paid-actions-modal-kicker"><?php echo esc_html($kicker); ?></div>
+		<div class="cg-paid-actions-auth" role="dialog" aria-modal="true" aria-labelledby="<?php echo $customSignInText!=='' ? 'cgSharedAuthLabel' : 'cgSharedAuthTitle'; ?>">
+			<div class="cg-paid-actions-modal-kicker" id="cgSharedAuthLabel"><?php echo esc_html($kicker); ?></div>
+			<?php if($customSignInText!==''){ ?>
+				<div class="cg-paid-actions-sign-in-text"><?php echo $customSignInText; ?></div>
+			<?php }else{ ?>
 			<h2 id="cgSharedAuthTitle"><?php echo esc_html($title); ?></h2>
 			<p><?php echo esc_html($description); ?></p>
+			<?php } ?>
 			<?php if($hasGoogleSignIn){ ?>
 				<div class="cg-paid-actions-google"></div>
 				<div class="cg-paid-actions-google-unavailable cg_hide" role="status"><?php echo esc_html(cg_paid_actions_t('GoogleSignInUnavailable')); ?></div>

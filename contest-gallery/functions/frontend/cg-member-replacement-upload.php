@@ -2,12 +2,17 @@
 if(!defined('ABSPATH')){exit;}
 require_once dirname(__DIR__).'/general/cg-upload-validation.php';
 
+if(!function_exists('cg_member_replacement_file_types')){
 function cg_member_replacement_file_types(){
 	return array('jpg'=>'image/jpeg','jpeg'=>'image/jpeg','jpe'=>'image/jpeg','png'=>'image/png','gif'=>'image/gif','ico'=>'image/x-icon','pdf'=>'application/pdf','zip'=>'application/zip','txt'=>'text/plain','doc'=>'application/msword','docx'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.document','xls'=>'application/vnd.ms-excel','xlsx'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','csv'=>'text/csv','mp3'=>'audio/mpeg','m4a'=>'audio/mpeg','ogg'=>'audio/ogg','wav'=>'audio/wav','mp4'=>'video/mp4','mov'=>'video/quicktime','webm'=>'video/webm','ppt'=>'application/vnd.ms-powerpoint','pptx'=>'application/vnd.openxmlformats-officedocument.presentationml.presentation');
 }
+}
 
+if(!function_exists('cg_member_replacement_accept_extension')){
 function cg_member_replacement_accept_extension($extension){return '.'.$extension;}
+}
 
+if(!function_exists('cg_member_replacement_attachment_type')){
 function cg_member_replacement_attachment_type($attachment){
 	$post = get_post($attachment);
 	if(!$post || $post->post_type!=='attachment'){return '';}
@@ -15,8 +20,10 @@ function cg_member_replacement_attachment_type($attachment){
 	$types = cg_member_replacement_file_types();
 	return isset($types[$extension]) ? $extension : '';
 }
+}
 
 // Existing backend-created embeds are replacement sources, never upload MIME types.
+if(!function_exists('cg_member_replacement_social_source')){
 function cg_member_replacement_social_source($id){
 	$id = absint($id);
 	if(!$id){return false;}
@@ -34,7 +41,9 @@ function cg_member_replacement_social_source($id){
 	$source['name'] = $source['label'].($title!=='' ? ': '.$title : '');
 	return $source;
 }
+}
 
+if(!function_exists('cg_member_replacement_upload_rules')){
 function cg_member_replacement_upload_rules($gid,$replacement = true){
 	global $wpdb;
 	// Use the same stored upload field and image switches as the ordinary frontend upload.
@@ -59,8 +68,10 @@ function cg_member_replacement_upload_rules($gid,$replacement = true){
 	}
 	return array('mimes'=>$mimes,'pdfPreview'=>cg_get_version()!=='contest-gallery' && !empty($pro['PdfPreviewFrontend']));
 }
+}
 
 // PHP/fileinfo can report Microsoft's ICO alias while WordPress allows image/x-icon.
+if(!function_exists('cg_member_replacement_check_icon')){
 function cg_member_replacement_check_icon($checked,$path,$name,$mimes){
 	if(strtolower(pathinfo($name,PATHINFO_EXTENSION))!=='ico' || empty($mimes['ico'])){return $checked;}
 	$size = @getimagesize($path);
@@ -69,7 +80,9 @@ function cg_member_replacement_check_icon($checked,$path,$name,$mimes){
 	}
 	return $checked;
 }
+}
 
+if(!function_exists('cg_member_replacement_upload_limit')){
 function cg_member_replacement_upload_limit($options,$image){
 	$general = isset($options['general']) ? $options['general'] : array();
 	$suffix = $image ? '' : 'file';
@@ -77,18 +90,22 @@ function cg_member_replacement_upload_limit($options,$image){
 	if(!empty($general['ActivatePostMaxMB'.$suffix]) && !empty($general['PostMaxMB'.$suffix])){$limit = min($limit,(float)$general['PostMaxMB'.$suffix]*1000000);}
 	return $limit;
 }
+}
 
 // Reuse the ordinary upload's translated messages, including gallery-specific overrides in JS.
+if(!function_exists('cg_member_replacement_upload_error')){
 function cg_member_replacement_upload_error($key,$text,$value = null,$unit = ''){
 	$validation = array('languageKey'=>$key);
 	$message = cg_member_t($text);
 	if($value!==null){$validation['value']=$value; $validation['unit']=$unit; $message .= ': '.$value.$unit;}
 	return new WP_Error('upload',$message,array('uploadValidation'=>$validation));
 }
+}
 
 // Read only the original JPEG's IFD0 orientation, also when PHP's EXIF extension
 // is unavailable. Segment lengths bound memory use; never follow TIFF pointers
 // outside the current EXIF segment or decode the image for this check.
+if(!function_exists('cg_member_replacement_jpeg_orientation')){
 function cg_member_replacement_jpeg_orientation($path){
 	$handle = @fopen($path,'rb');
 	if(!$handle){return 1;}
@@ -139,7 +156,9 @@ function cg_member_replacement_jpeg_orientation($path){
 	fclose($handle);
 	return $orientation;
 }
+}
 
+if(!function_exists('cg_member_replacement_validate_upload')){
 function cg_member_replacement_validate_upload($file,$gid,$options,$stored = false){
 	$rules = cg_upload_validate_file($file,$gid,$options,$stored,cg_member_replacement_upload_rules($gid));
 	if(is_wp_error($rules)){return $rules;}
@@ -152,7 +171,9 @@ function cg_member_replacement_validate_upload($file,$gid,$options,$stored = fal
 	}
 	return $rules;
 }
+}
 
+if(!function_exists('cg_member_replacement_create_pdf_preview')){
 function cg_member_replacement_create_pdf_preview($attachment){
 	$error = new WP_Error('preview','The PDF preview could not be created. Please try again.');
 	// Re-encode the bounded PNG. Never associate a client-supplied attachment or path.
@@ -169,7 +190,9 @@ function cg_member_replacement_create_pdf_preview($attachment){
 		if(is_file($temp)){@unlink($temp);}
 	}
 }
+}
 
+if(!function_exists('cg_member_replacement_media_data')){
 function cg_member_replacement_media_data($attachment,$preview = 0){
 	$post = get_post($attachment);
 	$extension = cg_member_replacement_attachment_type($attachment);
@@ -193,4 +216,5 @@ function cg_member_replacement_media_data($attachment,$preview = 0){
 	$data['Exif'] = $image ? cg_create_exif_data($attachment) : array();
 	$data['IsExifDataChecked'] = true;
 	return $data;
+}
 }

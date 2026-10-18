@@ -1,6 +1,7 @@
 <?php
 if(!defined('ABSPATH')){exit;}
 
+if(!function_exists('cg_community_entry')){
 function cg_community_entry($viewer,$request,$where=null){
 	global $wpdb;
 	if($where===null){$where=cg_community_feed_where($viewer,$request);}
@@ -32,4 +33,5 @@ function cg_community_entry($viewer,$request,$where=null){
 	include(__DIR__.'/../../v10/include-scripts-v10.php');
 	return array('html'=>$frontend_gallery,'gid'=>$cgCommunityEntryInstanceId,'entryId'=>$entryId,
 		'entryUrl'=>$entryUrl,'paidActions'=>$paidActions);
+}
 }

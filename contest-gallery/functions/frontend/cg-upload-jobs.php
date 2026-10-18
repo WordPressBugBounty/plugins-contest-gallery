@@ -4,17 +4,24 @@ require_once dirname(__DIR__).'/general/cg-frontend-security-state.php';
 
 /* Durable upload state. Only the original submit may supply files/form fields.
  * Subsequent requests operate on server-owned attachments and stored context. */
+if(!function_exists('cg_upload_job_owner')){
 function cg_upload_job_owner(){
 	$session = cg1l_get_or_create_frontend_session_id();
 	return hash_hmac('sha256',get_current_user_id().'|'.$session,wp_salt('auth'));
 }
+}
+if(!function_exists('cg_upload_job_key')){
 function cg_upload_job_key($id){return '_cg_upload_job_'.$id;}
+}
+if(!function_exists('cg_upload_job_read')){
 function cg_upload_job_read($id){
 	global $wpdb;
 	if(!preg_match('/^[a-f0-9]{64}$/',(string)$id)){return false;}
 	$value = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name=%s",cg_upload_job_key($id)));
 	return $value ? json_decode($value,true) : false;
 }
+}
+if(!function_exists('cg_upload_job_save')){
 function cg_upload_job_save(&$job){
 	global $wpdb;
 	$key = cg_upload_job_key($job['id']);
@@ -27,19 +34,41 @@ function cg_upload_job_save(&$job){
 	if($result===false){throw new Exception('Upload state could not be saved.');}
 	$GLOBALS['cgUploadJob'] = $job;
 }
+}
+if(!function_exists('cg_upload_job_lock_name')){
 function cg_upload_job_lock_name($id){global $wpdb; return 'cg-upload-'.md5(DB_NAME.'|'.$wpdb->prefix.'|'.$id);}
+}
+if(!function_exists('cg_upload_job_lock')){
 function cg_upload_job_lock($id){global $wpdb; return (string)$wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s,0)',cg_upload_job_lock_name($id)))==='1';}
+}
+if(!function_exists('cg_upload_job_unlock')){
 function cg_upload_job_unlock($id){global $wpdb; $wpdb->get_var($wpdb->prepare('SELECT RELEASE_LOCK(%s)',cg_upload_job_lock_name($id)));}
+}
+if(!function_exists('cg_upload_job_running')){
 function cg_upload_job_running($id){global $wpdb; return !empty($wpdb->get_var($wpdb->prepare('SELECT IS_USED_LOCK(%s)',cg_upload_job_lock_name($id))));}
+}
+if(!function_exists('cg_upload_job_token')){
 function cg_upload_job_token($job){return hash_hmac('sha256',$job['id'].'|'.$job['owner'],wp_salt('nonce'));}
+}
+if(!function_exists('cg_upload_job_phase')){
 function cg_upload_job_phase($phase){return !empty($GLOBALS['cgUploadJobPhase']) && $GLOBALS['cgUploadJobPhase']===$phase;}
+}
+if(!function_exists('cg_upload_job_error_text')){
 function cg_upload_job_error_text(){return 'Image processing could not be completed. Please reduce the image dimensions and file size and upload it again.';}
+}
+if(!function_exists('cg_upload_job_wait_text')){
 function cg_upload_job_wait_text(){return 'Image processing is taking longer than expected. Please check the status again.';}
+}
+if(!function_exists('cg_upload_job_form_error')){
 function cg_upload_job_form_error($html){
 	$text=trim(wp_strip_all_tags(preg_replace('~<script\b[^>]*>.*?</script>~is','',$html)));
 	return $text!=='' ? sanitize_text_field(substr($text,0,1000)) : 'The file or form does not meet the gallery upload requirements.';
 }
+}
+if(!function_exists('cg_upload_job_context')){
 function cg_upload_job_context(){return isset($GLOBALS['cgUploadJob']) ? $GLOBALS['cgUploadJob'] : false;}
+}
+if(!function_exists('cg_upload_job_storage_ready')){
 function cg_upload_job_storage_ready($strict = true){
 	global $wpdb;
 	// A rollback must include the job, media, credits and gallery entry together.
@@ -53,8 +82,10 @@ function cg_upload_job_storage_ready($strict = true){
 	}
 	return true;
 }
+}
 // Older MySQL releases keep only one named lock per connection. Probe before
 // starting a job, while this request holds no application lock of its own.
+if(!function_exists('cg_upload_job_multiple_locks_available')){
 function cg_upload_job_multiple_locks_available(){
 	global $wpdb;
 	$name='cg-probe-'.str_replace('-','',wp_generate_uuid4());
@@ -68,6 +99,8 @@ function cg_upload_job_multiple_locks_available(){
 		$wpdb->get_var($wpdb->prepare('SELECT RELEASE_LOCK(%s)',$first));
 	}
 }
+}
+if(!function_exists('cg_upload_job_commit_admission')){
 function cg_upload_job_commit_admission(){
 	global $wpdb;
 	if(!empty($GLOBALS['cgUploadJobTransaction'])){
@@ -75,7 +108,9 @@ function cg_upload_job_commit_admission(){
 		unset($GLOBALS['cgUploadJobTransaction'],$GLOBALS['cgUploadJobRollback']);
 	}
 }
-function cg_upload_job_pending_entries($gid,$order = 0,$user = 0,$cookie = '',$ip = ''){
+}
+if(!function_exists('cg_upload_job_pending_entries')){
+function cg_upload_job_pending_entries($gid,$order = 0,$user = 0,$cookie = '',$ip = '',$category = null){
 	global $wpdb;
 	$current=cg_upload_job_context(); $count=0;
 	$rows=$wpdb->get_col($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name LIKE %s",$wpdb->esc_like('_cg_upload_job_').'%'));
@@ -84,10 +119,13 @@ function cg_upload_job_pending_entries($gid,$order = 0,$user = 0,$cookie = '',$i
 		if(!$job || $job['id']===($current ? $current['id'] : '') || $job['gid']!=(int)$gid || empty($job['admitted']) || in_array($job['state'],array('complete','failed'),true)){continue;}
 		if($order && (int)$job['order']!==(int)$order){continue;}
 		if(!$order && (($user && $job['user']!=(int)$user) || ($cookie!=='' && $job['cookie']!==$cookie) || ($ip!=='' && $job['ip']!==$ip))){continue;}
-		$count+=(int)$job['reservedEntries'];
+		// Jobs admitted before category reservations existed conservatively reserve every slot.
+		$count += $category!==null && isset($job['categoryCounts']) ? (isset($job['categoryCounts'][$category]) ? (int)$job['categoryCounts'][$category] : 0) : (int)$job['reservedEntries'];
 	}
 	return $count;
 }
+}
+if(!function_exists('cg_upload_job_replacement_usage')){
 function cg_upload_job_replacement_usage($user){
 	global $wpdb;
 	$current=cg_upload_job_context(); $usage=array('count'=>0,'bytes'=>0);
@@ -104,8 +142,10 @@ function cg_upload_job_replacement_usage($user){
 	}
 	return $usage;
 }
+}
 
 /* Respect an outer upload transaction instead of implicitly committing it. */
+if(!function_exists('cg_upload_job_db_transaction')){
 function cg_upload_job_db_transaction($sql){
 	global $wpdb;
 	if(!empty($GLOBALS['cgUploadJobTransaction'])){
@@ -114,6 +154,8 @@ function cg_upload_job_db_transaction($sql){
 	}
 	return $wpdb->query($sql);
 }
+}
+if(!function_exists('cg_upload_job_assert_authorized')){
 function cg_upload_job_assert_authorized($job){
 	if(!$job || !hash_equals($job['owner'],cg_upload_job_owner()) || $job['expires']<time()){
 		throw new Exception('This upload session has expired. Please reload the page and try again.');
@@ -121,6 +163,8 @@ function cg_upload_job_assert_authorized($job){
 	$token = isset($_POST['jobToken']) && is_string($_POST['jobToken']) ? $_POST['jobToken'] : '';
 	if(!hash_equals(cg_upload_job_token($job),$token)){throw new Exception('Upload authorization failed. Please reload the page and try again.');}
 }
+}
+if(!function_exists('cg_upload_job_prepare_gallery')){
 function cg_upload_job_prepare_gallery($gid){
 	global $wpdb;
 	$hash = isset($_POST['check']) && is_string($_POST['check']) ? sanitize_text_field(wp_unslash($_POST['check'])) : '';
@@ -143,6 +187,8 @@ function cg_upload_job_prepare_gallery($gid){
 		if(empty($interval['shortcodeIsActive'])){throw new Exception('This gallery is not available.');}
 	}
 }
+}
+if(!function_exists('cg_upload_job_prepare')){
 function cg_upload_job_prepare(){
 	$owner = cg_upload_job_owner();
 	$request = isset($_POST['requestKey']) && is_string($_POST['requestKey']) ? $_POST['requestKey'] : '';
@@ -178,6 +224,8 @@ function cg_upload_job_prepare(){
 	if(!wp_next_scheduled('cg_upload_jobs_cleanup')){wp_schedule_event(time()+HOUR_IN_SECONDS,'hourly','cg_upload_jobs_cleanup');}
 	return $job;
 }
+}
+if(!function_exists('cg_upload_job_file_array')){
 function cg_upload_job_file_array($files,$key){
 	$file = array();
 	foreach(array('name','type','tmp_name','error','size') as $part){
@@ -186,6 +234,8 @@ function cg_upload_job_file_array($files,$key){
 	}
 	return $file;
 }
+}
+if(!function_exists('cg_upload_job_attach')){
 function cg_upload_job_attach($file,$slot,$mimes = null){
 	$job = cg_upload_job_context();
 	$slot = (string)$slot;
@@ -222,8 +272,10 @@ function cg_upload_job_attach($file,$slot,$mimes = null){
 	cg_upload_job_save($job);
 	return $id;
 }
+}
 
 /* Called only after the existing gallery validator has accepted the full form. */
+if(!function_exists('cg_upload_job_accept_gallery')){
 function cg_upload_job_accept_gallery($context){
 	$job = cg_upload_job_context();
 	$job['additional']=!empty($context['proOptions']->AdditionalFiles);
@@ -232,6 +284,7 @@ function cg_upload_job_accept_gallery($context){
 	$job['contact']=!empty($context['isOnlyContactEntry']);
 	$job['order']=!empty($context['OrderItem']) ? absint($context['OrderItem']) : 0;
 	$job['admitted']=true; $job['reservedEntries']=$job['additional'] || $job['contact'] ? 1 : count($context['files']['name']);
+	if(isset($context['cgUploadCategories']) && is_array($context['cgUploadCategories'])){$job['categoryCounts']=array_count_values($context['cgUploadCategories']);}
 	$job['cookie']=$context['CookieId']; $job['ip']=isset($context['userIP']) ? $context['userIP'] : '';
 	$job['reservation']=$context['cgPaidActionUploadReservation'];
 	cg_upload_job_save($job);
@@ -262,6 +315,8 @@ function cg_upload_job_accept_gallery($context){
 	$job=cg_upload_job_context(); $job['state']='processing'; cg_upload_job_save($job);
 	$GLOBALS['cgUploadJobAccepted']=true;
 }
+}
+if(!function_exists('cg_upload_job_accept_replace')){
 function cg_upload_job_accept_replace($row,$slot,$revision,$valid,$budget){
 	$job=cg_upload_job_context();
 	$job['post']=$GLOBALS['cgUploadJobOriginalPost'];
@@ -278,16 +333,22 @@ function cg_upload_job_accept_replace($row,$slot,$revision,$valid,$budget){
 	$GLOBALS['cgUploadJobAccepted']=true;
 	return array('staged'=>true);
 }
+}
+if(!function_exists('cg_upload_job_gallery_attachment')){
 function cg_upload_job_gallery_attachment($key){
 	$job=cg_upload_job_context();
 	return isset($job['files'][(string)$key]['attachment']) ? absint($job['files'][(string)$key]['attachment']) : 0;
 }
+}
 // Replacement validation must use the submitted original, not a WordPress
 // derivative whose size or orientation may already have changed.
+if(!function_exists('cg_upload_job_original_path')){
 function cg_upload_job_original_path($attachment){
 	$path = function_exists('wp_get_original_image_path') ? wp_get_original_image_path($attachment) : false;
 	return $path ? $path : get_attached_file($attachment);
 }
+}
+if(!function_exists('cg_upload_job_restore_files')){
 function cg_upload_job_restore_files($job,$onlyReady = false){
 	$data=array('name'=>array(),'type'=>array(),'tmp_name'=>array(),'error'=>array(),'size'=>array());
 	foreach($job['files'] as $slot=>$file){
@@ -297,6 +358,8 @@ function cg_upload_job_restore_files($job,$onlyReady = false){
 	}
 	return array('data'=>$data);
 }
+}
+if(!function_exists('cg_upload_job_stored_file')){
 function cg_upload_job_stored_file($slot){
 	$job=cg_upload_job_context();
 	if(!$job || !isset($job['files'][$slot])){return null;}
@@ -304,6 +367,8 @@ function cg_upload_job_stored_file($slot){
 	if(!$file['attachment'] || get_post_meta($file['attachment'],'_cg_upload_job',true)!==$job['id']){return null;}
 	return array('name'=>$file['name'],'tmp_name'=>cg_upload_job_original_path($file['attachment']),'error'=>UPLOAD_ERR_OK,'type'=>$file['type'],'size'=>$file['size']);
 }
+}
+if(!function_exists('cg_upload_job_process')){
 function cg_upload_job_process(&$job){
 	require_once ABSPATH.'wp-admin/includes/image.php';
 	foreach($job['files'] as $slot=>$file){
@@ -356,6 +421,8 @@ function cg_upload_job_process(&$job){
 	}
 	cg_upload_job_processing_state($job);
 }
+}
+if(!function_exists('cg_upload_job_processing_state')){
 function cg_upload_job_processing_state(&$job){
 	$failed=0; $ready=0; $pending=false; $changed=false;
 	foreach($job['files'] as $slot=>$file){
@@ -376,7 +443,9 @@ function cg_upload_job_processing_state(&$job){
 	else{$job['state']='ready';}
 	cg_upload_job_save($job);
 }
+}
 
+if(!function_exists('cg_upload_job_mail')){
 function cg_upload_job_mail($to,$subject,$message,$headers = '',$attachments = array()){
 	if(!cg_upload_job_phase('finalize')){return wp_mail($to,$subject,$message,$headers,$attachments);}
 	$job=cg_upload_job_context();
@@ -384,6 +453,8 @@ function cg_upload_job_mail($to,$subject,$message,$headers = '',$attachments = a
 	cg_upload_job_save($job);
 	return true;
 }
+}
+if(!function_exists('cg_upload_job_send_mails')){
 function cg_upload_job_send_mails(&$job){
 	foreach($job['mails'] as $index=>$mail){
 		if($mail['state']!=='queued'){continue;}
@@ -392,10 +463,14 @@ function cg_upload_job_send_mails(&$job){
 		$job['mails'][$index]['state']=$sent ? 'sent' : 'failed'; cg_upload_job_save($job);
 	}
 }
+}
+if(!function_exists('cg_upload_job_journal_path')){
 function cg_upload_job_journal_path($job){
 	$upload=wp_upload_dir();
 	return $upload['basedir'].'/contest-gallery/gallery-id-'.$job['gid'].'/json/upload-job-'.$job['id'].'.json';
 }
+}
+if(!function_exists('cg_upload_job_record_entry')){
 function cg_upload_job_record_entry($id){
 	if(!cg_upload_job_phase('finalize')){return;}
 	$job=cg_upload_job_context();$path=cg_upload_job_journal_path($job);
@@ -404,6 +479,8 @@ function cg_upload_job_record_entry($id){
 	// Files survive a database rollback. Record only IDs, never form data or tokens.
 	if(!cg1l_write_atomic_file_payload($path,wp_json_encode(array_values(array_unique($ids))))){throw new Exception('The gallery entry could not be saved.');}
 }
+}
+if(!function_exists('cg_upload_job_reconcile_journal')){
 function cg_upload_job_reconcile_journal($job){
 	global $wpdb;
 	$path=cg_upload_job_journal_path($job);
@@ -422,12 +499,16 @@ function cg_upload_job_reconcile_journal($job){
 	}
 	if(in_array($job['state'],array('complete','failed'),true)){wp_delete_file($path);}
 }
+}
+if(!function_exists('cg_upload_job_publish_replace')){
 function cg_upload_job_publish_replace(&$job){
 	if($job['mode']!=='replace' || $job['state']!=='complete' || !empty($job['published'])){return;}
 	if(empty($job['result']['active'])){cg_deactivate_images($job['gid'],wp_upload_dir(),array($job['pid']=>$job['pid']));}
 	else{cg_entry_watermark_invalidate($job['gid'],$job['pid']);}
 	$job['published']=true;cg_upload_job_save($job);
 }
+}
+if(!function_exists('cg_upload_job_restore_replace_cache')){
 function cg_upload_job_restore_replace_cache($job){
 	global $wpdb;
 	if($job['mode']!=='replace' || !array_key_exists('cacheBackup',$job) || $job['cacheBackup']===false){return;}
@@ -438,6 +519,8 @@ function cg_upload_job_restore_replace_cache($job){
 	cg1l_write_atomic_file_payload($path,$job['cacheBackup']);
 	cg1l_push_recent_id_file_all_types($job['gid'],$job['pid']);cg1l_create_last_updated_time_file_all($job['gid']);
 }
+}
+if(!function_exists('cg_upload_job_finish')){
 function cg_upload_job_finish(&$job){
 	global $wpdb;
 	if($job['state']==='complete'){cg_upload_job_reconcile_journal($job);cg_upload_job_publish_replace($job);cg_upload_job_send_mails($job);return;}
@@ -483,6 +566,8 @@ function cg_upload_job_finish(&$job){
 	}
 	if($job['state']==='complete'){cg_upload_job_reconcile_journal($job);cg_upload_job_publish_replace($job);cg_upload_job_send_mails($job);}
 }
+}
+if(!function_exists('cg_upload_job_release')){
 function cg_upload_job_release(&$job){
 	if(!empty($job['reservation'])){
 		global $wpdb;
@@ -494,6 +579,8 @@ function cg_upload_job_release(&$job){
 		finally{unset($GLOBALS['cgUploadJobTransaction'],$GLOBALS['cgUploadJobRollback']);}
 	}
 }
+}
+if(!function_exists('cg_upload_job_shutdown')){
 function cg_upload_job_shutdown(){
 	unset($GLOBALS['cgUploadJobEmergencyMemory']);
 	if(empty($GLOBALS['cgUploadJobActive'])){return;}
@@ -512,6 +599,8 @@ function cg_upload_job_shutdown(){
 	// Image workers keep their durable checkpoints. A later request may retry them.
 	cg_upload_job_unlock($id);
 }
+}
+if(!function_exists('cg_upload_job_public')){
 function cg_upload_job_public($job,$running = false){
 	$files=array(); $ready=0; $expired=false;
 	foreach($job['files'] as $slot=>$file){
@@ -521,6 +610,8 @@ function cg_upload_job_public($job,$running = false){
 	}
 	return array('id'=>$job['id'],'token'=>cg_upload_job_token($job),'revision'=>isset($job['revision']) ? $job['revision'] : 0,'serverTime'=>time(),'state'=>$job['state'],'running'=>$running,'waiting'=>$expired && $running,'files'=>$files,'percent'=>$job['state']==='complete' ? 100 : ($job['state']==='receiving' ? 0 : 90+(count($files) ? floor(9*$ready/count($files)) : 0)),'message'=>$job['message'],'result'=>$job['state']==='complete' ? $job['result'] : null);
 }
+}
+if(!function_exists('cg_upload_job_ajax')){
 function cg_upload_job_ajax(){
 	nocache_headers(); cg1l_ajax_reject_bad_origin(); cg_check_frontend_nonce();
 	$op=isset($_POST['operation']) ? sanitize_key($_POST['operation']) : '';
@@ -603,17 +694,23 @@ function cg_upload_job_ajax(){
 			// A post-commit mail/cache error must never invite a second upload.
 			wp_send_json_success(cg_upload_job_public($committed,false));
 		}
-		wp_send_json_error(array('message'=>$error->getMessage()));
+		$failure = array('message'=>$error->getMessage());
+		if(!empty($GLOBALS['cgUploadCategoryRejection'])){$failure = $GLOBALS['cgUploadCategoryRejection'];}
+		wp_send_json_error($failure);
 	}
+}
 }
 add_action('wp_ajax_cg_upload_job','cg_upload_job_ajax');
 add_action('wp_ajax_nopriv_cg_upload_job','cg_upload_job_ajax');
 
+if(!function_exists('cg_upload_job_strings')){
 function cg_upload_job_strings(){
 	$strings=array();
 	foreach(array('Processing…','Continuing image processing…','Check status','Upload completed.','Refresh','Please try again.','The connection failed. Please try again.') as $text){$strings[$text]=cg_member_t($text);}
 	return $strings;
 }
+}
+if(!function_exists('cg_upload_job_attachment_referenced')){
 function cg_upload_job_attachment_referenced($id,$jobDirectory = true){
 	global $wpdb;
 	if($wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}contest_gal1ery WHERE WpUpload=%d OR PdfPreview=%d OR MultipleFiles LIKE %s LIMIT 1",$id,$id,'%'.$wpdb->esc_like('i:'.$id.';').'%'))){return true;}
@@ -627,6 +724,8 @@ function cg_upload_job_attachment_referenced($id,$jobDirectory = true){
 	if($prefix && $wpdb->get_var($wpdb->prepare("SELECT post_id FROM {$wpdb->postmeta} WHERE post_id<>%d AND meta_value LIKE %s LIMIT 1",$id,'%'.$wpdb->esc_like($prefix).'%'))){return true;}
 	return $prefix && $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->posts} WHERE ID<>%d AND (post_content LIKE %s OR post_content LIKE %s) LIMIT 1",$id,'%'.$wpdb->esc_like($prefix).'%','%wp-image-'.$id.'%'));
 }
+}
+if(!function_exists('cg_upload_job_cleanup_valid')){
 function cg_upload_job_cleanup_valid($job,$id){
 	if(!is_array($job) || !isset($job['id'],$job['gid'],$job['user'],$job['state'],$job['files'],$job['created'],$job['expires'])){return false;}
 	if($job['id']!==$id || !preg_match('/^[a-f0-9]{64}$/D',$id) || !is_string($job['state']) || !is_array($job['files'])){return false;}
@@ -639,6 +738,8 @@ function cg_upload_job_cleanup_valid($job,$id){
 	}
 	return true;
 }
+}
+if(!function_exists('cg_upload_jobs_cleanup')){
 function cg_upload_jobs_cleanup(){
 	global $wpdb;
 	$rows=$wpdb->get_results($wpdb->prepare("SELECT option_name,option_value FROM {$wpdb->options} WHERE option_name LIKE %s ORDER BY option_id ASC LIMIT 100",$wpdb->esc_like('_cg_upload_job_').'%'));
@@ -674,5 +775,6 @@ function cg_upload_jobs_cleanup(){
 			$cleaned++;if($cleaned>=100){break;}
 		}finally{cg_upload_job_unlock($jobId);}
 	}
+}
 }
 add_action('cg_upload_jobs_cleanup','cg_upload_jobs_cleanup');

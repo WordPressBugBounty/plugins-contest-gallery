@@ -1,6 +1,7 @@
 <?php
 if(!defined('ABSPATH')){exit;}
 
+if(!function_exists('cg_community_member_url')){
 function cg_community_member_url($gid,$args){
 	$gallery=cg_community_gallery($gid);
 	if(!$gallery){
@@ -10,10 +11,14 @@ function cg_community_member_url($gid,$args){
 	}
 	return $gallery ? add_query_arg($args,$gallery['url']) : '';
 }
+}
+if(!function_exists('cg_community_message_preview')){
 function cg_community_message_preview($body){
 	$text=trim(preg_replace('/\s+/u',' ',wp_check_invalid_utf8($body)));
 	return mb_strlen($text,'UTF-8')>200 ? rtrim(mb_substr($text,0,199,'UTF-8')).'…' : $text;
 }
+}
+if(!function_exists('cg_community_notify')){
 function cg_community_notify($event){
 	$settings=cg_community_settings();$type=$event['type'];
 	if(empty($settings['enabled']) || empty($settings[$type]['enabled']) || cg_community_blocked($event['sender'],$event['recipient'])){return;}
@@ -57,4 +62,5 @@ function cg_community_notify($event){
 		if($hadHook===false){remove_action('wp_mail_failed','cg_on_wp_mail_error',10);}
 		$cgMailAction=$oldAction;$cgMailGalleryId=$oldGallery;
 	}
+}
 }

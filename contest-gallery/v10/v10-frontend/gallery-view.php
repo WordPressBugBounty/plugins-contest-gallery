@@ -370,7 +370,8 @@
 
         if(!empty($fullData['Timestamp']) && $showDateInGalleryView && empty($isCGalleries)){
             $dateTimeInvisibleSeo = cg_get_time_based_on_wp_timezone_conf($fullData['Timestamp'],'Y-m-d\TH:i:sP');
-            $dateTimeVisibleSeo = wp_date('j. F Y',(int)$fullData['Timestamp']);
+            $dateTimeVisibleFormat = preg_match('/^fr(?:[_-]|$)/i',get_locale()) ? 'j F Y' : 'j. F Y';
+            $dateTimeVisibleSeo = wp_date($dateTimeVisibleFormat,(int)$fullData['Timestamp']);
             $cg_date = '<div class="cg_date cg_opacity_0" data-cg-timestamp="'.absint($fullData['Timestamp']).'"><time datetime="'.esc_attr($dateTimeInvisibleSeo).'">'.esc_html($dateTimeVisibleSeo).'</time></div>';
         }
 

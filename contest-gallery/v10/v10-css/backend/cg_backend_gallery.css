@@ -10400,6 +10400,7 @@ body.cg_member_upload_choice_open,body.cg_view_choice_open{overflow:hidden;}
 }
 
 #cgSortable li.cg_sortable_div .cg-center-image-exif-data {
+    width: 90%;
     display: flex;
     justify-content: flex-start;
     margin-top: 12px;

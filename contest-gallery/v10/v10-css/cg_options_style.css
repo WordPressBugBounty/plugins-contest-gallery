@@ -6475,6 +6475,49 @@ code.cg_shortcode_copy:after{
 	font-size: 14px;
 }
 
+.cg_main_options .cg_view_options_rows_container.cg_access_configuration{
+	margin: 0 20px 30px;
+	padding: 24px 0 0;
+	border: 1px solid #d9dee8;
+	border-radius: 12px;
+	background: #fff;
+}
+
+.cg_main_options .cg_access_configuration > .cg_view_options_rows_container_title{
+	margin: 0 20px 12px;
+}
+
+.cg_main_options .cg_access_configuration > .cg_view_options_rows_container_title code{
+	font-size: inherit;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+.cg_main_options .cg_registration_help{
+	box-sizing: border-box;
+	width: fit-content;
+	max-width: calc(100% - 40px);
+	margin: 0 auto 24px;
+	padding: 0 0 0 18px;
+	font-size: 13px;
+	line-height: 1.6;
+	text-align: left;
+	color: #526070;
+	list-style: disc;
+}
+
+.cg_main_options .cg_registration_help li{
+	margin: 0 0 5px;
+}
+
+.cg_main_options .cg_registration_help li:last-child{
+	margin-bottom: 0;
+}
+
+.cg_main_options .cg_registration_help strong{
+	color: #354355;
+}
+
 .cg-mail-delivery-card {
 	box-sizing: border-box;
 	width: 100%;

@@ -1,12 +1,15 @@
 <?php
 if(!defined('ABSPATH')){exit;}
 
+if(!function_exists('cg_backend_entry_page_open_url')){
 function cg_backend_entry_page_open_url($entryId,$shortcode,$test = false){
 	return add_query_arg(array('action'=>'cg_open_current_entry','cgRealId'=>absint($entryId),'shortcode'=>$shortcode,'test'=>$test ? 1 : 0,'cg_nonce'=>wp_create_nonce('cg_nonce')),admin_url('admin-post.php'));
+}
 }
 
 add_action('admin_post_cg_open_current_entry','cg_backend_entry_page_open');
 add_action('admin_post_nopriv_cg_open_current_entry','cg_backend_entry_page_open');
+if(!function_exists('cg_backend_entry_page_open')){
 function cg_backend_entry_page_open(){
 	nocache_headers();
 	header('Content-Type: text/html; charset='.get_bloginfo('charset'));
@@ -28,4 +31,5 @@ function cg_backend_entry_page_open(){
 	include_once __DIR__.'/../render/cg-entry-page-open.php';
 	cg_backend_render_entry_page_open($config);
 	exit;
+}
 }

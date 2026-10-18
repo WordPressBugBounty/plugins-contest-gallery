@@ -379,6 +379,8 @@ if(!function_exists('cg_database_install_current_site_check')){
 
         $p_cgal1ery_db_installed_ver = get_option( "p_cgal1ery_db_version" );
         $pending = cg_database_install_get_pending();
+        $cgSignInTextFreshInstall = $pending || cg_is_fresh_install_before_create_table(cg_database_install_get_current_table_suffix(),$p_cgal1ery_db_installed_ver);
+        if(!cg_member_sign_in_text_initialize($p_cgal1ery_db_installed_ver,$cgSignInTextFreshInstall)){return false;}
         if($pending){
             if($networkWide && empty($pending['network_wide'])){
                 $pending['network_wide'] = true;
@@ -392,7 +394,7 @@ if(!function_exists('cg_database_install_current_site_check')){
 
         if ( $p_cgal1ery_db_installed_ver != $p_cgal1ery_db_new_version ) {
             $i = cg_database_install_get_current_table_suffix();
-            if($isActivation && cg_is_fresh_install_before_create_table($i,$p_cgal1ery_db_installed_ver)){
+            if($isActivation && $cgSignInTextFreshInstall){
                 return cg_database_install_start_fresh($i,$networkWide);
             }
             if(function_exists('contest_gal1ery_create_table')){

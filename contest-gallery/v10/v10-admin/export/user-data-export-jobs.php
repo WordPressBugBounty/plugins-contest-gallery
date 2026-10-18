@@ -427,6 +427,7 @@ if(!function_exists('post_cg_user_data_export_start')){
 		foreach($header_data['fields'] as $field){
 			$header[] = $field['label'];
 		}
+		$header = array_merge($header,cg_registration_agreements_csv_headers());
 		if(!cg_user_data_export_write_csv_rows(trailingslashit($job_dir).'header.csvpart',array($header),true)){
 			cg_user_data_export_delete_dir($job_dir);
 			cg_user_data_export_error('The CSV header could not be written.',500,'cg_user_data_export_header_write');
@@ -446,6 +447,7 @@ if(!function_exists('post_cg_user_data_export_start')){
 			'processed' => 0,
 			'chunk_index' => 0,
 			'fields' => $header_data['fields'],
+			'registration_agreements' => 1,
 			'profile_field_id' => $header_data['profile_field_id']
 		);
 		if(!cg_user_data_export_save_state($state)){
@@ -535,13 +537,14 @@ if(!function_exists('post_cg_user_data_export_step')){
 		$user_placeholders = cg_user_data_export_placeholders(count($user_ids));
 		$user_values = array();
 		$roles = array();
+		$registrationReceipts = array();
 		$capabilities_key = $wpdb->prefix.'capabilities';
 		$usermeta_table = $wpdb->base_prefix.'usermeta';
-		$meta_args = array_merge($user_ids,array('first_name','last_name',$capabilities_key,$wpdb->esc_like(cg_profile_meta_prefix()).'%'));
+		$meta_args = array_merge($user_ids,array('first_name','last_name',$capabilities_key,cg_registration_agreements_meta_key(),$wpdb->esc_like(cg_profile_meta_prefix()).'%'));
 		$meta_query = "SELECT user_id, meta_key, meta_value
 			FROM $usermeta_table
 			WHERE user_id IN ($user_placeholders)
-			AND (meta_key IN (%s,%s,%s) OR meta_key LIKE %s)
+			AND (meta_key IN (%s,%s,%s,%s) OR meta_key LIKE %s)
 			ORDER BY user_id ASC";
 		$meta_rows = $wpdb->get_results(cg_user_data_export_prepare_query($meta_query,$meta_args));
 		$wp_roles = wp_roles();
@@ -566,6 +569,8 @@ if(!function_exists('post_cg_user_data_export_step')){
 						}
 					}
 				}
+			}elseif($meta->meta_key===cg_registration_agreements_meta_key()){
+				$registrationReceipts[$user_id] = maybe_unserialize($meta->meta_value);
 			}elseif($field_id = cg_profile_meta_field_id($meta->meta_key)){
 				if(!empty($meta->meta_value)){
 					$user_values[$user_id]['fields'][$field_id] = cg_user_data_export_meta_value($meta->meta_value);
@@ -647,6 +652,9 @@ if(!function_exists('post_cg_user_data_export_step')){
 			foreach($state['fields'] as $field){
 				$field_id = absint($field['id']);
 				$row[] = isset($values['fields'][$field_id]) ? $values['fields'][$field_id] : '';
+			}
+			if(!empty($state['registration_agreements'])){
+				$row = array_merge($row,cg_registration_agreements_csv_values(isset($registrationReceipts[$user_id]) && is_array($registrationReceipts[$user_id]) ? $registrationReceipts[$user_id] : array()));
 			}
 			$rows[] = $row;
 		}

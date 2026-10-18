@@ -1013,8 +1013,8 @@ msgid "Maximum amount of uploads per user is"
 msgstr "Maximaal aantal uploads per gebruiker is"
 
 #: check-language.php:375
-msgid "Maximum amount of uploads per category is"
-msgstr "Het maximale aantal uploads per categorie is"
+msgid "Maximum number of uploads for this category"
+msgstr "Maximaal aantal uploads voor deze categorie"
 
 #: check-language.php:377
 msgid "You have already uploaded"
@@ -3092,3 +3092,8 @@ msgstr "Een beheerder heeft het versturen van berichten en vriendschapsverzoeken
 #: check-language.php
 msgid "Ratings and comments"
 msgstr "Beoordelingen en reacties"
+
+
+#: check-language-ecommerce.php
+msgid "Settings path"
+msgstr "Pad naar instellingen"

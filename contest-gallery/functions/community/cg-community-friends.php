@@ -2,6 +2,7 @@
 if(!defined('ABSPATH')){exit;}
 
 // Counts and paginated lists select the same available website accounts.
+if(!function_exists('cg_community_friends_from_sql')){
 function cg_community_friends_from_sql($viewer,$list='accepted'){
 	global $wpdb;$table=cg_community_table('friends');
 	$status=in_array($list,array('incoming','outgoing'),true) ? 'pending' : 'accepted';
@@ -11,11 +12,15 @@ function cg_community_friends_from_sql($viewer,$list='accepted'){
 	if(is_multisite()){$where.=$wpdb->prepare(" AND u.spam=0 AND u.deleted=0 AND EXISTS (SELECT 1 FROM {$wpdb->usermeta} um WHERE um.user_id=u.ID AND um.meta_key=%s)",$wpdb->get_blog_prefix().'capabilities');}
 	return $from.' WHERE '.$where;
 }
+}
+if(!function_exists('cg_community_friend_count')){
 function cg_community_friend_count($viewer){
 	global $wpdb;
 	return (int)$wpdb->get_var('SELECT COUNT(*) '.cg_community_friends_from_sql($viewer));
 }
+}
 
+if(!function_exists('cg_community_friends')){
 function cg_community_friends($viewer,$request){
 	global $wpdb;$list=$request['list'];$offset=(max(1,$request['page'])-1)*20;$items=array();
 	if($list==='blocked'){
@@ -33,6 +38,8 @@ function cg_community_friends($viewer,$request){
 	}
 	return array('items'=>$items,'more'=>$more);
 }
+}
+if(!function_exists('cg_community_friend_action')){
 function cg_community_friend_action($viewer,$request){
 	global $wpdb;$target=$request['target'];$action=$request['operation'];$table=cg_community_table('friends');
 	if(!$target || $viewer===$target || !cg_community_user($target) || cg_community_blocked($viewer,$target)){return cg_community_error();}
@@ -58,6 +65,8 @@ function cg_community_friend_action($viewer,$request){
 	if($wpdb->update($table,array('Status'=>$statuses[$action],'UpdatedAt'=>$now),array('id'=>$row->id))===false){return cg_community_error('Please try again.',500);}
 	return array('relationship'=>cg_community_relationship($viewer,$target));
 }
+}
+if(!function_exists('cg_community_block_action')){
 function cg_community_block_action($viewer,$request){
 	global $wpdb;$target=$request['target'];$table=cg_community_table('blocks');
 	if(!$target || $target===$viewer || !cg_community_user($target)){return cg_community_error();}
@@ -71,4 +80,5 @@ function cg_community_block_action($viewer,$request){
 	}
 	if($saved===false){return cg_community_error('Please try again.',500);}
 	return array('relationship'=>cg_community_relationship($viewer,$target));
+}
 }

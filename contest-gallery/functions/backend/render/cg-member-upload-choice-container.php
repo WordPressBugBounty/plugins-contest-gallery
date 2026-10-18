@@ -1,6 +1,7 @@
 <?php
 if(!defined('ABSPATH')){exit;}
 
+if(!function_exists('cg_member_upload_choice_container')){
 function cg_member_upload_choice_container(){
 	echo '<div id="cgMemberUploadChoice" class="cg_backend_action_container cg-options-choice-dialog cg_hide" role="dialog" aria-modal="true" aria-labelledby="cgMemberUploadChoiceTitle" aria-describedby="cgMemberUploadChoiceDescription">
 		<button type="button" class="cg-options-choice-close" aria-label="Close"><span class="dashicons dashicons-no-alt" aria-hidden="true"></span></button>
@@ -22,4 +23,5 @@ function cg_member_upload_choice_container(){
 		<p class="cg-options-choice-note">The upload setting applies to all views of this gallery. Changes take effect when you save the gallery options.</p>
 		<button type="button" class="cg-options-choice-cancel">Cancel</button>
 	</div>';
+}
 }

@@ -32,11 +32,14 @@ if(!function_exists('cg_google_sign_in_is_existing_wp_email_auto_link_allowed'))
 }
 
 // Google avatars remain remote URLs. Only expose the image, never account identifiers.
+if(!function_exists('cg_google_sign_in_profile_image_url')){
 function cg_google_sign_in_profile_image_url($url){
     if(!is_string($url) || !preg_match('#^https?://#i',$url)){return '';}
     return esc_url_raw($url,array('http','https'));
 }
+}
 
+if(!function_exists('cg_google_sign_in_get_profile_images')){
 function cg_google_sign_in_get_profile_images($userIds){
     global $wpdb;
     $userIds = array_values(array_unique(array_filter(array_map('absint',$userIds))));
@@ -49,6 +52,7 @@ function cg_google_sign_in_get_profile_images($userIds){
         if($url && empty($images[$row->WpUserId])){$images[$row->WpUserId]=$url;}
     }
     return $images;
+}
 }
 
 if(!function_exists('cg_google_sign_in_link_wp_user')){
@@ -109,15 +113,19 @@ if(!function_exists('cg_google_sign_in_render_public_error')){
 }
 
 // Recheck the raw account immediately before issuing a Google login cookie.
+if(!function_exists('cg_google_sign_in_set_auth_cookie')){
 function cg_google_sign_in_set_auth_cookie($userId){
     if(!cg1l_auth_eligible_user($userId) || cg_check_headers_sent()){return false;}
     update_user_meta($userId,'cgGoogleSignInJustSignedIn',1);
     wp_set_auth_cookie($userId,true,is_ssl());
     return true;
 }
+}
 
 if(!function_exists('cg_create_wp_user_from_google_user')){
-    function cg_create_wp_user_from_google_user($payload,$isSignOn = false){
+    function cg_create_wp_user_from_google_user($payload,$isSignOn = false,$registrationApproved = false,&$createdUserId = null){
+        $createdUserId = 0;
+        if(!$registrationApproved && cg_registration_agreements_active() && !email_exists($payload['email'])){return false;}
 
         $GoogleId = (!empty($payload['sub'])) ? $payload['sub'] : '';
         $Email = (!empty($payload['email'])) ? $payload['email'] : '';
@@ -183,6 +191,7 @@ if(!function_exists('cg_create_wp_user_from_google_user')){
             if(empty($WpUserId) || is_wp_error($WpUserId)){
                 return false;
             }
+            $createdUserId = absint($WpUserId);
 
             $wpdb->update(
                 $wpdb->users,

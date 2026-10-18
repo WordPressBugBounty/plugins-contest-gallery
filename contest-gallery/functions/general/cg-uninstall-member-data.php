@@ -5,6 +5,7 @@ if(!defined('ABSPATH') || !defined('WP_UNINSTALL_PLUGIN')){exit;}
 function cg_uninstall_member_workers_inactive(){
 	global $wpdb;
 	$locks = array('cg_profile_'.md5($wpdb->users));
+	$locks[] = 'cg-pmail-'.md5(DB_NAME.'|'.$wpdb->prefix);
 	foreach(array(array('upload-prepare','site'),array('community','write')) as $scope){
 		$locks[] = 'cg-sec-'.md5(DB_NAME.'|'.$wpdb->prefix.'|'.$scope[0].'|'.$scope[1]);
 	}
@@ -30,6 +31,15 @@ function cg_uninstall_member_site_data(){
 	global $wpdb;
 	foreach(array('cg_frontend_security_cleanup','cg_upload_jobs_cleanup','cg_gallery_transfer_cleanup_stale_jobs_event') as $hook){wp_clear_scheduled_hook($hook);}
 	delete_option('cg_captcha_legacy_v1');
+	delete_option('cg_registration_agreements');
+	delete_option('cg_member_sign_in_text');
+	wp_clear_scheduled_hook('cg_participant_mail_worker');wp_clear_scheduled_hook('cg_participant_mail_cleanup');
+	wp_unschedule_hook('cg_participant_mail_erase_user');
+	$participantMailKeys = $wpdb->get_col($wpdb->prepare("SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s",$wpdb->esc_like('cg_pmail_').'%'));
+	foreach($participantMailKeys as $key){
+		if(preg_match('/^cg_pmail_(?:index|rate|composer_[1-9][0-9]*_[1-9][0-9]*|history_(?:legacy_id|[1-9][0-9]*)|(?:job|stop)_[a-f0-9]{32}|chunk_[a-f0-9]{32}_[0-9]+)$/D',$key)){delete_option($key);}
+	}
+	delete_metadata('user',0,$wpdb->get_blog_prefix().'cg_registration_agreements','',true);
 	foreach(array('_cg_member_replace_attempts_'.$wpdb->prefix,$wpdb->get_blog_prefix().'cg_member_admin_mail_note_dismissed',$wpdb->get_blog_prefix().'cg_member_communication_disabled') as $key){
 		delete_metadata('user',0,$key,'',true);
 	}
@@ -126,7 +136,16 @@ function cg_uninstall_member_reference_condition($column,$id,$needles){
 	global $wpdb;
 	$parts = array();
 	// Conservative token matching also covers serialized IDs and JSON arrays.
-	if($id){$parts[] = $column.$wpdb->prepare(' REGEXP %s','(^|[^0-9])'.absint($id).'([^0-9]|$)');}
+	if($id){
+		$pattern = '(^|[^0-9])'.absint($id).'([^0-9]|$)';
+		$serverInfo = method_exists($wpdb,'db_server_info') ? $wpdb->db_server_info() : '';
+		$version = method_exists($wpdb,'db_version') ? $wpdb->db_version() : '';
+		// Avoid MySQL 8 ICU timeouts on large values without changing token boundaries.
+		if(is_string($serverInfo) && $serverInfo!=='' && stripos($serverInfo,'MariaDB')===false && is_string($version) && version_compare($version,'8.0','>=')){
+			$pattern = '(?<![0-9])'.absint($id).'(?![0-9])';
+		}
+		$parts[] = $column.$wpdb->prepare(' REGEXP %s',$pattern);
+	}
 	foreach($needles as $needle){$parts[] = $column.$wpdb->prepare(' LIKE %s','%'.$wpdb->esc_like($needle).'%');}
 	return '('.implode(' OR ',$parts).')';
 }

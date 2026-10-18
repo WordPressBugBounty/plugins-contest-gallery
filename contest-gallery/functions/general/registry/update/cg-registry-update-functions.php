@@ -4,6 +4,7 @@
 add_action('user_profile_update_errors','cg_registry_validate_wordpress_profile_urls',10,3);
 add_action('profile_update','cg_update_additional_registry_form_user_fields');
 
+if(!function_exists('cg_registry_wordpress_profile_values')){
 function cg_registry_wordpress_profile_values($post){
     $posted = array();
     foreach($post as $key=>$value){
@@ -11,7 +12,9 @@ function cg_registry_wordpress_profile_values($post){
     }
     return cg_member_profile_validate_fields($posted,cg_member_profile_fields());
 }
+}
 
+if(!function_exists('cg_registry_validate_wordpress_profile_urls')){
 function cg_registry_validate_wordpress_profile_urls($errors,$update,$user){
     if(!$update || !is_admin() || empty($_POST['cg_user_data_available']) || !current_user_can('edit_user',$user->ID) || !cgHasUserGroupAllowedToEdit(wp_get_current_user())){return;}
     $values = cg_registry_wordpress_profile_values(wp_unslash($_POST));
@@ -24,6 +27,7 @@ function cg_registry_validate_wordpress_profile_urls($errors,$update,$user){
             }
         }
     }else{$errors->add('cg_fields',esc_html(cg_member_t($values->get_error_message())));}
+}
 }
 
 if(!function_exists('cg_update_additional_registry_form_user_fields')){

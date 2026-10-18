@@ -1,16 +1,21 @@
 <?php
 if(!defined('ABSPATH')){exit;}
 
+if(!function_exists('cg_entry_page_fields')){
 function cg_entry_page_fields(){
 	return array('cg_gallery'=>'WpPage','cg_gallery_user'=>'WpPageUser','cg_gallery_no_voting'=>'WpPageNoVoting','cg_gallery_winner'=>'WpPageWinner','cg_gallery_ecommerce'=>'WpPageEcommerce');
 }
+}
 
+if(!function_exists('cg_entry_page_clear_cache')){
 function cg_entry_page_clear_cache($row){
 	foreach(cg_entry_page_fields() as $field){if(!empty($row->$field)){clean_post_cache($row->$field);}}
+}
 }
 
 // Shared by form saves and media replacement. Only update pages, never publish
 // an owner's private entry through the public info/JSON regeneration path.
+if(!function_exists('cg_entry_page_update_urls')){
 function cg_entry_page_update_urls($rows,$options,$entries,$urlFieldId,$allowMissingField = false,$isBulk = false){
 	if(!$options || (int)$options->Version<22){return array();}
 	global $cg_post_names_for_a_title,$cg_post_names_for_a_title_numbers,$cg_processed_post_titles;
@@ -33,11 +38,14 @@ function cg_entry_page_update_urls($rows,$options,$entries,$urlFieldId,$allowMis
 	}
 	return $updated;
 }
+}
 
+if(!function_exists('cg_entry_page_update_replacement_urls')){
 function cg_entry_page_update_replacement_urls($row){
 	global $wpdb;
 	$options = $wpdb->get_row($wpdb->prepare('SELECT * FROM '.$wpdb->prefix.'contest_gal1ery_options WHERE id=%d',$row->GalleryID));
 	$field = $wpdb->get_var($wpdb->prepare('SELECT id FROM '.$wpdb->prefix.'contest_gal1ery_f_input WHERE GalleryID=%d AND IsForWpPageTitle=1 ORDER BY id DESC LIMIT 1',$row->GalleryID));
 	$entries = $field ? $wpdb->get_results($wpdb->prepare('SELECT pid,f_input_id,Short_Text FROM '.$wpdb->prefix.'contest_gal1ery_entries WHERE GalleryID=%d AND pid=%d AND f_input_id=%d',$row->GalleryID,$row->id,$field)) : array();
 	return cg_entry_page_update_urls(array($row),$options,$entries,$field,true);
+}
 }

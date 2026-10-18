@@ -2,6 +2,7 @@
 if(!defined('ABSPATH')){exit;}
 
 // One schema definition feeds installation, column repair and index repair.
+if(!function_exists('cg_community_schema')){
 function cg_community_schema($prefix){
 	$id = array('id'=>'BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT');
 	$number = 'BIGINT(20) UNSIGNED NOT NULL DEFAULT 0';
@@ -21,6 +22,8 @@ function cg_community_schema($prefix){
 		)),'indexes'=>array('BlockPair'=>array('columns'=>array('BlockerID','BlockedID'),'unique'=>true),'BlockedUser'=>array('columns'=>array('BlockedID','BlockerID'))))
 	);
 }
+}
+if(!function_exists('cg_community_schema_columns')){
 function cg_community_schema_columns($prefix){
 	$result=array();
 	foreach(cg_community_schema($prefix) as $table=>$definition){
@@ -33,11 +36,15 @@ function cg_community_schema_columns($prefix){
 	}
 	return $result;
 }
+}
+if(!function_exists('cg_community_schema_indexes')){
 function cg_community_schema_indexes($prefix){
 	$result=array();
 	foreach(cg_community_schema($prefix) as $table=>$definition){$result[$table]=$definition['indexes'];}
 	return $result;
 }
+}
+if(!function_exists('cg_community_create_tables')){
 function cg_community_create_tables($prefix,$existing){
 	global $wpdb;
 	require_once ABSPATH.'wp-admin/includes/upgrade.php';
@@ -49,4 +56,5 @@ function cg_community_create_tables($prefix,$existing){
 		foreach($definition['indexes'] as $name=>$index){$lines[]=(!empty($index['unique']) ? 'UNIQUE KEY ' : 'KEY ').$name.' ('.implode(',',$index['columns']).')';}
 		dbDelta('CREATE TABLE '.$table." (\n".implode(",\n",$lines)."\n) ENGINE=InnoDB ".$wpdb->get_charset_collate().';');
 	}
+}
 }

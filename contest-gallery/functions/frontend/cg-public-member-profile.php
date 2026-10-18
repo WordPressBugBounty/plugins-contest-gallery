@@ -2,6 +2,7 @@
 if(!defined('ABSPATH')){exit;}
 
 // A public read grant is separate from the contact grant and never authorizes account actions.
+if(!function_exists('cg_public_member_profile_source')){
 function cg_public_member_profile_source($userId,$context,$entryId,$surface='participants'){
 	global $wpdb;
 	$data=array('target'=>absint($userId),'sourceGallery'=>absint($context['realGid']),'shortcode'=>$context['shortcodeName'],'entry'=>absint($entryId),'surface'=>$surface,
@@ -9,18 +10,24 @@ function cg_public_member_profile_source($userId,$context,$entryId,$surface='par
 	if(!empty($context['directorySource'])){$data['directorySource']=$context['directorySource'];}
 	return cg_public_member_profile_pack_source($data);
 }
+}
+if(!function_exists('cg_public_member_profile_pack_source')){
 function cg_public_member_profile_pack_source($data){
 	$payload=base64_encode(wp_json_encode($data));
 	return array('target'=>$data['target'],'sourceGallery'=>$data['sourceGallery'],'shortcode'=>$data['shortcode'],'entry'=>$data['entry'],
 		'source'=>$payload.'.'.hash_hmac('sha256','cg-public-member-profile|'.$payload,wp_salt('auth')));
 }
+}
 
+if(!function_exists('cg_public_member_profile_attributes')){
 function cg_public_member_profile_attributes($userId,$context,$entryId){
 	$source=cg_public_member_profile_source($userId,$context,$entryId);
 	$gid=isset($context['gid']) ? $context['gid'] : $context['realGid'].($context['shortcodeName']==='cg_gallery_no_voting' ? '-nv' : '');
 	return ' data-cg-gid="'.esc_attr($gid).'" data-cg-public-profile-source="'.esc_attr(wp_json_encode($source)).'"';
 }
+}
 
+if(!function_exists('cg_public_member_profile_origin')){
 function cg_public_member_profile_origin($request){
 	global $wpdb;
 	$error=cg_community_error('This profile is no longer available in this gallery.');
@@ -29,8 +36,10 @@ function cg_public_member_profile_origin($request){
 	$data=json_decode(base64_decode($parts[0],true),true);
 	return cg_public_member_profile_validate_origin($data,$request);
 }
+}
 
 // Friends grants retain the original gallery origin and recheck every accepted edge.
+if(!function_exists('cg_public_member_profile_validate_origin')){
 function cg_public_member_profile_validate_origin($data,$request){
 	global $wpdb;
 	$error=cg_community_error('This profile is no longer available in this gallery.');
@@ -82,7 +91,9 @@ function cg_public_member_profile_validate_origin($data,$request){
 	}
 	return $data;
 }
+}
 
+if(!function_exists('cg_public_member_profile_render')){
 function cg_public_member_profile_render($userId,$context,$entryId,$source,$origin=array()){
 	$profile=cg_member_profile_data($userId);
 	ob_start();
@@ -115,7 +126,9 @@ function cg_public_member_profile_render($userId,$context,$entryId,$source,$orig
 	echo '</div>';
 	return ob_get_clean();
 }
+}
 
+if(!function_exists('cg_public_member_profile_dispatch')){
 function cg_public_member_profile_dispatch($viewer,$mode,$request){
 	if(!in_array($mode,array('load','feed','galleries','entry','friends'),true)){return cg_community_error();}
 	if($mode==='friends' && (!$viewer || !cg_community_user($viewer) || !cg_community_enabled())){return cg_community_error('Please sign in to view friends.');}
@@ -134,8 +147,10 @@ function cg_public_member_profile_dispatch($viewer,$mode,$request){
 	if(!empty($request['gallery'])){$where.=$wpdb->prepare(' AND e.GalleryID=%d',$request['gallery']);}
 	return $mode==='entry' ? cg_community_entry($viewer,$request,$where) : cg_community_feed($viewer,$request,$mode==='galleries',$where);
 }
+}
 
 // Both sides of an existing friendship/request can inspect the public profile without an entry.
+if(!function_exists('cg_public_member_profile_request_source')){
 function cg_public_member_profile_request_source($viewer,$target,$gid,$shortcode){
 	global $wpdb;
 	$row=cg_community_pair_row('friends',$viewer,$target);
@@ -146,7 +161,9 @@ function cg_public_member_profile_request_source($viewer,$target,$gid,$shortcode
 	return cg_public_member_profile_pack_source(array('target'=>(int)$target,'sourceGallery'=>(int)$gid,'shortcode'=>$gallery['shortcode'],'entry'=>0,'surface'=>'member-friends',
 		'viewer'=>(int)$viewer,'relationship'=>(int)$row->id,'expires'=>time()+2*HOUR_IN_SECONDS,'site'=>$wpdb->prefix,'realIds'=>array()));
 }
+}
 
+if(!function_exists('cg_public_member_profile_contact_source')){
 function cg_public_member_profile_contact_source($viewer,$target,$gid,$shortcode,$conversation=0){
 	if(!$conversation){return cg_public_member_profile_request_source($viewer,$target,$gid,$shortcode);}
 	if(!$viewer || $viewer===$target || !cg_community_enabled() || !cg_community_user($target) || cg_community_blocked($viewer,$target)){return false;}
@@ -159,9 +176,11 @@ function cg_public_member_profile_contact_source($viewer,$target,$gid,$shortcode
 	return cg_public_member_profile_pack_source(array('target'=>(int)$target,'sourceGallery'=>(int)$gid,'shortcode'=>$gallery['shortcode'],'entry'=>0,'surface'=>'member-conversation',
 		'viewer'=>(int)$viewer,'conversation'=>(int)$thread->id,'expires'=>time()+2*HOUR_IN_SECONDS,'site'=>$wpdb->prefix,'realIds'=>array()));
 }
+}
 
 // Friends navigation does not require the member to own a public entry.
 // Keep the original entry-based fallback for callers without a friends origin.
+if(!function_exists('cg_public_member_profile_friend_source')){
 function cg_public_member_profile_friend_source($userId,$origin=null,$viewer=0){
 	if($origin && $viewer){
 		$data=$origin;
@@ -180,7 +199,9 @@ function cg_public_member_profile_friend_source($userId,$origin=null,$viewer=0){
 	}
 	return false;
 }
+}
 
+if(!function_exists('cg_public_member_profile_friends_where')){
 function cg_public_member_profile_friends_where($viewer,$target){
 	global $wpdb;$blocks=cg_community_table('blocks');
 	$where=$wpdb->prepare("(f.UserLow=%d OR f.UserHigh=%d) AND f.Status='accepted' AND u.user_status=0 AND NOT EXISTS (SELECT 1 FROM $blocks b WHERE (b.BlockerID=u.ID AND b.BlockedID=%d) OR (b.BlockerID=u.ID AND b.BlockedID=%d) OR (b.BlockerID=%d AND b.BlockedID=u.ID))",$target,$target,$viewer,$target,$target);
@@ -189,10 +210,14 @@ function cg_public_member_profile_friends_where($viewer,$target){
 	}
 	return $where;
 }
+}
+if(!function_exists('cg_public_member_profile_friend_count')){
 function cg_public_member_profile_friend_count($viewer,$target){
 	global $wpdb;$table=cg_community_table('friends');$where=cg_public_member_profile_friends_where($viewer,$target);
 	return (int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table f INNER JOIN {$wpdb->users} u ON u.ID=IF(f.UserLow=%d,f.UserHigh,f.UserLow) WHERE $where",$target));
 }
+}
+if(!function_exists('cg_public_member_profile_friends')){
 function cg_public_member_profile_friends($viewer,$target,$request,$origin){
 	global $wpdb;
 	$table=cg_community_table('friends');$blocks=cg_community_table('blocks');
@@ -207,12 +232,16 @@ function cg_public_member_profile_friends($viewer,$target,$request,$origin){
 	}
 	return array('items'=>$items,'more'=>count($rows)>20,'total'=>cg_public_member_profile_friend_count($viewer,$target));
 }
+}
 
 // Separate contact capability. Public read tokens still cannot authorize writes.
+if(!function_exists('cg_public_member_profile_friend_contact_proof')){
 function cg_public_member_profile_friend_contact_proof($origin){
 	$payload=base64_encode(wp_json_encode($origin));
 	return $payload.'.'.hash_hmac('sha256','cg-community-friend-contact|'.$payload,wp_salt('auth'));
 }
+}
+if(!function_exists('cg_public_member_profile_friend_contact_allowed')){
 function cg_public_member_profile_friend_contact_allowed($viewer,$target,$request){
 	$parts=explode('.',isset($request['source']) ? $request['source'] : '');
 	if(count($parts)!==2 || !cg1l_hash_equals(hash_hmac('sha256','cg-community-friend-contact|'.$parts[0],wp_salt('auth')),$parts[1])){return false;}
@@ -221,7 +250,9 @@ function cg_public_member_profile_friend_contact_allowed($viewer,$target,$reques
 	$origin=cg_public_member_profile_validate_origin($data,array('target'=>$target,'sourceGallery'=>$request['gallery'],'shortcode'=>$request['shortcode'],'entry'=>$request['entry']));
 	return !is_wp_error($origin);
 }
+}
 
+if(!function_exists('cg_public_member_profile_ajax')){
 function cg_public_member_profile_ajax(){
 	nocache_headers();header('Cache-Control: private, no-store, max-age=0');
 	cg1l_ajax_reject_bad_origin();cg_check_frontend_nonce();
@@ -234,6 +265,7 @@ function cg_public_member_profile_ajax(){
 	if(is_wp_error($result)){$data=$result->get_error_data();wp_send_json_error(array('message'=>$result->get_error_message()),isset($data['status']) ? $data['status'] : 400);}
 	$result['communicationDisabled']=cg_community_communication_disabled(get_current_user_id());
 	wp_send_json_success($result);
+}
 }
 add_action('wp_ajax_cg_public_member_profile','cg_public_member_profile_ajax');
 add_action('wp_ajax_nopriv_cg_public_member_profile','cg_public_member_profile_ajax');

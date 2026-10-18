@@ -1,6 +1,7 @@
 <?php
 if(!defined('ABSPATH')){exit;}
 
+if(!function_exists('cg_view_choice_container')){
 function cg_view_choice_container(){
 	$choices = array(
 		'BlogLookFullWindow'=>array('Full window blog view','Open the entry in a full window overlay.','editor-expand'),
@@ -25,4 +26,5 @@ function cg_view_choice_container(){
 		<p class="cg-options-choice-note">Slider and blog views keep their current behavior. Changes take effect when you save the gallery options.</p>
 		<button type="button" class="cg-options-choice-cancel">Cancel</button>
 	</div>';
+}
 }

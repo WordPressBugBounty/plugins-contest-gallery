@@ -1,5 +1,6 @@
 <?php
 if(!defined('ABSPATH')){exit;}
+if(!function_exists('cg_member_admin_threads_html')){
 function cg_member_admin_threads_html($userId,$rows,$selected=0){
 	$html='';
 	foreach($rows as $row){
@@ -8,6 +9,8 @@ function cg_member_admin_threads_html($userId,$rows,$selected=0){
 	}
 	return $html;
 }
+}
+if(!function_exists('cg_member_admin_messages_html')){
 function cg_member_admin_messages_html($userId,$rows){
 	$html='';
 	foreach($rows as $row){
@@ -15,6 +18,8 @@ function cg_member_admin_messages_html($userId,$rows){
 	}
 	return $html;
 }
+}
+if(!function_exists('cg_member_admin_messages_page')){
 function cg_member_admin_messages_page($userId){
 	if(!current_user_can('manage_options')){echo '<div class="notice notice-error"><p>Administrator rights are required.</p></div>';return;}
 	$user=cg_member_admin_messages_user($userId);
@@ -30,7 +35,9 @@ function cg_member_admin_messages_page($userId){
 	echo $history && count($history['items']) ? cg_member_admin_messages_html($userId,$history['items']) : '<p class="cg-member-admin-empty">No messages yet.</p>';
 	echo '</div><button type="button" class="button cg-member-admin-older" data-before="'.($history ? $history['before'] : 0).'"'.(!$history || !$history['more'] ? ' hidden' : '').'>Earlier messages</button></section></div><p class="cg-member-admin-status" role="status" aria-live="polite"></p></section>';
 }
+}
 
+if(!function_exists('cg_member_admin_communication_html')){
 function cg_member_admin_communication_html($id){
 	$disabled=cg_community_communication_disabled($id);
 	$html='<strong class="cg-member-admin-communication-status">'.($disabled ? 'Communication disabled' : 'Communication enabled').'</strong>';
@@ -40,4 +47,5 @@ function cg_member_admin_communication_html($id){
 		$html.='<button type="button" class="button cg-member-admin-set-communication" data-disabled="'.($disabled ? '0' : '1').'" data-confirm="'.esc_attr($confirm).'">'.($disabled ? 'Enable communication' : 'Disable communication').'</button>';
 	}
 	return $html.'<p>Controls outgoing messages and new friend requests on this website. Existing conversations remain available.</p>';
+}
 }

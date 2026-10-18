@@ -2,33 +2,42 @@
 if(!defined('ABSPATH')){exit;}
 
 // Existing galleries keep sharing, while public profile cards are opt-in.
+if(!function_exists('cg_gallery_card_option_enabled')){
 function cg_gallery_card_option_enabled($options,$key){
 	if(isset($options['visual'][$key])){return !empty($options['visual'][$key]);}
 	return $key==='ShowShareButtonGallery';
 }
+}
 
+if(!function_exists('cg_gallery_card_profile_supported')){
 function cg_gallery_card_profile_supported($shortcode){
-	return in_array($shortcode,array('cg_gallery','cg_gallery_no_voting'),true);
+	return in_array($shortcode,array('cg_gallery','cg_gallery_no_voting','cg_gallery_winner'),true);
+}
 }
 
 // A saved entry preference takes precedence over the legacy name/image pair.
+if(!function_exists('cg_uploader_profile_entry_enabled')){
 function cg_uploader_profile_entry_enabled($options,$shortcode){
 	if(!cg_gallery_card_profile_supported($shortcode)){return false;}
 	if(isset($options['visual']['ShowProfileEntry'])){return !empty($options['visual']['ShowProfileEntry']);}
 	return !empty($options['pro']['ShowNickname']) || !empty($options['pro']['ShowProfileImage']);
 }
+}
 
+if(!function_exists('cg_uploader_profile_entry_posted')){
 function cg_uploader_profile_entry_posted($options,$shortcode,$posted){
 	if(isset($posted[$shortcode]['visual']['ShowProfileEntry']) && is_scalar($posted[$shortcode]['visual']['ShowProfileEntry'])){
 		return !empty($posted[$shortcode]['visual']['ShowProfileEntry']);
 	}
 	return cg_uploader_profile_entry_enabled($options,$shortcode);
 }
+}
 
 // Preserve missing controls on partial saves. Keep legacy JSON/DB readers compatible.
+if(!function_exists('cg_uploader_profile_store_entry_options')){
 function cg_uploader_profile_store_entry_options(&$options,$gid,$posted = array(),$source = null){
 	$source = is_array($source) ? $source : $options;
-	foreach(array(''=>'cg_gallery','-nv'=>'cg_gallery_no_voting') as $suffix=>$shortcode){
+	foreach(array(''=>'cg_gallery','-nv'=>'cg_gallery_no_voting','-w'=>'cg_gallery_winner') as $suffix=>$shortcode){
 		$previous = cg_member_options_from_source($source,$gid,$shortcode);
 		$value = cg_uploader_profile_entry_posted($previous,$shortcode,$posted) ? 1 : 0;
 		$keys = $suffix==='' ? array('flat',$gid) : array($gid.$suffix);
@@ -42,7 +51,7 @@ function cg_uploader_profile_store_entry_options(&$options,$gid,$posted = array(
 		}
 	}
 	// Removed controls on other shortcodes must not overwrite dormant legacy preferences.
-	foreach(array('-u','-w','-ec') as $suffix){
+	foreach(array('-u','-ec') as $suffix){
 		$key = $gid.$suffix;
 		if(empty($options[$key])){continue;}
 		$previous = !empty($source[$key]) ? $source[$key] : cg_member_options_from_source($source,$gid,'cg_gallery');
@@ -53,15 +62,19 @@ function cg_uploader_profile_store_entry_options(&$options,$gid,$posted = array(
 		else{unset($options[$key]['visual']['ShowProfileEntry']);}
 	}
 }
+}
 
+if(!function_exists('cg_uploader_profile_render_entry_option')){
 function cg_uploader_profile_render_entry_option($gid,$shortcode,$allOptions){
 	if(!cg_gallery_card_profile_supported($shortcode)){return;}
 	$options = cg_member_options_from_source($allOptions,$gid,$shortcode);
 	echo '<div class="cg_view_options_row"><div class="cg_view_option cg_view_option_100_percent cg_border_border_bottom_left_radius_8_px cg_border_border_bottom_right_radius_8_px"><div class="cg_view_option_title"><p>Show uploader profile in entry view<br><span class="cg_view_option_title_note">Shows the uploader name and available profile image in entry view and full window view. Also shows the profile header on entry landing pages.</span></p></div><div class="cg_view_option_checkbox">';
 	echo '<input type="checkbox" name="multiple-pics['.esc_attr($shortcode).'][visual][ShowProfileEntry]" class="cg_shortcode_checkbox ShowProfileEntry" checked="'.(cg_uploader_profile_entry_enabled($options,$shortcode) ? '1' : '0').'" aria-label="Show uploader profile in entry view"></div></div></div>';
 }
+}
 
 // The profile action uses the signed entry context, independently of Member profile.
+if(!function_exists('cg_uploader_profile_entry_links')){
 function cg_uploader_profile_entry_links($args,$owner,$profile){
 	$gid = absint($args['gallery_id']);
 	$shortcode = $args['shortcode'];
@@ -78,7 +91,9 @@ function cg_uploader_profile_entry_links($args,$owner,$profile){
 	}
 	return $html.'</nav>';
 }
+}
 
+if(!function_exists('cg_gallery_card_render_options')){
 function cg_gallery_card_render_options($gid,$shortcode,$allOptions){
 	$suffixes = array('cg_gallery'=>'','cg_gallery_user'=>'-u','cg_gallery_no_voting'=>'-nv','cg_gallery_winner'=>'-w','cg_gallery_ecommerce'=>'-ec');
 	if(!isset($suffixes[$shortcode])){return;}
@@ -101,7 +116,9 @@ function cg_gallery_card_render_options($gid,$shortcode,$allOptions){
 	}
 	echo '</div>';
 }
+}
 
+if(!function_exists('cg_gallery_card_render_profile')){
 function cg_gallery_card_render_profile($gid,$entryId,$fullData,$wpUserIdsData){
 	if(!cg_member_features_available(absint($gid))){return;}
 	$userId = !empty($fullData['WpUserId']) ? absint($fullData['WpUserId']) : (!empty($wpUserIdsData['mainDataWpUserIds'][$entryId]) ? absint($wpUserIdsData['mainDataWpUserIds'][$entryId]) : 0);
@@ -110,4 +127,5 @@ function cg_gallery_card_render_profile($gid,$entryId,$fullData,$wpUserIdsData){
 	$image = cg1l_frontend_get_preferred_wp_user_avatar_url($userId,$wpUserIdsData);
 	echo '<div class="cg-member-account cg-gallery-card-account"><button type="button" class="cg-member-public-profile" data-cg-gid="'.esc_attr($gid).'" data-cg-real-id="'.absint($entryId).'" data-cg-wp-user-id="'.$userId.'" aria-haspopup="dialog" aria-label="'.esc_attr($name).'" title="'.esc_attr($name).'">';
 	echo '<img class="cg-member-avatar" alt=""'.($image ? ' src="'.esc_url($image).'"' : ' hidden').'><span class="cg-member-avatar-placeholder" aria-hidden="true"'.($image ? ' hidden' : '').'></span><span class="cg-member-name">'.esc_html($name).'</span></button></div>';
+}
 }

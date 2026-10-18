@@ -3,26 +3,35 @@ if(!defined('ABSPATH')){exit;}
 
 // Form schemas are site-local, while WordPress usermeta is shared by a network.
 // Never fall back to ambiguous, unprefixed legacy values on multisite.
+if(!function_exists('cg_profile_meta_prefix')){
 function cg_profile_meta_prefix(){
 	global $wpdb;
 	return (is_multisite() ? $wpdb->prefix : '').'cg_custom_field_id_';
 }
+}
 
+if(!function_exists('cg_profile_meta_key')){
 function cg_profile_meta_key($fieldId){
 	return cg_profile_meta_prefix().absint($fieldId);
 }
+}
 
+if(!function_exists('cg_profile_meta_field_id')){
 function cg_profile_meta_field_id($key){
 	return preg_match('/^'.preg_quote(cg_profile_meta_prefix(),'/').'([1-9][0-9]*)$/D',$key,$matches) ? absint($matches[1]) : 0;
 }
+}
 
+if(!function_exists('cg_member_profile_choices')){
 function cg_member_profile_choices($field){
 	$content = isset($field->Field_Content) ? (string)$field->Field_Content : '';
 	$lines = preg_split('/\r\n|\r|\n/',html_entity_decode(stripslashes($content),ENT_QUOTES,'UTF-8'));
 	return array_values(array_unique(array_filter(array_map('sanitize_text_field',$lines),'strlen')));
 }
+}
 
 // Old registration values were HTML-encoded. Prefer an exact choice before decoding.
+if(!function_exists('cg_profile_choice_value')){
 function cg_profile_choice_value($value,$choices){
 	if(!is_scalar($value)){return '';}
 	$value = (string)$value;
@@ -30,9 +39,11 @@ function cg_profile_choice_value($value,$choices){
 	$decoded = html_entity_decode($value,ENT_QUOTES,'UTF-8');
 	return in_array($decoded,$choices,true) ? $decoded : $value;
 }
+}
 
 // Legacy comma lists have no escaping. Prefer a complete choice, then the longest match.
 // New saves use arrays and therefore never need this ambiguous legacy recovery.
+if(!function_exists('cg_profile_legacy_check_values')){
 function cg_profile_legacy_check_values($value,$choices,$offset,&$memo){
 	if(array_key_exists($offset,$memo)){return $memo[$offset];}
 	$rest = substr($value,$offset);
@@ -54,7 +65,9 @@ function cg_profile_legacy_check_values($value,$choices,$offset,&$memo){
 	$memo[$offset] = false;
 	return false;
 }
+}
 
+if(!function_exists('cg_profile_field_value')){
 function cg_profile_field_value($field,$value){
 	if($field->Field_Type==='user-check-field'){
 		$choices = cg_member_profile_choices($field);
@@ -78,12 +91,16 @@ function cg_profile_field_value($field,$value){
 	}
 	return (string)$value;
 }
+}
 
+if(!function_exists('cg_profile_field_text')){
 function cg_profile_field_text($value){
 	if(is_array($value)){return implode(', ',array_filter($value,'is_scalar'));}
 	return is_scalar($value) ? (string)$value : '';
 }
+}
 
+if(!function_exists('cg_profile_field_length_attributes')){
 function cg_profile_field_length_attributes($field){
 	$attributes = '';
 	foreach(array('Min_Char'=>'min','Max_Char'=>'max') as $column=>$kind){
@@ -95,7 +112,9 @@ function cg_profile_field_length_attributes($field){
 	}
 	return $attributes;
 }
+}
 
+if(!function_exists('cg_member_profile_validate_fields')){
 function cg_member_profile_validate_fields($posted,$fields){
 	if(!is_array($posted)){return new WP_Error('fields','Please choose a valid option.');}
 	$values = array();
@@ -141,15 +160,19 @@ function cg_member_profile_validate_fields($posted,$fields){
 	if($errors){return new WP_Error($hasRequiredError ? 'required' : 'fields',$hasRequiredError ? 'Please complete the required fields.' : reset($errors),array('fieldErrors'=>$errors));}
 	return $values;
 }
+}
 
 // Called only after the registry schema/type/value checks have succeeded.
+if(!function_exists('cg_registry_field_storage_content')){
 function cg_registry_field_storage_content($field){
     $value = isset($field['Field_Content']) ? $field['Field_Content'] : '';
     if($field['Field_Type']==='user-url-field'){return trim($value);}
     if($field['Field_Type']==='user-check-field'){return wp_json_encode(array('cg_choices'=>$value));}
     return cg1l_sanitize_method($value);
 }
+}
 
+if(!function_exists('cg_profile_registry_check_value')){
 function cg_profile_registry_check_value($value){
 	$decoded = is_string($value) ? json_decode($value,true) : null;
 	if(is_array($decoded) && array_keys($decoded)===array('cg_choices') && is_array($decoded['cg_choices'])){
@@ -157,4 +180,5 @@ function cg_profile_registry_check_value($value){
 		return $decoded['cg_choices'];
 	}
 	return $value;
+}
 }

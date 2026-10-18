@@ -2,6 +2,7 @@
 if(!defined('ABSPATH')){exit;}
 
 // Evaluate the source gallery, never the gallery containing the member toolbar.
+if(!function_exists('cg_community_gallery')){
 function cg_community_gallery($gid,$shortcode=''){
 	global $wpdb;
 	static $cache=array();
@@ -33,6 +34,8 @@ function cg_community_gallery($gid,$shortcode=''){
 	}
 	return false;
 }
+}
+if(!function_exists('cg_community_visible_entry')){
 function cg_community_visible_entry($entry,$shortcode=''){
 	if((int)$entry->Active!==1 || !empty($entry->IsProfileImage) || empty($entry->WpUserId) || !cg_community_user($entry->WpUserId)){return false;}
 	$gallery=cg_community_gallery($entry->GalleryID,$shortcode);
@@ -41,11 +44,15 @@ function cg_community_visible_entry($entry,$shortcode=''){
 	$page=!empty($entry->$field) ? get_post($entry->$field) : null;
 	return $page && $page->post_status==='publish' && !post_password_required($page) ? $gallery : false;
 }
+}
 // No-voting profile origins must not fall through to the normal voting variant.
 // Normal browsing retains its existing no-voting-only fallback.
+if(!function_exists('cg_community_feed_shortcode')){
 function cg_community_feed_shortcode($request){
 	return isset($request['shortcode']) && $request['shortcode']==='cg_gallery_no_voting' ? 'cg_gallery_no_voting' : '';
 }
+}
+if(!function_exists('cg_community_feed_where')){
 function cg_community_feed_where($viewer,$request){
 	global $wpdb;$blocks=cg_community_table('blocks');
 	$target=!empty($request['target']) ? absint($request['target']) : $viewer;
@@ -59,7 +66,9 @@ function cg_community_feed_where($viewer,$request){
 	if(!empty($request['gallery'])){$where.=$wpdb->prepare(' AND e.GalleryID=%d',$request['gallery']);}
 	return $where;
 }
+}
 // Use the same configured captions as the public gallery, including category fields.
+if(!function_exists('cg_community_entry_titles')){
 function cg_community_entry_titles($entry,$gallery){
 	static $languageNames=null;
 	if($languageNames===null){
@@ -83,6 +92,8 @@ function cg_community_entry_titles($entry,$gallery){
 	}
 	return $titles;
 }
+}
+if(!function_exists('cg_community_feed_item')){
 function cg_community_feed_item($entry,$gallery){
 	$field=$gallery['shortcode']==='cg_gallery' ? 'WpPage' : 'WpPageNoVoting';
 	$fileType=strtolower((string)$entry->ImgType);
@@ -109,6 +120,8 @@ function cg_community_feed_item($entry,$gallery){
 	$dateFormat=!empty($gallery['options']['visual']['ShowDateFormat']) ? $gallery['options']['visual']['ShowDateFormat'] : 'modern';
 	return array('id'=>(int)$entry->id,'person'=>cg_community_person($entry->WpUserId),'time'=>(int)$entry->Timestamp,'galleryId'=>(int)$entry->GalleryID,'gallery'=>$gallery['name'],'url'=>get_permalink($entry->$field),'image'=>$image,'fileType'=>$fileType,'videoUrl'=>$videoUrl, 'title'=>$titles ? $titles[0] : '', 'titles'=>$titles, 'dateFormat'=>$dateFormat);
 }
+}
+if(!function_exists('cg_community_feed')){
 function cg_community_feed($viewer,$request,$galleries=false,$where=null){
 	global $wpdb;$table=$wpdb->prefix.'contest_gal1ery';
 	if($where===null){$where=cg_community_feed_where($viewer,$request);}if(is_wp_error($where)){return $where;}
@@ -131,7 +144,9 @@ function cg_community_feed($viewer,$request,$galleries=false,$where=null){
 	}
 	return array('items'=>$items,'cursor'=>$hasMore ? $cursor : '','more'=>$hasMore);
 }
+}
 // Use public card captions, including a visible fallback, instead of the internal gallery name.
+if(!function_exists('cg_community_gallery_titles')){
 function cg_community_gallery_titles($options,$gid){
 	$titles=array();
 	foreach(array('name'=>'MainTitleGalleriesView','subtitle'=>'SubTitleGalleriesView','thirdTitle'=>'ThirdTitleGalleriesView') as $key=>$field){
@@ -141,6 +156,8 @@ function cg_community_gallery_titles($options,$gid){
 	if($titles['name']===''){$titles['name']=cg_member_t('Gallery').' '.absint($gid);}
 	return $titles;
 }
+}
+if(!function_exists('cg_community_gallery_list')){
 function cg_community_gallery_list($viewer,$request,$where){
 	global $wpdb;$table=$wpdb->prefix.'contest_gal1ery';$items=array();$cursor=absint($request['cursor']);$scanned=0;$more=false;
 	$member=cg_community_person(!empty($request['target']) ? $request['target'] : $viewer);
@@ -174,4 +191,5 @@ function cg_community_gallery_list($viewer,$request,$where){
 		$more=true;
 	}
 	return array('items'=>$items,'cursor'=>$more ? (string)$cursor : '','more'=>$more);
+}
 }

@@ -767,6 +767,7 @@ if (!function_exists('cg1l_validate_order_upload_context')) {
 }
 
 // Shared by job preparation and the full upload validator. No credits are consumed here.
+if(!function_exists('cg1l_get_order_upload_authorization')){
 function cg1l_get_order_upload_authorization($galleryId,$orderItemId,$providedHash){
     global $wpdb;
     $item = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}contest_gal1ery_ecommerce_orders_items WHERE id=%d LIMIT 1",absint($orderItemId)));
@@ -777,6 +778,7 @@ function cg1l_get_order_upload_authorization($galleryId,$orderItemId,$providedHa
     }
     $cookie = !empty($_COOKIE['cg_order']) && is_string($_COOKIE['cg_order']) ? sanitize_text_field(wp_unslash($_COOKIE['cg_order'])) : '';
     return cg1l_validate_order_upload_context($galleryId,$item,$order,$fallback,$providedHash,$cookie,$order ? cg_current_user_can_access_ecommerce_order($order) : false);
+}
 }
 
 if (!function_exists('cg1l_get_order_upload_lock_name')) {
@@ -830,11 +832,18 @@ if (!function_exists('cg1l_release_order_upload_lock')) {
 }
 
 if (!function_exists('cg1l_reject_frontend_upload')) {
-    function cg1l_reject_frontend_upload($galleryIdForJs, $message)
+    function cg1l_reject_frontend_upload($galleryIdForJs, $message, $validation = array())
     {
         $galleryIdForJs = sanitize_text_field((string)$galleryIdForJs);
         $message = sanitize_text_field((string)$message);
+        if(!empty($validation['categoryUploadRejected'])){
+            $validation['message'] = $message;
+            $GLOBALS['cgUploadCategoryRejection'] = $validation;
+        }
         if(function_exists('cg_upload_job_phase') && (cg_upload_job_phase('receive') || cg_upload_job_phase('finalize'))){throw new Exception($message);}
+        if(!empty($validation['categoryUploadRejected'])){
+            echo '<script type="application/json" data-cg-category-upload-rejected="true">'.wp_json_encode($validation,JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT).'</script>';
+        }
         ?>
         <script data-cg-processing="true" data-cg-upload-authorization-failed="true">
             var gid = <?php echo wp_json_encode($galleryIdForJs); ?>;

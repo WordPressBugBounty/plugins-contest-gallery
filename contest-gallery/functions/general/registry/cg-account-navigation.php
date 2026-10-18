@@ -2,6 +2,7 @@
 if(!defined('ABSPATH')){exit;}
 
 // Version zero deliberately retains the old, action-specific role rules.
+if(!function_exists('cg_account_navigation_settings')){
 function cg_account_navigation_settings($row = null){
 	if($row === null){
 		global $wpdb, $cg_account_navigation_settings_cache;
@@ -26,19 +27,25 @@ function cg_account_navigation_settings($row = null){
 	$settings['BackToGalleryMode'] = $version && isset($row['BackToGalleryMode']) ? intval($row['BackToGalleryMode']) : ($settings['BackToGalleryLink'] !== '' ? 2 : 0);
 	return $settings;
 }
+}
 
+if(!function_exists('cg_account_navigation_pro_available')){
 function cg_account_navigation_pro_available(){
 	return cg_get_version()==='contest-gallery-pro' && function_exists('contest_gal1ery_key_check') && contest_gal1ery_key_check();
 }
+}
 
+if(!function_exists('cg_account_navigation_user_allowed')){
 function cg_account_navigation_user_allowed($user,$settings){
 	if(!$user || empty($user->ID)){return false;}
 	$roles = (array)$user->roles;
 	if(!$roles){return !empty($settings['AccountNavigationNoRole']);}
 	return (bool)array_intersect($roles,array_keys($settings['AccountNavigationRoles']));
 }
+}
 
 // Only a real first installation opts into automatic navigation. Repairs and upgrades never do.
+if(!function_exists('cg_account_navigation_install_defaults')){
 function cg_account_navigation_install_defaults($table){
 	global $wpdb, $cg_account_navigation_settings_cache;
 	if($wpdb->get_var("SELECT id FROM $table WHERE GeneralID = 1 LIMIT 1")){return;}
@@ -53,8 +60,10 @@ function cg_account_navigation_install_defaults($table){
 	),array('GeneralID'=>1));
 	unset($cg_account_navigation_settings_cache[$wpdb->prefix]);
 }
+}
 
 // Called inside the existing nonce-checked options save. Missing/disabled groups preserve data.
+if(!function_exists('cg_account_navigation_prepare_save')){
 function cg_account_navigation_prepare_save($submitted,$row){
 	$current = cg_account_navigation_settings($row);
 	$preserve = array('LogoutLink'=>isset($row['LogoutLink']) ? $row['LogoutLink'] : '', 'BackToGalleryLink'=>isset($row['BackToGalleryLink']) ? $row['BackToGalleryLink'] : '');
@@ -87,8 +96,10 @@ function cg_account_navigation_prepare_save($submitted,$row){
 	}
 	return $next;
 }
+}
 
 // Return context is per link/tab, never a shared user-meta or cookie "last gallery".
+if(!function_exists('cg_account_navigation_frontend_url')){
 function cg_account_navigation_frontend_url($url){
 	if(!is_string($url) || strlen($url)>4096){return '';}
 	$url = esc_url_raw($url,array('http','https'));
@@ -101,7 +112,9 @@ function cg_account_navigation_frontend_url($url){
 	if(preg_match('~(?:^|/)(?:wp-admin|wp-login\.php)(?:/|$)~i',$path)){return '';}
 	return remove_query_arg(array('cg_account_return','cg_account_logout','cgLogoutLink','_wpnonce','cgkey'),$url);
 }
+}
 
+if(!function_exists('cg_account_navigation_return_url')){
 function cg_account_navigation_return_url(){
 	foreach(array($_POST,$_GET) as $request){
 		if(isset($request['cg_account_return']) && is_string($request['cg_account_return'])){
@@ -115,7 +128,9 @@ function cg_account_navigation_return_url(){
 	}
 	return '';
 }
+}
 
+if(!function_exists('cg_account_navigation_logout_url')){
 function cg_account_navigation_logout_url($redirect = ''){
 	$url = wp_logout_url($redirect);
 	$settings = cg_account_navigation_settings();
@@ -124,7 +139,9 @@ function cg_account_navigation_logout_url($redirect = ''){
 	$return = cg_account_navigation_return_url();
 	return $return ? add_query_arg('cg_account_return',rawurlencode($return),$url) : $url;
 }
+}
 
+if(!function_exists('cg_account_navigation_logout_target')){
 function cg_account_navigation_logout_target($user,$return,$isCgLogout,$settings = null){
 	if($settings === null){$settings = cg_account_navigation_settings();}
 	if(!$settings['AccountNavigationVersion'] || !cg_account_navigation_pro_available() || !cg_account_navigation_user_allowed($user,$settings) || (!$isCgLogout && !$settings['LogoutApplyToWpLinks'])){return '';}
@@ -135,13 +152,17 @@ function cg_account_navigation_logout_target($user,$return,$isCgLogout,$settings
 	}
 	return '';
 }
+}
 
+if(!function_exists('cg_account_navigation_logout_redirect')){
 function cg_account_navigation_logout_redirect($redirect,$requested,$user){
 	$target = cg_account_navigation_logout_target($user,cg_account_navigation_return_url(),!empty($_GET['cg_account_logout']));
 	return $target !== '' ? $target : $redirect;
 }
+}
 add_filter('logout_redirect','cg_account_navigation_logout_redirect',10,3);
 
+if(!function_exists('cg_account_navigation_back_url')){
 function cg_account_navigation_back_url($user){
 	$settings = cg_account_navigation_settings();
 	if(!$settings['AccountNavigationVersion']){return $settings['BackToGalleryLink'];}
@@ -153,15 +174,19 @@ function cg_account_navigation_back_url($user){
 	}
 	return '';
 }
+}
 
+if(!function_exists('cg_account_navigation_profile_url')){
 function cg_account_navigation_profile_url($url,$userId){
 	$settings = cg_account_navigation_settings();
 	if(!$settings['AccountNavigationVersion'] || !cg_account_navigation_pro_available() || intval($userId)!==get_current_user_id() || !cg_account_navigation_user_allowed(wp_get_current_user(),$settings)){return $url;}
 	$return = cg_account_navigation_return_url();
 	return $return ? add_query_arg('cg_account_return',rawurlencode($return),$url) : $url;
 }
+}
 add_filter('edit_profile_url','cg_account_navigation_profile_url',10,2);
 
+if(!function_exists('cg_account_navigation_profile_field')){
 function cg_account_navigation_profile_field($user){
 	global $pagenow;
 	if($pagenow !== 'profile.php' || intval($user->ID)!==get_current_user_id()){return;}
@@ -170,8 +195,10 @@ function cg_account_navigation_profile_field($user){
 	$return = cg_account_navigation_return_url();
 	if($return){echo '<input type="hidden" name="cg_account_return" value="'.esc_attr($return).'">';}
 }
+}
 add_action('personal_options','cg_account_navigation_profile_field');
 
+if(!function_exists('cg_account_navigation_profile_redirect')){
 function cg_account_navigation_profile_redirect($url){
 	global $pagenow;
 	if($pagenow==='profile.php' && wp_parse_url($url,PHP_URL_PATH)===wp_parse_url(self_admin_url('profile.php'),PHP_URL_PATH)){
@@ -179,8 +206,10 @@ function cg_account_navigation_profile_redirect($url){
 	}
 	return $url;
 }
+}
 add_filter('wp_redirect','cg_account_navigation_profile_redirect');
 
+if(!function_exists('cg_account_navigation_admin_bar')){
 function cg_account_navigation_admin_bar(){
 	global $pagenow, $wp_admin_bar;
 	$settings = cg_account_navigation_settings(); $user = wp_get_current_user();
@@ -195,8 +224,10 @@ function cg_account_navigation_admin_bar(){
 	$parent = $wp_admin_bar->get_node('cg_account') ? 'cg_account' : ($isLegacyAccountMenu ? 'contest_gallery_user_bar' : 'user-actions');
 	$wp_admin_bar->add_node(array('id'=>$isLegacyAccountMenu ? 'cg_account_back_to_gallery' : 'contest_gallery_user_bar','parent'=>$parent,'title'=>$language_BackToGallery,'href'=>esc_url($back)));
 }
+}
 add_action('wp_before_admin_bar_render','cg_account_navigation_admin_bar',20);
 
+if(!function_exists('cg_account_navigation_enqueue')){
 function cg_account_navigation_enqueue(){
 	global $pagenow;
 	if(!is_user_logged_in() || !cg_account_navigation_pro_available()){return;}
@@ -204,6 +235,7 @@ function cg_account_navigation_enqueue(){
 	if(!$settings['AccountNavigationVersion'] || !cg_account_navigation_user_allowed(wp_get_current_user(),$settings) || (is_admin() && $pagenow!=='profile.php')){return;}
 	wp_enqueue_script('cg-account-navigation',plugins_url('../../../v10/v10-js/frontend/account-navigation.js',__FILE__),array(),cg_get_version_for_scripts(),true);
 	wp_localize_script('cg-account-navigation','cgAccountNavigation',array('profileUrl'=>self_admin_url('profile.php'),'frontend'=>!is_admin(),'returnUrl'=>cg_account_navigation_return_url(),'allLogoutLinks'=>(bool)$settings['LogoutApplyToWpLinks']));
+}
 }
 add_action('wp_enqueue_scripts','cg_account_navigation_enqueue');
 add_action('admin_enqueue_scripts','cg_account_navigation_enqueue');

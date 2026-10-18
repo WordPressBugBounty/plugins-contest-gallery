@@ -1,6 +1,7 @@
 <?php
 
 //include('get-data-management.php');
+include_once(__DIR__.'/../../../../../functions/backend/render/cg-registration-details.php');
 
 global $wpdb;
 
@@ -15,10 +16,16 @@ $wpUsers = $wpdb->base_prefix . "users";
 $is_frontend = true;
 include(__DIR__ . "/../../../../../check-language-general.php");
 
-$wpUserId = absint($_GET['wp_user_id']);
+$wpUserId = isset($_GET['wp_user_id']) && is_scalar($_GET['wp_user_id']) ? absint($_GET['wp_user_id']) : 0;
 
 if(!current_user_can('manage_options')){
     echo "Logged in user have to be able to manage_options to edit user data.";die;
+}
+
+$wpUserEntry = $wpUserId ? get_userdata($wpUserId) : false;
+if(!$wpUserEntry || (is_multisite() && !is_user_member_of_blog($wpUserId))){
+    echo '<div class="notice notice-error"><p>This user is no longer available.</p></div>';
+    return;
 }
 
 if(!empty($_POST['cg_input_image_upload_file_to_delete_wp_id'])){// then image must be removed!
@@ -61,8 +68,6 @@ if(!empty($_GET['wp_user_meta_entries']) OR !empty($_POST['wp_user_meta_entries'
 print_r($userEntries);
 echo "</pre>";*/
 
-$wpUserEntry = $wpdb->get_row($wpdb->prepare( "SELECT * FROM $wpUsers WHERE ID = %d",[$wpUserId]));
-
 $wpUserLogin = $wpUserEntry->user_login;
 $wpUserEmail = $wpUserEntry->user_email;
 
@@ -76,7 +81,12 @@ else {$GalleryNameOrId = "id $GalleryID";}
 
 echo "<div style='width:100%;background-color:#fff;padding-bottom:15px;box-shadow: 2px 4px 12px rgba(0,0,0,.08);border-radius: 8px;' id='cg-search-results-container'>";
 echo "<div  id='cgManagementShowUsers' style='clear:both;padding: 25px 20px 10px;'>";
-echo "<div id='cgBackToUsersManagementList'>Back to users list</div>";
+echo '<section id="cgRegistrationDetails"><button type="button" class="button" id="cgBackToUsersManagementList">Back to users list</button>';
+echo '<header class="cg-registration-details-header"><div><h1>Registration details</h1><dl class="cg-registration-details-identity"><div><dt>Username</dt><dd>'.esc_html($wpUserLogin).'</dd></div><div><dt>Email</dt><dd>'.esc_html($wpUserEmail).'</dd></div></dl></div><a class="button" href="'.esc_url(get_edit_user_link($wpUserId)).'" target="_blank" rel="noopener">Edit WordPress Profile</a></header>';
+cg_registration_details_agreements($wpUserId);
+echo '<section class="cg-registration-details-card" aria-labelledby="cgRegistrationFormDataTitle"><h2 id="cgRegistrationFormDataTitle">Registration form data</h2>';
+$cgHasRegistrationFormData = false;
+$cgCanSaveRegistrationFormData = false;
 echo "<form  id='cgRegUserAdminForm' data-cg-gid='$GalleryID' method='POST' action='?page=".cg_get_version()."/index.php&users_management=true&option_id=$GalleryID&wp_user_id=$wpUserId&edit_registration_entries=true'  data-cg-submit-message='Changes saved'>";
 echo "<input type='hidden' name='get-data-management' value='true' >";
 
@@ -84,21 +94,13 @@ if(!empty($_GET['wp_user_meta_entries']) OR !empty($_POST['wp_user_meta_entries'
     echo "<input type='hidden' name='wp_user_meta_entries' value='true' >";
 }
 
-echo "<div style='margin-bottom:10px;' id='cg-user-$wpUserId'>";
-echo "<div style='float:left;display:inline;width:50%;border-bottom: 1px dotted #DFDFDF;'><strong>Username</strong></div>";
-echo "<div style='float:right;display:inline;width:50%;text-align:right;border-bottom: 1px dotted #DFDFDF;'><a href=".get_edit_user_link($wpUserId)."  target='_blank' ><button type=\"button\" class='cg-show-fields'>Edit WordPress Profile</button></a></div>";
-echo "<div>$wpUserLogin</div>";
-echo "</div>";
-
-echo "<div style='margin-bottom:10px;'>";
-echo "<div style='float:left;display:block;width:100%;border-bottom: 1px dotted #DFDFDF;'><strong>User e-mail</strong></div>";
-echo "<div>$wpUserEmail</div>";
-echo "</div>";
-
 $selectProfileImage = $wpdb->get_row("SELECT * FROM $tablenameCreateUserForm WHERE GeneralID = '1' && 
                 (Field_Type = 'profile-image')");
+$WpUpload = $selectProfileImage ? $wpdb->get_var($wpdb->prepare("SELECT WpUpload FROM $tablename WHERE WpUserId = %d AND IsProfileImage = 1",$wpUserId)) : 0;
 
-if(!empty($selectProfileImage)){
+if(!empty($selectProfileImage) && !empty($WpUpload)){
+    $cgHasRegistrationFormData = true;
+    $cgCanSaveRegistrationFormData = true;
     echo "<div style='margin-bottom:10px;'>";
 
         echo "<div style='display:inline-block;'>";
@@ -106,8 +108,6 @@ if(!empty($selectProfileImage)){
         echo "</div>";
 
         echo "<div>";
-
-    $WpUpload = $wpdb->get_var($wpdb->prepare( "SELECT WpUpload FROM $tablename WHERE WpUserId = %d AND IsProfileImage = 1",[$wpUserId]));
 
         if(!empty($WpUpload)){
             echo "<input type='hidden' name='cg_input_image_upload_file_to_delete_wp_id' value='$WpUpload' id='cg_input_image_upload_file_to_delete_wp_id' disabled />";
@@ -133,6 +133,8 @@ if(!empty($selectProfileImage)){
 foreach($userEntriesNew as $entry){
 
     if(!empty($selectUserFormSorted[$entry->meta_key])){
+        $cgHasRegistrationFormData = true;
+        $cgCanSaveRegistrationFormData = true;
 
         $fieldTitle = contest_gal1ery_convert_for_html_output_without_nl2br($selectUserFormSorted[$entry->meta_key]->Field_Name);
         $fieldName = 'cg_custom_field_id_'.$selectUserFormSorted[$entry->meta_key]->id;
@@ -178,7 +180,10 @@ foreach($userEntries as $entry){
     $formFieldId = $entry->f_input_id;
     $formFieldIdGalleryID = $entry->GalleryID;
     $formFieldType = $entry->Field_Type;
-    $formFieldRow = $wpdb->get_row("SELECT * FROM $tablename_contest_gal1ery_create_user_form WHERE id = '$formFieldId'");
+    $formFieldRow = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_contest_gal1ery_create_user_form WHERE id = %d",$formFieldId));
+    if(!$formFieldRow){continue;}
+    $cgHasRegistrationFormData = true;
+    if(in_array($formFieldType,array('user-text-field','user-select-field','user-comment-field'),true)){$cgCanSaveRegistrationFormData = true;}
     $formFieldName = $formFieldRow->Field_Name;
     $formFieldRowContent = $formFieldRow->Field_Content;
     $formFieldChecked = $entry->Checked;
@@ -241,12 +246,18 @@ foreach($userEntries as $entry){
 }
 
 
-echo "<div style='height:30px;' id='cg_go_to_save_button'>";
-echo "<button id='cgRegUserAdminFormSubmit' type='submit' value='Save data' class='cg_backend_button_gallery_action' style='float:right;text-align:center;width:80px;' data-cg-gid='$GalleryID'>Save data</button>";
-echo "</div>";
+if(!$cgHasRegistrationFormData){
+    echo '<p class="cg-registration-details-empty">No registration form data recorded for this user.</p>';
+}
+if($cgCanSaveRegistrationFormData){
+    echo "<div style='height:30px;' id='cg_go_to_save_button'>";
+    echo "<button id='cgRegUserAdminFormSubmit' type='submit' value='Save data' class='cg_backend_button_gallery_action' style='float:right;text-align:center;width:80px;' data-cg-gid='$GalleryID'>Save data</button>";
+    echo "</div>";
+}
 
 
 echo "</form>";
+echo '</section></section>';
 
 
 

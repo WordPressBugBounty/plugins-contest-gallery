@@ -632,7 +632,7 @@ if($isAjaxCall){
 
 		if(count($MultipleFiles)){
 			// to be done here after unset($MultipleFiles[$order]['post_content']); is done
-			$MultipleFilesString = json_encode($MultipleFiles);
+			$MultipleFilesString = json_encode($MultipleFiles, JSON_HEX_AMP);
 		}
 
 		echo "<div class='cg_drag_area' ><img class='cg_drag_area_icon' src='$cgDragIcon'></div>";
@@ -1037,8 +1037,8 @@ if($isAjaxCall){
 
 		$exifDataStringForAttribute = esc_attr($exifDataStringForInput);
 
-		echo "<div class='cg_backend_info_container $cg_ecom_not_ecom' data-cg-real-id='$id' data-cg-post_name='$post_name'  data-cg-post_title='$post_title' 
-             data-cg-post_content='$post_description'  data-cg-post_excerpt='$post_excerpt'   data-cg-post_mime_type='$post_mime_type'  
+		echo "<div class='cg_backend_info_container $cg_ecom_not_ecom' data-cg-real-id='$id' data-cg-post_name='".esc_attr($post_name)."'  data-cg-post_title='".esc_attr($post_title)."'
+             data-cg-post_content='".esc_attr($post_description)."'  data-cg-post_excerpt='".esc_attr($post_excerpt)."'   data-cg-post_mime_type='".esc_attr($post_mime_type)."'
              data-cg-original-source='$image_url' data-cg-type-short='$ImgType'  data-cg-type='$post_mime_type_fist_part'
              data-cg-url-image-large='$imgSrcLargeRealIdSrc'  data-cg-url-image-medium='$imgSrcMediumRealIdSrc'  
              data-cg-file-height='$fileHeight' data-cg-file-width='$fileWidth'  data-cg-exif='$exifDataStringForAttribute'  data-cg-pdf-preview='".$value->PdfPreview."' data-cg-pdf-original='".$image_url."'   data-cg-pdf-preview-image='$PdfPreviewImage' data-cg-pdf-preview-image-large='$PdfPreviewImageLarge' data-cg-wp-upload='$WpUpload'
@@ -1073,7 +1073,7 @@ if($isAjaxCall){
 			echo "<div class='cg_hover_effect cg_add_multiple_files_to_post cg_hide_override ".(($ImgTypeToShow=='con' || (cg_get_version()=='contest-gallery' && count($MultipleFiles)>=10) || (cg_get_version()=='contest-gallery-pro' && count($MultipleFiles)>=10)) ? 'cg_hide' : '')."' title='Add additional files to this entry'></div>";
 			echo "<div data-cg-rThumb='$rThumb' class='cg_hover_effect cg_rotate_image_backend ".(((cg_is_is_image($ImgTypeToShow))) ? '' : 'cg_hide')."' title='Rotate image'></div>";
 		}
-		echo "<input type='hidden' class='cg_disabled_send cg_multiple_files_for_post cg_input_vars_count' name='cg_multiple_files_for_post[$id]' value='$MultipleFilesString' >";
+		echo "<input type='hidden' class='cg_disabled_send cg_multiple_files_for_post cg_input_vars_count' name='cg_multiple_files_for_post[$id]' value='".esc_attr($MultipleFilesString)."' >";
 		echo "<input type='hidden' class='cg_disabled_send cg_input_vars_count cg_rThumb' name='cg_rThumb[$id]' value='$rThumb' >";
 
 		$cgEntryActionButtons = '';
@@ -1132,9 +1132,9 @@ if($isAjaxCall){
 
 			echo "<input type='hidden' class='IsImageType' value='".(cg_is_is_image($ImgType) ? '1' : '0')."'>";
 
-			echo "<input type='hidden' class='cg_wp_post_title' value='$post_title_to_show'>";
-			echo "<input type='hidden' class='cg_wp_post_name' value='$post_name_to_show'>";
-			echo "<input type='hidden' class='cg_wp_post_content' value='$post_description_to_show'>";
+			echo "<input type='hidden' class='cg_wp_post_title' value='".esc_attr($post_title_to_show)."'>";
+			echo "<input type='hidden' class='cg_wp_post_name' value='".esc_attr($post_name_to_show)."'>";
+			echo "<input type='hidden' class='cg_wp_post_content' value='".esc_attr($post_description_to_show)."'>";
 			if($WpUserId>=1 AND !empty($allWpUsersByIdArray[$WpUserId])){
 				echo "<input type='hidden' class='cg_wp_user_login' value='".$allWpUsersByIdArray[$WpUserId]['user_login']."'>";
 				echo "<input type='hidden' class='cg_wp_user_nicename' value='".$allWpUsersByIdArray[$WpUserId]['user_nicename']."'>";
@@ -1253,18 +1253,18 @@ if($isAjaxCall){
 			echo "</div>";
 		}elseif(cg_is_alternative_file_type_file($ImgTypeToShow)){
 			echo '<a href="'.$sourceOriginalImgShow.'" target="_blank" title="Show file" alt="Show file">';
-			echo '<div class="cg_backend_image_full_size_target_'.$ImgTypeToShow.' cg_backend_image_full_size_target_alternative_file_type" data-cg-file-type="'.$ImgTypeToShow.'"><span class="cg_post_title">'.$post_title_to_show.'</span></div>';
+			echo '<div class="cg_backend_image_full_size_target_'.$ImgTypeToShow.' cg_backend_image_full_size_target_alternative_file_type" data-cg-file-type="'.$ImgTypeToShow.'"><span class="cg_post_title">'.esc_html($post_title_to_show).'</span></div>';
 			echo '</a>';
 		}elseif(cg_is_alternative_file_type_video($ImgTypeToShow)){
 			if($isFirstFileIsEcommerceDownload){
-				echo '<div class="cg_backend_image_full_size_target_'.$ImgTypeToShow.'  cg_backend_image_full_size_target_child_video " data-cg-file-type="'.$ImgTypeToShow.'"><span class="cg_post_title">'.$post_title_to_show.'</span></div>';
+				echo '<div class="cg_backend_image_full_size_target_'.$ImgTypeToShow.'  cg_backend_image_full_size_target_child_video " data-cg-file-type="'.$ImgTypeToShow.'"><span class="cg_post_title">'.esc_html($post_title_to_show).'</span></div>';
 			}else{
 				echo '<a href="'.$sourceOriginalImgShow.'" target="_blank" title="Show file" alt="Show file">';
 				echo '<video style="width:100%;" height="220"  >';
 				echo '<source src="'.$sourceOriginalImgShow.'?time='.time().'" type="video/mp4">';
 				echo '<source src="'.$sourceOriginalImgShow.'?time='.time().'" type="video/'.$ImgTypeToShow.'">';
 				echo '</video>';
-				echo '</a><span class="cg_post_title cg_video">'.$post_title_to_show.'</span>';
+				echo '</a><span class="cg_post_title cg_video">'.esc_html($post_title_to_show).'</span>';
 			}
 		}elseif($ImgTypeToShow=='con'){
 			echo '<div class="cg_backend_image cg_backend_image_con_entry"><span>Upload form entry<br>Entry ID: '.$id.'</span></div>';
@@ -1888,7 +1888,7 @@ if($isAjaxCall){
 						echo  cg1l_sanitize_method($formvalue).":<br/>";
 						echo "<input type='text' value='$getEntries1' name='content[$id][$formFieldId][short-text]'  maxlength='1000' class='cg_image_title cg_short_text cg_input_vars_count cg_disabled_send cg_input_by_search_sort_$formFieldId'>";
 						echo "<img src='$titleIcon' title='Insert original WordPress title' alt='Insert original WordPress file title' class='$hideWpFileInfoToInsert cg_title_icon' />";
-						echo "<input type='hidden' class='post_title' value='$post_title' >";
+						echo "<input type='hidden' class='post_title' value='".esc_attr($post_title)."' >";
 
 						echo "</div>";
 
@@ -1916,7 +1916,7 @@ if($isAjaxCall){
 						echo  cg1l_sanitize_method($formvalue).":<br/>";
 						echo "<input type='text' value='$getEntries1' name='content[$id][$formFieldId][short-text]'  maxlength='1000' class='cg_image_title cg_short_text cg_input_vars_count cg_disabled_send cg_input_by_search_sort_$formFieldId'>";
 						echo "<img src='$titleIcon' title='Insert original WordPress title' alt='Insert original WordPress file title' class='$hideWpFileInfoToInsert cg_title_icon' />";
-						echo "<input type='hidden' class='post_title' value='$post_title' >";
+						echo "<input type='hidden' class='post_title' value='".esc_attr($post_title)."' >";
 
 						echo "</div>";
 
@@ -1944,7 +1944,7 @@ if($isAjaxCall){
 						echo  cg1l_sanitize_method($formvalue).":<br/>";
 						echo "<input type='text' value='$getEntries1' name='content[$id][$formFieldId][short-text]'  maxlength='1000' class='cg_image_title cg_short_text cg_input_vars_count cg_disabled_send cg_input_by_search_sort_$formFieldId'>";
 						echo "<img src='$titleIcon' title='Insert original WordPress title' alt='Insert original WordPress file title' class='$hideWpFileInfoToInsert cg_title_icon' />";
-						echo "<input type='hidden' class='post_title' value='$post_title' >";
+						echo "<input type='hidden' class='post_title' value='".esc_attr($post_title)."' >";
 
 						echo "</div>";
 
@@ -2058,7 +2058,7 @@ if($isAjaxCall){
 						echo cg1l_sanitize_method($formvalue).":<br/>";
 						echo "<input type='text' value='$getEntries1' name='content[$id][$formFieldId][short-text]' maxlength='1000' class='cg_image_title cg_short_text cg_input_vars_count cg_disabled_send cg_input_by_search_sort_$formFieldId'>";
 						echo "<img src='$titleIcon' title='Insert original WordPress file title if exists' alt='Insert original WordPress file title if exists' class='$hideWpFileInfoToInsert cg_title_icon' />";
-						echo "<input type='hidden' class='post_title' value='$post_title' >";
+						echo "<input type='hidden' class='post_title' value='".esc_attr($post_title)."' >";
 
 						if($Use_as_URL_id==$formFieldId AND $ForwardToURL==1){
 							echo "&nbsp;&nbsp;&nbsp;<strong>URL</strong>";
@@ -2220,8 +2220,8 @@ if($isAjaxCall){
 						echo "<div class='cg_comment_icons_div'>";
 						echo "<img src='$descriptionIcon' title='Insert original WordPress file description if exists' alt='Insert original WordPress description' class='$hideWpFileInfoToInsert cg_description_icon' />";
 						echo "<img src='$excerptIcon' title='Insert original WordPress file excerpt if exists' alt='Insert original WordPress excerpt if exists' class='$hideWpFileInfoToInsert cg_excerpt_icon' />";
-						echo "<input type='hidden' class='post_description' value='$post_description' >";
-						echo "<input type='hidden' class='post_excerpt' value='$post_excerpt' >";
+						echo "<input type='hidden' class='post_description' value='".esc_attr($post_description)."' >";
+						echo "<input type='hidden' class='post_excerpt' value='".esc_attr($post_excerpt)."' >";
 						echo "</div>";
 
 						echo "</div>";
@@ -2237,7 +2237,7 @@ if($isAjaxCall){
 
 			if(!empty($getEntriesMail) && $Informed!=1){// if informed then cg_email has not to be send!
 				echo "<input type='hidden' value='$getEntriesMail' name='cg_email[$id]'  class='email-clone cg_input_vars_count' >";
-				echo "<input type='hidden' value='$NamePic' name='cg_image_name[$id]'  class='cg_input_vars_count'  >";
+				echo "<input type='hidden' value='".esc_attr($NamePic)."' name='cg_image_name[$id]'  class='cg_input_vars_count'  >";
 			}
 
 			if($optionsSQL->FbLike==1 || $FbLikeOnlyShare == 1){
@@ -2269,7 +2269,7 @@ if($isAjaxCall){
 					echo "Facebook share button title:<br/>";
 					echo "<input type='text' value='".esc_attr($valueTitle)."' name='fbcontent[$id][title]'  maxlength='1000' class='cg_image_title cg_input_vars_count'>";
 					echo "<img src='$titleIcon' title='Insert original WordPress file title if exists' alt='Insert original WordPress file title if exists' class='$hideWpFileInfoToInsert cg_title_icon' />";
-					echo "<input type='hidden' class='post_title' value='$post_title' >";
+					echo "<input type='hidden' class='post_title' value='".esc_attr($post_title)."' >";
 					echo "</div>";
 
 					echo "<div class='cg_image_description_container cg_facebook_description' >";
@@ -2286,8 +2286,8 @@ if($isAjaxCall){
 					echo "<div class='cg_comment_icons_div'>";
 					echo "<img src='$descriptionIcon' title='Insert original WordPress description if exists' alt='Insert original WordPress description' class='$hideWpFileInfoToInsert cg_description_icon' />";
 					echo "<img src='$excerptIcon' title='Insert original WordPress excerpt if exists' alt='Insert original WordPress excerpt if exists' class='$hideWpFileInfoToInsert cg_excerpt_icon' />";
-					echo "<input type='hidden' class='post_description' value='$post_description' >";
-					echo "<input type='hidden' class='post_excerpt' value='$post_excerpt' >";
+					echo "<input type='hidden' class='post_description' value='".esc_attr($post_description)."' >";
+					echo "<input type='hidden' class='post_excerpt' value='".esc_attr($post_excerpt)."' >";
 					echo "</div>";
 					echo "</div>";
 

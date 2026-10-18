@@ -81,7 +81,7 @@ jQuery(document).ready(function($){
         if(pending){return;}
         opener = this;
         var $card = $(this).closest('.cg-mail-delivery-card');
-        var $scope = $card.closest('.cg_view_options_rows_container, #cgMailTemplateContainer');
+        var $scope = $card.closest('.cg_view_options_rows_container, #cgMailTemplateContainer, #cgParticipantMailContainer');
         $.each(['from', 'reply'], function(i, field){
             var selector = $card.attr('data-cg-mail-' + field);
             $modal.find('[name="' + field + '"]').val(selector ? ($scope.find(selector).first().val() || '') : '');

@@ -2,13 +2,16 @@
 if(!defined('ABSPATH')){exit;}
 
 // Gallery-wide rules deliberately live outside the shortcode-specific variants.
+if(!function_exists('cg_member_replacement_source')){
 function cg_member_replacement_source($gid){
 	$upload = wp_upload_dir();
 	$path = $upload['basedir'].'/contest-gallery/gallery-id-'.absint($gid).'/json/'.absint($gid).'-options.json';
 	$data = is_file($path) ? json_decode(file_get_contents($path),true) : array();
 	return is_array($data) ? $data : array();
 }
+}
 
+if(!function_exists('cg_member_replacement_options')){
 function cg_member_replacement_options($gid){
 	$data = cg_member_replacement_source($gid);
 	$rules = array_merge(array('mode'=>'unlimited','duration'=>24,'unit'=>'hours','deadline'=>0,'noVotes'=>1),!empty($data['memberReplacement']) && is_array($data['memberReplacement']) ? $data['memberReplacement'] : array());
@@ -16,7 +19,9 @@ function cg_member_replacement_options($gid){
 	if($rules['mode']==='upload'){$rules['mode'] = 'unlimited';}
 	return $rules;
 }
+}
 
+if(!function_exists('cg_member_replacement_timezone')){
 function cg_member_replacement_timezone(){
 	if(function_exists('wp_timezone')){return wp_timezone();}
 	$name = get_option('timezone_string');
@@ -26,7 +31,9 @@ function cg_member_replacement_timezone(){
 	}
 	return new DateTimeZone($name);
 }
+}
 
+if(!function_exists('cg_member_replacement_save_options')){
 function cg_member_replacement_save_options(&$options,$gid,$input){
 	$rules = cg_member_replacement_options($gid);
 	if(cg_member_features_available($gid) && is_array($input)){
@@ -43,7 +50,9 @@ function cg_member_replacement_save_options(&$options,$gid,$input){
 	}
 	$options['memberReplacement'] = $rules;
 }
+}
 
+if(!function_exists('cg_member_replacement_render_options')){
 function cg_member_replacement_render_options($gid){
 	$selectStyle = cg_member_features_available($gid) ? '' : ' style="background-repeat:no-repeat;background-position:right 8px center;background-size:16px 16px;"';
 	$disabledClass = cg_member_enabled($gid,'cg_gallery') ? '' : ' cg_disabled';
@@ -67,14 +76,18 @@ function cg_member_replacement_render_options($gid){
 	echo '<div class="cg_view_options_row cg_member_replace_votes_row'.($rules['mode']==='off' ? ' cg_hide' : '').'"><div class="cg_view_option cg_view_option_100_percent cg_border_top_none'.$disabledClass.$bottomRadius.'"><div class="cg_view_option_title"><p>Only allow replacement before the first vote</p></div><div class="cg_view_option_checkbox"><input type="hidden" name="cg_member_replace[noVotes]" value="0"><input type="checkbox" name="cg_member_replace[noVotes]" value="1"'.checked(!empty($rules['noVotes']),true,false).'></div></div></div>';
 	echo '</div>';
 }
+}
 
+if(!function_exists('cg_member_replacement_vote_columns')){
 function cg_member_replacement_vote_columns(){
 	$columns = array('CountS','CountR','Rating','addCountS');
 	for($i=1;$i<=10;$i++){$columns[] = 'CountR'.$i; $columns[] = 'addCountR'.$i;}
 	return $columns;
 }
+}
 
 // Return untranslated keys so the same policy can be tested without a locale.
+if(!function_exists('cg_member_replacement_policy')){
 function cg_member_replacement_policy($row,$rules,$source,$now = null){
 	if($now===null){$now=time();}
 	if($rules['mode']==='off'){return 'Image replacement is not allowed.';}
@@ -92,6 +105,7 @@ function cg_member_replacement_policy($row,$rules,$source,$now = null){
 	$interval = cg_shortcode_interval_check($row->GalleryID,$source,'cg_users_upload');
 	if(!$interval['shortcodeIsActive']){return 'The upload period is closed.';}
 	return '';
+}
 }
 
 require_once __DIR__.'/cg-member-entry-actions.php';

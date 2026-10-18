@@ -70,7 +70,14 @@ if (!function_exists('cg_save_sent_mail'))   {
             $existing = $wpdb->get_var(
                 $wpdb->prepare('SHOW TABLES LIKE %s', $table_like)
             );
-            if ( $existing !== $tablename_mails ) {
+            // This optional history table is installed lazily here. Use the same schema
+            // to widen existing history when a longer mail first needs it.
+            $needsLongContent = false;
+            if($existing === $tablename_mails && (strlen($subject)>1000 || strlen($body)>65535)){
+                $columns = $wpdb->get_results("SHOW COLUMNS FROM $tablename_mails",OBJECT_K);
+                $needsLongContent = empty($columns['Subject']) || empty($columns['Body']) || strtolower($columns['Subject']->Type)!=='longtext' || strtolower($columns['Body']->Type)!=='longtext';
+            }
+            if ( $existing !== $tablename_mails || $needsLongContent ) {
                 $sql = "CREATE TABLE $tablename_mails (
 		id BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		pid INT(20) NOT NULL DEFAULT 0,
@@ -83,8 +90,8 @@ if (!function_exists('cg_save_sent_mail'))   {
 		ReplyMail VARCHAR(256) NOT NULL DEFAULT '',
 		Cc TEXT NOT NULL,
 		Bcc TEXT NOT NULL,
-		Subject VARCHAR(1000) NOT NULL DEFAULT '',
-		Body TEXT NOT NULL,
+		Subject LONGTEXT NOT NULL,
+		Body LONGTEXT NOT NULL,
 		MailType VARCHAR(100) NOT NULL DEFAULT '',
 		Tstamp INT(11) NOT NULL DEFAULT 0,
         KEY pid (pid),
@@ -102,7 +109,7 @@ if (!function_exists('cg_save_sent_mail'))   {
 
         $Tstamp = time();
 
-        $wpdb->query($wpdb->prepare(
+        $saved = $wpdb->query($wpdb->prepare(
             "
             INSERT INTO $tablename_mails
             ( 
@@ -122,6 +129,7 @@ if (!function_exists('cg_save_sent_mail'))   {
             $Tstamp
         ));
 
+        $mailId = $saved ? (int)$wpdb->insert_id : false;
         if(!empty($pid) && ($MailType == 'entry-frontend' || $MailType == 'entry-backend' || $MailType == 'entry-backend-custom' || $MailType == 'entry-backend-custom-activation' || $MailType == 'entry-backend-custom-deactivation')) {
             $count = (int) $wpdb->get_var( $wpdb->prepare(
                 "SELECT COUNT(*) FROM $tablename_mails WHERE pid = %d",
@@ -129,6 +137,6 @@ if (!function_exists('cg_save_sent_mail'))   {
             ) );
             $wpdb->query("UPDATE $tablename SET Mails='$count' WHERE id = $pid");
         }
-
+        return $mailId;
     }
 }

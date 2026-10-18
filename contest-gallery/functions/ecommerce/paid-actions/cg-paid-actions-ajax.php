@@ -869,26 +869,33 @@ if(!function_exists('post_cg_paid_actions_email_code_verify')){
 			$status = $result->get_error_code()==='cg_pin_attempts' ? 429 : 400;
 			wp_send_json_error(array('message'=>$result->get_error_message(),'code'=>$result->get_error_code()),$status);
 		}
-		$context = !empty($result['context']) && is_array($result['context']) ? $result['context'] : array();
-		if(empty($context['galleryId']) || !cg_paid_actions_gallery_is_supported($context['galleryId'])){
-			wp_send_json_error(array(
-				'message'=>cg_paid_actions_t('GalleryUnsupported'),
-				'code'=>'cg_paid_actions_gallery_version_unsupported'
-			),400);
-		}
-		$userId = absint($result['userId']);
-		if(!cg1l_auth_eligible_user($userId,$result['email'])){
-			wp_send_json_error(array('message'=>cg_paid_actions_t('PinInvalidExpired'),'code'=>'cg_pin_invalid'),400);
-		}
-		$environment = !empty($context['checkoutMode']) && $context['checkoutMode']==='sandbox' ? 'sandbox' : 'live';
-		wp_set_current_user($userId);
-		wp_set_auth_cookie($userId,true,is_ssl());
-		wp_send_json_success(array(
-			'userId'=>$userId,'email'=>$result['email'],'nonce'=>wp_create_nonce('cg1l_action'),
-			'runtime'=>cg_paid_actions_get_gallery_runtime($context['galleryId'],$userId,$environment),
-			'confirmationHtml'=>cg_pin_auth_render_paid_actions_confirmation()
-		));
+		if(!empty($result['nextStep'])){wp_send_json_success($result);}
+		cg_paid_actions_pin_login_response($result);
 	}
+}
+
+if(!function_exists('cg_paid_actions_pin_login_response')){
+function cg_paid_actions_pin_login_response($result){
+	$context = !empty($result['context']) && is_array($result['context']) ? $result['context'] : array();
+	if(empty($context['galleryId']) || !cg_paid_actions_gallery_is_supported($context['galleryId'])){
+		wp_send_json_error(array(
+			'message'=>cg_paid_actions_t('GalleryUnsupported'),
+			'code'=>'cg_paid_actions_gallery_version_unsupported'
+		),400);
+	}
+	$userId = absint($result['userId']);
+	if(!cg1l_auth_eligible_user($userId,$result['email'])){
+		wp_send_json_error(array('message'=>cg_paid_actions_t('PinInvalidExpired'),'code'=>'cg_pin_invalid'),400);
+	}
+	$environment = !empty($context['checkoutMode']) && $context['checkoutMode']==='sandbox' ? 'sandbox' : 'live';
+	wp_set_current_user($userId);
+	wp_set_auth_cookie($userId,true,is_ssl());
+	wp_send_json_success(array(
+		'userId'=>$userId,'email'=>$result['email'],'nonce'=>wp_create_nonce('cg1l_action'),
+		'runtime'=>cg_paid_actions_get_gallery_runtime($context['galleryId'],$userId,$environment),
+		'confirmationHtml'=>cg_pin_auth_render_paid_actions_confirmation()
+	));
+}
 }
 
 add_action('wp_ajax_post_cg_paid_actions_email_code_resend','post_cg_paid_actions_email_code_resend');

@@ -1060,8 +1060,8 @@ msgid "Maximum amount of uploads per user is"
 msgstr "प्रति उपयोगकर्ता अधिकतम अपलोड हैं"
 
 #: check-language.php:375
-msgid "Maximum amount of uploads per category is"
-msgstr "प्रति श्रेणी अधिकतम अपलोड हैं"
+msgid "Maximum number of uploads for this category"
+msgstr "इस श्रेणी के लिए अपलोड की अधिकतम संख्या"
 
 #: check-language.php:377
 msgid "You have already uploaded"
@@ -3110,3 +3110,8 @@ msgstr "एक व्यवस्थापक ने आपके संदे�
 #: check-language.php
 msgid "Ratings and comments"
 msgstr "रेटिंग और टिप्पणियाँ"
+
+
+#: check-language-ecommerce.php
+msgid "Settings path"
+msgstr "सेटिंग का पथ"

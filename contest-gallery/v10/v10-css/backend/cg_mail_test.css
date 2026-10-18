@@ -22,7 +22,6 @@ body.cg-mail-test-open { overflow: hidden; }
 #cgMailTestForm label { display: block; margin: 14px 0 5px; font-weight: 600; }
 #cgMailTestForm input { display: block; box-sizing: border-box; width: 100%; height: 38px; padding: 6px 10px; border: 1px solid #bbc2c8; border-radius: 5px; background: #fff; color: #24282c; }
 #cgMailTestForm input[aria-invalid="true"] { border: 2px solid #b32d2e; background: #fff8f7; }
-#cgMailTestContainer input[aria-invalid="true"]:focus-visible { outline-color: #b32d2e; }
 #cgMailTestContainer .cg-mail-test-required { color: #59626a; font-size: 12px; font-weight: 400; }
 #cgMailTestContainer .cg-mail-test-field-error {
     display: block; margin: 6px 0 0; padding: 8px 10px; border: 1px solid #e4b0b0;
@@ -40,7 +39,7 @@ body.cg-mail-test-open { overflow: hidden; }
 }
 #cgMailTestContainer button { padding: 8px 14px; border: 1px solid #b7bdc3; border-radius: 6px; background: #fff; color: #24282c; cursor: pointer; font: inherit; }
 #cgMailTestContainer button:disabled { opacity: .6; cursor: wait; }
-#cgMailTestContainer button:focus-visible, #cgMailTestContainer input:focus-visible { outline: 2px solid #2271b1; outline-offset: 2px; }
+#cgMailTestContainer button, #cgMailTestContainer input, #cgMailTestContainer select, #cgMailTestContainer textarea { outline: none !important; box-shadow: none !important; }
 #cgMailTestContainer .cg-mail-test-send { background: #2271b1; border-color: #2271b1; color: #fff; }
 #cgMailTestContainer .cg-mail-test-x { position: absolute; top: 10px; right: 12px; padding: 0 7px; border: 0; font-size: 25px; }
 .cg-mail-test-actions { display: flex; flex-wrap: wrap; gap: 10px; }

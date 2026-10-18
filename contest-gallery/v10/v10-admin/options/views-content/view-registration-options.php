@@ -57,14 +57,14 @@ echo <<<HEREDOC
                 </div>
            </div>
             <div class='cg_view_options_row'>
-                <div class="cg_view_option cg_view_option_50_percent cg_border_bottom_none cg_border_right_none ">
+                <div class="cg_view_option cg_view_option_50_percent cg_border_right_none cg_border_border_bottom_left_radius_8_px">
                     <div class="cg_view_option_title" style="width: 100%;">
                         <p><code class="cg_shortcode_copy cg_tooltip"><span>[cg_users_reg]</span></code><br><span class="cg_view_option_title_note">User receives an email and <b>confirms 
         registration by clicking a link</b> (<b>page opens</b>).<br>
         <b>Typical registration form</b> requiring password, username, and nickname.</span></p>
                     </div>
                 </div>
-                <div class="cg_view_option cg_view_option_50_percent cg_border_bottom_none" >
+                <div class="cg_view_option cg_view_option_50_percent cg_border_border_bottom_left_radius_unset cg_border_border_bottom_right_radius_8_px" >
                     <div class="cg_view_option_title"  style="width: 100%;">
                         <p><code class="cg_shortcode_copy cg_tooltip"><span>[cg_users_pin]</span></code><br><span class="cg_view_option_title_note">User receives an <b>email with a PIN</b> and 
         <b>confirms it on the same page</b> (<b>no page reload</b>).<br><b>Only the email field is required</b> to fill out.<br>Additional fields can be added in "Edit user form".</span></p>
@@ -72,6 +72,19 @@ echo <<<HEREDOC
                     </div>
                 </div>
            </div>
+        </div>
+        <section class="cg_view_options_rows_container cg_access_configuration" aria-labelledby="cgAccessConfigurationTitle">
+            <h3 class="cg_view_options_rows_container_title" id="cgAccessConfigurationTitle"><code>[cg_users_pin mode="access"]</code> configuration</h3>
+            <ul class="cg_registration_help">
+                <li><strong>Shortcode:</strong> Email PIN sign-in on your page.</li>
+                <li><strong>Dialog text:</strong> Shown in the gallery and during upload.</li>
+            </ul>
+HEREDOC;
+cg_member_sign_in_text_render_options();
+cg_registration_agreements_render_options();
+echo <<<HEREDOC
+        </section>
+        <div class='cg_view_options_rows_container'>
         <div class='cg_view_options_row cg_go_to_target'  data-cg-go-to-target="RegOptionsUserGroupRolesContainer" >
             <div class="cg_view_option cg_view_option_full_width" id="RegistryUserRoleContainer">
                 <div class="cg_view_option_title">

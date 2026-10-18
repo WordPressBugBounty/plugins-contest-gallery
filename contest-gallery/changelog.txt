@@ -1,5 +1,11 @@
 Contest Gallery
 
+= 34.0.2 =
+* NEW: Email gallery participants with recipient filters, test emails, drafts and message history.
+* NEW: Custom sign-in text and registration agreements with saved consent records.
+* FIXED: Plugin activation, member profile links and date formatting.
+* SECURITY: Security hardening.
+
 = 34.0.1 =
 * NEW: Private member messages and friendships.
 * NEW: Participant directories and public profiles with friends and entries across galleries.

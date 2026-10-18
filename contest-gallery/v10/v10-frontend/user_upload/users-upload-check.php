@@ -250,6 +250,7 @@ if(empty($_POST["cg_upload_action"]) OR empty($_FILES["data"])){
 
     $RegUserUploadOnly = $proOptions->RegUserUploadOnly;
     $RegUserMaxUpload = $proOptions->RegUserMaxUpload;
+    $proOptions->RegUserMaxUploadPerCategory = cg_upload_category_limit($proOptions->RegUserMaxUploadPerCategory);
     $UploadRequiresCookieMessage = $proOptions->UploadRequiresCookieMessage;
 
     $DataShare = ($proOptions->FbLikeNoShare==1) ? 'false' : 'true';
@@ -619,6 +620,16 @@ if(!$isManipulated){
 
     // manipulation fields check of fields --- END
 
+    $cgUploadCategories = null;
+    if(empty($OrderItem) && !empty($proOptions->RegUserMaxUploadPerCategory) && in_array((int)$RegUserUploadOnly,array(1,2,3),true)){
+        $cgUploadCategories = cg_upload_entry_categories($galeryID,isset($_POST['form_input']) ? $_POST['form_input'] : array(),$files['name'],!empty($proOptions->AdditionalFiles));
+        if(is_wp_error($cgUploadCategories)){cg1l_reject_frontend_upload($galeryIDuser,$cgUploadCategories->get_error_message());}
+        if($RegUserUploadOnly==2){$CookieId = cg_get_valid_frontend_cookie($galeryID,'upload');}
+        if($RegUserUploadOnly==3){$userIP = cg1l_sanitize_method(cg_get_user_ip());}
+        $cgCategoryLimitResult = cg_upload_check_category_limit($galeryID,(int)$proOptions->RegUserMaxUploadPerCategory,$RegUserUploadOnly,$cgUploadCategories,$WpUserId,$CookieId,isset($userIP) ? $userIP : '');
+        if(is_wp_error($cgCategoryLimitResult)){cg1l_reject_frontend_upload($galeryIDuser,$cgCategoryLimitResult->get_error_message(),$cgCategoryLimitResult->get_error_data());}
+    }
+
     $cgUploadJobContext = cg_upload_job_context();
     $cgPaidActionUploadReservation = cg_upload_job_phase('finalize') && !empty($cgUploadJobContext['reservation']) ? $cgUploadJobContext['reservation'] : null;
     if(empty($OrderItem) && function_exists('cg_paid_actions_maybe_reserve') && !cg_upload_job_phase('finalize')){
@@ -646,6 +657,12 @@ if(!$isManipulated){
         }
     }
 
+    // Credit reservation can acquire another named lock on older MySQL versions.
+    if(is_array($cgUploadCategories)){
+        $cgCategoryLimitResult = cg_upload_check_category_limit($galeryID,(int)$proOptions->RegUserMaxUploadPerCategory,$RegUserUploadOnly,$cgUploadCategories,$WpUserId,$CookieId,isset($userIP) ? $userIP : '');
+        if(is_wp_error($cgCategoryLimitResult)){cg1l_reject_frontend_upload($galeryIDuser,$cgCategoryLimitResult->get_error_message(),$cgCategoryLimitResult->get_error_data());}
+    }
+
     if(cg_upload_job_phase('receive')){
         cg_upload_job_accept_gallery(get_defined_vars());
         return;
@@ -659,6 +676,7 @@ if(!$isManipulated){
     $WpUploadBefore = 0;
     $realIdBefore = 0;
 	$cgCreatedEntryIds = array();
+    $cgCreatedEntryCategoryCounts = array();
 	$cgPaidActionUploadFlags = cg_paid_actions_reservation_flags($cgPaidActionUploadReservation);
     $cgUploadedWpUploadIds = array();
     $cgAdditionalFilesExifByWpUpload = array();
@@ -1065,6 +1083,11 @@ if(!$isManipulated){
                 if(cg_upload_job_phase('finalize') && !$nextId){throw new Exception('The gallery entry could not be saved.');}
                 $cgCreatedEntryIds[] = $nextId;
                 cg_upload_job_record_entry($nextId);
+                if(is_array($cgUploadCategories) && $nextId){
+                    $cgCreatedCategory = $cgUploadCategories[$keyFile];
+                    if(!isset($cgCreatedEntryCategoryCounts[$cgCreatedCategory])){$cgCreatedEntryCategoryCounts[$cgCreatedCategory]=0;}
+                    $cgCreatedEntryCategoryCounts[$cgCreatedCategory]++;
+                }
 
             //    var_dump('$fileType');
                 //     var_dump($fileType);
@@ -1431,7 +1454,8 @@ if(!$isManipulated){
 
                                 if($ft=='sec'){
 
-                                    $categoryId = $content;
+                                    $categoryId = is_array($cgUploadCategories) ? $cgUploadCategories[$keyFile] : $content;
+                                    $content = $categoryId;
 
                                     $wpdb->update(
                                         "$tablename1",
@@ -2074,20 +2098,20 @@ if(!$isManipulated){
             <?php
         }
 
+        if(!empty($cgCreatedEntryCategoryCounts)){
+            ?>
+            <script data-cg-processing="true">
+                cgJsClass.gallery.upload.functions.applyCategoryUploadState(<?php echo json_encode($galeryID);?>,<?php echo wp_json_encode(cg_upload_category_state($galeryID));?>);
+            </script>
+            <?php
+        }
+
         if($ActivateUpload==1){
             ?>
             <script data-cg-processing="true">
                 //  alert(1);
 
                 var gid = <?php echo json_encode($galeryIDuser);?>;
-                var categoryId = <?php echo json_encode($categoryId);?>;
-
-                if(cgJsData[gid].vars.upload.UploadedUserFilesAmountPerCategoryArray[categoryId]){
-                    cgJsData[gid].vars.upload.UploadedUserFilesAmountPerCategoryArray[categoryId] = parseInt(cgJsData[gid].vars.upload.UploadedUserFilesAmountPerCategoryArray[categoryId])+1;
-                }else{
-                    cgJsData[gid].vars.upload.UploadedUserFilesAmountPerCategoryArray[categoryId] = 1;
-                }
-
                 var gidReal = <?php echo json_encode($galeryID);?>;
                 var realIdBefore = <?php echo json_encode($realIdBefore);?>;
                 var data = <?php echo json_encode($imagesArray);?>;

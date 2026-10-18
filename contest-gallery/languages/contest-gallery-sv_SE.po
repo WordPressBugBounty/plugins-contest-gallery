@@ -1011,8 +1011,8 @@ msgid "Maximum amount of uploads per user is"
 msgstr "Maximalt antal uppladdningar per användare är"
 
 #: check-language.php:375
-msgid "Maximum amount of uploads per category is"
-msgstr "Maximalt antal uppladdningar per kategori är"
+msgid "Maximum number of uploads for this category"
+msgstr "Maximalt antal uppladdningar för den här kategorin"
 
 #: check-language.php:377
 msgid "You have already uploaded"
@@ -3113,3 +3113,8 @@ msgstr "En administratör har stängt av din möjlighet att skicka meddelanden o
 #: check-language.php
 msgid "Ratings and comments"
 msgstr "Betyg och kommentarer"
+
+
+#: check-language-ecommerce.php
+msgid "Settings path"
+msgstr "Sökväg till inställningarna"

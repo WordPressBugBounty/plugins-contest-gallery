@@ -1008,8 +1008,8 @@ msgid "Maximum amount of uploads per user is"
 msgstr "Maks antall opplastinger per bruker er"
 
 #: check-language.php:375
-msgid "Maximum amount of uploads per category is"
-msgstr "Maks antall opplastinger per kategori er"
+msgid "Maximum number of uploads for this category"
+msgstr "Maksimalt antall opplastinger for denne kategorien"
 
 #: check-language.php:377
 msgid "You have already uploaded"
@@ -2989,3 +2989,8 @@ msgstr "En administrator har deaktivert muligheten din til å sende meldinger og
 #: check-language.php
 msgid "Ratings and comments"
 msgstr "Vurderinger og kommentarer"
+
+
+#: check-language-ecommerce.php
+msgid "Settings path"
+msgstr "Sti til innstillingene"

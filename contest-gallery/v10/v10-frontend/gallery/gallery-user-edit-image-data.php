@@ -148,6 +148,14 @@ else {
             }
         }
 
+        if(isset($_REQUEST['cg-cat-id'])){
+            $cgCategoryChange = cg_upload_check_category_change($galeryID,$pictureID,(int)$_REQUEST['cg-cat-id'],$userId);
+            if(is_wp_error($cgCategoryChange)){
+                echo '<script data-cg-processing="true" data-cg-edit-error="'.esc_attr($cgCategoryChange->get_error_message()).'"></script>';
+                return;
+            }
+        }
+
         $cgMemberEntryActive = absint($wpdb->get_var($wpdb->prepare("SELECT Active FROM $tablename WHERE id=%d AND GalleryID=%d AND WpUserId=%d",$pictureID,$galeryID,$userId)));
         $collectedFieldIds = '';
 
@@ -310,6 +318,7 @@ echo "</pre>";
             var catId = <?php echo json_encode($categoryId);?>;
             var entryUrlAfterEdit = <?php echo json_encode($entryUrlAfterEdit);?>;
 
+            cgJsClass.gallery.upload.functions.applyCategoryUploadState(<?php echo json_encode($galeryID);?>,<?php echo wp_json_encode(cg_upload_category_state($galeryID));?>);
             cgJsClass.gallery.info.setInfoFromEditImageData(gid,realId,data,catId,entryUrlAfterEdit);
             var galeryIDuser = <?php echo json_encode($galeryIDuser);?>;
 

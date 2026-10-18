@@ -1016,8 +1016,8 @@ msgid "Maximum amount of uploads per user is"
 msgstr "Maximálny počet odovzdaní na jedného používateľa je"
 
 #: check-language.php:375
-msgid "Maximum amount of uploads per category is"
-msgstr "Maximálny počet odovzdaných videí na kategóriu je"
+msgid "Maximum number of uploads for this category"
+msgstr "Maximálny počet nahratí pre túto kategóriu"
 
 #: check-language.php:377
 msgid "You have already uploaded"
@@ -3094,3 +3094,8 @@ msgstr "Správca vám zakázal odosielať správy a žiadosti o priateľstvo."
 #: check-language.php
 msgid "Ratings and comments"
 msgstr "Hodnotenia a komentáre"
+
+
+#: check-language-ecommerce.php
+msgid "Settings path"
+msgstr "Cesta k nastaveniam"

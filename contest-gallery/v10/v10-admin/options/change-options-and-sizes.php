@@ -18,6 +18,17 @@ if(!is_user_logged_in() || !current_user_can('publish_posts') || !cg_user_has_ba
 }
 
 check_admin_referer('cg_admin');
+if(!empty($_POST['changeSize']) && cg_get_version()==='contest-gallery-pro' && isset($_POST['RegUserMaxUploadPerCategory'])){
+    $cgCategoryLimitInput = is_scalar($_POST['RegUserMaxUploadPerCategory']) ? trim((string)wp_unslash($_POST['RegUserMaxUploadPerCategory'])) : null;
+    if($cgCategoryLimitInput===null || ($cgCategoryLimitInput!=='' && (!preg_match('/^[0-9]+$/',$cgCategoryLimitInput) || (float)$cgCategoryLimitInput>2147483647))){
+        wp_die('Please enter a whole number of zero or greater for the upload limit per category.');
+    }
+    $_POST['RegUserMaxUploadPerCategory'] = $cgCategoryLimitInput==='' ? 0 : (int)$cgCategoryLimitInput;
+}elseif(cg_get_version()!=='contest-gallery-pro'){
+    unset($_POST['RegUserMaxUploadPerCategory']);
+}
+cg_member_sign_in_text_save();
+cg_registration_agreements_save();
 if(empty($_POST['cg_edit_translations']) && empty($_POST['cg_edit_ecommerce'])){cg_community_admin_save();}
 
 $id = absint($_GET['option_id']);
@@ -552,6 +563,7 @@ $wp_upload_dir = wp_upload_dir();
             unset($_POST['VotesPerUser']);// int $tablenameOptions $jsonOptions['general']['VotesPerUser']
             unset($_POST['VotesPerCategory']);// int $tablename_pro_options $jsonOptions['pro']['VotesPerCategory']
             unset($_POST['ShowOnlyUsersVotes']);// bool $tablenameOptions $jsonOptions['general']['ShowOnlyUsersVotes']
+            unset($_POST['RegUserMaxUploadPerCategory']);
             unset($_POST['RegUserMaxUpload']);// int $tablename_pro_options $jsonOptions['pro']['RegUserMaxUpload']
             unset($_POST['RegUserGalleryOnly']);// bool $tablename_pro_options $jsonOptions['pro']['RegUserGalleryOnly']
             unset($_POST['InformAdmin']);// bool $tablenameOptions $jsonOptions['general']['InformAdmin']

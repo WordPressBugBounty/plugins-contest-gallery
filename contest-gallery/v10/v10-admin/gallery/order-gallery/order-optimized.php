@@ -1,110 +1,18 @@
 <?php
 
-$cgOrderFilterSql = '';
-
-if(!empty($_POST['cg_show_only_winners'])){
-    $cgOrderFilterSql .= ' AND cgGallery.Winner = 1 ';
-}
-
-if(!empty($_POST['cg_show_only_active'])){
-    $cgOrderFilterSql .= ' AND cgGallery.Active = 1 ';
-}
-
-if(!empty($_POST['cg_show_only_inactive'])){
-    $cgOrderFilterSql .= ' AND cgGallery.Active = 0 ';
-}
-
-if($cgWpUserIdFilterValue === '0'){
-    $cgOrderFilterSql .= ' AND cgGallery.WpUserId = 0 ';
-}elseif(!empty($cgWpUserIdFilterValue)){
-    $cgOrderFilterSql .= ' AND cgGallery.WpUserId = '.absint($cgWpUserIdFilterValue).' ';
-}
-
-$cgOrderSearchSql = '';
-$cgOrderSearchParameters = array();
+$cgOrderSharedFilters = cg_backend_gallery_filters($_POST);
+$cgOrderSharedFilters['search'] = $search;
+$cgOrderSharedFilters['user'] = $cgWpUserIdFilterValue;
+$cgOrderSharedQuery = cg_backend_gallery_filter_query($GalleryID,$cgOrderSharedFilters);
+$cgOrderFilterSql = $cgOrderSharedQuery['filter_sql'];
+$cgOrderSearchSql = $cgOrderSharedQuery['search_sql'];
+$cgOrderSearchParameters = $cgOrderSharedQuery['search_parameters'];
 
 if($search !== ''){
-    $cgOrderSearchLike = '%'.$wpdb->esc_like($search).'%';
-    $cgOrderSearchId = absint($search);
-
-    $cgOrderSearchSql = "
-        AND (
-            cgGallery.id = %d
-            OR cgGallery.Exif LIKE %s
-            OR EXISTS(
-                SELECT 1
-                FROM $tablenameentries AS cgSearchEntry
-                WHERE cgSearchEntry.GalleryID = %d
-                AND cgSearchEntry.pid = cgGallery.id
-                AND (
-                    cgSearchEntry.Short_Text LIKE %s
-                    OR cgSearchEntry.Long_Text LIKE %s
-                )
-            )
-            OR EXISTS(
-                SELECT 1
-                FROM $tablename_categories AS cgSearchCategory
-                WHERE cgSearchCategory.GalleryID = %d
-                AND cgSearchCategory.id = cgGallery.Category
-                AND cgSearchCategory.Name LIKE %s
-            )
-            OR EXISTS(
-                SELECT 1
-                FROM $table_posts AS cgSearchPost
-                WHERE cgSearchPost.ID = cgGallery.WpUpload
-                AND (
-                    cgSearchPost.post_content LIKE %s
-                    OR cgSearchPost.post_title LIKE %s
-                    OR cgSearchPost.post_name LIKE %s
-                )
-            )
-            OR EXISTS(
-                SELECT 1
-                FROM $wpUsers AS cgSearchUser
-                WHERE cgSearchUser.ID = cgGallery.WpUserId
-                AND (
-                    cgSearchUser.user_login LIKE %s
-                    OR cgSearchUser.user_nicename LIKE %s
-                    OR cgSearchUser.user_email LIKE %s
-                    OR cgSearchUser.display_name LIKE %s
-                )
-            )
-        )
-    ";
-
-    $cgOrderSearchParameters = array(
-        $cgOrderSearchId,
-        $cgOrderSearchLike,
-        $GalleryID,
-        $cgOrderSearchLike,
-        $cgOrderSearchLike,
-        $GalleryID,
-        $cgOrderSearchLike,
-        $cgOrderSearchLike,
-        $cgOrderSearchLike,
-        $cgOrderSearchLike,
-        $cgOrderSearchLike,
-        $cgOrderSearchLike,
-        $cgOrderSearchLike,
-        $cgOrderSearchLike
-    );
-
-    $cgOrderCountQuery = "
-        SELECT COUNT(*)
-        FROM $tablename AS cgGallery
-        WHERE cgGallery.GalleryID = %d
-        $cgOrderFilterSql
-        $cgOrderSearchSql
-    ";
-
-    $cgOrderCountParameters = array_merge(
-        array($GalleryID),
-        $cgOrderSearchParameters
-    );
-
-    $countSearchSQL = $wpdb->get_var(
-        $wpdb->prepare($cgOrderCountQuery,$cgOrderCountParameters)
-    );
+    $countSearchSQL = $wpdb->get_var($wpdb->prepare(
+        "SELECT COUNT(*) FROM $tablename AS cgGallery WHERE cgGallery.GalleryID = %d $cgOrderFilterSql $cgOrderSearchSql",
+        array_merge(array($GalleryID),$cgOrderSearchParameters)
+    ));
 }
 
 $cgOrderJoinSql = '';

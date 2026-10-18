@@ -3,15 +3,20 @@ if(!defined('ABSPATH')){exit;}
 
 // Security decisions must not reuse per-request or persistent WordPress caches.
 // The fixed-width expiry prefix allows bounded cleanup without scanning live records.
+if(!function_exists('cg_security_state_key')){
 function cg_security_state_key($scope,$subject){
 	return '_cg_security_v1_'.sanitize_key($scope).'_'.hash_hmac('sha256',(string)$subject,wp_salt('auth'));
 }
+}
+if(!function_exists('cg_security_state_read')){
 function cg_security_state_read($scope,$subject){
 	global $wpdb;
 	$raw=$wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name=%s",cg_security_state_key($scope,$subject)));
 	if(!is_string($raw) || strlen($raw)<12 || $raw[10]!==':' || !ctype_digit(substr($raw,0,10)) || (int)substr($raw,0,10)<=time()){return false;}
 	return json_decode(substr($raw,11),true);
 }
+}
+if(!function_exists('cg_security_state_write')){
 function cg_security_state_write($scope,$subject,$value,$ttl){
 	global $wpdb;
 	$json=wp_json_encode($value);
@@ -24,6 +29,8 @@ function cg_security_state_write($scope,$subject,$value,$ttl){
 	if(!wp_next_scheduled('cg_frontend_security_cleanup')){wp_schedule_event(time()+HOUR_IN_SECONDS,'hourly','cg_frontend_security_cleanup');}
 	return true;
 }
+}
+if(!function_exists('cg_security_state_delete')){
 function cg_security_state_delete($scope,$subject){
 	global $wpdb;
 	$key=cg_security_state_key($scope,$subject);
@@ -31,22 +38,30 @@ function cg_security_state_delete($scope,$subject){
 	wp_cache_delete($key,'options');
 	return $result!==false;
 }
+}
+if(!function_exists('cg_security_state_lock')){
 function cg_security_state_lock($scope,$subject,$timeout=5){
 	global $wpdb;
 	$name='cg-sec-'.md5(DB_NAME.'|'.$wpdb->prefix.'|'.$scope.'|'.$subject);
 	return (string)$wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s,%d)',$name,absint($timeout)))==='1' ? $name : false;
 }
+}
+if(!function_exists('cg_security_state_unlock')){
 function cg_security_state_unlock($name){
 	global $wpdb;
 	if($name){$wpdb->get_var($wpdb->prepare('SELECT RELEASE_LOCK(%s)',$name));}
 }
+}
+if(!function_exists('cg_frontend_security_cleanup')){
 function cg_frontend_security_cleanup(){
 	global $wpdb;
 	$wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value < %s LIMIT 250",$wpdb->esc_like('_cg_security_v1_').'%',sprintf('%010d',time()).':'));
 }
+}
 add_action('cg_frontend_security_cleanup','cg_frontend_security_cleanup');
 
 // Only call while holding the scope/subject lock or a common admission lock.
+if(!function_exists('cg_security_rate_take_locked')){
 function cg_security_rate_take_locked($scope,$subject,$limit,$window,$cooldown = 0){
 	$now=time(); $recent=array();
 	$stored=cg_security_state_read($scope,$subject);
@@ -58,13 +73,18 @@ function cg_security_rate_take_locked($scope,$subject,$limit,$window,$cooldown =
 	$recent[]=$now;
 	return cg_security_state_write($scope,$subject,$recent,$window);
 }
+}
+if(!function_exists('cg_security_rate_take')){
 function cg_security_rate_take($scope,$subject,$limit,$window,$cooldown = 0){
 	$lock=cg_security_state_lock($scope,$subject);
 	if(!$lock){return false;}
 	try{return cg_security_rate_take_locked($scope,$subject,$limit,$window,$cooldown);}
 	finally{cg_security_state_unlock($lock);}
 }
+}
+if(!function_exists('cg_security_remote_address')){
 function cg_security_remote_address(){
 	// Forwarded headers are caller-controlled unless the server normalizes them.
 	return isset($_SERVER['REMOTE_ADDR']) && is_string($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
+}
 }

@@ -2,8 +2,10 @@
 if(!defined('ABSPATH')){exit;}
 
 // Keep custom wording when the default wording changes.
+if(!function_exists('cg_member_translation_aliases')){
 function cg_member_translation_aliases(){
 	return array(
+		'Maximum number of uploads for this category'=>'Maximum amount of uploads per category is',
 		'Delete this entry and all its files?'=>'Delete this entry and all its images?',
 		'Share this entry'=>'Share this image',
 		'My entries'=>'My images',
@@ -16,7 +18,9 @@ function cg_member_translation_aliases(){
 		'No participants with a profile yet. Published entries with a profile will appear here.'=>'No participants yet. Published entries with a profile will appear here.'
 	);
 }
+}
 
+if(!function_exists('cg_member_translation_values')){
 function cg_member_translation_values($values){
 	if(!is_array($values)){return array();}
 	foreach(cg_member_translation_aliases() as $current=>$previous){
@@ -25,8 +29,10 @@ function cg_member_translation_values($values){
 	}
 	return $values;
 }
+}
 
 // The same catalogue drives Edit translations and the frontend JS dictionary.
+if(!function_exists('cg_member_interface_translation_groups')){
 function cg_member_interface_translation_groups(){
 	return array(
 		'Navigation'=>array(
@@ -185,14 +191,18 @@ function cg_member_interface_translation_groups(){
 		)
 	);
 }
+}
 
+if(!function_exists('cg_member_interface_strings')){
 function cg_member_interface_strings(){
 	$strings = array();
 	foreach(cg_member_interface_translation_groups() as $group){$strings = array_merge($strings,$group);}
 	return array_values(array_unique($strings));
 }
+}
 
 // General wording, edited with the other gallery voting messages.
+if(!function_exists('cg_member_voting_translation_strings')){
 function cg_member_voting_translation_strings(){
 	return array(
 		'Vote',
@@ -200,4 +210,5 @@ function cg_member_voting_translation_strings(){
 		'Your vote could not be saved. Please try again.',
 		'Vote and linked comment could not be removed.'
 	);
+}
 }

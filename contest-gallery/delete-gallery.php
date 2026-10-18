@@ -3,6 +3,9 @@
 if (!empty($_GET['option_id']) AND !empty($_POST['cg_delete_gallery'])) {
 
     $optionID = absint($_GET["option_id"]);
+	if(!cg_participant_mail_history_delete_gallery($optionID)){
+		wp_die('Email processing is busy. Please try deleting this gallery again.');
+	}
 
     global $wpdb;
 
@@ -263,6 +266,7 @@ if (!empty($_GET['option_id']) AND !empty($_POST['cg_delete_gallery'])) {
         wp_delete_post($options->WpPageParentEcommerce,true);
     }
 
+    cg_participant_mail_composer_delete($optionID,0);
     $upload_dir = wp_upload_dir();
     cg_remove_folder_recursively($upload_dir['basedir'] . '/contest-gallery/gallery-id-' . $optionID . '');
 

@@ -2,6 +2,7 @@
 if(!defined('ABSPATH')){exit;}
 
 // One policy for new profile uploads. Existing attachments are not revalidated.
+if(!function_exists('cg_profile_image_upload_config')){
 function cg_profile_image_upload_config(){
 	$messages = array(
 		'ThisFileTypeIsNotAllowed'=>'This file type is not allowed',
@@ -18,17 +19,23 @@ function cg_profile_image_upload_config(){
 		'mimes'=>array('jpg'=>'image/jpeg','jpeg'=>'image/jpeg','jpe'=>'image/jpeg','png'=>'image/png','gif'=>'image/gif'),
 		'messages'=>array_map('cg_member_t',$messages));
 }
+}
 
+if(!function_exists('cg_profile_image_upload_attributes')){
 function cg_profile_image_upload_attributes(){
 	return ' accept="image/jpeg,image/png,image/gif" data-cg-profile-image="'.esc_attr(wp_json_encode(cg_profile_image_upload_config())).'"';
 }
+}
 
+if(!function_exists('cg_profile_image_upload_hint')){
 function cg_profile_image_upload_hint(){
 	$config = cg_profile_image_upload_config();
 	$size = rtrim(rtrim(number_format($config['maxBytes']/1000000,6,'.',''),'0'),'.');
 	return esc_html(str_replace('{size}',$size,cg_member_t('JPG, PNG or GIF. Maximum {size} MB.'))).' '.esc_html(cg_member_t('Maximum resolution')).': 2000 × 2000 px.';
 }
+}
 
+if(!function_exists('cg_profile_image_upload_file')){
 function cg_profile_image_upload_file($files){
 	if(!is_array($files)){return null;}
 	// Registry/WP profile use [0], the gallery profile uses a native flat file.
@@ -42,7 +49,9 @@ function cg_profile_image_upload_file($files){
 	}
 	return $files;
 }
+}
 
+if(!function_exists('cg_profile_image_upload_error')){
 function cg_profile_image_upload_error($error){
 	$data = $error->get_error_data();
 	if(!is_array($data)){$data=array();}
@@ -50,7 +59,9 @@ function cg_profile_image_upload_error($error){
 	$data['fieldErrors']=array('profile_image'=>$message);
 	return new WP_Error('profile_image',$message,$data);
 }
+}
 
+if(!function_exists('cg_profile_image_validate_upload')){
 function cg_profile_image_validate_upload($file){
 	$config = cg_profile_image_upload_config();
 	$general = array('ActivatePostMaxMB'=>1,'PostMaxMB'=>$config['maxBytes']/1000000);
@@ -62,15 +73,20 @@ function cg_profile_image_validate_upload($file){
 	$result = cg_upload_validate_file($file,0,array('general'=>$general),false,array('mimes'=>$config['mimes'],'pdfPreview'=>false));
 	return is_wp_error($result) ? cg_profile_image_upload_error($result) : $result;
 }
+}
 
+if(!function_exists('cg_profile_image_upload_response')){
 function cg_profile_image_upload_response($error){
 	$data = $error->get_error_data();
 	return array('message'=>$error->get_error_message(),
 		'fieldErrors'=>array('profile_image'=>$error->get_error_message()),
 		'uploadValidation'=>is_array($data) && isset($data['uploadValidation']) ? $data['uploadValidation'] : null);
 }
+}
 
+if(!function_exists('cg_profile_image_registry_error')){
 function cg_profile_image_registry_error($error){
 	// Keep the registry's existing HTML/script response contract and block redirect.
 	echo '<script data-cg-processing="true" data-cg-processing-error="true">cgJsClass.gallery.registry.functions.profileImageError(cgJsClass.gallery.vars.$regFormContainer,'.wp_json_encode(cg_profile_image_upload_response($error)).');</script>';
+}
 }

@@ -2,15 +2,20 @@
 if(!defined('ABSPATH')){exit;}
 
 // Secrets never belong to the public form tables/JSON. Legacy recognition is a one-time snapshot.
+if(!function_exists('cg_captcha_tables')){
 function cg_captcha_tables(){
     global $wpdb;
     return array('registry'=>array($wpdb->prefix.'contest_gal1ery_create_user_form','user-robot-recaptcha-field'),
         'upload'=>array($wpdb->prefix.'contest_gal1ery_f_input','caRoRe-f'));
 }
+}
+if(!function_exists('cg_captcha_table_exists')){
 function cg_captcha_table_exists($table){
     global $wpdb;
     return $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s',$wpdb->esc_like($table)))===$table;
 }
+}
+if(!function_exists('cg_captcha_bootstrap')){
 function cg_captcha_bootstrap(){
     if(get_option('cg_captcha_legacy_v1',false)!==false){return;}
     global $wpdb;
@@ -23,9 +28,13 @@ function cg_captcha_bootstrap(){
     }
     add_option('cg_captcha_legacy_v1',$legacy,'',false);
 }
+}
 add_action('init','cg_captcha_bootstrap',1);
 
+if(!function_exists('cg_captcha_option')){
 function cg_captcha_option($scope,$id){return 'cg_captcha_'.$scope.'_'.absint($id);}
+}
+if(!function_exists('cg_captcha_config')){
 function cg_captcha_config($scope,$id,$siteKey){
     cg_captcha_bootstrap();
     $record = get_option(cg_captcha_option($scope,$id),array());
@@ -36,6 +45,8 @@ function cg_captcha_config($scope,$id,$siteKey){
     $secret = isset($record['siteKey'],$record['secret']) && $record['siteKey']===trim($siteKey) ? $record['secret'] : '';
     return array('legacy'=>$isLegacy,'secret'=>$secret,'enforce'=>!$isLegacy);
 }
+}
+if(!function_exists('cg_captcha_prepare_config')){
 function cg_captcha_prepare_config($scope,$id,$siteKey,$secret,$active){
     if(!is_string($siteKey) || !is_string($secret)){return new WP_Error('captcha_config','Invalid reCAPTCHA keys.');}
     $siteKey=trim(wp_unslash($siteKey));$secret=trim(wp_unslash($secret));
@@ -48,14 +59,20 @@ function cg_captcha_prepare_config($scope,$id,$siteKey,$secret,$active){
     if($secret===''){return null;}// Unrelated saves must not migrate a legacy configuration.
     return array('siteKey'=>$siteKey,'secret'=>$secret,'enforce'=>1);
 }
+}
+if(!function_exists('cg_captcha_store_config')){
 function cg_captcha_store_config($scope,$id,$record){
     if(is_array($record) && $id){update_option(cg_captcha_option($scope,$id),$record,false);}
 }
+}
+if(!function_exists('cg_captcha_secret_input')){
 function cg_captcha_secret_input($scope,$id,$siteKey,$name){
     $config=cg_captcha_config($scope,$id,$siteKey);
     $note=$config['secret']!=='' ? 'A secret is saved. Leave empty to keep it.' : ($config['legacy'] ? 'Your existing form still works. Add the secret key to enable server-side bot protection.' : 'Required when enabling reCAPTCHA.');
     return '<label style="display:block;width:100%;margin-top:16px"><span style="display:block;font-weight:600;margin-bottom:8px">Your secret key</span><input type="password" class="cg_reca_secret" name="'.esc_attr($name).'" value="" autocomplete="new-password" maxlength="200" style="width:100%" /></label><span style="display:block;width:100%;margin-top:8px;text-align:center">'.esc_html($note).' Test keys are for testing only and do not block bots.</span>';
 }
+}
+if(!function_exists('cg_captcha_admin_notice')){
 function cg_captcha_admin_notice(){
     if(!current_user_can('manage_options')){return;}
     $screen=get_current_screen();
@@ -79,9 +96,13 @@ function cg_captcha_admin_notice(){
     }
     if($links){echo '<div class="notice notice-warning"><p><strong>Contest Gallery reCAPTCHA</strong><br>'.implode('<br>',$links).'</p></div>';}
 }
+}
 add_action('admin_notices','cg_captcha_admin_notice');
 
+if(!function_exists('cg_captcha_registry_signature')){
 function cg_captcha_registry_signature($gid,$pin){return hash_hmac('sha256','cg-registry-captcha|'.absint($gid).'|'.($pin?'pin':'register'),wp_salt('auth'));}
+}
+if(!function_exists('cg_captcha_registry_mode')){
 function cg_captcha_registry_mode($gid,$post){
     $pin=!empty($post['cg_users_pin']);
     $signature=isset($post['cg_captcha_form']) && is_string($post['cg_captcha_form']) ? $post['cg_captcha_form'] : '';
@@ -91,6 +112,8 @@ function cg_captcha_registry_mode($gid,$post){
     }
     return $pin;
 }
+}
+if(!function_exists('cg_captcha_validate')){
 function cg_captcha_validate($scope,$gid,$post,$pin=false,$version=100){
     global $wpdb;
     if($scope==='registry'){
@@ -122,7 +145,10 @@ function cg_captcha_validate($scope,$gid,$post,$pin=false,$version=100){
     }
     return true;
 }
+}
+if(!function_exists('cg_captcha_render_widget')){
 function cg_captcha_render_widget($siteKey,$language,$registry=false){
     echo '<div class="'.($registry?'cg_recaptcha_reg_form':'cg_recaptcha_in_gallery_form cg_recaptcha_form').' cg-captcha-widget" data-sitekey="'.esc_attr(trim($siteKey)).'" data-language="'.esc_attr($language).'" ></div>';
     echo '<p class="cg_input_error cg_hide '.($registry?'cg_recaptcha_not_valid_reg_form_error':'cg_recaptcha_not_valid_in_gallery_form_error').'"></p>';
+}
 }

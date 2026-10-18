@@ -173,7 +173,8 @@ else {
             cg_delete_images_of_deleted_wp_uploads($deletedWpUploads);
         }
 
-        if(!empty($_POST['cg_member_json'])){wp_send_json_success(array('pid'=>$pictureID,'backUrl'=>$memberBackUrl));}
+        $cgUploadCategoryState = cg_upload_category_state($galeryID);
+        if(!empty($_POST['cg_member_json'])){wp_send_json_success(array('pid'=>$pictureID,'backUrl'=>$memberBackUrl,'uploadCategoryState'=>$cgUploadCategoryState));}
 
         ?>
         <script data-cg-processing="true">
@@ -183,6 +184,7 @@ else {
             var realIdToDelete = <?php echo json_encode($pictureID);?>;
             var isMultipleFilesDelete = <?php echo json_encode($isMultipleFilesDelete);?>;
             cgJsClass.gallery.getJson.removeImageFromImageData(gid,realIdToDelete,true);
+            cgJsClass.gallery.upload.functions.applyCategoryUploadState(<?php echo json_encode($galeryID);?>,<?php echo wp_json_encode($cgUploadCategoryState);?>);
             if(cgJsClass.gallery.member){cgJsClass.gallery.member.changed(gid, false);}
             cgJsClass.gallery.function.message.show(gid,(isMultipleFilesDelete) ? cgJsClass.gallery.language[gid].DeleteImagesConfirm : cgJsClass.gallery.language[gid].DeleteImageConfirm);
 

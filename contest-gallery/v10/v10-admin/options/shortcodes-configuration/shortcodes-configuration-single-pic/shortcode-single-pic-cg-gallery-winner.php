@@ -762,6 +762,7 @@ echo <<<HEREDOC
 
 HEREDOC;
 
+cg_uploader_profile_render_entry_option($GalleryID,'cg_gallery_winner',$jsonOptions);
 echo '</div>';
 
 if(floatval($galleryDbVersion)>=21){

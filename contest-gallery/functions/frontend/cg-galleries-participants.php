@@ -1,11 +1,14 @@
 <?php
 if(!defined('ABSPATH')){exit;}
 
+if(!function_exists('cg_galleries_member_enabled')){
 function cg_galleries_member_enabled($shortcode,$options=null){
 	if(!in_array($shortcode,array('cg_gallery','cg_gallery_no_voting'),true)){return false;}
 	if($options===null){$options=cg_galleries_options($shortcode);}
 	return (bool)cg_page_header_option_value($options,'MemberArea');
 }
+}
+if(!function_exists('cg_member_store_galleries_options')){
 function cg_member_store_galleries_options(&$options,$previous){
 	foreach(array('g','nv','u','w','ec') as $type){
 		if(!in_array($type,array('g','nv'),true)){unset($options[$type]['MemberArea']);continue;}
@@ -14,14 +17,18 @@ function cg_member_store_galleries_options(&$options,$previous){
 		$options[$type]['MemberArea']=cg_page_header_option_value($values,'MemberArea',cg_page_header_option_value($old,'MemberArea'));
 	}
 }
+}
 
 // A bounded, signed overview scope is independent of the hero and gallery pagination.
+if(!function_exists('cg_galleries_participants_source')){
 function cg_galleries_participants_source($context){
 	global $wpdb;
 	$data=array('token'=>cg1l_create_runtime_context_token($context),'site'=>$wpdb->prefix,'expires'=>time()+2*HOUR_IN_SECONDS);
 	$payload=base64_encode(wp_json_encode($data));
 	return $payload.'.'.hash_hmac('sha256','cg-galleries-participants|'.$payload,wp_salt('auth'));
 }
+}
+if(!function_exists('cg_galleries_participants_scope')){
 function cg_galleries_participants_scope($source){
 	global $wpdb;$error=cg_community_error('This participant list is no longer available.');
 	$parts=explode('.',(string)$source);
@@ -33,8 +40,10 @@ function cg_galleries_participants_scope($source){
 	$viewer=get_current_user_id();
 	return $viewer && !cg_community_user($viewer) ? $error : $context;
 }
+}
 
 // Collect eligible public owners once per request. No ratings/comments or user directory scans.
+if(!function_exists('cg_galleries_participant_rows')){
 function cg_galleries_participant_rows($context){
 	static $cache=array();
 	$gids=cg1l_normalize_positive_int_id_list($context['galleriesIds']);sort($gids);
@@ -52,7 +61,9 @@ function cg_galleries_participant_rows($context){
 	$cache[$key]=$users;
 	return $users;
 }
+}
 
+if(!function_exists('cg_galleries_participants_control')){
 function cg_galleries_participants_control($gid,$instance,$shortcode,$covers){
 	if(!cg_galleries_member_enabled($shortcode)){return '';}
 	$gids=array();
@@ -61,7 +72,9 @@ function cg_galleries_participants_control($gid,$instance,$shortcode,$covers){
 	$count=count(cg_galleries_participant_rows($context));$source=cg_galleries_participants_source($context);
 	return '<div class="cg-galleries-participants-control"><button type="button" class="cg-galleries-participants-open" data-cg-gid="'.esc_attr($instance).'" data-cg-participants-source="'.esc_attr($source).'" aria-haspopup="dialog">'.esc_html(cg_member_t('Participants')).' <span class="cg-member-count cg-galleries-participant-count">'.esc_html(number_format_i18n($count)).'</span></button><template class="cg-galleries-participants-template">'.cg_community_render_participants($count).'</template></div>';
 }
+}
 
+if(!function_exists('cg_galleries_participants_data')){
 function cg_galleries_participants_data($source,$request){
 	$context=cg_galleries_participants_scope($source);if(is_wp_error($context)){return $context;}
 	$users=cg_galleries_participant_rows($context);$total=count($users);$matches=array();
@@ -86,6 +99,8 @@ function cg_galleries_participants_data($source,$request){
 	}
 	return array('items'=>$items,'total'=>count($matches),'participantCount'=>$total,'formattedCount'=>number_format_i18n($total),'more'=>$offset+20<count($matches),'page'=>$page,'search'=>$search);
 }
+}
+if(!function_exists('cg_galleries_participants_ajax')){
 function cg_galleries_participants_ajax(){
 	nocache_headers();header('Cache-Control: private, no-store, max-age=0');
 	cg1l_ajax_reject_bad_origin();cg_check_frontend_nonce();
@@ -93,6 +108,7 @@ function cg_galleries_participants_ajax(){
 	$result=cg_galleries_participants_data(cg_community_post('scope'),array('page'=>cg_community_post('page','1'),'search'=>cg_community_post('search'),'member'=>cg_community_post('member')));
 	if(is_wp_error($result)){$data=$result->get_error_data();wp_send_json_error(array('message'=>$result->get_error_message()),isset($data['status']) ? $data['status'] : 403);}
 	wp_send_json_success($result);
+}
 }
 add_action('wp_ajax_cg_galleries_participants','cg_galleries_participants_ajax');
 add_action('wp_ajax_nopriv_cg_galleries_participants','cg_galleries_participants_ajax');

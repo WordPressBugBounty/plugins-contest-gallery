@@ -4,7 +4,7 @@ Donate link: http://www.contest-gallery.com/
 Tags: photo contest, competition, contest, voting, openai
 Requires at least: 5.6
 Requires PHP: 5.6
-Stable tag: 34.0.1
+Stable tag: 34.0.2
 Tested up to: 7.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -317,6 +317,12 @@ Contest Gallery does not impose a limit on the number of gallery entries. The pr
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
 
 == Changelog ==
+
+= 34.0.2 =
+* NEW: Email gallery participants with recipient filters, test emails, drafts and message history.
+* NEW: Custom sign-in text and registration agreements with saved consent records.
+* FIXED: Plugin activation, member profile links and date formatting.
+* SECURITY: Security hardening.
 
 = 34.0.1 =
 * NEW: Private member messages and friendships.

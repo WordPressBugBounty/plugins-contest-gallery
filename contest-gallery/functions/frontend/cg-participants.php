@@ -1,6 +1,7 @@
 <?php
 if(!defined('ABSPATH')){exit;}
 
+if(!function_exists('cg_participants_context')){
 function cg_participants_context($context){
 	if(!$context || !empty($context['isCGalleries']) || !in_array($context['shortcodeName'],array('cg_gallery','cg_gallery_no_voting'),true) || !cg_member_enabled($context['realGid'],$context['shortcodeName'])){return false;}
 	$options = cg_member_options($context['realGid'],$context['shortcodeName']);
@@ -8,8 +9,10 @@ function cg_participants_context($context){
 	$interval = cg_shortcode_interval_check($context['realGid'],cg_member_replacement_source($context['realGid']),$context['shortcodeName']);
 	return !empty($interval['shortcodeIsActive']);
 }
+}
 
 // Only the list presentation changes. Entry opening, voting and comments keep their source settings.
+if(!function_exists('cg_participants_gallery_options')){
 function cg_participants_gallery_options($options){
 	$options['general']['AllowGalleryScript'] = 1;
 	$options['pro']['GalleryUpload'] = 0;
@@ -19,7 +22,9 @@ function cg_participants_gallery_options($options){
 	foreach(array('HeightLook','RowLook','SliderLook') as $key){$options['general'][$key] = 0;}
 	return $options;
 }
+}
 
+if(!function_exists('cg_participants_request_context')){
 function cg_participants_request_context(){
 	nocache_headers();
 	header('Cache-Control: private, no-store, max-age=0');
@@ -33,8 +38,10 @@ function cg_participants_request_context(){
 	}
 	return $context;
 }
+}
 
 // Membership is derived from published entries, never from the WordPress user directory.
+if(!function_exists('cg_participants_rows')){
 function cg_participants_rows($gid,$shortcode,$userId = 0){
 	global $wpdb;
 	$context = array('realGid'=>absint($gid),'shortcodeName'=>$shortcode);
@@ -50,25 +57,33 @@ function cg_participants_rows($gid,$shortcode,$userId = 0){
 	$ids = cg1l_frontend_get_allowed_real_ids($keyed,$shortcode,$categories,cg_member_options($gid,$shortcode),get_current_user_id(),$form);
 	return cg1l_frontend_filter_id_keyed_data_by_allowed_ids($keyed,$ids);
 }
+}
 
+if(!function_exists('cg_participants_compare')){
 function cg_participants_compare($a,$b){
 	$order = strnatcasecmp($a['name'],$b['name']);
 	return $order ? $order : ($a['id']===$b['id'] ? 0 : ($a['id']<$b['id'] ? -1 : 1));
 }
+}
 
+if(!function_exists('cg_participants_profile_image')){
 function cg_participants_profile_image($profile,$isCard = false){
 	$initial = '<span class="cg-participant-initial" aria-hidden="true">'.esc_html(mb_substr($profile['name'],0,1)).'</span>';
 	if($profile['largeImage']){return '<img class="skip-lazy" data-skip-lazy="1" src="'.esc_url($profile['largeImage']).'" alt="" decoding="async">'.($isCard ? $initial : '');}
 	return $initial;
 }
+}
 
 // The badge counts the same visible members as the directory, including in My images.
+if(!function_exists('cg_participants_count')){
 function cg_participants_count($gid,$shortcode){
 	$users = array();
 	foreach(cg_participants_rows($gid,$shortcode) as $row){$users[absint($row['WpUserId'])] = true;}
 	return count($users);
 }
+}
 
+if(!function_exists('cg_participants_collect')){
 function cg_participants_collect($gid,$shortcode,$options,$userId = 0){
 	$rows = cg_participants_rows($gid,$shortcode,$userId);
 	$users = array();
@@ -111,7 +126,9 @@ function cg_participants_collect($gid,$shortcode,$options,$userId = 0){
 	unset($user);
 	return $users;
 }
+}
 
+if(!function_exists('cg_participants_sort_choices')){
 function cg_participants_sort_choices($options,$shortcode){
 	$choices = array('date-desc'=>'Date descend','date-asc'=>'Date ascend','name-asc'=>'Name A–Z','name-desc'=>'Name Z–A');
 	if(cg_page_stats_votes_visible($options,$shortcode)){
@@ -120,14 +137,18 @@ function cg_participants_sort_choices($options,$shortcode){
 	if(!empty($options['general']['AllowComments'])){$choices['comment-desc'] = 'Comments descend';$choices['comment-asc'] = 'Comments ascend';}
 	return $choices;
 }
+}
 
+if(!function_exists('cg_participants_default_sort')){
 function cg_participants_default_sort($options){
 	$preselect = isset($options['pro']['PreselectSort']) ? $options['pro']['PreselectSort'] : '';
 	if(strpos($preselect,'rating_')===0){return strpos($preselect,'asc')!==false ? 'rate-asc' : 'rate-desc';}
 	if(strpos($preselect,'comments_')===0){return strpos($preselect,'asc')!==false ? 'comment-asc' : 'comment-desc';}
 	return $preselect==='date_ascend' ? 'date-asc' : 'date-desc';
 }
+}
 
+if(!function_exists('cg_participants_controls')){
 function cg_participants_controls($choices,$sort,$search){
 	$html = '<div class="mainCGdivHelperChild cg-participants-controls"><div class="cg_header"><div class="cg_gallery_view_sort_control"><div class="cg_sort_div">';
 	$html .= '<div class="cg_search_input_div cg_gallery_control_element"><input type="search" class="cg_search_input cg-participants-search" maxlength="200" autocomplete="off" value="'.esc_attr($search).'" placeholder="'.esc_attr(cg_member_t('Search')).'" aria-label="'.esc_attr(cg_member_t('Search names and profile information')).'"></div>';
@@ -135,8 +156,10 @@ function cg_participants_controls($choices,$sort,$search){
 	foreach($choices as $key=>$label){$html .= '<option value="'.esc_attr($key).'"'.selected($sort,$key,false).'>'.esc_html(cg_member_t($label)).'</option>';}
 	return $html.'</select></label><div class="cg-participants-theme-slot"></div></div></div></div></div>';
 }
+}
 
 // Use the same compact selector/range/arrows and page size as the entry gallery.
+if(!function_exists('cg_participants_pagination')){
 function cg_participants_pagination($page,$pages,$total,$perPage,$bottom = false){
 	if($pages<2){return '';}
 	$html = '<nav class="cg-participants-pagination cg_further_images_container'.($bottom ? ' cg_further_images_container_bottom cg_compact_bottom_pager' : '').'" aria-label="'.esc_attr(cg_member_t('Participants')).'">';
@@ -149,7 +172,9 @@ function cg_participants_pagination($page,$pages,$total,$perPage,$bottom = false
 	$html .= '<div class="cg_further_images_select_nav_current">'.(($page-1)*$perPage+1).'-'.min($page*$perPage,$total).'</div><div class="cg_further_images_select_nav_of_language">'.esc_html(cg_member_t('of')).'</div><div class="cg_further_images_select_nav_total">'.$total.'</div>';
 	return $html.'<button type="button" data-cg-participants-page="'.($page+1).'" aria-label="'.esc_attr(cg_member_t('Next page')).'"'.($page===$pages ? ' disabled' : '').'><span class="cg_further_images_select_nav_next'.($page===$pages ? ' cg_further_images_select_nav_none' : '').'"></span></button></div></nav>';
 }
+}
 
+if(!function_exists('cg_participants_metrics')){
 function cg_participants_metrics($user,$options,$shortcode,$card = false){
 	$totals = array('entries'=>$user['count']);
 	if(cg_page_stats_votes_visible($options,$shortcode)){$totals['votes'] = $user['votes'];}
@@ -158,13 +183,17 @@ function cg_participants_metrics($user,$options,$shortcode,$card = false){
 	cg_page_render_statistics($totals,'',$options,$card);
 	return ob_get_clean();
 }
+}
 
+if(!function_exists('cg_participants_ajax_list')){
 function cg_participants_ajax_list(){
 	$context = cg_participants_request_context();
 	$options = cg_member_options($context['realGid'],$context['shortcodeName']);
 	wp_send_json_success(cg_participants_list_data($context,$options,wp_unslash($_POST)));
 }
+}
 
+if(!function_exists('cg_participants_list_data')){
 function cg_participants_list_data($context,$options,$request){
 	$users = cg_participants_collect($context['realGid'],$context['shortcodeName'],$options);
 	$participantCount = count($users);
@@ -205,17 +234,21 @@ function cg_participants_list_data($context,$options,$request){
 	echo cg_participants_pagination($page,$pages,$total,$perPage,true);
 	return array('html'=>ob_get_clean(),'controlsHtml'=>cg_participants_controls($choices,$sort,$search),'page'=>$page,'pages'=>$pages,'total'=>$total,'participantCount'=>$participantCount,'perPage'=>$perPage,'sort'=>$sort,'search'=>$search);
 }
+}
 add_action('wp_ajax_cg_participants','cg_participants_ajax_list');
 add_action('wp_ajax_nopriv_cg_participants','cg_participants_ajax_list');
 
+if(!function_exists('cg_participants_ajax_gallery')){
 function cg_participants_ajax_gallery(){
 	$context = cg_participants_request_context();
 	$data = cg_participants_profile_data($context,wp_unslash($_POST));
 	if(!empty($data['unavailable'])){wp_send_json_error($data);}
 	wp_send_json_success($data);
 }
+}
 
 // Shared by the initial page response and subsequent participant navigation.
+if(!function_exists('cg_participants_profile_data')){
 function cg_participants_profile_data($context,$request){
 	$userId = isset($request['userId']) && is_scalar($request['userId']) ? absint($request['userId']) : 0;
 	$entries = $userId ? cg_participants_rows($context['realGid'],$context['shortcodeName'],$userId) : array();
@@ -251,9 +284,11 @@ function cg_participants_profile_data($context,$request){
 	set_query_var('cgl_page',$previousPage);
 	return array('html'=>$frontend_gallery,'profileHtml'=>$profileHtml,'gid'=>$cgMemberInstanceId,'userId'=>$userId,'page'=>$page);
 }
+}
 add_action('wp_ajax_cg_participant_gallery','cg_participants_ajax_gallery');
 add_action('wp_ajax_nopriv_cg_participant_gallery','cg_participants_ajax_gallery');
 
+if(!function_exists('cg_participants_entry_link')){
 function cg_participants_entry_link($gid,$shortcode,$owner,$backUrl){
 	if(!$backUrl || !$owner || !in_array($shortcode,array('cg_gallery','cg_gallery_no_voting'),true) || !cg_member_enabled($gid,$shortcode)){return '';}
 	// Reuse the resolved Back to gallery URL, including origin, pagination and passthrough args.
@@ -270,7 +305,9 @@ function cg_participants_entry_link($gid,$shortcode,$owner,$backUrl){
 	$count = cg_participants_count($gid,$shortcode);
 	return '<nav class="cg-page-hero-links"><a class="cg-page-profile-link" data-cg-participant-view="profile" data-cg-participant-id="'.absint($owner).'" href="'.esc_url($profileUrl).'" title="'.esc_attr($profileLabel).'">'.$avatar.'<span class="cg-member-name">'.esc_html($profileLabel).'</span></a><a class="cg-page-participants-link" data-cg-participant-view="participants" href="'.esc_url($participantsUrl).'">'.esc_html(cg_member_t('Participants')).' <span class="cg-member-count">'.absint($count).'</span></a></nav>';
 }
+}
 
+if(!function_exists('cg_participants_navigation_args')){
 function cg_participants_navigation_args($source = null){
 	$source = is_array($source) ? $source : $_GET;
 	if(empty($source['cgl_view']) || !is_string($source['cgl_view']) || !in_array($source['cgl_view'],array('participants','profile'),true)){return array();}
@@ -279,12 +316,15 @@ function cg_participants_navigation_args($source = null){
 	foreach(array('cgl_participants_search','cgl_participants_sort') as $key){if(isset($source[$key]) && is_string($source[$key])){$args[$key] = mb_substr(sanitize_text_field(wp_unslash($source[$key])),0,200);}}
 	return $args;
 }
+}
 
 // Only generated gallery landing pages adopt a participant view on the server.
+if(!function_exists('cg_participants_initial_navigation')){
 function cg_participants_initial_navigation($gid,$shortcode,$entryId,$isOverview){
 	if(empty($GLOBALS['cgPagePresentation']) || !empty($GLOBALS['cgParticipantRendering']) || (defined('DOING_AJAX') && DOING_AJAX) || $entryId || $isOverview){return array();}
 	$args = cg_participants_navigation_args();
 	$target = isset($_GET['cgl_gallery']) && is_scalar($_GET['cgl_gallery']) ? absint($_GET['cgl_gallery']) : 0;
 	if(!$args || ($target && $target!==absint($gid)) || !cg_participants_context(array('realGid'=>$gid,'shortcodeName'=>$shortcode))){return array();}
 	return $args;
+}
 }

@@ -1011,8 +1011,8 @@ msgid "Maximum amount of uploads per user is"
 msgstr "每個用戶的最大上傳量為"
 
 #: check-language.php:375
-msgid "Maximum amount of uploads per category is"
-msgstr "每個類別的最大上傳量為"
+msgid "Maximum number of uploads for this category"
+msgstr "此類別的上傳數量上限"
 
 #: check-language.php:377
 msgid "You have already uploaded"
@@ -3083,3 +3083,8 @@ msgstr "管理員已停用你傳送訊息及交友邀請的功能。"
 #: check-language.php
 msgid "Ratings and comments"
 msgstr "評分及留言"
+
+
+#: check-language-ecommerce.php
+msgid "Settings path"
+msgstr "設定路徑"

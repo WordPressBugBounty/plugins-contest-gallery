@@ -149,6 +149,8 @@ if(!function_exists('cg1l_pre_delete_user')){
 		if(empty($user_id)){
 			return;
 		}
+		$historyUser = $user ? $user : get_userdata($user_id);
+		cg_participant_mail_history_erase_user($user_id,$historyUser ? $historyUser->user_email : '');
 
 		global $wpdb;
 

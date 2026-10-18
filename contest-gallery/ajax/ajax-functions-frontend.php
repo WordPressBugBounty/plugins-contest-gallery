@@ -376,6 +376,22 @@ if (!function_exists('cg1l_get_runtime_instance_state')) {
             }
         }
 
+        $options['pro']['RegUserMaxUploadPerCategory'] = cg_upload_category_limit(isset($options['pro']['RegUserMaxUploadPerCategory']) ? $options['pro']['RegUserMaxUploadPerCategory'] : 0);
+
+        // Viewer refreshes must not replace category counts with an empty map.
+        if(!empty($options['pro']['RegUserMaxUploadPerCategory'])){
+            global $wpdb;
+            $uploadMode = isset($options['pro']['RegUserUploadOnly']) ? (int)$options['pro']['RegUserUploadOnly'] : 0;
+            $uploadIdentity = ''; $uploadColumn = '';
+            if($uploadMode===1 && $viewerUserId){$uploadColumn='WpUserId';$uploadIdentity=$viewerUserId;}
+            elseif($uploadMode===2){$uploadColumn='CookieId';$uploadIdentity=cg_get_valid_frontend_cookie($realGid,'upload',true);$uploadState['CookieId']=$uploadIdentity;}
+            elseif($uploadMode===3){$uploadColumn='IP';$uploadIdentity=cg1l_sanitize_method(cg_get_user_ip());}
+            if($uploadColumn && $uploadIdentity && $uploadIdentity!=='unknown'){
+                $categoryCounts = $wpdb->get_results($wpdb->prepare("SELECT Category, COUNT(*) AS Amount FROM {$wpdb->prefix}contest_gal1ery WHERE GalleryID=%d AND $uploadColumn=%s GROUP BY Category",$realGid,$uploadIdentity));
+                foreach($categoryCounts as $categoryCount){$uploadState['UploadedUserFilesAmountPerCategoryArray'][(int)$categoryCount->Category]=(int)$categoryCount->Amount;}
+            }
+        }
+
         if(!empty($context['participantUserId'])){
             $allowedRealIds = array_values(array_intersect($allowedRealIds,array_keys(cg_participants_rows($realGid,$shortcodeName,$context['participantUserId']))));
             $options = cg_participants_gallery_options($options);
@@ -1098,6 +1114,10 @@ if(!function_exists('post_cg1l_verify_pin')){
                         cgJsClass.gallery.vars.pinMessage = <?php echo wp_json_encode($pinMessage);?>;
                     </script>
                     <?php
+                    exit();
+                }
+                if(is_array($cgPinResult) && !empty($cgPinResult['nextStep'])){
+                    echo '<script data-cg-processing="true">cgJsClass.gallery.vars.registrationAgreementsResult='.wp_json_encode($cgPinResult).';cgJsClass.gallery.vars.pinMessage="agreements";</script>';
                     exit();
                 }
                 if(is_array($cgPinResult) && !empty($cgPinResult['userId'])){

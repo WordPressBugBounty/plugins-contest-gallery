@@ -1,0 +1,36 @@
+#cgRegistrationDetails { color: #263b30; }
+#cgRegistrationDetails *, #cgRegistrationDetails *::before, #cgRegistrationDetails *::after { box-sizing: border-box; }
+#cgRegistrationDetails button, #cgRegistrationDetails input, #cgRegistrationDetails textarea, #cgRegistrationDetails select, #cgRegistrationDetails a { outline: none !important; box-shadow: none !important; }
+#cgRegistrationDetails button:focus, #cgRegistrationDetails input:focus, #cgRegistrationDetails textarea:focus, #cgRegistrationDetails select:focus, #cgRegistrationDetails a:focus { outline: none !important; box-shadow: none !important; }
+.cg-registration-details-header { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin: 20px 0; }
+.cg-registration-details-header h1 { margin: 0 0 12px; font-size: 24px; line-height: 1.3; }
+#cgRegistrationDetails .cg-registration-details-header > .button { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; min-height: 38px; padding: 8px 16px; border: 1px solid #c9d9cf; border-radius: 999px; background: #fff; color: #263b30; font-size: 13px; font-weight: 600; line-height: 1.4; text-decoration: none; white-space: nowrap; transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease; }
+#cgRegistrationDetails .cg-registration-details-header > .button:hover, #cgRegistrationDetails .cg-registration-details-header > .button:focus { background: #eff8f2; border-color: #98bea8; color: #176b40; }
+#cgRegistrationDetails .cg-registration-details-header > .button:active { background: #e1f0e6; border-color: #7da98f; color: #176b40; }
+.cg-registration-details-identity { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0; }
+.cg-registration-details-identity div { display: flex; flex-wrap: wrap; gap: 6px; }
+.cg-registration-details-identity dt { font-weight: 600; }
+.cg-registration-details-identity dd { margin: 0; overflow-wrap: anywhere; }
+.cg-registration-details-card { background: #fff; border: 1px solid #d7e2dc; border-radius: 10px; padding: 22px; margin: 0 0 20px; min-width: 0; }
+#cgRegistrationDetails .cg-registration-details-card h2 { font-size: 17px; margin: 0 0 18px; }
+.cg-registration-details-summary { display: flex; flex-wrap: wrap; gap: 16px 36px; margin: 0 0 20px; }
+.cg-registration-details-summary dt { color: #64766b; font-size: 12px; margin-bottom: 4px; }
+.cg-registration-details-summary dd { margin: 0; overflow-wrap: anywhere; }
+.cg-registration-details-agreement + .cg-registration-details-agreement { border-top: 1px solid #e1e8e4; margin-top: 20px; padding-top: 20px; }
+.cg-registration-details-agreement-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+#cgRegistrationDetails .cg-registration-details-agreement h3 { font-size: 14px; margin: 0; }
+.cg-registration-details-badges { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.cg-registration-details-status, .cg-registration-details-requirement { display: inline-block; padding: 4px 9px; border: 1px solid #d7e2dc; border-radius: 6px; background: #f6f8f7; font-size: 12px; }
+.cg-registration-details-status.is-accepted { background: #edf8f1; border-color: #c1e5cf; color: #187746; }
+.cg-registration-details-agreement-text { overflow-wrap: anywhere; }
+.cg-registration-details-agreement-text > :first-child { margin-top: 0; }
+.cg-registration-details-agreement-text > :last-child { margin-bottom: 0; }
+.cg-registration-details-agreement-text img, .cg-registration-details-agreement-text video { max-width: 100%; height: auto; }
+.cg-registration-details-agreement-text table { display: block; max-width: 100%; overflow-x: auto; }
+.cg-registration-details-empty, .cg-registration-details-note { color: #64766b; }
+.cg-registration-details-empty { margin: 0; }
+.cg-registration-details-note { margin: 20px 0 0; font-size: 12px; }
+@media (max-width: 782px) {
+    .cg-registration-details-header { align-items: flex-start; flex-direction: column; }
+    .cg-registration-details-card { padding: 16px; }
+}

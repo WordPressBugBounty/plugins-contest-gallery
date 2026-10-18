@@ -1,21 +1,28 @@
 <?php
 if(!defined('ABSPATH')){exit;}
 
+if(!function_exists('cg_member_profile_strings')){
 function cg_member_profile_strings(){
 	return array('My profile','Additional information','Display name','This name is displayed across this website.','Choose profile image','JPG, PNG or GIF. Maximum {size} MB.','Save profile','Save information','Profile saved.','Information saved.','Please enter a display name.','Please use a display name instead of an email address.','Please complete the required fields.','Please choose a valid option.','Your profile has changed. Close and reopen it before saving.','Discard unsaved profile changes?','The profile image could not be saved.','You cannot edit these profile fields.');
 }
+}
 
+if(!function_exists('cg_member_profile_fields')){
 function cg_member_profile_fields(){
 	global $wpdb;
 	return $wpdb->get_results("SELECT * FROM {$wpdb->prefix}contest_gal1ery_create_user_form WHERE GeneralID=1 AND Field_Type IN ('user-text-field','user-url-field','user-comment-field','user-select-field','user-radio-field','user-check-field') ORDER BY Field_Order ASC, id ASC");
 }
+}
 
+if(!function_exists('cg_member_profile_image_id')){
 function cg_member_profile_image_id($userId){
 	global $wpdb;
 	// The existing registry stores account profile images in the base-prefix table.
 	return absint($wpdb->get_var($wpdb->prepare("SELECT WpUpload FROM {$wpdb->base_prefix}contest_gal1ery WHERE WpUserId=%d AND IsProfileImage=1 ORDER BY id DESC LIMIT 1",$userId)));
 }
+}
 
+if(!function_exists('cg_member_profile_data')){
 function cg_member_profile_data($userId){
 	$user = get_userdata($userId);
 	$id = cg_member_profile_image_id($userId);
@@ -27,7 +34,9 @@ function cg_member_profile_data($userId){
 	$override = $custom && get_user_meta($userId,'cg_member_profile_image_override',true);
 	return array('userId'=>absint($userId),'name'=>$user->display_name,'customImage'=>$custom,'image'=>$override ? $custom : ($wp['small'] ? $wp['small'] : ($custom ? $custom : $google)),'largeImage'=>$override ? $custom : ($wp['large'] ? $wp['large'] : ($custom ? $custom : $google)),'fallbackImage'=>$wp['small'] ? $wp['small'] : $google,'attachment'=>$id,'override'=>(bool)$override);
 }
+}
 
+if(!function_exists('cg_member_profile_revision')){
 function cg_member_profile_revision($userId,$section){
 	if($section==='basic'){
 		$user = get_userdata($userId);
@@ -38,7 +47,9 @@ function cg_member_profile_revision($userId,$section){
 	}
 	return wp_hash(wp_json_encode(array(cg_profile_meta_prefix(),$userId,$section,$state)),'nonce');
 }
+}
 
+if(!function_exists('cg_member_profile_render')){
 function cg_member_profile_render($userId){
 	$data = cg_member_profile_data($userId);
 	$fields = cgHasUserGroupAllowedToEdit(get_userdata($userId)) ? cg_member_profile_fields() : array();
@@ -91,17 +102,23 @@ function cg_member_profile_render($userId){
 	echo '</form></div>';
 	return ob_get_clean();
 }
+}
 
+if(!function_exists('cg_member_profile_render_field_error')){
 function cg_member_profile_render_field_error($key){
 	echo '<p class="cg_input_error" id="cg-member-profile-error-'.esc_attr($key).'"'.($key==='profile_image' ? ' role="status" aria-live="polite"' : '').' hidden></p>';
 }
+}
 
+if(!function_exists('cg_member_profile_render_save')){
 function cg_member_profile_render_save(){
 	// Keep both labels in the layout so saving never changes the button width.
 	echo '<div class="cg-member-profile-footer"><button type="button" class="cg-member-profile-close">'.esc_html(cg_member_t('Close')).'</button><button type="submit" class="cg-member-profile-save"><span class="cg-member-profile-save-label">'.esc_html(cg_member_t('Save')).'</span><span class="cg-member-profile-saved-label" aria-hidden="true">'.esc_html(cg_member_t('Saved')).'</span><span class="cg-member-profile-spinner" aria-hidden="true"></span></button>';
 	echo '<p role="status" aria-live="polite" aria-atomic="true" class="cg-member-profile-status"></p></div>';
 }
+}
 
+if(!function_exists('cg_member_profile_validate_name')){
 function cg_member_profile_validate_name($userId,$name){
 	global $wpdb;
 	if($name==='' || mb_strlen($name)>250){return new WP_Error('name','Please enter a display name.',array('fieldErrors'=>array('display_name'=>$name==='' ? 'Required' : 'Please enter a display name.')));}
@@ -118,7 +135,9 @@ function cg_member_profile_validate_name($userId,$name){
 	if($existing){return new WP_Error('name_taken','This nickname is already taken',array('fieldErrors'=>array('display_name'=>'This nickname is already taken')));}
 	return true;
 }
+}
 
+if(!function_exists('cg_member_profile_save_basic')){
 function cg_member_profile_save_basic($userId,$values = array()){
 	global $wpdb;
 	$name = isset($_POST['display_name']) && is_string($_POST['display_name']) ? trim(sanitize_text_field(wp_unslash($_POST['display_name']))) : '';
@@ -171,8 +190,10 @@ function cg_member_profile_save_basic($userId,$values = array()){
 	clean_user_cache($userId);
 	return true;
 }
+}
 
 add_action('wp_ajax_cg_member_profile','cg_member_profile_ajax');
+if(!function_exists('cg_member_profile_ajax')){
 function cg_member_profile_ajax(){
 	if(!is_user_logged_in() || $_SERVER['REQUEST_METHOD']!=='POST'){wp_send_json_error(array('message'=>cg_member_t('Please reload the page and try again.')),403);}
 	cg_member_ajax_context();
@@ -230,4 +251,5 @@ function cg_member_profile_ajax(){
 	);
 	if($mode==='save' && $saveFields){$response['fieldsRevision'] = cg_member_profile_revision($userId,'fields');}
 	wp_send_json_success($response);
+}
 }

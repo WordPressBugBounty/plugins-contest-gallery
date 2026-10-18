@@ -3,6 +3,7 @@ if(!defined('ABSPATH')){exit;}
 
 // Called while holding the existing user/action lock. SQL rollback does not undo
 // MyISAM writes, so remember only the counters and audit rows this operation owns.
+if(!function_exists('cg_paid_actions_recovery_start')){
 function cg_paid_actions_recovery_start($user,$action,$token,$objectIds = array()){
     global $wpdb;
     $state=array('rows'=>array(),'ledger'=>false,'ledgerIds'=>array(),'ledgerWhere'=>'');
@@ -34,7 +35,9 @@ function cg_paid_actions_recovery_start($user,$action,$token,$objectIds = array(
     }
     return $state;
 }
+}
 
+if(!function_exists('cg_paid_actions_recovery_transaction')){
 function cg_paid_actions_recovery_transaction($sql,&$state){
     global $wpdb;
     $result=cg_upload_job_db_transaction($sql);
@@ -56,11 +59,14 @@ function cg_paid_actions_recovery_transaction($sql,&$state){
     if(!$restored){error_log('Contest Gallery: failed to restore an upload credit operation. Administrator review is required.');}
     return $result!==false && $restored ? $result : false;
 }
+}
 
 // Register before reservation-release handlers. A PHP fatal during a counter or
 // ledger write must be compensated before shutdown retries pending settlement.
+if(!function_exists('cg_paid_actions_recovery_shutdown')){
 function cg_paid_actions_recovery_shutdown(){
     if(empty($GLOBALS['cgPaidActionRecovery'])){return;}
     foreach(array_reverse($GLOBALS['cgPaidActionRecovery']) as $state){cg_paid_actions_recovery_transaction('ROLLBACK',$state);}
+}
 }
 register_shutdown_function('cg_paid_actions_recovery_shutdown');

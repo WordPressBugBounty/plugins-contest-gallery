@@ -2,10 +2,13 @@
 if(!defined('ABSPATH')){exit;}
 require_once __DIR__.'/cg-page-statistics.php';
 
+if(!function_exists('cg_page_text')){
 function cg_page_text($value){
 	return trim(wp_strip_all_tags(html_entity_decode(stripslashes((string)$value),ENT_QUOTES,'UTF-8')));
 }
+}
 
+if(!function_exists('cg_page_gallery_title')){
 function cg_page_gallery_title($options,$gid){
 	foreach(array('GalleryName','MainTitleGalleriesView') as $key){
 		$group = $key==='GalleryName' ? 'general' : 'pro';
@@ -14,7 +17,9 @@ function cg_page_gallery_title($options,$gid){
 	}
 	return cg_member_t('Explore the gallery');
 }
+}
 
+if(!function_exists('cg_page_gallery_header_texts')){
 function cg_page_gallery_header_texts($options,$gid){
 	$texts = array('GalleryHeaderLabel'=>cg_member_t('Gallery'),'GalleryHeaderTitle'=>cg_page_gallery_title($options,$gid),'GalleryHeaderSubtitle'=>cg_member_t('Explore the entries in this gallery.'));
 	$subtitle = isset($options['pro']['SubTitleGalleriesView']) ? cg_page_text($options['pro']['SubTitleGalleriesView']) : '';
@@ -25,7 +30,9 @@ function cg_page_gallery_header_texts($options,$gid){
 	}
 	return $texts;
 }
+}
 
+if(!function_exists('cg_page_galleries_header_texts')){
 function cg_page_galleries_header_texts($options){
 	$texts = array('GalleriesHeaderLabel'=>cg_member_t('Galleries'),'GalleriesHeaderTitle'=>cg_member_t('Discover galleries'),'GalleriesHeaderSubtitle'=>cg_member_t('Explore galleries and their entries.'));
 	foreach($texts as $key=>$default){
@@ -33,12 +40,16 @@ function cg_page_galleries_header_texts($options){
 	}
 	return $texts;
 }
+}
 
 // Only an explicit saved choice changes the previous, enabled-by-default header.
+if(!function_exists('cg_page_header_option_value')){
 function cg_page_header_option_value($options,$key,$default = 1){
 	return isset($options[$key]) && in_array($options[$key],array(0,1,'0','1'),true) ? (int)$options[$key] : (int)$default;
 }
+}
 
+if(!function_exists('cg_page_gallery_header_enabled')){
 function cg_page_gallery_header_enabled($gid,$shortcode,$stored = null){
 	if(!in_array($shortcode,array('cg_gallery','cg_gallery_no_voting'),true)){return false;}
 	if($stored===null){$stored = cg_member_replacement_source($gid);}
@@ -50,8 +61,10 @@ function cg_page_gallery_header_enabled($gid,$shortcode,$stored = null){
 	}
 	return (bool)cg_page_header_option_value(isset($options['visual']) ? $options['visual'] : array(),'ShowGalleryHeader');
 }
+}
 
 // Small presentation hints let AJAX navigation show the destination's skeleton immediately.
+if(!function_exists('cg_page_gallery_navigation_presentation')){
 function cg_page_gallery_navigation_presentation($gid,$shortcode,$stored,$active){
 	$options = cg_member_options_from_source($stored,$gid,$shortcode);
 	$hasHeader = $active && in_array($shortcode,array('cg_gallery','cg_gallery_no_voting'),true) && !empty($options['general']['Version']) && (int)$options['general']['Version']>=24;
@@ -60,7 +73,9 @@ function cg_page_gallery_navigation_presentation($gid,$shortcode,$stored,$active
 		'showHeader'=>$hasHeader && cg_page_gallery_header_enabled($gid,$shortcode,$stored)
 	);
 }
+}
 
+if(!function_exists('cg_page_galleries_navigation_presentation')){
 function cg_page_galleries_navigation_presentation($shortcode){
 	$options = cg_galleries_options($shortcode);
 	return array(
@@ -68,7 +83,9 @@ function cg_page_galleries_navigation_presentation($shortcode){
 		'showHeader'=>in_array($shortcode,array('cg_gallery','cg_gallery_no_voting'),true) && (bool)cg_page_header_option_value($options,'ShowGalleriesHeader')
 	);
 }
+}
 
+if(!function_exists('cg_page_store_galleries_header_options')){
 function cg_page_store_galleries_header_options(&$options,$previous){
 	foreach(array('g','nv','u','w','ec') as $type){
 		if(in_array($type,array('g','nv'),true)){
@@ -88,7 +105,9 @@ function cg_page_store_galleries_header_options(&$options,$previous){
 		}
 	}
 }
+}
 
+if(!function_exists('cg_page_store_header_options')){
 function cg_page_store_header_options(&$options,$gid,$input){
 	$stored = cg_member_replacement_source($gid);
 	$base = isset($stored[$gid]) ? $stored[$gid] : $stored;
@@ -115,14 +134,18 @@ function cg_page_store_header_options(&$options,$gid,$input){
 		}
 	}
 }
+}
 
 // Recognize only the shipped explanatory copy. Custom introductory content stays intact.
+if(!function_exists('cg_page_is_factory_intro')){
 function cg_page_is_factory_intro($value){
 	$original = '<p  style="text-align: center;">This is <strong>"General text on entry landing page before an activated entry"</strong>, is only visible on an entry landing page of an entry and can be configured for every cg_gallery shortcode type in <strong>"Edit options" >>> "Entry view"</strong><br><strong>NOTE:</strong>the cg_gallery... shortcode with entry_id added to this page can be placed on any other of your pages<br><strong>NOTE:</strong> social media share icons can be configured in <strong>"Edit options" >>> "Entry view"</strong><br><strong>NOTE:</strong> "Back to gallery button custom URL" can be configured in <strong>"Edit options" >>> "Entry view"</strong></p>';
 	return cg_page_text($value)===cg_page_text($original);
 }
+}
 
 // Resolve the selected file's dimensions, not the original upload's dimensions.
+if(!function_exists('cg_page_preview_image_size')){
 function cg_page_preview_image_size($entry,$url){
 	static $sizes = array();
 	$path = wp_parse_url($url,PHP_URL_PATH);
@@ -141,7 +164,9 @@ function cg_page_preview_image_size($entry,$url){
 	// Unknown files use scale-down until the browser knows their actual pixel size.
 	return array(0,0);
 }
+}
 
+if(!function_exists('cg_page_preview_media')){
 function cg_page_preview_media($entry){
 	if(!empty($entry['isCGalleriesNoGalleryEntries'])){return false;}
 	$type = isset($entry['ImgType']) ? strtolower($entry['ImgType']) : '';
@@ -182,8 +207,10 @@ function cg_page_preview_media($entry){
 	}
 	return false;
 }
+}
 
 // Match layoutPagePreviews() before the browser loads or decodes the selected media.
+if(!function_exists('cg_page_preview_layout')){
 function cg_page_preview_layout($previews){
 	$layout = array('class'=>'','style'=>'');
 	if(!$previews || count($previews)>2){return $layout;}
@@ -200,8 +227,10 @@ function cg_page_preview_layout($previews){
 	$layout['style'] = '--cg-preview-ratio:'.number_format($total,6,'.','').';--cg-preview-columns:'.implode(' ',$columns).';--cg-preview-gap-count:'.(count($previews)-1);
 	return $layout;
 }
+}
 
 // Keep destinations tied to WordPress-owned IDs, not the displayed thumbnail URL.
+if(!function_exists('cg_page_preview_navigation')){
 function cg_page_preview_navigation($entry,$shortcode){
 	$gid = !empty($entry['GalleryIdToCheck']) ? absint($entry['GalleryIdToCheck']) : (!empty($entry['GalleryID']) ? absint($entry['GalleryID']) : (!empty($entry['gid']) ? absint($entry['gid']) : 0));
 	$map = cgl_get_shortcode_page_map($shortcode);
@@ -217,9 +246,11 @@ function cg_page_preview_navigation($entry,$shortcode){
 		'label'=>!empty($entry['post_title']) ? cg_page_text($entry['post_title']) : ''
 	);
 }
+}
 
 // Overview covers are selected separately from the public gallery dataset.
 // Keep their existing selection, but authorize every preview before emitting it.
+if(!function_exists('cg_page_overview_preview_entries')){
 function cg_page_overview_preview_entries($covers,$shortcode){
 	$entries = array();
 	foreach($covers as $id=>$cover){
@@ -231,8 +262,10 @@ function cg_page_overview_preview_entries($covers,$shortcode){
 	}
 	return $entries;
 }
+}
 
 // The live refresh uses the same media rules as the initial header.
+if(!function_exists('cg_page_select_previews')){
 function cg_page_select_previews($entries,$entryId = 0,$owner = 0,$gid = 0,$limit = 3,$shortcode = 'cg_gallery'){
 	$previews = array();
 	$seen = array();
@@ -260,7 +293,9 @@ function cg_page_select_previews($entries,$entryId = 0,$owner = 0,$gid = 0,$limi
 	}
 	return $previews;
 }
+}
 
+if(!function_exists('cg_page_render_header')){
 function cg_page_render_header($args){
 	$gid = absint($args['gallery_id']);
 	$options = $args['options'];
@@ -361,4 +396,5 @@ function cg_page_render_header($args){
 	}
 	echo '</header>';
 	return true;
+}
 }

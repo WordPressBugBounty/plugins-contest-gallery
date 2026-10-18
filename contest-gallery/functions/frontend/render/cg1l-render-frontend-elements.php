@@ -145,6 +145,7 @@ if(!function_exists('cg1l_render_full_main_parent')){
 
 
 // Shared catalogue for PHP first paint and every JavaScript sharing surface.
+if(!function_exists('cg1l_share_config')){
 function cg1l_share_config(){
     $providers = array(
         'whatsapp'=>array('WhatsApp','https://api.whatsapp.com/send?text={whatsapp}'),
@@ -186,12 +187,17 @@ function cg1l_share_config(){
     foreach($paths as $key=>$path){$icons[$key] = '<svg class="cg-action-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'.$path.'</svg>';}
     return array('platforms'=>$platforms,'icons'=>$icons);
 }
+}
+if(!function_exists('cg1l_file_action_content')){
 function cg1l_file_action_content($type,$label){
     $config = cg1l_share_config();
     return $config['icons'][$type].'<span class="cg-action-label">'.esc_html($label).'</span>';
 }
+}
+if(!function_exists('cg1l_share_strings')){
 function cg1l_share_strings(){
     return array('Share this entry','Take a look at this entry','Copy link','More apps…','Link copied','Copy this link:','Sharing is unavailable. You can copy the link instead.','File actions');
+}
 }
 
 if(!function_exists('cg1l_render_sharebuttons')){

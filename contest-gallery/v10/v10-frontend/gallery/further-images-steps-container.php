@@ -83,8 +83,10 @@ echo <<<HEREDOC
     <div class="cg_skeleton"></div>
 HEREDOC;
 #toDo cg_further_images_select_nav_none CSS setzen in js auch setzen
+$cgPreviousPageLabel = esc_attr($language_PreviousPage);
+$cgNextPageLabel = esc_attr($language_NextPage);
 echo <<<HEREDOC
-    <a $previousHref ><div class="cg_further_images_select_nav_prev" data-cg-gid="$galeryIDuserForJs" data-cg-tooltip="$language_PreviousPage"></div></a>
+    <a $previousHref aria-label="$cgPreviousPageLabel"><div class="cg_further_images_select_nav_prev" data-cg-gid="$galeryIDuserForJs" data-cg-tooltip="$cgPreviousPageLabel"></div></a>
 HEREDOC;
 echo <<<HEREDOC
     <div class="cg_further_images_select_nav_current">$start - $end</div>
@@ -92,7 +94,7 @@ echo <<<HEREDOC
     <div class="cg_further_images_select_nav_total">$imagesFullDataOriginalLength</div>
 HEREDOC;
 echo <<<HEREDOC
-    <a $nextPageHref ><div class="cg_further_images_select_nav_next" data-cg-gid="$galeryIDuserForJs" data-cg-tooltip="$language_NextPage"></div></a>
+    <a $nextPageHref aria-label="$cgNextPageLabel"><div class="cg_further_images_select_nav_next" data-cg-gid="$galeryIDuserForJs" data-cg-tooltip="$cgNextPageLabel"></div></a>
 </div>
 HEREDOC;
 

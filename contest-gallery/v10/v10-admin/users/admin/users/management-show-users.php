@@ -140,6 +140,7 @@ echo "<div style='padding-top:2px;position: relative;'><span class=\"cg-info-ico
 echo "</div>";
 
 cg_mails_list();
+cg_mail_history_container();
 cg1l_email_backend_template(true);
 
 $nr1 = $start + 1;
@@ -458,22 +459,18 @@ HEREDOC;
 
             $user_email = $user->user_email;
 
-            $contestGalleryEntriesEditLink = "";
-
-            $cgEntriesCheck = $wpdb->get_var( "SELECT COUNT(*) FROM $entriesShort WHERE GeneralID = '0' AND (wp_user_id  = $userId) AND (Field_Type = 'user-select-field' OR Field_Type = 'user-comment-field' OR Field_Type = 'user-text-field' OR Field_Type = 'user-radio-field' OR Field_Type = 'user-check-field' OR Field_Type = 'user-check-agreement-field')");
-
-            if(!empty($cgEntriesCheck)){
-                $contestGalleryEntriesEditLink =  "<span class='cg_entries'><a href='?page=".cg_get_version()."/index.php&users_management=true&option_id=$GalleryID&wp_user_id=$userId&edit_registration_entries=true' class='cg_entry' >Edit Contest Gallery registration form entries</a></span>";
-            }else{
-                $cgEntriesCheck = $wpdb->get_var( $wpdb->prepare("SELECT COUNT(*) FROM $table_usermeta WHERE user_id = %d AND meta_key LIKE %s",$userId,$wpdb->esc_like(cg_profile_meta_prefix()).'%'));
-                if(!empty($cgEntriesCheck)){
-                    $contestGalleryEntriesEditLink =  "<span><a href='?page=".cg_get_version()."/index.php&users_management=true&option_id=$GalleryID&wp_user_id=$userId&edit_registration_entries=true&wp_user_meta_entries=true' class='cg_entry' >Edit Contest Gallery registration form entries</a></span>";
-                }else{
-                    $contestGalleryEntriesEditLink = "<span>(No Contest Gallery registration form entries to edit)</span>";
+            $contestGalleryEntriesEditLink = '';
+            if(current_user_can('manage_options') && (!is_multisite() || is_user_member_of_blog($userId))){
+                $cgEntriesCheck = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $entriesShort WHERE GeneralID = '0' AND wp_user_id = %d AND Field_Type IN ('user-select-field','user-comment-field','user-text-field','user-radio-field','user-check-field','user-check-agreement-field')",$userId));
+                $cgRegistrationDetailsArgs = array('page'=>cg_get_version().'/index.php','users_management'=>'true','option_id'=>absint($GalleryID),'wp_user_id'=>absint($userId),'edit_registration_entries'=>'true','cg_nonce'=>wp_create_nonce('cg_nonce'));
+                if(!$cgEntriesCheck && $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table_usermeta WHERE user_id = %d AND meta_key LIKE %s",$userId,$wpdb->esc_like(cg_profile_meta_prefix()).'%'))){
+                    $cgRegistrationDetailsArgs['wp_user_meta_entries'] = 'true';
                 }
+                $contestGalleryEntriesEditLink = '<span class="cg_entries"><a href="'.esc_url(add_query_arg($cgRegistrationDetailsArgs,admin_url('admin.php'))).'" class="cg_entry">Registration details</a></span>';
             }
 
             $cgMemberMessagesLink = current_user_can('manage_options') ? ' | <span><a class="cg_member_admin_messages_open" target="_blank" rel="noopener" href="'.esc_url(cg_member_admin_messages_url($userId,$GalleryID)).'">Messages</a></span>' : '';
+            $cgMailHistoryLink = current_user_can('manage_options') ? ' | <span><a href="#" class="cg_mail_history_open" data-context="user" data-user-id="'.absint($userId).'">Email history</a></span>' : '';
 
             // var_dump(get_avatar( 1));
 
@@ -490,9 +487,9 @@ HEREDOC;
                 echo "<span style='margin-left:5px;font-weight:600;'>Mail not confirmed</span>";
             }
                 echo "<br>
-                                    <div class=\"row-actions\"><span><a target='_blank' 
+                                    <div class=\"row-actions visible\"><span><a target='_blank'
                                             href=\"$editUserWPprofileLink\">Edit WordPress Profile</a> | </span>
-                                            $contestGalleryEntriesEditLink$cgMemberMessagesLink
+                                            $contestGalleryEntriesEditLink$cgMemberMessagesLink$cgMailHistoryLink
                                             </div>
                                 </td>
                                 <td class=\"email column-email\" data-colname=\"Email\">$user_email

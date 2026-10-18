@@ -10,6 +10,7 @@ require_once __DIR__.'/cg-participants.php';
 require_once __DIR__.'/cg-galleries-participants.php';
 
 // Read defaults without rewriting existing galleries or changing upload access.
+if(!function_exists('cg_member_options_from_source')){
 function cg_member_options_from_source($data,$gid,$shortcode){
 	$data = is_array($data) ? $data : array();
 	$base = !empty($data[$gid]) ? $data[$gid] : $data;
@@ -27,12 +28,16 @@ function cg_member_options_from_source($data,$gid,$shortcode){
 	$options['visual']['MemberArea'] = $enabled ? 1 : 0;
 	return $options;
 }
+}
 
+if(!function_exists('cg_member_options')){
 function cg_member_options($gid,$shortcode = 'cg_gallery'){
 	return cg_member_options_from_source(cg_member_replacement_source($gid),$gid,$shortcode);
 }
+}
 
 // Member profile availability is separate from the stored owner display preferences.
+if(!function_exists('cg_member_profile_options')){
 function cg_member_profile_options($options,$gid,$shortcode){
 	$options['visual']['ShowProfileEntry'] = cg_uploader_profile_entry_enabled($options,$shortcode) ? 1 : 0;
 	$options['pro']['ShowNickname'] = $options['visual']['ShowProfileEntry'];
@@ -41,9 +46,11 @@ function cg_member_profile_options($options,$gid,$shortcode){
 	if(!cg_member_features_available($gid) || !cg_gallery_card_profile_supported($shortcode)){$options['visual']['ShowProfileGallery'] = 0;}
 	return $options;
 }
+}
 
 // Availability follows the stored gallery generation and its actual page type.
 // Custom slugs and shortcode embeddings do not change this decision.
+if(!function_exists('cg_member_features_available')){
 function cg_member_features_available($gid){
 	global $wpdb;
 	static $rows = array();
@@ -59,16 +66,22 @@ function cg_member_features_available($gid){
 	$page = get_post($row->WpPageParent);
 	return $page && $page->post_type==='contest-g' && !in_array($page->post_status,array('trash','auto-draft'),true);
 }
+}
 
+if(!function_exists('cg_member_unavailable_note')){
 function cg_member_unavailable_note(){
 	return 'Available for galleries using the new page structure. Copy this gallery to use these features.';
 }
+}
 
+if(!function_exists('cg_member_enabled')){
 function cg_member_enabled($gid,$shortcode = ''){
 	return cg_member_features_available($gid) && cg_member_configured($gid,$shortcode);
 }
+}
 
 // A login return selects a view, never an account or an authorization context.
+if(!function_exists('cg_member_initial_own_view')){
 function cg_member_initial_own_view($gid,$instance,$shortcode,$entryId,$isOverview){
 	if((defined('DOING_AJAX') && DOING_AJAX) || $entryId || $isOverview || !is_user_logged_in() || !in_array($shortcode,array('cg_gallery','cg_gallery_no_voting'),true)){return false;}
 	$expected = array('cg_member_view'=>'own','cg_member_instance'=>(string)$instance,'cg_member_shortcode'=>$shortcode);
@@ -77,15 +90,19 @@ function cg_member_initial_own_view($gid,$instance,$shortcode,$entryId,$isOvervi
 	}
 	return cg_member_enabled($gid,$shortcode);
 }
+}
 
 // Keep the stored preference separate from runtime eligibility, including copies.
+if(!function_exists('cg_member_configured')){
 function cg_member_configured($gid,$shortcode = ''){
 	if($shortcode===''){return cg_member_configured($gid,'cg_gallery') || cg_member_configured($gid,'cg_gallery_no_voting') || cg_member_configured($gid,'cg_gallery_user');}
 	$options = cg_member_options($gid,$shortcode);
 	return !empty($options['visual']['MemberArea']);
 }
+}
 
 // Keep flat legacy options and explicit shortcode variants consistent on save/copy.
+if(!function_exists('cg_member_store_options')){
 function cg_member_store_options(&$options,$gid,$galleryEnabled,$noVotingEnabled,$userEnabled){
 	if(!cg_member_features_available($gid)){
 		// Disabled admin controls must not erase preferences or accept crafted saves.
@@ -111,7 +128,9 @@ function cg_member_store_options(&$options,$gid,$galleryEnabled,$noVotingEnabled
 		$options[$key]['visual']['MemberArea'] = $suffix==='' ? ($galleryEnabled ? 1 : 0) : (($suffix==='-nv' && $noVotingEnabled) || ($suffix==='-u' && $userEnabled) ? 1 : 0);
 	}
 }
+}
 
+if(!function_exists('cg_member_render_option')){
 function cg_member_render_option($gid,$shortcode){
 	$available = cg_member_features_available($gid);
 	$suffix = $shortcode==='cg_gallery_no_voting' ? 'NoVoting' : ($shortcode==='cg_gallery_user' ? 'User' : '');
@@ -121,16 +140,20 @@ function cg_member_render_option($gid,$shortcode){
 	echo '<div class="cg_member_options_group cg_margin_bottom_30">';
 	if(!$available){echo '<p class="cg-member-unavailable-note">'.esc_html(cg_member_unavailable_note()).'</p>';}
 	echo '<fieldset'.(!$available ? ' disabled class="cg_disabled"' : '').' style="border:0;margin:0;padding:0;min-width:0;">';
-	echo '<div class="cg_view_options_row"><div class="cg_view_option cg_view_option_100_percent cg_view_option_checkbox_container cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px'.$bottomRadius.'" id="MemberArea'.$suffix.'Container"><div class="cg_view_option_title"><p>Member profile<br><span class="cg_view_option_title_note">'.esc_html($description).' Uses email PIN.<br>Can also be used with Google login. <a href="" class="cg_go_to_link cg_no_outline_and_shadow_on_focus" data-cg-go-to-link="GoogleSignInOptions">Configure Google login options...</a><br>Upload access is set separately. <a href="" class="cg_go_to_link cg_no_outline_and_shadow_on_focus" data-cg-go-to-link="CheckLoginUploadContainer">Configure sign-in for uploads...</a></span></p></div><div class="cg_view_option_checkbox"><input type="hidden" name="'.esc_attr($name).'" value="0"><input type="checkbox" aria-label="Member profile" id="MemberArea'.$suffix.'" name="'.esc_attr($name).'" value="1"'.(cg_member_enabled($gid,$shortcode) ? ' checked' : '').'></div></div></div>';
+	echo '<div class="cg_view_options_row"><div class="cg_view_option cg_view_option_100_percent cg_view_option_checkbox_container cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px'.$bottomRadius.'" id="MemberArea'.$suffix.'Container"><div class="cg_view_option_title"><p>Member profile<br><span class="cg_view_option_title_note">'.esc_html($description).' Uses email PIN.<br><strong>Sign-in &amp; registration:</strong> <a href="#" class="cg_go_to_link cg_no_outline_and_shadow_on_focus" data-cg-go-to-link="MemberSignInTextOptions">Dialog text</a> &middot; <a href="#" class="cg_go_to_link cg_no_outline_and_shadow_on_focus" data-cg-go-to-link="RegistrationAgreementsOptions">Agreements for new accounts</a><br><strong>Other options:</strong> <a href="#" class="cg_go_to_link cg_no_outline_and_shadow_on_focus" data-cg-go-to-link="GoogleSignInOptions">Google login</a> &middot; <a href="#" class="cg_go_to_link cg_no_outline_and_shadow_on_focus" data-cg-go-to-link="CheckLoginUploadContainer">Upload sign-in</a></span></p></div><div class="cg_view_option_checkbox"><input type="hidden" name="'.esc_attr($name).'" value="0"><input type="checkbox" aria-label="Member profile" id="MemberArea'.$suffix.'" name="'.esc_attr($name).'" value="1"'.(cg_member_enabled($gid,$shortcode) ? ' checked' : '').'></div></div></div>';
 	if($shortcode==='cg_gallery'){cg_member_replacement_render_options($gid);}
 	echo '</fieldset></div>';
 }
+}
 
+if(!function_exists('cg_member_t')){
 function cg_member_t($text,$replacements = array()){
 	return cg_pin_auth_t($text,$replacements);
 }
+}
 
 // Project only display fields. Callers must authorize access to this entry first.
+if(!function_exists('cg_member_owner_entry_media')){
 function cg_member_owner_entry_media($row,$publicShortcode = '',$fresh = false){
 	$gid = absint($row->GalleryID); $id = absint($row->id);
 	$existing = !$fresh && !empty($row->Active) ? cg1l_get_entry_main_data($gid,$id) : array();
@@ -172,8 +195,10 @@ function cg_member_owner_entry_media($row,$publicShortcode = '',$fresh = false){
 	if(!empty($query['MultipleFiles']) && function_exists('cg_entry_watermark_append_url_version_to_multiple_files')){$query['MultipleFiles'] = cg_entry_watermark_append_url_version_to_multiple_files($query['MultipleFiles']);}
 	return array_merge($data,$query);
 }
+}
 
 // Read-only owner projection. Never write unpublished entries into public JSON segments.
+if(!function_exists('cg_member_owner_data')){
 function cg_member_owner_data($gid,$publicShortcode = ''){
 	global $wpdb;
 	$result = array('main'=>array(),'info'=>array(),'query'=>array(),'urls'=>array(),'stats'=>array(),'comments'=>array());
@@ -208,7 +233,9 @@ function cg_member_owner_data($gid,$publicShortcode = ''){
 	}
 	return $result;
 }
+}
 
+if(!function_exists('cg_member_client_strings')){
 function cg_member_client_strings(){
 	$strings = array(
 		'Please try again.',
@@ -240,12 +267,16 @@ function cg_member_client_strings(){
 	foreach(array_merge($strings,cg_member_interface_strings(),cg_member_voting_translation_strings(),cg_member_entry_action_strings(),cg_member_profile_strings(),array('Edit profile','Remove profile image','Close'),cg1l_share_strings()) as $string){$result[$string] = cg_member_t($string);}
 	return $result;
 }
+}
 
+if(!function_exists('cg_member_admin_mail_note_dismissed')){
 function cg_member_admin_mail_note_dismissed(){
 	global $wpdb;
 	return get_user_meta(get_current_user_id(),$wpdb->get_blog_prefix().'cg_member_admin_mail_note_dismissed',true)==='1';
 }
+}
 
+if(!function_exists('cg_member_render_admin_mail_note')){
 function cg_member_render_admin_mail_note($gid){
 	static $rendered = false;
 	if($rendered || !current_user_can('manage_options') || cg_member_admin_mail_note_dismissed()){return;}
@@ -253,7 +284,9 @@ function cg_member_render_admin_mail_note($gid){
 	$url = add_query_arg(array('page'=>cg_get_version().'/index.php','edit_options'=>'true','option_id'=>absint($gid),'cg_go_to'=>'cgRegistrationMailOptions','cg_nonce'=>wp_create_nonce('cg_nonce')),admin_url('admin.php'));
 	echo '<div class="cg-member-admin-mail-note"><button type="button" class="cg-member-admin-mail-note-close" aria-label="'.esc_attr(cg_member_t('Close')).'" title="'.esc_attr(cg_member_t('Close')).'"><span aria-hidden="true">&times;</span></button><strong><span aria-hidden="true">⚠️</span> Administrator note: test registration emails</strong><p>Test sign-in in a private browser window and confirm that the PIN email arrives.</p><p>The PIN is sent to the email address entered there.</p><a href="'.esc_url($url).'" target="_blank" rel="noopener noreferrer">Registration email settings</a><p class="cg-member-admin-mail-note-error" role="alert" hidden></p></div>';
 }
+}
 
+if(!function_exists('cg_member_render_header')){
 function cg_member_render_header($gid,$instance,$shortcode,$options,$publicInstance = '',$publicShortcode = '',$wpUserIdsData = array(),$initialOwnPage = 0){
 	if(!in_array($shortcode,array('cg_gallery','cg_gallery_no_voting','cg_gallery_user'),true)){return;}
 	global $wpdb;
@@ -296,12 +329,16 @@ function cg_member_render_header($gid,$instance,$shortcode,$options,$publicInsta
 	echo '</section>';
 	return $own && !$count;
 }
+}
 
+if(!function_exists('cg_member_render_empty')){
 function cg_member_render_empty(){
 	echo '<div class="cg-member-empty"><strong>'.esc_html(cg_member_t('Show your first entry')).'</strong><p>'.esc_html(cg_member_t('Your uploads will appear here.')).'</p></div>';
 }
+}
 
 // Standalone upload sign-in does not require a member area or a modern gallery page.
+if(!function_exists('cg_member_upload_auth_enabled')){
 function cg_member_upload_auth_enabled($gid){
 	$source = cg_member_replacement_source($gid);
 	$options = cg_member_options_from_source($source,$gid,'cg_users_upload');
@@ -315,7 +352,9 @@ function cg_member_upload_auth_enabled($gid){
 	}
 	return true;
 }
+}
 
+if(!function_exists('cg_member_render_upload_access')){
 function cg_member_render_upload_access($gid,$instance,$options){
 	$token = cg1l_create_runtime_context_token(array('realGid'=>$gid,'gid'=>$instance,'shortcodeName'=>'cg_users_upload'));
 	$titleId = 'cgUploadAuthTitle'.preg_replace('/[^A-Za-z0-9_-]/','',(string)$instance);
@@ -327,7 +366,9 @@ function cg_member_render_upload_access($gid,$instance,$options){
 	echo '<button type="button" class="cg-paid-actions-primary cg-upload-auth-action" aria-haspopup="dialog">'.esc_html(cg_paid_actions_t('SignInToContinue')).'</button>';
 	echo '<div class="cg-upload-auth-message" role="status" aria-live="polite"></div></div>';
 }
+}
 
+if(!function_exists('cg_member_ajax_context')){
 function cg_member_ajax_context($allowUploadAuth = false){
 	nocache_headers();
 	header('Cache-Control: no-store, private, max-age=0');
@@ -347,7 +388,9 @@ function cg_member_ajax_context($allowUploadAuth = false){
 	}
 	return $context;
 }
+}
 
+if(!function_exists('cg_member_ajax_dismiss_admin_mail_note')){
 function cg_member_ajax_dismiss_admin_mail_note(){
 	if(!current_user_can('manage_options') || $_SERVER['REQUEST_METHOD']!=='POST'){
 		wp_send_json_error(array('message'=>cg_member_t('Please reload the page and try again.')),403);
@@ -361,13 +404,17 @@ function cg_member_ajax_dismiss_admin_mail_note(){
 	}
 	wp_send_json_success();
 }
+}
 add_action('wp_ajax_cg_member_dismiss_admin_mail_note','cg_member_ajax_dismiss_admin_mail_note');
 
+if(!function_exists('cg_member_browser_binding')){
 function cg_member_browser_binding(){
 	$session = cg1l_get_or_create_frontend_session_id(true);
 	return $session ? hash_hmac('sha256','cg-member|'.$session,wp_salt('auth')) : '';
 }
+}
 
+if(!function_exists('cg_member_ajax_auth')){
 function cg_member_ajax_auth(){
 	$context = cg_member_ajax_context(true);
 	$mode = isset($_POST['mode']) ? sanitize_key($_POST['mode']) : '';
@@ -406,6 +453,7 @@ function cg_member_ajax_auth(){
 		}elseif($mode==='verify'){
 			$pin = isset($_POST['pin']) ? sanitize_text_field(wp_unslash($_POST['pin'])) : '';
 			$result = cg_pin_auth_verify($key,$pin,'gallery-member',array('browserBinding'=>$binding,'galleryId'=>$context['realGid'],'gid'=>$context['gid'],'shortcodeName'=>$context['shortcodeName']));
+			if(is_array($result) && !empty($result['nextStep'])){wp_send_json_success($result);}
 			if(is_array($result) && !empty($result['userId']) && cg1l_auth_eligible_user($result['userId'],$result['email'])){
 				// PIN and browser binding were verified. Reload before any gallery request uses the new cookie.
 				wp_set_current_user($result['userId']);
@@ -423,10 +471,12 @@ function cg_member_ajax_auth(){
 	if(!$result){wp_send_json_error(array('message'=>cg_member_t('The PIN is invalid or expired.')));}
 	wp_send_json_success($result);
 }
+}
 add_action('wp_ajax_cg_member_auth','cg_member_ajax_auth');
 add_action('wp_ajax_nopriv_cg_member_auth','cg_member_ajax_auth');
 
 // Embedded My entries may use the signed public gallery's voting context.
+if(!function_exists('cg_member_is_public_voting_context')){
 function cg_member_is_public_voting_context($gid,$instance,$entryId,$token){
 	if(!is_user_logged_in() || !is_string($token) || $token===''){return false;}
 	$context = cg1l_verify_runtime_context_token($token);
@@ -436,7 +486,9 @@ function cg_member_is_public_voting_context($gid,$instance,$entryId,$token){
 	global $wpdb;
 	return (bool)$wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}contest_gal1ery WHERE id = %d AND GalleryID = %d AND WpUserId = %d AND Active = 1",absint($entryId),absint($gid),get_current_user_id()));
 }
+}
 
+if(!function_exists('cg_member_ajax_gallery')){
 function cg_member_ajax_gallery(){
 	$context = cg_member_ajax_context();
 	if(!empty($_POST['countsOnly'])){
@@ -472,6 +524,7 @@ function cg_member_ajax_gallery(){
 	$frontend_gallery = '';
 	include(__DIR__.'/../../v10/include-scripts-v10.php');
 	wp_send_json_success(array('html'=>$frontend_gallery,'gid'=>$cgMemberInstanceId));
+}
 }
 add_action('wp_ajax_cg_member_gallery','cg_member_ajax_gallery');
 add_action('wp_ajax_nopriv_cg_member_gallery','cg_member_ajax_gallery');

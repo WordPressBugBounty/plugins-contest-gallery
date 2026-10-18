@@ -45,6 +45,11 @@ wp_enqueue_script( 'cg_gallery_admin_gallery_load_change_or_sort', plugins_url( 
 wp_enqueue_script( 'cg_gallery_admin_events', plugins_url( '/v10/v10-js/admin/gallery/events/gallery-admin-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_script( 'cg_gallery_admin_paid_actions', plugins_url( '/v10/v10-js/admin/gallery/gallery-admin-paid-actions.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/gallery/gallery-admin-paid-actions.js') );
 wp_enqueue_script( 'cg_gallery_admin_send_mail_events', plugins_url( '/v10/v10-js/admin/gallery/events/gallery-admin-send-mail-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script('cg_gallery_admin_participant_draft',plugins_url('/v10/v10-js/admin/gallery/gallery-admin-participant-draft.js',__FILE__),array('cg_gallery_admin_functions'),$cgAdminAssetVersion('v10/v10-js/admin/gallery/gallery-admin-participant-draft.js'));
+wp_enqueue_script('cg_gallery_admin_participant_mail',plugins_url('/v10/v10-js/admin/gallery/gallery-admin-participant-mail.js',__FILE__),array('cg_gallery_admin_functions','cg_gallery_admin_participant_draft'),$cgAdminAssetVersion('v10/v10-js/admin/gallery/gallery-admin-participant-mail.js'));
+wp_enqueue_style('cg_participant_mail',plugins_url('/v10/v10-css/backend/cg_participant_mail.css',__FILE__),false,$cgAdminAssetVersion('v10/v10-css/backend/cg_participant_mail.css'));
+wp_enqueue_script('cg_mail_history',plugins_url('/v10/v10-js/admin/mail-history.js',__FILE__),array('cg_gallery_admin_functions'),$cgAdminAssetVersion('v10/v10-js/admin/mail-history.js'));
+wp_enqueue_style('cg_mail_history',plugins_url('/v10/v10-css/backend/cg_mail_history.css',__FILE__),false,$cgAdminAssetVersion('v10/v10-css/backend/cg_mail_history.css'));
 wp_enqueue_script( 'cg_gallery_admin_events_multiple_files', plugins_url( '/v10/v10-js/admin/gallery/events/gallery-admin-events-multiple-files.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 
 
@@ -63,7 +68,7 @@ wp_enqueue_style( 'cg_backend_gallery', plugins_url('/v10/v10-css/backend/cg_bac
 wp_enqueue_style( 'cg_gallery_admin_vendor_daterangepicker_css', plugins_url('/v10/v10-css/vendor/daterangepicker.css', __FILE__), false, cg_get_version_for_scripts() );
 
 
-wp_enqueue_script( 'cg_js_admin_main_menu_events', plugins_url( '/v10/v10-js/admin/main-menu-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_js_admin_main_menu_events', plugins_url( '/v10/v10-js/admin/main-menu-events.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/main-menu-events.js') );
 
 wp_enqueue_script( 'cg_js_admin_main_menu_functions', plugins_url( '/v10/v10-js/admin/main-menu-functions.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 
@@ -114,6 +119,7 @@ wp_enqueue_script( 'cg_create_registry_functions', plugins_url( '/v10/v10-js/adm
 wp_enqueue_style( 'cg_backend_gallery', plugins_url('v10-css/backend/cg_backend_gallery.css', __FILE__), false, cg_get_version_for_scripts() );
 wp_enqueue_script('cg_member_messages_admin', plugins_url('/v10/v10-js/admin/users-management/member-messages-admin.js', __FILE__), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/users-management/member-messages-admin.js'));
 wp_enqueue_style('cg_member_messages_admin', plugins_url('/v10/v10-css/backend/cg_member_messages_admin.css', __FILE__), false, $cgAdminAssetVersion('v10/v10-css/backend/cg_member_messages_admin.css'));
+wp_enqueue_style('cg_registration_details', plugins_url('/v10/v10-css/backend/cg_registration_details.css', __FILE__), false, $cgAdminAssetVersion('v10/v10-css/backend/cg_registration_details.css'));
 wp_enqueue_script( 'cg_admin_users_management_users_management_v10', plugins_url( '/v10/v10-js/admin/users-management/users-management-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 
 wp_enqueue_script( 'cg_check_wp_admin_upload_v10', plugins_url( '/v10/v10-js/admin/gallery/cg_check_wp_admin_upload.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );

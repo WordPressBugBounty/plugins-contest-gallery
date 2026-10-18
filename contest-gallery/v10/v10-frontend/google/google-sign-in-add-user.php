@@ -28,6 +28,16 @@ if(!empty($GoogleId) && !empty($GoogleEmail)){
     }
 
 	$payload['email'] = $GoogleEmailToSet;
+    $registration = cg_registration_agreements_google_begin($payload);
+    if(is_wp_error($registration)){
+        cg_google_sign_in_render_public_error($registration->get_error_message());
+        return;
+    }
+    if(is_array($registration) && !empty($registration['nextStep'])){
+        echo '<script data-cg-processing="true">cgJsClass.gallery.vars.registrationAgreementsResult='.wp_json_encode($registration).';</script>';
+        return;
+    }
+
 
 	$GoogleEmailToCheck1 = str_replace('@googlemail.com','@gmail.com',$GoogleEmail);
 	$GoogleEmailToCheck2 = str_replace('@gmail.com','@googlemail.com',$GoogleEmail);

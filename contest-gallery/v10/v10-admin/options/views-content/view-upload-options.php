@@ -26,11 +26,24 @@ echo <<<HEREDOC
         </div>
 HEREDOC;
 
+$cgUploadLimitLayout = 'cg_view_option_50_percent cg_border_right_none cg_border_border_top_left_radius_8_px';
+$RegUserMaxUploadPerCategory = esc_attr($RegUserMaxUploadPerCategory);
+$cgUploadCategoryOption = <<<HEREDOC
+                <div class='cg_view_option cg_view_option_50_percent $cgProFalse cg_border_top_right_radius_8_px' id="RegUserMaxUploadPerCategoryContainer" >
+                    <div class='cg_view_option_title'>
+                        <p>Upload entries for a user per category<br><span class="cg_view_option_title_note">0 or empty = no limit<br>Includes entries without a category. Multiple files in one entry count once.</span></p>
+                    </div>
+                    <div class='cg_view_option_input'>
+                        <input id="RegUserMaxUploadPerCategory" type="text" name="RegUserMaxUploadPerCategory" value="$RegUserMaxUploadPerCategory" maxlength="10" inputmode="numeric" >
+                    </div>
+                </div>
+HEREDOC;
+
 echo <<<HEREDOC
     <div class='cg_view_options_rows_container' id="cgLimitUploadEntries">
         <p class='cg_view_options_rows_container_title'>Limit upload entries and user recognition methods</span></p>
             <div class='cg_view_options_row'>
-                <div class='cg_view_option cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px cg_view_option_full_width $cgProFalse cg_border_radius_unset' id="RegUserMaxUploadContainer" >
+                <div class='cg_view_option $cgUploadLimitLayout $cgProFalse cg_border_radius_unset' id="RegUserMaxUploadContainer" >
                     <div class='cg_view_option_title'>
                         <p>Upload entries total per user<br><span class="cg_view_option_title_note">0 or empty = no limit</span></p>
                     </div>
@@ -38,14 +51,7 @@ echo <<<HEREDOC
                         <input id="RegUserMaxUpload" type="text" name="RegUserMaxUpload" value="$RegUserMaxUpload" maxlength="20" style="max-width: 100px; text-align: center;" >
                     </div>
                 </div>
-                <div class='cg_view_option cg_view_option_50_percent cg_hide $cgProFalse cg_border_top_right_radius_8_px' id="RegUserMaxUploadPerCategoryContainer" >
-                    <div class='cg_view_option_title'>
-                        <p>Upload entries for a user per category<br><span class="cg_view_option_title_note">0 or empty = no limit</span></p>
-                    </div>
-                    <div class='cg_view_option_input'>
-                        <input id="RegUserMaxUploadPerCategory" type="text" name="RegUserMaxUploadPerCategory" value="$RegUserMaxUploadPerCategory" maxlength="20" >
-                    </div>
-                </div>
+                $cgUploadCategoryOption
             </div>
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_100_percent cg_border_top_none CheckMethodUploadContainer $cgProFalse' id="CheckIpUploadContainer" >

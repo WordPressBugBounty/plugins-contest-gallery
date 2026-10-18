@@ -3,6 +3,7 @@ if(!defined('ABSPATH')){exit;}
 require_once __DIR__.'/cg-public-member-profile.php';
 
 // Resolve an entry visible in this signed gallery context, then derive its owner.
+if(!function_exists('cg_public_profile_owner')){
 function cg_public_profile_owner($context,$entryId,$accessHash,$surface){
 	global $wpdb;
 	$error = new WP_Error('profile','This gallery is not available.');
@@ -16,8 +17,10 @@ function cg_public_profile_owner($context,$entryId,$accessHash,$surface){
 	if(!cg1l_hash_equals($expected,$accessHash)){return $error;}
 	return cg_public_profile_visible_owner($context,$entryId,$surface);
 }
+}
 
 // Visibility is shared with signed public read grants. The entrypoint above still checks the access hash.
+if(!function_exists('cg_public_profile_visible_owner')){
 function cg_public_profile_visible_owner($context,$entryId,$surface){
 	global $wpdb;
 	$error = new WP_Error('profile','This gallery is not available.');
@@ -49,7 +52,9 @@ function cg_public_profile_visible_owner($context,$entryId,$surface){
 	if(!in_array((int)$entryId,$allowed,true) || !get_userdata($entry['WpUserId'])){return $error;}
 	return absint($entry['WpUserId']);
 }
+}
 
+if(!function_exists('cg_public_profile_items')){
 function cg_public_profile_items($userId){
 	$items = array();
 	foreach(cg_member_profile_fields() as $field){
@@ -62,7 +67,9 @@ function cg_public_profile_items($userId){
 	}
 	return $items;
 }
+}
 
+if(!function_exists('cg_public_profile_render_fields')){
 function cg_public_profile_render_fields($userId,$limit = 0){
 	$fields = cg_public_profile_items($userId);
 	if($limit){$fields = array_slice($fields,0,$limit);}
@@ -75,7 +82,9 @@ function cg_public_profile_render_fields($userId,$limit = 0){
 	}
 	return $html.'</dl>';
 }
+}
 
+if(!function_exists('cg_public_profile_render')){
 function cg_public_profile_render($userId,$context = array(),$entryId = 0,$surface='card'){
 	// Preserve trusted PHP calls without a gallery entry. They do not issue a public read grant.
 	if(empty($context['realGid']) || empty($context['shortcodeName']) || !$entryId){
@@ -87,7 +96,9 @@ function cg_public_profile_render($userId,$context = array(),$entryId = 0,$surfa
 	$source=cg_public_member_profile_source($userId,$context,$entryId,$surface);
 	return cg_public_member_profile_render($userId,$context,$entryId,$source);
 }
+}
 
+if(!function_exists('cg_public_profile_ajax')){
 function cg_public_profile_ajax(){
 	nocache_headers();
 	header('Cache-Control: no-store, private, max-age=0');
@@ -104,6 +115,7 @@ function cg_public_profile_ajax(){
 	$origin=cg_public_member_profile_origin($source);
 	if(is_wp_error($origin)){wp_send_json_error(array('message'=>cg_member_t($origin->get_error_message())));}
 	wp_send_json_success(array('html'=>cg_public_member_profile_render($owner,$context,$entryId,$source)));
+}
 }
 add_action('wp_ajax_cg_public_profile','cg_public_profile_ajax');
 add_action('wp_ajax_nopriv_cg_public_profile','cg_public_profile_ajax');

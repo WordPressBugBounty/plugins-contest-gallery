@@ -852,9 +852,11 @@ cgJsClassAdmin.gallery.functions = {
                 '<div class="cg_hover_effect cg_backend_image_full_size_target_container_remove  ' + cg_hide_remove_button + ' ' + cg_is_for_sale + '"  data-cg-wp-upload-id="' + data.WpUpload + '" data-isecommerceentryanddownload="' + isEcommerceEntryAndDownload + '" data-cg-real-id="' + realId + '"></div>' +
                 '<div class="cg_backend_image_full_size_target_container_position">' + order + '</div>' +
                 '<div class="cg_backend_image_full_size_target cg_backend_image_full_size_target_container_' + data.ImgType + '" ' +
-                'data-file-type="' + data.ImgType + '" data-file-name="' + data.name + '" data-original-src="' + data.guid + '"></div>' +
+                'data-file-type="' + data.ImgType + '" data-original-src="' + data.guid + '"></div>' +
                 cg_replace +
                 '</div>');
+
+            $divElement.find('.cg_backend_image_full_size_target').attr('data-file-name', data.name);
 
             if (data.WpUploadRemoved) {
                 $divElement.addClass('cg_backend_image_full_size_target_container_empty');
@@ -884,7 +886,7 @@ cgJsClassAdmin.gallery.functions = {
                 $divElement.addClass('cg_backend_image_full_size_target_container_video cg_backend_image_full_size_target_container_video_' + data.ImgType);
                 $divElement.find('.cg_backend_image_full_size_target').addClass('cg_backend_image_full_size_target_video');
                 if (WpUploadFilesForSaleArrayLoaded.indexOf(parseInt(data.WpUpload)) > -1) {
-                    $divElement.append('<div class="cg_backend_image_full_size_target_name" >' + data.NamePic + '</div>');
+                    $divElement.append($('<div class="cg_backend_image_full_size_target_name"></div>').text(data.NamePic));
                 } else {
                     $divElement.append($('<div style="overflow: hidden;max-height: 100%;"><a href="' + data.guid + '" target="_blank" ><div class="cg_video_container"><video width="160" >' +
                         '<source src="' + data.guid + '#t=0.001" type="video/mp4"/>' +
@@ -917,7 +919,7 @@ cgJsClassAdmin.gallery.functions = {
                     $divElement.find('.cg_backend_image_full_size_target').wrap('<a href="' + data.PdfOriginal + '?time=' + (new Date().getTime() - 1000) + '" target="_blank" ></a>');
                 }else{
                     $divElement.addClass('cg_backend_image_full_size_target_container_alternative_file_type cg_backend_image_full_size_target_container_' + data.ImgType);
-                    $divElement.append('<div class="cg_backend_image_full_size_target_name" >' + data.NamePic + '</div>');
+                    $divElement.append($('<div class="cg_backend_image_full_size_target_name"></div>').text(data.NamePic));
                     if (data.ImgType == 'pdf' && $('#cgPdfPreviewBackend').val()==1) {
                         $divElement.append('<div class="cg_pdf_preview_to_create" >PDF preview will be added</div>');
                     }

@@ -1,6 +1,7 @@
 <?php
 if(!defined('ABSPATH')){exit;}
 
+if(!function_exists('cg_member_replacement_limits')){
 function cg_member_replacement_limits($user){
 	$defaults = array('hour'=>20,'day'=>50,'attachments'=>100,'bytes'=>2147483648);
 	$limits = apply_filters('cg_member_replacement_limits',$defaults,absint($user));
@@ -8,16 +9,22 @@ function cg_member_replacement_limits($user){
 	foreach($defaults as $key=>$value){$limits[$key] = max(1,is_numeric($limits[$key]) ? (float)$limits[$key] : $value);}
 	return $limits;
 }
+}
 
+if(!function_exists('cg_member_replacement_attempt_key')){
 function cg_member_replacement_attempt_key(){
 	global $wpdb;
 	return '_cg_member_replace_attempts_'.$wpdb->prefix;
 }
+}
 
+if(!function_exists('cg_member_replacement_storage_error')){
 function cg_member_replacement_storage_error(){
 	return new WP_Error('storage','Your replacement storage limit has been reached. Please contact the gallery administrator.');
 }
+}
 
+if(!function_exists('cg_member_replacement_usage')){
 function cg_member_replacement_usage($user){
 	global $wpdb;
 	// Retained attachments count even in the trash. Actual deletion releases their budget.
@@ -25,8 +32,10 @@ function cg_member_replacement_usage($user){
 	$pending = cg_upload_job_replacement_usage($user);
 	return $row ? array('count'=>(int)$row['count']+$pending['count'],'bytes'=>(float)$row['bytes']+$pending['bytes']) : false;
 }
+}
 
 // Called while the per-site, per-member lock is held, before media processing.
+if(!function_exists('cg_member_replacement_admit')){
 function cg_member_replacement_admit($user){
 	$limits = cg_member_replacement_limits($user);
 	$usage = cg_member_replacement_usage($user);
@@ -45,7 +54,9 @@ function cg_member_replacement_admit($user){
 	if(!update_user_meta($user,cg_member_replacement_attempt_key(),$recent)){return new WP_Error('busy','Please try again.');}
 	return array('limits'=>$limits,'usage'=>$usage);
 }
+}
 
+if(!function_exists('cg_member_replacement_attachment_bytes')){
 function cg_member_replacement_attachment_bytes($attachment){
 	$paths = array();
 	foreach(cg_entry_watermark_get_public_files($attachment) as $file){$paths[$file['public_path']]=true;}
@@ -61,7 +72,9 @@ function cg_member_replacement_attachment_bytes($attachment){
 	foreach($paths as $path=>$unused){$bytes += (float)filesize($path);}
 	return $bytes;
 }
+}
 
+if(!function_exists('cg_member_replacement_track_storage')){
 function cg_member_replacement_track_storage($user,$attachment,$preview,$budget){
 	$files = array($attachment);
 	if($preview){$files[]=$preview;}
@@ -72,4 +85,5 @@ function cg_member_replacement_track_storage($user,$attachment,$preview,$budget)
 		if(!$size || !add_post_meta($id,'_cg_member_replacement_owner',absint($user),true) || !add_post_meta($id,'_cg_member_replacement_bytes',$size,true)){return new WP_Error('save','Please try again.');}
 	}
 	return true;
+}
 }

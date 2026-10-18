@@ -1,6 +1,7 @@
 <?php
 if(!defined('ABSPATH')){exit;}
 
+if(!function_exists('cg_member_replacement_page_snapshot')){
 function cg_member_replacement_page_snapshot($row){
     global $wpdb;
     $pages=array();
@@ -11,9 +12,11 @@ function cg_member_replacement_page_snapshot($row){
     }
     return $pages;
 }
+}
 
 // Keep the original media association usable even when SQL ROLLBACK is a no-op.
 // Conditional writes must not replace a newer association from another request.
+if(!function_exists('cg_member_replacement_restore')){
 function cg_member_replacement_restore($recovery,$table,$pid){
     global $wpdb;
     $restored=true;
@@ -36,9 +39,11 @@ function cg_member_replacement_restore($recovery,$table,$pid){
     }
     return true;
 }
+}
 
 // Keep this finally in a separate function. PHP 5.6 can corrupt a pending
 // return value when another try/finally runs inside its finally block.
+if(!function_exists('cg_member_replacement_cleanup')){
 function cg_member_replacement_cleanup($attachment,$preview,$cachePath,$cacheBackup,$restore,$statsLock){
 	global $wpdb;
 	try{
@@ -51,4 +56,5 @@ function cg_member_replacement_cleanup($attachment,$preview,$cachePath,$cacheBac
 			}
 		}
 	}finally{cg1l_release_stats_lock($statsLock);}
+}
 }

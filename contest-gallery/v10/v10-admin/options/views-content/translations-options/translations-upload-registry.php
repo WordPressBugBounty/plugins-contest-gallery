@@ -280,7 +280,7 @@ echo <<<HEREDOC
          <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_full_width cg_border_top_none' >
                     <div class='cg_view_option_title'>
-                        <p>$language_MaximumAmountOfUploadsPerCategoryIs$cgShortcodeCopy<span class="cg-info-icon">info</span><span class="cg-info-container"><strong>"Uploads per category" option</strong><br>Frontend result example:<br>$language_MaximumAmountOfUploadsPerCategoryIs: 5</span></p>
+                        <p>$language_MaximumAmountOfUploadsPerCategoryIs$cgShortcodeCopy<span class="cg-info-icon">info</span><span class="cg-info-container"><strong>"Upload entries for a user per category" option</strong><br>The limit is added automatically.<br>Frontend result example:<br>$language_MaximumAmountOfUploadsPerCategoryIs: 5</span></p>
                     </div>
                     <div class='cg_view_option_input'>
                         <input type="text" name="translations[$l_MaximumAmountOfUploadsPerCategoryIs]" maxlength="100" value="$translations[$l_MaximumAmountOfUploadsPerCategoryIs]">

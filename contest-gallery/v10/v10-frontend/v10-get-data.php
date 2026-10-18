@@ -1356,6 +1356,8 @@ if($is_user_logged_in){
     }
 }
 
+$options['pro']['RegUserMaxUploadPerCategory'] = cg_upload_category_limit(isset($options['pro']['RegUserMaxUploadPerCategory']) ? $options['pro']['RegUserMaxUploadPerCategory'] : 0);
+
 $UploadedUserFilesAmount = 0;
 $UploadedUserFilesAmountPerCategories = null;
 $UploadedUserFilesAmountPerCategoryArray = [];
