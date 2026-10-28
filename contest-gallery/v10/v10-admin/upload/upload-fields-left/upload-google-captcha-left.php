@@ -56,7 +56,7 @@ if(!$isOnlyPlaceHolder){
 
     foreach($fieldContent as $key => $valueFieldContent){
 
-        $valueFieldContent = contest_gal1ery_convert_for_html_output_without_nl2br($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
+        $valueFieldContent = cg_form_editor_value($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
 
         if($key=='titel'){
 
@@ -80,10 +80,9 @@ if(!$isOnlyPlaceHolder){
             $pleaseSelectLanguage .= '</select>';
 
             $enterKey = '';
-            $enterKey .= "<div style='display:flex;flex-direction:column;width:100%;'><input type='text' name='upload[$id][ReCaKey]' class='cg_reca_key' placeholder='Example Key: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI' size='30' maxlength='1000' value='$ReCaKey'/>";// Titel und Delete M�glichkeit die oben bestimmt wurde
+            $enterKey .= "<div style='display:flex;flex-direction:column;width:100%;'><input type='text' name='upload[$id][ReCaKey]' class='cg_reca_key' placeholder='Example Key: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI' size='30' maxlength='1000' value='".cg_form_escape_value($ReCaKey)."'/>";// Titel und Delete M�glichkeit die oben bestimmt wurde
 
-            $captchaNote = "<span class='cg_recaptcha_test_note' ><span>NOTE:</span><br><b>Google reCAPTCHA test key</b> is provided from Google for testing purpose.
-                                    <br><b>Create your own \"Site key\"</b> here <a href='https://www.google.com/recaptcha/admin' target='_blank'>www.google.com/recaptcha/admin</a><br>Register your site, create a <b>V2 \"I am not a robot\"</b>  key.</span>";
+            $captchaNote = cg_captcha_setup_note();
 
         }
 
@@ -98,7 +97,6 @@ if(!$isOnlyPlaceHolder){
         }
 
     }
-    $caRoReCount++;
     $caRoReHiddenCount++;
 
 }else{
@@ -124,16 +122,15 @@ if(!$isOnlyPlaceHolder){
     $pleaseSelectLanguage .= '</select>';
 
     $enterKey = '';
-    $enterKey .= "<div style='display:flex;flex-direction:column;width:100%;'><input type='text' name='upload[$id][ReCaKey]' class='cg_reca_key' placeholder='Example Key: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI' size='30' maxlength='1000' value='$ReCaKey'/>";// Titel und Delete M�glichkeit die oben bestimmt wurde
+    $enterKey .= "<div style='display:flex;flex-direction:column;width:100%;'><input type='text' name='upload[$id][ReCaKey]' class='cg_reca_key' placeholder='Example Key: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI' size='30' maxlength='1000' value='".cg_form_escape_value($ReCaKey)."'/>";// Titel und Delete M�glichkeit die oben bestimmt wurde
 
-    $captchaNote = "<span class='cg_recaptcha_test_note' ><span>NOTE:</span><br><b>Google reCAPTCHA test key</b> is provided from Google for testing purpose.
-                                    <br><b>Create your own \"Site key\"</b> here <a href='https://www.google.com/recaptcha/admin' target='_blank'>www.google.com/recaptcha/admin</a><br>Register your site, create a <b>V2 \"I am not a robot\"</b>  key.</span>";
+    $captchaNote = cg_captcha_setup_note();
 
 }
 
 
 $enterKey .= cg_captcha_secret_input('upload',!$isOnlyPlaceHolder ? $id : 0,$ReCaKey,'upload['.$id.'][ReCaSecret]');
-$enterKey .= "<span class='cg_recaptcha_icon' style='margin:16px 0 10px;text-align:center;'>Insert Google reCAPTCHA test key</span></div>";
+$enterKey .= "<span class='cg_recaptcha_icon' style='margin:16px 0 10px;text-align:center;'>Insert Google reCAPTCHA test keys</span></div>";
 
 echo <<<HEREDOC
 <div id="cgEditCaptchaRoReFieldField"  class="cg_view_options_row cg_view_options_row_title cg_view_options_row_collapse" title="Collapse">
@@ -152,7 +149,7 @@ echo <<<HEREDOC
 <div class='cg_view_options_row'>
       <div class='cg_view_option cg_view_option_100_percent   cg_border_bottom_none cg_view_option_flex_flow_column'>
         <div class='cg_view_option_title cg_view_option_title_full_width '>
-            <p>Select Captacha language</p>
+            <p>Select CAPTCHA language<br><span class="cg_view_option_title_note">Google provides the widget text. All reCAPTCHA widgets on the same page share the language of the first loaded widget.</span></p>
         </div>
         <div class="cg_view_option_select cg_view_option_input_full_width" >
             $pleaseSelectLanguage
@@ -182,13 +179,13 @@ echo <<<HEREDOC
     <div  class='cg_view_option cg_pointer_events_none cg_view_option_50_percent cg_border_right_none'>
         <div class='cg_view_option_title cg_view_option_title_full_width '>
             <p>Required<br>
-                  <span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">Google reCAPTCHA is always required</span></span>
+                  <span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">Confirmation is required while this field is enabled</span></span>
             </p>
         </div>
     </div>
      <div class='cg_view_option cg_view_option_hide_upload_field cg_view_option_50_percent '>
         <div class='cg_view_option_title cg_view_option_title_full_width'>
-            <p>Hide<br><span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">will not be visible in upload form</span></span></p>
+            <p>Hide<br><span class="cg_view_option_title_note"><b>NOTE:</b> <span class="cg_note_text">Hides this field and disables reCAPTCHA verification for this upload form</span></span></p>
         </div>
         <div class="cg_view_option_checkbox" >
               <input type="checkbox" name="upload[$id][hide]" $hideChecked>

@@ -14,12 +14,12 @@ if($isOnlyPlaceHolder){
     $fieldPlaceholder = '';
     foreach($fieldContent as $key => $valueFieldContent){
         if($key=='titel'){
-            $valueFieldContent = contest_gal1ery_convert_for_html_output_without_nl2br($valueFieldContent);
+            $valueFieldContent = cg_form_decode_value($valueFieldContent);
             $fieldTitle = $valueFieldContent;
         }
         if($key=='content'){
             $fieldPlaceholder = $valueFieldContent;
-            $valueFieldContent = contest_gal1ery_convert_for_html_output_without_nl2br($valueFieldContent);
+            $valueFieldContent = cg_form_decode_value($valueFieldContent);
             $valueFieldTextareaContent = $valueFieldContent;
         }
         if($key=='mandatory'){
@@ -52,7 +52,3 @@ $requiredChecked = '';
             echo "<div class='cg_upl_del' title='Delete field' >";
             echo "</div>";
     echo "</div>";
-
-if(!$isOnlyPlaceHolder){
-    $htRightCount++;
-}

@@ -1256,6 +1256,7 @@ HEREDOC;
             RowNumber INT(11) DEFAULT 0,
             ColNumber INT(11) DEFAULT 0,
             RowCols INT(11) DEFAULT 0,
+            RowLayout VARCHAR(5) DEFAULT '',
 		    PinField TINYINT DEFAULT 0,
             PublicProfile TINYINT DEFAULT 0,
             INDEX GeneralID_Active_Field_Order_index (GeneralID, Active, Field_Order),

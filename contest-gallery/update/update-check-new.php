@@ -89,7 +89,7 @@ if(!function_exists('cg_update_check_new_handle_collation')){
                     )
                 );
             }else{
-                if(!$wpdb->query("ALTER TABLE $tableName CONVERT TO CHARACTER SET utf8mb4 COLLATE $requiredCollation")){
+                if($wpdb->query("ALTER TABLE $tableName CONVERT TO CHARACTER SET utf8mb4 COLLATE $requiredCollation")===false){
                     $wpdb->show_errors();
                     ob_start();
                     $wpdb->print_error();
@@ -312,7 +312,7 @@ if(!function_exists('cg_update_check_new_handle_indexes')){
                 }else{
                     $indexTypeSql = !empty($indexData['unique']) ? 'UNIQUE INDEX' : 'INDEX';
                     $query = "ALTER TABLE ".cg_update_check_new_quote_identifier($tableName)." ADD $indexTypeSql ".cg_update_check_new_quote_identifier($indexName)." ($indexColumnsSql)";
-                    if(!$wpdb->query($query)){
+                    if($wpdb->query($query)===false){
                         $wpdb->show_errors();
                         ob_start();
                         $wpdb->print_error();
@@ -418,7 +418,7 @@ foreach($updateArray as $tableName => $tableData){
                 $DEFAULT = isset($columnData['DEFAULT']) ? "DEFAULT ".$columnData['DEFAULT'] : '';
                 $query = "ALTER TABLE $tableName ADD COLUMN $columnName $columnType $DEFAULT";
 
-                if(!$wpdb->query($query)){
+                if($wpdb->query($query)===false){
                     $wpdb->show_errors();
                     ob_start();
                     $wpdb->print_error();
@@ -446,7 +446,7 @@ foreach($updateArray as $tableName => $tableData){
                     // if not then modify
                     $DEFAULT = isset($columnData['DEFAULT']) ? "DEFAULT ".$columnData['DEFAULT'] : '';
                     $query = "ALTER TABLE $tableName MODIFY COLUMN $columnName $columnType $DEFAULT";
-                    if(!$wpdb->query($query)){
+                    if($wpdb->query($query)===false){
                         $wpdb->show_errors();
                         ob_start();
                         $wpdb->print_error();
@@ -462,6 +462,9 @@ foreach($updateArray as $tableName => $tableData){
 }
 
 cg_update_check_new_handle_indexes($updateIndexArray,$dtacaoo,$isJustCheck,$columnsToRepairArray,$errorsArray);
+
+// Do not run data migrations or advance the stored DB version after failed DDL.
+if(!$isJustCheck && !empty($errorsArray)){return false;}
 
 if(
     empty($isJustCheck) &&

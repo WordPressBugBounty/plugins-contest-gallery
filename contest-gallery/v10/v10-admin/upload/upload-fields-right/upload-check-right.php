@@ -12,7 +12,7 @@ if($isOnlyPlaceHolder){
     $fieldTitle = '';
     $checkArray = [];
     foreach($fieldContent as $key => $valueFieldContent){
-        $valueFieldContentProcessed = contest_gal1ery_convert_for_html_output_without_nl2br($valueFieldContent);
+        $valueFieldContentProcessed = cg_form_decode_value($valueFieldContent);
         if($key=='titel'){
             $fieldTitle = $valueFieldContentProcessed;
         }
@@ -42,12 +42,12 @@ if(!empty($checkArray)){
     foreach($checkArray as $key => $checkButton){
         if(empty($addOrShowCheckButtons)){
             $addOrShowCheckButtons = '<div class="cg_upl_check_button">
-<div class="cg_upl_check_button_text">'.$checkButton.'</div>
+<div class="cg_upl_check_button_text">'.cg_form_editor_value($checkButton).'</div>
 <input type="checkbox" disabled />
 </div>';
         }else{
             $addOrShowCheckButtons .= '<div class="cg_upl_check_button">
-<div class="cg_upl_check_button_text">'.$checkButton.'</div>
+<div class="cg_upl_check_button_text">'.cg_form_editor_value($checkButton).'</div>
 <input type="checkbox" disabled />
 </div>';
         }
@@ -58,7 +58,7 @@ if(!empty($checkArray)){
         ondragstart='cgJsClassAdmin.createUpload.dragAndDrop.drag(event)' ondragend='cgJsClassAdmin.createUpload.dragAndDrop.dragEnd(event)' 
  >";
             echo "<div class='cg_upl_title $requiredChecked' style='margin-bottom:3px;' >";
-                echo cg1l_sanitize_method($fieldTitle);
+                echo cg_form_escape_value($fieldTitle);
             echo "</div>";
             echo "<div class='cg_upl_content cg_upl_content_check' >";
                 echo $addOrShowCheckButtons;
@@ -67,7 +67,3 @@ if(!empty($checkArray)){
             echo "<div class='cg_upl_del' title='Delete field' >";
             echo "</div>";
     echo "</div>";
-
-if(!$isOnlyPlaceHolder){
-    $chkRightCount++;
-}

@@ -14,6 +14,8 @@ if(!function_exists('cg_json_single_view_order')){
         // Formular Input für User wird ermittelt
         $selectFormInput = $wpdb->get_results( "SELECT id, Field_Type, Field_Order, Field_Content FROM $tablename_form_input WHERE GalleryID = '$GalleryID' AND Show_Slider = 1 ORDER BY Field_Order ASC" );
 
+        if($wpdb->last_error){return false;}
+
         foreach($selectFormInput as $row){
             $row->Field_Content = unserialize($row->Field_Content);
             $row->Field_Content = $row->Field_Content["titel"];
@@ -21,9 +23,7 @@ if(!function_exists('cg_json_single_view_order')){
 
 
         $file = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/'.$GalleryID.'-single-view-order.json';
-        $fp = fopen($file, 'w');
-        fwrite($fp, json_encode($selectFormInput));
-        fclose($fp);
+        return cg_form_write_json($file, $selectFormInput);
 
     }
 }

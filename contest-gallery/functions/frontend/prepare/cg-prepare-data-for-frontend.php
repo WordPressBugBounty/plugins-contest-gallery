@@ -16,10 +16,15 @@ if (!function_exists('cg1l_create_last_updated_time_file')) {
         // when multiple users trigger this simultaneously
         $temp = $final . '.' . uniqid('tmp_', true);
 
+        // A form save can advance the marker within the same second. A later
+        // cache build must not move it backwards and hide that invalidation.
+        $previous = file_exists($final) ? (int) @file_get_contents($final) : 0;
+        $timestamp = max(time(), $previous);
+
         // Write the current timestamp to the unique temporary file
         $fh = fopen($temp, 'wb');
         if ($fh) {
-            fwrite($fh, (string) time());
+            fwrite($fh, (string) $timestamp);
             fclose($fh);
 
             // Atomically replace the final file with the unique temp file

@@ -1,7 +1,20 @@
 cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostData,$formLinkObject,submitMessage,cg_picture_id_to_scroll) {
     //console.trace();
 
-    debugger
+    var isFormEditorSave = $formLinkObject && $formLinkObject.is('#cgCreateUploadForm,#cg_create_user_form');
+    var previousFormState = {
+        upload: cgJsClassAdmin.index.vars.isCreateUploadAreaLoaded,
+        registry: cgJsClassAdmin.index.vars.isCreateRegistryAreaLoaded,
+        resize: cgJsClassAdmin.index.vars.resizeLeftSideIsActive
+    };
+    function formSaveError(message){
+        cgJsClassAdmin.index.vars.isCreateUploadAreaLoaded = previousFormState.upload;
+        cgJsClassAdmin.index.vars.isCreateRegistryAreaLoaded = previousFormState.registry;
+        cgJsClassAdmin.index.vars.resizeLeftSideIsActive = previousFormState.resize;
+        $formLinkObject.find('.cg_form_save_client_error').remove();
+        var $error = jQuery('<p class="cg_form_save_client_error" role="alert"></p>').text(message).prependTo($formLinkObject);
+        $error.get(0).scrollIntoView({block: 'center'});
+    }
     cgJsClassAdmin.index.vars.isCreateUploadAreaLoaded = false;
     cgJsClassAdmin.index.vars.resizeLeftSideIsActive = false;
     cgJsClassAdmin.index.vars.isOptionsAreaLoaded = false;
@@ -32,7 +45,7 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
         processData: false
     }).done(function(response) {
         debugger
-        if(cgJsClassAdmin.index.functions.isInvalidNonce($,response)){
+        if(!isFormEditorSave && cgJsClassAdmin.index.functions.isInvalidNonce($,response)){
             return;
         }
 
@@ -46,6 +59,26 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
         //console.log('urlString');
         //console.log(urlString);
         var $response = $(new DOMParser().parseFromString(response, 'text/html'));
+        if(isFormEditorSave){
+            var $result = $response.find('[data-cg-form-save-status]');
+            var saveStatus = $result.attr('data-cg-form-save-status');
+            if(saveStatus === 'partial_save_failed'){
+                $formLinkObject.data('cg-form-reload-required',true);
+                $('#cgSaveContactFormNavButton,#cgSaveRegistryFormNavButton').attr('aria-disabled','true').addClass('cg_disabled');
+                formSaveError($result.text());
+                return;
+            }
+            if(saveStatus !== 'saved' && saveStatus !== 'committed_refresh_failed'){
+                formSaveError(saveStatus === 'rejected' ? $result.text() : 'The save could not be confirmed. Your input has been kept. Reload the form before trying again.');
+                return;
+            }
+            if(!$response.find($formLinkObject.is('#cgCreateUploadForm') ? '#cgCreateUploadForm' : '#cg_create_user_form').length){
+                formSaveError('The saved form could not be loaded. Reload the editor before trying again.');
+                return;
+            }
+            if(saveStatus === 'committed_refresh_failed'){submitMessage = '';}
+        }
+
         if($response.find('[data-cg-database-installation-pending-response="1"]').length){
             $formLinkObject.data('cg-create-gallery-submitting',false);
             $formLinkObject.find('button[type="submit"], input[type="submit"]').prop('disabled',false).removeClass('disabled');
@@ -268,11 +301,15 @@ cgJsClassAdmin.index.functions.cgLoadBackendAjax = function (urlString,formPostD
         cgJsClassAdmin.gallery.functions.initOverlayWatcher($);
 
     }).fail(function(xhr, status, error) {
+        if(isFormEditorSave){formSaveError('The save could not be confirmed. Your input has been kept. Reload the form before trying again.');}
         cgJsClassAdmin.index.functions.noteIfIsIE();
         if($('#cg_main_container').hasClass('cg_database_installation_active')){
             cgJsClassAdmin.index.functions.showDatabaseInstallationError();
         }
     }).always(function() {
-
+        if(isFormEditorSave){
+            $formLinkObject.data('cg-form-saving',false).find(':submit').prop('disabled',!!$formLinkObject.data('cg-form-reload-required'));
+            $('#cg_main_container').removeClass('cg_pointer_events_none').find('#cgBackendLoader').remove();
+        }
     });
 }

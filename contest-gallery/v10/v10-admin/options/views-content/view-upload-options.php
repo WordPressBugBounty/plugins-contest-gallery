@@ -56,7 +56,7 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_100_percent cg_border_top_none CheckMethodUploadContainer $cgProFalse' id="CheckIpUploadContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Check by IP<br/><span class="cg_view_option_title_note">IP will be tracked always$userIPunknown</span></p>
+                        <p>Uploads without sign-in (IP address)<br/><span class="cg_view_option_title_note">Visitors do not need to register or sign in. Upload limits use the IP address.<br>IP addresses are recorded for all uploads.$userIPunknown</span></p>
                     </div>
                     <div class='cg_view_option_radio'>
                         <input type="radio" name="RegUserUploadOnly" class="CheckMethodUpload" id="CheckIpUpload" value="3" $CheckIpUpload $checkIpCheckUpload>
@@ -66,7 +66,7 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_100_percent CheckMethodUploadContainer cg_border_top_none $cgProFalse'  id="CheckCookieUploadContainer"  >
                     <div class='cg_view_option_title'>
-                        <p>Check by cookie<br/><span class="cg_view_option_title_note">Cookie will be only set and tracked if this option is activated.<br>Will be not set if administrator uploads files in WordPress backend area.</span></p>
+                        <p>Uploads without sign-in (browser cookie)<br/><span class="cg_view_option_title_note">Visitors do not need to register or sign in. Upload limits use a browser cookie.<br>The cookie is set only when this option is selected.<br>No upload cookie is set for uploads from the WordPress backend.</span></p>
                     </div>
                     <div class='cg_view_option_radio'>
                         <input type="radio" name="RegUserUploadOnly" class="CheckMethodUpload" id="CheckCookieUpload" value="2" $CheckCookieUpload>
@@ -86,7 +86,7 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_100_percent CheckMethodUploadContainer cg_border_bottom_none cg_border_top_none cg_go_to_target' data-cg-go-to-target="CheckLoginUploadContainer" id="CheckLoginUploadContainer"   >
                     <div class='cg_view_option_title'>
-                        <p>Check if is registered user<br/><span class="cg_view_option_title_note">User have to be registered and logged in to be able to upload.<br>User WordPress ID will be always tracked if user is logged in.
+                        <p>Require sign-in before uploading<br/><span class="cg_view_option_title_note">Only signed-in users can upload. Visitors must sign in or create an account first.<br>The WordPress user ID is recorded whenever a user is signed in.
                         </span>
                         </p>
                     </div>
@@ -107,7 +107,7 @@ echo <<<HEREDOC
                 <div class='cg_view_option cg_view_option_50_percent cg_border_border_bottom_left_radius_unset cg_border_left_none cg_border_top_none' id="ShowPinFormUploadingContainer" >
                     <div class='cg_view_option_title cg_view_option_title_flex_flow_column'>
                         <p>Offer sign-in before uploading<br/>
-                            <span class="cg_view_option_title_note">Requires "Check if is registered user" for uploads.</span>
+                            <span class="cg_view_option_title_note">Requires "Require sign-in before uploading".</span>
                         </p>
                         <p>Standalone upload form<br/>
                             <span class="cg_view_option_title_note">Place this shortcode on your page:</span><br/>

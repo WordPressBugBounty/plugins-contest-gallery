@@ -33,20 +33,23 @@ wp_enqueue_script( 'cg_gallery_admin_index_indexeddb', plugins_url( '/v10/v10-js
 wp_enqueue_script( 'cg_gallery_admin_objects', plugins_url( '/v10/v10-js/admin/gallery/gallery-admin-objects.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_script( 'cg_gallery_admin_functions', plugins_url( '/v10/v10-js/admin/gallery/gallery-admin-functions.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/gallery/gallery-admin-functions.js') );
 wp_enqueue_script( 'cg_gallery_admin_pdf', plugins_url( '/v10/v10-js/admin/gallery/gallery-admin-pdf.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
-wp_enqueue_script( 'cg_gallery_youtube_events', plugins_url( '/v10/v10-js/admin/gallery/gallery-youtube-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_gallery_youtube_events', plugins_url( '/v10/v10-js/admin/gallery/gallery-youtube-events.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/gallery/gallery-youtube-events.js') );
+wp_enqueue_script( 'cg_gallery_social_embed', plugins_url('/v10/v10-js/admin/gallery/gallery-social-embed.js', __FILE__), array('cg_gallery_youtube_events'), $cgAdminAssetVersion('v10/v10-js/admin/gallery/gallery-social-embed.js') );
 
 wp_enqueue_script( 'cg_gallery_openai_create_events', plugins_url( '/v10/v10-js/admin/gallery/gallery-openai-create-events.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/gallery/gallery-openai-create-events.js') );
 
 wp_enqueue_script( 'cg_gallery_openai_edit_events', plugins_url( '/v10/v10-js/admin/gallery/gallery-openai-edit-events.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/gallery/gallery-openai-edit-events.js') );
 
-wp_enqueue_script( 'cg_gallery_admin_gallery_load_init_or_add', plugins_url( '/v10/v10-js/admin/load/gallery-load-init-or-add.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_gallery_admin_gallery_load_init_or_add', plugins_url( '/v10/v10-js/admin/load/gallery-load-init-or-add.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/load/gallery-load-init-or-add.js') );
 wp_enqueue_script( 'cg_gallery_admin_gallery_reload_entry', plugins_url( '/v10/v10-js/admin/load/gallery-reload-entry.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
-wp_enqueue_script( 'cg_gallery_admin_gallery_load_change_or_sort', plugins_url( '/v10/v10-js/admin/load/gallery-load-change-or-sort.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_gallery_admin_gallery_load_change_or_sort', plugins_url( '/v10/v10-js/admin/load/gallery-load-change-or-sort.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/load/gallery-load-change-or-sort.js') );
 wp_enqueue_script( 'cg_gallery_admin_events', plugins_url( '/v10/v10-js/admin/gallery/events/gallery-admin-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_script( 'cg_gallery_admin_paid_actions', plugins_url( '/v10/v10-js/admin/gallery/gallery-admin-paid-actions.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/gallery/gallery-admin-paid-actions.js') );
 wp_enqueue_script( 'cg_gallery_admin_send_mail_events', plugins_url( '/v10/v10-js/admin/gallery/events/gallery-admin-send-mail-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 wp_enqueue_script('cg_gallery_admin_participant_draft',plugins_url('/v10/v10-js/admin/gallery/gallery-admin-participant-draft.js',__FILE__),array('cg_gallery_admin_functions'),$cgAdminAssetVersion('v10/v10-js/admin/gallery/gallery-admin-participant-draft.js'));
 wp_enqueue_script('cg_gallery_admin_participant_mail',plugins_url('/v10/v10-js/admin/gallery/gallery-admin-participant-mail.js',__FILE__),array('cg_gallery_admin_functions','cg_gallery_admin_participant_draft'),$cgAdminAssetVersion('v10/v10-js/admin/gallery/gallery-admin-participant-mail.js'));
+wp_enqueue_script('cg_gallery_exports',plugins_url('/v10/v10-js/admin/gallery/gallery-admin-exports.js',__FILE__),array('cg_gallery_admin_functions'),$cgAdminAssetVersion('v10/v10-js/admin/gallery/gallery-admin-exports.js'));
+wp_enqueue_style('cg_gallery_exports',plugins_url('/v10/v10-css/backend/cg_gallery_exports.css',__FILE__),array('cg_options_style_v10'),$cgAdminAssetVersion('v10/v10-css/backend/cg_gallery_exports.css'));
 wp_enqueue_style('cg_participant_mail',plugins_url('/v10/v10-css/backend/cg_participant_mail.css',__FILE__),false,$cgAdminAssetVersion('v10/v10-css/backend/cg_participant_mail.css'));
 wp_enqueue_script('cg_mail_history',plugins_url('/v10/v10-js/admin/mail-history.js',__FILE__),array('cg_gallery_admin_functions'),$cgAdminAssetVersion('v10/v10-js/admin/mail-history.js'));
 wp_enqueue_style('cg_mail_history',plugins_url('/v10/v10-css/backend/cg_mail_history.css',__FILE__),false,$cgAdminAssetVersion('v10/v10-css/backend/cg_mail_history.css'));
@@ -104,23 +107,23 @@ wp_enqueue_script( 'cg_js_admin_options_show_votes', plugins_url( '/v10/v10-js/a
 wp_enqueue_style( 'cg_css_general_rotate_image', plugins_url('/v10/v10-css/backend/cg_rotate_image.css', __FILE__), false, cg_get_version_for_scripts() );
 
 wp_enqueue_style( 'cg_options_style_v10', plugins_url('/v10/v10-css/cg_options_style.css', __FILE__), false , $cgAdminAssetVersion('v10/v10-css/cg_options_style.css') );
-wp_enqueue_script( 'cg_admin_create_upload_create_upload_v10', plugins_url( '/v10/v10-js/admin/create-upload/create-upload-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
-wp_enqueue_script( 'cg_admin_create_form_events_v10', plugins_url( '/v10/v10-js/admin/create-form/create-form-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_admin_create_upload_create_upload_v10', plugins_url( '/v10/v10-js/admin/create-upload/create-upload-events.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/create-upload/create-upload-events.js') );
+wp_enqueue_script( 'cg_admin_create_form_events_v10', plugins_url( '/v10/v10-js/admin/create-form/create-form-events.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/create-form/create-form-events.js') );
 wp_enqueue_script( 'cg_admin_create_form_drag_and_drop_v10', plugins_url( '/v10/v10-js/admin/create-form/create-form-drag-and-drop-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
-wp_enqueue_script( 'cg_admin_create_upload_create_form_drag_and_drop_functions', plugins_url( '/v10/v10-js/admin/create-form/create-form-drag-and-drop-functions.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_admin_create_upload_create_form_drag_and_drop_functions', plugins_url( '/v10/v10-js/admin/create-form/create-form-drag-and-drop-functions.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/create-form/create-form-drag-and-drop-functions.js') );
 wp_enqueue_script( 'cg_admin_create_upload_create_upload_tinymce', plugins_url( '/v10/v10-js/admin/create-upload/create-upload-tinymce.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
-wp_enqueue_script( 'cg_admin_create_upload_create_upload_v10_functions', plugins_url( '/v10/v10-js/admin/create-upload/create-upload-functions.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_admin_create_upload_create_upload_v10_functions', plugins_url( '/v10/v10-js/admin/create-upload/create-upload-functions.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/create-upload/create-upload-functions.js') );
 
 wp_enqueue_script( 'cg_admin_create_upload_tinymce', plugins_url( '/v10/v10-js/admin/create-upload/tinymce.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 
-wp_enqueue_script( 'cg_create_registry_events', plugins_url( '/v10/v10-js/admin/create-registry/create-registry-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
-wp_enqueue_script( 'cg_create_registry_functions', plugins_url( '/v10/v10-js/admin/create-registry/create-registry-functions.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_create_registry_events', plugins_url( '/v10/v10-js/admin/create-registry/create-registry-events.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/create-registry/create-registry-events.js') );
+wp_enqueue_script( 'cg_create_registry_functions', plugins_url( '/v10/v10-js/admin/create-registry/create-registry-functions.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/create-registry/create-registry-functions.js') );
 
 wp_enqueue_style( 'cg_backend_gallery', plugins_url('v10-css/backend/cg_backend_gallery.css', __FILE__), false, cg_get_version_for_scripts() );
 wp_enqueue_script('cg_member_messages_admin', plugins_url('/v10/v10-js/admin/users-management/member-messages-admin.js', __FILE__), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/users-management/member-messages-admin.js'));
 wp_enqueue_style('cg_member_messages_admin', plugins_url('/v10/v10-css/backend/cg_member_messages_admin.css', __FILE__), false, $cgAdminAssetVersion('v10/v10-css/backend/cg_member_messages_admin.css'));
 wp_enqueue_style('cg_registration_details', plugins_url('/v10/v10-css/backend/cg_registration_details.css', __FILE__), false, $cgAdminAssetVersion('v10/v10-css/backend/cg_registration_details.css'));
-wp_enqueue_script( 'cg_admin_users_management_users_management_v10', plugins_url( '/v10/v10-js/admin/users-management/users-management-events.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
+wp_enqueue_script( 'cg_admin_users_management_users_management_v10', plugins_url( '/v10/v10-js/admin/users-management/users-management-events.js', __FILE__ ), array('jquery'), $cgAdminAssetVersion('v10/v10-js/admin/users-management/users-management-events.js') );
 
 wp_enqueue_script( 'cg_check_wp_admin_upload_v10', plugins_url( '/v10/v10-js/admin/gallery/cg_check_wp_admin_upload.js', __FILE__ ), array('jquery'), cg_get_version_for_scripts() );
 

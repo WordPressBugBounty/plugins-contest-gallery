@@ -2,6 +2,8 @@
 if(!function_exists('cg_replace_ecommerce_file')){
     function cg_replace_ecommerce_file($realId, $GalleryID, $ecommerceEntry, $cgNewWpUploadWhichReplace, $fileDataForPostArray,$removedWpUploadIdsFromSale){
 
+        cg_ecommerce_validate_key_uploads($_FILES);
+
         global $wpdb;
 
 // Set table names

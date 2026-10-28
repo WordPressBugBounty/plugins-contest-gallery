@@ -9,7 +9,7 @@ if($isOnlyPlaceHolder){
     $cg_el_saved = "";
     $PinField = 0;
 }else{
-    $fieldTitle = contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Name);
+    $fieldTitle = cg_form_decode_value($value->Field_Name);
     $radioArray = [];
     if(!empty(trim($value->Field_Content))){
         $radioArray = cg_get_array_from_multiple_line_textarea($value->Field_Content);
@@ -30,12 +30,12 @@ if(!empty($radioArray)){
     foreach($radioArray as $key => $radioButton){
         if(empty($addOrShowRadioButtons)){
             $addOrShowRadioButtons = '<div class="cg_upl_radio_button">
-<div class="cg_upl_radio_button_text">'.$radioButton.'</div>
+<div class="cg_upl_radio_button_text">'.cg_form_editor_value($radioButton).'</div>
 <input type="radio" disabled />
 </div>';
         }else{
             $addOrShowRadioButtons .= '<div class="cg_upl_radio_button">
-<div class="cg_upl_radio_button_text">'.$radioButton.'</div>
+<div class="cg_upl_radio_button_text">'.cg_form_editor_value($radioButton).'</div>
 <input type="radio" disabled />
 </div>';
         }
@@ -46,7 +46,7 @@ if(!empty($radioArray)){
         ondragstart='cgJsClassAdmin.createUpload.dragAndDrop.drag(event)' ondragend='cgJsClassAdmin.createUpload.dragAndDrop.dragEnd(event)' 
  >";
         echo "<div class='cg_upl_title $requiredChecked' >";
-            echo cg1l_sanitize_method($fieldTitle);
+            echo cg_form_escape_value($fieldTitle);
         echo "</div>";
 if($PinField){
     echo "<div class='cg_pin_field' title='Visible in [cg_users_pin] form' >";
@@ -59,7 +59,3 @@ if($PinField){
         echo "<div class='cg_upl_del' title='Delete field' >";
         echo "</div>";
     echo "</div>";
-
-if(!$isOnlyPlaceHolder){
-    $raRightCount++;
-}

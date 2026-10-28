@@ -3,7 +3,7 @@ include_once __DIR__.'/../cg-entry-page-urls.php';
 
 add_action('cg_json_upload_form_info_data_files_new','cg_json_upload_form_info_data_files_new');
 if(!function_exists('cg_json_upload_form_info_data_files_new')){
-	function cg_json_upload_form_info_data_files_new($GalleryID,$pidsArray=[],$isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized = false,$IsForWpPageTitleInputDeleted = false,$IsFromCopyGalleryOrActualizeAll = false,$deferFrontendFreshness = false){
+	function cg_json_upload_form_info_data_files_new($GalleryID,$pidsArray=[],$isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized = false,$IsForWpPageTitleInputDeleted = false,$IsFromCopyGalleryOrActualizeAll = false,$deferFrontendFreshness = false,$checkedFormSave = false){
 
 		// var_dump('$isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized123');
 		// var_dump($isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized);
@@ -37,7 +37,9 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 		// collect all input ids which can be visible somehow in frontend
 		$inputIdsArray = [];
 		$options = $wpdb->get_row("SELECT * FROM $tablename_options WHERE id = $GalleryID");
+		if($checkedFormSave && $wpdb->last_error){return new WP_Error('form_refresh','The form data could not be read.');}
 		$optionsVisual = $wpdb->get_row("SELECT * FROM $tablename_options_visual WHERE GalleryID = $GalleryID");
+		if($checkedFormSave && $wpdb->last_error){return new WP_Error('form_refresh','The form data could not be read.');}
 		$Field1IdGalleryView = (!empty($optionsVisual) && isset($optionsVisual->Field1IdGalleryView)) ? absint($optionsVisual->Field1IdGalleryView) : 0;
 		$Field1IdFullWindowBlogView = (!empty($optionsVisual) && isset($optionsVisual->Field1IdFullWindowBlogView)) ? absint($optionsVisual->Field1IdFullWindowBlogView) : 0;
 		$Field2IdGalleryView = (!empty($optionsVisual) && isset($optionsVisual->Field2IdGalleryView)) ? absint($optionsVisual->Field2IdGalleryView) : 0;
@@ -48,6 +50,7 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 		if(!empty($Field3IdGalleryView)){$inputIdsArray[]=$Field3IdGalleryView;}
 
 		$inputs = $wpdb->get_results("SELECT * FROM $tablename_form_input WHERE GalleryID = $GalleryID");
+		if($checkedFormSave && $wpdb->last_error){return new WP_Error('form_refresh','The form data could not be read.');}
 		$frontendInputProperties = ['Show_Slider','WatermarkPosition','SubTitle','ThirdTitle','EcommerceTitle','EcommerceDescription','IsForWpPageTitle','FieldTitleGallery'];
 		$fieldTitlesArray = [];
 		$dateFieldsIdsAndFormatArray = array();
@@ -84,6 +87,7 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 				$entries = $wpdb->get_results("SELECT * FROM $tablename_entries WHERE GalleryID = $GalleryID ORDER BY pid ASC");
 			}
 
+		if($checkedFormSave && $wpdb->last_error){return new WP_Error('form_refresh','The form data could not be read.');}
 		$galleryEntries = array();
 		if((int)$options->Version>=22 && ($isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized || $IsForWpPageTitleInputDeleted)){
 			if($pidsArray){
@@ -108,7 +112,7 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 
 		foreach($entries as $row){
 
-			if(in_array($row->pid,$deletedInfoFiles)!==false){
+			if(!$checkedFormSave && in_array($row->pid,$deletedInfoFiles)!==false){
 				// delete file for sure, cause might not have entries, will be created if have
 				$jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/image-info/image-info-'.$row->pid.'.json';
 				if(file_exists($jsonFile)){
@@ -167,6 +171,8 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 					$arrayDataForImage[$row->pid][$row->f_input_id]['field-content'] = $row->Short_Text;
 				}
 
+				if($checkedFormSave){continue;}
+
 				if(!is_dir($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/image-info')){
 					mkdir($wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/image-info',0755,true);
 				}
@@ -191,6 +197,20 @@ if(!function_exists('cg_json_upload_form_info_data_files_new')){
 		}
 
 
+
+        if($checkedFormSave){
+            // Rebuild every existing entry, including entries whose last field was
+            // deleted or is no longer public. An empty JSON replaces stale values.
+            $ids=$wpdb->get_col($wpdb->prepare("SELECT id FROM $tablename WHERE GalleryID=%d",$GalleryID));
+            if($wpdb->last_error){return new WP_Error('form_refresh','The gallery entries could not be read.');}
+            foreach($ids as $pid){
+                $data=isset($arrayDataForImage[$pid]) ? $arrayDataForImage[$pid] : array();
+                if(!cg_form_write_json($jsonUpload.'/image-info/image-info-'.(int)$pid.'.json',$data)){return new WP_Error('form_refresh','The entry information could not be refreshed.');}
+            }
+            // The save handler invalidates the complete caches after every file
+            // has been written. A full rebuild must not turn every ID into recent.
+            return true;
+        }
 
 	}
 }

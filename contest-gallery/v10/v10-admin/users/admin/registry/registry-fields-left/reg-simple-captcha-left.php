@@ -7,8 +7,8 @@ if(!$isOnlyPlaceHolder){
     $fieldOrder = $value->Field_Order;
     $Min_Char = $value->Min_Char;
     $Max_Char = $value->Max_Char;
-    $Field_Name = contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Name);
-    $Field_Content = contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Content);
+    $Field_Name = cg_form_editor_value($value->Field_Name);
+    $Field_Content = cg_form_editor_value($value->Field_Content);
     $Field_Order = $value->Field_Order;
     $Field_Type = $value->Field_Type;
     $cg_Necessary = $value->Required;
@@ -54,7 +54,6 @@ echo "<input type='hidden' class='RowCols' name='RowCols[$i]' value='$RowCols'>"
 
 if(!$isOnlyPlaceHolder){
 
-    $caRoCount++;
     $caRoHiddenCount++;
 
 }

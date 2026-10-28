@@ -135,11 +135,10 @@ if(true){
     $enterKey = '';
     $ReCaKey = '';
     $enterKey .= "<div style='display:flex;align-items:center;flex-wrap: wrap;'><input type='text' name='ReCaKey' class='cg_reca_key' placeholder='Example Key: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI' size='30' maxlength='1000' value='$ReCaKey'/>";// Titel und Delete M�glichkeit die oben bestimmt wurde
-    $enterKey .=  "<span  class='cg_recaptcha_icon' style='width: 100%;margin-left: 0;margin-top: 15px;margin-bottom: 10px;'>Insert Google reCAPTCHA test key</span>";
+    $enterKey .=  "<span  class='cg_recaptcha_icon' style='width: 100%;margin-left: 0;margin-top: 15px;margin-bottom: 10px;'>Insert Google reCAPTCHA test keys</span>";
     $enterKey .=  "</div>";
 
-    $captchaNote = "<span class='cg_recaptcha_test_note' ><span>NOTE:</span><br><b>Google reCAPTCHA test key</b> is provided from Google for testing purpose.
-                                        <br><b>Create your own \"Site key\"</b> here <a href='https://www.google.com/recaptcha/admin' target='_blank'>www.google.com/recaptcha/admin</a><br>Register your site, create a <b>V2 \"I am not a robot\"</b>  key.</span>";
+    $captchaNote = cg_captcha_setup_note();
 
     $RowNumberCount = 1;// in case of first time processing after update to 28.0.0
 
@@ -192,6 +191,11 @@ echo "<div id='cgCreateUploadSortableArea' class='cg_sortable_area'>";
 $RowNumberCount = 1;// in case of first time processing after update to 27.0.0
 
 foreach ($selectFormInput as $key => $value) {
+
+    // Saved fields have one stable DOM ID, independent of their type/count.
+    foreach(array('nf','kf','ef','ht','cb','se','caRo','caRoRe','wpfn','wpln','pi','ra','chk','url') as $cgFieldPrefix){
+        ${$cgFieldPrefix.'Count'} = 'field-'.(int)$value->id;
+    }
 
     if($value->Field_Type == 'main-mail'){
         include (__DIR__.'/registry-fields-left/wp-email-left.php');

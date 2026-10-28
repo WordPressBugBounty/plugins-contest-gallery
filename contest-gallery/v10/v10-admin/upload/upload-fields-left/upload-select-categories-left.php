@@ -26,7 +26,7 @@ if(!$isOnlyPlaceHolder){
 $valueFieldTitle = 'Select category';
 
 
-$categories = $wpdb->get_results("SELECT * FROM $tablename_categories WHERE GalleryID = '$GalleryID' ORDER BY Field_Order ASC");
+$categories = cg_form_editor_fields($cgFormEditorState['categories']);
 // Anfang des Formularteils
 echo "<div id='$secCount'  class='formField cg_sec_field selectCategoriesField cg_hide' >";
 echo "<div class='cg_remove cg_is_category_main_field cg_hide' title='Remove field' data-cg-id='$id'></div>";
@@ -52,10 +52,10 @@ if(!$isOnlyPlaceHolder){
     if($id==$Field1IdFullWindowBlogView){$checkedShowFullWindowBlogView='checked';}
     else{$checkedShowFullWindowBlogView='';}
 
-    $inputRow = $wpdb->get_row("SELECT * FROM $tablename_form_input WHERE id = '$id'");
+    $inputRow = $value;
 
     $Show_Slider = $inputRow->Show_Slider;
-	$FieldTitleGallery = $inputRow->FieldTitleGallery;
+	$FieldTitleGallery = cg_form_escape_value($inputRow->FieldTitleGallery);
 
     if($Show_Slider==1){$checkedShow_Slider='checked';}
     else{$checkedShow_Slider='';}
@@ -118,14 +118,13 @@ $requiredChecked = '';
 foreach($fieldContent as $key => $valueFieldContent){
 
     if($key=='titel'){
-        $valueFieldContent = contest_gal1ery_convert_for_html_output_without_nl2br($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
+        $valueFieldContent = cg_form_editor_value($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
         $valueFieldTitle = $valueFieldContent;
     }
 
     if($key=='mandatory'){
-        $valueFieldContent = contest_gal1ery_convert_for_html_output_without_nl2br($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
+        $valueFieldContent = cg_form_editor_value($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
         $requiredChecked = ($valueFieldContent=='on') ? "checked" : "";
-        $secCount++;
     }
 
 }
@@ -213,7 +212,7 @@ if($checkCategory==false){
         echo "<div class='cg_drag_area_1' ><img class='cg_drag_area_icon' src='$cgDragIcon'></div>";
         echo '<div>
                     <div class="cg_name_field_and_delete_button_container">
-                        <input class="cg_category_field" placeholder="Category'.$cOrder.'" value="'.$category->Name.'" name="cg_category[]['.$category->id.']" type="text" />
+                        <input class="cg_category_field" placeholder="Category'.$cOrder.'" value="'.cg_form_editor_value($category->Name).'" name="cg_category[]['.$category->id.']" type="text" />
                     </div>
                     </div>
                     </div>';

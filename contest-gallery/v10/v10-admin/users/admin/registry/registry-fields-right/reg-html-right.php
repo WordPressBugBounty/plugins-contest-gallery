@@ -9,8 +9,8 @@ if($isOnlyPlaceHolder){
     $cg_el_saved = "";
     $PinField = 0;
 }else{
-    $fieldTitle = contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Name);
-    $valueFieldTextareaContent = contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Content);
+    $fieldTitle = cg_form_decode_value($value->Field_Name);
+    $valueFieldTextareaContent = cg_form_decode_value($value->Field_Content);
     $requiredChecked = ($value->Required==1) ? "cg_upl_required" : "";
     $PinField = $value->PinField;
     if($value->Active==0){
@@ -42,7 +42,3 @@ if($PinField){
             echo "<div class='cg_upl_del' title='Delete field' >";
             echo "</div>";
     echo "</div>";
-
-if(!$isOnlyPlaceHolder){
-    $htRightCount++;
-}

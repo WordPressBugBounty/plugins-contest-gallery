@@ -25,8 +25,10 @@ function cg_profile_meta_field_id($key){
 if(!function_exists('cg_member_profile_choices')){
 function cg_member_profile_choices($field){
 	$content = isset($field->Field_Content) ? (string)$field->Field_Content : '';
-	$lines = preg_split('/\r\n|\r|\n/',html_entity_decode(stripslashes($content),ENT_QUOTES,'UTF-8'));
-	return array_values(array_unique(array_filter(array_map('sanitize_text_field',$lines),'strlen')));
+	$lines = preg_split('/\r\n|\r|\n/',cg_form_decode_value($content));
+	$choices = array();
+	foreach($lines as $line){if(trim($line)!==''){$choices[] = $line;}}
+	return array_values(array_unique($choices));
 }
 }
 
@@ -168,6 +170,9 @@ function cg_registry_field_storage_content($field){
     $value = isset($field['Field_Content']) ? $field['Field_Content'] : '';
     if($field['Field_Type']==='user-url-field'){return trim($value);}
     if($field['Field_Type']==='user-check-field'){return wp_json_encode(array('cg_choices'=>$value));}
+    // Already validated against the schema. Store one encoding layer without
+    // sanitizing or unslashing the selected text a second time.
+    if(in_array($field['Field_Type'],array('user-select-field','user-radio-field'),true)){return cg_form_escape_value($value);}
     return cg1l_sanitize_method($value);
 }
 }

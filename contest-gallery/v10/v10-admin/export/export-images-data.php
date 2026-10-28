@@ -1,14 +1,10 @@
 <?php
-if(!function_exists('cg_images_data_csv_export')){
 
-    function cg_images_data_csv_export(){
+if(!defined('ABSPATH')){exit;}
 
-        if(!current_user_can('manage_options')){
-            echo "Logged in user have to be able to manage_options to export images.";die;
-        }
-
-        cg_check_nonce();
-
+if(!function_exists('cg_images_data_csv_write_batch')){
+    function cg_images_data_csv_write_batch($GalleryID,$cgExportStream,$context,$ids,$headers=false){
+        $idSql = count($ids) ? implode(',',array_map('absint',$ids)) : '0';
         global $wpdb;
 
         $tablename = $wpdb->prefix . "contest_gal1ery";
@@ -20,7 +16,6 @@ if(!function_exists('cg_images_data_csv_export')){
         $tablenameentries = $wpdb->prefix . "contest_gal1ery_entries";
         $contest_gal1ery_categories = $wpdb->prefix . "contest_gal1ery_categories";
 
-        $GalleryID = absint($_GET['option_id']);
 
         $content_url = wp_upload_dir();
         $content_url = $content_url['baseurl']; // Pfad zum Bilderordner angeben
@@ -31,13 +26,13 @@ if(!function_exists('cg_images_data_csv_export')){
         $categoryFieldCsvNumber = '';
         $categoryTitle = '';
 
-        $categories = $wpdb->get_results($wpdb->prepare("SELECT * FROM $contest_gal1ery_categories WHERE GalleryID = %d ORDER BY Field_Order DESC",[$GalleryID]));
+        $categories = cg_gallery_export_objects($context['categories']);
 
-        $proOptions = $wpdb->get_row($wpdb->prepare( "SELECT * FROM $tablename_pro_options WHERE GalleryID = %d",[$GalleryID]));
+        $proOptions = (object)$context['pro_options'];
 
         $IsModernFiveStar = $proOptions->IsModernFiveStar;
         $Manipulate = $proOptions->Manipulate;
-        $selectSQLall = $wpdb->get_results($wpdb->prepare(
+        $selectSQLall = cg_gallery_export_results($wpdb->prepare(
             "SELECT
                 gallery.GalleryID,
                 gallery.id,
@@ -75,18 +70,18 @@ if(!function_exists('cg_images_data_csv_export')){
             FROM $tablename AS gallery
             LEFT JOIN $table_posts AS posts ON posts.ID = gallery.WpUpload
             LEFT JOIN $wpUsers AS users ON users.ID = gallery.WpUserId
-            WHERE gallery.GalleryID = %d
+            WHERE gallery.GalleryID = %d AND gallery.id IN ($idSql)
             ORDER BY gallery.id DESC",
             array($GalleryID)
         ));
 
-        $selectFormInput = $wpdb->get_results($wpdb->prepare(  "SELECT id, Field_Type, Field_Order, Field_Content FROM $tablename_f_input WHERE GalleryID = %d AND (Field_Type = 'fbt-f' OR Field_Type = 'fbd-f' OR Field_Type = 'url-f' OR Field_Type = 'check-f' OR Field_Type = 'text-f' OR Field_Type = 'radio-f' OR Field_Type = 'chk-f' OR Field_Type = 'comment-f' OR Field_Type ='email-f' OR Field_Type ='select-f' OR Field_Type ='selectc-f' OR Field_Type ='url-f' OR Field_Type ='date-f') ORDER BY Field_Order ASC" ,[$GalleryID]));
+        $selectFormInput = cg_gallery_export_objects($context['fields']);
 
-        $selectAllGalleryEntries = $wpdb->get_results($wpdb->prepare(
+        $selectAllGalleryEntries = cg_gallery_export_results($wpdb->prepare(
             "SELECT entries.pid, entries.f_input_id, entries.Field_Type, entries.Short_Text, entries.Long_Text, entries.Checked, entries.InputDate
             FROM $tablenameentries AS entries
             INNER JOIN $tablename AS gallery ON gallery.id = entries.pid
-            WHERE gallery.GalleryID = %d
+            WHERE gallery.GalleryID = %d AND gallery.id IN ($idSql)
             ORDER BY entries.pid DESC, entries.Field_Order ASC",
             array($GalleryID)
         ));
@@ -100,7 +95,7 @@ if(!function_exists('cg_images_data_csv_export')){
         }
         unset($selectAllGalleryEntries);
 
-        $selectAllGalleryVotes = $wpdb->get_results($wpdb->prepare( "
+        $selectAllGalleryVotes = cg_gallery_export_results($wpdb->prepare( "
                 SELECT
                     pid,
                     SUM(CASE WHEN RatingS = 1 THEN 1 ELSE 0 END) AS OneStarCount,
@@ -115,7 +110,7 @@ if(!function_exists('cg_images_data_csv_export')){
                     SUM(CASE WHEN (RatingS IS NULL OR RatingS <> 1) AND Rating = 9 THEN 1 ELSE 0 END) AS MultipleStarsNineStarsCount,
                     SUM(CASE WHEN (RatingS IS NULL OR RatingS <> 1) AND Rating = 10 THEN 1 ELSE 0 END) AS MultipleStarsTenStarsCount
                 FROM $tablename_ip
-                WHERE GalleryID = %d
+                WHERE GalleryID = %d AND pid IN ($idSql) AND id <= ".absint($context['max_vote_id'])."
                 GROUP BY pid
         ",[$GalleryID]));
 
@@ -145,7 +140,8 @@ if(!function_exists('cg_images_data_csv_export')){
             $addVotesArray[$row->id]['addCountR10'] = $row->addCountR10;
         }*/
 
-        include('export-images-data-voting-calculation.php');
+        cg_gallery_export_check_db();
+        include(__DIR__.'/export-images-data-voting-calculation.php');
 
         include(__DIR__ ."/../../../check-language.php");
 
@@ -426,7 +422,7 @@ if(!function_exists('cg_images_data_csv_export')){
                     $n=0;
                 }
 
-                if(@$formvalue=='radio-f'){$fieldtype="ra"; $n=1; continue;}
+                if(@$formvalue=='radio-f' || @$formvalue=='chk-f'){$fieldtype="ra"; $n=1; continue;}
                 if(@$fieldtype=="ra" AND $n==1){$formFieldId=$formvalue; $n=2; continue;}
                 if(@$fieldtype=="ra" AND $n==2){$fieldOrder=$formvalue; $n=3; continue;}
                 if (@$fieldtype=='ra' AND $n==3) {
@@ -498,6 +494,7 @@ if(!function_exists('cg_images_data_csv_export')){
             $categoryFieldCsvNumber = $r;// Keine Ahnung warum -1 :)
         }
         $r++;
+        $ratingColumnStart = $r;
         $csvData[$i][$r]="OneStarCount";
         $r++;
         $csvData[$i][$r]="MultipleStarsOneStarCount";
@@ -595,21 +592,12 @@ if(!function_exists('cg_images_data_csv_export')){
         $csvData[$i][$r]="MultipleStarsAverageInCaseTenStarsVotingIsActivated";
         $r++;
 
-        $filename = "cg-images-data-gallery-id-$GalleryID.csv";
-
-        nocache_headers();
-        header("Content-type: text/csv; charset=UTF-8");
-        header('Content-Disposition: attachment; filename="'.$filename.'"');
-
-        $fp = fopen("php://output",'w');
-        if($fp===false){
-            echo "CSV export could not be created.";
-            die;
-        }
-
-        fwrite($fp,chr(0xEF).chr(0xBB).chr(0xBF));
-        foreach($csvData as $fields){
-            fputcsv($fp,cg_neutralize_csv_array($fields),";");
+        if($headers){
+            if(fwrite($cgExportStream,chr(0xEF).chr(0xBB).chr(0xBF))!==3){throw new Exception('The CSV header could not be written.');}
+            foreach($csvData as $fields){
+                cg_gallery_export_csv_row($cgExportStream,$fields);
+            }
+            return;
         }
         $csvData = array();
 
@@ -782,12 +770,8 @@ if(!function_exists('cg_images_data_csv_export')){
 
             // ACHTUNG!!!! Leere Felder müssen gefüllt werden ansonsten erscheint der inhalt einfacher in der nächsten spalte und nicht in der richtigen
             // Schon ma vorab füllen!!!!
-            foreach ($selectFormInput as $container) {
-
-                //    var_dump($r);
-                $csvData[$i][$r] = '';
-                $r++;
-
+            foreach ($selectFormIdArrayAndRow as $column) {
+                $csvData[$i][$column] = '';
             }
 
             if(!empty($selectSQLentries)){
@@ -876,7 +860,7 @@ if(!function_exists('cg_images_data_csv_export')){
                // $r++;
                $csvData[$i][$categoryFieldCsvNumber] = (isset($categoriesUidsNames[$value->Category])) ? $categoriesUidsNames[$value->Category] : '';
             }
-            $r++;
+            $r = $ratingColumnStart;
             $csvData[$i][$r] = (!empty($allGalleryVotesArray[$value->id])) ? $allGalleryVotesArray[$value->id]['OneStarCount'] : 0;
             $r++;
             $csvData[$i][$r] = (!empty($allGalleryVotesArray[$value->id])) ? $allGalleryVotesArray[$value->id]['MultipleStarsOneStarCount'] : 0;
@@ -974,7 +958,7 @@ if(!function_exists('cg_images_data_csv_export')){
             $csvData[$i][$r] = (!empty($allGalleryVotesArray[$value->id])) ? str_replace('.',',',$allGalleryVotesArray[$value->id]['MultipleStarsAverageInCaseTenStarsVotingIsActivated']) : 0;
 
             ksort($csvData[$i]);
-            fputcsv($fp,cg_neutralize_csv_array($csvData[$i]),";");
+            cg_gallery_export_csv_row($cgExportStream,$csvData[$i]);
             unset($csvData[$i]);
          //   var_dump($csvData);
       //      die;
@@ -999,9 +983,13 @@ if(!function_exists('cg_images_data_csv_export')){
 
         $filename = $code."_userdata.csv";*/
 
-        fclose($fp);
-        die();
+        cg_gallery_export_check_db();
     }
 }
 
-?>
+
+if(!function_exists('cg_images_data_csv_export')){
+    function cg_images_data_csv_export(){
+        cg_gallery_export_legacy_redirect('fields_csv');
+    }
+}

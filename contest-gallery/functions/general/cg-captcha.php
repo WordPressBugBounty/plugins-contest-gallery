@@ -65,11 +65,54 @@ function cg_captcha_store_config($scope,$id,$record){
     if(is_array($record) && $id){update_option(cg_captcha_option($scope,$id),$record,false);}
 }
 }
+if(!function_exists('cg_captcha_copy_upload_config')){
+function cg_captcha_copy_upload_config($sourceId,$targetId,$siteKey){
+    global $wpdb;
+    $error=new WP_Error('captcha_copy','The reCAPTCHA settings could not be copied. The gallery copy is incomplete. Please check the copied gallery before using its upload form.');
+    $sourceId=absint($sourceId);$targetId=absint($targetId);$siteKey=trim($siteKey);
+    if(!$sourceId || !$targetId || $sourceId===$targetId){return $error;}
+    $config=cg_captcha_config('upload',$sourceId,$siteKey);
+    if($wpdb->last_error){return $error;}
+    if($config['legacy']){
+        $name='cg_captcha_legacy_v1';$source='upload:'.$sourceId;$target='upload:'.$targetId;
+        $hash=hash('sha256',$siteKey);
+        // Merge only this copy. A concurrent copy must not lose its own legacy entry.
+        for($attempt=0;$attempt<5;$attempt++){
+            $raw=$wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name=%s",$name));
+            if($wpdb->last_error || !is_string($raw)){return $error;}
+            $legacy=maybe_unserialize($raw);
+            if(!is_array($legacy) || !isset($legacy[$source]) || $legacy[$source]!==$hash){return $error;}
+            if(isset($legacy[$target])){return $legacy[$target]===$hash ? true : $error;}
+            $legacy[$target]=$hash;
+            $updated=$wpdb->query($wpdb->prepare("UPDATE {$wpdb->options} SET option_value=%s WHERE option_name=%s AND BINARY option_value=BINARY %s",maybe_serialize($legacy),$name,$raw));
+            wp_cache_delete($name,'options');wp_cache_delete('alloptions','options');
+            if($updated===false){return $error;}
+            if($updated===1){return true;}
+        }
+        return $error;
+    }
+    // Missing or mismatched secrets stay invalid. They must never create a legacy bypass.
+    if($siteKey==='' || $config['secret']===''){return true;}
+    $name=cg_captcha_option('upload',$targetId);
+    $serialized=maybe_serialize(array('siteKey'=>$siteKey,'secret'=>$config['secret'],'enforce'=>1));
+    // The new field owns a new option. Never overwrite an already configured target.
+    $inserted=$wpdb->query($wpdb->prepare("INSERT INTO {$wpdb->options} (option_name,option_value,autoload) VALUES (%s,%s,'no') ON DUPLICATE KEY UPDATE option_name=VALUES(option_name)",$name,$serialized));
+    wp_cache_delete($name,'options');wp_cache_delete('notoptions','options');
+    if($inserted===false){return $error;}
+    $stored=$wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name=%s",$name));
+    return !$wpdb->last_error && $stored===$serialized ? true : $error;
+}
+}
+if(!function_exists('cg_captcha_setup_note')){
+function cg_captcha_setup_note(){
+    return '<span class="cg_recaptcha_test_note"><b>Setup:</b><br>Create a <b>reCAPTCHA v2 &quot;I\'m not a robot&quot; Checkbox</b> key pair at <a href="https://www.google.com/recaptcha/admin" target="_blank" rel="noopener noreferrer">Google reCAPTCHA</a>.<br>Register your website domain. Enter the <b>Site Key</b> and matching <b>Secret Key</b> here, then save the form.<br>Test keys are for testing only and do not block bots.</span>';
+}
+}
 if(!function_exists('cg_captcha_secret_input')){
 function cg_captcha_secret_input($scope,$id,$siteKey,$name){
     $config=cg_captcha_config($scope,$id,$siteKey);
-    $note=$config['secret']!=='' ? 'A secret is saved. Leave empty to keep it.' : ($config['legacy'] ? 'Your existing form still works. Add the secret key to enable server-side bot protection.' : 'Required when enabling reCAPTCHA.');
-    return '<label style="display:block;width:100%;margin-top:16px"><span style="display:block;font-weight:600;margin-bottom:8px">Your secret key</span><input type="password" class="cg_reca_secret" name="'.esc_attr($name).'" value="" autocomplete="new-password" maxlength="200" style="width:100%" /></label><span style="display:block;width:100%;margin-top:8px;text-align:center">'.esc_html($note).' Test keys are for testing only and do not block bots.</span>';
+    $note=$config['secret']!=='' ? 'A secret is saved. Leave this empty to keep it if the Site Key is unchanged. When changing the Site Key, enter its matching Secret Key.' : ($config['legacy'] ? 'Your existing form still works. Add the matching Secret Key to enable server-side bot protection.' : 'Enter the matching Secret Key before enabling reCAPTCHA.');
+    return '<label style="display:block;width:100%;margin-top:16px"><span style="display:block;font-weight:600;margin-bottom:8px">Your secret key</span><input type="text" class="cg_reca_secret" name="'.esc_attr($name).'" value="" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="200" style="width:100%" /></label><span style="display:block;width:100%;margin-top:8px;text-align:center">'.esc_html($note).' Test keys are for testing only and do not block bots.</span>';
 }
 }
 if(!function_exists('cg_captcha_admin_notice')){

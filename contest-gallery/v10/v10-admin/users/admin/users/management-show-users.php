@@ -133,11 +133,19 @@ if(isset($_GET['delete_data_csv'])){
 
 $versionColor = "#444";
 
-echo "<div id='cgCreateDataCSVdiv' class='cg_export_data_div'>";
-echo "<input type='button' class='cg_backend_button_gallery_action' id='cg_create_user_data_csv_submit' value='Export registered users data' style='text-align:center;width:210px;margin: 1px auto;' />";
-echo "<div style='padding-top:2px;position: relative;'><span class=\"cg-info-icon\" style='font-weight:bold;margin-bottom:10px;position:relative;'>info<span class=\"cg-info-container cg-info-container-gallery-user\" style=\"top: 25px; margin-left: -210px; display: none;font-weight:normal;\">CSV file will be exported separated by semicolon ( ; )</span></span>
-    </div>";
-echo "</div>";
+echo '<div id="cgCreateDataCSVdiv" class="cg_export_data_div cg_users_export_card">
+    <span class="cg_users_export_icon" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+            <path d="M13 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10z" />
+            <path d="M13 3v7h7M12 13v5m-3-3 3 3 3-3" />
+        </svg>
+    </span>
+    <div class="cg_users_export_text">
+        <h2>Export registered users</h2>
+        <p id="cgUsersExportDescription">Download user data as CSV. Columns are separated by semicolons.</p>
+    </div>
+    <button type="button" class="cg_backend_button_gallery_action" id="cg_create_user_data_csv_submit" aria-describedby="cgUsersExportDescription">Export CSV</button>
+</div>';
 
 cg_mails_list();
 cg_mail_history_container();
@@ -192,7 +200,9 @@ $total = (int)$rows;
 $current_start = $start + 1; // make sure it starts at 1, not 0
 $current_end = min($start + $step, $total);
 
-echo "<div id='cgUsersListSteps' class='cg_pics_per_site' style='margin-top:2px;width: 100%;'>";
+echo "<div id='cgUsersListSteps' class='cg_pics_per_site cg_users_management'>";
+echo "<div id='cgListsContainer'>";
+echo "<section class='cg_users_management_card' aria-labelledby='cgRegUserStepsSelectTitle'>";
 echo "<div id='cgUserListStepsContainer' class='cg_steps_container'  style='display:flex;align-items:center;gap:6px;'>";
 echo '<div id="cgRegUserStepsSelectTitle" class="cg_steps_container_title" >';
 echo 'Registered users';
@@ -307,15 +317,6 @@ echo '<div id="cgRegistrationSearchReset" title="Refresh and reset search"></div
 echo "</div>";
 
 echo "</div>";
-echo "<div id='cgUnconfirmedListStepsContainer'  class='cg_steps_container cg_steps_loading'>";
-    echo "<div id='cgUnconfirmedUserStepsSelectTitle'  class='cg_steps_container_title'>";
-    echo "Unconfirmed users";
-    echo "</div>";
-    echo "<div class='cg_steps_container_loader' >";
-        echo '<div class="cg_skeleton_loader_on_page_load" style="width: 100%;height: 30px;"></div>';
-    echo "</div>";
-echo "</div>";
-echo "</div>";
 
 /*
 var_dump('$rows');
@@ -325,11 +326,12 @@ var_dump($rows);
 die;*/
 if(!empty($_GET['edit_registration_entries']) AND !empty($_GET['wp_user_id'])){
 
+    echo '<div id="cgUsersManagementList" class="cg_table_list">';
     include("management-show-user.php");
+    echo '</div>';
 
 }else{
 
-    echo "<div id='cgListsContainer'>";
     $usersTableHtmlStart = <<<HEREDOC
                 <div id="cgUsersManagementList" class="cg_table_list" >
                     <form method="get">
@@ -469,8 +471,8 @@ HEREDOC;
                 $contestGalleryEntriesEditLink = '<span class="cg_entries"><a href="'.esc_url(add_query_arg($cgRegistrationDetailsArgs,admin_url('admin.php'))).'" class="cg_entry">Registration details</a></span>';
             }
 
-            $cgMemberMessagesLink = current_user_can('manage_options') ? ' | <span><a class="cg_member_admin_messages_open" target="_blank" rel="noopener" href="'.esc_url(cg_member_admin_messages_url($userId,$GalleryID)).'">Messages</a></span>' : '';
-            $cgMailHistoryLink = current_user_can('manage_options') ? ' | <span><a href="#" class="cg_mail_history_open" data-context="user" data-user-id="'.absint($userId).'">Email history</a></span>' : '';
+            $cgMemberMessagesLink = current_user_can('manage_options') ? '<span><a class="cg_member_admin_messages_open" target="_blank" rel="noopener" href="'.esc_url(cg_member_admin_messages_url($userId,$GalleryID)).'">Messages</a></span>' : '';
+            $cgMailHistoryLink = current_user_can('manage_options') ? '<span><a href="#" class="cg_mail_history_open" data-context="user" data-user-id="'.absint($userId).'">Email history</a></span>' : '';
 
             // var_dump(get_avatar( 1));
 
@@ -484,11 +486,11 @@ HEREDOC;
                                     <strong><a
                                             href=\"$editUserWPprofileLink\">$user_login</a></strong>";
             if(in_array($userId,$wpUsersIdsWithNotConfirmedMailArray)){
-                echo "<span style='margin-left:5px;font-weight:600;'>Mail not confirmed</span>";
+                echo "<span class='cg_users_management_pending'>Mail not confirmed</span>";
             }
                 echo "<br>
                                     <div class=\"row-actions visible\"><span><a target='_blank'
-                                            href=\"$editUserWPprofileLink\">Edit WordPress Profile</a> | </span>
+                                            href=\"$editUserWPprofileLink\">Edit WordPress Profile</a></span>
                                             $contestGalleryEntriesEditLink$cgMemberMessagesLink$cgMailHistoryLink
                                             </div>
                                 </td>
@@ -508,6 +510,16 @@ HEREDOC;
     }
 
     echo $usersTableHtmlEnd;
+}
+
+echo '</section>';
+echo "<section class='cg_users_management_card' aria-labelledby='cgUnconfirmedUserStepsSelectTitle'>";
+echo "<div id='cgUnconfirmedListStepsContainer' class='cg_steps_container cg_steps_loading'>";
+    echo "<div id='cgUnconfirmedUserStepsSelectTitle' class='cg_steps_container_title'>Unconfirmed users</div>";
+    echo "<div class='cg_steps_container_loader'>";
+        echo '<div class="cg_skeleton_loader_on_page_load" style="width: 100%;height: 30px;"></div>';
+    echo '</div>';
+echo '</div>';
     echo '<div id="cgUnconfirmedManagementList" class="cg_table_list"><table class="wp-list-table widefat fixed striped users">
                             <thead>
                             <tr>
@@ -534,6 +546,4 @@ HEREDOC;
                             </tbody>
                         </table></div>';
 
-    echo '</div>';
-
-}
+echo '</section></div></div>';

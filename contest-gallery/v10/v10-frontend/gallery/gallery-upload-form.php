@@ -1,7 +1,5 @@
 <?php
 
-global $cgGlobalGoogleRecaptchaRendered;
-
 include('gallery-upload-form-options.php');
 
 if (empty($OrderItemID)) {
@@ -155,7 +153,7 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
             foreach ($jsonUploadFormSortedByFieldOrder as $fieldOrder => $field) {
                 if ($field['Field_Type'] == 'image-f') {
                     $Field_Content = $field['Field_Content'];
-                    $imageFieldFieldTitle = contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['titel']);
+                    $imageFieldFieldTitle = cg_form_editor_value($Field_Content['titel']);
                     break;
                 }
             }
@@ -225,7 +223,7 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
                                                     $ondragSingleUpload
                                                 >";
                                                 echo "<p class='cg_input_error cg_hide cg_hide_image_upload'></p>";// Error message appears here
-                                                echo "<label class='cg_input_image_upload_label' for='cg_input_image_upload_id_in_gallery$galeryIDuser$uniqueIdAddition'>".$Field_Content['alternative-file-title']."</label>";
+                                                echo "<label class='cg_input_image_upload_label' for='cg_input_image_upload_id_in_gallery$galeryIDuser$uniqueIdAddition'>".cg_form_editor_value($Field_Content['alternative-file-title'])."</label>";
                                                 echo "<input type='file' name='data[$Field_Order][]' class='cg_input_image_upload_id_in_gallery cg_input_image_upload_input' data-cg-gid='$galeryIDuserForJs' id='cg_input_image_upload_id_in_gallery$galeryIDuser$uniqueIdAddition' name='data[]' />";// Content field
                                                 echo "<div class='cg_form_div_image_upload_preview cg_hide'></div>";
                                             echo "</div>";*/
@@ -267,6 +265,8 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
                         echo "</div>";*/
 
 
+            $cgUploadRowLayouts = cg_upload_form_row_layouts($jsonUploadForm);
+            $cgUploadColumn = 0;
             $previousRowNumber = -1;
             $echoRowClosed = false;
 
@@ -274,6 +274,9 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
             if (!empty($jsonUploadForm)) {
                 foreach ($jsonUploadForm as $fieldOrder => $field) {
 
+                    $cgRowLayout = isset($cgUploadRowLayouts[$field['RowNumber']]) ? $cgUploadRowLayouts[$field['RowNumber']] : '';
+                    if($field['RowNumber'] == 0 || $field['RowNumber'] != $previousRowNumber){$cgUploadColumn = 0;}
+                    $cgUploadColumn++;
                     // echo rows
                     $echoRowClosed = false;
                     if ($previousRowNumber != -1 && $field['RowNumber'] > $previousRowNumber) {
@@ -282,10 +285,10 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
                     }
 
                     if ($field['RowNumber'] == 0) {// if first time load in 27.0.0
-                        echo "<div class='cg_row'>";
+                        echo "<div class='cg_row cg_upload_row_layout' data-cg-row-layout='".esc_attr($cgRowLayout)."'>";
                         $echoRowClosed = true;
                     } elseif ($field['RowNumber'] != $previousRowNumber) {
-                        echo "<div class='cg_row'>";
+                        echo "<div class='cg_row cg_upload_row_layout' data-cg-row-layout='".esc_attr($cgRowLayout)."'>";
                         $echoRowClosed = false;
                     }
 
@@ -297,7 +300,11 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
                         $cg_empty = 'cg_empty';
                     }
 
-                    echo "<div class='cg_row_col $cg_empty'>";
+                    $cgUploadWidth = '';
+                    if($cgRowLayout === '2-1' || $cgRowLayout === '1-2'){
+                        $cgUploadWidth = (($cgRowLayout === '2-1' && $cgUploadColumn === 1) || ($cgRowLayout === '1-2' && $cgUploadColumn === 2)) ? 'cg_66' : 'cg_33';
+                    }
+                    echo "<div class='cg_row_col $cg_empty $cgUploadWidth'>";
                     // echo rows --- END
 
 
@@ -315,10 +322,10 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
                         $maxLength = $Field_Content['max-char'];
 
                         echo "<div class='cg_form_div'>";
-                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['titel'])) . " $necessary</label>";
+                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . cg_form_editor_value($Field_Content['titel']) . " $necessary</label>";
                         echo "<input type='hidden' name='form_input[$Field_Order][]' value='fbt'><input type='hidden' name='form_input[$Field_Order][]' value='$fieldId'>";// Form type and form field ID hidden
                         echo "<input type='hidden' name='form_input[$Field_Order][]'  value='$Field_Order'>";// Fieldorder will be provided
-                        echo "<input type='text' placeholder='" . contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['content']) . "'  maxlength='$maxLength' class='cg_input_text_class cg_upload_form_field_in_gallery' data-cg-gid='$galeryIDuserForJs' id='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition' value='' name='form_input[$Field_Order][]'>";// Content field, l�nge wird �berpr�ft
+                        echo "<input type='text' placeholder='" . cg_form_editor_value($Field_Content['content']) . "'  maxlength='$maxLength' class='cg_input_text_class cg_upload_form_field_in_gallery' data-cg-gid='$galeryIDuserForJs' id='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition' value='' name='form_input[$Field_Order][]'>";// Content field, l�nge wird �berpr�ft
                         echo "<input type='hidden' class='minsize' value='$minLength'>"; // Pr�fen minimale Anzahl zeichen
                         echo "<input type='hidden' class='maxsize' value='$maxLength'>"; // Pr�fen maximale Anzahl zeichen
                         echo "<input type='hidden' class='cg_form_required' value='$checkIfNeed'>";// Pr�fen ob Pflichteingabe
@@ -340,10 +347,10 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
                         $maxLength = $Field_Content['max-char'];
 
                         echo "<div class='cg_form_div'>";
-                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['titel'])) . " $necessary</label>";
+                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . cg_form_editor_value($Field_Content['titel']) . " $necessary</label>";
                         echo "<input type='hidden' name='form_input[$Field_Order][]' value='nf'><input type='hidden' name='form_input[$Field_Order][]' value='$fieldId'>";// Form type and form field ID hidden
                         echo "<input type='hidden' name='form_input[$Field_Order][]'  value='$Field_Order'>";// Fieldorder will be provided
-                        echo "<input type='text' placeholder='" . contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['content']) . "'  maxlength='$maxLength' class='cg_input_text_class cg_upload_form_field_in_gallery' data-cg-gid='$galeryIDuserForJs' id='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition' value='' name='form_input[$Field_Order][]'>";// Content field, l�nge wird �berpr�ft
+                        echo "<input type='text' placeholder='" . cg_form_editor_value($Field_Content['content']) . "'  maxlength='$maxLength' class='cg_input_text_class cg_upload_form_field_in_gallery' data-cg-gid='$galeryIDuserForJs' id='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition' value='' name='form_input[$Field_Order][]'>";// Content field, l�nge wird �berpr�ft
                         echo "<input type='hidden' class='minsize' value='$minLength'>"; // Pr�fen minimale Anzahl zeichen
                         echo "<input type='hidden' class='maxsize' value='$maxLength'>"; // Pr�fen maximale Anzahl zeichen
                         echo "<input type='hidden' class='cg_form_required' value='$checkIfNeed' >";// Pr�fen ob Pflichteingabe
@@ -363,7 +370,7 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
                         $checkIfNeed = ($Field_Content['mandatory'] == 'on') ? 'on' : '';
 
                         echo "<div class='cg_form_div'>";
-                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['titel'])) . " $necessary</label>";
+                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . cg_form_editor_value($Field_Content['titel']) . " $necessary</label>";
                         echo "<input type='hidden' name='form_input[$Field_Order][]' value='dt'><input type='hidden' name='form_input[$Field_Order][]' value='$fieldId'>";// Form type and form field ID hidden
                         echo "<input type='hidden' name='form_input[$Field_Order][]'  value='$Field_Order'>";// Fieldorder will be provided
                         echo "<input type='text' autocomplete='off' class='cg_upload_form_field_in_gallery cg_input_date_class' data-cg-gid='$galeryIDuserForJs' id='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition' value='' name='form_input[$Field_Order][]'>";// Content field, l�nge wird �berpr�ft
@@ -385,10 +392,10 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
 
 
                         echo "<div class='cg_form_div'>";
-                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['titel'])) . " $necessary</label>";
+                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . cg_form_editor_value($Field_Content['titel']) . " $necessary</label>";
                         echo "<input type='hidden' name='form_input[$Field_Order][]' value='url'><input type='hidden' name='form_input[$Field_Order][]' value='$fieldId'>";// Form type and form field ID hidden
                         echo "<input type='hidden' name='form_input[$Field_Order][]'  value='$Field_Order'>";// Fieldorder will be provided
-                        echo "<input type='text' placeholder='" . contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['content']) . "' class='cg_input_url_class cg_upload_form_field_in_gallery' data-cg-gid='$galeryIDuserForJs'  id='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition' value='' name='form_input[$Field_Order][]'>";// Content field, l�nge wird �berpr�ft
+                        echo "<input type='text' placeholder='" . cg_form_editor_value($Field_Content['content']) . "' class='cg_input_url_class cg_upload_form_field_in_gallery' data-cg-gid='$galeryIDuserForJs'  id='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition' value='' name='form_input[$Field_Order][]'>";// Content field, l�nge wird �berpr�ft
                         echo "<input type='hidden' class='cg_form_required' value='$checkIfNeed'>";// Pr�fen ob Pflichteingabe
                         echo "<p class='cg_input_error cg_hide'></p>";// Error message appears here
                         echo "</div>";
@@ -407,10 +414,10 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
                             $checkIfNeed = ($Field_Content['mandatory'] == 'on') ? 'on' : '';
 
                             echo "<div class='cg_form_div'>";
-                            echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['titel'])) . " $necessary</label>";
+                            echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . cg_form_editor_value($Field_Content['titel']) . " $necessary</label>";
                             echo "<input type='hidden' name='form_input[$Field_Order][]'  value='ef'><input type='hidden' name='form_input[$Field_Order][]' value='$fieldId'>";//Formart und FormfeldID hidden
                             echo "<input type='hidden' name='form_input[$Field_Order][]'  value='$Field_Order'>";// Fieldorder will be provided
-                            echo "<input type='text' placeholder='" . contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['content']) . "' value='' class='cg_input_email_class cg_upload_form_field_in_gallery' data-cg-gid='$galeryIDuserForJs'  id='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition' name='form_input[$Field_Order][]'>";// Content field, l�nge wird �berpr�ft
+                            echo "<input type='text' placeholder='" . cg_form_editor_value($Field_Content['content']) . "' value='' class='cg_input_email_class cg_upload_form_field_in_gallery' data-cg-gid='$galeryIDuserForJs'  id='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition' name='form_input[$Field_Order][]'>";// Content field, l�nge wird �berpr�ft
                             echo "<input type='hidden' class='cg_form_required' value='$checkIfNeed'>";// Pr�fen ob Pflichteingabe
                             echo "<p class='cg_input_error cg_hide'></p>";// Error message appears here
                             echo "</div>";
@@ -428,10 +435,10 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
                         $checkIfNeed = ($Field_Content['mandatory'] == 'on') ? 'on' : '';
 
                         echo "<div class='cg_form_div'>";
-                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['titel'])) . " $necessary</label>";
+                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . cg_form_editor_value($Field_Content['titel']) . " $necessary</label>";
                         echo "<input type='hidden' name='form_input[$Field_Order][]'  value='fbd'><input type='hidden' name='form_input[$Field_Order][]' value='$fieldId'>";// Form type and form field ID hidden
                         echo "<input type='hidden' name='form_input[$Field_Order][]'  value='$Field_Order'>";// Fieldorder will be provided
-                        echo "<textarea maxlength='" . $Field_Content['max-char'] . "' class='cg_textarea_class cg_upload_form_field_in_gallery' data-cg-gid='$galeryIDuserForJs' id='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition' placeholder='" . contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['content']) . "' name='form_input[$Field_Order][]'  rows='6' ></textarea>";// Content field, l�nge wird �berpr�ft
+                        echo "<textarea maxlength='" . $Field_Content['max-char'] . "' class='cg_textarea_class cg_upload_form_field_in_gallery' data-cg-gid='$galeryIDuserForJs' id='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition' placeholder='" . cg_form_editor_value($Field_Content['content']) . "' name='form_input[$Field_Order][]'  rows='6' ></textarea>";// Content field, l�nge wird �berpr�ft
                         echo "<input type='hidden' class='minsize' value='" . $Field_Content['min-char'] . "'>"; // Pr�fen minimale Anzahl zeichen
                         echo "<input type='hidden' class='maxsize' value='" . $Field_Content['max-char'] . "'>"; // Pr�fen maximale Anzahl zeichen
                         echo "<input type='hidden' class='cg_form_required' value='$checkIfNeed'>";// Pr�fen ob Pflichteingabe
@@ -450,10 +457,10 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
                         $checkIfNeed = ($Field_Content['mandatory'] == 'on') ? 'on' : '';
 
                         echo "<div class='cg_form_div'>";
-                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['titel'])) . " $necessary</label>";
+                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . cg_form_editor_value($Field_Content['titel']) . " $necessary</label>";
                         echo "<input type='hidden' name='form_input[$Field_Order][]'  value='kf'><input type='hidden' name='form_input[$Field_Order][]' value='$fieldId'>";// Form type and form field ID hidden
                         echo "<input type='hidden' name='form_input[$Field_Order][]'  value='$Field_Order'>";// Fieldorder will be provided
-                        echo "<textarea maxlength='" . $Field_Content['max-char'] . "' class='cg_textarea_class cg_upload_form_field_in_gallery' data-cg-gid='$galeryIDuserForJs' id='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition' placeholder='" . contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['content']) . "' name='form_input[$Field_Order][]'  rows='6' ></textarea>";// Content field, l�nge wird �berpr�ft
+                        echo "<textarea maxlength='" . $Field_Content['max-char'] . "' class='cg_textarea_class cg_upload_form_field_in_gallery' data-cg-gid='$galeryIDuserForJs' id='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition' placeholder='" . cg_form_editor_value($Field_Content['content']) . "' name='form_input[$Field_Order][]'  rows='6' ></textarea>";// Content field, l�nge wird �berpr�ft
                         echo "<input type='hidden' class='minsize' value='" . $Field_Content['min-char'] . "'>"; // Pr�fen minimale Anzahl zeichen
                         echo "<input type='hidden' class='maxsize' value='" . $Field_Content['max-char'] . "'>"; // Pr�fen maximale Anzahl zeichen
                         echo "<input type='hidden' class='cg_form_required' value='$checkIfNeed'>";// Pr�fen ob Pflichteingabe
@@ -481,7 +488,7 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
                         }
 
                         echo "<div class='cg_form_div'>";
-                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['titel'])) . " $necessary</label>";
+                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . cg_form_editor_value($Field_Content['titel']) . " $necessary</label>";
                         echo "<input type='hidden' name='form_input[$Field_Order][]'  value='cb'><input type='hidden' name='form_input[$Field_Order][]' value='$fieldId'>";// Form type and form field ID hidden
                         echo "<input type='hidden' name='form_input[$Field_Order][]'  value='$Field_Order'>";// Fieldorder will be provided
                         echo "<div class='cg-check-agreement-container'>";
@@ -489,7 +496,7 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
                         echo "<input type='checkbox' class='cg_check_agreement_class cg_upload_form_field_in_gallery' data-cg-gid='$galeryIDuserForJs' id='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition' name='form_input[$Field_Order][]' value='checked' >";
                         echo "<input type='hidden' class='cg_form_required' value='$checkIfNeed'>";// Pr�fen ob Pflichteingabe
                         echo "</div>";
-                        echo "<div class='cg-check-agreement-html'>" . contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['content']);
+                        echo "<div class='cg-check-agreement-html'>" . cg_form_decode_value($Field_Content['content']);
                         echo "</div>";
                         echo "</div>";
                         echo "<p class='cg_input_error cg_hide'></p>";// Error message appears here
@@ -507,7 +514,7 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
                         $checkIfNeed = ($Field_Content['mandatory'] == 'on') ? 'on' : '';
 
                         echo "<div class='cg_form_div'>";
-                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['titel'])) . " $necessary</label>";
+                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . cg_form_editor_value($Field_Content['titel']) . " $necessary</label>";
                         echo "<input type='hidden' name='form_input[$Field_Order][]'  value='ra'><input type='hidden' name='form_input[$Field_Order][]' value='$fieldId'>";// Form type and form field ID hidden
                         echo "<input type='hidden' name='form_input[$Field_Order][]'  value='$Field_Order'>";// Fieldorder will be provided
 
@@ -517,7 +524,7 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
 
                         $rI = 1;
                         foreach ($textAr as $key => $value) {
-                            $value = sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($value));
+                            $value = cg_form_editor_value($value);
                             echo '<div class="cg_radio_button">
                                     <label for="cg_radio_button_'.$fieldId.$rI.'">'.$value.'</label>
                                     <input type="radio" id="cg_radio_button_'.$fieldId.$rI.'" name="form_input['.$Field_Order.'][]" value="'.$value.'" class="cg_radio_button_input">
@@ -543,7 +550,7 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
                         $checkIfNeed = ($Field_Content['mandatory'] == 'on') ? 'on' : '';
 
                         echo "<div class='cg_form_div cg_form_div_check'>";
-                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['titel'])) . " $necessary</label>";
+                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . cg_form_editor_value($Field_Content['titel']) . " $necessary</label>";
                         echo "<input type='hidden' name='form_input[$Field_Order][]'  value='chk'><input type='hidden' name='form_input[$Field_Order][]' value='$fieldId'>";// Form type and form field ID hidden
                         echo "<input type='hidden' class='cg_field_order' name='form_input[$Field_Order][]'  value='$Field_Order'>";// Fieldorder will be provided
 
@@ -553,7 +560,7 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
 
                         $rI = 1;
                         foreach ($textAr as $key => $value) {
-                            $value = sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($value));
+                            $value = cg_form_editor_value($value);
                             echo '<div class="cg_check_button">
                                     <label for="cg_check_button_'.$fieldId.$rI.'">'.$value.'</label>
                                     <input type="checkbox" id="cg_check_button_'.$fieldId.$rI.'" class="cg_check_button_input" value="'.$value.'">
@@ -579,7 +586,7 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
                         $checkIfNeed = ($Field_Content['mandatory'] == 'on') ? 'on' : '';
 
                         echo "<div class='cg_form_div'>";
-                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['titel'])) . " $necessary</label>";
+                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . cg_form_editor_value($Field_Content['titel']) . " $necessary</label>";
                         echo "<input type='hidden' name='form_input[$Field_Order][]'  value='se'><input type='hidden' name='form_input[$Field_Order][]' value='$fieldId'>";// Form type and form field ID hidden
                         echo "<input type='hidden' name='form_input[$Field_Order][]'  value='$Field_Order'>";// Fieldorder will be provided
 
@@ -590,7 +597,7 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
                         echo "<option value='0'>$language_pleaseSelect</option>";
 
                         foreach ($textAr as $key => $value) {
-                            $value = sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($value));
+                            $value = cg_form_editor_value($value);
                             echo "<option value='$value'>$value</option>";
                         }
 
@@ -612,7 +619,7 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
                         $checkIfNeed = ($Field_Content['mandatory'] == 'on') ? 'on' : '';
 
                         echo "<div class='cg_form_div'>";
-                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['titel'])) . " $necessary</label>";
+                        echo "<label for='cg_upload_form_field_in_gallery$fieldId$uniqueIdAddition'>" . cg_form_editor_value($Field_Content['titel']) . " $necessary</label>";
                         echo "<input type='hidden' name='form_input[$Field_Order][]'  value='sec'><input type='hidden' name='form_input[$Field_Order][]' value='$fieldId'>";// Form type and form field ID hidden
                         echo "<input type='hidden' name='form_input[$Field_Order][]'  value='$Field_Order'>";// Fieldorder will be provided
 
@@ -640,7 +647,7 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
                         $Field_Content = $field['Field_Content'];
 
                         echo "<div class='cg_form_div cg_html_field_class'>";
-                        echo contest_gal1ery_convert_for_html_output_without_nl2br($Field_Content['content']);
+                        echo cg_form_decode_value($Field_Content['content']);
                         echo "</div>";
 
                     }
@@ -698,9 +705,9 @@ if ((time() >= $ContestEndTime && $ContestEnd == 1) or $ContestEnd == 2) {
                     }
 
                     if (!empty($fieldGoogleRecaptcha)) {
-                        if (empty($cgGlobalGoogleRecaptchaRendered)) {
-                            $cgGlobalGoogleRecaptchaRendered = true;
+                        if (!$isGoogleRecaptchaAlreadyRendered) {
                             include('gallery-upload-form-google-recaptcha.php');
+                            $isGoogleRecaptchaAlreadyRendered = true;
                         }
                     }
 

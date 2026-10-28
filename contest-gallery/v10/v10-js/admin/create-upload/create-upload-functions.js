@@ -258,13 +258,73 @@ cgJsClassAdmin.createUpload.functions = {
         });
 
     },
+    rowLayouts: {'1': [100], '1-1': [50, 50], '2-1': [66, 33], '1-2': [33, 66], '1-1-1': [33, 33, 33]},
+    rowLayoutLabels: {'1': '1/1', '1-1': '1/2 + 1/2', '2-1': '2/3 + 1/3', '1-2': '1/3 + 2/3', '1-1-1': '1/3 + 1/3 + 1/3'},
+    normalizeRowLayout: function ($row) {
+        var count = $row.children('.cg_row_col').length;
+        var layout = $row.attr('data-cg-row-layout');
+        if(!Object.prototype.hasOwnProperty.call(this.rowLayouts, layout) || this.rowLayouts[layout].length !== count){
+            layout = count === 3 ? '1-1-1' : (count === 2 ? '1-1' : '1');
+        }
+        $row.attr('data-cg-row-layout', layout);
+        return layout;
+    },
+    refreshUploadRowTools: function ($) {
+        var self = this;
+        var $rightSide = $('#cgCreateUploadForm #cgRightSide, #cg_registry_form_container_parent #cgRightSide');
+        var $rows = $rightSide.children('.cg_row:not(.cg_add_row):not(.cg_image):not(.cg_drag_drop_temporary_row)');
+        $rows.each(function (index) {
+            var $row = $(this);
+            if(!$row.children('.cg_upload_row_tools').length){
+                $row.children('.cg_add_col').remove();
+                $row.prepend($('#cgUploadRowToolsTemplate').children().clone());
+            }
+            var layout = self.normalizeRowLayout($row);
+            $row.children('.cg_upload_row_tools').find('.cg_upload_row_layout_label').text(self.rowLayoutLabels[layout]);
+            $row.find('.cg_upload_row_move[data-cg-direction="up"]').prop('disabled', index === 0);
+            $row.find('.cg_upload_row_move[data-cg-direction="down"]').prop('disabled', index === $rows.length - 1);
+            $row.find('.cg_add_col').toggleClass('cg_hide', $row.children('.cg_row_col').length >= 3);
+            $row.children('.cg_row_col.cg_el').each(function () {
+                if(!$(this).children('.cg_upload_field_handle').length){
+                    $(this).prepend($('<span class="cg_upload_field_handle" aria-hidden="true" title="Drag to move or swap field"></span>').text('\u22ee\u22ee'));
+                }
+            });
+        });
+        $rightSide.children('.cg_add_row').attr({role: 'button', tabindex: '0', title: 'Add row'}).text('+ Add row');
+    },
+    setRowLayout: function ($, $row, layout) {
+        if(!$row || !$row.closest('#cgCreateUploadForm, #cg_registry_form_container_parent').length || !Object.prototype.hasOwnProperty.call(this.rowLayouts, layout)){return;}
+        var columns = this.rowLayouts[layout].length;
+        var $slots = $row.children('.cg_row_col');
+        var $after = $row;
+        // Keep occupied slots in order. Move only fields beyond the new row capacity.
+        $slots.slice(columns).each(function () {
+            var $slot = $(this);
+            if($slot.hasClass('cg_el')){
+                var $newRow = $('<div class="cg_row" data-cg-row-layout="1"><div class="cg_add_col" title="Add column"></div></div>');
+                $newRow.append($slot).insertAfter($after);
+                $after = $newRow;
+            }else{
+                $slot.remove();
+            }
+        });
+        while($row.children('.cg_row_col').length < columns){$row.append(this.getAddElCol());}
+        $row.attr('data-cg-row-layout', layout);
+        cgJsClassAdmin.createUpload.dragAndDrop.normalizeAddRows($row.closest('#cgRightSide'));
+        this.addRightFieldOrderAndAddRowsAndColumns($);
+    },
     addRowsAndColumns: function ($) {
 
         var v = 1;
-        var fieldOrder = 1;
+        var fieldOrder = cgJsClassAdmin.index.vars.isCreateUploadAreaLoaded ? 1 : 0;
         var $cgCreateUploadSortableArea = cgJsClassAdmin.options.vars.$cgCreateUploadSortableArea;
         var $cgRightSide = cgJsClassAdmin.index.vars.$cgRightSide;
-        $cgCreateUploadSortableArea.find('#40').find('.fieldOrder').val(fieldOrder);
+        var $imageField = $cgCreateUploadSortableArea.find('#40');
+        $imageField.find('.fieldOrder,.RowNumber,.ColNumber,.RowCols').val(1);
+        if($imageField.length && !$imageField.find('.RowLayout').length){
+            $('<input type="hidden" class="RowLayout">').attr('name',$imageField.find('.RowCols').attr('name').replace('RowCols','RowLayout')).appendTo($imageField);
+        }
+        $imageField.find('.RowLayout').val('1');
 
         $cgRightSide.find("> .cg_row:not(.cg_add_row)").each(function (i) {
 
@@ -279,7 +339,9 @@ cgJsClassAdmin.createUpload.functions = {
             var rowCols = $row.find('.cg_row_col').length;
             var rowElCols = $row.find('.cg_row_col.cg_el').length;
 
-            $row.find('.cg_row_col').removeClass('cg_33 cg_50 cg_100');
+            var isUploadLayout = $row.closest('#cgCreateUploadForm, #cg_registry_form_container_parent').length > 0;
+            var layout = isUploadLayout ? cgJsClassAdmin.createUpload.functions.normalizeRowLayout($row) : '';
+            $row.find('.cg_row_col').removeClass('cg_33 cg_50 cg_66 cg_100');
 
             if(rowCols==1){
                 $row.find('.cg_row_col').addClass('cg_100');
@@ -289,6 +351,13 @@ cgJsClassAdmin.createUpload.functions = {
                 $row.find('.cg_row_col').addClass('cg_33');
             }
 
+            if(isUploadLayout){
+                var widths = cgJsClassAdmin.createUpload.functions.rowLayouts[layout];
+                $row.children('.cg_row_col').each(function (index) {
+                    $(this).removeClass('cg_33 cg_50 cg_66 cg_100').addClass('cg_' + widths[index]);
+                });
+            }
+
             if(rowElCols){
                 $row.removeClass('cg_empty');
                 $(this).find('.cg_row_col').each(function (i) {
@@ -296,10 +365,18 @@ cgJsClassAdmin.createUpload.functions = {
                         fieldOrder++;
                         var id = $(this).attr('id').split('right')[1];
                         var $div = $cgCreateUploadSortableArea.find('#'+id);
+                        if(!$div.length){return;}
                         $div.find('.RowNumber').val(v);
                         $div.find('.ColNumber').val(i+1);
                         $div.find('.RowCols').val(rowCols);
-                        $div.find('.fieldOrder').val(fieldOrder);
+                        if(isUploadLayout){
+                            var $layout = $div.find('.RowLayout');
+                            if(!$layout.length){
+                                $layout = $('<input type="hidden" class="RowLayout">').attr('name', $div.find('.RowCols').attr('name').replace('RowCols', 'RowLayout')).appendTo($div);
+                            }
+                            $layout.val(layout);
+                        }
+                        $div.find('.fieldOrder,.Field_Order').val(fieldOrder);
                     }
                 });
                 v++;
@@ -317,10 +394,10 @@ cgJsClassAdmin.createUpload.functions = {
             this.addUploadFieldOrder($);
         }
         this.addRowsAndColumns($);
+        this.refreshUploadRowTools($);
     },
     fDeleteFieldAndDataModifyRowsAndColumns: function ($,fieldContainerId, idToDelete, categoryField) {
-        debugger
-        $("#cgCreateUploadSortableArea #" + idToDelete).remove();
+        $("#cgCreateUploadSortableArea #" + fieldContainerId).remove();
         if (categoryField) {
             $("#ausgabe1.cg_create_upload").append("<input type='hidden' name='deleteFieldnumber[deleteCategoryField]' value=" + idToDelete + ">");
         }
@@ -328,7 +405,7 @@ cgJsClassAdmin.createUpload.functions = {
             $("#ausgabe1.cg_create_upload").append("<input type='hidden' name='deleteFieldnumber[normalFields]["+idToDelete+"]' value=" + idToDelete + ">");
         }
 
-        this.addRightFieldOrderAndAddRowsAndColumns($);
+        // Recalculate only after the matching preview has also been removed.
         $('#cgUplEditFields').removeClass('cg_hide');
 
         //$('#submitForm').click();
@@ -399,7 +476,7 @@ cgJsClassAdmin.createUpload.functions = {
         },10);
     },
     getAddElCol: function () {
-        return '<div class="cg_row_col cg_upl_add" title="Add field" '+cgJsClassAdmin.gallery.vars.dragAndDropEvents+'><div class="cg_upl_add_container"></div><div class="cg_upl_del" title="Delete column"></div></div>';
+        return '<div class="cg_row_col cg_upl_add" title="Add field" '+cgJsClassAdmin.gallery.vars.dragAndDropEvents+'><button type="button" class="cg_upl_add_container" aria-haspopup="dialog"><span class="cg_upl_add_icon" aria-hidden="true"></span><span class="cg_upl_add_text"><span class="cg_upl_add_label">Add field</span><span class="cg_upl_add_hint">Choose field type</span></span></button><div class="cg_upl_del" title="Delete column"></div></div>';
     },
     showDelRow: function () {
         jQuery('#cgRightSide').find('.cg_row_col.cg_upl_add').each(function (i) {

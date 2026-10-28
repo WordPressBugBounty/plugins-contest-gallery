@@ -5,6 +5,41 @@ jQuery(function ($) {
         selectionGeneration: 0, selectionXhr: null, selectionTimer: null, selectionReady: false, selectionFailed: false, selectionCount: 0, selectionSignature: '', liveOffset: 0, liveLoaded: false,
         selectedRecipients: [], legacySearch: '', userGeneration: 0, userXhr: null, userTimer: null};
     var draft = cgJsClassAdmin.participantMailDraft;
+    // Keep the gallery-wide count independent of the composer's filters and requests.
+    var launchCount = {generation: 0, xhr: null};
+    var stopLaunchCount = function () {
+        launchCount.generation++;
+        if (launchCount.xhr) { launchCount.xhr.abort(); launchCount.xhr = null; }
+    };
+    var refreshLaunchCount = function () {
+        stopLaunchCount();
+        var $button = $('#cgEmailParticipants'), button = $button[0], gallery = parseInt($button.attr('data-gallery-id'), 10);
+        if (!button || !gallery) { return; }
+        var generation = launchCount.generation;
+        var current = function () {
+            return generation === launchCount.generation && button === document.getElementById('cgEmailParticipants') &&
+                gallery === parseInt($button.attr('data-gallery-id'), 10);
+        };
+        var render = function (value, description) {
+            $button.find('.cg_pmail_launch_count').text(value).attr('title', description);
+            $('#cgParticipantMailCountDescription').text(description);
+        };
+        var unavailable = function () { render('—', 'Participant count unavailable.'); };
+        render('…', 'Loading the number of participants with a valid email address.');
+        launchCount.xhr = $.ajax({url: window.ajaxurl || 'admin-ajax.php', type: 'POST', dataType: 'json', timeout: 20000,
+            data: {action: 'cg_participant_mail', command: 'selection', gallery_id: gallery, cg_nonce: CG1LBackendNonce.nonce}})
+            .done(function (response) {
+                if (!current()) { return; }
+                var count = response && response.success && response.data && response.data.available_recipient_count;
+                if (typeof count !== 'number' || !isFinite(count) || count < 0 || Math.floor(count) !== count) { unavailable(); return; }
+                var formatted = count.toLocaleString();
+                render(formatted, formatted + (count === 1 ? ' participant with a valid email address.' : ' participants with a valid email address.') + ' Each email address is counted once.');
+            }).fail(function (xhr, status) {
+                if (current() && status !== 'abort') { unavailable(); }
+            }).always(function () {
+                if (current()) { launchCount.xhr = null; }
+            });
+    };
     var modal = function () { return $('#cgParticipantMailContainer'); };
     var visible = function () { return modal().length && !modal().hasClass('cg_hide'); };
     var stopPolling = function () { clearTimeout(state.timer); state.timer = null; };
@@ -424,6 +459,7 @@ jQuery(function ($) {
         if (typeof scroll === 'number') { modal().scrollTop(scroll); }
     };
     cgJsClassAdmin.participantMail = {
+        refreshCount: refreshLaunchCount,
         returnFromHistory: returnFromHistory,
         openHistory: function () {
             var scroll = modal().scrollTop();
@@ -518,4 +554,6 @@ jQuery(function ($) {
             event.preventDefault(); modal().find('.cg_message_close').trigger('click');
         }
     });
+    $(window).on('hashchange.cgParticipantMailCount pagehide.cgParticipantMailCount', stopLaunchCount);
+    refreshLaunchCount();
 });

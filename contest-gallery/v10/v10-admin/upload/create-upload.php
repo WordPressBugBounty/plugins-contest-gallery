@@ -32,7 +32,7 @@ if(floatval($dbGalleryVersion)>=22){
 	$cgIsV22OrHigher = '1';
 }
 
-cg_row_columns($GalleryID);
+cg_row_columns($GalleryID, true);
 
 cg_add_upl_field($GalleryID,$cgProFalse,$dbGalleryVersion);
 
@@ -128,6 +128,7 @@ if(!empty($_POST['upload'])){
 
 echo "<form class='cg_load_backend_submit'  data-cg-submit-message='Changes saved'  name='defineUpload' enctype='multipart/form-data' action='?page=".cg_get_version()."/index.php&option_id=$GalleryID&define_upload=true' id='cgCreateUploadForm' method='post'>";
 wp_nonce_field( 'cg_admin');
+cg_form_save_hidden('upload',$GalleryID,false,$cgFormEditorState);
 
 echo "<input type='hidden' name='option_id' value='$GalleryID'>";
 echo "<input type='hidden' id='isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized' name='isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized' value='' >";

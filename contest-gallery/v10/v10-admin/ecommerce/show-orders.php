@@ -106,8 +106,11 @@ echo '<div id="cgSaleOrderSearchReset" title="Reset search"></div>';
 echo "</div>";
 
 echo "<div id='cgCreateSaleOrdersDataCSVdiv' class='cg_export_data_div' >";
-echo "<input type='button' class='cg_backend_button_gallery_action' id='cg_create_sale_orders_csv_submit' value='Export orders data' style='text-align:center;width:210px;margin: 1px auto;' />";
-echo "<div style='padding-top:2px;position: relative;'><span class=\"cg-info-icon\" style='font-weight:bold;margin-bottom:10px;position: relative;'>info<span class=\"cg-info-container cg-info-container-gallery-user\" style=\"top: 25px; margin-left: -210px; display: none; font-weight: normal;\">CSV file will be exported separated by semicolon ( ; )</span></span></div>";
+echo '<div class="cg_orders_export_text">
+    <h2>Export orders</h2>
+    <p id="cgOrdersExportDescription">Download order data as CSV. Columns are separated by semicolons.</p>
+</div>';
+echo '<button type="button" class="cg_backend_button_gallery_action" id="cg_create_sale_orders_csv_submit" aria-describedby="cgOrdersExportDescription">Export CSV</button>';
 echo "</div>";
 
 $nr1 = $start + 1;

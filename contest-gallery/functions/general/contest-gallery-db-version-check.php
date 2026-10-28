@@ -188,7 +188,7 @@ if(!function_exists('cg_complete_database_install')){
         $i = cg_database_install_get_current_table_suffix();
         contest_gal1ery_create_table($i,false,'all');
 
-        if(!cg_contest_gallery_required_tables_exist($i) || !cg_database_install_defaults_exist($i)){
+        if(!cg_contest_gallery_required_tables_exist($i) || !cg_database_install_defaults_exist($i) || !cg_form_layout_schema_ready($i,true)){
             cg_database_install_release_lock($lockOwner);
             return array('status'=>'failed');
         }
@@ -276,21 +276,39 @@ if(!function_exists('post_cg_complete_database_install')){
 }
 add_action('wp_ajax_post_cg_complete_database_install','post_cg_complete_database_install');
 
+if(!function_exists('cg_form_layout_schema_ready')){
+    function cg_form_layout_schema_ready($i,$refresh=false){
+        global $wpdb;
+        static $ready=array();
+        $prefix=$wpdb->base_prefix.$i;
+        if(!$refresh && isset($ready[$prefix])){return $ready[$prefix];}
+        foreach(array('f_input'=>array('Field_Content','RowNumber','ColNumber','RowCols'),'create_user_form'=>array('RowNumber','ColNumber','RowCols','RowLayout')) as $suffix=>$required){
+            $table=str_replace('`','``',$prefix.'contest_gal1ery_'.$suffix);
+            $columns=$wpdb->get_col("SHOW COLUMNS FROM `$table`");
+            if($wpdb->last_error || !is_array($columns) || array_diff($required,$columns)){$ready[$prefix]=false;return false;}
+        }
+        $ready[$prefix]=true;return true;
+    }
+}
+
 if(!function_exists('cg_run_update_check_after_create_table')){
     function cg_run_update_check_after_create_table($i,$p_cgal1ery_db_installed_ver,$p_cgal1ery_db_new_version){
-
-        if(cg_contest_gallery_db_check_was_run($i,$p_cgal1ery_db_new_version)){
-            return;
-        }
-
+        global $wpdb;
+        static $results=array();
+        $key=$wpdb->base_prefix.$i.'|'.$p_cgal1ery_db_new_version;
+        // A failed run must stay failed on subsequent checks in this request.
+        if(array_key_exists($key,$results)){return $results[$key];}
+        $results[$key]=false;
         $isFreshInstall = cg_is_fresh_install_before_create_table($i,$p_cgal1ery_db_installed_ver);
-
-        contest_gal1ery_create_table($i);
-
+        $creationError = contest_gal1ery_create_table($i);
+        if(!empty($creationError)){return false;}
+        $errorsArray=array();
         if(!$isFreshInstall){
-            include(__DIR__."/../../update/update-check-new.php");
+            $updated=include(__DIR__."/../../update/update-check-new.php");
+            if($updated===false || !empty($errorsArray)){return false;}
         }
-
+        $results[$key]=cg_contest_gallery_required_tables_exist($i) && cg_form_layout_schema_ready($i,true);
+        return $results[$key];
     }
 }
 
@@ -392,15 +410,17 @@ if(!function_exists('cg_database_install_current_site_check')){
             return false;
         }
 
-        if ( $p_cgal1ery_db_installed_ver != $p_cgal1ery_db_new_version ) {
+        $i = cg_database_install_get_current_table_suffix();
+        if ( $p_cgal1ery_db_installed_ver != $p_cgal1ery_db_new_version || !cg_form_layout_schema_ready($i) ) {
             $i = cg_database_install_get_current_table_suffix();
             if($isActivation && $cgSignInTextFreshInstall){
                 return cg_database_install_start_fresh($i,$networkWide);
             }
             if(function_exists('contest_gal1ery_create_table')){
-                cg_run_update_check_after_create_table($i,$p_cgal1ery_db_installed_ver,$p_cgal1ery_db_new_version);
+                if(!cg_run_update_check_after_create_table($i,$p_cgal1ery_db_installed_ver,$p_cgal1ery_db_new_version)){return false;}
             }
 
+            if(!cg_form_layout_schema_ready($i,true)){return false;}
             require_once __DIR__.'/../../update/update-public-profile-fields.php';
             global $wpdb;
             if(!cg_migrate_public_profile_fields($wpdb->prefix.'contest_gal1ery_create_user_form')){
@@ -409,6 +429,7 @@ if(!function_exists('cg_database_install_current_site_check')){
 
             if($p_cgal1ery_db_installed_ver){update_option( "p_cgal1ery_db_version", $p_cgal1ery_db_new_version );}
             else{add_option( "p_cgal1ery_db_version", $p_cgal1ery_db_new_version );}
+            if((string)get_option("p_cgal1ery_db_version")!==(string)$p_cgal1ery_db_new_version){return false;}
 
             $wp_upload_dir = wp_upload_dir();
             $rewriteRulesChangedFilePath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-general/rewrite-rules-changed-do-not-edit-or-remove.txt';

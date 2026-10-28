@@ -2,6 +2,8 @@
 if(!function_exists('cg_move_file_ecommerce_sale_folder')){
     function cg_move_file_ecommerce_sale_folder($realId, $GalleryID, $sqlObjectFile, $sqlObjectFileEcommerceEntry, $WpUploadFilesForSale = [], $removedWpUploadIdsFromSale = []){
 
+        $keyUploads = cg_ecommerce_validate_key_uploads($_FILES);
+
         $wp_upload_dir = wp_upload_dir();
 
         global $wpdb;
@@ -372,30 +374,116 @@ HEREDOC;
             }
         }
 
-        if(!empty($_FILES['cgSellContainer']['name']) && !empty($_FILES['cgSellContainer']['name']['DownloadKey'])){
-            $ecommerceFileFolder = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/ecommerce/real-id-'.$sqlObjectFile->id.'/download-keys/';
-            if(!is_dir($ecommerceFileFolder)){
-                mkdir($ecommerceFileFolder,0755,true);
-            }
-            cg_create_htaccess_ecommerce_sale_folder_if_not_exists($ecommerceFileFolder);
-            $fileContent = file_get_contents($_FILES['cgSellContainer']['tmp_name']['DownloadKey']);
-            file_put_contents($ecommerceFileFolder.$_FILES['cgSellContainer']['name']['DownloadKey'],$fileContent);
-        }
-
-        if(!empty($_FILES['cgSellContainer']['name']) && !empty($_FILES['cgSellContainer']['name']['ServiceKey'])){
-            $ecommerceFileFolder = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/ecommerce/real-id-'.$sqlObjectFile->id.'/service-keys/';
-            if(!is_dir($ecommerceFileFolder)){
-                mkdir($ecommerceFileFolder,0755,true);
-            }
-            cg_create_htaccess_ecommerce_sale_folder_if_not_exists($ecommerceFileFolder);
-            $fileContent = file_get_contents($_FILES['cgSellContainer']['tmp_name']['ServiceKey']);
-            file_put_contents($ecommerceFileFolder.$_FILES['cgSellContainer']['name']['ServiceKey'],$fileContent);
+        foreach($keyUploads as $key => $upload){
+            cg_ecommerce_store_key_upload($upload,$GalleryID,$sqlObjectFile->id,$key);
         }
 
     }
 }
+if(!function_exists('cg_ecommerce_key_upload_fail')){
+    function cg_ecommerce_key_upload_fail($status = 400){
+        $message = $status === 400 ? 'Upload a valid CSV key file of at most 64000 bytes.' : 'The key file could not be saved. Check the upload directory permissions.';
+        if(function_exists('cg_backend_ajax_error_json')){
+            cg_backend_ajax_error_json($message,$status,'cg_key_upload_failed');
+        }
+        wp_die(esc_html($message),'',array('response'=>$status));
+    }
+}
+if(!function_exists('cg_ecommerce_validate_key_uploads')){
+    function cg_ecommerce_validate_key_uploads($files){
+        $uploads = array();
+        if(!isset($files['cgSellContainer'])){
+            return $uploads;
+        }
+        $files = $files['cgSellContainer'];
+        $fields = array('name','tmp_name','error','size','type');
+        foreach($fields as $field){
+            if(!is_array($files) || !isset($files[$field]) || !is_array($files[$field])){
+                cg_ecommerce_key_upload_fail();
+            }
+        }
+        // Validate both optional uploads before any caller moves or writes files.
+        foreach(array('DownloadKey','ServiceKey') as $key){
+            $present = false;
+            foreach($fields as $field){
+                $present = $present || array_key_exists($key,$files[$field]);
+            }
+            if(!$present){continue;}
+            foreach($fields as $field){
+                if(!isset($files[$field][$key]) || !is_scalar($files[$field][$key])){
+                    cg_ecommerce_key_upload_fail();
+                }
+            }
+            $name = $files['name'][$key];
+            $tmp = $files['tmp_name'][$key];
+            $error = $files['error'][$key];
+            $size = $files['size'][$key];
+            if(!is_string($name) || !is_string($tmp) || !is_string($files['type'][$key]) || !is_int($error) || !is_int($size)){
+                cg_ecommerce_key_upload_fail();
+            }
+            if($error === UPLOAD_ERR_NO_FILE && $name === '' && $tmp === '' && $size === 0){continue;}
+            if($error !== UPLOAD_ERR_OK || $size < 0 || $size > 64000 || $name === '' ||
+                preg_match('~[\\\\/\x00-\x1f\x7f]~',$name) || substr(ltrim($name),0,1) === '.' ||
+                strtolower(pathinfo($name,PATHINFO_EXTENSION)) !== 'csv' || !is_uploaded_file($tmp) || !is_readable($tmp)){
+                cg_ecommerce_key_upload_fail();
+            }
+            $name = sanitize_file_name($name);
+            if(strtolower(pathinfo($name,PATHINFO_EXTENSION)) !== 'csv'){
+                cg_ecommerce_key_upload_fail();
+            }
+            // A CSV extension alone does not neutralize intermediate handler extensions.
+            $name = str_replace('.','_',substr($name,0,-4)).'.csv';
+            if(!preg_match('~\A[^.\\\\/\x00-\x1f\x7f]+\.csv\z~',$name)){
+                cg_ecommerce_key_upload_fail();
+            }
+            $content = @file_get_contents($tmp,false,null,0,64001);
+            if($content === false){cg_ecommerce_key_upload_fail(500);}
+            if(strlen($content) > 64000 || strlen($content) !== $size){cg_ecommerce_key_upload_fail();}
+            $uploads[$key] = array('name'=>$name,'content'=>$content);
+        }
+        return $uploads;
+    }
+}
+if(!function_exists('cg_ecommerce_store_key_upload')){
+    function cg_ecommerce_store_key_upload($upload,$GalleryID,$realId,$key){
+        $folders = array('DownloadKey'=>'download-keys','ServiceKey'=>'service-keys');
+        $GalleryID = absint($GalleryID);
+        $realId = absint($realId);
+        if(!isset($folders[$key]) || !$GalleryID || !$realId || !isset($upload['name'],$upload['content']) ||
+            !is_string($upload['name']) || !is_string($upload['content']) || strlen($upload['content']) > 64000 ||
+            !preg_match('~\A[^.\\\\/\x00-\x1f\x7f]+\.csv\z~',$upload['name'])){
+            cg_ecommerce_key_upload_fail();
+        }
+        $wp_upload_dir = wp_upload_dir();
+        $dir = realpath($wp_upload_dir['basedir']);
+        if($dir === false){cg_ecommerce_key_upload_fail(500);}
+        // Resolve the configured upload root, then reject symlinks at every child level.
+        foreach(array('contest-gallery','gallery-id-'.$GalleryID,'ecommerce','real-id-'.$realId,$folders[$key]) as $part){
+            $dir .= '/'.$part;
+            if(is_link($dir) || (!is_dir($dir) && !@mkdir($dir,0755) && !is_dir($dir))){
+                cg_ecommerce_key_upload_fail(500);
+            }
+            if(wp_normalize_path(realpath($dir)) !== wp_normalize_path($dir)){
+                cg_ecommerce_key_upload_fail(500);
+            }
+        }
+        $target = $dir.'/'.$upload['name'];
+        if(is_link($target) || (file_exists($target) && !is_file($target)) ||
+            !cg_create_htaccess_ecommerce_sale_folder_if_not_exists($dir)){
+            cg_ecommerce_key_upload_fail(500);
+        }
+        if(@file_put_contents($target,$upload['content'],LOCK_EX) !== strlen($upload['content'])){
+            cg_ecommerce_key_upload_fail(500);
+        }
+        return $upload['name'];
+    }
+}
 if(!function_exists('cg_create_htaccess_ecommerce_sale_folder_if_not_exists')){
     function cg_create_htaccess_ecommerce_sale_folder_if_not_exists($attached_file_dir_watermarked){
+        $attached_file_dir_watermarked = rtrim($attached_file_dir_watermarked,'/\\');
+        if(is_link($attached_file_dir_watermarked) || !is_dir($attached_file_dir_watermarked)){
+            return false;
+        }
         $htaccessFileContent = <<<HEREDOC
 #Do not remove htaccess in this folder. It prevents for getting files which are selected for sale from getting from outside.
 <Files "*">
@@ -408,11 +496,14 @@ if(!function_exists('cg_create_htaccess_ecommerce_sale_folder_if_not_exists')){
 </Files>
 HEREDOC;
         $htaccessFile = $attached_file_dir_watermarked.'/.htaccess';
-        file_put_contents($htaccessFile,$htaccessFileContent);
-        chmod($htaccessFile, 0640);// no read for others!!!
-
-        file_put_contents($attached_file_dir_watermarked.'/do-not-remove-htaccess.txt','Do not remove htaccess in this folder. It prevents for getting files which are selected for sale from getting from outside.');
-        file_put_contents($attached_file_dir_watermarked.'/.htaccess','Do not remove htaccess in this folder. It prevents for getting files which are selected for sale from getting from outside.');
-
+        $noteFile = $attached_file_dir_watermarked.'/do-not-remove-htaccess.txt';
+        foreach(array($htaccessFile,$noteFile) as $file){
+            if(is_link($file) || (file_exists($file) && !is_file($file))){return false;}
+        }
+        if(@file_put_contents($htaccessFile,$htaccessFileContent,LOCK_EX) !== strlen($htaccessFileContent) || !@chmod($htaccessFile,0640)){
+            return false;
+        }
+        $note = 'Do not remove htaccess in this folder. It prevents for getting files which are selected for sale from getting from outside.';
+        return @file_put_contents($noteFile,$note,LOCK_EX) === strlen($note);
     }
 }

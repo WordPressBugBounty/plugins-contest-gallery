@@ -138,12 +138,12 @@ if(!function_exists('cg_user_data_export_save_state')){
 if(!function_exists('cg_user_data_export_delete_dir')){
 	function cg_user_data_export_delete_dir($dir){
 		if(empty($dir) || !is_dir($dir)){
-			return;
+			return false;
 		}
 		$base_dir_real = realpath(cg_user_data_export_base_dir());
 		$dir_real = realpath($dir);
 		if(empty($base_dir_real) || empty($dir_real) || dirname($dir_real)!==$base_dir_real){
-			return;
+			return false;
 		}
 		$items = scandir($dir_real);
 		if(is_array($items)){
@@ -153,11 +153,13 @@ if(!function_exists('cg_user_data_export_delete_dir')){
 				}
 				$path = $dir_real.'/'.$item;
 				if(is_file($path) || is_link($path)){
-					@unlink($path);
+					if(!@unlink($path)){
+						return false;
+					}
 				}
 			}
 		}
-		@rmdir($dir_real);
+		return @rmdir($dir_real);
 	}
 }
 
@@ -215,7 +217,30 @@ if(!function_exists('cg_user_data_export_owned_state')){
 		if(empty($state['owner_id']) || absint($state['owner_id'])!==get_current_user_id()){
 			cg_user_data_export_error('This export job belongs to another user.',403,'cg_user_data_export_wrong_owner');
 		}
+		if(empty($state['site_key']) || $state['site_key']!==cg_user_data_export_site_key()){
+			cg_user_data_export_error('This export job is no longer available for this site. Please start a new export.',404,'cg_user_data_export_wrong_site');
+		}
 		return $state;
+	}
+}
+
+if(!function_exists('cg_user_data_export_site_key')){
+	function cg_user_data_export_site_key(){
+		global $wpdb;
+		return hash('sha256',ABSPATH.'|'.$wpdb->prefix.'|'.get_current_blog_id());
+	}
+}
+
+if(!function_exists('cg_user_data_export_check_db')){
+	function cg_user_data_export_check_db($lock=null){
+		global $wpdb;
+		if($wpdb->last_error!==''){
+			if(is_resource($lock)){
+				flock($lock,LOCK_UN);
+				fclose($lock);
+			}
+			cg_user_data_export_error('The export data could not be read. Please try again.',500,'cg_user_data_export_query_failed');
+		}
 	}
 }
 
@@ -278,6 +303,7 @@ if(!function_exists('cg_user_data_export_headers')){
 			WHERE GeneralID = 1 AND Field_Type NOT IN ($excluded)
 			ORDER BY GeneralID ASC, Field_Order DESC"
 		);
+		cg_user_data_export_check_db();
 
 		$where = array(
 			"f.Field_Type NOT IN ($excluded)",
@@ -303,6 +329,7 @@ if(!function_exists('cg_user_data_export_headers')){
 			WHERE ".implode(' AND ',$where)."
 			ORDER BY f.GalleryID ASC, f.Field_Order DESC";
 		$gallery_fields = $wpdb->get_results(cg_user_data_export_prepare_query($query,$args));
+		cg_user_data_export_check_db();
 
 		$fields = array();
 		$known_ids = array();
@@ -340,18 +367,26 @@ if(!function_exists('cg_user_data_export_write_csv_rows')){
 		if($fp===false){
 			return false;
 		}
-		if($with_bom){
-			fwrite($fp,chr(0xEF).chr(0xBB).chr(0xBF));
+		if($with_bom && fwrite($fp,chr(0xEF).chr(0xBB).chr(0xBF))!==3){
+			fclose($fp);
+			@unlink($tmp_file);
+			return false;
 		}
 		foreach($rows as $row){
 			$row = cg_neutralize_csv_array($row);
-			if(fputcsv($fp,$row,';')===false){
+			$written = fputcsv($fp,$row,';');
+			if($written===false || $written===0){
 				fclose($fp);
 				@unlink($tmp_file);
 				return false;
 			}
 		}
-		fclose($fp);
+		$flushed = fflush($fp);
+		$closed = fclose($fp);
+		if(!$flushed || !$closed){
+			@unlink($tmp_file);
+			return false;
+		}
 		@chmod($tmp_file,0600);
 		if(!@rename($tmp_file,$file)){
 			@unlink($tmp_file);
@@ -404,9 +439,11 @@ if(!function_exists('post_cg_user_data_export_start')){
 		$where_data = cg_user_data_export_user_where($search,$gallery_id);
 		$max_query = "SELECT MAX(u.ID) FROM $users_table u WHERE ".$where_data['sql'];
 		$max_user_id = absint($wpdb->get_var(cg_user_data_export_prepare_query($max_query,$where_data['args'])));
+		cg_user_data_export_check_db();
 		$where_data = cg_user_data_export_user_where($search,$gallery_id,$max_user_id);
 		$count_query = "SELECT COUNT(*) FROM $users_table u WHERE ".$where_data['sql'];
 		$total = absint($wpdb->get_var(cg_user_data_export_prepare_query($count_query,$where_data['args'])));
+		cg_user_data_export_check_db();
 		$header_data = cg_user_data_export_headers($search,$gallery_id,$max_user_id);
 
 		$job_id = time().'-'.wp_generate_password(24,false,false);
@@ -436,6 +473,7 @@ if(!function_exists('post_cg_user_data_export_start')){
 		$state = array(
 			'job_id' => $job_id,
 			'owner_id' => get_current_user_id(),
+			'site_key' => cg_user_data_export_site_key(),
 			'created_at' => time(),
 			'updated_at' => time(),
 			'status' => $total>0 ? 'processing' : 'done',
@@ -471,7 +509,7 @@ if(!function_exists('cg_user_data_export_registry_value')){
 		if(!empty($entry->Field_Type) && $entry->Field_Type==='user-check-agreement-field'){
 			return ($entry->Checked==1 || empty($entry->Version)) ? 'checked' : 'not checked';
 		}
-		if(!empty($entry->Field_Content)){
+		if(isset($entry->Field_Content) && $entry->Field_Content!==''){
 			return $entry->Field_Type==='user-check-field' ? cg_profile_field_text(cg_profile_registry_check_value($entry->Field_Content)) : $entry->Field_Content;
 		}
 		return '';
@@ -515,18 +553,22 @@ if(!function_exists('post_cg_user_data_export_step')){
 
 		$users_table = $wpdb->base_prefix.'users';
 		$where_data = cg_user_data_export_user_where($state['search'],$state['gallery_id'],$state['max_user_id'],$state['last_user_id']);
-		$query = "SELECT u.ID, u.user_login, u.user_nicename, u.user_email
+		$query = "SELECT u.ID, u.user_login, u.user_email
 			FROM $users_table u
 			WHERE ".$where_data['sql']."
 			ORDER BY u.ID ASC
 			LIMIT ".absint(CG_USER_DATA_EXPORT_BATCH_SIZE);
 		$users = $wpdb->get_results(cg_user_data_export_prepare_query($query,$where_data['args']));
+		cg_user_data_export_check_db($lock);
 		if(empty($users)){
 			$state['status'] = 'done';
 			$state['total'] = absint($state['processed']);
-			cg_user_data_export_save_state($state);
+			$saved = cg_user_data_export_save_state($state);
 			flock($lock,LOCK_UN);
 			fclose($lock);
+			if(!$saved){
+				cg_user_data_export_error('The export progress could not be saved.',500,'cg_user_data_export_state_write');
+			}
 			wp_send_json_success(cg_user_data_export_public_state($state));
 		}
 
@@ -540,13 +582,14 @@ if(!function_exists('post_cg_user_data_export_step')){
 		$registrationReceipts = array();
 		$capabilities_key = $wpdb->prefix.'capabilities';
 		$usermeta_table = $wpdb->base_prefix.'usermeta';
-		$meta_args = array_merge($user_ids,array('first_name','last_name',$capabilities_key,cg_registration_agreements_meta_key(),$wpdb->esc_like(cg_profile_meta_prefix()).'%'));
+		$meta_args = array_merge($user_ids,array('first_name','last_name','nickname',$capabilities_key,cg_registration_agreements_meta_key(),$wpdb->esc_like(cg_profile_meta_prefix()).'%'));
 		$meta_query = "SELECT user_id, meta_key, meta_value
 			FROM $usermeta_table
 			WHERE user_id IN ($user_placeholders)
-			AND (meta_key IN (%s,%s,%s,%s) OR meta_key LIKE %s)
+			AND (meta_key IN (%s,%s,%s,%s,%s) OR meta_key LIKE %s)
 			ORDER BY user_id ASC";
 		$meta_rows = $wpdb->get_results(cg_user_data_export_prepare_query($meta_query,$meta_args));
+		cg_user_data_export_check_db($lock);
 		$wp_roles = wp_roles();
 		foreach((array)$meta_rows as $meta){
 			$user_id = absint($meta->user_id);
@@ -557,7 +600,7 @@ if(!function_exists('post_cg_user_data_export_step')){
 					'fields' => array()
 				);
 			}
-			if($meta->meta_key==='first_name' || $meta->meta_key==='last_name'){
+			if($meta->meta_key==='first_name' || $meta->meta_key==='last_name' || $meta->meta_key==='nickname'){
 				$user_values[$user_id][$meta->meta_key] = $meta->meta_value;
 			}elseif($meta->meta_key===$capabilities_key){
 				$capabilities = maybe_unserialize($meta->meta_value);
@@ -572,7 +615,7 @@ if(!function_exists('post_cg_user_data_export_step')){
 			}elseif($meta->meta_key===cg_registration_agreements_meta_key()){
 				$registrationReceipts[$user_id] = maybe_unserialize($meta->meta_value);
 			}elseif($field_id = cg_profile_meta_field_id($meta->meta_key)){
-				if(!empty($meta->meta_value)){
+				if(isset($meta->meta_value) && $meta->meta_value!==''){
 					$user_values[$user_id]['fields'][$field_id] = cg_user_data_export_meta_value($meta->meta_value);
 				}
 			}
@@ -592,6 +635,7 @@ if(!function_exists('post_cg_user_data_export_step')){
 				AND f_input_id IN ($field_placeholders)
 				ORDER BY wp_user_id ASC";
 			$entry_rows = $wpdb->get_results(cg_user_data_export_prepare_query($entry_query,$entry_args));
+			cg_user_data_export_check_db($lock);
 			foreach((array)$entry_rows as $entry){
 				$user_id = absint($entry->wp_user_id);
 				if(!isset($user_values[$user_id])){
@@ -608,6 +652,7 @@ if(!function_exists('post_cg_user_data_export_step')){
 				WHERE WpUserId IN ($user_placeholders) AND IsProfileImage = 1
 				ORDER BY id ASC";
 			$profile_rows = $wpdb->get_results(cg_user_data_export_prepare_query($profile_query,$user_ids));
+			cg_user_data_export_check_db($lock);
 			$attachment_ids = array();
 			foreach((array)$profile_rows as $profile){
 				$attachment_ids[] = absint($profile->WpUpload);
@@ -643,7 +688,7 @@ if(!function_exists('post_cg_user_data_export_step')){
 			$row = array(
 				$user_id,
 				$user->user_login,
-				$user->user_nicename,
+				isset($values['nickname']) ? $values['nickname'] : '',
 				$values['first_name'],
 				$values['last_name'],
 				$user->user_email,
@@ -696,12 +741,15 @@ if(!function_exists('post_cg_user_data_export_cancel')){
 		if($lock!==false){
 			flock($lock,LOCK_EX);
 		}
-		wp_clear_scheduled_hook('cg_user_data_export_cleanup_job_event',array($job_id));
-		cg_user_data_export_delete_dir($job_dir);
+		$removed = cg_user_data_export_delete_dir($job_dir);
 		if($lock!==false){
 			flock($lock,LOCK_UN);
 			fclose($lock);
 		}
+		if(!$removed){
+			cg_user_data_export_error('The temporary export files could not be removed. Please try again.',500,'cg_user_data_export_cancel_failed');
+		}
+		wp_clear_scheduled_hook('cg_user_data_export_cleanup_job_event',array($job_id));
 		wp_send_json_success(array('cancelled'=>true));
 	}
 }
@@ -721,6 +769,9 @@ if(!function_exists('cg_user_data_export_download')){
 		if(empty($state) || empty($state['owner_id']) || absint($state['owner_id'])!==get_current_user_id()){
 			wp_die('Export job was not found or belongs to another user.','',array('response'=>403));
 		}
+		if(empty($state['site_key']) || $state['site_key']!==cg_user_data_export_site_key()){
+			wp_die('This export job is no longer available for this site. Please start a new export.','',array('response'=>404));
+		}
 		if(empty($state['status']) || $state['status']!=='done'){
 			wp_die('Export job is not finished yet.','',array('response'=>409));
 		}
@@ -728,6 +779,11 @@ if(!function_exists('cg_user_data_export_download')){
 		$files = array(trailingslashit($job_dir).'header.csvpart');
 		for($i=0;$i<absint($state['chunk_index']);$i++){
 			$files[] = trailingslashit($job_dir).sprintf('chunk-%06d.csvpart',$i);
+		}
+		foreach($files as $file){
+			if(!is_file($file) || !is_readable($file)){
+				wp_die('The CSV export is incomplete. Please start a new export.','',array('response'=>500));
+			}
 		}
 		nocache_headers();
 		header('Content-Type: text/csv; charset=UTF-8');
@@ -738,15 +794,17 @@ if(!function_exists('cg_user_data_export_download')){
 			ob_end_clean();
 		}
 		foreach($files as $file){
-			if(!is_file($file)){
-				continue;
-			}
-			$fp = fopen($file,'rb');
+			$fp = @fopen($file,'rb');
 			if($fp===false){
-				continue;
+				exit;
 			}
 			while(!feof($fp)){
-				echo fread($fp,1048576);
+				$bytes = fread($fp,1048576);
+				if($bytes===false){
+					fclose($fp);
+					exit;
+				}
+				echo $bytes;
 				flush();
 			}
 			fclose($fp);

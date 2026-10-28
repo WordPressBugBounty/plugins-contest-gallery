@@ -3,8 +3,10 @@
 #cgViewControl .cg_pmail_launch_card{box-sizing:border-box;grid-column:2;grid-row:1;width:100%;padding:12px;border:1px solid #cce9d8;border-radius:12px;background:linear-gradient(135deg,#f2fff7 0%,#fff 48%,#f4f8ff 100%);box-shadow:0 5px 16px rgba(26,87,54,.07);}
 #cgViewControl .cg_pmail_launch_card p{margin:8px 1px 0;color:#52695b;font-size:12px;line-height:17px;text-align:center;}
 #cgViewControl .cg_image_checkbox_container_view_control{grid-column:1/-1;}
-#cgViewControl #cgEmailParticipants{display:inline-flex;align-items:center;justify-content:center;gap:8px;box-sizing:border-box;width:100%;min-height:36px;margin:0;padding:8px 12px;border:1px solid #16844a;border-radius:8px;background:linear-gradient(135deg,#20a761,#16844a);color:#fff;font-size:13px;font-weight:600;line-height:18px;white-space:nowrap;cursor:pointer;}
-#cgViewControl #cgEmailParticipants .dashicons{width:18px;height:18px;font-size:18px;}
+#cgViewControl #cgEmailParticipants{display:inline-flex;align-items:center;justify-content:center;gap:8px;box-sizing:border-box;width:100%;height:auto;min-height:36px;margin:0;padding:8px 12px;border:1px solid #16844a;border-radius:8px;background:linear-gradient(135deg,#20a761,#16844a);color:#fff;font-size:13px;font-weight:600;line-height:18px;white-space:normal;cursor:pointer;}
+#cgViewControl #cgEmailParticipants .dashicons{flex:0 0 18px;width:18px;height:18px;font-size:18px;}
+#cgViewControl #cgEmailParticipants .cg_pmail_launch_label{min-width:0;text-align:center;}
+#cgViewControl #cgEmailParticipants .cg_pmail_launch_count{display:inline-flex;flex:0 0 auto;align-items:center;justify-content:center;box-sizing:border-box;min-width:24px;height:22px;padding:0 7px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.18);color:#fff;font-size:12px;font-weight:700;line-height:20px;font-variant-numeric:tabular-nums;white-space:nowrap;}
 #cgViewControl #cgEmailParticipants:hover{border-color:#11723e;background:linear-gradient(135deg,#199852,#11723e);}
 #cgViewControl #cgEmailParticipants:active{background:#11723e;}
 @media(max-width:1100px){#cgViewControl.cg_pmail_view_control{grid-template-columns:minmax(0,1fr);row-gap:12px;}#cgViewControl .cg_pmail_launch_card{grid-column:1;grid-row:1;justify-self:end;max-width:250px;}#cgViewControl .cg_pmail_filter_content{grid-row:2;}}

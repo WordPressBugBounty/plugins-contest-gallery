@@ -868,7 +868,8 @@ echo "<label class='cg_show_only_label' for='cgShowOnlyInactiveCheckbox'><span c
 echo "</div>";
 echo '</div>';
 echo '<section class="cg_pmail_launch_card" aria-label="Participant emails">';
-echo '<button type="button" id="cgEmailParticipants" class="cg_backend_button_gallery_action" data-gallery-id="'.absint($GalleryID).'" aria-describedby="cgParticipantMailLaunchDescription"><span class="dashicons dashicons-email-alt" aria-hidden="true"></span><span>Email participants</span></button>';
+echo '<button type="button" id="cgEmailParticipants" class="cg_backend_button_gallery_action" data-gallery-id="'.absint($GalleryID).'" aria-describedby="cgParticipantMailLaunchDescription cgParticipantMailCountDescription"><span class="dashicons dashicons-email-alt" aria-hidden="true"></span><span class="cg_pmail_launch_label">Email participants</span><span class="cg_pmail_launch_count" aria-hidden="true">…</span></button>';
+echo '<span id="cgParticipantMailCountDescription" class="screen-reader-text" role="status" aria-live="polite">Loading the number of participants with a valid email address.</span>';
 echo '<p id="cgParticipantMailLaunchDescription">Keep your participants up to date</p>';
 echo '<button type="button" class="cg_mail_history_open" data-context="gallery" data-gallery-id="'.absint($GalleryID).'">Email history</button>';
 echo '</section>';

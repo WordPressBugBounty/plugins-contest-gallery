@@ -243,6 +243,7 @@ cgJsClassAdmin.index.functions = {
         return cgBackendHashVal;
     },
     cgLoadBackend: function ($formLinkObject,isSaveData,isShowNoLoader,isDoNotEmptyContent,isCopyGallery,isCopyGalleryNextProcess) {
+        var $ = jQuery;
 
         var cg_picture_id_to_scroll = 0;
 
@@ -288,6 +289,13 @@ cgJsClassAdmin.index.functions = {
         var form = $formLinkObject.get(0);
 
         var formPostData;
+        var isFormEditorSave = $formLinkObject.is('#cgCreateUploadForm,#cg_create_user_form');
+        if(isFormEditorSave){
+            if($formLinkObject.data('cg-form-saving') || $formLinkObject.data('cg-form-reload-required')){return;}
+            cgJsClassAdmin.createUpload.functions.addRightFieldOrderAndAddRowsAndColumns($);
+            $formLinkObject.data('cg-form-saving',true);
+        }
+
 
         if($formLinkObject.is('form') && $formLinkObject.hasClass('cg_load_backend_create_gallery')){
             if($formLinkObject.data('cg-create-gallery-submitting')){
@@ -321,7 +329,11 @@ cgJsClassAdmin.index.functions = {
 
             // convert currency first for saving
             var form = $formLinkObject.get(0);
+            var $templates = isFormEditorSave ? $formLinkObject.find('#cgFieldsToCloneAndAppend :input:enabled') : $();
+            $templates.prop('disabled',true);
             formPostData = new FormData(form);
+            $templates.prop('disabled',false);
+            if(isFormEditorSave){$formLinkObject.find(':submit').prop('disabled',true);}
         }else{// then must be link
             formPostData = new FormData();
         }
@@ -329,11 +341,11 @@ cgJsClassAdmin.index.functions = {
         debugger
         if(!isCopyGallery){
         // execute here, because all content will be removed
-        var cgBackendHashVal = cgJsClassAdmin.index.functions.cgLoadBackendLoader(isShowNoLoader,isDoNotEmptyContent);
+        var cgBackendHashVal = cgJsClassAdmin.index.functions.cgLoadBackendLoader(isFormEditorSave || isShowNoLoader,isFormEditorSave || isDoNotEmptyContent);
         }else{
            // var $cg_main_container = jQuery('#cg_main_container');
            // var cgBackendHashVal = $cg_main_container.find('#cgBackendHash').val();
-            var cgBackendHashVal = cgJsClassAdmin.index.functions.cgLoadBackendLoader(isShowNoLoader,isDoNotEmptyContent);
+            var cgBackendHashVal = cgJsClassAdmin.index.functions.cgLoadBackendLoader(isFormEditorSave || isShowNoLoader,isFormEditorSave || isDoNotEmptyContent);
             jQuery('#cgBackendBackgroundDrop').addClass('cg_hide').removeClass('cg_active cg_pointer_events_none');
             if(!isCopyGalleryNextProcess){
                 jQuery('<h2 class="cg_first_in_progress">In progress ...</h2><p class="cg_first_in_progress">Do not cancel</p>').insertBefore(jQuery('#cgBackendBackgroundDrop'));
@@ -385,6 +397,7 @@ cgJsClassAdmin.index.functions = {
         }
 
         // window.history.replaceState({'action':urlString},'',location.pathname+location.hash);
+        if(isFormEditorSave){formPostData.append('cg_form_complete','1');}
         cgJsClassAdmin.index.functions.cgLoadBackendAjax(urlString,formPostData,$formLinkObject,submitMessage,cg_picture_id_to_scroll);
     },
     cgGetVersionForUrlJs: function (){

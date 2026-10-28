@@ -80,7 +80,7 @@ function cg_member_profile_render($userId){
 				echo '<fieldset class="cg-member-profile-options"><legend>'.esc_html($title).$required.'</legend>';
 				$selected = $type==='user-check-field' ? $value : array($value);
 				foreach(cg_member_profile_choices($field) as $choice){
-					echo '<label><input type="'.($type==='user-check-field' ? 'checkbox' : 'radio').'" name="'.esc_attr($name.($type==='user-check-field' ? '[]' : '')).'" value="'.esc_attr($choice).'"'.(in_array($choice,$selected,true) ? ' checked' : '').'> <span>'.esc_html($choice).'</span></label>';
+					echo '<label><input type="'.($type==='user-check-field' ? 'checkbox' : 'radio').'" name="'.esc_attr($name.($type==='user-check-field' ? '[]' : '')).'" value="'.cg_form_escape_value($choice).'"'.(in_array($choice,$selected,true) ? ' checked' : '').'> <span>'.cg_form_escape_value($choice).'</span></label>';
 				}
 				echo '</fieldset>';
 			}else{
@@ -88,7 +88,7 @@ function cg_member_profile_render($userId){
 				if($type==='user-comment-field'){echo '<textarea'.cg_profile_field_length_attributes($field).' name="'.esc_attr($name).'" rows="4">'.esc_textarea($value).'</textarea>';}
 				elseif($type==='user-select-field'){
 					echo '<select name="'.esc_attr($name).'"><option value=""></option>';
-					foreach(cg_member_profile_choices($field) as $choice){echo '<option value="'.esc_attr($choice).'"'.selected($value,$choice,false).'>'.esc_html($choice).'</option>';}
+					foreach(cg_member_profile_choices($field) as $choice){echo '<option value="'.cg_form_escape_value($choice).'"'.selected($value,$choice,false).'>'.cg_form_escape_value($choice).'</option>';}
 					echo '</select>';
 				}else{echo '<input type="text"'.cg_profile_field_length_attributes($field).($type==='user-url-field' ? ' inputmode="url" autocomplete="url" data-url-message="'.esc_attr(cg_member_t('Please enter a valid URL')).'"' : '').' name="'.esc_attr($name).'" value="'.esc_attr($value).'">';}
 				echo '</label>';

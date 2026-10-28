@@ -10,19 +10,19 @@ if(floatval($options['general']['Version'])>=21.1){
     $ContestEnd = 0;
 }
 $ContestEndTime = $options['general']['ContestEndTime'];
-$ContestStart = $options['general']['ContestStart'];
+$ContestStart = isset($options['general']['ContestStart']) ? $options['general']['ContestStart'] : 0;
 if(floatval($options['general']['Version'])>=21.1){
     $ContestStart = 0;
 }
-$ContestStartTime = $options['general']['ContestStartTime'];
+$ContestStartTime = isset($options['general']['ContestStartTime']) ? $options['general']['ContestStartTime'] : '';
 $AllowSort = $options['general']['AllowSort'];
 $FullSizeGallery = $options['general']['FullSizeGallery'];// full window mode
 $FullSize = $options['general']['FullSize'];// full window mode
 $FullScreenGallery = 0;
 $Search = $options['pro']['Search'];
 $GalleryUpload = $options['pro']['GalleryUpload'];
-$CatWidget = $options['pro']['CatWidget'];
-$ShowOther = $options['pro']['ShowOther'];
+$CatWidget = isset($options['pro']['CatWidget']) ? $options['pro']['CatWidget'] : 0;
+$ShowOther = isset($options['pro']['ShowOther']) ? $options['pro']['ShowOther'] : 0;
 
 $categoriesCheck = false;
 $categoriesCount = 0;
@@ -165,7 +165,7 @@ if(true){
 
                 // if($options['general']['RandomSortButton']==1){
              if($options['general']['HideUntilVote']!=1){
-                        if($options['general']['AllowRating']==2 || ($options['pro']['IsModernFiveStar']==0 && ($options['general']['AllowRating']==1 OR $options['general']['AllowRating']>=12))){
+                        if($options['general']['AllowRating']==2 || ((!isset($options['pro']['IsModernFiveStar']) || $options['pro']['IsModernFiveStar']==0) && ($options['general']['AllowRating']==1 OR $options['general']['AllowRating']>=12))){
                             if(
                                 empty($isOnlyGalleryNoVoting) ||
                                 ($isOnlyGalleryNoVoting && $RatingVisibleForGalleryNoVoting)

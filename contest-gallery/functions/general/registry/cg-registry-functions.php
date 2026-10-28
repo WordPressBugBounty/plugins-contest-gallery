@@ -575,7 +575,7 @@ if(!function_exists('cg_edit_additional_registry_form_user_fields')){
                                     if($optionValue==$userValue){
                                         $selected = 'selected';
                                     }
-                                    echo '<option value="'.esc_attr($optionValue).'" '.$selected.'>'.esc_html($optionValue).'</option>';
+                                    echo '<option value="'.cg_form_escape_value($optionValue).'" '.$selected.'>'.cg_form_escape_value($optionValue).'</option>';
                                 }
                                 echo '</select>
                                     </td>
@@ -595,8 +595,8 @@ if(!function_exists('cg_edit_additional_registry_form_user_fields')){
                                         $checked = 'checked';
                                     }
                                     $cgContentField .= '<div class="cg_radio_button">
-                                <label for="cg_reg_radio_button_'.$formField->id.$optionKey.'">'.esc_html($optionValue).'</label>
-                                <input type="radio" id="cg_reg_radio_button_'.$formField->id.$optionKey.'" name="'.$fieldName.'" value="'.esc_attr($optionValue).'" class="cg_radio_button_input" '.$checked.'>
+                                <label for="cg_reg_radio_button_'.$formField->id.$optionKey.'">'.cg_form_escape_value($optionValue).'</label>
+                                <input type="radio" id="cg_reg_radio_button_'.$formField->id.$optionKey.'" name="'.$fieldName.'" value="'.cg_form_escape_value($optionValue).'" class="cg_radio_button_input" '.$checked.'>
                         </div>';
                                 }
                                 $cgContentField .= '</div>';
@@ -622,8 +622,8 @@ if(!function_exists('cg_edit_additional_registry_form_user_fields')){
                                         $checked = 'checked';
                                     }
                                     $cgContentField .= '<div class="cg_check_button">
-                                <label for="cg_reg_check_button_'.$formField->id.$optionKey.'">'.esc_html($optionValue).'</label>
-                                <input type="checkbox" id="cg_reg_check_button_'.$formField->id.$optionKey.'" name="'.$fieldName.'[]" value="'.esc_attr($optionValue).'" class="cg_check_button_input" '.$checked.'>
+                                <label for="cg_reg_check_button_'.$formField->id.$optionKey.'">'.cg_form_escape_value($optionValue).'</label>
+                                <input type="checkbox" id="cg_reg_check_button_'.$formField->id.$optionKey.'" name="'.$fieldName.'[]" value="'.cg_form_escape_value($optionValue).'" class="cg_check_button_input" '.$checked.'>
                         </div>';
                                 }
                                 $cgContentField .= '</div>';

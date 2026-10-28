@@ -4,9 +4,8 @@ cgJsClassAdmin.createUpload = {};
 
 jQuery(document).ready(function ($) {
 
-    $(document).on('click', '#submitForm', function () {
-        $('#cgFieldsToCloneAndAppend').remove();
-    });
+    // Template controls are excluded while building FormData, so a rejected
+    // save leaves the editor's Add field actions available.
 
     // hide field
     $(document).on('click', '.cg_view_option_hide_upload_field', function () {

@@ -2,30 +2,7 @@
 if(!function_exists('cg_ecommerce_sale_activate')){
     function cg_ecommerce_sale_activate(){
 
-		/*
-        echo "<pre>";
-        print_r($_FILES);
-        echo "</pre>";
-
-        echo "<pre>";
-        print_r($_POST);
-        echo "</pre>";*/
-
-	    if(!empty($_FILES['cgSellContainer']) && !empty($_FILES['cgSellContainer']['name']) && (!empty($_FILES['cgSellContainer']['name']['ServiceKey']) || !empty($_FILES['cgSellContainer']['name']['DownloadKey']))){
-
-            if(!empty($_FILES['cgSellContainer']['name']['ServiceKey']['type']) &&  $_FILES['cgSellContainer']['name']['ServiceKey']['type']!='text/csv'){
-                echo 'not allowed download key file type';
-                die;
-            }
-
-            if(!empty($_FILES['cgSellContainer']['name']['DownloadKey']['type']) &&  $_FILES['cgSellContainer']['name']['DownloadKey']['type']!='text/csv'){
-                echo 'not allowed download key file type';
-                die;
-            }
-
-            $_FILES = cg1l_sanitize_post($_FILES);// since 21.0.1 can be also done
-            $_FILES = cg1l_sanitize_files($_FILES,'cgSellContainer');
-        }
+        $keyUploads = cg_ecommerce_validate_key_uploads($_FILES);
 
         $wp_upload_dir = wp_upload_dir();
 
@@ -106,18 +83,6 @@ if(!function_exists('cg_ecommerce_sale_activate')){
 
         }
 
-        $htaccessFileContent = <<<HEREDOC
-#Do not remove htaccess in this folder. It prevents for getting files which are selected for sale from getting from outside.
-<Files "*">
-  <IfModule mod_authz_core.c>
-    Require all denied
-  </IfModule>
-  <IfModule !mod_authz_core.c>
-    Deny from all
-  </IfModule>
-</Files>
-HEREDOC;
-
         $DownloadKeysCsvName = isset($sqlObjectFileEcommerceEntry->DownloadKeysCsvName) ? $sqlObjectFileEcommerceEntry->DownloadKeysCsvName : '';
         if(!empty($_POST['cgSellContainer']['RemoveDownloadKeysFile']) && $_POST['cgSellContainer']['RemoveDownloadKeysFile']==1){
             $DownloadKeysCsvName = $wpdb->get_var("SELECT DownloadKeysCsvName FROM $tablename_ecommerce_entries WHERE id = '$EcommerceEntry'");
@@ -125,18 +90,8 @@ HEREDOC;
             unlink($ecommerceFileFolder.$DownloadKeysCsvName);
             $DownloadKeysCsvName = '';
         }
-        if(!empty($_FILES['cgSellContainer']['name']) && !empty($_FILES['cgSellContainer']['name']['DownloadKey'])){
-            $DownloadKeysCsvName = sanitize_text_field($_FILES['cgSellContainer']['name']['DownloadKey']);
-            $ecommerceFileFolder = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/ecommerce/real-id-'.$sqlObjectFile->id.'/download-keys';
-            if(!is_dir($ecommerceFileFolder)){
-                mkdir($ecommerceFileFolder,0755,true);
-                $htaccessFile = $ecommerceFileFolder.'/.htaccess';
-                file_put_contents($htaccessFile,$htaccessFileContent);
-                chmod($htaccessFile, 0640);// no read for others!!!
-                file_put_contents($ecommerceFileFolder.'/do-not-remove-htaccess.txt','Do not remove htaccess in this folder. It prevents for getting files which are selected for sale from getting from outside.');
-            }
-            $downloadKeyFile = $ecommerceFileFolder.'/'.$DownloadKeysCsvName;
-            file_put_contents($downloadKeyFile,file_get_contents($_FILES['cgSellContainer']['tmp_name']['DownloadKey']));
+        if(isset($keyUploads['DownloadKey'])){
+            $DownloadKeysCsvName = cg_ecommerce_store_key_upload($keyUploads['DownloadKey'],$GalleryID,$sqlObjectFile->id,'DownloadKey');
         }
 
         $ServiceKeysCsvName = isset($sqlObjectFileEcommerceEntry->ServiceKeysCsvName) ? $sqlObjectFileEcommerceEntry->ServiceKeysCsvName : '';
@@ -150,18 +105,8 @@ HEREDOC;
             unlink($ecommerceFileFolder.$ServiceKeysCsvName);
             $ServiceKeysCsvName = '';
         }
-        if(!empty($_FILES['cgSellContainer']['name']) && !empty($_FILES['cgSellContainer']['name']['ServiceKey'])){
-            $ServiceKeysCsvName = sanitize_text_field($_FILES['cgSellContainer']['name']['ServiceKey']);
-            $ecommerceFileFolder = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/ecommerce/real-id-'.$sqlObjectFile->id.'/service-keys';
-            if(!is_dir($ecommerceFileFolder)){
-                mkdir($ecommerceFileFolder,0755,true);
-                $htaccessFile = $ecommerceFileFolder.'/.htaccess';
-                file_put_contents($htaccessFile,$htaccessFileContent);
-                chmod($htaccessFile, 0640);// no read for others!!!
-                file_put_contents($ecommerceFileFolder.'/do-not-remove-htaccess.txt','Do not remove htaccess in this folder. It prevents for getting files which are selected for sale from getting from outside.');
-            }
-            $serviceKeyFile = $ecommerceFileFolder.'/'.$ServiceKeysCsvName;
-            file_put_contents($serviceKeyFile,file_get_contents($_FILES['cgSellContainer']['tmp_name']['ServiceKey']));
+        if(isset($keyUploads['ServiceKey'])){
+            $ServiceKeysCsvName = cg_ecommerce_store_key_upload($keyUploads['ServiceKey'],$GalleryID,$sqlObjectFile->id,'ServiceKey');
         }
 
         /*var_dump('print cgSellContainer');
@@ -200,7 +145,8 @@ HEREDOC;
 			$MaxUploads = $_POST['cgSellContainer']['MaxUploads'];
         }
 
-	    $AllUploadsUsedText = (!empty(trim($_POST['cgSellContainer']['AllUploadsUsedText']))) ? contest_gal1ery_htmlentities_and_preg_replace($_POST['cgSellContainer']['AllUploadsUsedText']) : '';
+	    $AllUploadsUsedText = (isset($_POST['cgSellContainer']['AllUploadsUsedText']) && is_string($_POST['cgSellContainer']['AllUploadsUsedText'])) ? $_POST['cgSellContainer']['AllUploadsUsedText'] : '';
+	    $AllUploadsUsedText = (!empty(trim($AllUploadsUsedText))) ? contest_gal1ery_htmlentities_and_preg_replace($AllUploadsUsedText) : '';
 
 	    if($IsDownload){
             cg_move_file_ecommerce_sale_folder($realId, $GalleryID,$sqlObjectFile,$sqlObjectFileEcommerceEntry);

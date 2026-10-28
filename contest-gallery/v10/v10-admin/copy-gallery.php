@@ -1,10 +1,34 @@
 <?php
 
+// Keep these checks local to gallery copies. Other table-copy callers are unchanged.
+$cgCopyTargetId = 0;
+$cgCopyCheck = function($result, $step) use (&$cgCopyTargetId){
+    if($result !== false && !is_wp_error($result)){return $result;}
+    $message = 'The gallery could not be copied. Failed step: '.$step.'.';
+    if($cgCopyTargetId){
+        $message .= ' Gallery #'.$cgCopyTargetId.' is incomplete. Already created parts have been kept. Do not use this copy before checking it.';
+    }
+    $message .= ' Resolve the error before copying the original gallery again.';
+    // The existing loader renders HTTP 200 HTML. Keep its plugin navigation value.
+    cg_create_version_input();
+    wp_die('<p role="alert">'.esc_html($message).'</p>', '', array('response'=>200));
+};
+$cgCopyRow = function($table, $sourceId, $values, $step, $columns = null, $required = true) use ($wpdb, $cgCopyCheck){
+    if($columns === null){
+        $columns = $wpdb->get_results('SHOW COLUMNS FROM '.$wpdb->prefix.$table);
+        $cgCopyCheck(!$wpdb->last_error && !empty($columns), $step);
+    }
+    $newId = cg_copy_table_row($table, $sourceId, $values, '', $columns);
+    $cgCopyCheck(!$wpdb->last_error && (!$required || ($wpdb->rows_affected > 0 && $newId > 0)), $step);
+    return $newId;
+};
+
 $idToCopy = absint($_POST['cg_copy_id']);
 
 $wp_upload_dir = wp_upload_dir();
 
 $galleryToCopy = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablenameOptions WHERE id = %d ",[$idToCopy]));
+$cgCopyCheck(!$wpdb->last_error && !empty($galleryToCopy), 'Reading the source gallery');
 
 $cgVersion = intval($galleryToCopy->Version);
 
@@ -12,6 +36,7 @@ $galleryDBversion = $galleryToCopy->Version;
 
 if(!empty($_POST['option_id_next_gallery'])){
     $nextIDgallery = absint($_POST['option_id_next_gallery']);
+    $cgCopyTargetId = $nextIDgallery;
 }
 
 $uploadFolder = wp_upload_dir();
@@ -70,6 +95,9 @@ if ($copyFullGallery==true) {
 }
 
 
+// Check the final form export before removing copy mappings or reporting success.
+$cgCopyCheck(cg_json_single_view_order($nextIDgallery), 'Writing the form display order');
+
 // unlink files which were only created for copiying
 if(file_exists($galleryUpload . '/json/' . $nextIDgallery . '-collect-input-ids-array.json')){
 unlink($galleryUpload . '/json/' . $nextIDgallery . '-collect-input-ids-array.json');
@@ -78,12 +106,7 @@ if(file_exists($galleryUpload . '/json/' . $nextIDgallery . '-collect-cat-ids-ar
 unlink($galleryUpload . '/json/' . $nextIDgallery . '-collect-cat-ids-array.json');
 }
 
-// Formular Output für User wird ermittelt
-do_action('cg_json_single_view_order',$nextIDgallery);
-
-$fp = fopen($uploadFolder['basedir'] . '/contest-gallery/cg-copying-gallery.txt', 'w');
-fwrite($fp, 'cg-copying-gallery');
-fclose($fp);
+$cgCopyCheck(cg_form_atomic_file($uploadFolder['basedir'] . '/contest-gallery/cg-copying-gallery.txt', 'cg-copying-gallery'), 'Finishing the gallery copy');
 
 if(empty($_POST['option_id_next_gallery'])){
     $_POST['option_id_next_gallery'] = $nextIDgallery;

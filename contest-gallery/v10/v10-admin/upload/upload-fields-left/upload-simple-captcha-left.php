@@ -55,7 +55,7 @@ if(!$isOnlyPlaceHolder){
 
     foreach($fieldContent as $key => $valueFieldContent){
 
-        $valueFieldContent = contest_gal1ery_convert_for_html_output_without_nl2br($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
+        $valueFieldContent = cg_form_editor_value($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
 
         if($key=='titel'){
             $valueFieldTitle = $valueFieldContent;
@@ -72,7 +72,6 @@ if(!$isOnlyPlaceHolder){
 
     }
 
-    $caRoCount++;
     $caRoHiddenCount++;
 
 }

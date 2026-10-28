@@ -43,7 +43,7 @@ if (!defined('ABSPATH')) {
 
     $cg_check = (!empty($_POST['cg_Fields']) && is_array($_POST['cg_Fields'])) ? $_POST['cg_Fields'] : array();
     foreach($cg_check as $fieldKey=>$fieldValue){
-        if(is_array($fieldValue) && isset($fieldValue['Field_Type']) && in_array($fieldValue['Field_Type'],array('user-url-field','user-check-field'),true) && isset($cgRegistryFieldsRaw[$fieldKey]['Field_Content'])){
+        if(is_array($fieldValue) && isset($fieldValue['Field_Type']) && in_array($fieldValue['Field_Type'],array('user-url-field','user-check-field','user-select-field','user-radio-field'),true) && isset($cgRegistryFieldsRaw[$fieldKey]['Field_Content'])){
             $cg_check[$fieldKey]['Field_Content'] = $cgRegistryFieldsRaw[$fieldKey]['Field_Content'];
         }
     }

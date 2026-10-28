@@ -73,15 +73,15 @@ $LostPasswordMailActive = 0;
 
 if((!empty($galleryDbVersion) && intval($galleryDbVersion)>=14) || empty($GalleryID)){
     $registry_and_login_options = $wpdb->get_row("SELECT * FROM $tablename_registry_and_login_options WHERE GeneralID='1'");//get row here to not rewrite RegistryUserRole if not exists
-    $LostPasswordMailActive = $registry_and_login_options->LostPasswordMailActive;
-    $TextBeforeLoginForm = contest_gal1ery_convert_for_html_output_without_nl2br($registry_and_login_options->TextBeforeLoginForm);
-    $PermanentTextWhenLoggedIn = contest_gal1ery_convert_for_html_output_without_nl2br($registry_and_login_options->PermanentTextWhenLoggedIn);
+    $LostPasswordMailActive = isset($registry_and_login_options->LostPasswordMailActive) ? $registry_and_login_options->LostPasswordMailActive : 0;
+    $TextBeforeLoginForm = contest_gal1ery_convert_for_html_output_without_nl2br(isset($registry_and_login_options->TextBeforeLoginForm) ? $registry_and_login_options->TextBeforeLoginForm : '');
+    $PermanentTextWhenLoggedIn = contest_gal1ery_convert_for_html_output_without_nl2br(isset($registry_and_login_options->PermanentTextWhenLoggedIn) ? $registry_and_login_options->PermanentTextWhenLoggedIn : '');
     $optionsVisual = $wpdb->get_row( "SELECT * FROM $tablename_options_visual WHERE GeneralID='1'");
 }else{
     $registry_and_login_options = $wpdb->get_row("SELECT * FROM $tablename_registry_and_login_options WHERE GalleryID='$GalleryID'");//get row here to not rewrite RegistryUserRole if not exists
-    $LostPasswordMailActive = $registry_and_login_options->LostPasswordMailActive;
-    $TextBeforeLoginForm = contest_gal1ery_convert_for_html_output_without_nl2br($registry_and_login_options->TextBeforeLoginForm);
-    $PermanentTextWhenLoggedIn = contest_gal1ery_convert_for_html_output_without_nl2br($registry_and_login_options->PermanentTextWhenLoggedIn);
+    $LostPasswordMailActive = isset($registry_and_login_options->LostPasswordMailActive) ? $registry_and_login_options->LostPasswordMailActive : 0;
+    $TextBeforeLoginForm = contest_gal1ery_convert_for_html_output_without_nl2br(isset($registry_and_login_options->TextBeforeLoginForm) ? $registry_and_login_options->TextBeforeLoginForm : '');
+    $PermanentTextWhenLoggedIn = contest_gal1ery_convert_for_html_output_without_nl2br(isset($registry_and_login_options->PermanentTextWhenLoggedIn) ? $registry_and_login_options->PermanentTextWhenLoggedIn : '');
     $optionsVisual = $wpdb->get_row( "SELECT * FROM $tablename_options_visual WHERE GalleryID='$GalleryID'");
 }
 

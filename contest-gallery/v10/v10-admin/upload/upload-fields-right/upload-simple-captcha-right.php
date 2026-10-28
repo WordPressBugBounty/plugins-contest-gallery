@@ -12,7 +12,7 @@ if($isOnlyPlaceHolder){
     $fieldTitle = '';
     $fieldPlaceholder = '';
     foreach($fieldContent as $key => $valueFieldContent){
-        $valueFieldContent = contest_gal1ery_convert_for_html_output_without_nl2br($valueFieldContent);
+        $valueFieldContent = cg_form_decode_value($valueFieldContent);
         if($key=='titel'){
             $fieldTitle = $valueFieldContent;
         }
@@ -42,7 +42,7 @@ $requiredChecked = 'cg_upl_required';
         ondragstart='cgJsClassAdmin.createUpload.dragAndDrop.drag(event)' ondragend='cgJsClassAdmin.createUpload.dragAndDrop.dragEnd(event)' 
  >";
             echo "<div class='cg_upl_title $requiredChecked' >";
-                echo cg1l_sanitize_method($fieldTitle);
+                echo cg_form_escape_value($fieldTitle);
             echo "</div>";
             echo "<div class='cg_upl_content' >";
                 echo "<input type='checkbox'  />";
@@ -51,7 +51,3 @@ $requiredChecked = 'cg_upl_required';
             echo "<div class='cg_upl_del' title='Delete field' >";
             echo "</div>";
     echo "</div>";
-
-if(!$isOnlyPlaceHolder){
-    $caRoRightCount++;
-}

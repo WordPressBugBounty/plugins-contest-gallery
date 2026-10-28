@@ -249,7 +249,7 @@ if(!function_exists('cg_upload_form_real_watermark_update_saved_field')){
         if(empty($fieldId)){
             return;
         }
-        $wpdb->update(
+        return $wpdb->update(
             "$tablename_form_input",
             array('RealWatermarkSettings' => $realWatermarkSettings),
             array('id' => $fieldId),

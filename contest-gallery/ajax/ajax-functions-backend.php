@@ -2,6 +2,7 @@
 include_once(__DIR__.'/../v10/v10-admin/gallery-transfer/gallery-transfer.php');
 include_once(__DIR__.'/../functions/backend/gallery/cg-entry-watermark.php');
 include_once(__DIR__.'/../functions/backend/gallery/cg-entry-page-open.php');
+include_once(__DIR__.'/../functions/backend/gallery/cg-social-embed.php');
 include_once(__DIR__.'/../functions/backend/cg-mail-test.php');
 include_once(__DIR__.'/../functions/backend/cg-member-messages-admin.php');
 
@@ -42,6 +43,7 @@ if (!function_exists('cg_backend_ajax_require_access_json')) {
 }
 
 include_once(__DIR__.'/../v10/v10-admin/export/user-data-export-jobs.php');
+include_once(__DIR__.'/../v10/v10-admin/export/gallery-export-jobs.php');
 
 if (!function_exists('cg_backend_ajax_validate_gallery_hash_json')) {
     function cg_backend_ajax_validate_gallery_hash_json($GalleryID, $galleryHash) {
@@ -866,113 +868,7 @@ add_action('wp_ajax_post_cg_social_platform_input', 'post_cg_social_platform_inp
 if (!function_exists('post_cg_social_platform_input')) {
     function post_cg_social_platform_input()
     {
-        cg_require_backend_access();
-
-        contest_gal1ery_db_check();
-
-        $blockquote = '';
-        if(!empty($_POST['socialData']['html'])){
-	        $blockquote = 'blockquote: '.contest_gal1ery_htmlentities_and_preg_replace($_POST['socialData']['html']).';';
-        }
-	    $_POST = cg1l_sanitize_post($_POST);
-
-	    $isBackendCall = true;
-        $isAjaxCall = true;
-
-        $isAjaxCategoriesCall = true;
-
-        global $wp_version;
-        $sanitize_textarea_field = ($wp_version < 4.7) ? 'sanitize_text_field' : 'sanitize_textarea_field';
-
-	    $cgVersion = cg_get_version_for_scripts();
-
-        if (defined('DOING_AJAX') && DOING_AJAX) {
-
-            $user = wp_get_current_user();
-
-            if (
-                is_super_admin($user->ID) ||
-                in_array('administrator', (array)$user->roles) ||
-                in_array('editor', (array)$user->roles) ||
-                in_array('author', (array)$user->roles)
-            ) {
-
-                $post_mime_type = '';
-
-	            if($_POST['urlType']=='youtube'){
-		            $post_mime_type = 'contest-gallery-youtube';
-	            }
-	            if($_POST['urlType']=='twitter'){
-		            $post_mime_type = 'contest-gallery-twitter';
-	            }
-	            if($_POST['urlType']=='instagram'){
-		            $post_mime_type = 'contest-gallery-instagram';
-	            }
-	            if($_POST['urlType']=='tiktok'){
-		            $post_mime_type = 'contest-gallery-tiktok';
-	            }
-                $post_name = $_POST['urlPart'];
-	            $post_title = $_POST['socialData']['title'];
-	            $post_content = '';
-	            if(!empty($_POST['socialData']['author_name'])){
-	                $post_content = 'author_name: '.$_POST['socialData']['author_name'].'; author_url: '.$_POST['socialData']['author_url'].'; type: '.$_POST['socialData']['type'].'; version: '.$_POST['socialData']['version'].'; '.$blockquote;
-                }
-	            if($_POST['urlType']=='instagram'){
-		            $post_title = $post_name;
-		            $post_content = '';
-	            }
-	            $guid = $_POST['guid'];
-	            //$GalleryID = intval($_POST['gid']);
-
-	            global $wpdb;
-	            $table_posts = $wpdb->prefix . "posts";
-	            //$tablename_options = $wpdb->prefix . "contest_gal1ery_options";
-
-	            //$galleryDbVersion = $wpdb->get_var( "SELECT Version FROM $tablename_options WHERE id='$GalleryID'");
-
-                $post_type = 'contest-gallery';
-                //if(intval($galleryDbVersion)>=24){
-	                //$post_type = 'contest-galleries';
-                //}
-
-	            $post_title = substr(cg_pre_process_name_for_url_name($post_title),0,100);
-
-	            $array = [
-                    'post_title'=> $post_title,
-                    'post_name'=> $post_name,
-                    'guid'=> $guid,
-                    'post_type'=>$post_type,
-                    'post_content'=>$post_content,
-                    'post_mime_type'=>$post_mime_type,
-                    'post_status'=>'publish'
-                ];
-
-	            $postId = wp_insert_post($array);
-
-
-				// by default post_name will be converted to lowercase, so has to be update to original (which is with uppercases mostly) here
-	            // also wordpress replace post_name by adding -1 and so on if same by defaul
-	            $wpdb->update(
-		            "$table_posts",
-		            array('post_name' => $post_name),
-		            array('ID' => $postId),
-		            array('%s'),
-		            array('%d')
-	            );
-
-	            echo '###SOCIAL-PLATFORM-POST-TYPE-ADDED###';
-
-	            die;
-
-            } else {
-                echo "<div id='cgSaveCategoriesCouldNotBeChanged'><h2>MISSINGRIGHTS<br>post_cg_social_platform_input can be edited only as administrator, editor or author.</h2></div>";
-                exit();
-            }
-
-            exit();
-        } else {
-            exit();
-        }
+        cg_social_embed_save();
     }
 }
 // youtube input ---- END
@@ -1025,6 +921,17 @@ add_action('wp_ajax_post_cg_social_platforms_add_to_gallery', 'post_cg_social_pl
 if (!function_exists('post_cg_social_platforms_add_to_gallery')) {
     function post_cg_social_platforms_add_to_gallery()
     {
+
+        if (!empty($_POST['cg_social_direct'])) {
+            cg_backend_ajax_require_access_json();
+            global $wpdb;
+            $galleryId = isset($_POST['action2']) ? absint($_POST['action2']) : 0;
+            $ids = isset($_POST['cg_wp_post_ids']) && is_array($_POST['cg_wp_post_ids']) ? $_POST['cg_wp_post_ids'] : array();
+            $post = count($ids) === 1 ? get_post(absint(reset($ids))) : false;
+            if (!$galleryId || !$wpdb->get_var($wpdb->prepare('SELECT id FROM '.$wpdb->prefix.'contest_gal1ery_options WHERE id=%d', $galleryId)) || !$post || $post->post_type !== 'contest-gallery' || !in_array($post->post_mime_type, array('contest-gallery-youtube','contest-gallery-instagram','contest-gallery-twitter','contest-gallery-tiktok'), true)) {
+                cg_backend_ajax_error_json('The gallery or social post is no longer available. Reload the gallery.', 400, 'cg_social_gallery');
+            }
+        }
 	    cg_require_backend_access();
 
 	    contest_gal1ery_db_check();

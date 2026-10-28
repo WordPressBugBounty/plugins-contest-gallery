@@ -1,11 +1,14 @@
 cgJsClassAdmin.createUpload.dragAndDrop = {}
 cgJsClassAdmin.createUpload.dragAndDrop = {
     temporaryDropRowsTimeout: null,
+    highlightedField: null,
+    highlightTimeout: null,
     drag: function(ev) {
         var dragged = this.getDraggedElementFromEvent(ev);
 
         if (!dragged || !dragged.id) return;
 
+        this.clearDropHighlight();
         ev.dataTransfer.setData("text", dragged.id);
         ev.dataTransfer.effectAllowed = "move";
         dragged.classList.add('cg_dragging');
@@ -22,6 +25,8 @@ cgJsClassAdmin.createUpload.dragAndDrop = {
     dragEnd: function(ev) {
         var dragged = this.getDraggedElementFromEvent(ev);
         var $rightSide = dragged ? jQuery(dragged).closest('#cgRightSide') : jQuery(ev.currentTarget).closest('#cgRightSide');
+        var scrollContainer = dragged ? this.getScrollContainer(dragged) : null;
+        var draggedTopBefore = dragged ? dragged.getBoundingClientRect().top : null;
 
         if(dragged){
             dragged.classList.remove('cg_dragging');
@@ -31,6 +36,7 @@ cgJsClassAdmin.createUpload.dragAndDrop = {
         this.removeHovered(ev);
         this.removeTemporaryDropRows($rightSide);
         cgJsClassAdmin.createUpload.functions.addRightFieldOrderAndAddRowsAndColumns(jQuery);
+        this.restoreDraggedVisualPosition(dragged, scrollContainer, draggedTopBefore);
 
     },
     drop: function(ev) {
@@ -39,6 +45,8 @@ cgJsClassAdmin.createUpload.dragAndDrop = {
         var $rightSide = jQuery(target).closest('#cgRightSide');
         var targetIsField = target.classList.contains('cg_el');
         var targetIsTemporaryDropTarget = target.classList.contains('cg_drag_drop_temporary_target');
+        var scrollContainer = this.getScrollContainer(target);
+        var targetTopBefore = target.getBoundingClientRect().top;
         this.clearTemporaryDropRowsTimeout();
         cgJsClassAdmin.createUpload.dragAndDrop.hoverOff(ev);
 
@@ -49,16 +57,20 @@ cgJsClassAdmin.createUpload.dragAndDrop = {
         // Ensure drag started from .cg_upl_add
         if (!dragged || !dragged.classList.contains('cg_el')) {
             this.removeTemporaryDropRows($rightSide);
+            this.restoreDraggedVisualPosition(target, scrollContainer, targetTopBefore);
             return;
         }
 
         // Target must be either .cg_el or .cg_upl_add
         if (!target.matches('.cg_el, .cg_upl_add')) {
             this.removeTemporaryDropRows($rightSide);
+            this.restoreDraggedVisualPosition(target, scrollContainer, targetTopBefore);
             return;
         }
         if (dragged === target) {
             this.removeTemporaryDropRows($rightSide);
+            this.restoreDraggedVisualPosition(target, scrollContainer, targetTopBefore);
+            this.highlightDroppedField(dragged);
             return;
         }
 
@@ -110,6 +122,26 @@ cgJsClassAdmin.createUpload.dragAndDrop = {
         this.normalizeAddRows($rightSide);
         cgJsClassAdmin.createUpload.functions.showDelRow();
         cgJsClassAdmin.createUpload.functions.addRightFieldOrderAndAddRowsAndColumns(jQuery);
+        // Keep the placed field at the drop target while temporary rows collapse.
+        this.restoreDraggedVisualPosition(dragged, scrollContainer, targetTopBefore);
+        this.highlightDroppedField(dragged);
+    },
+    clearDropHighlight: function() {
+        clearTimeout(this.highlightTimeout);
+        if(this.highlightedField){
+            this.highlightedField.classList.remove('cg_drop_highlight');
+        }
+        this.highlightedField = null;
+        this.highlightTimeout = null;
+    },
+    highlightDroppedField: function(field) {
+        var self = this;
+        this.clearDropHighlight();
+        this.highlightedField = field;
+        field.classList.add('cg_drop_highlight');
+        this.highlightTimeout = setTimeout(function() {
+            self.clearDropHighlight();
+        }, 650);
     },
     removeSourceRowIfEmpty: function($sourceRow) {
         if(!$sourceRow || !$sourceRow.length || !$sourceRow.parent().length){
@@ -219,7 +251,7 @@ cgJsClassAdmin.createUpload.dragAndDrop = {
         var scrollTop;
         var delta;
 
-        if(!dragged || !scrollContainer || draggedTopBefore === null){
+        if(!dragged || !document.documentElement.contains(dragged) || !scrollContainer || draggedTopBefore === null){
             return;
         }
 

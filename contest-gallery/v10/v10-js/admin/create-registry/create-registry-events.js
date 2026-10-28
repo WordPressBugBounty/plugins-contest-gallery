@@ -394,12 +394,12 @@ jQuery(document).ready(function ($) {
             debugger
             if ($('select[name="dauswahl"] :selected').hasClass('cg-pro-false')) {
                 alert('Only available in PRO version');
-                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddRegField');
                 return;
             }
             if ($('#cgCreateUploadSortableArea .regCheckField').length == 10) {
                 alert("This field can be added maximum 10 times");
-                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddRegField');
                 return;
             }else {
                 var newId = cloneAndAppendNewField('regCheckField');
@@ -410,12 +410,12 @@ jQuery(document).ready(function ($) {
             debugger
             if ($('select[name="dauswahl"] :selected').hasClass('cg-pro-false')) {
                 alert('Only available in PRO version');
-                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddRegField');
                 return;
             }
             if ($('#cgCreateUploadSortableArea .regRadioField').length == 10) {
                 alert("This field can be added maximum 10 times");
-                cgJsClassAdmin.gallery.functions.showModal('#cgAddUplField');
+                cgJsClassAdmin.gallery.functions.showModal('#cgAddRegField');
                 return;
             }else {
                 var newId = cloneAndAppendNewField('regRadioField');

@@ -67,7 +67,8 @@ $ForwardToUrlNewTab = 0;
 $checkedForwardToUrl = '';
 $checkedForwardToUrlNewTab = '';
 
-if (!empty($_POST['upload'])) {
+$cgFormSaveContext = null;
+if (!empty($_POST['upload']) || isset($_POST['cg_form_kind'])) {
 
 //  echo "<pre>";
 //     print_r($_POST);
@@ -76,13 +77,16 @@ if (!empty($_POST['upload'])) {
  //die;
 
     check_admin_referer('cg_admin');
+    try{
+    cg_form_save_begin($cgFormSaveContext,'upload',$GalleryID,false,$dbGalleryVersion,$cgProVersion);
+    $_POST['upload'] = cg_upload_form_prepare_layouts($_POST['upload']);
     $cgCaptchaConfigs = array();
     foreach($_POST['upload'] as $cgId=>$cgField){
         if(empty($cgField['type']) || $cgField['type']!=='caRoRe'){continue;}
         $cgExistingId = empty($cgField['new']) ? absint($cgId) : 0;
-        if($cgExistingId && !$wpdb->get_var($wpdb->prepare("SELECT id FROM $tablename_form_input WHERE id=%d AND GalleryID=%d AND Field_Type='caRoRe-f'",$cgExistingId,$GalleryID))){wp_die('Invalid CAPTCHA field.');}
+        if($cgExistingId && !$wpdb->get_var($wpdb->prepare("SELECT id FROM $tablename_form_input WHERE id=%d AND GalleryID=%d AND Field_Type='caRoRe-f'",$cgExistingId,$GalleryID))){throw new Exception('Invalid CAPTCHA field.');}
         $cgRecord = cg_captcha_prepare_config('upload',$cgExistingId,isset($cgField['ReCaKey']) ? $cgField['ReCaKey'] : '',isset($cgField['ReCaSecret']) ? $cgField['ReCaSecret'] : '',empty($cgField['hide']));
-        if(is_wp_error($cgRecord)){wp_die(esc_html($cgRecord->get_error_message()),'',array('back_link'=>true));}
+        cg_form_save_check($cgRecord);
         $cgCaptchaConfigs[$cgId] = $cgRecord;
     }
 
@@ -100,9 +104,8 @@ if (!empty($_POST['upload'])) {
 
     // make json file
     $optionsFile = $wp_upload_dir['basedir'] . '/contest-gallery/gallery-id-' . $GalleryID . '/json/' . $GalleryID . '-options.json';
-    $fp = fopen($optionsFile, 'r');
-    $optionsFileData = json_decode(fread($fp, filesize($optionsFile)), true);
-    fclose($fp);
+    $optionsFileData = json_decode(@file_get_contents($optionsFile), true);
+    if(!is_array($optionsFileData)){throw new Exception('The gallery settings file could not be read. No changes were saved.');}
 
     $realWatermarkSelectedUploadKey = cg_upload_form_real_watermark_get_selected_upload_key($_POST['upload'], $dbGalleryVersion);
     $legacyWatermarkSelectedUploadKey = cg_upload_form_legacy_watermark_get_selected_upload_key($_POST['upload'], $dbGalleryVersion, $realWatermarkSelectedUploadKey);
@@ -121,10 +124,11 @@ if (!empty($_POST['upload'])) {
     // L�schen Ddaten in Tablename f_output
 
     $deletedFieldnumberInput = 0;
-    $IsForWpPageTitleInputDeleted = false;
     $categoriesDeleted = false;
 
     $deleteFieldnumberArray = [];
+
+    $cgFormSaveContext['writes_started'] = true;
 
     if (!empty($_POST['deleteFieldnumber'])) {
 
@@ -140,20 +144,20 @@ if (!empty($_POST['upload'])) {
 
             $deleteFieldnumberArray[] = $deleteFieldnumber;
 
-            $wpdb->query($wpdb->prepare(
+            cg_form_save_check($wpdb->query($wpdb->prepare(
                 "
                     DELETE FROM $tablename_categories WHERE GalleryID = %d
                 ",
                 $GalleryID
-            ));
+            )));
 
-            $wpdb->update(
+            cg_form_save_check($wpdb->update(
                 "$tablename",
                 array('Category' => 0),
                 array('GalleryID' => $GalleryID),
                 array('%d'),
                 array('%d')
-            );
+            ));
 
         }
 
@@ -167,38 +171,28 @@ if (!empty($_POST['upload'])) {
 //        var_dump('$deleteFieldnumberArray');
 //         var_dump($deleteFieldnumberArray);
 
-        $IsForWpPageTitleInputId = $wpdb->get_var("SELECT id FROM $tablename_form_input WHERE GalleryID = '$GalleryID' AND IsForWpPageTitle = '1'");
-
         foreach ($deleteFieldnumberArray as $deleteFieldnumber) {
 
-            if (!empty($deleteFieldnumber) && !empty($IsForWpPageTitleInputId) && $deleteFieldnumber == $IsForWpPageTitleInputId) {
-                $IsForWpPageTitleInputDeleted = true;
-                // isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized can be reseted generally in that case
-                if (!empty($_POST['isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized']) && $_POST['isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized'] == $deleteFieldnumber) {
-                    $_POST['isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized'] = '';
-                }
-            }
-
-            $wpdb->query($wpdb->prepare(
+            cg_form_save_check($wpdb->query($wpdb->prepare(
                 "
                 DELETE FROM $tablename_form_input WHERE GalleryID = %d AND id = %d
              ",
                 $GalleryID, $deleteFieldnumber
-            ));
+            )));
 
-            $wpdb->query($wpdb->prepare(
+            cg_form_save_check($wpdb->query($wpdb->prepare(
                 "
                 DELETE FROM $tablename_form_output WHERE GalleryID = %d AND f_input_id = %d
              ",
                 $GalleryID, $deleteFieldnumber
-            ));
+            )));
 
-            $wpdb->query($wpdb->prepare(
+            cg_form_save_check($wpdb->query($wpdb->prepare(
                 "
                 DELETE FROM $tablenameentries WHERE GalleryID = %d AND f_input_id = %d
              ",
                 $GalleryID, $deleteFieldnumber
-            ));
+            )));
 
         }
 
@@ -214,20 +208,20 @@ if (!empty($_POST['upload'])) {
 
         foreach ($_POST['deleteCategory'] as $categoryId) {
             $categoryId = intval($categoryId);
-            $wpdb->query($wpdb->prepare(
+            cg_form_save_check($wpdb->query($wpdb->prepare(
                 "
-                DELETE FROM $tablename_categories WHERE id = %d
+                DELETE FROM $tablename_categories WHERE id = %d AND GalleryID = %d
              ",
-                $categoryId
-            ));
+                $categoryId, $GalleryID
+            )));
             // wenn es die Kategorie gibt wird diese mit 0 upgedatet, wenn nicht dann nicht
-            $wpdb->update(
+            cg_form_save_check($wpdb->update(
                 "$tablename",
                 array('Category' => 0),
-                array('Category' => $categoryId),
+                array('Category' => $categoryId, 'GalleryID' => $GalleryID),
                 array('%d'),
-                array('%d')
-            );
+                array('%d','%d')
+            ));
         }
 
     }
@@ -241,13 +235,13 @@ if (!empty($_POST['upload'])) {
 
         if (empty($categoriesCount)) { // then CatWidget option has to be set to 1 and show other also to 1 again
 
-            $wpdb->update(
+            cg_form_save_check($wpdb->update(
                 "$tablename_pro_options",
                 array('ShowOther' => 1, 'CatWidget' => 1),
                 array('GalleryID' => $GalleryID),
                 array('%d', '%d'),
                 array('%s')
-            );
+            ));
 
 
             if (!empty($optionsFileData[$GalleryID])) {
@@ -269,9 +263,7 @@ if (!empty($_POST['upload'])) {
 
             // make json file
             $optionsFile = $wp_upload_dir['basedir'] . '/contest-gallery/gallery-id-' . $GalleryID . '/json/' . $GalleryID . '-options.json';
-            $fp = fopen($optionsFile, 'w');
-            fwrite($fp, json_encode($optionsFileData));
-            fclose($fp);
+            // Write generated files only after the database commit.
 
         }
 
@@ -290,30 +282,30 @@ if (!empty($_POST['upload'])) {
             if (is_array($value)) {
 
                 foreach ($value as $id => $name) {
-                    $name = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($name);
-                    $wpdb->update(
+                    $name = cg_form_store_value($name,isset($cgFormSaveContext['categories'][$id]['Name']) ? $cgFormSaveContext['categories'][$id]['Name'] : null);
+                    cg_form_save_check($wpdb->update(
                         "$tablename_categories",
                         array('Name' => $name, 'Field_Order' => $order),
-                        array('id' => $id),
+                        array('id' => $id, 'GalleryID' => $GalleryID),
                         array('%s'),
-                        array('%d')
-                    );
+                        array('%d','%d')
+                    ));
                     $order++;
 
                 }
 
             } else {
 
-                $value = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($value);
+                $value = cg_form_store_value($value);
 
-                $wpdb->query($wpdb->prepare(
+                cg_form_save_check($wpdb->query($wpdb->prepare(
                     "
                       INSERT INTO $tablename_categories
                       ( id, GalleryID, Name, Field_Order, Active)
                       VALUES ( %s,%s,%s,%s,%d )
                    ",
                     '', $GalleryID, $value, $order, 1
-                ));
+                )));
 
                 $order++;
 
@@ -339,6 +331,7 @@ if (!empty($_POST['upload'])) {
             }
 
             $realWatermarkUploadKey = (string)$id;
+            $cgOriginalContent = isset($cgFormSaveContext['fields'][$id]) ? maybe_unserialize($cgFormSaveContext['fields'][$id]['Field_Content']) : array();
 
             if (strpos($id, 'new-') !== false) {
                 $id = 'new';
@@ -384,9 +377,9 @@ if (!empty($_POST['upload'])) {
                 $bhFieldsArray['mandatory'] = cg1l_sanitize_method($onOff);
                 $bhFieldsArray['collapsed'] = cg1l_sanitize_method($collapsed);
 
-                $bhFieldsArray['titel'] = cg1l_sanitize_method($field['title']);
+                $bhFieldsArray['titel'] = cg_form_store_value($field['title'],isset($cgOriginalContent['titel']) ? $cgOriginalContent['titel'] : null);
                 $bhFieldsArray['file-type-img'] = cg1l_sanitize_method(!empty($field['file-type-img']) ? $field['file-type-img'] : '');
-                $bhFieldsArray['alternative-file-title'] = cg1l_sanitize_method(!empty($field['alternative-file-title']) ? $field['alternative-file-title'] : '');
+                $bhFieldsArray['alternative-file-title'] = cg_form_store_value(isset($field['alternative-file-title']) ? $field['alternative-file-title'] : '');
                 $bhFieldsArray['alternative-file-type-pdf'] = cg1l_sanitize_method(!empty($field['alternative-file-type-pdf']) ? $field['alternative-file-type-pdf'] : '');
                 $bhFieldsArray['alternative-file-type-zip'] = cg1l_sanitize_method(!empty($field['alternative-file-type-zip']) ? $field['alternative-file-type-zip'] : '');
                 $bhFieldsArray['alternative-file-type-txt'] = cg1l_sanitize_method(!empty($field['alternative-file-type-txt']) ? $field['alternative-file-type-txt'] : '');
@@ -407,71 +400,59 @@ if (!empty($_POST['upload'])) {
                 $bhFieldsArray['alternative-file-type-pptx'] = cg1l_sanitize_method(!empty($field['alternative-file-type-pptx']) ? $field['alternative-file-type-pptx'] : '');
                 //$bhFieldsArray['alternative-file-type-wmv'] = cg1l_sanitize_method(!empty($field['alternative-file-type-wmv']) ? $field['alternative-file-type-wmv'] : '' );
 
-                if (!empty($cgProFalse)) {
-                    $bhFieldsArray['alternative-file-type-pdf'] = '';
-                    $bhFieldsArray['alternative-file-type-zip'] = '';
-                    // $bhFieldsArray['alternative-file-type-txt'] = '';
-                    //$bhFieldsArray['alternative-file-type-doc'] = '';
-                    $bhFieldsArray['alternative-file-type-docx'] = '';
-                    //$bhFieldsArray['alternative-file-type-xls'] = '';
-                    $bhFieldsArray['alternative-file-type-xlsx'] = '';
-                    //$bhFieldsArray['alternative-file-type-csv'] = '';
-                    $bhFieldsArray['alternative-file-type-mp3'] = '';
-                    $bhFieldsArray['alternative-file-type-m4a'] = '';
-                    $bhFieldsArray['alternative-file-type-ogg'] = '';
-                    $bhFieldsArray['alternative-file-type-wav'] = '';
-                    $bhFieldsArray['alternative-file-type-mp4'] = '';
-                    $bhFieldsArray['alternative-file-type-mov'] = '';
-                    //$bhFieldsArray['alternative-file-type-avi'] = '';
-                    $bhFieldsArray['alternative-file-type-webm'] = '';
-                    //$bhFieldsArray['alternative-file-type-wmv'] = '';
-                    //$bhFieldsArray['alternative-file-type-ppt'] = '';
-                    $bhFieldsArray['alternative-file-type-pptx'] = '';
+                if (!empty($cgProFalse) && empty($field['new'])) {
+                    $cgStoredImage = $wpdb->get_var($wpdb->prepare("SELECT Field_Content FROM $tablename_form_input WHERE id=%d AND GalleryID=%d",$id,$GalleryID));
+                    if($wpdb->last_error){throw new Exception('The image field could not be read.');}
+                    $cgStoredImage = maybe_unserialize($cgStoredImage);
+                    foreach(array('alternative-file-type-pdf','alternative-file-type-zip','alternative-file-type-docx','alternative-file-type-xlsx','alternative-file-type-mp3','alternative-file-type-m4a','alternative-file-type-ogg','alternative-file-type-wav','alternative-file-type-mp4','alternative-file-type-mov','alternative-file-type-webm','alternative-file-type-pptx') as $cgFormat){
+                        $bhFieldsArray[$cgFormat] = isset($cgStoredImage[$cgFormat]) ? $cgStoredImage[$cgFormat] : '';
+                    }
                 }
 
                 $bhFieldsArray['alternative-file-preview-required'] = cg1l_sanitize_method(!empty($field['alternative-file-preview-required']) ? $field['alternative-file-preview-required'] : '');
                 $bhFieldsArray['alternative-file-preview-hide'] = cg1l_sanitize_method(!empty($field['alternative-file-preview-hide']) ? $field['alternative-file-preview-hide'] : '');
 
-                $bhFieldsArray = serialize($bhFieldsArray);
+                $bhFieldsArray = cg_upload_form_serialize_content($bhFieldsArray, $field);
                 $order = $field['order'];
 
 
                 if (empty($field['new'])) {
 
-                    $wpdb->update(
+                    cg_form_save_check($wpdb->update(
                         "$tablename_form_input",
                         array(
                             'GalleryID' => $GalleryID, 'Field_Type' => 'image-f', 'Field_Order' => $order, 'Field_Content' => $bhFieldsArray, 'Active' => $active, 'Show_Slider' => 0, 'RowNumber' => $RowNumber, 'ColNumber' => $ColNumber, 'RowCols' => $RowCols
                         ),
-                        array('id' => $id),
+                        array('id' => $id, 'GalleryID' => $GalleryID),
                         array('%d', '%s', '%s', '%s', '%s', '%d', '%d', '%d'),
-                        array('%d')
-                    );
+                        array('%d','%d')
+                    ));
 
                 } else {
 
-                    $wpdb->query($wpdb->prepare(
+                    cg_form_save_check($wpdb->query($wpdb->prepare(
                         "
                       INSERT INTO $tablename_form_input
                       ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,RowNumber,ColNumber,RowCols)
                       VALUES ( %s,%d,%s,%d,%s,%d,%d,%d,%d,%d )
                    ",
                         '', $GalleryID, 'image-f', $order, $bhFieldsArray, 0, $active, $RowNumber, $ColNumber, $RowCols
-                    ));
+                    )));
+                    $cgInsertedFieldId = (int)$wpdb->insert_id;
 
                 }
 
             }
 
-            if ($field['type'] == 'cb' && $cgProVersion) {// CHECK AGREEMENT!!!!!!!
+            if ($field['type'] == 'cb' && ($cgProVersion || empty($field['new']))) {// CHECK AGREEMENT!!!!!!!
 
                 $ColNumber = (!empty($field['ColNumber'])) ? absint($field['ColNumber']) : 1;
                 $RowNumber = (!empty($field['RowNumber'])) ? absint($field['RowNumber']) : 1;
                 $RowCols = (!empty($field['RowCols'])) ? absint($field['RowCols']) : 1;
 
                 $cbFieldsArray = array();
-                $cbFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
-                $cbFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
+                $cbFieldsArray['titel'] = cg_form_store_value($field['title'],isset($cgOriginalContent['titel']) ? $cgOriginalContent['titel'] : null);
+                $cbFieldsArray['content'] = cg_form_store_value($field['content'],isset($cgOriginalContent['content']) ? $cgOriginalContent['content'] : null);
 
                 if (!empty($field['infoInSlider'])) {
                     $Show_Slider = 1;
@@ -495,16 +476,16 @@ if (!empty($_POST['upload'])) {
                                 print_r($cbFieldsArray);
                                 echo "</pre>";*/
 
-                $cbFieldsArray = serialize($cbFieldsArray);
+                $cbFieldsArray = cg_upload_form_serialize_content($cbFieldsArray, $field);
 
                 if (empty($field['new'])) {
-                    $wpdb->update(
+                    cg_form_save_check($wpdb->update(
                         "$tablename_form_input",
                         array('GalleryID' => $GalleryID, 'Field_Type' => 'check-f', 'Field_Order' => $order, 'Field_Content' => $cbFieldsArray, 'Active' => $active, 'Show_Slider' => $Show_Slider, 'Version' => $Version, 'RowNumber' => $RowNumber, 'ColNumber' => $ColNumber, 'RowCols' => $RowCols),
-                        array('id' => $id),
+                        array('id' => $id, 'GalleryID' => $GalleryID),
                         array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d'),
-                        array('%d')
-                    );
+                        array('%d','%d')
+                    ));
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $id;
                     }
@@ -516,23 +497,24 @@ if (!empty($_POST['upload'])) {
                     }
 
                 } else {
-                    $wpdb->query($wpdb->prepare(
+                    cg_form_save_check($wpdb->query($wpdb->prepare(
                         "
                                 INSERT INTO $tablename_form_input
                       ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider, Active, Version,RowNumber,ColNumber,RowCols)
                       VALUES ( %s,%d,%s,%d,%s,%d,%d,%s,%d,%d,%d )
                             ",
                         '', $GalleryID, 'check-f', $order, $cbFieldsArray, $Show_Slider, $active, $Version, $RowNumber, $ColNumber, $RowCols
-                    ));
+                    )));
+                    $cgInsertedFieldId = (int)$wpdb->insert_id;
 
                     if (!empty($field['infoInGallery'])) {
-                        $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInGalleryId = $cgInsertedFieldId;
                     }
                     if (!empty($field['infoInFullWindowBlogView'])) {
-                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInFullWindowBlogViewId = $cgInsertedFieldId;
                     }
                     if (!empty($field['tagInGallery'])) {
-                        $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $tagInGalleryId = $cgInsertedFieldId;
                     }
 
                 }
@@ -545,8 +527,8 @@ if (!empty($_POST['upload'])) {
                 $RowCols = (!empty($field['RowCols'])) ? absint($field['RowCols']) : 1;
 
                 $nfFieldsArray = array();
-                $nfFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
-                $nfFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
+                $nfFieldsArray['titel'] = cg_form_store_value($field['title'],isset($cgOriginalContent['titel']) ? $cgOriginalContent['titel'] : null);
+                $nfFieldsArray['content'] = cg_form_store_value($field['content'],isset($cgOriginalContent['content']) ? $cgOriginalContent['content'] : null);
                 $nfFieldsArray['min-char'] = absint($field['min-char']);
                 $nfFieldsArray['max-char'] = absint($field['max-char']);
 
@@ -589,7 +571,7 @@ if (!empty($_POST['upload'])) {
                     $SubTitle = 0;
                 }
 
-                $FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? trim($field['FieldTitleGallery']) : '';
+                $FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? wp_unslash($field['FieldTitleGallery']) : '';
 
                 if (strpos($Version, '-PRO') === false) {
                     $SubTitle = 0;
@@ -640,7 +622,7 @@ if (!empty($_POST['upload'])) {
                 print_r($nfFieldsArray);
                 echo "</pre>";*/
 
-                $nfFieldsArray = serialize($nfFieldsArray);
+                $nfFieldsArray = cg_upload_form_serialize_content($nfFieldsArray, $field);
                 $order = $field['order'];
 
                 $fieldType = ($field['type'] == 'nf') ? 'text-f' : 'fbt-f';
@@ -652,17 +634,17 @@ if (!empty($_POST['upload'])) {
                     //var_dump('update');
                     //var_dump($id);
                     //var_dump($tablename_form_input);
-                    $wpdb->update(
+                    cg_form_save_check($wpdb->update(
                         "$tablename_form_input",
                         array('GalleryID' => $GalleryID, 'Field_Type' => $fieldType, 'Field_Order' => $order, 'Field_Content' => $nfFieldsArray,
                             'Active' => $active, 'Show_Slider' => $Show_Slider, 'WatermarkPosition' => $WatermarkPosition, 'IsForWpPageTitle' => $IsForWpPageTitle, 'IsForWpPageDescription' => $IsForWpPageDescription, 'SubTitle' => $SubTitle, 'ThirdTitle' => $ThirdTitle, 'EcommerceTitle' => $EcommerceTitle, 'EcommerceDescription' => $EcommerceDescription, 'WpAttachmentDetailsType' => $WpAttachmentDetailsType,
                             'FieldTitleGallery' => $FieldTitleGallery, 'RowNumber' => $RowNumber, 'ColNumber' => $ColNumber, 'RowCols' => $RowCols
                         ),
-                        array('id' => $id),
+                        array('id' => $id, 'GalleryID' => $GalleryID),
                         array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%d'),
-                        array('%d')
-                    );
-                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $id, $RealWatermarkSettings);
+                        array('%d','%d')
+                    ));
+                    cg_form_save_check(cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $id, $RealWatermarkSettings));
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $id;
                     }
@@ -695,15 +677,16 @@ if (!empty($_POST['upload'])) {
                     }
                 } else {
 
-                    $wpdb->query($wpdb->prepare(
+                    cg_form_save_check($wpdb->query($wpdb->prepare(
                         "
                                 INSERT INTO $tablename_form_input
                       ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,WatermarkPosition,IsForWpPageTitle,IsForWpPageDescription,SubTitle,ThirdTitle,EcommerceTitle,EcommerceDescription,WpAttachmentDetailsType,FieldTitleGallery,RowNumber,ColNumber,RowCols)
                       VALUES ( %s,%d,%s,%d,%s,%d,%d,%s,%d,%d,%d,%d,%s,%s,%s,%s,%d,%d,%d )
                             ",
                         '', $GalleryID, $fieldType, $order, $nfFieldsArray, $Show_Slider, $active, $WatermarkPosition, $IsForWpPageTitle, $IsForWpPageDescription, $SubTitle, $ThirdTitle, $EcommerceTitle, $EcommerceDescription, $WpAttachmentDetailsType, $FieldTitleGallery, $RowNumber, $ColNumber, $RowCols
-                    ));
-                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $wpdb->insert_id, $RealWatermarkSettings);
+                    )));
+                    $cgInsertedFieldId = (int)$wpdb->insert_id;
+                    cg_form_save_check(cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $cgInsertedFieldId, $RealWatermarkSettings));
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $wpdb->insert_id;
                     }
@@ -723,16 +706,16 @@ if (!empty($_POST['upload'])) {
                         $EcommerceDescriptionToSet = $wpdb->insert_id;
                     }
                     if (!empty($field['alternativeFileTypeName'])) {
-                        $alternativeFileTypeNameId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $alternativeFileTypeNameId = $cgInsertedFieldId;
                     }
                     if (!empty($field['infoInGallery'])) {
-                        $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInGalleryId = $cgInsertedFieldId;
                     }
                     if (!empty($field['infoInFullWindowBlogView'])) {
-                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInFullWindowBlogViewId = $cgInsertedFieldId;
                     }
                     if (!empty($field['tagInGallery'])) {
-                        $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $tagInGalleryId = $cgInsertedFieldId;
                     }
 
                 }
@@ -745,8 +728,8 @@ if (!empty($_POST['upload'])) {
                 $RowCols = (!empty($field['RowCols'])) ? absint($field['RowCols']) : 1;
 
                 $dtFieldsArray = array();
-                $dtFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
-                $dtFieldsArray['format'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['format']);
+                $dtFieldsArray['titel'] = cg_form_store_value($field['title'],isset($cgOriginalContent['titel']) ? $cgOriginalContent['titel'] : null);
+                $dtFieldsArray['format'] = cg_form_store_value($field['format'],isset($cgOriginalContent['format']) ? $cgOriginalContent['format'] : null);
 
 
                 if (!empty($field['infoInSlider'])) {
@@ -778,7 +761,7 @@ if (!empty($_POST['upload'])) {
                 print_r($dtFieldsArray);
                 echo "</pre>";*/
 
-                $dtFieldsArray = serialize($dtFieldsArray);
+                $dtFieldsArray = cg_upload_form_serialize_content($dtFieldsArray, $field);
                 $order = $field['order'];
 
                 $fieldType = 'date-f';
@@ -789,7 +772,7 @@ if (!empty($_POST['upload'])) {
                     $SubTitle = 0;
                 }
 
-                $FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? trim($field['FieldTitleGallery']) : '';
+                $FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? wp_unslash($field['FieldTitleGallery']) : '';
 
                 if (strpos($Version, '-PRO') === false) {
                     $SubTitle = 0;
@@ -802,14 +785,14 @@ if (!empty($_POST['upload'])) {
                 }
 
                 if (empty($field['new'])) {
-                    $wpdb->update(
+                    cg_form_save_check($wpdb->update(
                         "$tablename_form_input",
                         array('GalleryID' => $GalleryID, 'Field_Type' => $fieldType, 'Field_Order' => $order, 'Field_Content' => $dtFieldsArray, 'Active' => $active, 'Show_Slider' => $Show_Slider, 'SubTitle' => $SubTitle, 'ThirdTitle' => $ThirdTitle,
                             'FieldTitleGallery' => $FieldTitleGallery, 'RowNumber' => $RowNumber, 'ColNumber' => $ColNumber, 'RowCols' => $RowCols),
-                        array('id' => $id),
+                        array('id' => $id, 'GalleryID' => $GalleryID),
                         array('%d', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d', '%d', '%d'),
-                        array('%d')
-                    );
+                        array('%d','%d')
+                    ));
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $id;
                     }
@@ -828,14 +811,15 @@ if (!empty($_POST['upload'])) {
 
                 } else {
 
-                    $wpdb->query($wpdb->prepare(
+                    cg_form_save_check($wpdb->query($wpdb->prepare(
                         "
                                 INSERT INTO $tablename_form_input
                       ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,SubTitle,ThirdTitle,FieldTitleGallery,RowNumber,ColNumber,RowCols)
                       VALUES ( %s,%d,%s,%d,%s,%d,%d,%d,%d,%s,%d,%d,%d )
                             ",
                         '', $GalleryID, $fieldType, $order, $dtFieldsArray, $Show_Slider, $active, $SubTitle, $ThirdTitle, $FieldTitleGallery, $RowNumber, $ColNumber, $RowCols
-                    ));
+                    )));
+                    $cgInsertedFieldId = (int)$wpdb->insert_id;
 
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $wpdb->insert_id;
@@ -844,28 +828,28 @@ if (!empty($_POST['upload'])) {
                         $ThirdTitleToSet = $wpdb->insert_id;
                     }
                     if (!empty($field['infoInGallery'])) {
-                        $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInGalleryId = $cgInsertedFieldId;
                     }
                     if (!empty($field['infoInFullWindowBlogView'])) {
-                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInFullWindowBlogViewId = $cgInsertedFieldId;
                     }
                     if (!empty($field['tagInGallery'])) {
-                        $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $tagInGalleryId = $cgInsertedFieldId;
                     }
 
 
                 }
             }
 
-            if ($field['type'] == 'url' && ($cgProVersion || !$cgProVersion && floatval($dbGalleryVersion)<27)) {
+            if ($field['type'] == 'url' && ($cgProVersion || empty($field['new']) || !$cgProVersion && floatval($dbGalleryVersion)<27)) {
 
                 $ColNumber = (!empty($field['ColNumber'])) ? absint($field['ColNumber']) : 1;
                 $RowNumber = (!empty($field['RowNumber'])) ? absint($field['RowNumber']) : 1;
                 $RowCols = (!empty($field['RowCols'])) ? absint($field['RowCols']) : 1;
 
                 $urlFieldsArray = array();
-                $urlFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
-                $urlFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
+                $urlFieldsArray['titel'] = cg_form_store_value($field['title'],isset($cgOriginalContent['titel']) ? $cgOriginalContent['titel'] : null);
+                $urlFieldsArray['content'] = cg_form_store_value($field['content'],isset($cgOriginalContent['content']) ? $cgOriginalContent['content'] : null);
 
                 if (!empty($field['infoInSlider'])) {
                     $Show_Slider = 1;
@@ -873,7 +857,7 @@ if (!empty($_POST['upload'])) {
                     $Show_Slider = 0;
                 }
 
-                $FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? trim($field['FieldTitleGallery']) : '';
+                $FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? wp_unslash($field['FieldTitleGallery']) : '';
 
                 if (!empty($field['ForwardToUrl'])) {
                     $ForwardToUrl = 1;
@@ -909,23 +893,23 @@ if (!empty($_POST['upload'])) {
                 }
 
                 $urlFieldsArray['mandatory'] = cg1l_sanitize_method($onOff);
-                $urlFieldsArray = serialize($urlFieldsArray);
+                $urlFieldsArray = cg_upload_form_serialize_content($urlFieldsArray, $field);
                 $order = $field['order'];
 
                 if (empty($field['new'])) {
-                    $wpdb->update(
+                    cg_form_save_check($wpdb->update(
                         "$tablename_form_input",
                         array('GalleryID' => $GalleryID, 'Field_Type' => 'url-f', 'Field_Order' => $order,
                             'Field_Content' => $urlFieldsArray, 'Active' => $active,
                             'Show_Slider' => $Show_Slider, 'ForwardToUrl' => $ForwardToUrl, 'ForwardToUrlNewTab' => $ForwardToUrlNewTab,
                             'FieldTitleGallery' => $FieldTitleGallery, 'RowNumber' => $RowNumber, 'ColNumber' => $ColNumber, 'RowCols' => $RowCols),
-                        array('id' => $id),
+                        array('id' => $id, 'GalleryID' => $GalleryID),
                         array('%d', '%s', '%d',
                             '%s', '%d',
                             '%d', '%d', '%d',
                             '%s', '%d', '%d', '%d'),
-                        array('%d')
-                    );
+                        array('%d','%d')
+                    ));
 
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $id;
@@ -942,23 +926,24 @@ if (!empty($_POST['upload'])) {
 
                 } else {
 
-                    $wpdb->query($wpdb->prepare(
+                    cg_form_save_check($wpdb->query($wpdb->prepare(
                         "
                                 INSERT INTO $tablename_form_input
                       ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider, Active, ForwardToUrl, ForwardToUrlNewTab, FieldTitleGallery,RowNumber,ColNumber,RowCols)
                       VALUES ( %s,%d,%s,%d,%s,%d,%d,%d,%d,%s,%d,%d,%d )
                             ",
                         '', $GalleryID, 'url-f', $order, $urlFieldsArray, $Show_Slider, $active, $ForwardToUrl, $ForwardToUrlNewTab, $FieldTitleGallery, $RowNumber, $ColNumber, $RowCols
-                    ));
+                    )));
+                    $cgInsertedFieldId = (int)$wpdb->insert_id;
 
                     if (!empty($field['infoInGallery'])) {
-                        $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInGalleryId = $cgInsertedFieldId;
                     }
                     if (!empty($field['infoInFullWindowBlogView'])) {
-                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInFullWindowBlogViewId = $cgInsertedFieldId;
                     }
                     if (!empty($field['tagInGallery'])) {
-                        $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $tagInGalleryId = $cgInsertedFieldId;
                     }
                     if (!empty($ForwardToUrl)) {
                         $ForwardToUrlToSet = $wpdb->insert_id;
@@ -967,15 +952,15 @@ if (!empty($_POST['upload'])) {
                 }
             }
 
-            if ($field['type'] == 'ef' && $cgProVersion) {
+            if ($field['type'] == 'ef' && ($cgProVersion || empty($field['new']))) {
 
                 $ColNumber = (!empty($field['ColNumber'])) ? absint($field['ColNumber']) : 1;
                 $RowNumber = (!empty($field['RowNumber'])) ? absint($field['RowNumber']) : 1;
                 $RowCols = (!empty($field['RowCols'])) ? absint($field['RowCols']) : 1;
 
                 $efFieldsArray = array();
-                $efFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
-                $efFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
+                $efFieldsArray['titel'] = cg_form_store_value($field['title'],isset($cgOriginalContent['titel']) ? $cgOriginalContent['titel'] : null);
+                $efFieldsArray['content'] = cg_form_store_value($field['content'],isset($cgOriginalContent['content']) ? $cgOriginalContent['content'] : null);
 
                 if (!empty($field['infoInSlider'])) {
                     $Show_Slider = 1;
@@ -1000,28 +985,29 @@ if (!empty($_POST['upload'])) {
                 }
 
                 $efFieldsArray['mandatory'] = cg1l_sanitize_method($onOff);
-                $efFieldsArray = serialize($efFieldsArray);
+                $efFieldsArray = cg_upload_form_serialize_content($efFieldsArray, $field);
                 $order = $field['order'];
 
                 if (empty($field['new'])) {
-                    $wpdb->update(
+                    cg_form_save_check($wpdb->update(
                         "$tablename_form_input",
                         array('GalleryID' => $GalleryID, 'Field_Type' => 'email-f', 'Field_Order' => $order, 'Field_Content' => $efFieldsArray, 'Active' => $active, 'Show_Slider' => $Show_Slider, 'RowNumber' => $RowNumber, 'ColNumber' => $ColNumber, 'RowCols' => $RowCols),
-                        array('id' => $id),
+                        array('id' => $id, 'GalleryID' => $GalleryID),
                         array('%d', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d'),
-                        array('%d')
-                    );
+                        array('%d','%d')
+                    ));
 
                 } else {
 
-                    $wpdb->query($wpdb->prepare(
+                    cg_form_save_check($wpdb->query($wpdb->prepare(
                         "
                                 INSERT INTO $tablename_form_input
                       ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,RowNumber,ColNumber,RowCols)
                       VALUES ( %s,%d,%s,%d,%s,%d,%d,%d,%d,%d )
                             ",
                         '', $GalleryID, 'email-f', $order, $efFieldsArray, $Show_Slider, $active, $RowNumber, $ColNumber, $RowCols
-                    ));
+                    )));
+                    $cgInsertedFieldId = (int)$wpdb->insert_id;
 
 
                 }
@@ -1049,8 +1035,8 @@ if (!empty($_POST['upload'])) {
                 }
 
                 $kfFieldsArray = array();
-                $kfFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
-                $kfFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
+                $kfFieldsArray['titel'] = cg_form_store_value($field['title'],isset($cgOriginalContent['titel']) ? $cgOriginalContent['titel'] : null);
+                $kfFieldsArray['content'] = cg_form_store_value($field['content'],isset($cgOriginalContent['content']) ? $cgOriginalContent['content'] : null);
                 $kfFieldsArray['min-char'] = absint($field['min-char']);
                 $kfFieldsArray['max-char'] = absint($field['max-char']);
 
@@ -1071,7 +1057,7 @@ if (!empty($_POST['upload'])) {
                 }
 
                 $kfFieldsArray['mandatory'] = cg1l_sanitize_method($onOff);
-                $kfFieldsArray = serialize($kfFieldsArray);
+                $kfFieldsArray = cg_upload_form_serialize_content($kfFieldsArray, $field);
                 $order = $field['order'];
 
                 $fieldType = ($field['type'] == 'kf') ? 'comment-f' : 'fbd-f';
@@ -1091,7 +1077,7 @@ if (!empty($_POST['upload'])) {
                     $SubTitle = 0;
                 }
 
-                $FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? trim($field['FieldTitleGallery']) : '';
+                $FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? wp_unslash($field['FieldTitleGallery']) : '';
 
                 if (!empty($field['ThirdTitle'])) {
                     $ThirdTitle = 1;
@@ -1109,15 +1095,15 @@ if (!empty($_POST['upload'])) {
                 }
 
                 if (empty($field['new'])) {
-                    $wpdb->update(
+                    cg_form_save_check($wpdb->update(
                         "$tablename_form_input",
                         array('GalleryID' => $GalleryID, 'Field_Type' => $fieldType, 'Field_Order' => $order, 'Field_Content' => $kfFieldsArray,
                             'Active' => $active, 'Show_Slider' => $Show_Slider, 'IsForWpPageDescription' => $IsForWpPageDescription, 'SubTitle' => $SubTitle, 'ThirdTitle' => $ThirdTitle, 'EcommerceDescription' => $EcommerceDescription, 'WpAttachmentDetailsType' => $WpAttachmentDetailsType,
                             'FieldTitleGallery' => $FieldTitleGallery, 'RowNumber' => $RowNumber, 'ColNumber' => $ColNumber, 'RowCols' => $RowCols),
-                        array('id' => $id),
+                        array('id' => $id, 'GalleryID' => $GalleryID),
                         array('%d', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%d'),
-                        array('%d')
-                    );
+                        array('%d','%d')
+                    ));
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $id;
                     }
@@ -1141,14 +1127,15 @@ if (!empty($_POST['upload'])) {
                     }
 
                 } else {
-                    $wpdb->query($wpdb->prepare(
+                    cg_form_save_check($wpdb->query($wpdb->prepare(
                         "
                                 INSERT INTO $tablename_form_input
                       ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,IsForWpPageDescription,SubTitle,ThirdTitle,EcommerceDescription,WpAttachmentDetailsType,FieldTitleGallery,RowNumber,ColNumber,RowCols)
                       VALUES ( %s,%d,%s,%d,%s,%d,%d,%d,%d,%d,%s,%s,%s,%d,%d,%d )
                             ",
                         '', $GalleryID, $fieldType, $order, $kfFieldsArray, $Show_Slider, $active, $IsForWpPageDescription, $SubTitle, $ThirdTitle, $EcommerceDescription, $WpAttachmentDetailsType, $FieldTitleGallery, $RowNumber, $ColNumber, $RowCols
-                    ));
+                    )));
+                    $cgInsertedFieldId = (int)$wpdb->insert_id;
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $wpdb->insert_id;
                     }
@@ -1162,18 +1149,18 @@ if (!empty($_POST['upload'])) {
                         $IsForWpPageDescriptionID = $wpdb->insert_id;
                     }
                     if (!empty($field['infoInGallery'])) {
-                        $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInGalleryId = $cgInsertedFieldId;
                     }
                     if (!empty($field['infoInFullWindowBlogView'])) {
-                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInFullWindowBlogViewId = $cgInsertedFieldId;
                     }
                     if (!empty($field['tagInGallery'])) {
-                        $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $tagInGalleryId = $cgInsertedFieldId;
                     }
                 }
             }
 
-            if ($field['type'] == 'ht' && $cgProVersion) {
+            if ($field['type'] == 'ht' && ($cgProVersion || empty($field['new']))) {
 
                 $ColNumber = (!empty($field['ColNumber'])) ? absint($field['ColNumber']) : 1;
                 $RowNumber = (!empty($field['RowNumber'])) ? absint($field['RowNumber']) : 1;
@@ -1186,9 +1173,9 @@ if (!empty($_POST['upload'])) {
                 }
 
                 $htFieldsArray = array();
-                $htFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
+                $htFieldsArray['titel'] = cg_form_store_value($field['title'],isset($cgOriginalContent['titel']) ? $cgOriginalContent['titel'] : null);
                 //$htFieldsArray['content'] = cg1l_sanitize_method($field['content']);
-                $htFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
+                $htFieldsArray['content'] = cg_form_store_value($field['content'],isset($cgOriginalContent['content']) ? $cgOriginalContent['content'] : null);
 
                 // no need for html field
                 /*            if(!empty($field['required'])){
@@ -1204,17 +1191,17 @@ if (!empty($_POST['upload'])) {
                     $active = 0;
                 }
 
-                $htFieldsArray = serialize($htFieldsArray);
+                $htFieldsArray = cg_upload_form_serialize_content($htFieldsArray, $field);
                 $order = $field['order'];
 
                 if (empty($field['new'])) {
-                    $wpdb->update(
+                    cg_form_save_check($wpdb->update(
                         "$tablename_form_input",
                         array('GalleryID' => $GalleryID, 'Field_Type' => 'html-f', 'Field_Order' => $order, 'Field_Content' => $htFieldsArray, 'Active' => $active, 'RowNumber' => $RowNumber, 'ColNumber' => $ColNumber, 'RowCols' => $RowCols),
-                        array('id' => $id),
+                        array('id' => $id, 'GalleryID' => $GalleryID),
                         array('%d', '%s', '%s', '%s', '%s', '%d', '%d', '%d'),
-                        array('%d')
-                    );
+                        array('%d','%d')
+                    ));
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $id;
                     }
@@ -1227,23 +1214,24 @@ if (!empty($_POST['upload'])) {
 
                 } else {
 
-                    $wpdb->query($wpdb->prepare(
+                    cg_form_save_check($wpdb->query($wpdb->prepare(
                         "
                                 INSERT INTO $tablename_form_input
                       ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,RowNumber,ColNumber,RowCols)
                       VALUES ( %s,%d,%s,%d,%s,%d,%d,%d,%d,%d )
                             ",
                         '', $GalleryID, 'html-f', $order, $htFieldsArray, $Show_Slider, $active, $RowNumber, $ColNumber, $RowCols
-                    ));
+                    )));
+                    $cgInsertedFieldId = (int)$wpdb->insert_id;
 
                     if (!empty($field['infoInGallery'])) {
-                        $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInGalleryId = $cgInsertedFieldId;
                     }
                     if (!empty($field['infoInFullWindowBlogView'])) {
-                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInFullWindowBlogViewId = $cgInsertedFieldId;
                     }
                     if (!empty($field['tagInGallery'])) {
-                        $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $tagInGalleryId = $cgInsertedFieldId;
                     }
 
 
@@ -1257,7 +1245,7 @@ if (!empty($_POST['upload'])) {
                 $RowCols = (!empty($field['RowCols'])) ? absint($field['RowCols']) : 1;
 
                 $caFieldsArray = array();
-                $caFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
+                $caFieldsArray['titel'] = cg_form_store_value($field['title'],isset($cgOriginalContent['titel']) ? $cgOriginalContent['titel'] : null);
 
                 if (!empty($field['infoInSlider'])) {
                     $Show_Slider = 1;
@@ -1274,17 +1262,17 @@ if (!empty($_POST['upload'])) {
                 }
 
                 $caFieldsArray['mandatory'] = cg1l_sanitize_method($onOff);
-                $caFieldsArray = serialize($caFieldsArray);
+                $caFieldsArray = cg_upload_form_serialize_content($caFieldsArray, $field);
                 $order = $field['order'];
 
                 if (empty($field['new'])) {
-                    $wpdb->update(
+                    cg_form_save_check($wpdb->update(
                         "$tablename_form_input",
                         array('GalleryID' => $GalleryID, 'Field_Type' => 'caRo-f', 'Field_Order' => $order, 'Field_Content' => $caFieldsArray, 'Active' => $active, 'Show_Slider' => $Show_Slider, 'RowNumber' => $RowNumber, 'ColNumber' => $ColNumber, 'RowCols' => $RowCols),
-                        array('id' => $id),
+                        array('id' => $id, 'GalleryID' => $GalleryID),
                         array('%d', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d'),
-                        array('%d')
-                    );
+                        array('%d','%d')
+                    ));
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $id;
                     }
@@ -1297,30 +1285,31 @@ if (!empty($_POST['upload'])) {
 
                 } else {
 
-                    $wpdb->query($wpdb->prepare(
+                    cg_form_save_check($wpdb->query($wpdb->prepare(
                         "
                                 INSERT INTO $tablename_form_input
                       ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,RowNumber,ColNumber,RowCols)
                       VALUES ( %s,%d,%s,%d,%s,%d,%d,%d,%d,%d )
                             ",
                         '', $GalleryID, 'caRo-f', $order, $caFieldsArray, $Show_Slider, $active, $RowNumber, $ColNumber, $RowCols
-                    ));
+                    )));
+                    $cgInsertedFieldId = (int)$wpdb->insert_id;
 
                     if (!empty($field['infoInGallery'])) {
-                        $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInGalleryId = $cgInsertedFieldId;
                     }
                     if (!empty($field['infoInFullWindowBlogView'])) {
-                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInFullWindowBlogViewId = $cgInsertedFieldId;
                     }
                     if (!empty($field['tagInGallery'])) {
-                        $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $tagInGalleryId = $cgInsertedFieldId;
                     }
 
 
                 }
             }
 
-            if ($field['type'] == 'caRoRe' && ($cgProVersion || !$cgProVersion && floatval($dbGalleryVersion)<27)) {
+            if ($field['type'] == 'caRoRe' && ($cgProVersion || empty($field['new']) || !$cgProVersion && floatval($dbGalleryVersion)<27)) {
 
                 $ColNumber = (!empty($field['ColNumber'])) ? absint($field['ColNumber']) : 1;
                 $RowNumber = (!empty($field['RowNumber'])) ? absint($field['RowNumber']) : 1;
@@ -1328,7 +1317,7 @@ if (!empty($_POST['upload'])) {
 
                 $caFieldsArray = array();
                 if (!empty($field['title'])) {
-                    $caFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
+                    $caFieldsArray['titel'] = cg_form_store_value($field['title'],isset($cgOriginalContent['titel']) ? $cgOriginalContent['titel'] : null);
                 } else {
                     $caFieldsArray['titel'] = '';
                 }
@@ -1348,19 +1337,19 @@ if (!empty($_POST['upload'])) {
                 }
 
                 $caFieldsArray['mandatory'] = cg1l_sanitize_method($onOff);
-                $caFieldsArray = serialize($caFieldsArray);
+                $caFieldsArray = cg_upload_form_serialize_content($caFieldsArray, $field);
                 $order = $field['order'];
                 $ReCaKey = $field['ReCaKey'];
                 $ReCaLang = $field['ReCaLang'];
 
                 if (empty($field['new'])) {
-                    $wpdb->update(
+                    cg_form_save_check($wpdb->update(
                         "$tablename_form_input",
                         array('GalleryID' => $GalleryID, 'Field_Type' => 'caRoRe-f', 'Field_Order' => $order, 'Field_Content' => $caFieldsArray, 'Active' => $active, 'Show_Slider' => $Show_Slider, 'ReCaKey' => $ReCaKey, 'ReCaLang' => $ReCaLang, 'RowNumber' => $RowNumber, 'ColNumber' => $ColNumber, 'RowCols' => $RowCols),
-                        array('id' => $id),
+                        array('id' => $id, 'GalleryID' => $GalleryID),
                         array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d'),
-                        array('%d')
-                    );
+                        array('%d','%d')
+                    ));
                     if (!empty($field['infoInGallery'])) {
                         $infoInGalleryId = $id;
                     }
@@ -1373,41 +1362,42 @@ if (!empty($_POST['upload'])) {
 
                 } else {
 
-                    $wpdb->query($wpdb->prepare(
+                    cg_form_save_check($wpdb->query($wpdb->prepare(
                         "
                                 INSERT INTO $tablename_form_input
                       ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active, ReCaKey, ReCaLang,RowNumber,ColNumber,RowCols)
                       VALUES ( %s,%d,%s,%d,%s,%d,%d,%s,%s,%d,%d,%d )
                             ",
                         '', $GalleryID, 'caRoRe-f', $order, $caFieldsArray, $Show_Slider, $active, $ReCaKey, $ReCaLang, $RowNumber, $ColNumber, $RowCols
-                    ));
+                    )));
+                    $cgInsertedFieldId = (int)$wpdb->insert_id;
 
                     if (!empty($field['infoInGallery'])) {
-                        $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInGalleryId = $cgInsertedFieldId;
                     }
                     if (!empty($field['infoInFullWindowBlogView'])) {
-                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInFullWindowBlogViewId = $cgInsertedFieldId;
                     }
                     if (!empty($field['tagInGallery'])) {
-                        $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $tagInGalleryId = $cgInsertedFieldId;
                     }
 
 
                 }
-                $cgCaptchaId = empty($field['new']) ? absint($id) : absint($wpdb->insert_id);
-                cg_captcha_store_config('upload',$cgCaptchaId,isset($cgCaptchaConfigs[$id]) ? $cgCaptchaConfigs[$id] : null);
+                $cgCaptchaId = empty($field['new']) ? absint($id) : absint($cgInsertedFieldId);
+                cg_form_save_captcha($cgFormSaveContext,'upload',$cgCaptchaId,isset($cgCaptchaConfigs[$realWatermarkUploadKey]) ? $cgCaptchaConfigs[$realWatermarkUploadKey] : null);
 
             }
 
-            if ($field['type'] == 'chk' && $cgProVersion) {
+            if ($field['type'] == 'chk' && ($cgProVersion || empty($field['new']))) {
 
                 $ColNumber = (!empty($field['ColNumber'])) ? absint($field['ColNumber']) : 1;
                 $RowNumber = (!empty($field['RowNumber'])) ? absint($field['RowNumber']) : 1;
                 $RowCols = (!empty($field['RowCols'])) ? absint($field['RowCols']) : 1;
 
                 $seFieldsArray = array();
-                $seFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
-                $seFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
+                $seFieldsArray['titel'] = cg_form_store_value($field['title'],isset($cgOriginalContent['titel']) ? $cgOriginalContent['titel'] : null);
+                $seFieldsArray['content'] = cg_form_store_value($field['content'],isset($cgOriginalContent['content']) ? $cgOriginalContent['content'] : null);
 
                 $RealWatermarkSettings = cg_upload_form_real_watermark_prepare_for_storage($field, $dbGalleryVersion, $realWatermarkUploadKey, $realWatermarkSelectedUploadKey);
                 $WatermarkPosition = cg_upload_form_legacy_watermark_position_from_field($field, $dbGalleryVersion, $realWatermarkUploadKey, $legacyWatermarkSelectedUploadKey);
@@ -1438,7 +1428,7 @@ if (!empty($_POST['upload'])) {
                 }
 
                 $seFieldsArray['mandatory'] = cg1l_sanitize_method($onOff);
-                $seFieldsArray = serialize($seFieldsArray);
+                $seFieldsArray = cg_upload_form_serialize_content($seFieldsArray, $field);
 
                 $order = $field['order'];
 
@@ -1448,7 +1438,7 @@ if (!empty($_POST['upload'])) {
                     $SubTitle = 0;
                 }
 
-                $FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? trim($field['FieldTitleGallery']) : '';
+                $FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? wp_unslash($field['FieldTitleGallery']) : '';
 
                 if (strpos($Version, '-PRO') === false) {
                     $SubTitle = 0;
@@ -1460,15 +1450,15 @@ if (!empty($_POST['upload'])) {
                 }
 
                 if (empty($field['new'])) {
-                    $wpdb->update(
+                    cg_form_save_check($wpdb->update(
                         "$tablename_form_input",
                         array('GalleryID' => $GalleryID, 'Field_Type' => 'chk-f', 'Field_Order' => $order, 'Field_Content' => $seFieldsArray, 'Active' => $active, 'Show_Slider' => $Show_Slider, 'WatermarkPosition' => $WatermarkPosition, 'SubTitle' => $SubTitle, 'ThirdTitle' => $ThirdTitle,
                             'FieldTitleGallery' => $FieldTitleGallery, 'RowNumber' => $RowNumber, 'ColNumber' => $ColNumber, 'RowCols' => $RowCols),
-                        array('id' => $id),
+                        array('id' => $id, 'GalleryID' => $GalleryID),
                         array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d', '%d', '%d'),
-                        array('%d')
-                    );
-                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $id, $RealWatermarkSettings);
+                        array('%d','%d')
+                    ));
+                    cg_form_save_check(cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $id, $RealWatermarkSettings));
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $id;
                     }
@@ -1487,15 +1477,16 @@ if (!empty($_POST['upload'])) {
 
                 } else {
 
-                    $wpdb->query($wpdb->prepare(
+                    cg_form_save_check($wpdb->query($wpdb->prepare(
                         "
                                 INSERT INTO $tablename_form_input
                       ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,WatermarkPosition,SubTitle,ThirdTitle,FieldTitleGallery,RowNumber,ColNumber,RowCols)
                       VALUES ( %s,%d,%s,%d,%s,%d,%d,%s,%d,%d,%s,%d,%d,%d )
                             ",
                         '', $GalleryID, 'chk-f', $order, $seFieldsArray, $Show_Slider, $active, $WatermarkPosition, $SubTitle, $ThirdTitle, $FieldTitleGallery, $RowNumber, $ColNumber, $RowCols
-                    ));
-                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $wpdb->insert_id, $RealWatermarkSettings);
+                    )));
+                    $cgInsertedFieldId = (int)$wpdb->insert_id;
+                    cg_form_save_check(cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $cgInsertedFieldId, $RealWatermarkSettings));
 
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $wpdb->insert_id;
@@ -1504,28 +1495,28 @@ if (!empty($_POST['upload'])) {
                         $ThirdTitleToSet = $wpdb->insert_id;
                     }
                     if (!empty($field['infoInGallery'])) {
-                        $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInGalleryId = $cgInsertedFieldId;
                     }
                     if (!empty($field['infoInFullWindowBlogView'])) {
-                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInFullWindowBlogViewId = $cgInsertedFieldId;
                     }
                     if (!empty($field['tagInGallery'])) {
-                        $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $tagInGalleryId = $cgInsertedFieldId;
                     }
 
 
                 }
             }
 
-            if ($field['type'] == 'ra' && $cgProVersion) {
+            if ($field['type'] == 'ra' && ($cgProVersion || empty($field['new']))) {
 
                 $ColNumber = (!empty($field['ColNumber'])) ? absint($field['ColNumber']) : 1;
                 $RowNumber = (!empty($field['RowNumber'])) ? absint($field['RowNumber']) : 1;
                 $RowCols = (!empty($field['RowCols'])) ? absint($field['RowCols']) : 1;
 
                 $seFieldsArray = array();
-                $seFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
-                $seFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
+                $seFieldsArray['titel'] = cg_form_store_value($field['title'],isset($cgOriginalContent['titel']) ? $cgOriginalContent['titel'] : null);
+                $seFieldsArray['content'] = cg_form_store_value($field['content'],isset($cgOriginalContent['content']) ? $cgOriginalContent['content'] : null);
 
                 $RealWatermarkSettings = cg_upload_form_real_watermark_prepare_for_storage($field, $dbGalleryVersion, $realWatermarkUploadKey, $realWatermarkSelectedUploadKey);
                 $WatermarkPosition = cg_upload_form_legacy_watermark_position_from_field($field, $dbGalleryVersion, $realWatermarkUploadKey, $legacyWatermarkSelectedUploadKey);
@@ -1548,7 +1539,7 @@ if (!empty($_POST['upload'])) {
                 }
 
                 $seFieldsArray['mandatory'] = cg1l_sanitize_method($onOff);
-                $seFieldsArray = serialize($seFieldsArray);
+                $seFieldsArray = cg_upload_form_serialize_content($seFieldsArray, $field);
 
                 $order = $field['order'];
 
@@ -1558,7 +1549,7 @@ if (!empty($_POST['upload'])) {
                     $SubTitle = 0;
                 }
 
-                $FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? trim($field['FieldTitleGallery']) : '';
+                $FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? wp_unslash($field['FieldTitleGallery']) : '';
 
                 if (strpos($Version, '-PRO') === false) {
                     $SubTitle = 0;
@@ -1570,15 +1561,15 @@ if (!empty($_POST['upload'])) {
                 }
 
                 if (empty($field['new'])) {
-                    $wpdb->update(
+                    cg_form_save_check($wpdb->update(
                         "$tablename_form_input",
                         array('GalleryID' => $GalleryID, 'Field_Type' => 'radio-f', 'Field_Order' => $order, 'Field_Content' => $seFieldsArray, 'Active' => $active, 'Show_Slider' => $Show_Slider, 'WatermarkPosition' => $WatermarkPosition, 'SubTitle' => $SubTitle, 'ThirdTitle' => $ThirdTitle,
                             'FieldTitleGallery' => $FieldTitleGallery, 'RowNumber' => $RowNumber, 'ColNumber' => $ColNumber, 'RowCols' => $RowCols),
-                        array('id' => $id),
+                        array('id' => $id, 'GalleryID' => $GalleryID),
                         array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d', '%d', '%d'),
-                        array('%d')
-                    );
-                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $id, $RealWatermarkSettings);
+                        array('%d','%d')
+                    ));
+                    cg_form_save_check(cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $id, $RealWatermarkSettings));
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $id;
                     }
@@ -1597,15 +1588,16 @@ if (!empty($_POST['upload'])) {
 
                 } else {
 
-                    $wpdb->query($wpdb->prepare(
+                    cg_form_save_check($wpdb->query($wpdb->prepare(
                         "
                                 INSERT INTO $tablename_form_input
                       ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,WatermarkPosition,SubTitle,ThirdTitle,FieldTitleGallery,RowNumber,ColNumber,RowCols)
                       VALUES ( %s,%d,%s,%d,%s,%d,%d,%s,%d,%d,%s,%d,%d,%d )
                             ",
                         '', $GalleryID, 'radio-f', $order, $seFieldsArray, $Show_Slider, $active, $WatermarkPosition, $SubTitle, $ThirdTitle, $FieldTitleGallery, $RowNumber, $ColNumber, $RowCols
-                    ));
-                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $wpdb->insert_id, $RealWatermarkSettings);
+                    )));
+                    $cgInsertedFieldId = (int)$wpdb->insert_id;
+                    cg_form_save_check(cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $cgInsertedFieldId, $RealWatermarkSettings));
 
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $wpdb->insert_id;
@@ -1614,28 +1606,28 @@ if (!empty($_POST['upload'])) {
                         $ThirdTitleToSet = $wpdb->insert_id;
                     }
                     if (!empty($field['infoInGallery'])) {
-                        $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInGalleryId = $cgInsertedFieldId;
                     }
                     if (!empty($field['infoInFullWindowBlogView'])) {
-                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInFullWindowBlogViewId = $cgInsertedFieldId;
                     }
                     if (!empty($field['tagInGallery'])) {
-                        $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $tagInGalleryId = $cgInsertedFieldId;
                     }
 
 
                 }
             }
 
-            if ($field['type'] == 'se' && ($cgProVersion || !$cgProVersion && floatval($dbGalleryVersion)<27)) {
+            if ($field['type'] == 'se' && ($cgProVersion || empty($field['new']) || !$cgProVersion && floatval($dbGalleryVersion)<27)) {
 
                 $ColNumber = (!empty($field['ColNumber'])) ? absint($field['ColNumber']) : 1;
                 $RowNumber = (!empty($field['RowNumber'])) ? absint($field['RowNumber']) : 1;
                 $RowCols = (!empty($field['RowCols'])) ? absint($field['RowCols']) : 1;
 
                 $seFieldsArray = array();
-                $seFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
-                $seFieldsArray['content'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['content']);
+                $seFieldsArray['titel'] = cg_form_store_value($field['title'],isset($cgOriginalContent['titel']) ? $cgOriginalContent['titel'] : null);
+                $seFieldsArray['content'] = cg_form_store_value($field['content'],isset($cgOriginalContent['content']) ? $cgOriginalContent['content'] : null);
 
                 $RealWatermarkSettings = cg_upload_form_real_watermark_prepare_for_storage($field, $dbGalleryVersion, $realWatermarkUploadKey, $realWatermarkSelectedUploadKey);
                 $WatermarkPosition = cg_upload_form_legacy_watermark_position_from_field($field, $dbGalleryVersion, $realWatermarkUploadKey, $legacyWatermarkSelectedUploadKey);
@@ -1666,7 +1658,7 @@ if (!empty($_POST['upload'])) {
                 }
 
                 $seFieldsArray['mandatory'] = cg1l_sanitize_method($onOff);
-                $seFieldsArray = serialize($seFieldsArray);
+                $seFieldsArray = cg_upload_form_serialize_content($seFieldsArray, $field);
 
                 $order = $field['order'];
 
@@ -1676,7 +1668,7 @@ if (!empty($_POST['upload'])) {
                     $SubTitle = 0;
                 }
 
-                $FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? trim($field['FieldTitleGallery']) : '';
+                $FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? wp_unslash($field['FieldTitleGallery']) : '';
 
                 if (strpos($Version, '-PRO') === false) {
                     $SubTitle = 0;
@@ -1688,15 +1680,15 @@ if (!empty($_POST['upload'])) {
                 }
 
                 if (empty($field['new'])) {
-                    $wpdb->update(
+                    cg_form_save_check($wpdb->update(
                         "$tablename_form_input",
                         array('GalleryID' => $GalleryID, 'Field_Type' => 'select-f', 'Field_Order' => $order, 'Field_Content' => $seFieldsArray, 'Active' => $active, 'Show_Slider' => $Show_Slider, 'WatermarkPosition' => $WatermarkPosition, 'SubTitle' => $SubTitle, 'ThirdTitle' => $ThirdTitle,
                             'FieldTitleGallery' => $FieldTitleGallery, 'RowNumber' => $RowNumber, 'ColNumber' => $ColNumber, 'RowCols' => $RowCols),
-                        array('id' => $id),
+                        array('id' => $id, 'GalleryID' => $GalleryID),
                         array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d', '%d', '%d'),
-                        array('%d')
-                    );
-                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $id, $RealWatermarkSettings);
+                        array('%d','%d')
+                    ));
+                    cg_form_save_check(cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $id, $RealWatermarkSettings));
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $id;
                     }
@@ -1712,15 +1704,16 @@ if (!empty($_POST['upload'])) {
 
                 } else {
 
-                    $wpdb->query($wpdb->prepare(
+                    cg_form_save_check($wpdb->query($wpdb->prepare(
                         "
                                 INSERT INTO $tablename_form_input
                       ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,WatermarkPosition,SubTitle,ThirdTitle,FieldTitleGallery,RowNumber,ColNumber,RowCols)
                       VALUES ( %s,%d,%s,%d,%s,%d,%d,%s,%d,%d,%s,%d,%d,%d )
                             ",
                         '', $GalleryID, 'select-f', $order, $seFieldsArray, $Show_Slider, $active, $WatermarkPosition, $SubTitle, $ThirdTitle, $FieldTitleGallery, $RowNumber, $ColNumber, $RowCols
-                    ));
-                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $wpdb->insert_id, $RealWatermarkSettings);
+                    )));
+                    $cgInsertedFieldId = (int)$wpdb->insert_id;
+                    cg_form_save_check(cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $cgInsertedFieldId, $RealWatermarkSettings));
 
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $wpdb->insert_id;
@@ -1729,10 +1722,10 @@ if (!empty($_POST['upload'])) {
                         $ThirdTitleToSet = $wpdb->insert_id;
                     }
                     if (!empty($field['infoInGallery'])) {
-                        $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInGalleryId = $cgInsertedFieldId;
                     }
                     if (!empty($field['tagInGallery'])) {
-                        $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $tagInGalleryId = $cgInsertedFieldId;
                     }
 
 
@@ -1746,7 +1739,7 @@ if (!empty($_POST['upload'])) {
                 $RowCols = (!empty($field['RowCols'])) ? absint($field['RowCols']) : 1;
 
                 $secFieldsArray = array();
-                $secFieldsArray['titel'] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($field['title']);
+                $secFieldsArray['titel'] = cg_form_store_value($field['title'],isset($cgOriginalContent['titel']) ? $cgOriginalContent['titel'] : null);
 
                 $RealWatermarkSettings = cg_upload_form_real_watermark_prepare_for_storage($field, $dbGalleryVersion, $realWatermarkUploadKey, $realWatermarkSelectedUploadKey);
                 $WatermarkPosition = cg_upload_form_legacy_watermark_position_from_field($field, $dbGalleryVersion, $realWatermarkUploadKey, $legacyWatermarkSelectedUploadKey);
@@ -1777,7 +1770,7 @@ if (!empty($_POST['upload'])) {
                 }
 
                 $secFieldsArray['mandatory'] = cg1l_sanitize_method($onOff);
-                $secFieldsArray = serialize($secFieldsArray);
+                $secFieldsArray = cg_upload_form_serialize_content($secFieldsArray, $field);
 
                 $order = $field['order'];
 
@@ -1787,7 +1780,7 @@ if (!empty($_POST['upload'])) {
                     $SubTitle = 0;
                 }
 
-                $FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? trim($field['FieldTitleGallery']) : '';
+                $FieldTitleGallery = !empty(trim($field['FieldTitleGallery'])) ? wp_unslash($field['FieldTitleGallery']) : '';
 
                 if (strpos($Version, '-PRO') === false) {
                     $SubTitle = 0;
@@ -1799,15 +1792,15 @@ if (!empty($_POST['upload'])) {
                 }
 
                 if (empty($field['new'])) {
-                    $wpdb->update(
+                    cg_form_save_check($wpdb->update(
                         "$tablename_form_input",
                         array('GalleryID' => $GalleryID, 'Field_Type' => 'selectc-f', 'Field_Order' => $order, 'Field_Content' => $secFieldsArray, 'Active' => $active, 'Show_Slider' => $Show_Slider, 'WatermarkPosition' => $WatermarkPosition, 'SubTitle' => $SubTitle, 'ThirdTitle' => $ThirdTitle,
                             'FieldTitleGallery' => $FieldTitleGallery, 'RowNumber' => $RowNumber, 'ColNumber' => $ColNumber, 'RowCols' => $RowCols),
-                        array('id' => $id),
+                        array('id' => $id, 'GalleryID' => $GalleryID),
                         array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d', '%d', '%d'),
-                        array('%d')
-                    );
-                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $id, $RealWatermarkSettings);
+                        array('%d','%d')
+                    ));
+                    cg_form_save_check(cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $id, $RealWatermarkSettings));
 
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $id;
@@ -1828,14 +1821,15 @@ if (!empty($_POST['upload'])) {
 
                 } else {
 
-                    $wpdb->query($wpdb->prepare(
+                    cg_form_save_check($wpdb->query($wpdb->prepare(
                         "
                                 INSERT INTO $tablename_form_input
                       ( id, GalleryID, Field_Type, Field_Order, Field_Content, Show_Slider,Active,WatermarkPosition,SubTitle,ThirdTitle,FieldTitleGallery,RowNumber,ColNumber,RowCols)
                       VALUES ( %s,%d,%s,%d,%s,%d,%d,%s,%d,%d,%s,%d,%d,%d )",
                         '', $GalleryID, 'selectc-f', $order, $secFieldsArray, $Show_Slider, $active, $WatermarkPosition, $SubTitle, $ThirdTitle, $FieldTitleGallery, $RowNumber, $ColNumber, $RowCols
-                    ));
-                    cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $wpdb->insert_id, $RealWatermarkSettings);
+                    )));
+                    $cgInsertedFieldId = (int)$wpdb->insert_id;
+                    cg_form_save_check(cg_upload_form_real_watermark_update_saved_field($tablename_form_input, $cgInsertedFieldId, $RealWatermarkSettings));
 
                     if (!empty($SubTitle)) {
                         $SubTitleToSet = $wpdb->insert_id;
@@ -1844,23 +1838,23 @@ if (!empty($_POST['upload'])) {
                         $ThirdTitleToSet = $wpdb->insert_id;
                     }
 
-                    $wpdb->update(
+                    cg_form_save_check($wpdb->update(
                         "$tablename_pro_options",
                         array('ShowOther' => 1, 'CatWidget' => 1),
                         array('GalleryID' => $GalleryID),
                         array('%d', '%d'),
                         array('%s')
-                    );
+                    ));
 
                     if (!empty($field['infoInGallery'])) {
-                        $infoInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInGalleryId = $cgInsertedFieldId;
                     }
                     if (!empty($field['infoInFullWindowBlogView'])) {
-                        $infoInFullWindowBlogViewId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $infoInFullWindowBlogViewId = $cgInsertedFieldId;
                     }
                     if (!empty($field['tagInGallery'])) {
                         $tagInGalleryIdIsForCategories = true;
-                        $tagInGalleryId = $wpdb->get_var("SELECT id FROM $tablename_form_input ORDER BY id DESC LIMIT 1");
+                        $tagInGalleryId = $cgInsertedFieldId;
                     }
 
                 }
@@ -2067,13 +2061,13 @@ if (!empty($_POST['upload'])) {
     // falls Show info in gallery gesetzt wurde dann inserten
     if (!empty($infoInGalleryId)) {
 
-        $wpdb->update(
+        cg_form_save_check($wpdb->update(
             "$tablename_options_visual",
             array('Field1IdGalleryView' => $infoInGalleryId),
             array('GalleryID' => $GalleryID),
             array('%d'),
             array('%d')
-        );
+        ));
 
         if (!empty($optionsFileData[$GalleryID])) {
             $optionsFileData[$GalleryID]['visual']['Field1IdGalleryView'] = $infoInGalleryId;
@@ -2086,24 +2080,24 @@ if (!empty($_POST['upload'])) {
         }
 
     } else {
-        $wpdb->update(
+        cg_form_save_check($wpdb->update(
             "$tablename_options_visual",
             array('Field1IdGalleryView' => 0),
             array('GalleryID' => $GalleryID),
             array('%d'),
             array('%d')
-        );
+        ));
     }
 
     if (!empty($infoInFullWindowBlogViewId)) {
 
-        $wpdb->update(
+        cg_form_save_check($wpdb->update(
             "$tablename_options_visual",
             array('Field1IdFullWindowBlogView' => $infoInFullWindowBlogViewId),
             array('GalleryID' => $GalleryID),
             array('%d'),
             array('%d')
-        );
+        ));
 
         if (!empty($optionsFileData[$GalleryID])) {
             $optionsFileData[$GalleryID]['visual']['Field1IdFullWindowBlogView'] = $infoInFullWindowBlogViewId;
@@ -2116,25 +2110,25 @@ if (!empty($_POST['upload'])) {
         }
 
     } else {
-        $wpdb->update(
+        cg_form_save_check($wpdb->update(
             "$tablename_options_visual",
             array('Field1IdFullWindowBlogView' => 0),
             array('GalleryID' => $GalleryID),
             array('%d'),
             array('%d')
-        );
+        ));
     }
 
     // falls Show info in gallery gesetzt wurde dann inserten
     if (!empty($tagInGalleryId)) {
 
-        $wpdb->update(
+        cg_form_save_check($wpdb->update(
             "$tablename_options_visual",
             array('Field2IdGalleryView' => $tagInGalleryId),
             array('GalleryID' => $GalleryID),
             array('%d'),
             array('%d')
-        );
+        ));
 
         if (!empty($optionsFileData[$GalleryID])) {
             $optionsFileData[$GalleryID]['visual']['Field2IdGalleryView'] = $tagInGalleryId;
@@ -2147,25 +2141,25 @@ if (!empty($_POST['upload'])) {
         }
 
     } else {
-        $wpdb->update(
+        cg_form_save_check($wpdb->update(
             "$tablename_options_visual",
             array('Field2IdGalleryView' => 0),
             array('GalleryID' => $GalleryID),
             array('%d'),
             array('%d')
-        );
+        ));
     }
 
     // falls Use as file name in single view gesetzt wurde dann inserten
     if (!empty($alternativeFileTypeNameId)) {
 
-        $wpdb->update(
+        cg_form_save_check($wpdb->update(
             "$tablename_options_visual",
             array('Field3IdGalleryView' => $alternativeFileTypeNameId),
             array('GalleryID' => $GalleryID),
             array('%d'),
             array('%d')
-        );
+        ));
 
         if (!empty($optionsFileData[$GalleryID])) {
             $optionsFileData[$GalleryID]['visual']['Field3IdGalleryView'] = $alternativeFileTypeNameId;
@@ -2179,18 +2173,29 @@ if (!empty($_POST['upload'])) {
 
     } else {
 
-        $wpdb->update(
+        cg_form_save_check($wpdb->update(
             "$tablename_options_visual",
             array('Field3IdGalleryView' => 0),
             array('GalleryID' => $GalleryID),
             array('%d'),
             array('%d')
-        );
+        ));
 
     }
 
     $optionsFile = $wp_upload_dir['basedir'] . '/contest-gallery/gallery-id-' . $GalleryID . '/json/' . $GalleryID . '-options.json';
-    file_put_contents($optionsFile, json_encode($optionsFileData));
+    // Copy the final database mappings, including zero after unchecking/deleting.
+    $cgSavedVisual = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_options_visual WHERE GalleryID=%d",$GalleryID),ARRAY_A);
+    if($wpdb->last_error || !$cgSavedVisual){throw new Exception('The form display settings could not be read.');}
+    foreach(array('Field1IdGalleryView','Field1IdFullWindowBlogView','Field2IdGalleryView','Field3IdGalleryView') as $cgMapping){
+        $cgMappingValue=(int)$cgSavedVisual[$cgMapping];
+        if(!empty($optionsFileData[$GalleryID])){
+            foreach(array($GalleryID,$GalleryID.'-u',$GalleryID.'-nv',$GalleryID.'-w',$GalleryID.'-ec') as $cgOptionsKey){$optionsFileData[$cgOptionsKey]['visual'][$cgMapping]=$cgMappingValue;}
+        }else{$optionsFileData['visual'][$cgMapping]=$cgMappingValue;}
+    }
+    $cgNeedsUrlRefresh=(int)$dbGalleryVersion>=22 && cg_form_save_prepare_url_refresh($cgFormSaveContext,$GalleryID,!empty($_POST['isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized']));
+    cg_form_save_commit($cgFormSaveContext);
+    cg_form_save_check(cg_form_write_json($optionsFile, $optionsFileData));
 
     if (!empty($_POST['cg_category'])) {
 
@@ -2212,41 +2217,38 @@ if (!empty($_POST['upload'])) {
 
         }
 
-        $fp = fopen($categoriesFile, 'w');
-        fwrite($fp, json_encode($categoriesArray));
-        fclose($fp);
+        cg_form_save_check(cg_form_write_json($categoriesFile, $categoriesArray));
 
     } else {
 
         $categoriesFile = $wp_upload_dir['basedir'] . '/contest-gallery/gallery-id-' . $GalleryID . '/json/' . $GalleryID . '-categories.json';
 
-        $fp = fopen($categoriesFile, 'w');
-        fwrite($fp, json_encode(array()));
-        fclose($fp);
+        cg_form_save_check(cg_form_write_json($categoriesFile, array()));
 
     }
 
-    do_action('cg_json_upload_form', $GalleryID);
+    cg_form_save_check(cg_json_upload_form($GalleryID));
     //do_action('cg_json_upload_form_info_data_files',$GalleryID,null);
 
-    if (empty($IsForWpPageTitleInputDeleted)) {
-        cg_json_upload_form_info_data_files_new($GalleryID, [], $_POST['isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized'], $IsForWpPageTitleInputDeleted, true);
-    } elseif (!empty($IsForWpPageTitleInputDeleted) && !empty($_POST['isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized'])) {
-        cg_json_upload_form_info_data_files_new($GalleryID, [], '', $IsForWpPageTitleInputDeleted, true);
-        $IsForWpPageTitleInputDeleted = false;// has to be set false then after first cg_json_upload_form_info_data_files_new with $IsForWpPageTitleInputDeleted as true was processed
-        cg_json_upload_form_info_data_files_new($GalleryID, [], $_POST['isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized'], $IsForWpPageTitleInputDeleted, true);
-    } else {
-        cg_json_upload_form_info_data_files_new($GalleryID, [], $_POST['isFromEditContactFormIsForWpPageTitleChangedOrHasToBeActualized'], $IsForWpPageTitleInputDeleted, true);
-    }
+    // Always use the final saved schema, including after deletion/replacement
+    // and a retry whose freshly rendered editor no longer has change flags.
+    cg_form_save_check(cg_json_upload_form_info_data_files_new($GalleryID, [], $cgNeedsUrlRefresh, false, true, true, true));
 
-    do_action('cg_json_single_view_order', $GalleryID);
+    cg_form_save_check(cg_json_single_view_order($GalleryID));
+    cg_form_save_check(cg_form_refresh_frontend_cache($GalleryID));
+    if($cgNeedsUrlRefresh){cg_form_save_finish_url_refresh($cgFormSaveContext,$GalleryID);}
 
+    cg_form_save_response('saved');
+    }catch(Exception $error){cg_form_save_failure($cgFormSaveContext,$error);}
+    catch(Throwable $error){cg_form_save_failure($cgFormSaveContext,new Exception('The form could not be saved. Reload the editor.'));}
+    finally{cg_form_save_release($cgFormSaveContext);}
 }
 
-// input felder holen zur ausgabe
-$selectFormInput = $wpdb->get_results($wpdb->prepare("SELECT * FROM $tablename_form_input WHERE GalleryID = %d ORDER BY Field_Order ASC", [$GalleryID]));
-
-$rowVisualOptions = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_options_visual WHERE GalleryID = %d", [$GalleryID]));
+// The revision and all editable values must come from the same read snapshot.
+try{$cgFormEditorState = cg_form_save_state('upload',$GalleryID,false);}
+catch(Exception $error){wp_die(esc_html($error->getMessage()));}
+$selectFormInput = cg_form_editor_fields($cgFormEditorState['fields']);
+$rowVisualOptions = !empty($cgFormEditorState['options_visual']) ? (object)$cgFormEditorState['options_visual'][0] : null;
 
 $Field1IdGalleryView = (!empty($rowVisualOptions) && isset($rowVisualOptions->Field1IdGalleryView)) ? absint($rowVisualOptions->Field1IdGalleryView) : 0;
 $Field1IdFullWindowBlogView = (!empty($rowVisualOptions) && isset($rowVisualOptions->Field1IdFullWindowBlogView)) ? absint($rowVisualOptions->Field1IdFullWindowBlogView) : 0;

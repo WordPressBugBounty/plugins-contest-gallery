@@ -7,7 +7,7 @@ $iconsURL = plugins_url().'/'.cg_get_version().'/v10/v10-css';
 $cgRecaptchaIconUrl = $iconsURL.'/backend/re-captcha.png';
 $cgDragIcon = $iconsURL.'/backend/cg-drag-icon.png';
 
-cg_row_columns($GalleryID);
+cg_row_columns($GalleryID, true);
 
 cg_add_reg_field($GalleryID,$cgProFalse,$galleryDbVersion);
 
@@ -127,10 +127,11 @@ if (!empty($_POST['submit'])) {
 
 }
 
-echo '<div id="cg_main_options" class="cg_main_options" style="box-shadow: unset;border-radius: unset;">';
+echo '<div id="cg_main_options" class="cg_main_options" style="box-shadow: unset;border-radius: unset;margin-bottom: 0;">';
 
 echo "<form name='create_user_form' enctype='multipart/form-data'  data-cg-submit-message='Changes saved'  class='cg_load_backend_submit' action='?page=".cg_get_version()."/index.php&option_id=$GalleryID&create_user_form=true' id='cg_create_user_form' method='post'>";
 wp_nonce_field( 'cg_admin');
+cg_form_save_hidden('registry',$GalleryID,intval($galleryDbVersion)>=14,$cgFormEditorState);
 echo "<input type='hidden' name='option_id' value='$GalleryID'>";
 
 
@@ -152,7 +153,6 @@ echo '</div>';
     <input type="hidden" name="submit" value="true"/>
 <input id="submitForm" class="cg_backend_button_gallery_action" type="submit" value="Save form" style="font-weight:bold;text-align:center;width:150px;float:right;margin-right:10px;margin-bottom:10px;">
 </div>
-<br/>
 
 
 
@@ -161,7 +161,6 @@ echo '</div>';
 
 // ---------------- AUSGABE des gespeicherten Formulares  --------------------------- ENDE
 
-echo "<br/>";
 ?>
 </form>
 </div>

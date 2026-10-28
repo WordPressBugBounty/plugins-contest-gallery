@@ -94,6 +94,8 @@ if(!$intervalConf['shortcodeIsActive']){
 
     echo "<span id='cg_user_registry_anchor'/></span>";
 
+    $cgRegistryRowLayouts = cg_upload_form_row_layouts($selectUserForm, true);
+
     // 1 Array
     $selectUserFormArray = json_decode(json_encode($selectUserForm), true);
 
@@ -132,6 +134,7 @@ if(!$intervalConf['shortcodeIsActive']){
     $isEmptyCol = false;// used only for registry form, because upload form has steps and not usable here
 
     foreach ($selectUserForm as $key => $value) {
+        $cgRowLayout = isset($cgRegistryRowLayouts[$value->RowNumber]) ? $cgRegistryRowLayouts[$value->RowNumber] : cg_upload_form_row_layout('', isset($value->RowCols) ? $value->RowCols : 1);
 
         $PinField = !empty($value->PinField) ? 1 : 0;
 
@@ -144,10 +147,10 @@ if(!$intervalConf['shortcodeIsActive']){
         }
 
         if($value->RowNumber == 0){// if first time load in 27.0.0
-            echo "<div class='cg_row'>";
+            echo "<div class='cg_row cg_registry_row_layout' data-cg-row-layout='".esc_attr($cgRowLayout)."'>";
             $echoRowClosed = true;
         }elseif($value->RowNumber != $previousRowNumber){
-            echo "<div class='cg_row'>";
+            echo "<div class='cg_row cg_registry_row_layout' data-cg-row-layout='".esc_attr($cgRowLayout)."'>";
             $echoRowClosed = false;
         }
 
@@ -182,7 +185,7 @@ if(!$intervalConf['shortcodeIsActive']){
         $cgCheckUsernameNicknameMail = '';
 
         if (($value->Field_Type == 'main-user-name' OR $value->Field_Type == 'main-nick-name' OR $value->Field_Type == 'main-mail')) {
-            $placeholder = cg1l_sanitize_method(contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Content));
+            $placeholder = cg_form_editor_value($value->Field_Content);
             if ($value->Field_Type == 'main-user-name') {
                 $cgContentField = "<input type='text' maxlength='" . $value->Max_Char . "' placeholder='$placeholder' class='cg_registry_form_field cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_Fields[$i][Field_Content]'>";
                 $cgCheckUsernameNicknameMail = "id='cg_user_name_check_alert'";
@@ -200,63 +203,61 @@ if(!$intervalConf['shortcodeIsActive']){
             }
         }
         if (($value->Field_Type == 'password' OR $value->Field_Type == 'password-confirm')) {
-            $placeholder = cg1l_sanitize_method(contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Content));
+            $placeholder = cg_form_editor_value($value->Field_Content);
             $cgContentField = "<input type='password' maxlength='" . $value->Max_Char . "' placeholder='$placeholder' autocomplete='off' class='cg_registry_form_field cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_Fields[$i][Field_Content]' readonly onfocus='this.removeAttribute(\"readonly\")';>";
         }
         if ($value->Field_Type == 'user-comment-field') {
-            $placeholder = contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Content);
+            $placeholder = cg_form_editor_value($value->Field_Content);
             $cgContentField = "<textarea maxlength='" . $value->Max_Char . "' placeholder='$placeholder' class='cg_registry_form_field cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_Fields[$i][Field_Content]' rows='6' ></textarea>";
         }
 
         if ($value->Field_Type == 'profile-image') {
-            $placeholder = contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Content);
+            $placeholder = cg_form_editor_value($value->Field_Content);
             $cgContentField = "<input type='file' class='cg_registry_form_field cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_input_image_upload_file[]'".cg_profile_image_upload_attributes()."><p class='cg-profile-image-hint'>".cg_profile_image_upload_hint()."</p>";
         }
 
         if ($value->Field_Type == 'wpfn') {
-            $placeholder = contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Content);
+            $placeholder = cg_form_editor_value($value->Field_Content);
             $cgContentField = "<input maxlength='" . $value->Max_Char . "' type='text' placeholder='$placeholder' class='cg_registry_form_field cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_Fields[$i][Field_Content]'>";
         }
 
         if ($value->Field_Type == 'wpln') {
-            $placeholder = contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Content);
+            $placeholder = cg_form_editor_value($value->Field_Content);
             $cgContentField = "<input maxlength='" . $value->Max_Char . "' type='text' placeholder='$placeholder' class='cg_registry_form_field cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_Fields[$i][Field_Content]'>";
         }
 
         if ($value->Field_Type == 'user-text-field' || $value->Field_Type == 'user-url-field') {
             $urlAttributes = $value->Field_Type == 'user-url-field' ? ' inputmode="url" autocomplete="url" data-url-message="'.esc_attr($language_URLnotValid).'"' : '';
-            $placeholder = contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Content);
+            $placeholder = cg_form_editor_value($value->Field_Content);
             $cgContentField = "<input maxlength='" . $value->Max_Char . "' type='text'$urlAttributes placeholder='$placeholder' class='cg_registry_form_field cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_Fields[$i][Field_Content]'>";
         }
 
         if ($value->Field_Type == 'user-check-field') {
-            $textAr = explode("\n", $value->Field_Content);// sanitazing happens after that in foreach
+            $textAr = cg_member_profile_choices($value);
             $cgContentField = '<div class="cg_check">';
                 foreach ($textAr as $optionKey => $optionValue) {
-                    $optionValue = sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($optionValue));
                     $cgContentField .= '<div class="cg_check_button">
-                            <label for="cg_reg_check_button_'.$value->id.$optionKey.'">'.esc_html($optionValue).'</label>
-                            <input type="checkbox" id="cg_reg_check_button_'.$value->id.$optionKey.'" value="'.esc_attr($optionValue).'" class="cg_check_button_input">
+                            <label for="cg_reg_check_button_'.$value->id.$optionKey.'">'.cg_form_escape_value($optionValue).'</label>
+                            <input type="checkbox" id="cg_reg_check_button_'.$value->id.$optionKey.'" value="'.cg_form_escape_value($optionValue).'" class="cg_check_button_input">
                     </div>';
                 }
             $cgContentField .= '</div>';
         }
 
         if ($value->Field_Type == 'user-radio-field') {
-            $textAr = explode("\n", $value->Field_Content);// sanitazing happens after that in foreach
+            $textAr = cg_member_profile_choices($value);
             $cgContentField = '<div class="cg_radio">';
                 foreach ($textAr as $optionKey => $optionValue) {
-                    $optionValue = sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($optionValue));
                     $cgContentField .= '<div class="cg_radio_button">
-                            <label for="cg_reg_radio_button_'.$value->id.$optionKey.'">'.esc_html($optionValue).'</label>
-                            <input type="radio" id="cg_reg_radio_button_'.$value->id.$optionKey.'" name="cg_Fields['.$i.'][Field_Content]" value="'.esc_attr($optionValue).'" class="cg_radio_button_input">
+                            <label for="cg_reg_radio_button_'.$value->id.$optionKey.'">'.cg_form_escape_value($optionValue).'</label>
+                            <input type="radio" id="cg_reg_radio_button_'.$value->id.$optionKey.'" name="cg_Fields['.$i.'][Field_Content]" value="'.cg_form_escape_value($optionValue).'" class="cg_radio_button_input">
                     </div>';
                 }
             $cgContentField .= '</div>';
         }
 
         if ($value->Field_Type == 'user-html-field') {
-            $content = contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Content);
+            $content = cg_form_decode_value($value->Field_Content);
             $cgContentField = "<div class='cg-" . $value->Field_Type . "'>$content</div>";
         }
 
@@ -273,9 +274,9 @@ if(!$intervalConf['shortcodeIsActive']){
         if ($value->Field_Type != 'user-html-field' && $value->Field_Type != 'user-robot-recaptcha-field') {
 
             if ($value->Field_Type == 'user-robot-field') {
-                echo "<label for='cg_" . $cg_login_check . "_registry' >".cg1l_sanitize_method(contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Name))." *</label>";
+                echo "<label for='cg_" . $cg_login_check . "_registry' >".cg_form_editor_value($value->Field_Name)." *</label>";
             } else {
-                echo "<label for='cg_registry_form_field" . $value->id . "' >" .cg1l_sanitize_method(contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Name)) . " $required</label>";
+                echo "<label for='cg_registry_form_field" . $value->id . "' >" .cg_form_editor_value($value->Field_Name) . " $required</label>";
             }
 
             echo "<input type='hidden' name='cg_Fields[$i][Form_Input_ID]' value='" . $value->id . "'>";
@@ -288,7 +289,7 @@ if(!$intervalConf['shortcodeIsActive']){
         // Pr�fen ob check-agreement-feld ist ansonsten Text oder, Comment Felder anzeigen
         if ($value->Field_Type == 'user-check-agreement-field') {
 
-            $cgCheckContent = contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Content);
+            $cgCheckContent = cg_form_decode_value($value->Field_Content);
             echo "<div class='cg-check-agreement-container'>";
             echo "<div class='cg-check-agreement-checkbox'>";
             echo "<input type='checkbox' id='cg_registry_form_field" . $value->id . "' class='cg_check_f_checkbox' value='checked' name='cg_Fields[$i][Field_Content]'>";
@@ -303,7 +304,7 @@ if(!$intervalConf['shortcodeIsActive']){
 
             if ($value->Field_Type == 'user-select-field') {
 
-                $textAr = explode("\n", $value->Field_Content);// sanitazing happens after that in foreach
+                $textAr = cg_member_profile_choices($value);
 
                 echo "<select name='cg_Fields[$i][Field_Content]' class='cg-" . $value->Field_Type . "' id='cg_registry_form_field" . $value->id . "' name='cg_Fields[$i][Field_Content]' >";
 
@@ -311,8 +312,7 @@ if(!$intervalConf['shortcodeIsActive']){
 
                 foreach ($textAr as $optionKey => $optionValue) {
 
-                    $optionValue = sanitize_text_field(contest_gal1ery_convert_for_html_output_without_nl2br($optionValue));
-                    echo "<option value='$optionValue'>$optionValue</option>";
+                    echo "<option value='".cg_form_escape_value($optionValue)."'>".cg_form_escape_value($optionValue)."</option>";
 
                 }
 

@@ -1,51 +1,57 @@
-#menu-dashboard{
+/* This stylesheet also loads in the frontend for Contest Gallery members. */
+body.wp-admin.profile-php #menu-dashboard{
     display: none;
 }
 
-#wp-admin-bar-wp-logo{
+#wpadminbar #wp-admin-bar-wp-logo{
     display: none;
 }
 
-#wp-admin-bar-search{
+#wpadminbar #wp-admin-bar-search{
     display: none;
 }
 
-#wp-admin-bar-site-name{
+#wpadminbar #wp-admin-bar-site-name{
     display: none;
 }
 
-#wp-admin-bar-user-info{
+#wpadminbar #wp-admin-bar-user-info{
     display: none;
 }
 
-.user-display-name-wrap{
+body.wp-admin.profile-php .user-display-name-wrap{
     display: none;
 }
 
-.avatar {
+body.wp-admin.profile-php .avatar,
+#wpadminbar .avatar {
     display: none !important;
 }
 #wpadminbar #wp-admin-bar-my-account.with-avatar #wp-admin-bar-user-actions > li{
     margin-left: 0;
 }
 
-#contextual-help-link-wrap{
+body.wp-admin.profile-php #contextual-help-link-wrap{
     display: none;
 }
-.update-nag.notice{
+body.wp-admin.profile-php .update-nag.notice{
     display: none;
 }
-.user-admin-color-wrap,.show-admin-bar,.user-language-wrap,
-.user-url-wrap,.user-description-wrap,
-.user-profile-picture, h2{
+body.wp-admin.profile-php .user-admin-color-wrap,
+body.wp-admin.profile-php .show-admin-bar,
+body.wp-admin.profile-php .user-language-wrap,
+body.wp-admin.profile-php .user-url-wrap,
+body.wp-admin.profile-php .user-description-wrap,
+body.wp-admin.profile-php .user-profile-picture,
+body.wp-admin.profile-php h2{
     display: none;
 }
 
-#email-description{
+body.wp-admin.profile-php #email-description{
     display: none;
 }
 
-#email{
+body.wp-admin.profile-php #email{
     background: rgba(255,255,255,.5);
     border-color: rgba(220,220,222,.75);
     box-shadow: inset 0 1px 2px rgba(0,  0, 0, 0.4);
@@ -53,30 +59,29 @@
     pointer-events: none;
 }
 
-#adminmenumain{
+body.wp-admin.profile-php #adminmenumain{
     display: none;
 }
 
-#profile-page > div{
+body.wp-admin.profile-php #profile-page > div{
     display: none;
 }
 
-#profile-page > div.notice.error{
+body.wp-admin.profile-php #profile-page > div.notice.error{
     display: block;
 }
 
-#profile-page > #message{
+body.wp-admin.profile-php #profile-page > #message{
     display: block;
 }
 
-.form-table+div{
+body.wp-admin.profile-php .form-table+div{
     display: none;
 }
 
-#wpfooter{
+body.wp-admin.profile-php #wpfooter{
     display: none;
 }
-
 
 
 

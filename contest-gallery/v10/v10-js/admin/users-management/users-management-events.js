@@ -126,17 +126,21 @@ jQuery(document).ready(function($){
         $('#cgBackendBackgroundDrop').addClass('cg_message_close_extra_processing');
     };
 
-    var cgUserDataExportSetError = function (message) {
+    var cgUserDataExportSetError = function (message, status) {
         var $modal = cgUserDataExportModal();
+        var terminal = [401, 403, 404].indexOf(status) !== -1;
+        if (terminal) {
+            cgUserDataExportRetry = null;
+        }
         cgUserDataExportIsProcessing = false;
         $('#cgBackendBackgroundDrop').removeClass('cg_message_close_extra_processing');
         $modal.removeClass('cg-user-data-export-processing cg-user-data-export-done').addClass('cg-user-data-export-error');
-        $('#cgUserDataExportHeadline').text('Export paused');
-        $('#cgUserDataExportText').text('The completed parts remain available and the failed step can be retried.');
+        $('#cgUserDataExportHeadline').text(terminal ? 'Export stopped' : 'Export paused');
+        $('#cgUserDataExportText').text(terminal ? (status === 404 ? 'Please close this dialog and start a new export.' : 'Please reload this page before starting another export.') : 'The request failed. Please try again.');
         $('#cgUserDataExportError').removeClass('cg_hide').text(message);
         $('#cgUserDataExportRetry').toggleClass('cg_hide', !cgUserDataExportRetry);
         $('#cgUserDataExportDownload, #cgUserDataExportDownloadInfo').addClass('cg_hide');
-        if (cgUserDataExportJobId) {
+        if (cgUserDataExportJobId && !terminal) {
             $('#cgUserDataExportCancel').removeClass('cg_hide').prop('disabled', false).text('Cancel and remove files');
             $('#cgUserDataExportClose').addClass('cg_hide');
         } else {
@@ -213,7 +217,7 @@ jQuery(document).ready(function($){
                 return;
             }
             cgUserDataExportRetry = retry;
-            cgUserDataExportSetError(cgUserDataExportErrorMessage(xhr, 'The next export batch could not be processed.'));
+            cgUserDataExportSetError(cgUserDataExportErrorMessage(xhr, 'The next export batch could not be processed.'), xhr.status);
         });
     };
 
@@ -246,7 +250,7 @@ jQuery(document).ready(function($){
                 return;
             }
             cgUserDataExportRetry = retry;
-            cgUserDataExportSetError(cgUserDataExportErrorMessage(xhr, 'The export job could not be started.'));
+            cgUserDataExportSetError(cgUserDataExportErrorMessage(xhr, 'The export job could not be started.'), xhr.status);
         });
     };
 
@@ -277,9 +281,13 @@ jQuery(document).ready(function($){
         cgUserDataExportRetry();
     });
 
-    $(document).on('click', '#cgUserDataExportCancel', function () {
-        var $button = $(this);
+    var cgUserDataExportCancel = function () {
+        var $button = $('#cgUserDataExportCancel');
         var jobId = cgUserDataExportJobId;
+        cgUserDataExportRetry = cgUserDataExportCancel;
+        cgUserDataExportIsProcessing = true;
+        $('#cgBackendBackgroundDrop').addClass('cg_message_close_extra_processing');
+        $('#cgUserDataExportError, #cgUserDataExportRetry, #cgUserDataExportClose').addClass('cg_hide');
         $button.prop('disabled', true).text('Cancelling...');
         if (cgUserDataExportRequest) {
             cgUserDataExportRequest.abort();
@@ -298,10 +306,18 @@ jQuery(document).ready(function($){
                 cg_nonce: CG1LBackendNonce.nonce,
                 job_id: jobId
             }
-        }).always(function () {
-            cgUserDataExportHideModal();
+        }).done(function (response) {
+            if (response && response.success && response.data && response.data.cancelled) {
+                cgUserDataExportHideModal();
+            } else {
+                cgUserDataExportSetError(response && response.data && response.data.message ? response.data.message : 'The export could not be cancelled. Please try again.');
+            }
+        }).fail(function (xhr) {
+            cgUserDataExportSetError(cgUserDataExportErrorMessage(xhr, 'The export could not be cancelled. Please try again.'), xhr.status);
         });
-    });
+    };
+
+    $(document).on('click', '#cgUserDataExportCancel', cgUserDataExportCancel);
 
     $(document).on('click', '#cgUserDataExportClose', function () {
         cgUserDataExportHideModal();
@@ -410,7 +426,7 @@ jQuery(document).ready(function($){
         if($box.find('tbody').length){
             cgJsClassAdmin.gallery.functions.createCgUsersManagementListLoaderClone($,$box);
             $cgUsersManagementListLoaderClone = $box.clone();
-        }else{
+        }else if($cgUsersManagementListLoaderClone){
             $box.replaceWith($cgUsersManagementListLoaderClone);
             isCloneLoader = true;
         }

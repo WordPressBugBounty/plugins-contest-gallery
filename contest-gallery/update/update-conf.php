@@ -389,6 +389,7 @@ $cgUpdateColumns = array(
         'RowNumber' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update ab 01.10.2025
         'ColNumber' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update ab 01.10.2025
         'RowCols' => array('COLUMN_TYPE' => 'INT(11)','DEFAULT' => 0),// Update ab 01.10.2025
+        'RowLayout' => array('COLUMN_TYPE' => 'VARCHAR(5)','DEFAULT' => '""'),// Registration row layout
         'PinField' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update ab 21.11.2025
         'PublicProfile' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Public registration field visibility
     ),

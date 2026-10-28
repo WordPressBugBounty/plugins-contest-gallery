@@ -39,6 +39,7 @@ if(!function_exists('rowColsCheck')){
     }
 }
 
+$cgRegistryRowLayouts = cg_upload_form_row_layouts($selectFormInput, true);
 $selectFormInput = cg_sort_form_input($selectFormInput);
 /*
   echo "<pre>";
@@ -66,6 +67,7 @@ if(count($selectFormInput)==0){
     echo "<div class='cg_row cg_add_row'  title='Add row' ></div>";
 
     foreach ($selectFormInput as $key => $value) {
+        $cgRowLayout = isset($cgRegistryRowLayouts[$value->RowNumber]) ? $cgRegistryRowLayouts[$value->RowNumber] : cg_upload_form_row_layout('', $value->RowCols);
         $echoRowClosed = false;
         if($previousRowNumber>0 && $value ->RowNumber>$previousRowNumber){
             $echoRowClosed = true;
@@ -73,11 +75,11 @@ if(count($selectFormInput)==0){
         }
 
         if($value->RowNumber == 0){// if first time load in 27.0.0
-            echo "<div class='cg_row'>";
+            echo "<div class='cg_row' data-cg-row-layout='".esc_attr($cgRowLayout)."'>";
             echo "<div class='cg_add_col' title='Add column' ></div>";
             $echoRowClosed = true;
         }elseif($value ->RowNumber != $previousRowNumber){
-            echo "<div class='cg_row'>";
+            echo "<div class='cg_row' data-cg-row-layout='".esc_attr($cgRowLayout)."'>";
             $cg_hide = '';
             if($value->RowCols==3){
                 $cg_hide = 'cg_hide';

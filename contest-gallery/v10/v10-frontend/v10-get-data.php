@@ -1074,6 +1074,9 @@ if($isShowGallery == true){
         $jsonCategories = json_decode(fread($fp,filesize($jsonCategoriesFile)),true);
         fclose($fp);
     }
+    if(!is_array($jsonCategories)){
+        $jsonCategories = array();
+    }
 
     $userIP = cg1l_sanitize_method(cg_get_user_ip());
     $userIPtype = cg1l_sanitize_method(cg_get_user_ip_type());
@@ -1091,6 +1094,13 @@ if($isShowGallery == true){
 
     if(empty($options['visual']['BlogLook'])){
         $options['visual']['BlogLook'] = 0;
+    }
+
+    if(!isset($options['general']['SliderLook'])){
+        $options['general']['SliderLook'] = 0;
+    }
+    if(!isset($options['general']['SliderLookOrder'])){
+        $options['general']['SliderLookOrder'] = 0;
     }
 
     // Legacy slider/blog gallery views are retired; render them as Masonry.

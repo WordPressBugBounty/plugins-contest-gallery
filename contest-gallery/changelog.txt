@@ -1,5 +1,13 @@
 Contest Gallery
 
+= 34.0.3 =
+* IMPROVED: Upload and registration forms with flexible columns, clearer field selection and smoother drag and drop.
+* IMPROVED: Backend navigation, user management and order screens.
+* IMPROVED: ZIP and CSV exports with progress feedback, cancellation and more reliable export results.
+* IMPROVED: Social embed previews, direct gallery insertion and Wordfence compatibility.
+* FIXED: Form saving and feedback, field ordering and registration choices in forms and profiles.
+* SECURITY: Security hardening.
+
 = 34.0.2 =
 * NEW: Email gallery participants with recipient filters, test emails, drafts and message history.
 * NEW: Custom sign-in text and registration agreements with saved consent records.

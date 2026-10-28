@@ -12,7 +12,7 @@ if($isOnlyPlaceHolder){
     $fieldTitle = '';
     $fieldPlaceholder = '';
     foreach($fieldContent as $key => $valueFieldContent){
-        $valueFieldContent = contest_gal1ery_convert_for_html_output_without_nl2br($valueFieldContent);
+        $valueFieldContent = cg_form_decode_value($valueFieldContent);
         if($key=='titel'){
             $fieldTitle = $valueFieldContent;
         }
@@ -39,16 +39,11 @@ $colId = 'kf';
 
     echo "<div class='cg_row_col cg_el cg_drag_drop $cg_hide_upload_field $cg_el_saved' id='right$kfRightCount'  data-cg-field='$colId'>";
             echo "<div class='cg_upl_title $requiredChecked' >";
-                echo cg1l_sanitize_method($fieldTitle);
+                echo cg_form_escape_value($fieldTitle);
             echo "</div>";
             echo "<div class='cg_upl_content' >";
-                echo "<textarea class='cg_upl_placeholder' placeholder='$fieldPlaceholder'></textarea>";
+                echo "<textarea class='cg_upl_placeholder' placeholder='".cg_form_escape_value($fieldPlaceholder)."'></textarea>";
             echo "</div>";
         echo "<div class='cg_upl_del' title='Delete field' >";
         echo "</div>";
     echo "</div>";
-
-if(!$isOnlyPlaceHolder){
-    $kfRightCount++;
-}
-

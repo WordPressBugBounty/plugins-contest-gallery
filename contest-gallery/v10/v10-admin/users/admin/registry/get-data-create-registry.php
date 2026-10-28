@@ -39,43 +39,11 @@ if(intval($galleryDbVersion)>=14){
     $GeneralIDtoInsert = $GalleryID;
 }
 
-// Authenticate before deleting fields or changing their public visibility.
-if(!empty($_POST['submit']) || !empty($_POST['deleteFieldnumber'])){check_admin_referer('cg_admin');}
-
-// Bind every submitted ID to this form and type before deleting or writing any rows.
-if(isset($_POST['Field_Type']) && !is_array($_POST['Field_Type'])){wp_die('Invalid registration fields.');}
-if(isset($_POST['Field_Id']) && !is_array($_POST['Field_Id'])){wp_die('Invalid registration field IDs.');}
-if(!empty($_POST['Field_Type']) && is_array($_POST['Field_Type'])){
-    $seenFieldIds = array();
-    foreach($_POST['Field_Type'] as $fieldIndex=>$fieldType){
-        if(!ctype_digit((string)$fieldIndex) || !$fieldIndex || !is_string($fieldType)){wp_die('Invalid registration fields.');}
-        $rawFieldId = isset($_POST['Field_Id'][$fieldIndex]) ? $_POST['Field_Id'][$fieldIndex] : '';
-        if(!is_scalar($rawFieldId) || ($rawFieldId!=='' && !ctype_digit((string)$rawFieldId))){wp_die('Invalid registration field ID.');}
-        $fieldId = absint($rawFieldId);
-        $existingField = null;
-        if($fieldId){
-            $existingField = $wpdb->get_row($wpdb->prepare("SELECT id,Field_Type FROM $tablename_create_user_form WHERE id=%d AND $GalleryIDorGeneralIDstring=%d",$fieldId,$GalleryIDorGeneralIDnumber));
-            if(!$existingField || $existingField->Field_Type!==$fieldType || isset($seenFieldIds[$fieldId])){wp_die('Invalid registration field assignment.');}
-            $seenFieldIds[$fieldId] = true;
-        }else{unset($_POST['Field_Id'][$fieldIndex]);}
-        if($fieldType==='user-url-field' && !$GeneralID){
-            wp_die('URL fields require the general registration form.');
-        }
-        if($fieldType==='user-url-field'){
-            foreach(array('Field_Name','Field_Content','Min_Char','Max_Char','RowNumber','ColNumber','RowCols') as $part){
-                if(!isset($_POST[$part]) || !is_array($_POST[$part]) || !isset($_POST[$part][$fieldIndex]) || !is_scalar($_POST[$part][$fieldIndex])){wp_die('Invalid URL field data.');}
-            }
-        }
-    }
-}
-if(!empty($_POST['deleteFieldnumber'])){
-    if(!is_array($_POST['deleteFieldnumber'])){wp_die('Invalid registration field deletion.');}
-    foreach($_POST['deleteFieldnumber'] as $fieldId){
-        if(!is_scalar($fieldId) || !ctype_digit((string)$fieldId) || !$wpdb->get_var($wpdb->prepare("SELECT id FROM $tablename_create_user_form WHERE id=%d AND $GalleryIDorGeneralIDstring=%d",absint($fieldId),$GalleryIDorGeneralIDnumber))){wp_die('Invalid registration field deletion.');}
-    }
-}
-
-
+$cgFormSaveContext = null;
+if(!empty($_POST['submit']) || !empty($_POST['deleteFieldnumber']) || isset($_POST['cg_form_kind'])){
+    check_admin_referer('cg_admin');
+    try{
+        cg_form_save_begin($cgFormSaveContext,'registry',$GalleryID,(bool)$GeneralID,$galleryDbVersion,$cgProVersion);
 // Check if certain fieldnumber should be deleted
 
 //
@@ -93,7 +61,7 @@ if(!empty($_POST['submit']) && !empty($_POST['Field_Type'])){
         if($cgType!=='user-robot-recaptcha-field'){continue;}
         $cgId = !empty($_POST['Field_Id'][$cgIndex]) ? absint($_POST['Field_Id'][$cgIndex]) : 0;
         $cgRecord = cg_captcha_prepare_config('registry',$cgId,isset($_POST['ReCaKey']) ? $_POST['ReCaKey'] : '',isset($_POST['ReCaSecret']) ? $_POST['ReCaSecret'] : '',empty($_POST['Hide'][$cgIndex]));
-        if(is_wp_error($cgRecord)){wp_die(esc_html($cgRecord->get_error_message()),'',array('back_link'=>true));}
+        cg_form_save_check($cgRecord);
         $cgCaptchaConfigs[$cgIndex] = $cgRecord;
     }
 }
@@ -103,6 +71,8 @@ if(!isset($_POST['Necessary'])){
 }
 
 $deleteFieldnumbersArray = [];
+
+$cgFormSaveContext['writes_started'] = true;
 
 if(!empty($_POST['deleteFieldnumber'])){
 
@@ -114,36 +84,40 @@ if(!empty($_POST['deleteFieldnumber'])){
 
         if(intval($galleryDbVersion)>=14){
 
+            $cgAffectedUsers = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT user_id FROM $wp_usermeta_table WHERE meta_key=%s",cg_profile_meta_key($fieldnumber)));
+            if($wpdb->last_error){throw new Exception('The field values could not be read.');}
+            $cgFormSaveContext['users'] = array_merge($cgFormSaveContext['users'],$cgAffectedUsers);
+
             // wpfn, wpln and profile image will be not deleted because named other way or stored in other table
-            $wpdb->query($wpdb->prepare(
+            cg_form_save_check($wpdb->query($wpdb->prepare(
                 "
 				DELETE FROM $wp_usermeta_table WHERE meta_key = %s
 			",
                 cg_profile_meta_key($fieldnumber)
-            ));
+            )));
 
-            $wpdb->query( $wpdb->prepare(
+            cg_form_save_check($wpdb->query( $wpdb->prepare(
                 "
 				DELETE FROM $tablename_create_user_form WHERE GeneralID = %d AND id = %d
 			",
                 1, $fieldnumber
-            ));
+            )));
 
         }else{
 
-            $wpdb->query( $wpdb->prepare(
+            cg_form_save_check($wpdb->query( $wpdb->prepare(
                 "
                 DELETE FROM $tablename_create_user_form WHERE GalleryID = %d AND id = %d
             ",
                 $GalleryID, $fieldnumber
-            ));
+            )));
 
-            $wpdb->query( $wpdb->prepare(
+            cg_form_save_check($wpdb->query( $wpdb->prepare(
                 "
                 DELETE FROM $tablename_create_user_entries WHERE GalleryID = %d AND f_input_id = %d
             ",
                 $GalleryID, $fieldnumber
-            ));
+            )));
 
         }
 
@@ -196,6 +170,31 @@ foreach ($get_RowCols as $charKey => $char){
     $get_RowCols[$charKey] = absint($char);
 }
 
+$cgRegistryLayoutFields = array();
+foreach($get_Field_Type as $cgIndex => $cgType){
+    $cgRegistryLayoutFields[$cgIndex] = array(
+        'RowNumber' => isset($get_RowNumber[$cgIndex]) ? $get_RowNumber[$cgIndex] : 1,
+        'RowCols' => isset($get_RowCols[$cgIndex]) ? $get_RowCols[$cgIndex] : 1,
+        'RowLayout' => isset($_POST['RowLayout'][$cgIndex]) ? $_POST['RowLayout'][$cgIndex] : ''
+    );
+}
+$cgRegistryLayoutFields = cg_upload_form_prepare_layouts($cgRegistryLayoutFields);
+$get_RowLayout = array();
+foreach($cgRegistryLayoutFields as $cgIndex => $cgLayoutField){
+    $get_RowCols[$cgIndex] = $cgLayoutField['RowCols'];
+    $get_RowLayout[$cgIndex] = $cgLayoutField['RowLayout'];
+}
+
+// Derive storage order from visible row/column positions, not left-panel indices.
+$cgFieldPositions = array();
+foreach($get_Field_Type as $cgIndex => $cgType){
+    $cgFieldPositions[$cgIndex] = $get_RowNumber[$cgIndex] * 100 + $get_ColNumber[$cgIndex];
+}
+asort($cgFieldPositions, SORT_NUMERIC);
+$cgFieldOrders = array();
+$cgFieldRank = 0;
+foreach($cgFieldPositions as $cgIndex => $cgPosition){$cgFieldOrders[$cgIndex] = ++$cgFieldRank;}
+
 $get_Necessary = (!empty($_POST['Necessary'])) ? $_POST['Necessary'] : [];
 $get_Hide = (!empty($_POST['Hide'])) ? $_POST['Hide'] : [];
 $get_PinField = (!empty($_POST['PinField'])) ? $_POST['PinField'] : [];
@@ -208,6 +207,7 @@ $get_PinField = (!empty($_POST['PinField'])) ? $_POST['PinField'] : [];
 foreach($get_Field_Type as $key => $value){
         // Use the same submitted index as the validation above, including sparse arrays.
         $i = $key;
+        $cgOriginalField = !empty($get_Field_Id[$i]) ? $cgFormSaveContext['fields'][$get_Field_Id[$i]] : array();
         $wpdb->insert_id = 0;
         $PublicProfile = $GeneralID && in_array($value,cg_public_profile_field_types(),true) && !empty($_POST['PublicProfile'][$i]) ? 1 : 0;
 
@@ -235,41 +235,41 @@ foreach($get_Field_Type as $key => $value){
             if($get_Necessary[$i]=='on'){$update_Necessary=1;}
             else{$update_Necessary=0;}
 
-            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
+            $get_Field_Name[$i]=cg_form_store_value($get_Field_Name[$i],isset($cgOriginalField['Field_Name']) ? $cgOriginalField['Field_Name'] : null);
 
             if(isset($get_Field_Id[$i])){
-                $wpdb->update(
+                cg_form_save_check($wpdb->update(
                     "$tablename_create_user_form",
-                    array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
+                    array('Field_Order' => $cgFieldOrders[$i], 'Field_Name' => $get_Field_Name[$i],
                         'Field_Content' => '','Min_Char' => '','Max_Char' => '', 'Required' => $update_Necessary, 'Active' => $Active,
-                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile
+                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i], 'RowLayout' => $get_RowLayout[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile
                     ),
-                    array('id' => $get_Field_Id[$i]),
+                    array('id' => $get_Field_Id[$i], $GalleryIDorGeneralIDstring => $GalleryIDorGeneralIDnumber),
                     array('%d','%s',
-                        '%s','%s','%s','%d','%d','%d','%d','%d','%d','%d'),
-                    array('%d')
-                );
+                        '%s','%s','%s','%d','%d','%d','%d','%d','%s','%d','%d'),
+                    array('%d','%d')
+                ));
             }
             else{
 
-                $wpdb->query( $wpdb->prepare(
+                cg_form_save_check($wpdb->query( $wpdb->prepare(
                     "
                                 INSERT INTO $tablename_create_user_form
                                 ( id, GalleryID, Field_Type, Field_Order,
                                 Field_Name,Field_Content,Min_Char,Max_Char,
                                 Required,Active,GeneralID,
-                                 RowNumber,ColNumber,RowCols,PinField,PublicProfile
+                                 RowNumber,ColNumber,RowCols,RowLayout,PinField,PublicProfile
                                  )
                                 VALUES ( %s,%d,%s,%d,
                                 %s,%s,%d,%d,
                                 %d,%d,%d,
-                                %d,%d,%d,%d,%d)
+                                %d,%d,%d,%s,%d,%d)
                             ",
-                    '',$GeneralIDtoInsert,'profile-image',$i,
+                    '',$GeneralIDtoInsert,'profile-image',$cgFieldOrders[$i],
                     $get_Field_Name[$i],'','','',
                     $update_Necessary,$Active,$GeneralID,
-                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
-                ) );
+                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$get_RowLayout[$i],$PinField,$PublicProfile
+                ) ));
 
             }
 
@@ -295,40 +295,40 @@ foreach($get_Field_Type as $key => $value){
             if($get_Necessary[$i]=='on'){$update_Necessary=1;}
             else{$update_Necessary=0;}
 
-            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
-            $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
+            $get_Field_Name[$i]=cg_form_store_value($get_Field_Name[$i],isset($cgOriginalField['Field_Name']) ? $cgOriginalField['Field_Name'] : null);
+            $get_Field_Content[$i]=cg_form_store_value($get_Field_Content[$i],isset($cgOriginalField['Field_Content']) ? $cgOriginalField['Field_Content'] : null);
 
             if(isset($get_Field_Id[$i])){
-                $wpdb->update(
+                cg_form_save_check($wpdb->update(
                     "$tablename_create_user_form",
-                    array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
+                    array('Field_Order' => $cgFieldOrders[$i], 'Field_Name' => $get_Field_Name[$i],
                         'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i], 'Required' => $update_Necessary, 'Active' => $Active,
-                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
-                    array('id' => $get_Field_Id[$i]),
+                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i], 'RowLayout' => $get_RowLayout[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
+                    array('id' => $get_Field_Id[$i], $GalleryIDorGeneralIDstring => $GalleryIDorGeneralIDnumber),
                     array('%d','%s',
-                        '%s','%d','%d','%d','%d','%d','%d','%d','%d','%d'),
-                    array('%d')
-                );
+                        '%s','%d','%d','%d','%d','%d','%d','%d','%s','%d','%d'),
+                    array('%d','%d')
+                ));
             }
             else{
 
-                $wpdb->query( $wpdb->prepare(
+                cg_form_save_check($wpdb->query( $wpdb->prepare(
                     "
                                 INSERT INTO $tablename_create_user_form
                                 ( id, GalleryID, Field_Type, Field_Order,
                                 Field_Name,Field_Content,Min_Char,Max_Char,
                                 Required,Active,GeneralID,
-                                 RowNumber,ColNumber,RowCols,PinField,PublicProfile)
+                                 RowNumber,ColNumber,RowCols,RowLayout,PinField,PublicProfile)
                                 VALUES ( %s,%d,%s,%d,
                                 %s,%s,%d,%d,
                                 %d,%d,%d,
-                                %d,%d,%d,%d,%d)
+                                %d,%d,%d,%s,%d,%d)
                             ",
-                    '',$GeneralIDtoInsert,'wpfn',$i,
+                    '',$GeneralIDtoInsert,'wpfn',$cgFieldOrders[$i],
                     $get_Field_Name[$i],$get_Field_Content[$i],$get_Min_Char[$i],$get_Max_Char[$i],
                     $update_Necessary,$Active,$GeneralID,
-                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
-                ) );
+                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$get_RowLayout[$i],$PinField,$PublicProfile
+                ) ));
 
             }
 
@@ -354,40 +354,40 @@ foreach($get_Field_Type as $key => $value){
             if($get_Necessary[$i]=='on'){$update_Necessary=1;}
             else{$update_Necessary=0;}
 
-            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
-            $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
+            $get_Field_Name[$i]=cg_form_store_value($get_Field_Name[$i],isset($cgOriginalField['Field_Name']) ? $cgOriginalField['Field_Name'] : null);
+            $get_Field_Content[$i]=cg_form_store_value($get_Field_Content[$i],isset($cgOriginalField['Field_Content']) ? $cgOriginalField['Field_Content'] : null);
 
             if(isset($get_Field_Id[$i])){
-                $wpdb->update(
+                cg_form_save_check($wpdb->update(
                     "$tablename_create_user_form",
-                    array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
+                    array('Field_Order' => $cgFieldOrders[$i], 'Field_Name' => $get_Field_Name[$i],
                         'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i], 'Required' => $update_Necessary, 'Active' => $Active,
-                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
-                    array('id' => $get_Field_Id[$i]),
+                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i], 'RowLayout' => $get_RowLayout[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
+                    array('id' => $get_Field_Id[$i], $GalleryIDorGeneralIDstring => $GalleryIDorGeneralIDnumber),
                     array('%d','%s',
-                        '%s','%d','%d','%d','%d','%d','%d','%d','%d','%d'),
-                    array('%d')
-                );
+                        '%s','%d','%d','%d','%d','%d','%d','%d','%s','%d','%d'),
+                    array('%d','%d')
+                ));
             }
             else{
 
-                $wpdb->query( $wpdb->prepare(
+                cg_form_save_check($wpdb->query( $wpdb->prepare(
                     "
                                 INSERT INTO $tablename_create_user_form
                                 ( id,GalleryID , Field_Type, Field_Order,
                                 Field_Name,Field_Content,Min_Char,Max_Char,
                                 Required,Active,GeneralID,
-                                 RowNumber,ColNumber,RowCols,PinField,PublicProfile)
+                                 RowNumber,ColNumber,RowCols,RowLayout,PinField,PublicProfile)
                                 VALUES ( %s,%d,%s,%d,
                                 %s,%s,%d,%d,
                                 %d,%d,%d,
-                                %d,%d,%d,%d,%d)
+                                %d,%d,%d,%s,%d,%d)
                             ",
-                    '',$GeneralIDtoInsert,'wpln',$i,
+                    '',$GeneralIDtoInsert,'wpln',$cgFieldOrders[$i],
                     $get_Field_Name[$i],$get_Field_Content[$i],$get_Min_Char[$i],$get_Max_Char[$i],
                     $update_Necessary,$Active,$GeneralID,
-                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
-                ) );
+                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$get_RowLayout[$i],$PinField,$PublicProfile
+                ) ));
 
             }
 
@@ -413,40 +413,40 @@ foreach($get_Field_Type as $key => $value){
             if($get_Necessary[$i]=='on'){$update_Necessary=1;}
             else{$update_Necessary=0;}
 
-            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
-            $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
+            $get_Field_Name[$i]=cg_form_store_value($get_Field_Name[$i],isset($cgOriginalField['Field_Name']) ? $cgOriginalField['Field_Name'] : null);
+            $get_Field_Content[$i]=cg_form_store_value($get_Field_Content[$i],isset($cgOriginalField['Field_Content']) ? $cgOriginalField['Field_Content'] : null);
 
             if(isset($get_Field_Id[$i])){
-                $wpdb->update(
+                cg_form_save_check($wpdb->update(
                     "$tablename_create_user_form",
-                    array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
+                    array('Field_Order' => $cgFieldOrders[$i], 'Field_Name' => $get_Field_Name[$i],
                         'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i], 'Required' => $update_Necessary, 'Active' => $Active,
-                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
-                    array('id' => $get_Field_Id[$i]),
+                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i], 'RowLayout' => $get_RowLayout[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
+                    array('id' => $get_Field_Id[$i], $GalleryIDorGeneralIDstring => $GalleryIDorGeneralIDnumber),
                     array('%d','%s',
-                        '%s','%d','%d','%d','%d','%d','%d','%d','%d','%d'),
-                    array('%d')
-                );
+                        '%s','%d','%d','%d','%d','%d','%d','%d','%s','%d','%d'),
+                    array('%d','%d')
+                ));
             }
             else{
 
-                $wpdb->query( $wpdb->prepare(
+                cg_form_save_check($wpdb->query( $wpdb->prepare(
                     "
                                 INSERT INTO $tablename_create_user_form
                                 ( id, GalleryID, Field_Type, Field_Order,
                                 Field_Name,Field_Content,Min_Char,Max_Char,
                                 Required,Active,GeneralID,
-                                 RowNumber,ColNumber,RowCols,PinField,PublicProfile)
+                                 RowNumber,ColNumber,RowCols,RowLayout,PinField,PublicProfile)
                                 VALUES ( %s,%d,%s,%d,
                                 %s,%s,%d,%d,
                                 %d,%d,%d,
-                                %d,%d,%d,%d,%d)
+                                %d,%d,%d,%s,%d,%d)
                             ",
-                    '',$GeneralIDtoInsert,$value,$i,
+                    '',$GeneralIDtoInsert,$value,$cgFieldOrders[$i],
                     $get_Field_Name[$i],$get_Field_Content[$i],$get_Min_Char[$i],$get_Max_Char[$i],
                     $update_Necessary,$Active,$GeneralID,
-                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
-                ) );
+                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$get_RowLayout[$i],$PinField,$PublicProfile
+                ) ));
 
             }
 
@@ -467,43 +467,43 @@ foreach($get_Field_Type as $key => $value){
 
             $update_Necessary=1;// so far check agreement is always required
 
-            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
-            $get_Field_Content[$i] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
+            $get_Field_Name[$i]=cg_form_store_value($get_Field_Name[$i],isset($cgOriginalField['Field_Name']) ? $cgOriginalField['Field_Name'] : null);
+            $get_Field_Content[$i] = cg_form_store_value($get_Field_Content[$i],isset($cgOriginalField['Field_Content']) ? $cgOriginalField['Field_Content'] : null);
 
             if(!isset($get_Field_Content[$i])){
                 $get_Field_Content[$i] = '';
             }
 
             if(isset($get_Field_Id[$i])){
-						$wpdb->update(
+						cg_form_save_check($wpdb->update(
 						"$tablename_create_user_form",
-						array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
+						array('Field_Order' => $cgFieldOrders[$i], 'Field_Name' => $get_Field_Name[$i],
 						'Field_Content' => $get_Field_Content[$i],'Min_Char' => 0,'Max_Char' => 0, 'Required' => $update_Necessary, 'Active' => $Active,
-                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
-						array('id' => $get_Field_Id[$i]),
+                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i], 'RowLayout' => $get_RowLayout[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
+						array('id' => $get_Field_Id[$i], $GalleryIDorGeneralIDstring => $GalleryIDorGeneralIDnumber),
 						array('%d','%s',
-						'%s','%s','%s','%d','%d','%d','%d','%d','%d','%d'),
-						array('%d')
-						);					
+						'%s','%s','%s','%d','%d','%d','%d','%d','%s','%d','%d'),
+						array('%d','%d')
+						));
 					}
 					else{						
-						$wpdb->query( $wpdb->prepare(
+						cg_form_save_check($wpdb->query( $wpdb->prepare(
 						"
 							INSERT INTO $tablename_create_user_form
 							( id, GalleryID, Field_Type, Field_Order,
 							Field_Name,Field_Content,Min_Char,Max_Char,
 							Required,Active,GeneralID,
-                             RowNumber,ColNumber,RowCols,PinField,PublicProfile)
+                             RowNumber,ColNumber,RowCols,RowLayout,PinField,PublicProfile)
 							VALUES ( %s,%d,%s,%d,
 							%s,%s,%d,%d,
 							%d,%d,%d,
-                            %d,%d,%d,%d,%d)
+                            %d,%d,%d,%s,%d,%d)
 						",
-							'',$GeneralIDtoInsert,'user-check-agreement-field',$i,
+							'',$GeneralIDtoInsert,'user-check-agreement-field',$cgFieldOrders[$i],
 							$get_Field_Name[$i],$get_Field_Content[$i],'','',
                             $update_Necessary,$Active,$GeneralID,
-                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
-						) );						
+                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$get_RowLayout[$i],$PinField,$PublicProfile
+						) ));
 					}			
 
 		}
@@ -523,41 +523,41 @@ foreach($get_Field_Type as $key => $value){
             }
 
 
-					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
+					$get_Field_Name[$i]=cg_form_store_value($get_Field_Name[$i],isset($cgOriginalField['Field_Name']) ? $cgOriginalField['Field_Name'] : null);
 
 					if(isset($get_Field_Id[$i])){
 
 
-						$wpdb->update(
+						cg_form_save_check($wpdb->update(
                             "$tablename_create_user_form",
-                            array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
+                            array('Field_Order' => $cgFieldOrders[$i], 'Field_Name' => $get_Field_Name[$i],
                             'Field_Content' => '','Min_Char' => '','Max_Char' => '', 'Active' => $Active,
-                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
-                            array('id' => $get_Field_Id[$i]),
+                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i], 'RowLayout' => $get_RowLayout[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
+                            array('id' => $get_Field_Id[$i], $GalleryIDorGeneralIDstring => $GalleryIDorGeneralIDnumber),
                             array('%d','%s',
-                            '%s','%s','%s','%d','%d','%d','%d','%d','%d'),
-                            array('%d')
-						);
+                            '%s','%s','%s','%d','%d','%d','%d','%s','%d','%d'),
+                            array('%d','%d')
+						));
 					}
 					else{
 
-						$wpdb->query( $wpdb->prepare(
+						cg_form_save_check($wpdb->query( $wpdb->prepare(
 						"
 							INSERT INTO $tablename_create_user_form
 							( id, GalleryID, Field_Type, Field_Order,
 							Field_Name,Field_Content,Min_Char,Max_Char,
 							Required,Active,GeneralID,
-                             RowNumber,ColNumber,RowCols,PinField,PublicProfile)
+                             RowNumber,ColNumber,RowCols,RowLayout,PinField,PublicProfile)
 							VALUES ( %s,%d,%s,%d,
 							%s,%s,%d,%d,
 							%d,%d,%d,
-                            %d,%d,%d,%d,%d)
+                            %d,%d,%d,%s,%d,%d)
 						",
-							'',$GeneralIDtoInsert,'user-robot-field',$i,
+							'',$GeneralIDtoInsert,'user-robot-field',$cgFieldOrders[$i],
 							$get_Field_Name[$i],'','','',
 							1,$Active,$GeneralID,
-                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
-						) );
+                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$get_RowLayout[$i],$PinField,$PublicProfile
+						) ));
 					}
 
 		}
@@ -575,42 +575,42 @@ foreach($get_Field_Type as $key => $value){
                 $PinField = 1;
             }
 
-					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method((isset($get_Field_Name[$i])) ? $get_Field_Name[$i] : '');
+					$get_Field_Name[$i]=cg_form_store_value((isset($get_Field_Name[$i])) ? $get_Field_Name[$i] : '');
 
 					if(isset($get_Field_Id[$i])){
-						$wpdb->update(
+						cg_form_save_check($wpdb->update(
                             "$tablename_create_user_form",
-                            array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
+                            array('Field_Order' => $cgFieldOrders[$i], 'Field_Name' => $get_Field_Name[$i],
                             'Field_Content' => '','Min_Char' => '','Max_Char' => '', 'Active' => $Active, 'ReCaKey' => $get_ReCaKey, 'ReCaLang' => $get_ReCaLang,
-                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
-                            array('id' => $get_Field_Id[$i]),
+                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i], 'RowLayout' => $get_RowLayout[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
+                            array('id' => $get_Field_Id[$i], $GalleryIDorGeneralIDstring => $GalleryIDorGeneralIDnumber),
                             array('%d','%s',
-                            '%s','%s','%s','%d','%s','%s','%d','%d','%d','%d','%d'),
-                            array('%d')
-						);
+                            '%s','%s','%s','%d','%s','%s','%d','%d','%d','%s','%d','%d'),
+                            array('%d','%d')
+						));
 					}
 					else{
 
-						$wpdb->query( $wpdb->prepare(
+						cg_form_save_check($wpdb->query( $wpdb->prepare(
 						"
 							INSERT INTO $tablename_create_user_form
 							( id, GalleryID, Field_Type, Field_Order,
 							Field_Name,Field_Content,Min_Char,Max_Char,
 							Required,Active,ReCaKey,ReCaLang,GeneralID,
-                                 RowNumber,ColNumber,RowCols,PinField,PublicProfile)
+                                 RowNumber,ColNumber,RowCols,RowLayout,PinField,PublicProfile)
 							VALUES ( %s,%d,%s,%d,
 							%s,%s,%d,%d,
 							%d,%d,%s,%s,%d,
-                                %d,%d,%d,%d,%d)
+                                %d,%d,%d,%s,%d,%d)
 						",
-							'',$GeneralIDtoInsert,'user-robot-recaptcha-field',$i,
+							'',$GeneralIDtoInsert,'user-robot-recaptcha-field',$cgFieldOrders[$i],
 							$get_Field_Name[$i],'','','',
 							1,$Active,$get_ReCaKey,$get_ReCaLang,$GeneralID,
-                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
-						) );
+                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$get_RowLayout[$i],$PinField,$PublicProfile
+						) ));
 					}
             $cgCaptchaId = !empty($get_Field_Id[$i]) ? absint($get_Field_Id[$i]) : absint($wpdb->insert_id);
-            cg_captcha_store_config('registry',$cgCaptchaId,isset($cgCaptchaConfigs[$i]) ? $cgCaptchaConfigs[$i] : null);
+            cg_form_save_captcha($cgFormSaveContext,'registry',$cgCaptchaId,isset($cgCaptchaConfigs[$i]) ? $cgCaptchaConfigs[$i] : null);
 
 		}
 	
@@ -627,8 +627,8 @@ foreach($get_Field_Type as $key => $value){
                     $PinField = 1;
                 }
 				
-                $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
-                $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
+                $get_Field_Name[$i]=cg_form_store_value($get_Field_Name[$i],isset($cgOriginalField['Field_Name']) ? $cgOriginalField['Field_Name'] : null);
+                $get_Field_Content[$i]=cg_form_store_value($get_Field_Content[$i],isset($cgOriginalField['Field_Content']) ? $cgOriginalField['Field_Content'] : null);
 
 
                 if(!isset($get_Necessary[$i])){
@@ -640,35 +640,35 @@ foreach($get_Field_Type as $key => $value){
 			
 					if(isset($get_Field_Id[$i])){
 
-						$wpdb->update(
+						cg_form_save_check($wpdb->update(
 						"$tablename_create_user_form",
-						array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
+						array('Field_Order' => $cgFieldOrders[$i], 'Field_Name' => $get_Field_Name[$i],
 						'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i], 'Required' => $update_Necessary, 'Active' => $Active,
-                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
-						array('id' => $get_Field_Id[$i]),
+                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i], 'RowLayout' => $get_RowLayout[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
+						array('id' => $get_Field_Id[$i], $GalleryIDorGeneralIDstring => $GalleryIDorGeneralIDnumber),
 						array('%d','%s',
-						'%s','%d','%d','%d','%d','%d','%d','%d','%d','%d'),
-						array('%d')
-						);							
+						'%s','%d','%d','%d','%d','%d','%d','%d','%s','%d','%d'),
+						array('%d','%d')
+						));
 					}
 					else{					
-						$wpdb->query( $wpdb->prepare(
+						cg_form_save_check($wpdb->query( $wpdb->prepare(
 						"
 							INSERT INTO $tablename_create_user_form
 							( id, GalleryID, Field_Type, Field_Order,
 							Field_Name,Field_Content,Min_Char,Max_Char,
 							Required,Active,GeneralID,
-                                 RowNumber,ColNumber,RowCols,PinField,PublicProfile)
+                                 RowNumber,ColNumber,RowCols,RowLayout,PinField,PublicProfile)
 							VALUES ( %s,%d,%s,%d,
 							%s,%s,%d,%d,
 							%d,%d,%d,
-                                %d,%d,%d,%d,%d)
+                                %d,%d,%d,%s,%d,%d)
 						",
-							'',$GeneralIDtoInsert,'user-comment-field',$i,
+							'',$GeneralIDtoInsert,'user-comment-field',$cgFieldOrders[$i],
 							$get_Field_Name[$i],$get_Field_Content[$i],$get_Min_Char[$i],$get_Max_Char[$i],
 							$update_Necessary,$Active,$GeneralID,
-                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
-						) );						
+                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$get_RowLayout[$i],$PinField,$PublicProfile
+						) ));
 					}
 		
 		}
@@ -698,39 +698,39 @@ foreach($get_Field_Type as $key => $value){
             // to go sure, to avoid eventually error 05 December 2021
             $get_Field_Name[$i] = (!empty($get_Field_Name[$i])) ? $get_Field_Name[$i] : '';
 
-            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
-            $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
+            $get_Field_Name[$i]=cg_form_store_value($get_Field_Name[$i],isset($cgOriginalField['Field_Name']) ? $cgOriginalField['Field_Name'] : null);
+            $get_Field_Content[$i]=cg_form_store_value($get_Field_Content[$i],isset($cgOriginalField['Field_Content']) ? $cgOriginalField['Field_Content'] : null);
 
             if(isset($get_Field_Id[$i])){
-                $wpdb->update(
+                cg_form_save_check($wpdb->update(
                 "$tablename_create_user_form",
-                array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
+                array('Field_Order' => $cgFieldOrders[$i], 'Field_Name' => $get_Field_Name[$i],
                 'Field_Content' => $get_Field_Content[$i],'Min_Char' => '','Max_Char' => '', 'Required' => $update_Necessary, 'Active' => $Active,
-                    'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
-                array('id' => $get_Field_Id[$i]),
+                    'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i], 'RowLayout' => $get_RowLayout[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
+                array('id' => $get_Field_Id[$i], $GalleryIDorGeneralIDstring => $GalleryIDorGeneralIDnumber),
                 array('%d','%s',
-                '%s','%s','%s','%d','%d','%d','%d','%d','%d','%d'),
-                array('%d')
-                );
+                '%s','%s','%s','%d','%d','%d','%d','%d','%s','%d','%d'),
+                array('%d','%d')
+                ));
             }
             else{
-                $wpdb->query( $wpdb->prepare(
+                cg_form_save_check($wpdb->query( $wpdb->prepare(
                 "
                     INSERT INTO $tablename_create_user_form
                     ( id, GalleryID, Field_Type, Field_Order,
                     Field_Name,Field_Content,Min_Char,Max_Char,
                     Required,Active,GeneralID,
-                         RowNumber,ColNumber,RowCols,PinField,PublicProfile)
+                         RowNumber,ColNumber,RowCols,RowLayout,PinField,PublicProfile)
                     VALUES ( %s,%d,%s,%d,
                     %s,%s,%s,%s,
                     %d,%d,%d,
-                        %d,%d,%d,%d,%d)
+                        %d,%d,%d,%s,%d,%d)
                 ",
-                    '',$GeneralIDtoInsert,'user-select-field',$i,
+                    '',$GeneralIDtoInsert,'user-select-field',$cgFieldOrders[$i],
                     $get_Field_Name[$i],$get_Field_Content[$i],'','',
                     $update_Necessary,$Active,$GeneralID,
-                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
-                ) );
+                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$get_RowLayout[$i],$PinField,$PublicProfile
+                ) ));
 
             }
 
@@ -761,39 +761,39 @@ foreach($get_Field_Type as $key => $value){
 				    // to go sure, to avoid eventually error 05 December 2021
                     $get_Field_Name[$i] = (!empty($get_Field_Name[$i])) ? $get_Field_Name[$i] : '';
 
-					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
-					$get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
+					$get_Field_Name[$i]=cg_form_store_value($get_Field_Name[$i],isset($cgOriginalField['Field_Name']) ? $cgOriginalField['Field_Name'] : null);
+					$get_Field_Content[$i]=cg_form_store_value($get_Field_Content[$i],isset($cgOriginalField['Field_Content']) ? $cgOriginalField['Field_Content'] : null);
 
 					if(isset($get_Field_Id[$i])){
-						$wpdb->update(
+						cg_form_save_check($wpdb->update(
 						"$tablename_create_user_form",
-						array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
+						array('Field_Order' => $cgFieldOrders[$i], 'Field_Name' => $get_Field_Name[$i],
 						'Field_Content' => $get_Field_Content[$i],'Min_Char' => '','Max_Char' => '', 'Required' => $update_Necessary, 'Active' => $Active,
-                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
-						array('id' => $get_Field_Id[$i]),
+                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i], 'RowLayout' => $get_RowLayout[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
+						array('id' => $get_Field_Id[$i], $GalleryIDorGeneralIDstring => $GalleryIDorGeneralIDnumber),
 						array('%d','%s',
-						'%s','%s','%s','%d','%d','%d','%d','%d','%d','%d'),
-						array('%d')
-						);
+						'%s','%s','%s','%d','%d','%d','%d','%d','%s','%d','%d'),
+						array('%d','%d')
+						));
 					}
 					else{
-						$wpdb->query( $wpdb->prepare(
+						cg_form_save_check($wpdb->query( $wpdb->prepare(
 						"
 							INSERT INTO $tablename_create_user_form
 							( id, GalleryID, Field_Type, Field_Order,
 							Field_Name,Field_Content,Min_Char,Max_Char,
 							Required,Active,GeneralID,
-                                 RowNumber,ColNumber,RowCols,PinField,PublicProfile)
+                                 RowNumber,ColNumber,RowCols,RowLayout,PinField,PublicProfile)
 							VALUES ( %s,%d,%s,%d,
 							%s,%s,%s,%s,
 							%d,%d,%d,
-                                %d,%d,%d,%d,%d)
+                                %d,%d,%d,%s,%d,%d)
 						",
-                    '',$GeneralIDtoInsert,'user-check-field',$i,
+                    '',$GeneralIDtoInsert,'user-check-field',$cgFieldOrders[$i],
                     $get_Field_Name[$i],$get_Field_Content[$i],'','',
                     $update_Necessary,$Active,$GeneralID,
-                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
-                ) );
+                    $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$get_RowLayout[$i],$PinField,$PublicProfile
+                ) ));
 
             }
 
@@ -818,39 +818,39 @@ foreach($get_Field_Type as $key => $value){
         // to go sure, to avoid eventually error 05 December 2021
         $get_Field_Name[$i] = (!empty($get_Field_Name[$i])) ? $get_Field_Name[$i] : '';
 
-        $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
-        $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
+        $get_Field_Name[$i]=cg_form_store_value($get_Field_Name[$i],isset($cgOriginalField['Field_Name']) ? $cgOriginalField['Field_Name'] : null);
+        $get_Field_Content[$i]=cg_form_store_value($get_Field_Content[$i],isset($cgOriginalField['Field_Content']) ? $cgOriginalField['Field_Content'] : null);
 
         if(isset($get_Field_Id[$i])){
-            $wpdb->update(
+            cg_form_save_check($wpdb->update(
             "$tablename_create_user_form",
-            array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
+            array('Field_Order' => $cgFieldOrders[$i], 'Field_Name' => $get_Field_Name[$i],
             'Field_Content' => $get_Field_Content[$i],'Min_Char' => '','Max_Char' => '', 'Required' => $update_Necessary, 'Active' => $Active,
-                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
-            array('id' => $get_Field_Id[$i]),
+                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i], 'RowLayout' => $get_RowLayout[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
+            array('id' => $get_Field_Id[$i], $GalleryIDorGeneralIDstring => $GalleryIDorGeneralIDnumber),
             array('%d','%s',
-            '%s','%s','%s','%d','%d','%d','%d','%d','%d','%d'),
-            array('%d')
-            );
+            '%s','%s','%s','%d','%d','%d','%d','%d','%s','%d','%d'),
+            array('%d','%d')
+            ));
         }
         else{
-            $wpdb->query( $wpdb->prepare(
+            cg_form_save_check($wpdb->query( $wpdb->prepare(
             "
                 INSERT INTO $tablename_create_user_form
                 ( id, GalleryID, Field_Type, Field_Order,
                 Field_Name,Field_Content,Min_Char,Max_Char,
                 Required,Active,GeneralID,
-                     RowNumber,ColNumber,RowCols,PinField,PublicProfile)
+                     RowNumber,ColNumber,RowCols,RowLayout,PinField,PublicProfile)
                 VALUES ( %s,%d,%s,%d,
                 %s,%s,%s,%s,
                 %d,%d,%d,
-                    %d,%d,%d,%d,%d)
+                    %d,%d,%d,%s,%d,%d)
             ",
-                '',$GeneralIDtoInsert,'user-radio-field',$i,
+                '',$GeneralIDtoInsert,'user-radio-field',$cgFieldOrders[$i],
 							$get_Field_Name[$i],$get_Field_Content[$i],'','',
 							$update_Necessary,$Active,$GeneralID,
-                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
-						) );
+                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$get_RowLayout[$i],$PinField,$PublicProfile
+						) ));
 
 					}
 
@@ -865,21 +865,21 @@ foreach($get_Field_Type as $key => $value){
             $PinField = 1;
         }
 
-					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
-					$get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
+					$get_Field_Name[$i]=cg_form_store_value($get_Field_Name[$i],isset($cgOriginalField['Field_Name']) ? $cgOriginalField['Field_Name'] : null);
+					$get_Field_Content[$i]=cg_form_store_value($get_Field_Content[$i],isset($cgOriginalField['Field_Content']) ? $cgOriginalField['Field_Content'] : null);
 
 						if($get_Field_Id[$i]){
-							$wpdb->update(
+							cg_form_save_check($wpdb->update(
 							"$tablename_create_user_form",
-							array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
+							array('Field_Order' => $cgFieldOrders[$i], 'Field_Name' => $get_Field_Name[$i],
 							'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i],
-                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
-							array('id' => $get_Field_Id[$i]),
+                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i], 'RowLayout' => $get_RowLayout[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
+							array('id' => $get_Field_Id[$i], $GalleryIDorGeneralIDstring => $GalleryIDorGeneralIDnumber),
 							array('%d','%s',
 							'%s','%s','%s',
-                            '%d','%d','%d','%d','%d'),
-							array('%d')
-							);
+                            '%d','%d','%d','%s','%d','%d'),
+							array('%d','%d')
+							));
 						}
 						
 		}
@@ -893,21 +893,21 @@ foreach($get_Field_Type as $key => $value){
             $PinField = 1;
         }
 
-					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
-					$get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
+					$get_Field_Name[$i]=cg_form_store_value($get_Field_Name[$i],isset($cgOriginalField['Field_Name']) ? $cgOriginalField['Field_Name'] : null);
+					$get_Field_Content[$i]=cg_form_store_value($get_Field_Content[$i],isset($cgOriginalField['Field_Content']) ? $cgOriginalField['Field_Content'] : null);
 
 						if($get_Field_Id[$i]){
-							$wpdb->update(
+							cg_form_save_check($wpdb->update(
 							"$tablename_create_user_form",
-							array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
+							array('Field_Order' => $cgFieldOrders[$i], 'Field_Name' => $get_Field_Name[$i],
 							'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i],
-                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
-							array('id' => $get_Field_Id[$i]),
+                                'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i], 'RowLayout' => $get_RowLayout[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
+							array('id' => $get_Field_Id[$i], $GalleryIDorGeneralIDstring => $GalleryIDorGeneralIDnumber),
 							array('%d','%s',
 							'%s','%s','%s',
-                            '%d','%d','%d','%d','%d'),
-							array('%d')
-							);
+                            '%d','%d','%d','%s','%d','%d'),
+							array('%d','%d')
+							));
 						}
 
 	}
@@ -919,8 +919,8 @@ foreach($get_Field_Type as $key => $value){
             $PinField = 1;
         }
 		
-            $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
-            $get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
+            $get_Field_Name[$i]=cg_form_store_value($get_Field_Name[$i],isset($cgOriginalField['Field_Name']) ? $cgOriginalField['Field_Name'] : null);
+            $get_Field_Content[$i]=cg_form_store_value($get_Field_Content[$i],isset($cgOriginalField['Field_Content']) ? $cgOriginalField['Field_Content'] : null);
 
 
         if(!isset($get_Field_Content[$i])){
@@ -928,17 +928,17 @@ foreach($get_Field_Type as $key => $value){
         }
 
         if($get_Field_Id[$i]){
-                $wpdb->update(
+                cg_form_save_check($wpdb->update(
                 "$tablename_create_user_form",
-                array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
+                array('Field_Order' => $cgFieldOrders[$i], 'Field_Name' => $get_Field_Name[$i],
                 'Field_Content' => $get_Field_Content[$i],'Min_Char' => 0,'Max_Char' => 0,
-                    'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
-                array('id' => $get_Field_Id[$i]),
+                    'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i], 'RowLayout' => $get_RowLayout[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
+                array('id' => $get_Field_Id[$i], $GalleryIDorGeneralIDstring => $GalleryIDorGeneralIDnumber),
                 array('%d','%s',
                 '%s','%s','%s',
-                    '%d','%d','%d','%d','%d'),
-                array('%d')
-                );
+                    '%d','%d','%d','%s','%d','%d'),
+                array('%d','%d')
+                ));
         }
 		
 						
@@ -951,22 +951,22 @@ foreach($get_Field_Type as $key => $value){
             $PinField = 1;
         }
 		
-					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
-					$get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
+					$get_Field_Name[$i]=cg_form_store_value($get_Field_Name[$i],isset($cgOriginalField['Field_Name']) ? $cgOriginalField['Field_Name'] : null);
+					$get_Field_Content[$i]=cg_form_store_value($get_Field_Content[$i],isset($cgOriginalField['Field_Content']) ? $cgOriginalField['Field_Content'] : null);
 		
 					if($get_Field_Id[$i]){
 						
-						$wpdb->update(
+						cg_form_save_check($wpdb->update(
 							"$tablename_create_user_form",
-							array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
+							array('Field_Order' => $cgFieldOrders[$i], 'Field_Name' => $get_Field_Name[$i],
 							'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i],
-                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
-							array('id' => $get_Field_Id[$i]),
+                            'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i], 'RowLayout' => $get_RowLayout[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
+							array('id' => $get_Field_Id[$i], $GalleryIDorGeneralIDstring => $GalleryIDorGeneralIDnumber),
 							array('%d','%s',
 							'%s','%s','%s',
-                            '%d','%d','%d','%d','%d'),
-							array('%d')
-						);
+                            '%d','%d','%d','%s','%d','%d'),
+							array('%d','%d')
+						));
 
 					}
 					
@@ -978,25 +978,25 @@ foreach($get_Field_Type as $key => $value){
                 $PinField = 1;
             }
 
-					$get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
-					$get_Field_Content[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
+					$get_Field_Name[$i]=cg_form_store_value($get_Field_Name[$i],isset($cgOriginalField['Field_Name']) ? $cgOriginalField['Field_Name'] : null);
+					$get_Field_Content[$i]=cg_form_store_value($get_Field_Content[$i],isset($cgOriginalField['Field_Content']) ? $cgOriginalField['Field_Content'] : null);
 		
 					if($get_Field_Id[$i]){
-						$wpdb->update(
+						cg_form_save_check($wpdb->update(
 						"$tablename_create_user_form",
-						array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
+						array('Field_Order' => $cgFieldOrders[$i], 'Field_Name' => $get_Field_Name[$i],
 						'Field_Content' => $get_Field_Content[$i],'Min_Char' => $get_Min_Char[$i],'Max_Char' => $get_Max_Char[$i],
-                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
-						array('id' => $get_Field_Id[$i]),
+                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i], 'RowLayout' => $get_RowLayout[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
+						array('id' => $get_Field_Id[$i], $GalleryIDorGeneralIDstring => $GalleryIDorGeneralIDnumber),
 						array('%d','%s',
 						'%s','%s','%s',
-                        '%d','%d','%d','%d','%d'),
-						array('%d')
-						);							
+                        '%d','%d','%d','%s','%d','%d'),
+						array('%d','%d')
+						));
 					}
 		}
 
-	if($value=="user-html-field" && $cgProVersion){
+	if($value=="user-html-field" && ($cgProVersion || !empty($get_Field_Id[$i]))){
 
         $fieldOrder++;
         $Active = 1;
@@ -1009,43 +1009,43 @@ foreach($get_Field_Type as $key => $value){
             $PinField = 1;
         }
 
-        $get_Field_Name[$i]=contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Name[$i]);
-                $get_Field_Content[$i] = contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method($get_Field_Content[$i]);
+        $get_Field_Name[$i]=cg_form_store_value($get_Field_Name[$i],isset($cgOriginalField['Field_Name']) ? $cgOriginalField['Field_Name'] : null);
+                $get_Field_Content[$i] = cg_form_store_value($get_Field_Content[$i],isset($cgOriginalField['Field_Content']) ? $cgOriginalField['Field_Content'] : null);
 
 
         if(!empty($get_Field_Id[$i])){
 
-						$wpdb->update(
+						cg_form_save_check($wpdb->update(
 						"$tablename_create_user_form",
-						array('Field_Order' => $i, 'Field_Name' => $get_Field_Name[$i],
+						array('Field_Order' => $cgFieldOrders[$i], 'Field_Name' => $get_Field_Name[$i],
 						'Field_Content' => $get_Field_Content[$i],'Min_Char' => '','Max_Char' => '', 'Required' => '', 'Active' => $Active,
-                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
-						array('id' => $get_Field_Id[$i]),
+                        'RowNumber' => $get_RowNumber[$i],'ColNumber' => $get_ColNumber[$i],'RowCols' => $get_RowCols[$i], 'RowLayout' => $get_RowLayout[$i],'PinField' => $PinField, 'PublicProfile' => $PublicProfile),
+						array('id' => $get_Field_Id[$i], $GalleryIDorGeneralIDstring => $GalleryIDorGeneralIDnumber),
 						array('%d','%s',
 						'%s','%s','%s','%d','%d',
-                        '%d','%d','%d','%d','%d'),
-						array('%d')
-						);
+                        '%d','%d','%d','%s','%d','%d'),
+						array('%d','%d')
+						));
 						
 					}
 					else{			
-						$wpdb->query( $wpdb->prepare(
+						cg_form_save_check($wpdb->query( $wpdb->prepare(
 						"
 							INSERT INTO $tablename_create_user_form
 							( id, GalleryID, Field_Type, Field_Order,
 							Field_Name,Field_Content,Min_Char,Max_Char,
 							Required,Active,GeneralID,
-                                 RowNumber,ColNumber,RowCols,PinField,PublicProfile)
+                                 RowNumber,ColNumber,RowCols,RowLayout,PinField,PublicProfile)
 							VALUES ( %s,%d,%s,%d,
 							%s,%s,%d,%d,
 							%d,%d,%d,
-                                %d,%d,%d,%d,%d)
+                                %d,%d,%d,%s,%d,%d)
 						",
-							'',$GeneralIDtoInsert,'user-html-field',$i,
+							'',$GeneralIDtoInsert,'user-html-field',$cgFieldOrders[$i],
 							$get_Field_Name[$i],$get_Field_Content[$i],'','',
 							'',$Active,$GeneralID,
-                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$PinField,$PublicProfile
-						) );						
+                            $get_RowNumber[$i],$get_ColNumber[$i],$get_RowCols[$i],$get_RowLayout[$i],$PinField,$PublicProfile
+						) ));
 					}
 
 		}
@@ -1054,11 +1054,16 @@ foreach($get_Field_Type as $key => $value){
 
 }
 
-if(intval($galleryDbVersion)>=14){
-    $selectFormInput = $wpdb->get_results("SELECT * FROM $tablename_create_user_form WHERE GeneralID = 1 ORDER BY Field_Order ASC");
-}else{// then old form
-    $selectFormInput = $wpdb->get_results($wpdb->prepare( "SELECT * FROM $tablename_create_user_form WHERE GalleryID = %d ORDER BY Field_Order ASC",[$GalleryID]));
+        cg_form_save_commit($cgFormSaveContext);
+        cg_form_save_response('saved');
+    }catch(Exception $error){cg_form_save_failure($cgFormSaveContext,$error);}
+    catch(Throwable $error){cg_form_save_failure($cgFormSaveContext,new Exception('The form could not be saved. Reload the editor.'));}
+    finally{cg_form_save_release($cgFormSaveContext);}
 }
+
+try{$cgFormEditorState = cg_form_save_state('registry',$GalleryID,(bool)$GeneralID);}
+catch(Exception $error){wp_die(esc_html($error->getMessage()));}
+$selectFormInput = cg_form_editor_fields($cgFormEditorState['fields']);
 
 $checkDataFormOutput = $wpdb->get_results($wpdb->prepare( "SELECT * FROM $tablename_create_user_form WHERE GalleryID = %d and (Field_Type = 'comment-f' or Field_Type = 'text-f' or Field_Type = 'email-f')",[$GalleryID]));
 

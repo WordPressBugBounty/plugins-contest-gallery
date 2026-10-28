@@ -1,12 +1,10 @@
 <?php
-if(!function_exists('cg_votes_csv_export_all')){
-    function cg_votes_csv_export_all(){
-        if(!current_user_can('manage_options')){
-            echo "Logged in user have to be able to manage_options to execute export votes.";die;
-        }
 
-        cg_check_nonce();
+if(!defined('ABSPATH')){exit;}
 
+if(!function_exists('cg_votes_csv_write_batch')){
+    function cg_votes_csv_write_batch($GalleryID,$cgExportStream,$context,$ids,$headers=false){
+        $idSql = count($ids) ? implode(',',array_map('absint',$ids)) : '0';
         global $wpdb;
 
         $tablename = $wpdb->prefix . "contest_gal1ery";
@@ -14,23 +12,11 @@ if(!function_exists('cg_votes_csv_export_all')){
         $tablename_categories = $wpdb->prefix . "contest_gal1ery_categories";
         $tablename_options = $wpdb->prefix . "contest_gal1ery_options";
 
-        $wpPosts = $wpdb->base_prefix . "posts";
+        $wpPosts = $wpdb->posts;
         $wpUsers = $wpdb->base_prefix . "users";
 
-        $GalleryID = absint($_POST['cg_option_id']);
 
-        $generalOptions = $wpdb->get_row($wpdb->prepare("SELECT AllowRating FROM $tablename_options WHERE id = %d",array($GalleryID)));
-
-        $AllowRating = (!empty($generalOptions->AllowRating)) ? intval($generalOptions->AllowRating) : 0;
-        if($AllowRating===1){
-            $AllowRating = 15;
-        }
-        $AllowRatingMax = 0;
-        if($AllowRating>=12 && $AllowRating<=20){
-            $AllowRatingMax = $AllowRating-10;
-        }
-
-        $categories = $wpdb->get_results($wpdb->prepare("SELECT id, Name FROM $tablename_categories WHERE GalleryID = %d ORDER BY Field_Order DESC",array($GalleryID)));
+        $categories = cg_gallery_export_objects($context['categories']);
 
         // for check-language.php
         $galeryID = $GalleryID;
@@ -44,12 +30,8 @@ if(!function_exists('cg_votes_csv_export_all')){
             $categoriesUidsNames[$category->id] = $category->Name;
         }
 
-        $ratingQuery = "$tablename_ip.RatingS = 1";
+        $ratingQuery = cg_gallery_export_vote_condition($context,$tablename_ip);
         $queryArgs = array($GalleryID);
-        if($AllowRatingMax){
-            $ratingQuery .= " OR ($tablename_ip.Rating BETWEEN 1 AND %d)";
-            $queryArgs[] = $AllowRatingMax;
-        }
 
         $votingDataSql = "SELECT
                 $wpUsers.user_login,
@@ -77,24 +59,11 @@ if(!function_exists('cg_votes_csv_export_all')){
             LEFT JOIN $wpUsers
                 ON $wpUsers.ID = $tablename_ip.WpUserId
             WHERE $tablename_ip.GalleryID = %d
-                AND ($ratingQuery)
+                AND ($ratingQuery) AND $tablename_ip.id IN ($idSql)
             ORDER BY $tablename_ip.id DESC";
 
-        $votingData = $wpdb->get_results($wpdb->prepare($votingDataSql,$queryArgs));
-
-        $filename = "cg-votes-gallery-id-$GalleryID.csv";
-
-        nocache_headers();
-        header("Content-type: text/csv; charset=UTF-8");
-        header('Content-Disposition: attachment; filename="'.$filename.'"');
-
-        $fp = fopen("php://output",'w');
-        if($fp===false){
-            echo "CSV export could not be created.";
-            die;
-        }
-
-        fwrite($fp,chr(0xEF).chr(0xBB).chr(0xBF));
+        $votingData = cg_gallery_export_results($wpdb->prepare($votingDataSql,$queryArgs));
+        cg_gallery_export_check_db();
 
         $headerRows = array(
             array('gallery id: '.$GalleryID),
@@ -116,8 +85,10 @@ if(!function_exists('cg_votes_csv_export_all')){
             )
         );
 
-        foreach($headerRows as $fields){
-            fputcsv($fp,cg_neutralize_csv_array($fields),";");
+        if($headers){
+            if(fwrite($cgExportStream,chr(0xEF).chr(0xBB).chr(0xBF))!==3){throw new Exception('The CSV header could not be written.');}
+            foreach($headerRows as $fields){cg_gallery_export_csv_row($cgExportStream,$fields);}
+            return;
         }
 
         foreach($votingData as $value){
@@ -146,12 +117,16 @@ if(!function_exists('cg_votes_csv_export_all')){
                 cg_get_time_based_on_wp_timezone_conf($value->Tstamp,'d-M-Y H:i:s')
             );
 
-            fputcsv($fp,cg_neutralize_csv_array($fields),";");
+            cg_gallery_export_csv_row($cgExportStream,$fields);
         }
 
-        fclose($fp);
-        die();
+        cg_gallery_export_check_db();
     }
 }
 
-?>
+
+if(!function_exists('cg_votes_csv_export_all')){
+    function cg_votes_csv_export_all(){
+        cg_gallery_export_legacy_redirect('votes_csv');
+    }
+}

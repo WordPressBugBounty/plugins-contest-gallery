@@ -1,5 +1,32 @@
 <?php
 
+// Form settings use one entity-encoded storage layer. Do not strip literal
+// backslashes or decode a second time when moving a field to another row.
+if(!function_exists('cg_form_decode_value')){
+    function cg_form_decode_value($value){
+        return html_entity_decode((string)$value, ENT_QUOTES, 'UTF-8');
+    }
+}
+if(!function_exists('cg_form_escape_value')){
+    function cg_form_escape_value($value){
+        // Double encoding is intentional: literal character references are data.
+        return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+    }
+}
+if(!function_exists('cg_form_editor_value')){
+    function cg_form_editor_value($value){
+        return cg_form_escape_value(cg_form_decode_value($value));
+    }
+}
+if(!function_exists('cg_form_store_value')){
+    function cg_form_store_value($value,$stored=null){
+        $value = wp_unslash($value);
+        if(is_string($stored) && str_replace(array("\r\n","\r"),"\n",$value)===str_replace(array("\r\n","\r"),"\n",cg_form_decode_value($stored))){return $stored;}
+        if(!current_user_can('unfiltered_html')){$value = wp_kses_post($value);}
+        return htmlentities($value, ENT_QUOTES, 'UTF-8');
+    }
+}
+
 if(!function_exists('contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method')){
     function contest_gal1ery_htmlentities_and_preg_replace_with_cg1l_sanitize_method ($content){
         if(!empty($content)){

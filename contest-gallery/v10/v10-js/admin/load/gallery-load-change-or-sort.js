@@ -117,6 +117,7 @@ cgJsClassAdmin.gallery.load.changeViewByControl = function ($,$cgStep,$cgStart,i
 
 
             if(cgJsClassAdmin.gallery.functions.missingRights($,response)){return;}
+            if(cgJsClassAdmin.participantMail){cgJsClassAdmin.participantMail.refreshCount();}
             cgJsClassAdmin.gallery.functions.hideCgBackendBackgroundDropAndContainer();
             cgJsClassAdmin.gallery.vars.selectChanged = false;
             cgJsClassAdmin.gallery.vars.inputsChanged = false;

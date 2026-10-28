@@ -12,7 +12,7 @@ if($isOnlyPlaceHolder){
     $fieldTitle = '';
     $fieldPlaceholder = '';
     foreach($fieldContent as $key => $valueFieldContent){
-        $valueFieldContent = contest_gal1ery_convert_for_html_output_without_nl2br($valueFieldContent);
+        $valueFieldContent = cg_form_decode_value($valueFieldContent);
         if($key=='titel'){
             $fieldTitle = $valueFieldContent;
         }
@@ -51,7 +51,3 @@ $requiredChecked = 'cg_upl_required';
             echo "<div class='cg_upl_del' title='Delete field' >";
             echo "</div>";
     echo "</div>";
-
-if(!$isOnlyPlaceHolder){
-    $caRoReRightCount++;
-}

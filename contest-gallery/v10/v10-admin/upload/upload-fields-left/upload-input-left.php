@@ -1,7 +1,7 @@
 <?php
 
 if(!$isOnlyPlaceHolder){
-    $Show_Slider = $wpdb->get_var("SELECT Show_Slider FROM $tablename_form_input WHERE id = '$id'");
+    $Show_Slider = $value->Show_Slider;
 
     if($Show_Slider==1){$checkedShow_Slider='checked';}
     else{$checkedShow_Slider='';}
@@ -49,9 +49,9 @@ if(!$isOnlyPlaceHolder){
     if($id==$Field1IdFullWindowBlogView){$checkedShowFullWindowBlogView='checked';}
     else{$checkedShowFullWindowBlogView='';}
 
-    $inputRow = $wpdb->get_row("SELECT * FROM $tablename_form_input WHERE id = '$id'");
+    $inputRow = $value;
     $Show_Slider = $inputRow->Show_Slider;
-	$FieldTitleGallery = $inputRow->FieldTitleGallery;
+	$FieldTitleGallery = cg_form_escape_value($inputRow->FieldTitleGallery);
 
     if($Show_Slider==1){$checkedShow_Slider='checked';}
     else{$checkedShow_Slider='';}
@@ -138,7 +138,7 @@ if(!$isOnlyPlaceHolder){
 
     foreach($fieldContent as $key => $valueFieldContent){
 
-        $valueFieldContent = contest_gal1ery_convert_for_html_output_without_nl2br($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
+        $valueFieldContent = cg_form_editor_value($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
 
         if($key=='titel'){
             $valueFieldTitle = $valueFieldContent;
@@ -165,7 +165,6 @@ if(!$isOnlyPlaceHolder){
     }
 
 
-    $nfCount++;
     $nfHiddenCount++;
 
 }

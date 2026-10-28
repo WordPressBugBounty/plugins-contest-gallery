@@ -72,6 +72,11 @@ if(!function_exists('cg_update_user_meta_when_register_and_delete_user_entries')
                         continue;
                     }
                     $value = $entry->Field_Type==='user-check-field' ? cg_profile_field_value($value,cg_profile_registry_check_value($entry->Field_Content)) : $entry->Field_Content;
+                    if(in_array($entry->Field_Type,array('user-select-field','user-radio-field'),true)){
+                        // Pending registry rows have one HTML encoding layer.
+                        // Usermeta stores the validated choice as plain text.
+                        $value = cg_form_decode_value($entry->Field_Content);
+                    }
                 }
 
                 if($entry->Field_Type == 'wpfn'){

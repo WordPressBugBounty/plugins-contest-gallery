@@ -60,7 +60,7 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_100_percent CheckMethodContainer' id="CheckIpContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Check by IP<br/><span class="cg_view_option_title_note">IP will be tracked always.$userIPunknown<br>A user can manipulate by switching IP.<br>A network of users, like an office for example, can have same IP.</span></p>
+                        <p>Voting without sign-in (IP address)<br/><span class="cg_view_option_title_note">No sign-in is required. Voting limits use the IP address.<br>People sharing an internet connection may share the same limit. Changing the IP address can allow voting again.<br>IP addresses are recorded for all votes.$userIPunknown</span></p>
                     </div>
                     <div class='cg_view_option_radio'>
                         <input type="radio" name="CheckMethod" class="CheckMethod" id="CheckIp" value="ip" $CheckIp>
@@ -70,7 +70,7 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_100_percent CheckMethodContainer cg_border_top_none $cgProFalse'  id="CheckCookieContainer"  >
                     <div class='cg_view_option_title'>
-                        <p>Check by cookie<br/><span class="cg_view_option_title_note">Cookie with unique cookie ID will be set and tracked if this option is activated.<br>A user can manpulate by deleting site cookies.</span></p>
+                        <p>Voting without sign-in (browser cookie)<br/><span class="cg_view_option_title_note">No sign-in is required. A browser cookie is set when this option is selected and is used for voting limits.<br>Clearing cookies or using another browser can allow voting again.</span></p>
                     </div>
                     <div class='cg_view_option_radio'>
                         <input type="radio" name="CheckMethod" class="CheckMethod" id="CheckCookie" value="cookie" $CheckCookie>
@@ -90,7 +90,7 @@ echo <<<HEREDOC
              <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_100_percent cg_border_top_none CheckMethodContainer $cgProFalse' id="CheckIpAndCookieContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Check by IP and Cookie<br/><span class="cg_view_option_title_note">IP will be tracked and a unique cookie ID will be set and tracked<br>if this option is activated.<br>A user is only recognized again if both the same IP and the same cookie are available.<br>Deleting cookies or using another browser or incognito window can allow voting again even on the same IP.</span></p>
+                        <p>Voting without sign-in (IP address and browser cookie)<br/><span class="cg_view_option_title_note">No sign-in is required. Voting limits use the combination of IP address and browser cookie.<br>Both must match to recognize previous votes.<br>Changing the IP address, clearing cookies or using another browser or a private window can allow voting again.</span></p>
                     </div>
                     <div class='cg_view_option_radio'>
                         <input type="radio" name="CheckMethod" class="CheckMethod" id="CheckIpAndCookie" value="ip-and-cookie" $CheckIpAndCookie>
@@ -100,7 +100,7 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_100_percent CheckMethodContainer cg_border_top_none cg_border_bottom_none $cgProFalse'   id="CheckLoginContainer"   >
                     <div class='cg_view_option_title'>
-                        <p>Check if is registered user<br/><span class="cg_view_option_title_note">User have to be registered and logged in to be able to vote.<br>User WordPress ID based voting  – uncheatable, can not be manipulated.<br>User WordPress ID will be always tracked if user is logged in.
+                        <p>Require sign-in before voting<br/><span class="cg_view_option_title_note">Only signed-in users can vote. Visitors must sign in or create an account first.<br>Voting limits apply to the user account.<br>The WordPress user ID is recorded whenever a user is signed in.
                         </span>
                         </p>
                     </div>
@@ -510,7 +510,7 @@ echo <<<HEREDOC
             <div class='cg_view_options_row'>
                 <div class='cg_view_option cg_view_option_100_percent cg_border_top_none $cgProFalse' id="VoteNotOwnImageContainer" >
                     <div class='cg_view_option_title'>
-                        <p>Voting on self-added files is not allowed<br/><span class="cg_view_option_title_note">Users can't vote on their own uploads.<br>Works only for voting recognition methods:<br>- Check by IP (files added since version 10.9.3.7)<br> - Check by registration</span></p>
+                        <p>Voting on self-added files is not allowed<br/><span class="cg_view_option_title_note">Users can't vote on their own uploads.<br>Works only for voting recognition methods:<br>- Voting without sign-in (IP address) (files added since version 10.9.3.7)<br> - Require sign-in before voting</span></p>
                     </div>
                     <div class='cg_view_option_checkbox'>
                         <input type="checkbox" name="VoteNotOwnImage"  id="VoteNotOwnImage" $VoteNotOwnImage>

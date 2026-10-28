@@ -17,6 +17,8 @@ cgJsClassAdmin.gallery.load = {
             return;
         }
 
+        if(cgJsClassAdmin.participantMail){cgJsClassAdmin.participantMail.refreshCount();}
+
         cgJsClassAdmin.index.vars.isGalleryAreaLoaded = true;
 
         // reset here, cg_view_option can be init again

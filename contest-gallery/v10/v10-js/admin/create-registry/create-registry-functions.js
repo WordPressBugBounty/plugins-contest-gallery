@@ -186,15 +186,21 @@ cgJsClassAdmin.createRegistry.functions = {
     cgSortOrder: function ($) {
 
         var v = 0;
+        // Core field IDs also exist in the hidden templates. Only index live fields.
+        var $fields = $("#cg_create_user_form #cgCreateUploadSortableArea").children(".formField");
 
-        $("#ausgabe1.cg_registry_form_container #cgCreateUploadSortableArea .formField").each(function (i) {
+        $("#cg_create_user_form #cgRightSide .cg_row_col.cg_el[id]").map(function () {
+            var fieldId = this.id.replace(/^right/, "");
+            return $fields.filter(function () { return this.id === fieldId; }).get(0);
+        }).filter(".formField").each(function (i) {
 
             v++;
 
             $(this).find('.Field_Type').attr("name", "Field_Type[" + v + "]");
-            $(this).find('.Field_Order').attr("name", "Field_Order[" + v + "]");
+            $(this).find('.Field_Order').attr("name", "Field_Order[" + v + "]").val(v);
             $(this).find('.RowNumber').attr("name", "RowNumber[" + v + "]");
             $(this).find('.RowCols').attr("name", "RowCols[" + v + "]");
+            $(this).find('.RowLayout').attr("name", "RowLayout[" + v + "]");
             $(this).find('.ColNumber').attr("name", "ColNumber[" + v + "]");
             $(this).find('.Field_Name').attr("name", "Field_Name[" + v + "]");
             $(this).find('.Field_Id').attr("name", "Field_Id[" + v + "]");
@@ -214,7 +220,7 @@ cgJsClassAdmin.createRegistry.functions = {
         $("#cgCreateUploadSortableArea #" + fieldContainerId + "").remove();
         $("#ausgabe1.cg_registry_form_container").append("<input type='hidden' name='deleteFieldnumber[]' value=" + idToDelete + ">");
 
-        this.cgSortOrder($);
+        // The caller removes the preview before recalculating row/index data.
 
         // $('#submitForm').click();
 

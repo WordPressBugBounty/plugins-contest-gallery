@@ -85,6 +85,7 @@ foreach ($galleryToCopy as $key => $value) {
 
 if (!empty($valueCollect['GalleryName'])) {
 	$valueCollect['GalleryName'] = cg_get_copied_gallery_name($valueCollect['GalleryName'], $tablenameOptions, $wpdb);
+	$cgCopyCheck(!$wpdb->last_error, 'Reading gallery names');
 	$jsonOptions['general']['GalleryName'] = $valueCollect['GalleryName'];
 }
 if (!empty($valueCollect['FbLikeGoToGalleryLink'])) {
@@ -196,36 +197,42 @@ if((empty($valueCollect['HeightLook']) && empty($valueCollect['ThumbLook']) && e
 
 }
 
-$nextIDgallery = cg_copy_table_row('contest_gal1ery_options',$idToCopy,['contest_gal1ery_options' => $valueCollect]);
+$nextIDgallery = $cgCopyRow('contest_gal1ery_options',$idToCopy,['contest_gal1ery_options' => $valueCollect], 'Creating the gallery');
+$cgCopyTargetId = $nextIDgallery;
 
 cg_create_slug_name_galleries_posts_if_required();
 
 // cg_gallery shortcode
 $array = cg_post_type_parent_galleries_array($nextIDgallery);
-$WpPageParent = wp_insert_post($array);
+$WpPageParent = wp_insert_post($array, true);
+$cgCopyCheck(!is_wp_error($WpPageParent) && $WpPageParent > 0, 'Creating gallery pages');
 $jsonOptions['general']['WpPageParent'] = $WpPageParent;
 
 // cg_gallery_user shortcode
 $array = cg_post_type_parent_galleries_array($nextIDgallery,'user');
-$WpPageParentUser = wp_insert_post($array);
+$WpPageParentUser = wp_insert_post($array, true);
+$cgCopyCheck(!is_wp_error($WpPageParentUser) && $WpPageParentUser > 0, 'Creating gallery pages');
 $jsonOptions['general']['WpPageParentUser'] = $WpPageParentUser ;
 
 // cg_gallery_no_voting shortcode
 $array = cg_post_type_parent_galleries_array($nextIDgallery,'no-voting');
-$WpPageParentNoVoting = wp_insert_post($array);
+$WpPageParentNoVoting = wp_insert_post($array, true);
+$cgCopyCheck(!is_wp_error($WpPageParentNoVoting) && $WpPageParentNoVoting > 0, 'Creating gallery pages');
 $jsonOptions['general']['WpPageParentNoVoting'] = $WpPageParentNoVoting ;
 
 // cg_gallery_winner shortcode
 $array = cg_post_type_parent_galleries_array($nextIDgallery,'winner');
-$WpPageParentWinner = wp_insert_post($array);
+$WpPageParentWinner = wp_insert_post($array, true);
+$cgCopyCheck(!is_wp_error($WpPageParentWinner) && $WpPageParentWinner > 0, 'Creating gallery pages');
 $jsonOptions['general']['WpPageParentWinner'] = $WpPageParentWinner ;
 
 // cg_gallery_ecommerce shortcode
 $array = cg_post_type_parent_galleries_array($nextIDgallery,'ecommerce');
-$WpPageParentEcommerce = wp_insert_post($array);
+$WpPageParentEcommerce = wp_insert_post($array, true);
+$cgCopyCheck(!is_wp_error($WpPageParentEcommerce) && $WpPageParentEcommerce > 0, 'Creating gallery pages');
 $jsonOptions['general']['WpPageParentEcommerce'] = $WpPageParentEcommerce ;
 
-$wpdb->update(
+$cgCopyCheck($wpdb->update(
     "$tablenameOptions",
     array(
         'WpPageParent' => $WpPageParent,'WpPageParentUser' => $WpPageParentUser,'WpPageParentNoVoting' => $WpPageParentNoVoting,'WpPageParentWinner' => $WpPageParentWinner,'WpPageParentEcommerce' => $WpPageParentEcommerce
@@ -233,7 +240,7 @@ $wpdb->update(
     array('id' => $nextIDgallery),
     array('%d','%d','%d','%d','%d'),
     array('%d')
-);
+), 'Saving gallery page assignments');
 
 $tag = get_term_by('slug', ' contest-gallery-plugin-tag','post_tag');
 if(empty($tag)){
@@ -257,56 +264,49 @@ $galleryJsonInfoDir = $uploadFolder['basedir'] . '/contest-gallery/gallery-id-' 
 $galleryJsonCommentsDir = $uploadFolder['basedir'] . '/contest-gallery/gallery-id-' . $nextIDgallery . '/json/image-comments';
 
 if (!is_dir($galleryUpload)) {
-    mkdir($galleryUpload, 0755, true);
+    $cgCopyCheck(wp_mkdir_p($galleryUpload), 'Creating gallery folders');
 }
 
 if (!is_dir($galleryJsonFolder)) {
-    mkdir($galleryJsonFolder, 0755, true);
+    $cgCopyCheck(wp_mkdir_p($galleryJsonFolder), 'Creating gallery folders');
 }
 
 if (!is_dir($galleryJsonImagesFolder)) {
-    mkdir($galleryJsonImagesFolder, 0755);
+    $cgCopyCheck(wp_mkdir_p($galleryJsonImagesFolder), 'Creating gallery folders');
 }
 
 if (!is_dir($galleryJsonInfoDir)) {
-    mkdir($galleryJsonInfoDir, 0755);
+    $cgCopyCheck(wp_mkdir_p($galleryJsonInfoDir), 'Creating gallery folders');
 }
 
 if (!is_dir($galleryJsonCommentsDir)) {
-    mkdir($galleryJsonCommentsDir, 0755);
+    $cgCopyCheck(wp_mkdir_p($galleryJsonCommentsDir), 'Creating gallery folders');
 }
 
 $galleryJsonFolderReadMeFile = $galleryJsonFolder . '/do not remove json or txt files manually.txt';
 
-$fp = fopen($galleryJsonFolderReadMeFile, 'w');
-fwrite($fp, 'Removing json or txt files manually will break functionality of your gallery');
-fclose($fp);
+$cgCopyCheck(cg_form_atomic_file($galleryJsonFolderReadMeFile, 'Removing json or txt files manually will break functionality of your gallery'), 'Preparing gallery files');
 
-$fp = fopen($galleryUpload . '/json/' . $nextIDgallery . '-categories.json', 'w');
-fwrite($fp, json_encode(array()));
-fclose($fp);
+$cgCopyCheck(cg_form_write_json($galleryUpload . '/json/' . $nextIDgallery . '-categories.json', array()), 'Preparing categories');
 
-$fp = fopen($galleryUpload . '/json/' . $nextIDgallery . '-form-upload.json', 'w');
-fwrite($fp, json_encode(array()));
-fclose($fp);
+$cgCopyCheck(cg_form_write_json($galleryUpload . '/json/' . $nextIDgallery . '-form-upload.json', array()), 'Preparing the upload form');
 
-$fp = fopen($galleryUpload . '/json/' . $nextIDgallery . '-single-view-order.json', 'w');
-fwrite($fp, json_encode(array()));
-fclose($fp);
+$cgCopyCheck(cg_form_write_json($galleryUpload . '/json/' . $nextIDgallery . '-single-view-order.json', array()), 'Preparing the form display order');
 
 
 // Gleich auf die Version ab der mit der neuen Art des Hinzufügens von Images updaten
-$wpdb->update(
+$cgCopyCheck($wpdb->update(
     "$tablenameOptions",
     array('Version' => $valueCollect['Version']),
     array('id' => $nextIDgallery),
     array('%s'),
     array('%d')
-);
+), 'Saving the gallery version');
 
 // Create f_input
 
 $uploadInputsToCopy = $wpdb->get_results("SELECT * FROM $tablename_form_input WHERE GalleryID = '$idToCopy' ");
+$cgCopyCheck(!$wpdb->last_error, 'Reading upload fields');
 
 $valueCollect = array();
 
@@ -319,6 +319,7 @@ $ThirdTitleFieldId = 0;
 
 $tableNameForColumns = $wpdb->prefix . 'contest_gal1ery_f_input';
 $columns = $wpdb->get_results( "SHOW COLUMNS FROM $tableNameForColumns" );
+$cgCopyCheck(!$wpdb->last_error && !empty($columns), 'Reading the upload field structure');
 
 foreach ($uploadInputsToCopy as $key => $rowObject) {
 
@@ -354,7 +355,12 @@ foreach ($uploadInputsToCopy as $key => $rowObject) {
         )// last one is WatermarkPosition, IsForWpPageTitle, IsForWpPageDescription
     );*/
 
-    $nextInputId = cg_copy_table_row('contest_gal1ery_f_input',$rowObject->id,['contest_gal1ery_f_input' => $valueCollect],'',$columns);
+    $nextInputId = $cgCopyRow('contest_gal1ery_f_input',$rowObject->id,['contest_gal1ery_f_input' => $valueCollect], 'Copying upload fields', $columns);
+
+    if($rowObject->Field_Type==='caRoRe-f'){
+        $cgCaptchaCopy=cg_captcha_copy_upload_config($rowObject->id,$nextInputId,$rowObject->ReCaKey);
+        $cgCopyCheck($cgCaptchaCopy, 'Copying reCAPTCHA settings');
+    }
 
     $uploadInputsToCopyOldNewIds[$rowObject->id] = $nextInputId;
 
@@ -366,11 +372,12 @@ foreach ($uploadInputsToCopy as $key => $rowObject) {
 
 }
 
-do_action('cg_json_upload_form', $nextIDgallery);
+$cgCopyCheck(cg_json_upload_form($nextIDgallery), 'Writing the upload form');
 
 // Create Options Visual
 
 $galleryToCopy = $wpdb->get_row("SELECT * FROM $tablename_options_visual WHERE GalleryID = '$idToCopy' ");
+$cgCopyCheck(!$wpdb->last_error, 'Reading display options');
 
 $valueCollect = array();
 
@@ -379,7 +386,7 @@ $Field1IdFullWindowBlogView = 0;
 $Field2IdGalleryView = 0;
 $Field3IdGalleryView = 0;
 
-foreach ($galleryToCopy as $key => $value) {
+foreach ((array)$galleryToCopy as $key => $value) {
 
     if ($key == 'id') {
         $value = '';
@@ -579,9 +586,10 @@ if(!empty($isAllowGalleryScriptWasActivated)){// since 15.05 version always 0. S
 
 //$contest_gal1ery_options_visual_id = cg_copy_table_row('contest_gal1ery_options_visual',$idToCopy,$nextIDgallery);
 
-$contest_gal1ery_options_visual_id = cg_copy_table_row('contest_gal1ery_options_visual',$idToCopy,['contest_gal1ery_options_visual' => $valueCollect]);
+$contest_gal1ery_options_visual_id = $cgCopyRow('contest_gal1ery_options_visual',$idToCopy,['contest_gal1ery_options_visual' => $valueCollect], 'Copying display options', null, !empty($galleryToCopy));
 
 $newOptionsVisual = $wpdb->get_row("SELECT * FROM $tablename_options_visual WHERE id = '$contest_gal1ery_options_visual_id' ");
+$cgCopyCheck(!$wpdb->last_error && (!$contest_gal1ery_options_visual_id || !empty($newOptionsVisual)), 'Reading copied display options');
 
 /*
 var_dump('$contest_gal1ery_options_visual_id');
@@ -605,43 +613,43 @@ echo "</pre>";
 echo "<br>";*/
 
 if(!empty($Field1IdGalleryView)){
-    $wpdb->update(
+    $cgCopyCheck($wpdb->update(
         "$tablename_options_visual",
         array('Field1IdGalleryView' => $Field1IdGalleryView),
         array('id' => $newOptionsVisual->id),
         array('%d'),
         array('%d')
-    );
+    ), 'Saving form field assignments');
 }
 
 if(!empty($Field1IdFullWindowBlogView)){
-    $wpdb->update(
+    $cgCopyCheck($wpdb->update(
         "$tablename_options_visual",
         array('Field1IdFullWindowBlogView' => $Field1IdFullWindowBlogView),
         array('id' => $newOptionsVisual->id),
         array('%d'),
         array('%d')
-    );
+    ), 'Saving form field assignments');
 }
 
 if(!empty($Field2IdGalleryView)){
-    $wpdb->update(
+    $cgCopyCheck($wpdb->update(
         "$tablename_options_visual",
         array('Field2IdGalleryView' => $Field2IdGalleryView),
         array('id' => $newOptionsVisual->id),
         array('%d'),
         array('%d')
-);
+), 'Saving form field assignments');
 }
 
 if(!empty($Field3IdGalleryView)){
-    $wpdb->update(
+    $cgCopyCheck($wpdb->update(
         "$tablename_options_visual",
         array('Field3IdGalleryView' => $Field3IdGalleryView),
         array('id' => $newOptionsVisual->id),
         array('%d'),
         array('%d')
-    );
+    ), 'Saving form field assignments');
 }
 
 $newSubTitleFieldId = 0;
@@ -657,10 +665,11 @@ if(!empty($ThirdTitleFieldId)){
 // Create Options Input
 
 $galleryToCopy = $wpdb->get_row("SELECT * FROM $tablename_options_input WHERE GalleryID = '$idToCopy' ");
+$cgCopyCheck(!$wpdb->last_error, 'Reading upload options');
 
 $valueCollect = array();
 
-foreach ($galleryToCopy as $key => $value) {
+foreach ((array)$galleryToCopy as $key => $value) {
 
     if ($key == 'id') {
         $value = '';
@@ -684,7 +693,7 @@ foreach ($galleryToCopy as $key => $value) {
 
 //cg_copy_table_row('contest_gal1ery_options_input',$idToCopy,$nextIDgallery);
 
-cg_copy_table_row('contest_gal1ery_options_input',$idToCopy,['contest_gal1ery_options_input' => $valueCollect]);
+$cgCopyRow('contest_gal1ery_options_input',$idToCopy,['contest_gal1ery_options_input' => $valueCollect], 'Copying upload options', null, !empty($galleryToCopy));
 
 // Create email user
 
@@ -885,6 +894,7 @@ cg_copy_table_row('contest_gal1ery_mail_confirmation',$idToCopy,['contest_gal1er
 if ($cgVersion >= 0) {
 
     $galleryCategoriesToCopy = $wpdb->get_results("SELECT * FROM $tablenameCategories WHERE GalleryID = '$idToCopy' ");
+    $cgCopyCheck(!$wpdb->last_error, 'Reading categories');
 
     if (!empty($galleryCategoriesToCopy)) {
 
@@ -894,6 +904,7 @@ if ($cgVersion >= 0) {
 
         $tableNameForColumns = $wpdb->prefix . 'contest_gal1ery_categories';
         $columns = $wpdb->get_results( "SHOW COLUMNS FROM $tableNameForColumns" );
+        $cgCopyCheck(!$wpdb->last_error && !empty($columns), 'Reading the category structure');
 
         foreach ($galleryCategoriesToCopy as $key => $rowObject) {
 
@@ -922,7 +933,7 @@ if ($cgVersion >= 0) {
             $lastCategoryId = $wpdb->get_var("SELECT MAX(id) FROM $tablenameCategories");*/
             //$nextInputId = cg_copy_table_row('contest_gal1ery_categories',$rowObject->id,$nextIDgallery,'',0,$columns);
 
-            $nextCategoryId = cg_copy_table_row('contest_gal1ery_categories',$rowObject->id,['contest_gal1ery_categories' => $valueCollect],'',$columns);
+            $nextCategoryId = $cgCopyRow('contest_gal1ery_categories',$rowObject->id,['contest_gal1ery_categories' => $valueCollect], 'Copying categories', $columns);
 
             $collectCatIdsArray[$catIdOld] = $nextCategoryId;
 
@@ -938,6 +949,7 @@ if ($cgVersion >= 0) {
 
 
         $galleryCategoriesCopied = $wpdb->get_results("SELECT * FROM $tablenameCategories WHERE GalleryID = '$nextIDgallery' ");
+        $cgCopyCheck(!$wpdb->last_error, 'Reading copied categories');
 
         $categoriesJson = array();
 
@@ -955,9 +967,7 @@ if ($cgVersion >= 0) {
             }
 
             $jsonFile = $uploadFolder['basedir'] . '/contest-gallery/gallery-id-' . $nextIDgallery . '/json/' . $nextIDgallery . '-categories.json';
-            $fp = fopen($jsonFile, 'w');
-            fwrite($fp, json_encode($categoriesJson));
-            fclose($fp);
+            $cgCopyCheck(cg_form_write_json($jsonFile, $categoriesJson), 'Writing categories');
 
         }
 
@@ -970,10 +980,11 @@ if ($cgVersion >= 0) {
 // Create Pro Options
 
 $galleryToCopy = $wpdb->get_row("SELECT * FROM $tablename_pro_options WHERE GalleryID = '$idToCopy' ");
+$cgCopyCheck(!$wpdb->last_error, 'Reading additional form options');
 
 $valueCollect = array();
 
-foreach ($galleryToCopy as $key => $value) {
+foreach ((array)$galleryToCopy as $key => $value) {
 
     if ($key == 'id') {
         $value = '';
@@ -1130,7 +1141,7 @@ $cgUploaderCopyStored = cg_member_replacement_source($idToCopy);
 $cgUploaderCopyBase = $cgUploaderCopyStored ? cg_member_options_from_source($cgUploaderCopyStored,$idToCopy,'cg_gallery') : $cgUploaderCopySource;
 $valueCollect['ShowNickname'] = $valueCollect['ShowProfileImage'] = cg_uploader_profile_entry_enabled($cgUploaderCopyBase,'cg_gallery') ? 1 : 0;
 
-cg_copy_table_row('contest_gal1ery_pro_options',$idToCopy,['contest_gal1ery_pro_options' => $valueCollect]);
+$cgCopyRow('contest_gal1ery_pro_options',$idToCopy,['contest_gal1ery_pro_options' => $valueCollect], 'Copying additional form options', null, !empty($galleryToCopy));
 
 $shortcodeSpecificToSetArray = include(__DIR__.'/../../vars/general/short-code-specific-to-set-array.php');
 
@@ -1139,9 +1150,9 @@ $jsonOptionsGalleryPrev = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id
 
 if(file_exists($jsonOptionsGalleryPrev)){
 
-    $fp = fopen($jsonOptionsGalleryPrev, 'r');
-    $jsonOptionsPrev = json_decode(fread($fp, filesize($jsonOptionsGalleryPrev)),true);
-    fclose($fp);
+    $cgCopyOptionsContents = $cgCopyCheck(file_get_contents($jsonOptionsGalleryPrev), 'Reading gallery options');
+    $jsonOptionsPrev = json_decode($cgCopyOptionsContents, true);
+    $cgCopyCheck(is_array($jsonOptionsPrev), 'Reading gallery options');
 
     $jsonOptionsPrevSource = $jsonOptionsPrev;
     // MemberArea is JSON-only and must also survive copies of never-saved galleries.
@@ -1469,16 +1480,18 @@ foreach(array('ShowGalleryHeader','GalleryHeaderLabel','GalleryHeaderTitle','Gal
     if(isset($cgHeaderSource['visual'][$cgHeaderKey])){$jsonOptions['visual'][$cgHeaderKey] = $cgHeaderSource['visual'][$cgHeaderKey];}
 }
 $jsonOptions['memberReplacement'] = cg_member_replacement_options($idToCopy);
-file_put_contents($galleryUpload . '/json/' . $nextIDgallery . '-options.json',json_encode($jsonOptions));
+$cgCopyCheck(cg_form_write_json($galleryUpload . '/json/' . $nextIDgallery . '-options.json', $jsonOptions), 'Writing gallery options');
 
 // Create f_output
 
 $galleryToCopy = $wpdb->get_results("SELECT * FROM $tablename_form_output WHERE GalleryID = '$idToCopy' ");
+$cgCopyCheck(!$wpdb->last_error, 'Reading form field assignments');
 
 $valueCollect = array();
 
 $tableNameForColumns = $wpdb->prefix . 'contest_gal1ery_f_output';
 $columns = $wpdb->get_results( "SHOW COLUMNS FROM $tableNameForColumns" );
+$cgCopyCheck(!$wpdb->last_error && !empty($columns), 'Reading the form assignment structure');
 
 foreach ($galleryToCopy as $key => $rowObject) {
 
@@ -1512,7 +1525,7 @@ foreach ($galleryToCopy as $key => $rowObject) {
 
     //cg_copy_table_row('contest_gal1ery_f_output',$rowObject->id,$nextIDgallery,'',0,$columns);
 
-    cg_copy_table_row('contest_gal1ery_f_output',$rowObject->id,['contest_gal1ery_f_output' => $valueCollect],'',$columns);
+    $cgCopyRow('contest_gal1ery_f_output',$rowObject->id,['contest_gal1ery_f_output' => $valueCollect], 'Copying form field assignments', $columns);
 
     $valueCollect = array();
 
@@ -1566,18 +1579,14 @@ foreach ($galleryToCopy as $key => $rowObject) {
 
 
 // write $collectInputIdsArray json for getting it later when processing images
-$fp = fopen($galleryUpload . '/json/' . $nextIDgallery . '-collect-input-ids-array.json', 'w');
-fwrite($fp, json_encode($collectInputIdsArray));
-fclose($fp);
+$cgCopyCheck(cg_form_write_json($galleryUpload . '/json/' . $nextIDgallery . '-collect-input-ids-array.json', $collectInputIdsArray), 'Writing form field mappings');
 
 if(empty($collectCatIdsArray)){
     $collectCatIdsArray = array();
 }
 
 // write $collectCatIdsArray json for getting it later when processing images
-$fp = fopen($galleryUpload . '/json/' . $nextIDgallery . '-collect-cat-ids-array.json', 'w');
-fwrite($fp, json_encode($collectCatIdsArray));
-fclose($fp);
+$cgCopyCheck(cg_form_write_json($galleryUpload . '/json/' . $nextIDgallery . '-collect-cat-ids-array.json', $collectCatIdsArray), 'Writing category mappings');
 
 // copy translations
 $translationsFileToCopy = $uploadFolder["basedir"]."/contest-gallery/gallery-id-$idToCopy/json/$idToCopy-translations.json";

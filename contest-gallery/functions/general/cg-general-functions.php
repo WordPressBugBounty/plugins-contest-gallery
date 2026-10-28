@@ -1,5 +1,8 @@
 <?php
 
+require_once(__DIR__.'/cg-upload-form-layout.php');
+require_once(__DIR__.'/cg-form-save.php');
+
 if(!function_exists('cg_create_slug_name_galleries_posts_if_required')){
 	function cg_create_slug_name_galleries_posts_if_required(){
 

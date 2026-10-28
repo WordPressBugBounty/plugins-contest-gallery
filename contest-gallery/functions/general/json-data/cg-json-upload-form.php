@@ -18,6 +18,8 @@ if(!function_exists('cg_json_upload_form')){
         }
 
         $formDataForJson = $wpdb->get_results("SELECT * FROM $tablename_form_input WHERE GalleryID = $GalleryID ORDER BY id DESC");
+        if($wpdb->last_error){return false;}
+
         //   $singleViewOrderDataJson = $wpdb->get_results("SELECT id, Field_Type, Field_Order, Field_Content FROM $tablename_form_input WHERE GalleryID = $GalleryID AND Show_Slider = 1 ORDER BY Field_Order DESC");
 
         $formDataArray = array();
@@ -69,9 +71,7 @@ if(!function_exists('cg_json_upload_form')){
 
 
         $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/'.$GalleryID.'-form-upload.json';
-        $fp = fopen($jsonFile, 'w');
-        fwrite($fp, json_encode($formDataArray));
-        fclose($fp);
+        return cg_form_write_json($jsonFile, $formDataArray);
 
         /*    $jsonFile = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/json/'.$GalleryID.'-single-view-order.json';
             $fp = fopen($jsonFile, 'w');

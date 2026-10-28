@@ -135,8 +135,7 @@ HEREDOC;
     }
     $pleaseSelectLanguage .= '</select>';
 
-    $captchaNote = "<span class='cg_recaptcha_test_note' ><span>NOTE:</span><br><b>Google reCAPTCHA test key</b> is provided from Google for testing purpose.
-                                    <br><b>Create your own \"Site key\"</b> here <a href='https://www.google.com/recaptcha/admin' target='_blank'>www.google.com/recaptcha/admin</a><br>Register your site, create a <b>V2 \"I am not a robot\"</b>  key.</span>";
+    $captchaNote = cg_captcha_setup_note();
 
     $valueFieldTextareaContent = '';
     $editor_id = '';
@@ -318,6 +317,11 @@ foreach ($selectFormInput as $key => $value) {
 $RowNumberCount = 1;// in case of first time processing after update to 27.0.0
 
 foreach ($selectFormInput as $key => $value) {
+
+    // Saved fields have one stable DOM ID, independent of their type/count.
+    foreach(array('nf','kf','ef','ht','cb','se','caRo','sec','url','caRoRe','fbt','fbd','dt','htf','ra','chk') as $cgFieldPrefix){
+        ${$cgFieldPrefix.'Count'} = 'field-'.(int)$value->id;
+    }
 
     if($value->Field_Type == 'check-f'){// AGREEMENT FIELD
         include (__DIR__.'/upload-fields-left/upload-check-agreement-left.php');

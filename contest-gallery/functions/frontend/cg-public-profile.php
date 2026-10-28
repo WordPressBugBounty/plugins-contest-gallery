@@ -63,7 +63,7 @@ function cg_public_profile_items($userId){
 		$value = cg_profile_field_text(cg_profile_field_value($field,get_user_meta($userId,cg_profile_meta_key($field->id),true)));
 		if(!is_scalar($value) || trim((string)$value)===''){continue;}
 		$value = (string)$value;
-		$items[] = array('title'=>html_entity_decode(stripslashes($field->Field_Name),ENT_QUOTES,'UTF-8'),'value'=>$value,'link'=>$settings['display']==='link' ? cg_public_profile_link($value) : '');
+		$items[] = array('title'=>html_entity_decode(stripslashes($field->Field_Name),ENT_QUOTES,'UTF-8'),'value'=>$value,'choice'=>in_array($field->Field_Type,array('user-select-field','user-radio-field','user-check-field'),true),'link'=>$settings['display']==='link' ? cg_public_profile_link($value) : '');
 	}
 	return $items;
 }
@@ -77,7 +77,7 @@ function cg_public_profile_render_fields($userId,$limit = 0){
 	$html = '<dl class="cg-public-profile-fields">';
 	foreach($fields as $field){
 		$linkText = $field['link'] ? preg_replace('~^https?://~i','',trim($field['value'])) : '';
-		$value = $field['link'] ? '<a href="'.esc_url($field['link']).'" target="_blank" rel="noopener noreferrer nofollow ugc">'.esc_html($linkText).'</a>' : nl2br(esc_html($field['value']));
+		$value = $field['link'] ? '<a href="'.esc_url($field['link']).'" target="_blank" rel="noopener noreferrer nofollow ugc">'.esc_html($linkText).'</a>' : nl2br(!empty($field['choice']) ? cg_form_escape_value($field['value']) : esc_html($field['value']));
 		$html .= '<div class="cg-public-profile-field"><dt>'.esc_html($field['title']).'</dt><dd>'.$value.'</dd></div>';
 	}
 	return $html.'</dl>';

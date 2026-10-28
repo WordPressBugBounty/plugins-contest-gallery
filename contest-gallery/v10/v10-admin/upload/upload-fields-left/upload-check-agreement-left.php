@@ -57,24 +57,23 @@ if(!$isOnlyPlaceHolder){
     foreach($fieldContent as $key => $valueFieldContent){
 
         if($key=='titel'){
-            $valueFieldContent = contest_gal1ery_convert_for_html_output_without_nl2br($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
+            $valueFieldContent = cg_form_editor_value($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
             $valueFieldTitle = $valueFieldContent;
         }
 
         if($key=='content'){
             $editor_id = "htmlFieldTemplateForAgreement$cbCount";
-            $valueFieldContent = contest_gal1ery_convert_for_html_output_without_nl2br($valueFieldContent);
+            $valueFieldContent = cg_form_editor_value($valueFieldContent);
             $valueFieldTextareaContent = $valueFieldContent;
         }
 
         if($key=='mandatory'){
-            $valueFieldContent = contest_gal1ery_convert_for_html_output_without_nl2br($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
+            $valueFieldContent = cg_form_editor_value($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
             $requiredChecked = ($valueFieldContent=='on') ? "checked" : "";
 
         }
     }
 
-    $cbCount++;
     $cbHiddenCount++;
 
 }

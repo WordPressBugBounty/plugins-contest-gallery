@@ -10,8 +10,8 @@ if(!$isOnlyPlaceHolder){
     $Max_Char = $value->Max_Char;
     $ReCaLang = $value->ReCaLang;
     $ReCaKey = $value->ReCaKey;
-    $Field_Name = contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Name);
-    $Field_Content = contest_gal1ery_convert_for_html_output_without_nl2br($value->Field_Content);
+    $Field_Name = cg_form_editor_value($value->Field_Name);
+    $Field_Content = cg_form_editor_value($value->Field_Content);
     $Field_Order = $value->Field_Order;
     $Field_Type = $value->Field_Type;
     $cg_Necessary = $value->Required;
@@ -54,13 +54,12 @@ foreach($langOptions as $langKey => $lang){
 $pleaseSelectLanguage .= '</select>';
 
 $enterKey = '';
-$enterKey .= "<div style='display:flex;flex-direction:column;width:100%;'><input type='text' name='ReCaKey' class='cg_reca_key' placeholder='Example Key: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI' size='30' maxlength='1000' value='$ReCaKey'/>";// Titel und Delete M�glichkeit die oben bestimmt wurde
+$enterKey .= "<div style='display:flex;flex-direction:column;width:100%;'><input type='text' name='ReCaKey' class='cg_reca_key' placeholder='Example Key: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI' size='30' maxlength='1000' value='".cg_form_escape_value($ReCaKey)."'/>";// Titel und Delete M�glichkeit die oben bestimmt wurde
 
 $enterKey .= cg_captcha_secret_input('registry',!$isOnlyPlaceHolder ? $id : 0,$ReCaKey,'ReCaSecret');
-$enterKey .= "<span class='cg_recaptcha_icon' style='margin:16px 0 10px;text-align:center;'>Insert Google reCAPTCHA test key</span></div>";
+$enterKey .= "<span class='cg_recaptcha_icon' style='margin:16px 0 10px;text-align:center;'>Insert Google reCAPTCHA test keys</span></div>";
 
-$captchaNote = "<span class='cg_recaptcha_test_note' ><span>NOTE:</span><br><b>Google reCAPTCHA test key</b> is provided from Google for testing purpose.
-                                        <br><b>Create your own \"Site key\"</b> here <a href='https://www.google.com/recaptcha/admin' target='_blank'>www.google.com/recaptcha/admin</a><br>Register your site, create a <b>V2 \"I am not a robot\"</b>  key.</span>";
+$captchaNote = cg_captcha_setup_note();
 
 // Anfang des Formularteils
 echo "<div id='$caRoReCount'  class='formField cg_hide regCaptchaRoReField'>";
@@ -76,7 +75,6 @@ echo "<input type='hidden' class='ColNumber' name='ColNumber[$i]' value='$ColNum
 echo "<input type='hidden' class='RowCols' name='RowCols[$i]' value='$RowCols'>";
 
 if(!$isOnlyPlaceHolder){
-    $caRoReCount++;
     $caRoReHiddenCount++;
 }
 
@@ -113,7 +111,7 @@ echo <<<HEREDOC
 <div class='cg_view_options_row'>
      <div class='cg_view_option cg_view_option_100_percent  cg_border_bottom_none cg_view_option_flex_flow_column'>
         <div class='cg_view_option_title cg_view_option_title_full_width '>
-            <p>Select Captacha language</p>
+            <p>Select CAPTCHA language<br><span class="cg_view_option_title_note">Google provides the widget text. All reCAPTCHA widgets on the same page share the language of the first loaded widget.</span></p>
         </div>
         <div class="cg_view_option_select cg_view_option_input_full_width" >
             $pleaseSelectLanguage
@@ -140,13 +138,13 @@ echo <<<HEREDOC
     <div  class='cg_view_option cg_pointer_events_none cg_view_option_50_percent cg_border_right_none'>
         <div class='cg_view_option_title cg_view_option_title_full_width '>
             <p>Required<br>
-                  <span class="cg_view_option_title_note"><b>NOTE:</b> Google reCAPTCHA is always required</span>
+                  <span class="cg_view_option_title_note"><b>NOTE:</b> Confirmation is required while this field is enabled</span>
             </p>
         </div>
     </div>
      <div class='cg_view_option cg_view_option_hide_upload_field cg_view_option_50_percent '>
         <div class='cg_view_option_title cg_view_option_title_full_width'>
-            <p>Hide<br><span class="cg_view_option_title_note"><b>NOTE:</b> will not be visible in registration form</span></p>
+            <p>Hide<br><span class="cg_view_option_title_note"><b>NOTE:</b> Hides this field and disables reCAPTCHA verification for this registration form</span></p>
         </div>
         <div class="cg_view_option_checkbox" >
                     <input type="checkbox" class="necessary-hide" name="Hide[$i]" $hideChecked>

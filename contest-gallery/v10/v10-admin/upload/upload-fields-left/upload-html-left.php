@@ -53,18 +53,17 @@ if(!$isOnlyPlaceHolder){
     foreach($fieldContent as $key => $valueFieldContent){
 
         if($key=='titel'){
-            $valueFieldContent = contest_gal1ery_convert_for_html_output_without_nl2br($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
+            $valueFieldContent = cg_form_editor_value($valueFieldContent);// because of possible textarea values do not use ..._without_nl2br
             $valueFieldTitle = $valueFieldContent;
         }
 
         if($key=='content'){
             $editor_id = "htmlFieldTemplate$htCount";
-            $valueFieldContent = contest_gal1ery_convert_for_html_output_without_nl2br($valueFieldContent);
+            $valueFieldContent = cg_form_editor_value($valueFieldContent);
             $valueFieldPlaceholder = $valueFieldContent;
         }
     }
 
-    $htCount++;
     $htHiddenCount++;
 }
 
@@ -100,7 +99,7 @@ echo <<<HEREDOC
         </div>
         <div class="cg_view_option_html cg_view_option_input_full_width" >
                <div class='cgCheckAgreementHtml cg-wp-editor-container' data-wp-editor-id='$editor_id'>
-                    <textarea class='cg-wp-editor-template' id='$editor_id' name='upload[$id][content]'>$valueFieldContent</textarea>
+                    <textarea class='cg-wp-editor-template' id='$editor_id' name='upload[$id][content]'>$valueFieldPlaceholder</textarea>
                 </div>
         </div>
     </div>
