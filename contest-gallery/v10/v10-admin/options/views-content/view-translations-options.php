@@ -16,6 +16,10 @@ HEREDOC;
 $cgShortcodeCopy = '<span class="td_gallery_info_shortcode_edit cg_shortcode_copy cg_shortcode_copy_gallery cg_tooltip td_gallery_translation_edit"></span>';
 
 $cgTranslationFormLegacy = $translations;
+// Keep the upload message separate from the profile image message loaded below.
+$cgUploadChooseYourFileKey = esc_attr($l_ChooseYourImage);
+$cgUploadChooseYourFileLabel = esc_html($language_ChooseYourImage);
+$cgUploadChooseYourFileValue = esc_attr(isset($translations[$l_ChooseYourImage]) ? $translations[$l_ChooseYourImage] : '');
 include(__DIR__ ."/../../../../check-language-general.php");
 $translations += $cgTranslationFormLegacy;
 unset($cgTranslationFormLegacy);
@@ -37,7 +41,7 @@ include(__DIR__.'/translations-options/translations-login-lost-password.php');
 include(__DIR__.'/translations-options/translations-menu-bar-edit-profile-area.php');
 
 $translations = $cgTranslationFormOriginal;
-unset($cgTranslationFormOriginal);
+unset($cgTranslationFormOriginal, $cgUploadChooseYourFileKey, $cgUploadChooseYourFileLabel, $cgUploadChooseYourFileValue);
 
 echo <<<HEREDOC
 </div>

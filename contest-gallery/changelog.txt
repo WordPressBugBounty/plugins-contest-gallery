@@ -1,5 +1,12 @@
 Contest Gallery
 
+= 34.0.4 =
+* IMPROVED: Full-window scrolling, touch controls and browser back navigation.
+* IMPROVED: Faster image previews, smoother gallery loading and larger touch targets.
+* FIXED: Full-window opening, closing and layout, including pagination and resizing.
+* FIXED: Mobile comment dialogs, keyboard handling and sharing navigation.
+* FIXED: Social embed previews, custom voting success messages and upload translations.
+
 = 34.0.3 =
 * IMPROVED: Upload and registration forms with flexible columns, clearer field selection and smoother drag and drop.
 * IMPROVED: Backend navigation, user management and order screens.

@@ -111,7 +111,11 @@ function cg_gallery_card_render_options($gid,$shortcode,$allOptions){
 		if($unavailable){$text[1] = cg_member_unavailable_note();}
 		$classes = 'cg_view_option '.$widthClass.' cg_border_top_none'.($unavailable ? ' cg_disabled' : '');
 		if($field==='ShowProfileGallery'){$classes .= ' cg_border_right_none';}
-		echo '<div class="'.$classes.'"><div class="cg_view_option_title"><p>'.esc_html($text[0]).'<br><span class="cg_view_option_title_note">'.esc_html($text[1]).'</span></p></div><div class="cg_view_option_checkbox">';
+		$note = esc_html($text[1]);
+		if($field==='ShowShareButtonGallery'){
+			$note .= '<br>Requires at least one enabled social share channel.<br><strong>Sharing:</strong> <a href="#" class="cg_go_to_link cg_no_outline_and_shadow_on_focus" data-cg-go-to-link="ShareButtonsOptions" data-cg-share-shortcode="'.esc_attr($shortcode).'">Configure share buttons</a>';
+		}
+		echo '<div class="'.$classes.'"><div class="cg_view_option_title"><p>'.esc_html($text[0]).'<br><span class="cg_view_option_title_note">'.$note.'</span></p></div><div class="cg_view_option_checkbox">';
 		echo '<input type="checkbox" name="multiple-pics['.esc_attr($shortcode).'][visual]['.$field.']" class="cg_shortcode_checkbox '.$field.'" checked="'.(!$unavailable && cg_gallery_card_option_enabled($options,$field) ? '1' : '0').'"'.($unavailable ? ' disabled' : '').'></div></div>';
 	}
 	echo '</div>';

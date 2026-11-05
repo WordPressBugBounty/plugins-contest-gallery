@@ -1564,6 +1564,13 @@ jQuery(document).ready(function($){
         e.preventDefault();
         //cgViewOptionCheck(this,e);
         var $cgGoToTarget = $('.cg_go_to_target'+'[data-cg-go-to-target="'+$(this).attr('data-cg-go-to-link')+'"]:visible');
+        if ($(this).attr('data-cg-go-to-link') === 'ShareButtonsOptions') {
+            var shortcode = $(this).attr('data-cg-share-shortcode');
+            if (['cg_gallery', 'cg_gallery_user', 'cg_gallery_no_voting', 'cg_gallery_winner', 'cg_gallery_ecommerce'].indexOf(shortcode) === -1) return;
+            var $mainOptions = $('#cg_main_options');
+            $mainOptions.find('.cg_short_code_single_pic_configuration_buttons_container > .cg_short_code_single_pic_configuration_' + shortcode).first().trigger('click');
+            $cgGoToTarget = $mainOptions.find('.cg_short_code_single_pic_configuration_' + shortcode + '_container .ShareButtonsHiddenRow:visible').first();
+        }
         if (!$cgGoToTarget.length) return;
         var offsetTop = $cgGoToTarget.offset().top;
         $(window).scrollTop(offsetTop-300);

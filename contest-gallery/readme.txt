@@ -1,10 +1,10 @@
 === Contest Gallery – Upload & Vote Photos, Media, Sell with PayPal & Stripe ===
 Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
-Tags: photo contest, competition, contest, voting, openai
+Tags: gallery, file upload, voting, photo contest, user registration
 Requires at least: 5.6
 Requires PHP: 5.6
-Stable tag: 34.0.3
+Stable tag: 34.0.4
 Tested up to: 7.1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -31,6 +31,8 @@ https://www.youtube.com/watch?v=ndGsyGYV6eg
 * **SEO-Friendly Galleries:** Publish descriptive entry pages with unique URLs, controlled indexing and structured media data. [View the SEO-friendly gallery example](https://www.contest-gallery.com/seo-friendly-galleries/)
 * **Video Contests:** Accept video entries and combine focused playback with ratings and comments. [View the video contest example](https://www.contest-gallery.com/video-contest/)
 * **Product Review Galleries:** Combine five-star average ratings with written feedback in a searchable gallery. [View the product review example](https://www.contest-gallery.com/product-reviews/)
+* **Galleries without a contest:** Present photos, videos, audio and supported files. Voting is optional. [Explore galleries](https://www.contest-gallery.com/multiple-gallery-views/)
+* **Voting & Ratings:** Collect favorites, cumulative star scores or average ratings on gallery entries. [Explore voting and ratings](https://www.contest-gallery.com/voting-types/)
 
 == Real Watermark Protection ==
 
@@ -43,6 +45,8 @@ Protect your image entries with real watermarks that are written into the public
 * **Monetization:** Sell entries or digital content directly via **PayPal or Stripe API**.
 * **Social Reach:** Built-in Social Media Share Buttons to boost your contest's visibility.
 * **No 100-entry limit:** The former 100-entry limit was removed in 2019. Contest Gallery does not impose a limit on the number of gallery entries. Hosting storage and server resources still apply.
+* **Member Community:** Connect participants through member profiles, private messages and friendships. [Explore member features](https://www.contest-gallery.com/wordpress-community-plugin/)
+* **Participant Emails:** Send participant mailings and review recorded email history. [Explore participant emails](https://www.contest-gallery.com/participant-emails/)
 
 == Paid uploads, votes and comments (PRO) ==
 * Contest Gallery PRO can sell upload, voting and comment credits directly from regular galleries.
@@ -278,8 +282,23 @@ Documentation to configure different options: [Click here..](https://www.contest
 
 == Frequently Asked Questions ==
 
+= Can I use Contest Gallery without running a contest? =
+Yes. You can create galleries for photos, videos, audio and supported files without running a competition. Voting can be disabled.
+
+= Can I restrict voting to registered users? =
+Yes. Configure voting to require registered users to sign in before voting.
+
+= Which voting and rating methods are available? =
+Contest Gallery supports one-star favorite voting, cumulative star scores and average star ratings. IP, cookie and login recognition are separate settings for identifying voters.
+
+= Can participants have profiles and contact other members? =
+Yes. Contest Gallery supports member profiles, private messages and friendships. Availability and visibility depend on your gallery and member settings.
+
+= What is included in FREE and PRO? =
+FREE includes the core gallery, frontend upload, voting and commenting workflows. PRO adds advanced workflows such as PDF uploads with generated previews and paid participation. [Compare FREE and PRO features](https://www.contest-gallery.com/free-vs-pro-features/)
+
 = Can I approve files before they appear in the gallery? =
-Yes.
+Yes. Choose manual activation to review frontend submissions before publication, or enable automatic activation to publish accepted entries immediately.
 
 = I would like to be informed when a file is uploaded. =
 That's possible! You can activate to be informed after every frontend upload
@@ -314,9 +333,18 @@ As many you like :)
 Contest Gallery does not impose a limit on the number of gallery entries. The practical limit depends on your hosting storage and server resources.
 
 = How can I report security bugs? =
-You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/contest-gallery)
+Contest Gallery participates in Patchstack’s Vulnerability Disclosure Program. We review security reports received through Patchstack, Wordfence and WPScan, as well as reports from independent security researchers. Confirmed vulnerabilities are addressed through plugin updates.
+
+To report a potential security vulnerability, use our [official Patchstack reporting form](https://patchstack.com/database/report/wordpress/plugin/contest-gallery). Include the affected plugin version and clear steps to reproduce the issue. Please do not post sensitive security details in public support topics.
 
 == Changelog ==
+
+= 34.0.4 =
+* IMPROVED: Full-window scrolling, touch controls and browser back navigation.
+* IMPROVED: Faster image previews, smoother gallery loading and larger touch targets.
+* FIXED: Full-window opening, closing and layout, including pagination and resizing.
+* FIXED: Mobile comment dialogs, keyboard handling and sharing navigation.
+* FIXED: Social embed previews, custom voting success messages and upload translations.
 
 = 34.0.3 =
 * IMPROVED: Upload and registration forms with flexible columns, clearer field selection and smoother drag and drop.
