@@ -4900,7 +4900,9 @@ div#cg_main_container div.cgEcommerceCheckoutBodyContainer div.cg-ecommerce-uplo
 
 #cgGallerySubmitTop.cg_sticky{
     position: fixed;
-    border-bottom: thin solid #dedede;
+    background-color: #f1f5f9;
+    border-bottom: 1px solid #c8d3df;
+    box-shadow: 0 6px 18px rgba(26,36,48,.16);
     top: 0;
     z-index: 101;
     padding-bottom: 15px;
@@ -8337,8 +8339,12 @@ body.cg_member_upload_choice_open,body.cg_view_choice_open{overflow:hidden;}
 
 
 #cgSellContainer.cg_backend_action_container{
+    left: 50%;
+    width: 1040px;
+    max-width: calc(100% - 48px);
+    min-width: 0;
     min-height: 70%;
-    min-width: 85%;
+    box-sizing: border-box;
     transform: translate(-50%,-50%);
 }
 
@@ -8943,6 +8949,33 @@ body.cg_member_upload_choice_open,body.cg_view_choice_open{overflow:hidden;}
     opacity: .72;
 }
 
+#cgEntryWatermarkFiles .cg_entry_watermark_file_container.cg_entry_watermark_sale_locked{
+    opacity: 1;
+}
+
+#cgEntryWatermarkSellingNotice{
+    max-width: 576px;
+    margin: 0 auto 12px;
+    padding: 10px 12px;
+    border: thin solid #d7dfe2;
+    border-radius: 6px;
+    background-color: #f4f6f7;
+    color: #46545c;
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+#cgEntryWatermarkFiles .cg_entry_watermark_sale_lock{
+    align-self: center;
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    color: #63717a;
+    font-size: 20px;
+    line-height: 34px;
+}
+
 #cgEntryWatermarkFiles .cg_file{
     width: 100%;
     height: 72px;
@@ -9048,6 +9081,11 @@ body.cg_member_upload_choice_open,body.cg_view_choice_open{overflow:hidden;}
     height: 26px;
     overflow: hidden;
     color: #555;
+}
+
+#cgEntryWatermarkFiles .cg_entry_watermark_sale_locked .cg_entry_watermark_file_status{
+    color: #3f4d58;
+    font-weight: 600;
 }
 
 #cgWatermarkContainer .cg_entry_watermark_editor{
@@ -9322,8 +9360,7 @@ body.cg_member_upload_choice_open,body.cg_view_choice_open{overflow:hidden;}
     border: thin solid #dedede;
     padding: 15px 15px;
     text-align: right;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
+    border-radius: 8px;
 }
 
 #cgSetForSell{
@@ -14385,3 +14422,252 @@ select.cg_action_select:focus,
     .media-modal .cg_social_embed_section_title { align-items: start; }
     .media-modal .cg_social_embed_section_title > span { max-width: 100px; text-align: right; }
 }
+
+/* Product summary. Only the settings button is interactive. */
+#cgSortable .cg_entry_sale_card{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;box-sizing:border-box;width:90%;padding:12px 14px;margin:0 0 16px;border:1px solid #cce9d8;border-radius:10px;background:linear-gradient(135deg,#f2fff7 0%,#fff 48%,#f4f8ff 100%);color:#15211b;box-shadow:0 5px 16px rgba(26,87,54,.06);}
+#cgSortable .cg_entry_sale_heading{display:flex;align-items:center;gap:10px;min-width:0;margin:0;}
+#cgSortable .cg_entry_sale_heading>.dashicons{color:#16844a;width:24px;height:24px;font-size:24px;flex-shrink:0;}
+#cgSortable .cg_entry_sale_heading h3{font-size:17px;line-height:1.25;margin:0;color:#15211b;}
+#cgSortable .cg_entry_sale_types{display:flex;flex:1 1 auto;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 12px;min-width:0;}
+#cgSortable .cg_entry_sale_type{display:inline-flex;align-items:center;gap:12px;color:#63736b;font-size:12px;line-height:1.5;cursor:default;}
+#cgSortable .cg_entry_sale_type+.cg_entry_sale_type:before{content:"\00b7";color:#a4b2aa;font-weight:400;}
+#cgSortable .cg_entry_sale_type_current{color:#116b3d;font-weight:700;}
+#cgSortable .cg_entry_sale_setup{display:inline-flex;flex-shrink:0;align-items:center;justify-content:center;gap:7px;min-height:36px;margin:0 0 0 auto;padding:8px 13px;border:1px solid #16844a;border-radius:8px;background:linear-gradient(135deg,#20a761,#16844a);color:#fff;font-size:12px;font-weight:700;line-height:18px;cursor:pointer;}
+#cgSortable .cg_entry_sale_setup:hover,#cgSortable .cg_entry_sale_setup:focus-visible{background:#11703e;border-color:#0f6337;}
+#cgSortable .cg_entry_sale_setup .dashicons{font-size:17px;width:17px;height:17px;}
+#cgSortable .cg_entry_sale_card button,#cgSortable .cg_entry_sale_card button:is(:focus,:focus-visible,:active,:hover){outline:none;box-shadow:none;}
+@media(max-width:600px){#cgSortable .cg_entry_sale_card{padding:12px;gap:10px;}#cgSortable .cg_entry_sale_heading{flex:1 1 0;gap:8px;}#cgSortable .cg_entry_sale_heading h3{font-size:15px;}#cgSortable .cg_entry_sale_types{order:1;flex-basis:100%;justify-content:flex-start;}#cgSortable .cg_entry_sale_setup{margin-left:0;}}
+#cgSortable .cg_entry_sale_setup .dashicons{color:inherit;}
+
+#cgSellContainer .cg_sell_options{margin:20px 0 0;box-shadow:none;}
+#cgSellContainer #cgSellWatermarkPreview{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,300px);gap:24px;width:auto;margin:0 12px;padding:16px 20px 0;box-sizing:border-box;border-color:#dce7e1;border-radius:8px 8px 0 0;}
+#cgSellContainer #cgSellContainerSubmitButtonContainer{margin:0 12px;border-color:#dce7e1;}
+
+#cgSellDiscardConfirmation{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;background:rgba(20,35,28,.38);}
+#cgSellDiscardConfirmation .cg_sell_discard_dialog{width:100%;max-width:440px;max-height:calc(100vh - 40px);overflow-y:auto;box-sizing:border-box;padding:24px;border:1px solid #dce7e1;border-radius:14px;background:#fff;box-shadow:0 14px 48px rgba(20,35,28,.18);text-align:left;}
+#cgSellDiscardConfirmation h2{margin:0 0 12px;font-size:20px;line-height:1.3;color:#203d2e;}
+#cgSellDiscardConfirmation p{margin:0 0 22px;font-size:14px;line-height:1.6;color:#53665d;}
+#cgSellDiscardConfirmation .cg_sell_discard_actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;}
+#cgSellDiscardConfirmation button{min-height:38px;padding:8px 14px;border:1px solid #248956;border-radius:8px;background:#248956;color:#fff;font-size:13px;font-weight:600;line-height:1.4;cursor:pointer;outline:none!important;box-shadow:none!important;}
+#cgSellDiscardConfirmation button:hover,#cgSellDiscardConfirmation button:focus-visible{background:#1b7045;}
+#cgSellDiscardConfirmation #cgDiscardSaleChanges{border-color:#e3b9b9;background:#fff;color:#a23838;}
+#cgSellDiscardConfirmation #cgDiscardSaleChanges:hover,#cgSellDiscardConfirmation #cgDiscardSaleChanges:focus-visible{border-color:#a23838;background:#fff4f4;}
+#cgSellContainer #cgSellWatermarkPreviewImage,#cgSellContainer #cgSellWatermarkPreview .cg_sell_conf_container{width:auto;min-width:0;margin-right:0;}
+#cgSellContainer #cgSellPreviewContainer{padding-left:0;box-sizing:border-box;}
+#cgSellContainer .cgSellPreview img{object-fit:contain;}
+@media(max-width:700px){
+    #cgSellContainer #cgSellWatermarkPreview{grid-template-columns:minmax(0,1fr);gap:16px;padding:16px 12px 0;}
+    #cgSellContainer #cgSellWatermarkPreview .cg_sell_conf_container{width:100%;max-width:400px;margin:0 auto 20px;}
+}
+@media(max-width:480px){
+    #cgSellContainer #cgSellWatermarkPreview,#cgSellContainer #cgSellContainerSubmitButtonContainer{margin-left:0;margin-right:0;}
+}
+#cgSellContainer .cg_sell_header{display:flex;align-items:center;gap:16px;padding:14px 18px;margin-bottom:12px;border:1px solid #d8e7df;border-radius:8px;background:linear-gradient(110deg,#f2fff7,#f4f8ff);}
+#cgSellContainer #cgSellBackendImageContainerOption{flex:0 0 64px;width:64px;}
+#cgSellContainer #cgSellBackendImageContainer{margin:0;}
+#cgSellContainer #cgSellBackendImageContainer .cg_backend_image_full_size_target{margin:0;width:64px;height:64px;min-height:0;}
+#cgSellContainer #cgSellBackendImageContainer .cg_backend_image{max-width:64px;max-height:64px;width:64px;height:64px;object-fit:contain;}
+#cgSellContainer .cg_sell_header_text{min-width:0;text-align:left;}
+#cgSellContainer .cg_sell_header_text h2{margin:0 0 5px;font-size:18px;line-height:1.3;}
+#cgSellContainer .cg_sell_header_text > span{font-size:12px;color:#60736b;}
+#cgSellContainer #cgSellSelectFilesForSale{margin:8px 12px 20px;padding:16px;box-sizing:border-box;border:1px solid #dce7e1;border-radius:8px;background:#fff;text-align:left;}
+#cgSellContainer .cg_sale_files_heading{margin:0;font-size:16px;font-weight:600;line-height:1.4;}
+#cgSellContainer .cg_sale_files_description{margin:5px 0 16px;color:#53665d;font-size:12px;line-height:1.6;}
+#cgSellContainer .cg_sale_files_layout{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:start;gap:16px;}
+#cgSellContainer .cg_sale_files_notes{display:grid;gap:10px;min-width:0;}
+#cgSellContainer .cg_sale_files_note,#cgSellContainer .cg_sale_files_picker{min-width:0;padding:12px;box-sizing:border-box;border:1px solid #dce7e1;border-radius:8px;background:#fff;text-align:left;}
+#cgSellContainer .cg_sale_files_note>strong,#cgSellContainer .cg_sale_files_picker_title{display:block;font-size:13px;font-weight:600;line-height:1.4;}
+#cgSellContainer .cg_sale_files_note>p,#cgSellContainer .cg_sale_files_picker_hint{margin:6px 0 0;color:#53665d;font-size:12px;line-height:1.6;}
+#cgSellContainer .cg_sale_files_picker_hint{margin-bottom:12px;}
+#cgSellContainer #cgSellSelectFilesForSaleSelectContainer{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));align-items:start;gap:10px;padding:0;}
+#cgSellContainer #cgSellSelectFilesForSale .cg_file_container{display:flex;flex-direction:column;gap:6px;width:auto;min-width:0;height:auto;min-height:128px;padding:8px;box-sizing:border-box;border:1px solid #dce7e1;border-radius:8px;background:#fff;}
+#cgSellContainer #cgSellSelectFilesForSale .cg_file{height:112px;flex-shrink:0;border-radius:5px;opacity:1;}
+#cgSellContainer #cgSellSelectFilesForSale .cg_file_checkbox{top:6px;right:6px;bottom:auto;left:auto;transform:none;width:24px;height:24px;background-size:24px!important;}
+#cgSellContainer #cgSellSelectFilesForSale .cg_file_checkbox.cg_checked{border-color:#248956;}
+#cgSellContainer #cgSellSelectFilesForSaleSelectContainer .cg_post_title{position:static!important;transform:none;display:block;white-space:normal;overflow-wrap:anywhere;text-align:left;font-size:11px;line-height:1.4;}
+#cgSellContainer #cgSellSelectFilesForSale .cg_entry_watermark_ecommerce_note{margin:0;overflow-wrap:anywhere;}
+#cgSellContainer #cgSellSelectFilesForSale .cg_entry_watermark_ecommerce_conflict_notice{width:100%;max-width:none;margin:0 0 12px;flex-wrap:wrap;box-shadow:none;}
+#cgSellContainer #cgSellSelectFilesForSale .cg_sell_files_nginx_notice{width:100%;max-width:none;min-width:0;margin:0;text-align:left;}
+@media(max-width:700px){
+    #cgSellContainer .cg_sale_files_layout{grid-template-columns:minmax(0,1fr);}
+}
+@media(max-width:480px){
+    #cgSellContainer #cgSellSelectFilesForSale{margin-left:0;margin-right:0;padding:12px;}
+}
+#cgSellContainer .cg_sell_type_row .cg_view_option{border:0;}
+#cgSellContainer .cg_sell_type_row .cg_view_option_title{padding:8px 12px;box-sizing:border-box;}
+#cgSellContainer .cg_sale_type_options{padding:4px 12px 12px;gap:12px;}
+#cgSellContainer .cg_sale_type_options > .cg_sale_type_option{padding:10px 12px;border:1px solid #dce7e1;border-radius:8px;box-sizing:border-box;gap:8px;}
+#cgSellContainer .cg_sale_type_option > .cg_sale_type_option_note{min-height:0;font-size:12px;}
+#cgSellContainer .cg_sell_pricing{margin:8px 12px 20px;}
+#cgSellContainer .cg_sell_pricing_cards{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1.25fr) repeat(2,minmax(0,.85fr));gap:12px;}
+#cgSellContainer .cg_sell_pricing_card{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:10px;min-width:0;padding:14px 16px;box-sizing:border-box;border:1px solid #dce6e1;border-radius:10px;background:#f8fafc;text-align:left;}
+#cgSellContainer .cg_sell_price_card{justify-content:flex-start;gap:14px;border-color:#dce7e1;background:#fff;}
+#cgSellContainer .cg_sell_pricing_label{display:block;margin:0;color:#53665d;font-size:12px;font-weight:600;line-height:1.4;}
+#cgSellContainer .cg_sell_price_card .cg_sell_pricing_label{color:inherit;}
+#cgSellContainer .cg_sell_pricing_value{display:block;max-width:100%;font-size:14px;font-weight:600;line-height:1.5;color:#263c31;overflow-wrap:anywhere;}
+#cgSellContainer .cg_sell_currency_options_note{margin:10px 0 0;padding:0 2px;color:#53665d;font-size:12px;line-height:1.6;text-align:left;}
+#cgSellContainer .cg_sell_currency_options_note a{color:#28704c;text-decoration:underline;text-underline-offset:2px;}
+#cgSellContainer .cg_sell_price_card #cgSellPrice,
+#cgSellContainer .cg_sell_price_card #cgSellReducedPrice{width:100%;min-width:0;max-width:none;height:44px;margin:0;padding:8px 10px;box-sizing:border-box;border:1px solid #dedede;border-radius:7px;background:#fff;color:inherit;font-size:21px;font-weight:600;line-height:1.2;outline:none!important;box-shadow:none!important;}
+#cgSellContainer .cg_sell_price_card #cgSellPrice:focus{border-color:#8c8f94;}
+@media(max-width:760px){
+    #cgSellContainer .cg_sell_pricing_cards{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:480px){
+    #cgSellContainer .cg_sell_pricing{margin-left:0;margin-right:0;}
+    #cgSellContainer .cg_sell_pricing_card{padding:12px;}
+    #cgSellContainer .cg_sell_price_card,#cgSellContainer .cg_sell_currency_card{grid-column:1/-1;}
+}
+#cgSellContainer .cg_sale_test_keys_note{font-size:12px;margin:0 12px 12px;color:#60736b;}
+#cgSellContainer .cg_sale_keys_row{width:auto;margin:8px 12px 20px;}
+#cgSellContainer .cg_sale_keys_card{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,360px);align-items:center;gap:12px 24px;width:100%;min-width:0;padding:16px;box-sizing:border-box;border:1px solid #dce7e1;border-radius:8px;background:#fff;text-align:left;}
+#cgSellContainer .cg_sale_keys_intro,#cgSellContainer .cg_sale_keys_file{min-width:0;}
+#cgSellContainer .cg_sale_keys_label{display:block;margin:0 0 7px;font-size:13px;font-weight:600;line-height:1.4;color:inherit;}
+#cgSellContainer .cg_sale_keys_intro p{margin:0 0 7px;color:#53665d;font-size:12px;line-height:1.6;}
+#cgSellContainer .cg_sale_keys_intro a{color:#28704c;font-size:12px;line-height:1.6;text-decoration:underline;text-underline-offset:2px;}
+#cgSellContainer .cg_sale_keys_file .cg_key_upload{display:block;box-sizing:border-box;width:100%;min-width:0;max-width:100%;height:auto;min-height:42px;margin:0;padding:6px;border:1px solid #dedede;border-radius:7px;background:#fff;color:inherit;font-size:12px;line-height:28px;outline:none!important;box-shadow:none!important;}
+#cgSellContainer .cg_sale_keys_file .cg_key_upload::file-selector-button{margin:0 10px 0 0;padding:5px 10px;border:1px solid #dce7e1;border-radius:5px;background:#f8fafc;color:inherit;font-family:inherit;font-size:12px;line-height:18px;cursor:pointer;outline:none;box-shadow:none;}
+#cgSellContainer .cg_sale_keys_file .cg_key_upload::file-selector-button:hover{background:#edf2f5;}
+#cgSellContainer .cg_sale_keys_file .cg_key_upload:focus-visible{border-color:#8c8f94;}
+#cgSellContainer .cg_sale_keys_file .cg_sale_keys_format,#cgSellContainer .cg_sale_keys_file .cg_sale_test_keys_note{margin:5px 0 0;font-size:12px;line-height:1.5;color:#60736b;}
+#cgSellContainer .cg_sale_keys_file .cg_sale_test_keys_note{margin-top:2px;}
+#cgSellContainer .cg_sale_keys_card>.cg_error{grid-column:1/-1;margin:0;font-size:12px;line-height:1.5;text-align:left;}
+@media(max-width:700px){
+    #cgSellContainer .cg_sale_keys_card{grid-template-columns:minmax(0,1fr);gap:14px;}
+}
+@media(max-width:480px){
+    #cgSellContainer .cg_sale_keys_row{margin-left:0;margin-right:0;}
+    #cgSellContainer .cg_sale_keys_card{padding:12px;}
+}
+#cgSellContainer .cg_sell_actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;}
+#cgSellContainer .cg_sale_tax_panel{display:flex;flex-wrap:wrap;margin:8px 12px 20px;border:1px solid #dce7e1;border-radius:8px;overflow:hidden;background:#fff;}
+#cgSellContainer .cg_sale_tax_panel #TaxRadioContainerRow{flex:1 1 58%;width:auto;min-width:0;}
+#cgSellContainer .cg_sale_tax_panel #TaxContainerRow{flex:1 1 36%;width:auto;min-width:0;border-left:1px solid #dce7e1;box-sizing:border-box;}
+#cgSellContainer .cg_sale_tax_panel .cg_sale_tax_choice,#cgSellContainer .cg_sale_tax_panel .cg_sale_tax_amount{align-items:flex-start;justify-content:flex-start;gap:12px;padding:16px;border:0;background:#fff;box-shadow:none;text-align:left;}
+#cgSellContainer .cg_sale_tax_heading{display:block;margin:0;font-size:13px;font-weight:600;line-height:1.4;color:inherit;}
+#cgSellContainer .cg_sale_tax_default{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px 6px;box-sizing:border-box;max-width:100%;padding:8px 10px;border:1px solid #dce7e1;border-radius:6px;background:#fff;color:#53665d;font-size:12px;line-height:1.5;}
+#cgSellContainer .cg_sale_tax_default #defaultTaxText{color:#000;white-space:nowrap;}
+#cgSellContainer .cg_sale_tax_choice>.cg_view_option_radio_multiple{justify-content:flex-start;flex-wrap:wrap;gap:12px 28px;width:100%;}
+#cgSellContainer .cg_sale_tax_amount>.cg_view_option_input{width:100%;max-width:240px;}
+#cgSellContainer .cg_sale_tax_amount #Tax{box-sizing:border-box;width:100%;min-width:0;height:40px;margin:0;padding:8px 10px;border:1px solid #dedede!important;border-radius:7px!important;background:#fff;color:inherit;font-size:16px;text-align:center;outline:none!important;box-shadow:none!important;}
+#cgSellContainer .cg_sale_tax_amount #Tax:focus{border-color:#8c8f94!important;}
+@media(max-width:600px){
+    #cgSellContainer .cg_sale_tax_panel #TaxRadioContainerRow,#cgSellContainer .cg_sale_tax_panel #TaxContainerRow{flex-basis:100%;}
+    #cgSellContainer .cg_sale_tax_panel #TaxContainerRow{border-left:0;border-top:1px solid #dce7e1;}
+}
+@media(max-width:480px){
+    #cgSellContainer .cg_sale_tax_panel{margin-left:0;margin-right:0;}
+    #cgSellContainer .cg_sale_tax_panel .cg_sale_tax_choice,#cgSellContainer .cg_sale_tax_panel .cg_sale_tax_amount{padding:12px;}
+}
+/* Shipping and quantity settings share the tax card's spacing and borders. */
+#cgSellContainer #ShippingContainerRow,#cgSellContainer #SaleAmountContainer{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);width:auto;margin:8px 12px 0;border:1px solid #dce7e1;border-bottom:0;border-radius:8px 8px 0 0;overflow:hidden;background:#fff;}
+#cgSellContainer #SaleAmountContainer{margin:0 12px 20px;border-bottom:1px solid #dce7e1;border-radius:0 0 8px 8px;}
+#cgSellContainer .cg_sale_shipping_cell{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:10px;box-sizing:border-box;width:100%;min-width:0;margin:0;padding:16px;border:0;background:#fff;box-shadow:none;text-align:left;}
+#cgSellContainer .cg_sale_shipping_cell+.cg_sale_shipping_cell{border-left:1px solid #dce7e1;}
+#cgSellContainer .cg_sale_shipping_heading{display:block;margin:0;font-size:13px;font-weight:600;line-height:1.4;color:inherit;}
+#cgSellContainer .cg_sale_shipping_note{margin:0;color:#53665d;font-size:12px;line-height:1.6;}
+#cgSellContainer .cg_sale_shipping_toggle{display:flex;align-items:center;gap:10px;font-size:13px;line-height:1.4;}
+#cgSellContainer #IsAlternativeShippingCheckbox{flex:0 0 30px;width:30px;min-width:30px;height:30px;margin:0;}
+#cgSellContainer #IsAlternativeShippingCheckbox:before{width:26px;height:26px;}
+#cgSellContainer #IsAlternativeShippingCheckbox.cg_view_option_unchecked:before{border-color:#c8d0dd;background:#f6f8fb;}
+#cgSellContainer #IsAlternativeShippingCheckbox.cg_view_option_unchecked:after{display:none;}
+#cgSellContainer #IsAlternativeShipping{display:block;position:absolute;inset:0;z-index:1;box-sizing:border-box;width:100%;height:100%;margin:0;padding:0;opacity:0;cursor:pointer;outline:none;box-shadow:none;}
+#cgSellContainer .cg_sale_shipping_cell>.cg_view_option_input,#cgSellContainer .cg_sale_shipping_cell>.cg_view_option_select{width:100%;max-width:240px;margin:0;}
+#cgSellContainer .cg_sale_shipping_cell #Shipping,#cgSellContainer .cg_sale_shipping_cell .SaleAmount{box-sizing:border-box;width:100%;min-width:0;max-width:none;height:40px;margin:0;padding:8px 10px;border:1px solid #dedede!important;border-radius:7px!important;background-color:#fff;color:inherit;font-size:16px;outline:none!important;box-shadow:none!important;}
+#cgSellContainer .cg_sale_shipping_cell .SaleAmount{padding-right:30px;}
+#cgSellContainer .cg_sale_shipping_cell #Shipping:focus,#cgSellContainer .cg_sale_shipping_cell .SaleAmount:focus{border-color:#8c8f94!important;}
+#cgSellContainer #ShippingContainer.cg_disabled,#cgSellContainer #ShippingContainer.cg_disabled_background_color_e0e0e0{background:#fff!important;}
+#cgSellContainer #ShippingContainer.cg_disabled #Shipping,#cgSellContainer #ShippingContainer.cg_disabled_background_color_e0e0e0 #Shipping{background:#f8faf9!important;color:#7a8981;}
+@media(max-width:600px){
+    #cgSellContainer #ShippingContainerRow,#cgSellContainer #SaleAmountContainer{grid-template-columns:minmax(0,1fr);}
+    #cgSellContainer .cg_sale_shipping_cell+.cg_sale_shipping_cell{border-left:0;border-top:1px solid #dce7e1;}
+}
+@media(max-width:480px){
+    #cgSellContainer #ShippingContainerRow,#cgSellContainer #SaleAmountContainer{margin-left:0;margin-right:0;}
+    #cgSellContainer .cg_sale_shipping_cell{padding:12px;}
+}
+#cgSellContainer #cgDeactivateSale{margin-right:auto;}
+#cgSellContainer #cgSetForSell{margin-left:0;padding:9px 16px;border:1px solid #16844a;border-radius:8px;background:linear-gradient(135deg,#20a761,#16844a);color:#fff;outline:none!important;box-shadow:none!important;}
+#cgSellContainer #cgSetForSell:hover,#cgSellContainer #cgSetForSell:focus-visible{background:#11703e;border-color:#0f6337;}
+#cgSellContainer .cg_sell_secondary{padding:8px 14px;border:1px solid #d6dfda;border-radius:8px;background:#fff;color:#344b3f;font-size:13px;line-height:1.4;cursor:pointer;}
+#cgSellContainer .cg_sell_secondary:hover,#cgSellContainer .cg_sell_secondary:focus-visible{border-color:#248956;background:#eef9f3;}
+#cgSellContainer .cg_sell_destructive{border-color:#e3b9b9;color:#a23838;}
+#cgSellContainer .cg_sell_destructive:hover,#cgSellContainer .cg_sell_destructive:focus-visible{border-color:#a23838;background:#fff4f4;}
+#cgSellContainer .cg_sell_deactivate_confirmation{text-align:left;}
+#cgSellContainer .cg_sell_deactivate_confirmation p{margin:6px 0 12px;font-size:13px;}
+#cgSellContainer .cg_sell_confirmation_actions{display:flex;justify-content:flex-end;gap:10px;}
+#cgSellContainer .cg_sell_secondary{outline:none!important;box-shadow:none!important;}
+.cg_entry_action_tooltip[id$="-mail"],.cg_entry_action_tooltip[id$="-mail-deactivate"],.cg_entry_action_tooltip[id$="-mail-activate"]{text-align:center;}
+@media(max-width:960px){
+    #cgSellContainer.cg_backend_action_container{left:50%;width:calc(100% - 24px);min-width:0;max-width:none;box-sizing:border-box;padding:15px 12px 20px;}
+}
+@media(max-width:600px){
+    #cgSellContainer .cg_sell_header{gap:10px;padding:12px;flex-wrap:wrap;}
+    #cgSellContainer .cg_sell_actions{gap:10px;}
+    #cgSellContainer #cgDeactivateSale{flex-basis:100%;}
+}
+
+
+/* Keep entry status and mail actions together, with inline help. */
+#cgSortable .cg_entry_actions{margin-bottom:18px;}
+#cgSortable .cg_entry_actions .informdiv{box-sizing:border-box;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:10px 12px;margin:0;padding:0 20px;}
+#cgSortable .cg_entry_actions .informdiv>div{display:flex;align-items:center;width:auto !important;flex:0 0 auto;}
+#cgSortable .cg_entry_actions .cg_image_checkbox{margin-bottom:0;}
+#cgSortable .cg_entry_actions .informdiv>.cg_status{width:120px !important;}
+#cgSortable .cg_entry_actions .cg_status_winner_container{position:relative;display:flex;align-items:center;gap:0;}
+#cgSortable .cg_entry_actions .cg_sell{width:auto;}
+#cgSortable li.cg_sortable_div .cg_entry_actions .cg_sale_settings.cg_sell_button{width:auto;white-space:nowrap;}
+#cgSortable .cg_entry_actions .cg_send_mail{flex:0 1 auto;max-width:100%;align-items:center;gap:10px 12px;padding:0;margin:0 0 0 auto;}
+#cgSortable .cg_entry_actions .cg_send_mail_item{position:relative;flex-direction:row;align-items:center;gap:0;}
+@media(max-width:600px){
+    #cgSortable .cg_entry_actions .cg_send_mail{margin-left:0;}
+}
+
+/* Independent help controls, visually integrated into the action pills. */
+#cgSortable li.cg_sortable_div .cg_entry_actions .cg_status_winner_container .cg_status_winner{box-sizing:border-box;width:auto !important;min-width:148px;padding:0 68px 0 16px;}
+#cgSortable .cg_entry_actions .cg_status_winner .cg_image_checkbox_action{margin-right:0;white-space:nowrap;}
+#cgSortable .cg_entry_actions .cg_send_mail_item>.cg_send_custom_mail,
+#cgSortable .cg_entry_actions .cg_send_mail_item>.cg_deactivate_send_custom_mail,
+#cgSortable .cg_entry_actions .cg_send_mail_item>.cg_activate_send_custom_mail{padding-right:38px;}
+#cgSortable .cg_entry_actions .cg_send_mail_item>.cg-pro-false:after{right:38px;margin-right:0;transform:translateY(-34%);}
+#cgSortable li.cg_sortable_div .cg_entry_actions button.cg_entry_action_help{position:absolute;right:8px;top:50%;transform:translateY(-50%);z-index:1;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;width:24px;min-width:24px;height:24px;min-height:24px;margin:0;padding:0;border:0;border-radius:50%;background:transparent;color:#68766d;cursor:pointer;touch-action:manipulation;outline:none;box-shadow:none;}
+#cgSortable li.cg_sortable_div .cg_entry_actions .cg_status_winner_container button.cg_entry_action_help{right:34px;}
+#cgSortable li.cg_sortable_div .cg_entry_actions button.cg_entry_action_help>span{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;width:14px;height:14px;border:1px solid currentColor;border-radius:50%;font-family:Arial,sans-serif;font-size:10px;font-weight:700;line-height:1;}
+#cgSortable li.cg_sortable_div .cg_entry_actions button.cg_entry_action_help:is(:hover,:focus,:focus-visible,:active,[aria-expanded="true"]){color:#165d3b;background:#e8f4ed;outline:none;box-shadow:none;}
+#cgSortable li.cg_sortable_div .cg_entry_actions .cg-pro-false~button.cg_entry_action_help{color:#7d6234;}
+#cgSortable li.cg_sortable_div .cg_entry_actions .cg-pro-false~button.cg_entry_action_help:is(:hover,:focus,:focus-visible,:active,[aria-expanded="true"]){color:#6e4a07;background:#f5e8cb;}
+.cg_entry_action_tooltip{position:fixed;z-index:9999999;display:block;box-sizing:border-box;width:max-content;max-width:min(270px,calc(100vw - 24px));max-height:calc(100vh - 24px);overflow:auto;padding:9px 12px;border:1px solid #d8e1dc;border-radius:8px;background:#fff;color:#26332c;box-shadow:0 5px 18px rgba(0,0,0,.12);font-size:13px;line-height:1.5;text-align:left;white-space:normal;overflow-wrap:anywhere;}
+.cg_entry_action_tooltip[hidden]{display:none !important;}
+
+/* Explicit free products. */
+#cgSellContainer .cg_offer_free_label{display:inline-flex;flex:0 0 auto;align-items:center;justify-content:center;gap:8px;box-sizing:border-box;min-height:36px;max-width:100%;margin:0;padding:7px 10px;border:1px solid #c9d8cf;border-radius:8px;background:#fff;color:#334c3e;font-size:12px;font-weight:600;line-height:20px;white-space:nowrap;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s;}
+#cgSellContainer .cg_offer_free_label:hover{border-color:#739c83;background:#f3faf6;}
+#cgSellContainer .cg_offer_free_label:focus-within{border-color:#16844a;outline:none;box-shadow:none;}
+#cgSellContainer .cg_offer_free_label:has(input:checked){border-color:#7fc79c;background:#e0f4e7;color:#116b3d;}
+#cgSellContainer .cg_offer_free_label input[type="checkbox"]{-webkit-appearance:none;appearance:none;position:relative;display:inline-block;flex:0 0 34px;box-sizing:border-box;width:34px;min-width:34px;max-width:34px;height:20px;min-height:20px;margin:0;padding:0;border:1px solid #8c9e93;border-radius:20px;background:#b9c8bf;vertical-align:middle;cursor:pointer;outline:none;box-shadow:none;transition:background-color .15s,border-color .15s;}
+#cgSellContainer .cg_offer_free_label input[type="checkbox"]::before{content:"";position:absolute;display:block;float:none;box-sizing:border-box;top:2px;left:2px;width:14px;height:14px;margin:0;padding:0;border:0;border-radius:50%;background:#fff;transform:translateX(0);transition:transform .15s;}
+#cgSellContainer .cg_offer_free_label input[type="checkbox"]::after{content:none;}
+#cgSellContainer .cg_offer_free_label input[type="checkbox"]:checked{border-color:#16844a;background:#16844a;}
+#cgSellContainer .cg_offer_free_label input[type="checkbox"]:checked::before{transform:translateX(14px);}
+#cgSellContainer .cg_offer_free_label input[type="checkbox"]:is(:hover,:focus,:focus-visible,:active){outline:none;box-shadow:none;}
+#cgSellFreeValue{display:block;text-align:center;padding:8px 0;font-size:18px;}
+#cgSellPriceError{margin:8px 0;}
+#cgSellContainer .cg_error{padding:10px 12px;border:1px solid #edc7c7;border-radius:8px;background:#fff5f5;color:#9a2e2e;font-size:13px;line-height:1.5;text-align:left;box-sizing:border-box;outline:none!important;}
+#cgSellContainer #cgSellActionError{margin:12px;}
+
+/* Keep price labels with their inputs and separate the optional pricing switches. */
+#cgSellContainer .cg_sell_price_fields{display:flex;flex-direction:column;gap:14px;width:100%;}
+#cgSellContainer .cg_sell_price_field{display:flex;flex-direction:column;gap:8px;width:100%;min-width:0;}
+#cgSellContainer .cg_sell_price_options{display:flex;flex-wrap:wrap;gap:8px;width:100%;padding-top:12px;border-top:1px solid #e2eae5;}
+#cgSellContainer #cgSellFreeValue{width:100%;box-sizing:border-box;margin:0;border:1px solid #cce5d5;border-radius:7px;background:#f0faf4;color:#16703e;}
+#cgSellContainer #cgSellReducedPrice:is(:hover,:focus,:focus-visible,:active){outline:none;box-shadow:none;}
+
+/* Shared sale previews remain visible while only their owner can edit download files. */
+#cgSellContainer #cgSellSelectFilesForSale .cg_is_sale_owned_elsewhere{cursor:default;background:#f4f6f7;}
+#cgSellContainer .cg_sale_owner_note{display:block;padding:8px;line-height:1.4;}
+#cgSellContainer .cg_sale_owner_link,
+#cgWatermarkContainer .cg_sale_owner_link{display:block;pointer-events:auto;cursor:pointer;text-decoration:underline;}
+#cgEntryWatermarkFiles .cg_entry_watermark_sale_locked{height:auto;min-height:188px;}
+#cgEntryWatermarkFiles .cg_entry_watermark_sale_locked .cg_entry_watermark_file_status{display:block;flex:0 0 auto;height:auto;overflow:visible;}
+#cgSellContainer #cgSetForSell:disabled{opacity:.5;cursor:default;}

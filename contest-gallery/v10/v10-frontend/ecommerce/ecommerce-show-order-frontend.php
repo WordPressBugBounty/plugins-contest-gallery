@@ -254,7 +254,11 @@ $RegUserOrderSummaryOnlyText
 </div>"; return;
 		}
 
-		if($Order->PaymentType == 'stripe'){
+		if($Order->PaymentType == 'free'){
+            $status = $Order->PaymentStatus;
+            $explanation = 'Free order. No payment required.';
+            if(empty($Order->IsFullPaid) || $status!=='COMPLETED'){echo '<p>This order has not been completed.</p>';return;}
+        }elseif($Order->PaymentType == 'stripe'){
 
 			if($Order->IsTest){
 				$secret = $ecommerceOptions['StripeSandboxSecret'];

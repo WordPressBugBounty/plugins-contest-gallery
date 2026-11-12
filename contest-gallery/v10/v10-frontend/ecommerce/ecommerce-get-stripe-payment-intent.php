@@ -35,6 +35,10 @@ if(isset($_POST['cgPurchaseUnits'])){
 		}elseif(!cg_ecommerce_payment_provider_is_ready($ecommerceOptions,'stripe',!empty($checkoutEnvironment['is_test']))){
 			$StripeError = 'Error:Stripe is not available for the requested checkout environment.';
 		}
+		if($StripeError===''){
+			$available = cg_ecommerce_checkout_keys_available($authoritativeStripeCart);
+			if(is_wp_error($available)){$StripeError = $available->get_error_message();}
+		}
 		if($StripeError!==''){
 			?>
 			<script data-cg-processing="true">

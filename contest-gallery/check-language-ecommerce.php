@@ -167,4 +167,10 @@ __('Uploaded');$l_Uploaded = "Uploaded";$language_Uploaded = (!empty($translatio
 
 __('All uploads used');$l_AllUploadsUsed = "All uploads used";$language_AllUploadsUsed = (!empty($translations[$l_AllUploadsUsed]) && $is_frontend) ? $translations[$l_AllUploadsUsed] : ((empty(trim(__($l_AllUploadsUsed,$domain)))) ? __($l_AllUploadsUsed,$domainDefault) : __($l_AllUploadsUsed,$domain)); if(empty($translations[$l_AllUploadsUsed])){$translations[$l_AllUploadsUsed]='';}
 
-?>
+// New free-order wording uses the same global ecommerce overrides as existing checkout text.
+include_once(__DIR__.'/functions/ecommerce/general/cg-ecommerce-free-translations.php');
+foreach(cg_ecommerce_free_language_definitions() as $cgFreeLanguageKey=>$cgFreeLanguageDefinition){
+    $cgFreeLanguageDefault = $cgFreeLanguageDefinition['default'];
+    ${'language_'.$cgFreeLanguageKey} = !empty($translations[$cgFreeLanguageDefault]) && $is_frontend ? $translations[$cgFreeLanguageDefault] : $cgFreeLanguageDefinition['translated'];
+    if(!isset($translations[$cgFreeLanguageDefault])){$translations[$cgFreeLanguageDefault]='';}
+}

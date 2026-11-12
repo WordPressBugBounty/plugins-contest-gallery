@@ -166,11 +166,11 @@
     };
 
     cgJsClassAdmin.gallery.entryWatermark.getSellingLockedMessage = function(){
-        return 'Already prepared for selling - deactivate sale download first';
+        return 'These files are prepared for sale. Manage their image watermarks in Sell settings.';
     };
 
     cgJsClassAdmin.gallery.entryWatermark.getNoSelectableFilesMessage = function(){
-        var hasSupportedLocked = false;
+        var hasSellingLocked = false;
         var hasSupportedUnlocked = false;
         var hasRestoreOnlyUnlocked = false;
         var firstUnsupportedReason = '';
@@ -182,8 +182,8 @@
                 continue;
             }
 
-            if(file.supported && file.ecommerce_locked){
-                hasSupportedLocked = true;
+            if(file.ecommerce_locked){
+                hasSellingLocked = true;
             }else if(file.supported){
                 hasSupportedUnlocked = true;
             }else if(file.can_restore && !file.ecommerce_locked){
@@ -193,7 +193,7 @@
             }
         }
 
-        if(hasSupportedLocked && !hasSupportedUnlocked && !hasRestoreOnlyUnlocked){
+        if(hasSellingLocked && !hasSupportedUnlocked && !hasRestoreOnlyUnlocked){
             return cgJsClassAdmin.gallery.entryWatermark.getSellingLockedMessage();
         }
 
@@ -209,7 +209,12 @@
     };
 
     cgJsClassAdmin.gallery.entryWatermark.showNoFilesMessage = function(message){
-        $('#cgEntryWatermarkNoFiles').text(message || cgJsClassAdmin.gallery.entryWatermark.getNoSelectableFilesMessage()).removeClass('cg_hide');
+        message = message || cgJsClassAdmin.gallery.entryWatermark.getNoSelectableFilesMessage();
+        if(message === cgJsClassAdmin.gallery.entryWatermark.getSellingLockedMessage() && !$('#cgEntryWatermarkSellingNotice').hasClass('cg_hide')){
+            cgJsClassAdmin.gallery.entryWatermark.hideNoFilesMessage();
+            return;
+        }
+        $('#cgEntryWatermarkNoFiles').text(message).removeClass('cg_hide');
     };
 
     cgJsClassAdmin.gallery.entryWatermark.hideNoFilesMessage = function(){
@@ -624,6 +629,7 @@
         $container.find('#cgEntryWatermarkEntryIdTitle').text('');
         $container.find('#cgEntryWatermarkFiles').empty();
         $container.find('#cgEntryWatermarkPreviewImage').empty();
+        $container.find('#cgEntryWatermarkSellingNotice').addClass('cg_hide');
         cgJsClassAdmin.gallery.entryWatermark.hideNoFilesMessage();
         $container.find('#cgEntryWatermarkSave').val(labels.save).prop('disabled', false);
         if(mode === 'watermark'){
@@ -681,6 +687,7 @@
         $container.find('#cgEntryWatermarkSave').val('Save').prop('disabled', false);
         $container.find('#cgEntryWatermarkFiles').empty();
         $container.find('#cgEntryWatermarkPreviewImage').empty();
+        $container.find('#cgEntryWatermarkSellingNotice').addClass('cg_hide');
         cgJsClassAdmin.gallery.entryWatermark.resetBulkProgress(0);
         cgJsClassAdmin.gallery.entryWatermark.hideNoFilesMessage();
         cgJsClassAdmin.gallery.entryWatermark.applySettingsToControls();
@@ -724,6 +731,7 @@
         var firstSelectable = 0;
         var firstEnabled = 0;
         var selectableCount = 0;
+        var sellingLockedCount = 0;
 
         $files.empty();
 
@@ -744,14 +752,23 @@
             }
 
             var disabledClass = (!canSelect) ? ' cg_disabled' : '';
+            if(file.ecommerce_locked){
+                disabledClass += ' cg_entry_watermark_sale_locked';
+                sellingLockedCount++;
+            }
             var checkedClass = file.enabled ? 'cg_checked' : 'cg_unchecked';
+            var controlHtml = file.ecommerce_locked ? '<span class="cg_entry_watermark_sale_lock dashicons dashicons-lock" aria-hidden="true"></span>' : '<div class="cg_file_checkbox '+checkedClass+'"></div>';
             var imageClass = (file.type_supported || file.supported || file.can_restore) ? 'cg_file_img' : 'cg_file_' + file.type;
             var $tile = $('<div class="cg_entry_watermark_file_container'+disabledClass+'" data-cg-wp-upload="'+file.WpUpload+'">' +
                 '<div class="cg_file '+imageClass+'"></div>' +
                 '<span class="cg_post_title">'+cgJsClassAdmin.gallery.entryWatermark.escapeHtml(file.name)+'</span>' +
                 '<span class="cg_entry_watermark_file_status"></span>' +
-                '<div class="cg_file_checkbox '+checkedClass+'"></div>' +
+                controlHtml +
                 '</div>');
+
+            if(file.ecommerce_locked){
+                $tile.attr('aria-disabled', 'true');
+            }
 
             if(file.preview_url && (file.type_supported || file.supported || file.can_restore)){
                 $tile.find('.cg_file').css('background-image', 'url('+file.preview_url+')');
@@ -760,6 +777,8 @@
             $files.append($tile);
             cgJsClassAdmin.gallery.entryWatermark.updateTile(file.WpUpload);
         }
+
+        $('#cgEntryWatermarkSellingNotice').toggleClass('cg_hide', !sellingLockedCount);
 
         if(!selectableCount){
             cgJsClassAdmin.gallery.entryWatermark.showNoFilesMessage();
@@ -790,7 +809,8 @@
         $checkbox.removeClass('cg_checked cg_unchecked').addClass(file.enabled ? 'cg_checked' : 'cg_unchecked');
 
         if(file.ecommerce_locked){
-            $status.text('');
+            $status.text('Managed in Sell settings. ');
+            cgJsClassAdmin.gallery.functions.appendSaleOwnerLink($status,file.sale_context);
         }else if(!file.supported){
             if(file.can_restore && !file.enabled){
                 $status.text('Will restore original');

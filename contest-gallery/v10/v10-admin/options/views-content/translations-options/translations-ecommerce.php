@@ -14,6 +14,11 @@ echo <<<HEREDOC
 <div class='cg_view_options_rows_container'>
 HEREDOC;
 
+foreach(cg_ecommerce_free_language_definitions() as $cgFreeLanguageKey=>$cgFreeLanguageDefinition){
+    $cgFreeLanguageDefault = $cgFreeLanguageDefinition['default'];
+    echo '<div class="cg_view_options_row"><div class="cg_view_option cg_view_option_full_width"><div class="cg_view_option_title"><p>'.esc_html($cgFreeLanguageDefinition['translated']).$cgShortcodeCopy.'</p></div><div class="cg_view_option_input"><input type="text" name="translations[ecommerce]['.esc_attr($cgFreeLanguageDefault).']" maxlength="1000" value="'.esc_attr(isset($translations[$cgFreeLanguageDefault]) ? $translations[$cgFreeLanguageDefault] : '').'"></div></div></div>';
+}
+
 $cgSettingsPathLabel = esc_html($language_SettingsPath);
 $cgSettingsPathValue = esc_attr($translations[$l_SettingsPath]);
 echo <<<HEREDOC

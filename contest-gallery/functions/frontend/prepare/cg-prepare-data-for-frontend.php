@@ -757,7 +757,9 @@ if (!function_exists('cg1l_frontend_get_ecommerce_sale_data')) {
     {
         $saleData = [
             'isActive' => false,
+            'isLivePurchaseBlocked' => false,
             'salePriceText' => '',
+            'regularPriceText' => '',
             'salePriceLeftSymbol' => '',
             'salePriceLeft' => '',
             'salePriceRight' => '',
@@ -780,9 +782,12 @@ if (!function_exists('cg1l_frontend_get_ecommerce_sale_data')) {
         $entryEcommerceData = $ecommerceFilesData[$rid];
 
         $saleData['isActive'] = true;
+        $saleData['isLivePurchaseBlocked'] = !empty($entryEcommerceData['IsLivePurchaseBlocked']);
         $saleData['saleTitleText'] = (!empty($entryEcommerceData['SaleTitle'])) ? $entryEcommerceData['SaleTitle'] : '';
         $saleData['saleDescriptionText'] = (!empty($entryEcommerceData['SaleDescription'])) ? $entryEcommerceData['SaleDescription'] : '';
         $saleData['salePriceType'] = cg1l_frontend_get_ecommerce_sale_type_label($entryEcommerceData, $languageNames);
+        $actionKey = cg_ecommerce_purchase_action_key($entryEcommerceData,$ecommerceOptions);
+        $saleData['purchaseActionText'] = !empty($languageNames['ecommerce'][$actionKey]) ? $languageNames['ecommerce'][$actionKey] : ($actionKey === 'BuyNow' ? __('Buy now','contest-gallery') : ($actionKey === 'OrderNow' ? __('Order now','contest-gallery') : __('Get for free','contest-gallery')));
 
         $salePriceValue = (!empty($entryEcommerceData['Price'])) ? floatval($entryEcommerceData['Price']) : 0;
         $priceDivider = (!empty($ecommerceOptions['PriceDivider'])) ? $ecommerceOptions['PriceDivider'] : '.';
@@ -806,6 +811,10 @@ if (!function_exists('cg1l_frontend_get_ecommerce_sale_data')) {
             $salePriceValue
         );
 
+        if(empty($entryEcommerceData['IsFree']) && $salePriceValue > 0 && isset($entryEcommerceData['RegularPrice']) && (float)$entryEcommerceData['RegularPrice'] > $salePriceValue){
+            $saleData['regularPriceText'] = cg_ecommerce_price_to_show($currenciesArray,$currencyShort,$currencyPosition,$priceDivider,$entryEcommerceData['RegularPrice']);
+        }
+
         $salePriceNormalized = number_format($salePriceValue, 2, '.', '');
         $salePriceParts = explode('.', $salePriceNormalized);
         $thousandsSeparator = ($priceDivider === ',') ? '.' : ',';
@@ -818,6 +827,11 @@ if (!function_exists('cg1l_frontend_get_ecommerce_sale_data')) {
             $saleData['salePriceRightSymbol'] = $currencySymbol;
         }
 
+        if(!empty($entryEcommerceData['IsFree'])){
+            $saleData['salePriceText'] = !empty($languageNames['ecommerce']['Free']) ? $languageNames['ecommerce']['Free'] : __('Free','contest-gallery');
+            $saleData['salePriceLeftSymbol'] = '';
+            $saleData['salePriceRightSymbol'] = '';
+        }
         return $saleData;
     }
 }
@@ -829,10 +843,14 @@ if (!function_exists('cg1l_frontend_get_ecommerce_gallery_price_markup')) {
             return '';
         }
 
-        return '<div class="cg-center-sale-price-container"><div class="cg-center-sale-price">' .
-            '<div class="cg-center-sale-price-value">' . esc_html($saleData['salePriceText']) . '</div>' .
+        $regularPriceMarkup = !empty($saleData['regularPriceText']) ? '<del class="cg-sale-regular-price">'.esc_html($saleData['regularPriceText']).'</del>' : '';
+        $blocked = !empty($saleData['isLivePurchaseBlocked']);
+        $badge = $blocked ? '<span class="cg-sale-pro-badge">PRO</span>' : '';
+        $notice = $blocked ? '<span class="cg-sale-live-notice">Available in test mode. Live purchases require PRO.</span>' : '';
+        return '<div class="cg-center-sale-price-container'.($blocked ? ' cg-sale-price-container-pro' : '').'"><div class="cg-center-sale-price'.($blocked ? ' cg-sale-price-pro' : '').'">' .
+            '<div class="cg-center-sale-price-value">' . $regularPriceMarkup . '<span class="cg-sale-current-price">' . esc_html($saleData['salePriceText']) . '</span></div>' .
             '<div class="cg-center-sale-price-type">' . esc_html($saleData['salePriceType']) . '</div>' .
-            '</div></div>';
+            $badge . '</div>' . $notice . '</div>';
     }
 }
 

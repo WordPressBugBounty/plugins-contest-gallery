@@ -38,6 +38,7 @@ if(!function_exists('cg_entry_watermark_container')){
 		echo "<div class='cg_view_options_row'>";
 		echo "<div class='cg_view_option cg_view_option_full_width cg_entry_page_description cg_border_bottom_none cg_border_border_top_left_radius_8_px cg_border_border_top_right_radius_8_px cg_entry_watermark_files_panel'>";
 		echo "<div class='cg_view_option_title cg_view_option_title_full_width'><p>Select image files</p></div>";
+		echo "<p id='cgEntryWatermarkSellingNotice' class='cg_entry_watermark_selling_notice cg_hide'>Files marked &ldquo;Managed in Sell settings&rdquo; are prepared for sale. Manage their image watermarks in Sell settings.</p>";
 		echo "<div id='cgEntryWatermarkFiles'></div>";
 		echo "<p id='cgEntryWatermarkNoFiles' class='cg_error cg_hide'>No JPG, PNG or GIF image files available for watermarking</p>";
 		echo "</div>";

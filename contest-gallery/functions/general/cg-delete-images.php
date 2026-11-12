@@ -213,6 +213,11 @@ if(!function_exists('cg_delete_images')){
                 $deleteParameters
             ));
 
+            if(!empty(get_option(cg_ecommerce_sale_draft_key($imageData->GalleryID,$value),array()))){
+                cg_remove_folder_recursively($upload_dir['basedir'].'/contest-gallery/gallery-id-'.absint($imageData->GalleryID).'/ecommerce/real-id-'.absint($value));
+            }
+            cg_ecommerce_sale_draft_delete($imageData->GalleryID,$value);
+
             // Optionally delete the original WordPress attachment as well. The
             // collected WpUpload IDs drive the later cross-gallery cleanup pass.
             if($shouldDeleteOriginalImageSource && !empty($imageData->WpUpload)){

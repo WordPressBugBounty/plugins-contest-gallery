@@ -5,7 +5,8 @@ cgJsClassAdmin.gallery.functions.initWatermarkSettings = function($,$cgSellConta
     // reset here
     var WatermarkTitle = (localStorage.getItem('cgWatermarkTitle')) ? localStorage.getItem('cgWatermarkTitle') : 'Contest Gallery';
     var WatermarkTitleDefault = WatermarkTitle;
-    var WatermarkSize = (localStorage.getItem('cgWatermarkSize')) ? localStorage.getItem('cgWatermarkSize') : '128';
+    // New sale watermarks start at M. Saved per-file settings still take precedence below.
+    var WatermarkSize = '64';
     var WatermarkSizeDefault = WatermarkSize;
     var WatermarkPosition = (localStorage.getItem('cgWatermarkPosition')) ? localStorage.getItem('cgWatermarkPosition') : 'center';
     var WatermarkPositionDefault = WatermarkPosition;
@@ -73,7 +74,43 @@ cgJsClassAdmin.gallery.functions.initWatermarkSettings = function($,$cgSellConta
         $cgSellContainer.find('#cgWatermarkSelectSize').val(WatermarkSize);
         $cgSellContainer.find('#cgWatermarkInputTitle').val(WatermarkTitle);
     }
+    cgJsClassAdmin.gallery.functions.prepareSaleDraftFiles($,$cgSellContainer,$sortableDiv,realId);
 }
+
+cgJsClassAdmin.gallery.functions.showSavedSaleWatermarkPreview = function($tile){
+    var $ = jQuery, vars = cgJsClassAdmin.gallery.vars;
+    if(!$tile.length || !$tile.find('.cg_file_checkbox.cg_checked').length){return false;}
+    var uploadId = parseInt($tile.attr('data-cg-wp-upload'));
+    if((vars.WpUploadFilesForSaleArrayLoaded || []).indexOf(uploadId) < 0){return false;}
+    if(vars.salePreviewJobs && vars.salePreviewJobs[uploadId]){return true;}
+    var realId = $tile.attr('data-cg-real-id'), order = $tile.attr('data-cg-order');
+    var settings = vars.WatermarkSettings && vars.WatermarkSettings[uploadId];
+    if(!settings || $tile.attr('data-cg-watermark-supported') !== '1'){return false;}
+    var $container = vars.cgSellContainer, $entry = vars.$sortableDiv;
+    var file = vars.multipleFilesForPost[realId] && vars.multipleFilesForPost[realId][order];
+    // Show the existing public preview, not the protected original used for editing.
+    var source = file && !file.isRealIdSource ? file.large : $entry.find('.cg_backend_info_container').attr('data-cg-url-image-large');
+    var prepared = vars.base64andAltFileValues[realId] || {};
+    source = prepared[uploadId] || source;
+    if(source && source.indexOf('data:') !== 0){source += (source.indexOf('?') < 0 ? '?' : '&')+'time='+Date.now();}
+    $container.find('#cgWatermarkSelectPosition').val(settings.WatermarkPosition);
+    $container.find('#cgWatermarkSelectSize').val(settings.WatermarkSize);
+    $container.find('#cgWatermarkInputTitle').val(settings.WatermarkTitle);
+    $container.find('#cgSellWatermarkPreview,#cgSellPreviewContainer').removeClass('cg_hide');
+    $container.find('#cgSellPreviewContainerLoader,#cgSellArrowLeft,#cgSellArrowRight').addClass('cg_hide');
+    $container.find('.cgSellPreview').remove();
+    var $preview = $(cgJsClassAdmin.gallery.watermarkSellPreview).removeClass('cg_hide').addClass('active')
+        .attr({'data-cg-order':order,'data-cg-wp-upload':uploadId}).appendTo($container.find('#cgSellPreviewContainer'));
+    var generation = cgJsClassAdmin.gallery.saleEdit.generation;
+    function isCurrent(){return generation === cgJsClassAdmin.gallery.saleEdit.generation && $container.find('.cgSellPreview.active')[0] === $preview[0];}
+    $('<img alt="">').on('load',function(){
+        if(isCurrent()){cgJsClassAdmin.gallery.setWidthForPreview();}
+    }).on('error',function(){
+        if(isCurrent()){cgJsClassAdmin.gallery.functions.showSaleError('The saved preview could not be loaded. Reopen Sales settings and try again.','#cgSellFilesError');}
+    }).appendTo($preview).attr('src',source || '');
+    // Viewing a saved image must never prepare replacement image data or mark the sale as changed.
+    return true;
+};
 
 cgJsClassAdmin.gallery.getBackgroundUrl =  function ($cg_backend_info_container,realId,order,WpUploadId,PdfPreviewImageLarge){
     debugger
@@ -95,10 +132,10 @@ cgJsClassAdmin.gallery.getBackgroundUrl =  function ($cg_backend_info_container,
                     backgroundUrl = $cgAddedEcommerceImageForDownload.attr('src');
                 }else{// then must be just added and will be watermarked
                     backgroundUrl=cgJsClassAdmin.gallery.vars.multipleFilesForPost[realId][order]['large'];
-                    backgroundUrl += '?time='+timestamp;
+                    if(backgroundUrl){backgroundUrl += '?time='+timestamp;}
                 }
             }else{
-                backgroundUrl += '?time='+timestamp;
+                if(backgroundUrl){backgroundUrl += '?time='+timestamp;}
             }
         }else{
             backgroundUrl=$cg_backend_info_container.attr('data-cg-url-image-large');
@@ -108,10 +145,10 @@ cgJsClassAdmin.gallery.getBackgroundUrl =  function ($cg_backend_info_container,
                 if($cgAddedEcommerceImageForDownload.length){
                     backgroundUrl = $cgAddedEcommerceImageForDownload.attr('src');
                 }else{// then must be just added and will be watermarked
-                    backgroundUrl += '?time='+timestamp;
+                    if(backgroundUrl){backgroundUrl += '?time='+timestamp;}
                 }
             }else{
-                backgroundUrl += '?time='+timestamp;
+                if(backgroundUrl){backgroundUrl += '?time='+timestamp;}
             }
         }
     }
@@ -138,8 +175,12 @@ cgJsClassAdmin.gallery.watermarkMultipleFiles =  function (backgroundUrl,positio
     cgJsClassAdmin.gallery.vars.cgSellContainer.find('#cgSellArrowRight').addClass('cg_hide');
     // https://brianium.github.io/watermarkjs/docs.html
     debugger
+    $cgSellPreview.attr({'data-cg-order':order,'data-cg-wp-upload':WpUploadId});
+    if(order==activeOrder){$cgSellPreview.addClass('active');}
+    var previewTicket = cgJsClassAdmin.gallery.functions.beginSalePreview(WpUploadId);
     cgJsClassAdmin.gallery.functions.renderWatermarkImage(backgroundUrl, text, position, pxSize, '#fff', 0.5)
         .then(function (img) {
+            if(!cgJsClassAdmin.gallery.functions.finishSalePreview(previewTicket,false)){return;}
             var base64src = jQuery(img).attr('src');
             debugger
             if(indexForDataCgOrder==1){
@@ -218,7 +259,7 @@ cgJsClassAdmin.gallery.watermarkMultipleFiles =  function (backgroundUrl,positio
                     cgJsClassAdmin.gallery.vars.cgSellContainer.find('#cgSetForSell').click();
                 }
             }
-        });
+        }).catch(function(){cgJsClassAdmin.gallery.functions.finishSalePreview(previewTicket,true);});
 }
 cgJsClassAdmin.gallery.setWidthForPreview  = function (){
 
@@ -365,10 +406,10 @@ cgJsClassAdmin.gallery.watermark =  function (backgroundUrl,position,text,pxSize
                 if($cgAddedEcommerceImageForDownload.length){
                     backgroundUrl = $cgAddedEcommerceImageForDownload.attr('src');
                 }else{
-                    backgroundUrl += '?time='+timestamp;
+                    if(backgroundUrl){backgroundUrl += '?time='+timestamp;}
                 }
             }else{
-                backgroundUrl += '?time='+timestamp;
+                if(backgroundUrl){backgroundUrl += '?time='+timestamp;}
             }
 
             cgJsClassAdmin.gallery.vars.cgSellContainer.find('#cgSellWatermarkPreview').removeClass('cg_hide');
@@ -378,8 +419,11 @@ cgJsClassAdmin.gallery.watermark =  function (backgroundUrl,position,text,pxSize
             cgJsClassAdmin.gallery.vars.cgSellContainer.find('#cgSellWatermarkPreview').removeClass('cg_hide');
             // https://brianium.github.io/watermarkjs/docs.html
             debugger
+            $cgSellPreview.addClass('active').attr({'data-cg-order':1,'data-cg-wp-upload':WpUploadId});
+            var previewTicket = cgJsClassAdmin.gallery.functions.beginSalePreview(WpUploadId);
             cgJsClassAdmin.gallery.functions.renderWatermarkImage(backgroundUrl, text, position, pxSize, '#fff', 0.5)
                 .then(function (img) {
+                    if(!cgJsClassAdmin.gallery.functions.finishSalePreview(previewTicket,false)){return;}
                     debugger
                     var base64src = jQuery(img).attr('src');
                     $cgSellPreview.get(0).appendChild(img);
@@ -408,7 +452,7 @@ cgJsClassAdmin.gallery.watermark =  function (backgroundUrl,position,text,pxSize
                         cgJsClassAdmin.gallery.vars.isNewAddedEcommerceImageForDownload = false;
                         cgJsClassAdmin.gallery.vars.cgSellContainer.find('#cgSetForSell').click();
                     }
-                });
+                }).catch(function(){cgJsClassAdmin.gallery.functions.finishSalePreview(previewTicket,true);});
         }else{
             // watermarkedFiles contains also simple full guid of not images, they are of course no kind of watermarked
             cgJsClassAdmin.gallery.vars.base64andAltFileValues[realId][WpUploadId] = $cg_backend_info_container.attr('data-cg-original-source');

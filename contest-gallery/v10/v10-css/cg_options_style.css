@@ -2956,7 +2956,9 @@ div.tabcontents
 .cg_main_options #cg_main_options_tab.cg_sticky{
 	position: fixed;
 	top: 32px;
-	border-bottom: thin solid #dedede;
+	background-color: #f1f5f9;
+	border-bottom: 1px solid #c8d3df;
+	box-shadow: 0 6px 18px rgba(26,36,48,.16);
 }
 
 .cg_main_options #cg_main_options_tab  ul.tabs{
@@ -2974,6 +2976,11 @@ div.tabcontents
 	justify-content: space-evenly;
 	border-width: 0.5px;
 	gap: 60px;
+}
+
+.cg_main_options #cg_main_options_tab.cg_sticky .cg_main_options_tab_row,
+.cg_main_options #cg_main_options_tab.cg_sticky #cg_main_options_tab_second_row {
+	background-color: transparent;
 }
 
 .cg_main_options #cg_main_options_tab .cg_main_options_tab_row .cg_view_select .cg_view_select_link{
@@ -5963,8 +5970,9 @@ code.cg_shortcode_copy:after{
 	font-size: 16px;
 	flex-direction: row;
 	flex-wrap: wrap;
+	gap: 8px;
 	width: 92%;
-	background-color: #f1f1f1;
+	background-color: transparent;
 	box-sizing: border-box;
 }
 
@@ -5982,11 +5990,12 @@ code.cg_shortcode_copy:after{
 	position: fixed;
 	top: 122px;
 	width: 935px;
-	background-color: white;
+	background-color: #f1f5f9;
+	box-shadow: 0 6px 18px rgba(26,36,48,.16);
 	z-index: 100;
 	margin: 0;
-	border-top: thin solid #dedede;
-	border-bottom: thin solid #dedede;
+	border-top: thin solid #c8d3df;
+	border-bottom: thin solid #c8d3df;
 	border-width: 0.5px;
 	padding-bottom: 10px;
 	padding-top: 10px;
@@ -6000,6 +6009,7 @@ code.cg_shortcode_copy:after{
 .cg_short_code_single_pic_configuration_buttons .cg_short_code_single_pic_configuration,
 .cg_short_code_galleries_configuration_buttons .cg_short_code_galleries_configuration{
 	width: 25%;
+	flex: 1 1 0;
 	text-align: center;
 	padding: 10px 0;
 	cursor: pointer;
@@ -6007,8 +6017,17 @@ code.cg_shortcode_copy:after{
 	-moz-user-select: none;     /* Firefox all */
 	-ms-user-select: none;      /* IE 10+ */
 	user-select: none;
-	border: thin solid #f1f1f1;
+	border: 1px solid #c8d3df;
+	border-radius: 999px;
+	background-color: white;
 	box-sizing: border-box;
+}
+
+.cg_short_code_multiple_pics_configuration_buttons .cg_short_code_multiple_pics_configuration:hover,
+.cg_short_code_single_pic_configuration_buttons .cg_short_code_single_pic_configuration:hover,
+.cg_short_code_galleries_configuration_buttons .cg_short_code_galleries_configuration:hover{
+	background-color: #edf2f7;
+	border-color: #9baec0;
 }
 
 .cg_short_code_multiple_pics_configuration_buttons .cg_short_code_multiple_pics_configuration.cg_since_v22,
@@ -6021,8 +6040,9 @@ code.cg_shortcode_copy:after{
 .cg_short_code_single_pic_configuration_buttons .cg_short_code_single_pic_configuration.cg_active,
 .cg_short_code_galleries_configuration_buttons .cg_short_code_galleries_configuration.cg_active{
 	font-weight: bold;
-	background-color: #f1f1f1;
-	box-shadow: 1px 1px 2px rgba(0,0,0,.5);
+	color: #145b38;
+	background-color: #e1f3e8;
+	border-color: #95ceae;
 }
 
 .cg_short_code_multiple_pics_configuration_note,

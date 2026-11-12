@@ -185,6 +185,97 @@ jQuery(document).ready(function($){
     });
 
 
+
+    // Entry help is a sibling of the action, visually positioned inside its pill.
+    var cgEntryActionHelp = null;
+    var cgEntryActionHelpTimer = null;
+    function closeEntryActionHelp(){
+        clearTimeout(cgEntryActionHelpTimer);
+        if(!cgEntryActionHelp){return;}
+        var help = cgEntryActionHelp;
+        cgEntryActionHelp = null;
+        help.button.attr('aria-expanded','false');
+        help.tooltip.prop('hidden',true).removeAttr('style');
+        if(document.documentElement.contains(help.home[0])){
+            help.home.append(help.tooltip);
+        }else{
+            help.tooltip.remove();
+        }
+    }
+    function positionEntryActionHelp(){
+        if(!cgEntryActionHelp){return;}
+        var help = cgEntryActionHelp;
+        if(!document.documentElement.contains(help.button[0])){
+            closeEntryActionHelp();
+            return;
+        }
+        var anchor = help.button[0].getBoundingClientRect();
+        var width = document.documentElement.clientWidth;
+        var height = window.innerHeight;
+        if(anchor.bottom < 0 || anchor.top > height || anchor.right < 0 || anchor.left > width){
+            closeEntryActionHelp();
+            return;
+        }
+        var box = help.tooltip[0].getBoundingClientRect();
+        var left = Math.max(12,Math.min(anchor.right - box.width,width - box.width - 12));
+        var top = anchor.bottom + 8;
+        if(top + box.height > height - 12){top = anchor.top - box.height - 8;}
+        top = Math.max(12,Math.min(top,height - box.height - 12));
+        help.tooltip.css({left:left,top:top});
+    }
+    function openEntryActionHelp(button){
+        clearTimeout(cgEntryActionHelpTimer);
+        if(cgEntryActionHelp && cgEntryActionHelp.button[0] === button){return;}
+        closeEntryActionHelp();
+        var $button = $(button);
+        var $tooltip = $(document.getElementById($button.attr('aria-describedby')));
+        if(!$tooltip.length){return;}
+        cgEntryActionHelp = {button:$button,tooltip:$tooltip,home:$button.parent(),pinned:false};
+        $button.attr('aria-expanded','true');
+        // Avoid clipping by entry containers without generating markup in JavaScript.
+        $tooltip.appendTo(document.body).prop('hidden',false);
+        positionEntryActionHelp();
+    }
+    function scheduleEntryActionHelpClose(){
+        clearTimeout(cgEntryActionHelpTimer);
+        cgEntryActionHelpTimer = setTimeout(function(){
+            var help = cgEntryActionHelp;
+            if(help && !help.pinned && !help.button.is(':hover,:focus') && !help.tooltip.is(':hover')){
+                closeEntryActionHelp();
+            }
+        },150);
+    }
+    $(document).on('mouseenter.cgEntryActionHelp focusin.cgEntryActionHelp','.cg_entry_action_help',function(){
+        openEntryActionHelp(this);
+    });
+    $(document).on('mouseleave.cgEntryActionHelp focusout.cgEntryActionHelp','.cg_entry_action_help',scheduleEntryActionHelpClose);
+    $(document).on('mouseenter.cgEntryActionHelp','.cg_entry_action_tooltip',function(){clearTimeout(cgEntryActionHelpTimer);});
+    $(document).on('mouseleave.cgEntryActionHelp','.cg_entry_action_tooltip',scheduleEntryActionHelpClose);
+    $(document).on('click.cgEntryActionHelp','.cg_entry_action_help',function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        if(cgEntryActionHelp && cgEntryActionHelp.button[0] === this && cgEntryActionHelp.pinned){
+            closeEntryActionHelp();
+        }else{
+            openEntryActionHelp(this);
+            if(cgEntryActionHelp){cgEntryActionHelp.pinned = true;}
+        }
+    });
+    $(document).on('click.cgEntryActionHelp',function(event){
+        if(!$(event.target).closest('.cg_entry_action_help,.cg_entry_action_tooltip').length){closeEntryActionHelp();}
+    });
+    $(document).on('keydown.cgEntryActionHelp',function(event){
+        if(cgEntryActionHelp && (event.key === 'Escape' || event.which === 27)){
+            event.preventDefault();
+            event.stopPropagation();
+            closeEntryActionHelp();
+        }
+    });
+    $(document).on('ajaxComplete.cgEntryActionHelp',positionEntryActionHelp);
+    $(window).on('resize.cgEntryActionHelp',positionEntryActionHelp);
+    $(window).on('hashchange.cgEntryActionHelp',closeEntryActionHelp);
+    document.addEventListener('scroll',positionEntryActionHelp,true);
+
     // show cg-info
 
     $(document).on('mouseenter','.cg-info-icon',function () {

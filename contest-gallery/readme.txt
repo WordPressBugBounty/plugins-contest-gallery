@@ -1,17 +1,19 @@
-=== Contest Gallery – Upload & Vote Photos, Media, Sell with PayPal & Stripe ===
+=== Contest Gallery Commerce – Upload, Vote & Sell with PayPal & Stripe ===
 Contributors: Contest-Gallery
 Donate link: http://www.contest-gallery.com/
 Tags: gallery, file upload, voting, photo contest, user registration
 Requires at least: 5.6
 Requires PHP: 5.6
-Stable tag: 34.0.4
+Stable tag: 34.0.5
 Tested up to: 7.1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Create voting and upload galleries for photos, video, audio and files. Gallery monetization, social sharing and user registration.
+Create photo and media galleries with uploads, voting and product sales through PayPal or Stripe.
 
-== All-in-One Photo Contest, Media Voting & File Gallery ==
+== Photo Contests, Media Galleries & Ecommerce ==
+
+Contest Gallery Commerce combines galleries, uploads and voting with PayPal and Stripe sales. Sell physical products, digital downloads and services, or charge for uploads, votes and comments.
 
 Photo contest and media voting plugin supporting: **JPG, PNG, GIF, ZIP, WEBM, MP4, MOV, TXT, DOC, DOCX, XLS, XLSX, PPT, PPTX, CSV, MP3, WAV, OGG, M4A**. Contest Gallery PRO additionally supports PDF uploads with generated previews.
 
@@ -42,7 +44,7 @@ Protect your image entries with real watermarks that are written into the public
 * **Flexible Uploads:** Create custom upload forms and add additional files to every entry.
 * **Real Watermark Protection:** Show watermarked public images while keeping the original files safely protected.
 * **User Management:** Includes user registration, login forms, and a **"Google Sign-In button"** for easy access.
-* **Monetization:** Sell entries or digital content directly via **PayPal or Stripe API**.
+* **Monetization:** Sell physical products via **PayPal or Stripe**. PRO adds digital downloads, services and paid uploads, votes and comments.
 * **Social Reach:** Built-in Social Media Share Buttons to boost your contest's visibility.
 * **No 100-entry limit:** The former 100-entry limit was removed in 2019. Contest Gallery does not impose a limit on the number of gallery entries. Hosting storage and server resources still apply.
 * **Member Community:** Connect participants through member profiles, private messages and friendships. [Explore member features](https://www.contest-gallery.com/wordpress-community-plugin/)
@@ -52,6 +54,7 @@ Protect your image entries with real watermarks that are written into the public
 * Contest Gallery PRO can sell upload, voting and comment credits directly from regular galleries.
 * Visitors can sign in with Google or a one-time email PIN and purchase credits through PayPal or Stripe.
 * Prices, taxes, currencies, invoices and order emails use the general Ecommerce configuration.
+* [Explore paid voting, comments and uploads](https://www.contest-gallery.com/paid-voting-and-comments/)
 * [Compare the FREE and PRO versions feature by feature](https://www.contest-gallery.com/pro-version-compare/)
 
 == Average ratings and comments ==
@@ -62,6 +65,7 @@ https://www.youtube.com/watch?v=tBu6kfqG-xs
 
 == Ecommerce PayPal and Stripe APIs available ==
 * Sell entries as **shipping**, **download** or **service**,  or **charge for uploads**, **via PayPal or Stripe API**. Configure **prices, shipping, taxes and currencies** for your products. Configure checkout notes and agreements. **Watermark image files, add download or service keys**. Selling download or service and charging for uploads only available in PRO version.
+* [Sell photos with WordPress](https://www.contest-gallery.com/sell-photos-with-wordpress/)
 
 == Different file types upload form ==
 * **Upload form** for **different file types**
@@ -338,6 +342,12 @@ Contest Gallery participates in Patchstack’s Vulnerability Disclosure Program.
 To report a potential security vulnerability, use our [official Patchstack reporting form](https://patchstack.com/database/report/wordpress/plugin/contest-gallery). Include the affected plugin version and clear steps to reproduce the issue. Please do not post sensitive security details in public support topics.
 
 == Changelog ==
+
+= 34.0.5 =
+* NEW: Offer products at a reduced price with the regular price shown alongside.
+* NEW: Offer products for free. Orders with a zero total, including shipping, can be completed without a payment provider.
+* IMPROVED: Set up products directly from gallery entries with a compact sales card.
+* NEW: Try download and service sales with PayPal or Stripe sandbox checkout. Prepared test products stay in sandbox until activated live.
 
 = 34.0.4 =
 * IMPROVED: Full-window scrolling, touch controls and browser back navigation.

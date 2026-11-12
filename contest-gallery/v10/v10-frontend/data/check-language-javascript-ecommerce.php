@@ -13,6 +13,9 @@
 
 	if (typeof cgJsClass.gallery.vars.isWereSetEcommerceLanguage == 'undefined') {
 		cgJsClass.gallery.vars.isWereSetEcommerceLanguage = true;
+        <?php foreach(cg_ecommerce_free_language_definitions() as $cgFreeLanguageKey=>$cgFreeLanguageDefinition){ ?>
+        cgJsClass.gallery.language.ecommerce[<?php echo wp_json_encode($cgFreeLanguageKey); ?>] = <?php echo wp_json_encode(${'language_'.$cgFreeLanguageKey},JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+        <?php } ?>
 		cgJsClass.gallery.language.ecommerce.Price = <?php echo json_encode($language_Price); ?>;
 		cgJsClass.gallery.language.ecommerce.Quantity = <?php echo json_encode($language_Quantity); ?>;
 		cgJsClass.gallery.language.ecommerce.Shipping = <?php echo json_encode($language_Shipping); ?>;

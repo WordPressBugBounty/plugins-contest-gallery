@@ -35,6 +35,8 @@ if(!empty($_POST['cg_search'])){
     }
 }
 
+if($search === '' && !empty($_GET['cg_sale_entry']) && is_scalar($_GET['cg_sale_entry'])){$search = (string)absint($_GET['cg_sale_entry']);}
+
 $cgWpUserIdFilterValue = '';
 $cgWpUserIdFilterSql = '';
 $cgWpUserIdFilterRaw = '';

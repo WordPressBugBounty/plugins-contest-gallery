@@ -267,11 +267,14 @@ if($isAjaxCall){
 		$SaleType = (!empty($value->EcommerceEntry)) ? $allEcommerceFilesByIdArray[$id]['SaleType']  : '';
 		$LegacyUploadSaleAllowed = ($SaleType === 'upload' || in_array(absint($id),$legacyUploadSaleEntries,true)) ? 1 : 0;
 		$EcommerceEntry = $value->EcommerceEntry;
+        $RegularPrice = (!empty($EcommerceEntry) && isset($allEcommerceFilesByIdArray[$id]['RegularPrice'])) ? $allEcommerceFilesByIdArray[$id]['RegularPrice'] : 0;
+        $cgSaleDraft = empty($EcommerceEntry) ? cg_ecommerce_sale_draft_get($value) : array();
 		$EcommerceEntryAndWpUploadIds = [];
 		$addedEcommerceImageForDownload[$id] = [];
 		if(!empty($EcommerceEntry) && cg_is_is_image($ImgType) && $SaleType=='download'){
 			$addedEcommerceImageForDownload[$id][$WpUpload] = 'base64here';
 		}
+		$IsFree = !empty($value->EcommerceEntry) && !empty($allEcommerceFilesByIdArray[$id]['IsFree']) ? 1 : 0;
 		$Price = (!empty($value->EcommerceEntry)) ? $allEcommerceFilesByIdArray[$id]['Price'] : 0;
 		$CurrencyShort = (!empty($value->EcommerceEntry) && (float)$optionsSQL->Version>=22) ? $ecommerce_options->CurrencyShort : 'USD';
 		$CurrencySymbol = (!empty($value->EcommerceEntry) && (float)$optionsSQL->Version>=22) ? $currenciesArray[$CurrencyShort] : '$';
@@ -293,6 +296,7 @@ if($isAjaxCall){
 		$IsAlternativeShipping = (!empty($value->EcommerceEntry)) ? $allEcommerceFilesByIdArray[$id]['IsAlternativeShipping']  : 0;
 		$DownloadKeysCsvName = (!empty($value->EcommerceEntry)) ? $allEcommerceFilesByIdArray[$id]['DownloadKeysCsvName']  : 0;
 		$ServiceKeysCsvName = (!empty($value->EcommerceEntry)) ? $allEcommerceFilesByIdArray[$id]['ServiceKeysCsvName']  : 0;
+        if($cgSaleDraft){$DownloadKeysCsvName = $cgSaleDraft['DownloadKeysCsvName']; $ServiceKeysCsvName = $cgSaleDraft['ServiceKeysCsvName'];}
 		$Tax = (!empty($value->EcommerceEntry)) ? strval($allEcommerceFilesByIdArray[$id]['TaxPercentage'])  : '';// not required to floatval value
 		$AlternativeShipping = (!empty($value->EcommerceEntry)) ? strval($allEcommerceFilesByIdArray[$id]['AlternativeShipping'])  : '';// not required to floatval value
 		if(empty($Tax)){
@@ -630,6 +634,14 @@ if($isAjaxCall){
 			}
 		}
 
+        foreach($MultipleFiles as $cgFileOrder => $cgFileData){
+            $cgPreviewUpload = !empty($cgFileData['isRealIdSource']) ? $WpUpload : (isset($cgFileData['WpUpload']) ? $cgFileData['WpUpload'] : 0);
+            if(get_post_type($cgPreviewUpload) !== 'contest-gallery-ecom'){continue;}
+            foreach(array('medium','large','full') as $cgPreviewSize){
+                $cgPreviewImage = cg_ecommerce_public_image_src($cgPreviewUpload,$cgPreviewSize);
+                $MultipleFiles[$cgFileOrder][$cgPreviewSize] = $cgPreviewImage ? $cgPreviewImage[0] : '';
+            }
+        }
 		if(count($MultipleFiles)){
 			// to be done here after unset($MultipleFiles[$order]['post_content']); is done
 			$MultipleFilesString = json_encode($MultipleFiles, JSON_HEX_AMP);
@@ -658,7 +670,7 @@ if($isAjaxCall){
 			}
 		}
 
-		echo "<div class='cg_backend_status_container'>";
+		echo "<div class='cg_backend_status_container cg_entry_actions'>";
 
 		if($Active == 1){
 			$Status = 'cg_status_activated';
@@ -699,9 +711,9 @@ if($isAjaxCall){
 </div></div>';
 		}
 
-		echo '<div><div class="cg_hover_effect cg_image_action_href cg_image_checkbox cg_image_checkbox_delete" style="margin-bottom: 40px;">
+		echo '<div><div class="cg_hover_effect cg_image_action_href cg_image_checkbox cg_image_checkbox_delete">
 <div class="cg_image_checkbox_action">Delete</div>
-<div class="cg_image_checkbox_icon" style="margin-left: 50px;"></div>
+<div class="cg_image_checkbox_icon"></div>
 <input type="hidden" class="cg_image_checkbox_checkbox cg_input_vars_count cg_delete"  disabled name="cg_delete['.$id.']" value="'.$id.'">
 </div></div>';
 
@@ -709,20 +721,9 @@ if($isAjaxCall){
 <div class="cg_image_checkbox_action">'.$WinnerText.'</div>
 <div class="cg_image_checkbox_icon" ></div>
 <input type="hidden" class="cg_status_winner_checkbox cg_input_vars_count" name="'.$WinnerName.'['.$id.']" disabled value="'.$id.'">
-</div><div style="padding-top:2px;position: relative;margin-bottom: 10px;text-align:left;padding-left:59px;"><div class="cg-info-icon" style="margin-left: -15px;">info</div>
-    <div class="cg-info-container cg-info-container-gallery-user" style="top: 32px; margin-left: -128px; display: none;">Use cg_gallery_winner shortcode to display only winners</div>
-    </div></div>';
-
-		if((float)$optionsSQL->Version>=22 && $ImgTypeToShow!='con'){
-			echo "<div><div class=\"cg_sell\" >";
-			echo "<div class='cg_sell_button cg_sell_activate_button cg_sale_settings $ytbDisabled' data-cg-real-id='$id' >Sales settings$ytbHint</div>";
-			echo '</div></div>';
-		}
-
-
-		echo '</div>';
-
-		echo "</div>";
+</div>';
+        cg_backend_entry_action_help($id,'winner',$WinnerText,'Use cg_gallery_winner shortcode to display only winners');
+        echo '</div>';
 
         $hasEmail = false;
         if(!empty($selectContentFieldArray)){
@@ -822,42 +823,21 @@ if($isAjaxCall){
                 echo "<div  class='cg_send_custom_mail $cgProFalse'>";
                     echo "Send custom mail";
                 echo "</div>";
-                echo "<div class='cg_info_container'>";
-                    echo "<div class='cg-info-icon'>";
-                        echo "Info";
-                    echo "</div>";
-                    echo "<div class='cg-info-container'>";
-                        echo "Send mail with available fields";
-                    echo "</div>";
-                echo "</div>";
+                cg_backend_entry_action_help($id,'mail','Send custom mail','Send mail with available fields');
             echo "</div>";
             if($Active==1){
                 echo "<div class='cg_send_mail_item'>";
                     echo "<div  class='cg_deactivate_send_custom_mail $cgProFalse'>";
                         echo "Deactivate and send custom mail";
                     echo "</div>";
-                    echo "<div class='cg_info_container'>";
-                        echo "<div class='cg-info-icon'>";
-                            echo "Info";
-                        echo "</div>";
-                        echo "<div class='cg-info-container'>";
-                            echo "Deactivate and send mail with available fields";
-                        echo "</div>";
-                    echo "</div>";
+                    cg_backend_entry_action_help($id,'mail-deactivate','Deactivate and send custom mail','Deactivate and send mail with available fields');
                 echo "</div>";
             }else{
                 echo "<div  class='cg_send_mail_item'>";
                     echo "<div  class='cg_activate_send_custom_mail $cgProFalse'>";
                         echo "Activate and send custom mail";
                     echo "</div>";
-                    echo "<div class='cg_info_container'>";
-                        echo "<div class='cg-info-icon'>";
-                            echo "Info";
-                        echo "</div>";
-                        echo "<div class='cg-info-container'>";
-                            echo "Activate and send mail with custom fields";
-                        echo "</div>";
-                    echo "</div>";
+                    cg_backend_entry_action_help($id,'mail-activate','Activate and send custom mail','Activate and send mail with custom fields');
                 echo "</div>";
             }
           //  echo $informedAndEmailStatusString;
@@ -865,6 +845,8 @@ if($isAjaxCall){
         }else{
          //   echo $informedAndEmailStatusString;
         }
+
+        echo '</div></div>'; // Shared status and mail action row.
 
 		// has to be done here so cgAddedEcommerceImageForDownload img tag appears
 		if(!empty($addedEcommerceImageForDownload[$realId])){
@@ -954,12 +936,12 @@ if($isAjaxCall){
 				$imgSrcLargeToShow=$image_url_to_show;
 				$imgSrcLargeRealIdSrc = $image_url_to_show;
 			}else{
-				$imgSrcMedium=wp_get_attachment_image_src($WpUploadToShow, 'medium');
+				$imgSrcMedium=cg_ecommerce_public_image_src($WpUploadToShow, 'medium');
 				$imgSrcMedium=($imgSrcMedium) ? $imgSrcMedium[0] : '';
 				$imgSrcMediumRealIdSrc = $imgSrcMedium;
-				$imgSrcLarge = wp_get_attachment_image_src($WpUploadToShow, 'large');
+				$imgSrcLarge = cg_ecommerce_public_image_src($WpUploadToShow, 'large');
 				$imgSrcLarge=($imgSrcLarge) ? $imgSrcLarge[0] : '';
-				$imgSrcFull = wp_get_attachment_image_src($WpUploadToShow, 'full');
+				$imgSrcFull = cg_ecommerce_public_image_src($WpUploadToShow, 'full');
 				$imgSrcFullWidth = ($imgSrcFull) ? $imgSrcFull[1] : '';
 				$imgSrcFullHeight = ($imgSrcFull) ? $imgSrcFull[2] : '';
 				$imgSrcLargeToShow=$imgSrcLarge;
@@ -969,7 +951,7 @@ if($isAjaxCall){
 				if(!empty($EcommerceEntry)){
 					$imgSrcLargeToShow=$image_url_to_show;
 				}else{
-					$imgSrcLargeToShow = wp_get_attachment_image_src($WpUploadToShow, 'large');
+					$imgSrcLargeToShow = cg_ecommerce_public_image_src($WpUploadToShow, 'large');
 					$imgSrcLargeToShow=$imgSrcLargeToShow[0];
 				}
 			}
@@ -978,7 +960,7 @@ if($isAjaxCall){
 				$imgSrcLarge = $image_url_to_show;
 				$imgSrcLargeToShow=$image_url_to_show;
 			}else{
-				$imgSrcLarge = wp_get_attachment_image_src($WpUpload, 'large');
+				$imgSrcLarge = cg_ecommerce_public_image_src($WpUpload, 'large');
 				$imgSrcLarge=$imgSrcLarge[0];
 			}
 		}
@@ -1011,9 +993,9 @@ if($isAjaxCall){
 					$imgSrcMediumRealIdSrc=$image_url;
 					$imgSrcLargeRealIdSrc=$image_url;
 				}else{
-					$imgSrcMediumRealIdSrc=wp_get_attachment_image_src( $WpUpload, 'medium');
+					$imgSrcMediumRealIdSrc=cg_ecommerce_public_image_src( $WpUpload, 'medium');
 					$imgSrcMediumRealIdSrc=$imgSrcMediumRealIdSrc[0];
-					$imgSrcLargeRealIdSrc = wp_get_attachment_image_src( $WpUpload, 'large');
+					$imgSrcLargeRealIdSrc = cg_ecommerce_public_image_src( $WpUpload, 'large');
 					$imgSrcLargeRealIdSrc=$imgSrcLargeRealIdSrc[0];
 				}
 			}
@@ -1023,13 +1005,13 @@ if($isAjaxCall){
             if(!empty($anotherFirstMultipleFilePdfPreviewImage) && $realIdSourceOrder==1){
                 $PdfPreviewImage = $anotherFirstMultipleFilePdfPreviewImage;
             }else{
-                $PdfPreviewImage = wp_get_attachment_image_src($value->PdfPreview, 'full');
+                $PdfPreviewImage = cg_ecommerce_public_image_src($value->PdfPreview, 'full');
                 $PdfPreviewImage = $PdfPreviewImage[0];
             }
             if(!empty($anotherFirstMultipleFilePdfPreviewImageLarge) && $realIdSourceOrder==1){
                 $PdfPreviewImageLarge = $anotherFirstMultipleFilePdfPreviewImageLarge;
             }else{
-                $PdfPreviewImageLarge = wp_get_attachment_image_src($value->PdfPreview, 'large');
+                $PdfPreviewImageLarge = cg_ecommerce_public_image_src($value->PdfPreview, 'large');
                 $PdfPreviewImageLarge = $PdfPreviewImageLarge[0];
             }
             $post_mime_type_fist_part = 'image';
@@ -1159,7 +1141,7 @@ if($isAjaxCall){
 		}
 
 		if($EcommerceEntry>0){
-			$priceStringToShow = cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$Price);
+			$priceStringToShow = $IsFree ? 'Free' : cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$Price);
 
 			$SaleString = '';
 			if($SaleType=='download'){
@@ -1210,12 +1192,19 @@ if($isAjaxCall){
 		}
 
 		echo "<input type='hidden' class='isEcommerceEntryAndDownload' value='$isEcommerceEntryAndDownload'>";
-		echo "<input type='hidden' class='Price' value='$Price'>";
+        echo '<input type="hidden" class="RegularPrice" value="'.esc_attr($RegularPrice).'">';
+        echo '<input type="hidden" class="cgSaleDraft" value="'.esc_attr(json_encode($cgSaleDraft,JSON_HEX_AMP)).'">';
+		echo "<input type='hidden' class='Price' value='$Price'><input type='hidden' class='IsFree' value='$IsFree'>";
 		echo "<input type='hidden' class='CurrencyShort' value='$CurrencyShort'>";
 		echo "<input type='hidden' class='CurrencySymbol' value='$CurrencySymbol'>";
 		echo "<input type='hidden' class='CurrencyPosition' value='$CurrencyPosition'>";
 		echo "<input type='hidden' class='PriceDivider' value='$PriceDivider'>";
 		echo "<input type='hidden' class='WatermarkSettings' value='$WatermarkSettings'>";
+        $cgSaleFileContexts = array();
+        foreach(cg_ecommerce_sale_entry_upload_ids($value) as $cgSaleUploadId){
+            $cgSaleFileContexts[$cgSaleUploadId] = cg_ecommerce_file_context($cgSaleUploadId,$id);
+        }
+        echo "<input type='hidden' class='cgSaleFileContexts' value='".esc_attr(wp_json_encode($cgSaleFileContexts,JSON_HEX_AMP))."'>";
 		echo "<input type='hidden' class='cgEntryWatermarkWpUploads' value='$cgEntryWatermarkedWpUploads'>";
 		echo "<input type='hidden' class='WpUploadFilesForSale' value='$WpUploadFilesForSale'>";
 		echo "<input type='hidden' class='SaleTitle' value='$SaleTitle'>";
@@ -1837,6 +1826,9 @@ if($isAjaxCall){
 		echo "</div>";
 
 		echo "<div class='cg_fields_div'>";
+		if((float)$optionsSQL->Version >= 22 && $ImgTypeToShow !== 'con'){
+			cg_ecommerce_entry_card($id,$SaleType,$Price,$ecommerce_options,!in_array($ImgTypeToShow,array('ytb','twt','inst','tkt'),true),$EcommerceEntry,$IsFree,$cgSaleDraft,$RegularPrice);
+		}
 
 		//print_r($selectUpload);
 

@@ -3115,3 +3115,112 @@ msgstr "रेटिंग और टिप्पणियाँ"
 #: check-language-ecommerce.php
 msgid "Settings path"
 msgstr "सेटिंग का पथ"
+
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Free"
+msgstr "निःशुल्क"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Get for free"
+msgstr "निःशुल्क प्राप्त करें"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Order now"
+msgstr "अभी ऑर्डर करें"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Place free order"
+msgstr "निःशुल्क ऑर्डर दें"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Placing order…"
+msgstr "ऑर्डर दिया जा रहा है…"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "The order could not be completed. Please try again."
+msgstr "ऑर्डर पूरा नहीं हो सका। कृपया फिर से कोशिश करें।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Enter a valid email address and complete the required fields and agreements."
+msgstr "एक मान्य ईमेल पता दर्ज करें, सभी ज़रूरी फ़ील्ड भरें और आवश्यक सहमतियाँ स्वीकार करें।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "The order was created, but its confirmation could not be saved. Please contact the site administrator."
+msgstr "ऑर्डर बन गया है, लेकिन उसकी पुष्टि सहेजी नहीं जा सकी। कृपया साइट प्रशासक से संपर्क करें।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Your cart is empty."
+msgstr "आपकी कार्ट खाली है।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Please reload the checkout."
+msgstr "कृपया चेकआउट पेज फिर से लोड करें।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Please reload the gallery before ordering."
+msgstr "ऑर्डर देने से पहले कृपया गैलरी फिर से लोड करें।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "This product is no longer available."
+msgstr "यह उत्पाद अब उपलब्ध नहीं है।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "The cart has changed. Please reload the checkout."
+msgstr "कार्ट बदल गई है। कृपया चेकआउट पेज फिर से लोड करें।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "This product has not been offered for free."
+msgstr "यह उत्पाद निःशुल्क नहीं दिया जा रहा है।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Please sign in before ordering."
+msgstr "ऑर्डर देने से पहले कृपया साइन इन करें।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "The order summary page is not configured."
+msgstr "ऑर्डर सारांश पेज कॉन्फ़िगर नहीं किया गया है।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "The order confirmation email is not configured."
+msgstr "ऑर्डर पुष्टिकरण ईमेल कॉन्फ़िगर नहीं किया गया है।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Please enable cookies and reload the checkout."
+msgstr "कृपया कुकीज़ चालू करें और चेकआउट पेज फिर से लोड करें।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Please reopen the checkout."
+msgstr "कृपया चेकआउट पेज दोबारा खोलें।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Your order is being processed. Please wait."
+msgstr "आपके ऑर्डर पर कार्रवाई हो रही है। कृपया प्रतीक्षा करें।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "This order is already being processed. Please check your order confirmation before trying again."
+msgstr "इस ऑर्डर पर पहले से कार्रवाई हो रही है। फिर कोशिश करने से पहले अपना ऑर्डर पुष्टिकरण देखें।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Please accept the checkout agreements."
+msgstr "कृपया चेकआउट की सहमतियाँ स्वीकार करें।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Complete the shipping address."
+msgstr "डिलीवरी का पता पूरा भरें।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Select an allowed shipping country."
+msgstr "डिलीवरी के लिए अनुमत देश चुनें।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Select a shipping state."
+msgstr "डिलीवरी के लिए राज्य या क्षेत्र चुनें।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Sandbox checkout is available only to administrators or through a valid Paid Actions sandbox link."
+msgstr "सैंडबॉक्स चेकआउट केवल प्रशासकों के लिए या मान्य Paid Actions सैंडबॉक्स लिंक से उपलब्ध है।"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Available in test mode. Live purchases require PRO."
+msgstr "परीक्षण मोड में उपलब्ध है। वास्तविक खरीदारी के लिए PRO चाहिए।"

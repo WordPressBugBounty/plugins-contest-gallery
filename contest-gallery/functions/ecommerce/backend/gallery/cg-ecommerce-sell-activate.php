@@ -1,7 +1,31 @@
 <?php
 if(!function_exists('cg_ecommerce_sale_activate')){
     function cg_ecommerce_sale_activate(){
+        return cg_ecommerce_with_sale_files_lock('cg_ecommerce_sale_activate_locked',func_get_args());
+    }
+}
+if(!function_exists('cg_ecommerce_sale_activate_locked')){
+    function cg_ecommerce_sale_activate_locked(){
 
+        $IsFree = !empty($_POST['cgSellContainer']['IsFree']) && $_POST['cgSellContainer']['IsFree'] === '1' ? 1 : 0;
+        $isReduced = !empty($_POST['cgSellContainer']['HasReducedPrice']) && $_POST['cgSellContainer']['HasReducedPrice'] === '1';
+        $reducedPriceInput = isset($_POST['cgSellContainer']['ReducedPrice']) ? $_POST['cgSellContainer']['ReducedPrice'] : '';
+        // Empty or zero means no reduction, even with an enabled switch.
+        if(is_scalar($reducedPriceInput) && preg_match('/^(?:0+(?:[.,]0{1,2})?)?$/D',trim((string)$reducedPriceInput))){
+            $isReduced = false;
+        }
+        $RegularPrice = 0;
+        $Price = cg_ecommerce_parse_sale_price(isset($_POST['cgSellContainer']['PriceResult']) ? $_POST['cgSellContainer']['PriceResult'] : '', $IsFree);
+        if($isReduced){
+            $RegularPrice = $Price;
+            $Price = cg_ecommerce_parse_sale_price($reducedPriceInput,false);
+            if($IsFree || $RegularPrice === false || $Price === false || $Price >= $RegularPrice){
+                cg_backend_ajax_error_json('Enter a reduced price greater than 0 and lower than the regular price.',400,'cg_sale_reduced_price_invalid');
+            }
+        }
+        if($Price === false){
+            cg_backend_ajax_error_json('Enter a price greater than 0 or choose Offer for free.',400,'cg_sale_price_invalid');
+        }
         $keyUploads = cg_ecommerce_validate_key_uploads($_FILES);
 
         $wp_upload_dir = wp_upload_dir();
@@ -13,14 +37,53 @@ if(!function_exists('cg_ecommerce_sale_activate')){
         $GalleryID = absint($_POST['cgSellContainer']['GalleryID']);
         $realId = absint($_POST['cgSellContainer']['realId']);
         $SaleType = sanitize_text_field($_POST['cgSellContainer']['SaleType']);
+        if($isReduced && $SaleType === 'upload'){cg_backend_ajax_error_json('Reduced prices are available for downloads, shipping and services.',400,'cg_sale_type_unavailable');}
+        if($IsFree && $SaleType === 'upload'){cg_backend_ajax_error_json('Free offers are available for downloads, shipping and services.',400,'cg_sale_type_unavailable');}
         $removedWpUploadIdsFromSale = (isset($_POST['cgSellContainer']['removedWpUploadIdsFromSale'])) ? $_POST['cgSellContainer']['removedWpUploadIdsFromSale'] : [];
 
 	    $sqlObjectFile = $wpdb->get_row("SELECT * FROM $tablename WHERE id = '$realId'");
         $EcommerceEntry = intval($sqlObjectFile->EcommerceEntry);
+        $saleDraft = !$EcommerceEntry ? cg_ecommerce_sale_draft_get($sqlObjectFile) : array();
+        $ownedFiles = $EcommerceEntry ? maybe_unserialize($wpdb->get_var($wpdb->prepare("SELECT WpUploadFilesForSale FROM $tablename_ecommerce_entries WHERE id=%d",$EcommerceEntry))) : array();
+        $ownedFiles = is_array($ownedFiles) ? array_map('absint',$ownedFiles) : array();
+        // Validate before restore, insert, metadata changes or moving any original.
+        cg_ecommerce_assert_file_ownership($ownedFiles,$realId);
+        if(!is_array($removedWpUploadIdsFromSale) || array_diff(array_map('absint',$removedWpUploadIdsFromSale),$ownedFiles)){
+            cg_backend_ajax_error_json('Select files belonging to this sale.',400,'cg_sale_files_invalid');
+        }
+        if($SaleType === 'download'){
+            $selectedFiles = isset($_POST['cgSellContainer']['WpUploadFilesForSale']) ? $_POST['cgSellContainer']['WpUploadFilesForSale'] : array();
+            $allowedFiles = cg_ecommerce_sale_entry_upload_ids($sqlObjectFile);
+            if(!is_array($selectedFiles) || !is_array($removedWpUploadIdsFromSale) || array_diff(array_map('absint',$selectedFiles),$allowedFiles)){
+                cg_backend_ajax_error_json('Select files belonging to this entry.',400,'cg_sale_files_invalid');
+            }
+            $previewFiles = isset($_POST['cgSellContainer']['base64WatermarkedAndAltFiles']) ? $_POST['cgSellContainer']['base64WatermarkedAndAltFiles'] : array();
+            if(!is_array($previewFiles) || array_diff(array_map('absint',array_keys($previewFiles)),$allowedFiles)){
+                cg_backend_ajax_error_json('Select files belonging to this entry.',400,'cg_sale_files_invalid');
+            }
+            cg_ecommerce_assert_file_ownership(array_merge($ownedFiles,array_map('absint',$selectedFiles),array_keys($previewFiles)),$realId);
+            $existingFiles = $EcommerceEntry ? maybe_unserialize($wpdb->get_var($wpdb->prepare("SELECT WpUploadFilesForSale FROM $tablename_ecommerce_entries WHERE id = %d",$EcommerceEntry))) : array();
+            $remainingFiles = array_diff(array_merge(is_array($existingFiles) ? $existingFiles : array(),array_map('absint',$selectedFiles)),array_map('absint',$removedWpUploadIdsFromSale));
+            if(!array_intersect($allowedFiles,$remainingFiles)){
+                cg_backend_ajax_error_json('Select at least one download file.',400,'cg_sale_files_missing');
+            }
+            if(!$EcommerceEntry){
+                foreach($selectedFiles as $uploadId){
+                    $path = get_attached_file(absint($uploadId));
+                    if(!$path || !is_file($path) || !is_readable($path)){
+                        cg_backend_ajax_error_json('A selected download file is no longer available.',400,'cg_sale_file_missing');
+                    }
+                }
+            }
+        }
 	    $existingSaleType = '';
 	    if(!empty($EcommerceEntry)){
 		    $existingSaleType = (string)$wpdb->get_var($wpdb->prepare("SELECT SaleType FROM $tablename_ecommerce_entries WHERE id = %d",$EcommerceEntry));
 	    }
+
+        if(!in_array($SaleType,array('download','shipping','service','upload'),true) || ($SaleType === 'upload' && !cg_ecommerce_products_pro_available())){
+            cg_backend_ajax_error_json('This sale type is not available.',400,'cg_sale_type_unavailable');
+        }
 
 	    $galleryVersion = cg_ecommerce_get_gallery_creation_version($GalleryID);
 	    $isLegacyUploadSaleAllowed = cg_ecommerce_legacy_upload_sale_is_allowed($GalleryID,$realId);
@@ -70,6 +133,9 @@ if(!function_exists('cg_ecommerce_sale_activate')){
             ) );
 
             $EcommerceEntry = $wpdb->insert_id;
+            if(!$EcommerceEntry){
+                cg_backend_ajax_error_json('Could not save sale settings. Please try again.',500,'cg_sale_save_failed');
+            }
             $sqlObjectFile->EcommerceEntry = $EcommerceEntry;
 
             $wpdb->update(
@@ -83,11 +149,16 @@ if(!function_exists('cg_ecommerce_sale_activate')){
 
         }
 
+        if(!empty($saleDraft)){
+            foreach(array('DownloadKeysCsvName','ServiceKeysCsvName') as $keyField){
+                $sqlObjectFileEcommerceEntry->$keyField = isset($saleDraft[$keyField]) ? $saleDraft[$keyField] : '';
+            }
+        }
         $DownloadKeysCsvName = isset($sqlObjectFileEcommerceEntry->DownloadKeysCsvName) ? $sqlObjectFileEcommerceEntry->DownloadKeysCsvName : '';
         if(!empty($_POST['cgSellContainer']['RemoveDownloadKeysFile']) && $_POST['cgSellContainer']['RemoveDownloadKeysFile']==1){
-            $DownloadKeysCsvName = $wpdb->get_var("SELECT DownloadKeysCsvName FROM $tablename_ecommerce_entries WHERE id = '$EcommerceEntry'");
+
             $ecommerceFileFolder = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/ecommerce/real-id-'.$sqlObjectFile->id.'/download-keys/';
-            unlink($ecommerceFileFolder.$DownloadKeysCsvName);
+            if($DownloadKeysCsvName && is_file($ecommerceFileFolder.$DownloadKeysCsvName)){unlink($ecommerceFileFolder.$DownloadKeysCsvName);}
             $DownloadKeysCsvName = '';
         }
         if(isset($keyUploads['DownloadKey'])){
@@ -96,13 +167,13 @@ if(!function_exists('cg_ecommerce_sale_activate')){
 
         $ServiceKeysCsvName = isset($sqlObjectFileEcommerceEntry->ServiceKeysCsvName) ? $sqlObjectFileEcommerceEntry->ServiceKeysCsvName : '';
         if(!empty($_POST['cgSellContainer']['RemoveServiceKeysFile']) && $_POST['cgSellContainer']['RemoveServiceKeysFile']==1){
-            $ServiceKeysCsvName = $wpdb->get_var("SELECT ServiceKeysCsvName FROM $tablename_ecommerce_entries WHERE id = '$EcommerceEntry'");
+
             //var_dump('$ServiceKeysCsvName');
             //var_dump($ServiceKeysCsvName);
             $ecommerceFileFolder = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/ecommerce/real-id-'.$sqlObjectFile->id.'/service-keys/';
             //var_dump('$ecommerceFileFolder $ServiceKeysCsvName remove');
             //var_dump($ecommerceFileFolder);
-            unlink($ecommerceFileFolder.$ServiceKeysCsvName);
+            if($ServiceKeysCsvName && is_file($ecommerceFileFolder.$ServiceKeysCsvName)){unlink($ecommerceFileFolder.$ServiceKeysCsvName);}
             $ServiceKeysCsvName = '';
         }
         if(isset($keyUploads['ServiceKey'])){
@@ -152,7 +223,7 @@ if(!function_exists('cg_ecommerce_sale_activate')){
             cg_move_file_ecommerce_sale_folder($realId, $GalleryID,$sqlObjectFile,$sqlObjectFileEcommerceEntry);
         }
         // update of set values can be done even if activated or deactivated
-        $Price = round(floatval($_POST['cgSellContainer']['PriceResult']),2);
+        // Price and free consent were validated before any writes.
         $SaleDescription = sanitize_text_field($_POST['cgSellContainer']['SaleDescription']);
         $SaleTitle = sanitize_text_field($_POST['cgSellContainer']['SaleTitle']);
 	    $WatermarkSettings = (isset($_POST['cgSellContainer']['WatermarkSettings'])) ? serialize($_POST['cgSellContainer']['WatermarkSettings']) : '';
@@ -230,10 +301,10 @@ if(!function_exists('cg_ecommerce_sale_activate')){
 	    //var_dump($Price);
 
         // getting data via query in frontend
-        $wpdb->update(
+        $saleSaved = $wpdb->update(
             "$tablename_ecommerce_entries",
             array(
-                'Price' => $Price,
+                'Price' => $Price, 'RegularPrice' => $RegularPrice, 'IsFree' => $IsFree,
                 'WpUploadFilesForSale' => $WpUploadFilesForSale, 'WatermarkSettings' => $WatermarkSettings,
                 'SaleTitle' => $SaleTitle,'SaleDescription' => $SaleDescription,'SaleType' => $SaleType,
                 'SaleAmountMax' => $SaleAmountMax,'SaleAmountMin' => $SaleAmountMin,'TaxPercentage' => $TaxPercentage,'AlternativeShipping' => $AlternativeShipping,
@@ -243,7 +314,7 @@ if(!function_exists('cg_ecommerce_sale_activate')){
             ),
             array('id' => $sqlObjectFile->EcommerceEntry),
             array(
-                '%f',
+                '%f','%f','%d',
                 '%s','%s',
                 '%s','%s','%s',
                 '%d','%d','%f','%f',
@@ -253,6 +324,12 @@ if(!function_exists('cg_ecommerce_sale_activate')){
             ),
             array('%d')
         );
+
+        if($saleSaved === false){
+            cg_backend_ajax_error_json('Could not save sale settings. Please try again.',500,'cg_sale_save_failed');
+        }
+
+        cg_ecommerce_clear_legacy_sale_test_mode($EcommerceEntry);
 
 	    if($galleryVersion >= 33){
 		    if($SaleType === 'upload'){
@@ -277,6 +354,7 @@ if(!function_exists('cg_ecommerce_sale_activate')){
         cg1l_push_recent_id_file($GalleryID,$sqlObjectFile->id,'image-query-data-last-update');
         cg1l_push_recent_id_file($GalleryID,$sqlObjectFile->id,'image-urls-data-last-update');
         cg1l_create_last_updated_time_file_image_data($GalleryID);
+        cg_ecommerce_sale_draft_delete($GalleryID,$realId);
 
    }
 }

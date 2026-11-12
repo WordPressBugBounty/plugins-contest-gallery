@@ -761,7 +761,9 @@ if(!function_exists('cg1l_render_single_entry_view')){
         }
 
         $saleContainerClass = 'cg-center-sale cg_hide';
+        $salePurchaseBlocked = false;
         $salePriceText = '';
+        $regularPriceMarkup = '';
         $salePriceType = '';
         $saleTitleText = '';
         $saleDescriptionText = '';
@@ -773,26 +775,35 @@ if(!function_exists('cg1l_render_single_entry_view')){
 
             if(!empty($saleData['isActive'])){
                 $saleContainerClass = 'cg-center-sale';
+                $salePurchaseBlocked = !empty($saleData['isLivePurchaseBlocked']);
                 $salePriceText = $saleData['salePriceText'];
+                $buyNowText = $saleData['purchaseActionText'];
+                $regularPriceMarkup = !empty($saleData['regularPriceText']) ? '<del class="cg-sale-regular-price">'.esc_html($saleData['regularPriceText']).'</del>' : '';
                 $salePriceType = $saleData['salePriceType'];
                 $saleTitleText = $saleData['saleTitleText'];
                 $saleDescriptionText = $saleData['saleDescriptionText'];
             }
         }
 
+        $saleButtonClass = $salePurchaseBlocked ? ' cg-sale-pro-locked' : '';
+        $saleButtonDisabled = $salePurchaseBlocked ? ' aria-disabled="true"' : '';
+        $saleProBadge = $salePurchaseBlocked ? '<span class="cg-sale-pro-badge">PRO</span>' : '';
+        $saleAccessNotice = $salePurchaseBlocked ? '<span class="cg-sale-live-notice">Available in test mode. Live purchases require PRO.</span>' : '';
+
         $saleDiv = '<div id="'.esc_attr($saleId).'" class="'.esc_attr(trim($saleContainerClass.' cg-center-image-action-card cg-center-image-action-card-sale')).'" data-cg-gid="'.esc_attr($gidJs).'">
                             <div class="cg-center-sale-price-container">
                                 <div class="cg-center-sale-price">
-                                    <div class="cg-center-sale-price-value">'.esc_html($salePriceText).'</div>
+                                    <div class="cg-center-sale-price-value">'.$regularPriceMarkup.'<span class="cg-sale-current-price">'.esc_html($salePriceText).'</span></div>
                                     <div class="cg-center-sale-price-type">'.esc_html($salePriceType).'</div>
                                 </div>
                             </div>
                             <div class="cg-center-sale-buy-now-and-add-to-basket-container">
                                 <div class="cg-center-sale-buy-now-and-add-to-basket-container-sub">
-                                    <div class="cg-center-sale-buy-now" data-cg-gid="'.esc_attr($gidJs).'" data-cg-real-id="'.esc_attr($rid).'">'.esc_html($buyNowText).'</div>
-                                    <div class="cg-center-sale-add-to-basket" data-cg-gid="'.esc_attr($gidJs).'" data-cg-real-id="'.esc_attr($rid).'">'.esc_html($addToCartText).'</div>
+                                    <div class="cg-center-sale-buy-now'.$saleButtonClass.'"'.$saleButtonDisabled.' data-cg-gid="'.esc_attr($gidJs).'" data-cg-real-id="'.esc_attr($rid).'">'.esc_html($buyNowText).$saleProBadge.'</div>
+                                    <div class="cg-center-sale-add-to-basket'.$saleButtonClass.'"'.$saleButtonDisabled.' data-cg-gid="'.esc_attr($gidJs).'" data-cg-real-id="'.esc_attr($rid).'">'.esc_html($addToCartText).$saleProBadge.'</div>
                                 </div>
                             </div>
+                            '.$saleAccessNotice.'
                             <div class="cg-center-sale-product-info cg_hide">
                                 <div class="cg-center-sale-product-info-title">'.esc_html($saleTitleText).'</div>
                                 <div class="cg-center-sale-product-info-description">'.esc_html($saleDescriptionText).'</div>

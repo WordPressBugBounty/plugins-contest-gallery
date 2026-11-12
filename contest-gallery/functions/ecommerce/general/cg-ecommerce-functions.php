@@ -26,88 +26,12 @@ if(!function_exists('cg_increase_number')){
 }
 
 if(!function_exists('cg_get_set_key')){
-	function cg_get_set_key($GalleryID,$realId,$DownloadKeysCsvName='',$ServiceKeysCsvName='',$email='',$captureId='',$tstamp='',$OrderNumber=''){
-		$wp_upload_dir = wp_upload_dir();
-
-		if($DownloadKeysCsvName){
-			$csvPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/ecommerce/real-id-'.$realId.'/download-keys/'.$DownloadKeysCsvName;
-		}elseif($ServiceKeysCsvName){
-			$csvPath = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/ecommerce/real-id-'.$realId.'/service-keys/'.$ServiceKeysCsvName;
-		}
-//var_dump('$csvPath');
-//var_dump($csvPath);
-		$isGotNewKey = false;
-		$keyFromCsv = '';
-		$newExplode = [];
-
-		//$handle = fopen($csvPath, "w");
-		if (($handle = fopen($csvPath, "r+")) !== FALSE) {
-			//var_dump('opencsv');
-			//var_dump($DownloadKeysCsvName);
-			//var_dump($csvPath);
-			$fp = file($csvPath);
-			//$linesLength = 100;
-			$linesLength = 0;// 0 is unlimited
-
-			$i = 0;
-
-			while ($line = fgetcsv($handle,$linesLength,';')){
-				$newExplode[$i] = [];
-				$newExplode[$i][0] = trim($line[0]);
-				if(!empty($line[1])){
-					$newExplode[$i][1] = trim($line[1]);
-				}else{
-					$newExplode[$i][1] = '';
-				}
-				if(!empty($line[2])){
-					$newExplode[$i][2] = trim($line[2]);
-				}else{
-					$newExplode[$i][2] = '';
-				}
-				if(!empty($line[3])){
-					$newExplode[$i][3] = trim($line[3]);
-				}else{
-					$newExplode[$i][3] = '';
-				}
-
-				if(empty($line[1]) && !$isGotNewKey){
-					//var_dump('$line[0]');
-					//var_dump($line[0]);
-					//var_dump('$line[1]');
-					//var_dump($line[1]);
-					//var_dump('insert $i');
-					//var_dump($i);
-					$isGotNewKey = true;
-					$keyFromCsv = $line[0];
-					if(!empty($tstamp)){
-						$purchaseTime = cg_get_time_based_on_wp_timezone_conf($tstamp,'Y-M-d H:i:s');
-						$newExplode[$i][1] = trim($purchaseTime);
-					}
-					if(!empty($email)){
-						$newExplode[$i][2] = trim($email);
-					}
-					if(!empty($OrderNumber)){
-						$newExplode[$i][3] = trim($OrderNumber);
-					}
-				}
-				$i++;
-			}
-		}
-		fclose($handle);
-
-        $newExplode = cg_neutralize_csv_array($newExplode);
-
-		chmod($csvPath,0644);
-		$fpnew = fopen($csvPath, 'w');
-		// no need to use here otherwise puts "zwnbsp" at the beginning of every line 0
-		//fputs($fpnew, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
-		foreach ($newExplode as $fields) {
-			fputcsv($fpnew, $fields, ";");
-		}
-		fclose($fpnew);
-
-		return $keyFromCsv;
-	}
+    function cg_get_set_key($GalleryID,$realId,$DownloadKeysCsvName='',$ServiceKeysCsvName='',$email='',$captureId='',$tstamp='',$OrderNumber=''){
+        $type = $DownloadKeysCsvName ? 'download' : 'service';
+        $filename = $DownloadKeysCsvName ? $DownloadKeysCsvName : $ServiceKeysCsvName;
+        $path = cg_ecommerce_key_inventory_path($GalleryID,$realId,$filename,$type);
+        return cg_ecommerce_read_or_claim_key($path,true,$email,$tstamp,$OrderNumber);
+    }
 }
 
 if(!function_exists('cg_get_countries')){
@@ -236,7 +160,7 @@ if(!function_exists('cg_ecommerce_price_to_show')){
 }
 
 if(!function_exists('cg_get_ecommerce_files_data')){
-	function cg_get_ecommerce_files_data($galeryID,$pid = 0){
+	function cg_get_ecommerce_files_data($galeryID,$pid = 0,$isTest = null){
 
 		global $wpdb;
 		$tablenameEcommerceEntries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
@@ -251,6 +175,8 @@ if(!function_exists('cg_get_ecommerce_files_data')){
 
 		foreach ($ecommerceFilesSQL as $ecommerceFilesRow){
 			$ecommerceFilesData[$ecommerceFilesRow->pid] = json_decode(json_encode($ecommerceFilesRow),true);
+            $ecommerceFilesData[$ecommerceFilesRow->pid]['IsTestOnly'] = cg_ecommerce_sale_requires_test($ecommerceFilesRow->id,$ecommerceFilesRow->SaleType) ? 1 : 0;
+            $ecommerceFilesData[$ecommerceFilesRow->pid]['IsLivePurchaseBlocked'] = ($isTest === false && $ecommerceFilesData[$ecommerceFilesRow->pid]['IsTestOnly']) ? 1 : 0;
 
 			// has to be unserialized because is unserialized otherwise jsond_decode processing error later
 			$ecommerceFilesData[$ecommerceFilesRow->pid]['WpUploadFilesPosts'] = !empty($ecommerceFilesData[$ecommerceFilesRow->pid]['WpUploadFilesPosts']) ? unserialize($ecommerceFilesData[$ecommerceFilesRow->pid]['WpUploadFilesPosts']) : '';

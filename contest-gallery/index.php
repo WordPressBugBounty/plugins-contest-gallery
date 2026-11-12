@@ -2,7 +2,7 @@
 /*
 Plugin Name: Contest Gallery
 Description: Upload form, files, photos and videos upload contest gallery plugin for WordPress. Create upload forms for entries with or without file/image upload. Create user registration form. Create login form. Create responsive galleries and allow to vote for any kind of entries. Sell entries via PayPal or Stripe API. Create or edit images via OpenAI API.
-Version: 34.0.4
+Version: 34.0.5
 Requires at least: 5.6
 Requires PHP: 5.6
 Author: Contest Gallery
@@ -970,6 +970,8 @@ if(!function_exists('cg_download_sale_item')){
 		}
 
 		global $wpdb;
+		$tablename = $wpdb->prefix . "contest_gal1ery";
+		$tablename_ecommerce_entries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
 		$tablename_ecommerce_orders = $wpdb->prefix . "contest_gal1ery_ecommerce_orders";
 		$tablename_ecommerce_orders_items = $wpdb->prefix . "contest_gal1ery_ecommerce_orders_items";
 		$tablePostMeta = $wpdb->prefix . "postmeta";
@@ -989,7 +991,7 @@ if(!function_exists('cg_download_sale_item')){
 
 		$paymentSucceeded =
 			($Order->PaymentType==='stripe' && $Order->PaymentStatus==='succeeded') ||
-			($Order->PaymentType==='paypal' && $Order->PaymentStatus==='COMPLETED');
+			(($Order->PaymentType==='paypal' || $Order->PaymentType==='free') && $Order->PaymentStatus==='COMPLETED');
 
 		if(empty($Order->IsFullPaid) || !$paymentSucceeded){
 			status_header(403);
@@ -1003,8 +1005,15 @@ if(!function_exists('cg_download_sale_item')){
 
 		$id = $Order->id;
 		$wp_upload_dir = wp_upload_dir();
+		// Existing buyers receive the current files of the purchased entry, including replacements.
 		$orderItems = $wpdb->get_results($wpdb->prepare(
-			"SELECT * FROM $tablename_ecommerce_orders_items WHERE ParentOrder = %d AND IsDownload = 1",
+			"SELECT item.pid, item.GalleryID, sale.WpUploadFilesForSale
+			FROM $tablename_ecommerce_orders_items item
+			INNER JOIN $tablename entry ON entry.id = item.pid AND entry.GalleryID = item.GalleryID
+			INNER JOIN $tablename_ecommerce_entries sale ON sale.id = entry.EcommerceEntry
+				AND sale.pid = entry.id AND sale.GalleryID = entry.GalleryID
+			WHERE item.ParentOrder = %d AND item.IsDownload = 1
+				AND (sale.IsDownload = 1 OR sale.SaleType = 'download')",
 			$id
 		));
 

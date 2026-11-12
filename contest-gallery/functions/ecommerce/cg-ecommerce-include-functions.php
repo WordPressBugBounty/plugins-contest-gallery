@@ -1,5 +1,11 @@
 <?php
 
+    include(__DIR__.'/general/cg-ecommerce-sale-access.php');
+    include(__DIR__.'/general/cg-ecommerce-file-context.php');
+    include(__DIR__.'/general/cg-ecommerce-free-translations.php');
+    include(__DIR__.'/general/cg-ecommerce-key-inventory.php');
+    include(__DIR__.'/backend/gallery/cg-ecommerce-sale-draft.php');
+
     include(__DIR__.'/../ecommerce/backend/gallery/cg-ecommerce-legacy-upload-sale.php');
     include(__DIR__.'/../ecommerce/backend/gallery/cg-ecommerce-get-orders.php');
     include(__DIR__.'/../ecommerce/backend/gallery/cg-ecommerce-sell-conf.php');
@@ -10,6 +16,7 @@
     include(__DIR__.'/../ecommerce/backend/gallery/cg-move-file-from-ecommerce-sell-folder.php');
 
     include(__DIR__.'/../ecommerce/backend/render/cg-sell-ecommerce-container.php');
+    include(__DIR__.'/../ecommerce/backend/render/cg-ecommerce-entry-card.php');
     include(__DIR__.'/../ecommerce/backend/render/cg-download-ecommerce-form.php');
 
     include(__DIR__.'/../ecommerce/backend/options/cg-create-get-ecommerce-options.php');
@@ -30,3 +37,5 @@
     include(__DIR__.'/general/cg-ecommerce-functions.php');
 
 
+
+    include(__DIR__.'/general/cg-ecommerce-free-checkout.php');

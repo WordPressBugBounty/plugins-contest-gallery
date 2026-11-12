@@ -1,6 +1,11 @@
 <?php
 if(!function_exists('cg_ecommerce_sale_deactivate')){
     function cg_ecommerce_sale_deactivate(){
+        return cg_ecommerce_with_sale_files_lock('cg_ecommerce_sale_deactivate_locked',func_get_args());
+    }
+}
+if(!function_exists('cg_ecommerce_sale_deactivate_locked')){
+    function cg_ecommerce_sale_deactivate_locked(){
 
         global $wpdb;
         $tablename = $wpdb->prefix . "contest_gal1ery";
@@ -16,9 +21,15 @@ if(!function_exists('cg_ecommerce_sale_deactivate')){
 
 		if(!empty($ecommerceEntryId)){
 			$ecommerceEntry = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_entries WHERE id = '$ecommerceEntryId'");
+            $ownedFiles = !empty($ecommerceEntry) ? maybe_unserialize($ecommerceEntry->WpUploadFilesForSale) : array();
+            cg_ecommerce_assert_file_ownership(is_array($ownedFiles) ? $ownedFiles : array(),$realId);
 			if(!empty($ecommerceEntry) && $ecommerceEntry->SaleType === 'upload' && cg_ecommerce_get_gallery_creation_version($GalleryID) >= 33){
 				cg_ecommerce_set_legacy_upload_sale_allowed($GalleryID,$realId,true);
 			}
+
+            if(empty($ecommerceEntry) || !cg_ecommerce_sale_draft_save($sqlObjectFile,$ecommerceEntry)){
+                cg_backend_ajax_error_json('Could not keep the sale settings. Please try again.',500,'cg_sale_draft_failed');
+            }
 
 			$isAllWpUploadsSuccessfulMoved = true;
 
@@ -26,12 +37,19 @@ if(!function_exists('cg_ecommerce_sale_deactivate')){
 				$isAllWpUploadsSuccessfulMoved = cg_move_file_from_ecommerce_sale_folder($realId, $GalleryID,$ecommerceEntryId);
 			}
 
-			$wpdb->query($wpdb->prepare(
+            if(!$isAllWpUploadsSuccessfulMoved){
+                cg_backend_ajax_error_json('Could not restore the selected files. The sale settings have been kept. Please try again.',500,'cg_sale_restore_failed');
+            }
+
+			$saleDeleted = $wpdb->query($wpdb->prepare(
 				"
                         DELETE FROM $tablename_ecommerce_entries WHERE id = %d
                     ",
 				$sqlObjectFile->EcommerceEntry
 			));
+
+            if($saleDeleted === false){cg_backend_ajax_error_json('Could not deactivate the sale. Please try again.',500,'cg_sale_deactivate_failed');}
+            cg_ecommerce_clear_legacy_sale_test_mode($ecommerceEntryId);
 
 			$wpdb->update(
 				"$tablename",
@@ -57,7 +75,7 @@ if(!function_exists('cg_ecommerce_sale_deactivate')){
 			cg1l_create_last_updated_time_file_image_data($GalleryID);
 
 			// if $isAllWpUploadsSuccessfulMoved then ecommerce entry folder can be finally removed, so no empty folder then
-			if($isAllWpUploadsSuccessfulMoved){
+			if($isAllWpUploadsSuccessfulMoved && empty($ecommerceEntry->DownloadKeysCsvName) && empty($ecommerceEntry->ServiceKeysCsvName)){
 				$ecommerceEntryFolder = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/ecommerce/real-id-'.$realId;
 				cg_remove_folder_recursively($ecommerceEntryFolder);
 			}

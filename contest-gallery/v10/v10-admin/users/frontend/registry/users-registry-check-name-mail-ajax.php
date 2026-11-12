@@ -68,7 +68,7 @@ if($cg_check==$galleryHashToCompare){
 
     $cg_main_mail = sanitize_email(strtolower($_POST['cg-main-mail']));
 
-    if (empty($cg_main_mail) || is_email($cg_main_mail) == false) {// email has to be always
+    if (!cg_is_valid_email($cg_main_mail)) {// email has to be always
         ?>
         <script  data-cg-processing="true"  data-cg-processing-error="true">
             var cg_error = cgJsClass.gallery.vars.$regFormContainer.find('#cg_check_email_upload').val();

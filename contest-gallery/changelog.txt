@@ -1,5 +1,11 @@
 Contest Gallery
 
+= 34.0.5 =
+* NEW: Offer products at a reduced price with the regular price shown alongside.
+* NEW: Offer products for free. Orders with a zero total, including shipping, can be completed without a payment provider.
+* IMPROVED: Set up products directly from gallery entries with a compact sales card.
+* NEW: Try download and service sales with PayPal or Stripe sandbox checkout. Prepared test products stay in sandbox until activated live.
+
 = 34.0.4 =
 * IMPROVED: Full-window scrolling, touch controls and browser back navigation.
 * IMPROVED: Faster image previews, smoother gallery loading and larger touch targets.

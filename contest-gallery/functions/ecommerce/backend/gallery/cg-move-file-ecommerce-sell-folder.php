@@ -472,8 +472,14 @@ if(!function_exists('cg_ecommerce_store_key_upload')){
             !cg_create_htaccess_ecommerce_sale_folder_if_not_exists($dir)){
             cg_ecommerce_key_upload_fail(500);
         }
-        if(@file_put_contents($target,$upload['content'],LOCK_EX) !== strlen($upload['content'])){
-            cg_ecommerce_key_upload_fail(500);
+        $keyLock = cg_ecommerce_lock_key_file($target);
+        if(!$keyLock){cg_ecommerce_key_upload_fail(500);}
+        try{
+            if(@file_put_contents($target,$upload['content'],LOCK_EX) !== strlen($upload['content'])){
+                cg_ecommerce_key_upload_fail(500);
+            }
+        }finally{
+            cg_ecommerce_unlock_key_file($keyLock);
         }
         return $upload['name'];
     }

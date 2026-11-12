@@ -1,51 +1,77 @@
 jQuery(document).ready(function ($) {
 
 
-    $(document).on('click','#cgActivateSaleOption',function () {
-        var $cgSellContainer = $('#cgSellContainer');
-        var wasActiveForSale = ($cgSellContainer.find('#cgSellForm').attr('data-cg-was-active-for-sale') == '1');
-        setTimeout(function (){// has to be done with timeout so works correctly
-            if($cgSellContainer.find('#cgActivateSale').prop('checked')){
-                $cgSellContainer.find('.cg_sale_conf,#cgSellWatermarkPreview').removeClass('cg_disabled cg_disabled_background_color_e0e0e0');
-                $cgSellContainer.find('#cgSellContainerSubmitButtonContainer').removeClass('cg_disabled_background_color_e0e0e0');
-                if($cgSellContainer.find('#IsAlternativeShipping').prop('checked')==true){
-                    $cgSellContainer.find('#ShippingContainer').removeClass('cg_disabled cg_disabled_background_color_e0e0e0');
-                }
-            }else{
-                $cgSellContainer.find('.cg_sale_conf,#ShippingContainer,#cgSellWatermarkPreview').addClass('cg_disabled cg_disabled_background_color_e0e0e0');
-                if(wasActiveForSale){
-                    $cgSellContainer.find('#cgSellContainerSubmitButtonContainer').removeClass('cg_disabled_background_color_e0e0e0');
-                }else{
-                    $cgSellContainer.find('#cgSellContainerSubmitButtonContainer').addClass('cg_disabled_background_color_e0e0e0');
-                }
-                if(!$('#cgServiceKeysFileRemoveNote').hasClass('cg_hide') && !$('#cgDownloadKeysFileRemoveNote').hasClass('cg_hide')){
-                    $('#cgDownloadAndServiceKeyFilesWillBeDeleted').removeClass('cg_hide');
-                }else if(!$('#cgDownloadKeysFileRemoveNote').hasClass('cg_hide')){
-                    $('#cgDownloadKeyFilesWillBeDeleted').removeClass('cg_hide');
-                }else if(!$('#cgServiceKeysFileRemoveNote').hasClass('cg_hide')){
-                    $('#cgServiceKeyFilesWillBeDeleted').removeClass('cg_hide');
-                }
-                //$('#cgBackendBackgroundDrop').addClass('cg_high_overlay');
-            }
-            cgJsClassAdmin.gallery.functions.setForSellButtonLabel($cgSellContainer);
-        },100);
+    $(document).on('click','#cgDeactivateSale',function () {
+        var $container = $('#cgSellContainer');
+        if($container.find('#cgSellForm').attr('data-cg-was-active-for-sale') !== '1'){return;}
+        var $entry = cgJsClassAdmin.gallery.vars.$sortableDiv;
+        $container.find('#cgSellDeactivateDownloadNote').toggleClass('cg_hide',$entry.find('.SaleType').val() !== 'download');
+        $container.find('#cgSellDeactivateKeysNote').toggleClass('cg_hide',!$entry.find('.cg_download_keys_csv_name,.cg_service_keys_csv_name').length);
+        $container.find('#cgSellActions').addClass('cg_hide');
+        $container.find('#cgSellDeactivateConfirmation').removeClass('cg_hide');
+        $(this).attr('aria-expanded','true');
+        $container.find('#cgCancelDeactivateSale').trigger('focus');
+        $container.stop(true).scrollTop($container[0].scrollHeight);
     });
-
+    $(document).on('click','#cgCancelDeactivateSale',function () {
+        var $container = $('#cgSellContainer');
+        $container.find('#cgSellDeactivateConfirmation').addClass('cg_hide');
+        $container.find('#cgSellActions').removeClass('cg_hide');
+        $container.find('#cgDeactivateSale').attr('aria-expanded','false').trigger('focus');
+    });
+    $(document).on('click','#cgConfirmDeactivateSale',function () {
+        var $form = $(this).closest('form');
+        if($form.attr('data-cg-was-active-for-sale') !== '1' || $form.find('#cgSellDeactivateConfirmation').hasClass('cg_hide')){return;}
+        // Deactivation needs only identity and authorization, never incomplete product fields.
+        var formPostData = new FormData();
+        ['action','cgGalleryHash','cgSellContainer[GalleryID]','cgSellContainer[realId]'].forEach(function(name){
+            formPostData.append(name,$form.find('[name="'+name+'"]').val());
+        });
+        formPostData.append('cgSellContainer[saleAction]','deactivate');
+        cgJsClassAdmin.gallery.functions.submitSaleForm($form,formPostData);
+    });
+    $(document).on('submit','#cgSellForm',function(e){
+        e.preventDefault();
+        if($(this).find('#cgSellDeactivateConfirmation').hasClass('cg_hide')){
+            $(this).find('#cgSetForSell').trigger('click');
+        }
+    });
 
     $(document).on('click','#cgSetForSell',function (e) {
         e.preventDefault();
 
         var $form = $(this).closest('form');
-        var saleAction = cgJsClassAdmin.gallery.functions.getSetForSellSaleAction($form);
-        if(!saleAction){
+        if(!$form.find('#cgSellDeactivateConfirmation').hasClass('cg_hide')){return;}
+        $form.find('#cgSellActionError,#cgSellPriceError,#cgSellFilesError').addClass('cg_hide');
+        var freeOffer = $form.find('#cgOfferForFree').prop('checked');
+        var priceInput = $.trim($form.find('#cgSellPrice').val());
+        var divider = cgJsClassAdmin.gallery.currencyInputFunctions.priceDivider;
+        var normalizedPrice = priceInput.split(divider === ',' ? '.' : ',').join('').replace(',','.');
+        if(!freeOffer && (!/^\d+(?:\.\d{1,2})?$/.test(normalizedPrice) || !(parseFloat(normalizedPrice) > 0))){
+            cgJsClassAdmin.gallery.functions.showSaleError('Enter a price greater than 0 or choose Offer for free.','#cgSellPriceError');
             return;
         }
-        $form.find('#cgSellAction').val(saleAction);
+        var reducedOffer = $form.find('#cgOfferReducedPrice').prop('checked');
+        var normalizedReducedPrice = $.trim($form.find('#cgSellReducedPrice').val()).split(divider === ',' ? '.' : ',').join('').replace(',','.');
+        if(normalizedReducedPrice === '' || /^0+(?:\.0{1,2})?$/.test(normalizedReducedPrice)){
+            reducedOffer = false;
+        }
+        if(reducedOffer && (freeOffer || !/^\d+(?:\.\d{1,2})?$/.test(normalizedReducedPrice) || !(Number(normalizedReducedPrice) > 0 && Number(normalizedReducedPrice) < Number(normalizedPrice)))){
+            var errorText = 'Enter a reduced price greater than 0 and lower than the regular price.';
+            cgJsClassAdmin.gallery.functions.showSaleError(errorText,'#cgSellPriceError');
+            return;
+        }
+        $form.find('.cg_key_upload:visible').trigger('change');
+        if($form.find('.cg_key_upload_option .cg_error:visible').length){
+            cgJsClassAdmin.gallery.functions.scrollToSaleError();
+            return;
+        }
+        if(freeOffer){$form.find('#cgSellPrice').val('0');}
+        $form.find('#cgSellAction').val('activate');
 
-        var id = cgJsClassAdmin.gallery.vars.$sortableDiv.attr('data-cg-real-id');
         var TaxEntry = $form.find('#Tax').val();
         var realId = $form.find('#cgRealId').val();
-        var isDownloadSaleActive = ($form.find('.SaleType_download').prop('checked') && $form.find('#cgActivateSale').prop('checked'));
+        var isDownloadSaleActive = ($form.find('.SaleType_download').prop('checked'));
         var base64andAltFileValues = cgJsClassAdmin.gallery.vars.base64andAltFileValues || {};
         var base64andAltFileTypes = cgJsClassAdmin.gallery.vars.base64andAltFileTypes || {};
         var base64andAltFileValuesForRealId = base64andAltFileValues[realId] || {};
@@ -56,13 +82,23 @@ jQuery(document).ready(function ($) {
         // required correction here
         $form.find('.cg_file_container.cg_is_embed .cg_file_checkbox.cg_checked').removeClass('cg_checked').addClass('cg_unchecked');
 
-        if($form.find('.SaleType_download').prop('checked') && !$form.find('.cg_file_container:not(.cg_is_embed) .cg_file_checkbox.cg_checked').length  && $form.find('#cgActivateSale').prop('checked')){
-            $('#cgNoFilesForSaleDownload').removeClass('cg_hide').addClass('cg_active');
-            $('#cgBackendBackgroundDrop').addClass('cg_high_overlay');
+        if(isDownloadSaleActive && !$form.find('.cg_file_container:not(.cg_is_embed):not(.cg_is_entry_watermarked):not(.cg_is_sale_owned_elsewhere) .cg_file_checkbox.cg_checked').length){
+            cgJsClassAdmin.gallery.functions.showSaleError('Select at least one available download file. Add a file or remove its existing watermark if needed.','#cgSellFilesError');
             return;
         }
 
         if(isDownloadSaleActive){
+            var vars = cgJsClassAdmin.gallery.vars;
+            var failed = false, pending = false;
+            $form.find('.cg_file_container .cg_file_checkbox.cg_checked').each(function(){
+                var uploadId = $(this).closest('.cg_file_container').attr('data-cg-wp-upload');
+                failed = failed || !!(vars.salePreviewFailures && vars.salePreviewFailures[uploadId]);
+                pending = pending || !!(vars.salePreviewJobs && vars.salePreviewJobs[uploadId]);
+            });
+            if(failed || pending){
+                cgJsClassAdmin.gallery.functions.showSaleError(pending ? 'The watermark preview is still processing. Wait a moment, then save again.' : 'The watermark preview could not be prepared. Reopen Sales settings and try again.','#cgSellFilesError');
+                return;
+            }
             var isWatermarkProcessing = !$form.find('#cgSellWatermarkPreview').hasClass('cg_hide') && !$form.find('#cgSellPreviewContainerLoader').hasClass('cg_hide');
             var isNewWatermarkDataMissing = false;
 
@@ -77,25 +113,18 @@ jQuery(document).ready(function ($) {
                 }
             });
 
-            if(isWatermarkProcessing || isNewWatermarkDataMissing){
-                cgJsClassAdmin.gallery.functions.setAndAppearBackendGalleryDynamicMessage('Watermark is still processing. Please try again shortly.',true);
+            if(isWatermarkProcessing || cgJsClassAdmin.gallery.vars.saleDraftWatermarkPending){
+                cgJsClassAdmin.gallery.functions.showSaleError('The watermark preview is still processing. Wait a moment, then save again.','#cgSellFilesError');
+                return;
+            }
+            if(isNewWatermarkDataMissing){
+                cgJsClassAdmin.gallery.functions.showSaleError('The watermark preview could not be prepared. Reopen Sales settings and try again.','#cgSellFilesError');
                 return;
             }
         }
 
-        var $sortableDiv = cgJsClassAdmin.gallery.vars.$sortableDiv;
+        // Keep the rendered entry unchanged until the server saves and reloads it.
         var $cgSellContainer = $('#cgSellContainer');
-
-        $sortableDiv.find('.Price').val($form.find('[name="PriceResult"]').val());
-        $sortableDiv.find('.PriceDivider').val($form.find('[name="PriceResult"]').val());
-        $sortableDiv.find('.WatermarkPosition').val($form.find('[name="WatermarkPosition"]').val());
-        $sortableDiv.find('.WatermarkTitle').val($form.find('[name="WatermarkTitle"]').val());
-        $sortableDiv.find('.WatermarkSize').val($form.find('[name="WatermarkSize"]').val());
-        $sortableDiv.find('.SaleTitle').val($form.find('[name="SaleTitle"]').val());
-        $sortableDiv.find('.SaleDescription').val($form.find('[name="SaleDescription"]').val());
-        $sortableDiv.find('.CurrencyShort').val($form.find('[name="CurrencyShort"]').val());
-        $sortableDiv.find('.CurrencyPosition').val($form.find('[name="CurrencyPosition"]').val());
-        $sortableDiv.find('.MaxUploads').val($form.find('[name="MaxUploads"]').val());
 
         if($cgSellContainer.find('#wp-cgAllUploadsUsedText-wrap').hasClass('html-active')){
             //$cgSellContainer.find('#cgAllUploadsUsedText').val(tinymce.get('cgAllUploadsUsedText').getContent());
@@ -116,15 +145,6 @@ jQuery(document).ready(function ($) {
         // have to be done manually here, don't know why
         //$('#cgSaleDescription').val(tinyMCE.get('cgSaleDescription').getContent());
 
-        var $cgSellPrice = jQuery('#cgSellPrice');
-
-        if($cgSellPrice.val()!=''){
-            var input_val = $cgSellPrice.val();
-            var decimal_pos = input_val.indexOf(cgJsClassAdmin.gallery.currencyInputFunctions.priceDivider);
-            input_val = cgJsClassAdmin.gallery.currencyInputFunctions.correctInputVal(decimal_pos,input_val,true);
-            $cgSellPrice.val(input_val);
-        }
-
         var $Tax = jQuery('#Tax');
 
         if($Tax.val()!=''){
@@ -144,12 +164,10 @@ jQuery(document).ready(function ($) {
 
         var form = $form.get(0);
         var formPostData = new FormData(form);
-        if(typeof formPostData.set == 'function'){
-            formPostData.set('cg_nonce', CG1LBackendNonce.nonce);
-        }else{
-            formPostData.append('cg_nonce', CG1LBackendNonce.nonce);
-        }
-
+        // Normalize request values without changing the displayed inputs after a failed save.
+        formPostData.set('cgSellContainer[PriceResult]',freeOffer ? '0' : normalizedPrice);
+        formPostData.set('cgSellContainer[HasReducedPrice]',reducedOffer ? '1' : '0');
+        formPostData.set('cgSellContainer[ReducedPrice]',reducedOffer ? normalizedReducedPrice : '');
         var firstBase64OrFile;
         var firstBase64OrFileType;
 
@@ -226,25 +244,7 @@ jQuery(document).ready(function ($) {
             formPostData.append('cgSellContainer[removedWpUploadIdsFromSale][]', WpUploadValue);
         });
 
-        $('#cgSellFormLoaderContainer').removeClass('cg_hide');
-        $form.addClass('cg_hide');
-
-        cgJsClassAdmin.gallery.vars.ecommerce = cgJsClassAdmin.gallery.vars.ecommerce || {};
-        cgJsClassAdmin.gallery.vars.ecommerce.activateSale = cgJsClassAdmin.gallery.vars.ecommerce.activateSale || {};
-        cgJsClassAdmin.gallery.vars.ecommerce.activateSale.id = id;
-
-        cgJsClassAdmin.gallery.vars.ecommerce.activateSale.formPostData = formPostData;
-
-        cgJsClassAdmin.gallery.functions.insertLoaderBeforeSortableDiv();
-
-        $('body').addClass('cg_pointer_events_none cg_overflow_y_hidden');
-
-        // disable delete if set for delete
-        cgJsClassAdmin.gallery.vars.$sortableDiv.find('.cg_delete').prop('disabled',true);
-
-        // loader here also
-        $('#cgSellContainer .cg_message_close').click();
-        cgJsClassAdmin.gallery.reload.entry(id,true,true);
+        cgJsClassAdmin.gallery.functions.submitSaleForm($form,formPostData);
 
     });
 

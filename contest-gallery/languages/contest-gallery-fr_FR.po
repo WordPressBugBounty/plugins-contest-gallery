@@ -3096,3 +3096,112 @@ msgstr "Évaluations et commentaires"
 #: check-language-ecommerce.php
 msgid "Settings path"
 msgstr "Chemin des paramètres"
+
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Free"
+msgstr "Gratuit"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Get for free"
+msgstr "Obtenir gratuitement"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Order now"
+msgstr "Commander maintenant"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Place free order"
+msgstr "Passer une commande gratuite"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Placing order…"
+msgstr "Commande en cours…"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "The order could not be completed. Please try again."
+msgstr "La commande n’a pas pu être finalisée. Veuillez réessayer."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Enter a valid email address and complete the required fields and agreements."
+msgstr "Saisissez une adresse e-mail valide, remplissez les champs obligatoires et acceptez les accords requis."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "The order was created, but its confirmation could not be saved. Please contact the site administrator."
+msgstr "La commande a été créée, mais sa confirmation n’a pas pu être enregistrée. Veuillez contacter l’administration du site."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Your cart is empty."
+msgstr "Votre panier est vide."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Please reload the checkout."
+msgstr "Veuillez recharger la page de commande."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Please reload the gallery before ordering."
+msgstr "Veuillez recharger la galerie avant de commander."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "This product is no longer available."
+msgstr "Ce produit n’est plus disponible."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "The cart has changed. Please reload the checkout."
+msgstr "Le panier a changé. Veuillez recharger la page de commande."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "This product has not been offered for free."
+msgstr "Ce produit n’est pas proposé gratuitement."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Please sign in before ordering."
+msgstr "Veuillez vous connecter avant de commander."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "The order summary page is not configured."
+msgstr "La page récapitulative de la commande n’est pas configurée."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "The order confirmation email is not configured."
+msgstr "L’e-mail de confirmation de commande n’est pas configuré."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Please enable cookies and reload the checkout."
+msgstr "Veuillez activer les cookies et recharger la page de commande."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Please reopen the checkout."
+msgstr "Veuillez rouvrir la page de commande."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Your order is being processed. Please wait."
+msgstr "Votre commande est en cours de traitement. Veuillez patienter."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "This order is already being processed. Please check your order confirmation before trying again."
+msgstr "Cette commande est déjà en cours de traitement. Vérifiez votre confirmation de commande avant de réessayer."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Please accept the checkout agreements."
+msgstr "Veuillez accepter les accords de la commande."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Complete the shipping address."
+msgstr "Complétez l’adresse de livraison."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Select an allowed shipping country."
+msgstr "Sélectionnez un pays de livraison autorisé."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Select a shipping state."
+msgstr "Sélectionnez un état ou une région de livraison."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Sandbox checkout is available only to administrators or through a valid Paid Actions sandbox link."
+msgstr "La commande en environnement de test est réservée aux administrateurs ou aux utilisateurs d’un lien de test Paid Actions valide."
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Available in test mode. Live purchases require PRO."
+msgstr "Disponible en mode test. Les achats réels nécessitent PRO."

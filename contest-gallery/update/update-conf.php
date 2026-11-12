@@ -433,6 +433,8 @@ $cgUpdateColumns = array(
         'StripeTestActive' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 16.03.2025
     ),
     $tablename_ecommerce_entries => array(
+        'RegularPrice' => array('COLUMN_TYPE' => 'DECIMAL(65,2)','DEFAULT' => 0),
+        'IsFree' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),
         'MaxUploads' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 03.06.2024
         'AllUploadsUsedText' => array('COLUMN_TYPE' => 'TEXT','DEFAULT' => '""'),// Update 03.06.2024
         'IsUpload' => array('COLUMN_TYPE' => 'TINYINT','DEFAULT' => 0),// Update 03.06.2024

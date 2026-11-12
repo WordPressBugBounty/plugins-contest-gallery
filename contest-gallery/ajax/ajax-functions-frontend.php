@@ -1194,7 +1194,7 @@ if(!function_exists('post_cg1l_pin_access_request')){
             wp_send_json_success(array('alreadyLoggedIn'=>true));
         }
         $email = isset($_POST['email']) ? sanitize_email(strtolower(wp_unslash($_POST['email']))) : '';
-        if(!is_email($email)){
+        if(!cg_is_valid_email($email)){
             wp_send_json_error(array('message'=>'Enter a valid email address.','code'=>'cg_pin_invalid_email'),400);
         }
         $result = cg_pin_auth_request($email,'users-pin-access',array('source'=>'users-pin-access'));

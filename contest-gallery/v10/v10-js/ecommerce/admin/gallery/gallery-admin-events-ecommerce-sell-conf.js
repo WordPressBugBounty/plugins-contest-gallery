@@ -1,4 +1,41 @@
 jQuery(document).ready(function ($) {
+    var defaultPaidPrice = '10';
+    function updateFreePrice($scope, isFree) {
+        var $price = $scope.find('#cgSellPrice');
+        if(isFree){
+            $scope.find('#cgOfferReducedPrice').prop('checked',false);
+            updateReducedPrice($scope,false);
+            if(!$price.data('cg-free-active')){$price.data('cg-paid-price',$price.val());}
+            $price.val('0');
+        }else if($price.data('cg-free-active')){
+            var paidPrice = $.trim($price.data('cg-paid-price') || '');
+            var divider = cgJsClassAdmin.gallery.currencyInputFunctions.priceDivider;
+            var normalizedPrice = paidPrice.split(divider === ',' ? '.' : ',').join('').replace(',','.');
+            $price.val(/^\d+(?:\.\d{1,2})?$/.test(normalizedPrice) && Number(normalizedPrice) > 0 ? paidPrice : defaultPaidPrice);
+            cgJsClassAdmin.gallery.currencyInputFunctions.setCurNew($price,true);
+        }
+        $price.data('cg-free-active',isFree);
+        $scope.find('#cgSellPrice').toggleClass('cg_hide',isFree);
+        $scope.find('#cgSellFreeValue,#cgSellFreeMembersNote').toggleClass('cg_hide',!isFree);
+        $scope.find('#cgSellPriceError').addClass('cg_hide');
+    }
+    function updateReducedPrice($scope,isReduced){
+        if(isReduced && $scope.find('#cgOfferForFree').prop('checked')){
+            $scope.find('#cgOfferForFree').prop('checked',false).trigger('change');
+        }
+        $scope.find('#cgSellReducedPriceField').toggleClass('cg_hide',!isReduced);
+        $scope.find('#cgSellMainPriceLabel').text(isReduced ? 'Regular price' : 'Price');
+        $scope.find('#cgSellPriceError,#cgSellActionError').addClass('cg_hide');
+    }
+    $(document).on('change','#cgOfferReducedPrice',function(){updateReducedPrice($('#cgSellContainer'),this.checked);});
+    $(document).on('click','#SaleType_download_option_container,#SaleType_shipping_option_container,#SaleType_service_option_container,#SaleType_upload_option_container',function(){
+        var $scope = $('#cgSellContainer');
+        setTimeout(function(){cgJsClassAdmin.gallery.functions.syncSaleFileAvailability($scope);},0);
+        var isUpload = this.id === 'SaleType_upload_option_container';
+        $scope.find('.cg_offer_reduced_label').toggleClass('cg_hide',isUpload);
+        if(isUpload){$scope.find('#cgOfferReducedPrice').prop('checked',false).trigger('change');}
+    });
+    $(document).on('change','#cgOfferForFree',function(){updateFreePrice($('#cgSellContainer'),this.checked);});
 
     $(document).on('change','#UploadGallery',function (e) {
         var $cgSellContainer = $('#cgSellContainer');
@@ -9,22 +46,22 @@ jQuery(document).ready(function ($) {
         e.preventDefault();
 
         var $sortableDiv = cgJsClassAdmin.gallery.vars.$sortableDiv;
-        $('#cgSellContainerFadeBackground').addClass('cg_hide').removeClass('cg_active');
-        $('#cgSellContainer').addClass('cg_hide');
-
-        if($sortableDiv && $sortableDiv.length){
-            if(cgJsClassAdmin.gallery.entryWatermark && cgJsClassAdmin.gallery.entryWatermark.open){
-                cgJsClassAdmin.gallery.entryWatermark.open($sortableDiv);
-            }else{
-                $sortableDiv.find('.cg_entry_watermark').first().click();
+        cgJsClassAdmin.gallery.saleEdit.close(false,function(){
+            if($sortableDiv && $sortableDiv.length){
+                if(cgJsClassAdmin.gallery.entryWatermark && cgJsClassAdmin.gallery.entryWatermark.open){
+                    cgJsClassAdmin.gallery.entryWatermark.open($sortableDiv);
+                }else{
+                    $sortableDiv.find('.cg_entry_watermark').first().click();
+                }
             }
-        }
+        });
     });
 
     $(document).on('click','#cgSellContainer .cg_file_container',function (e) {
+        if($(e.target).closest('.cg_sale_owner_link').length){return;}
         e.preventDefault();
         debugger
-        if($(this).hasClass('cg_is_embed') || $(this).hasClass('cg_is_entry_watermarked')){
+        if($(this).hasClass('cg_is_embed') || $(this).hasClass('cg_is_entry_watermarked') || $(this).hasClass('cg_is_sale_owned_elsewhere')){
             return;
         }
 
@@ -41,6 +78,9 @@ jQuery(document).ready(function ($) {
             ($(this).find('.cg_checked').length && (!isWatermarkSupported || order==visibleWatermarkedImageOrder)) ||
             ($(this).find('.cg_checked').length && !$(this).hasClass('cg_file_img_container'))
         ){// then unset
+            if($form.find('.cg_file_container:not(.cg_is_embed):not(.cg_is_entry_watermarked):not(.cg_is_sale_owned_elsewhere) .cg_file_checkbox.cg_checked').length <= 1){
+                return;
+            }
             $(this).find('.cg_checked').removeClass('cg_checked').addClass('cg_unchecked');
             if(($(this).attr('data-cg-type')=='image' || $(this).attr('data-cg-is-image')=='1') && isWatermarkSupported){
                 delete cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['on'];
@@ -71,7 +111,9 @@ jQuery(document).ready(function ($) {
                 $form.find('#cgWatermarkInputTitle').val(cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['WatermarkTitle']);
                 debugger
                 $form.find('#cgSellWatermarkPreview').removeClass('cg_hide');
-                cgJsClassAdmin.gallery.watermark(cgJsClassAdmin.gallery.vars.backgroundUrlToSell,cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['WatermarkPosition'],cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['WatermarkTitle'],cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['WatermarkSize'],false,true,order,undefined,undefined);
+                if(!cgJsClassAdmin.gallery.functions.showSavedSaleWatermarkPreview($(this))){
+                    cgJsClassAdmin.gallery.watermark(cgJsClassAdmin.gallery.vars.backgroundUrlToSell,cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['WatermarkPosition'],cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['WatermarkTitle'],cgJsClassAdmin.gallery.vars.WatermarkSettings[WpUpload]['WatermarkSize'],false,true,order,undefined,undefined);
+                }
             }
             debugger
             if(cgJsClassAdmin.gallery.vars.WpUploadFilesForSaleArrayLoaded.indexOf(WpUpload)>-1 && cgJsClassAdmin.gallery.vars.removedWpUploadIdsFromSale.indexOf(WpUpload)>-1){
@@ -126,13 +168,16 @@ jQuery(document).ready(function ($) {
         var file = $field[0].files[0];
 
         if(!file){
+            $field.attr('name','cgSellContainer['+$field.attr('id')+']');
+            if($('#cg'+type+'KeysFileRemoveWasClicked').val()!=1){
+                $('#cgRemove'+type+'KeysFileInput').val(0);
+            }
             return;
         }
 
-        var fileType = file.type;
         var fileSize = file.size;
 
-        if(fileType!='text/csv'){
+        if(!/\.csv$/i.test(file.name)){
             $cg_view_option.find('.cg_key_upload_error_not_csv').removeClass('cg_hide');
             $field.removeAttr('name');
             if($('#cg'+type+'KeysFileRemoveWasClicked').val()!=1){
@@ -174,6 +219,7 @@ jQuery(document).ready(function ($) {
             if(!cgJsClassAdmin.gallery.vars.WatermarkSettings){
                 cgJsClassAdmin.gallery.functions.initWatermarkSettings($,$cgSellContainer,$sortableDiv,realId);
             }
+            cgJsClassAdmin.gallery.functions.ensureDownloadSaleFile($cgSellContainer);
 
             // will be done via click on cg_file_checkbox if firstCheckedImageOrder exists
             //cgJsClassAdmin.gallery.watermarkOnShow($,realId,cgJsClassAdmin.gallery.vars.$sortableDiv,undefined,$(this).closest('#cgSellContainer'));
@@ -263,6 +309,7 @@ jQuery(document).ready(function ($) {
         }
         debugger
         var $cgSellContainer = $('#cgSellContainer');
+        cgJsClassAdmin.gallery.saleEdit.reset();
         cgJsClassAdmin.gallery.vars.WatermarkSettings = null; // has to be completely  reseted here
         var $cgSellSelectFilesForSaleSelectContainer = $cgSellContainer.find('#cgSellSelectFilesForSaleSelectContainer');
         if(cgJsClassAdmin.gallery.vars.isNewAddedEcommerceImageForDownload && false){
@@ -289,6 +336,13 @@ jQuery(document).ready(function ($) {
         cgJsClassAdmin.gallery.vars.ecommerceWatermarkInitiated = false;
         cgJsClassAdmin.gallery.vars.$sortableDiv = $(this).closest('.cg_sortable_div');
         var $sortableDiv = cgJsClassAdmin.gallery.vars.$sortableDiv;
+        var saleDraft = cgJsClassAdmin.gallery.functions.applySaleDraft($sortableDiv);
+        cgJsClassAdmin.gallery.vars.salePreviewGeneration = (cgJsClassAdmin.gallery.vars.salePreviewGeneration || 0)+1;
+        cgJsClassAdmin.gallery.vars.saleDraftFilesPrepared = false;
+        cgJsClassAdmin.gallery.vars.salePreviewJobs = {};
+        cgJsClassAdmin.gallery.vars.salePreviewFailures = {};
+        cgJsClassAdmin.gallery.vars.saleDraftWatermarkPending = false;
+        $cgSellContainer.find('#cgSellActionError,#cgSellFilesError').empty().addClass('cg_hide');
         $cgSellContainer.find('#UploadContainerRow').addClass('cg_hide');
         cgJsClassAdmin.gallery.functions.setMultipleFilesForPostBeforeClone(undefined,$sortableDiv.find('.cg_backend_info_container'));
 
@@ -348,10 +402,13 @@ jQuery(document).ready(function ($) {
         //CHECK if Ecommerce --- END
 
         var realId = $sortableDiv.find('.cg_real_id').val();
+        // Discard image edits from a previously closed dialog before loading the saved sale.
+        cgJsClassAdmin.gallery.vars.base64andAltFileValues[realId] = {};
+        cgJsClassAdmin.gallery.vars.base64andAltFileTypes[realId] = {};
         var saleType = $sortableDiv.find('.SaleType').val();
         if(!saleType){
-            saleType = 'shipping';
-            cgJsClassAdmin.gallery.functions.addRemoveCgProFalse($cgSellContainer,true);
+            saleType = $sortableDiv.find('.cg_entry_sale_card').attr('data-cg-default-sale-type') || 'shipping';
+            cgJsClassAdmin.gallery.functions.addRemoveCgProFalse($cgSellContainer,saleType === 'shipping');
         }else{
             cgJsClassAdmin.gallery.functions.addRemoveCgProFalse($cgSellContainer);
         }
@@ -458,18 +515,14 @@ jQuery(document).ready(function ($) {
         var isActiveForSale = ($sortableDiv.find('.cg_ecommerce_entry').val()!=0);
         $cgSellContainerForm.attr('data-cg-was-active-for-sale', (isActiveForSale ? '1' : '0'));
 
-        if(isActiveForSale){
-            $cgSellContainer.find('#cgActivateSaleOption .cg_view_option_checkbox').addClass('cg_view_option_checked').removeClass('cg_view_option_unchecked');// has to be done at the beginning
-            $cgSellContainer.find('#cgActivateSaleOption #cgActivateSale').prop('checked',true);
-            $cgSellContainer.find('.cg_sale_conf').removeClass('cg_disabled cg_disabled_background_color_e0e0e0');
-            $cgSellContainer.find('#cgSellContainerSubmitButtonContainer').removeClass('cg_disabled_background_color_e0e0e0');
-        }else{
-            isNotActivatedForSale = true;
-            $cgSellContainer.find('#cgActivateSaleOption .cg_view_option_checkbox').addClass('cg_view_option_unchecked').removeClass('cg_view_option_checked');// has to be done at the beginning
-            $cgSellContainer.find('#cgActivateSaleOption #cgActivateSale').prop('checked',false);
-            $cgSellContainer.find('.cg_sale_conf').addClass('cg_disabled cg_disabled_background_color_e0e0e0');
-            $cgSellContainer.find('#cgSellContainerSubmitButtonContainer').addClass('cg_disabled_background_color_e0e0e0');
-        }
+        isNotActivatedForSale = !isActiveForSale && !saleDraft.SaleType;
+        $cgSellContainer.find('.cg_sale_conf,#cgSellWatermarkPreview').removeClass('cg_disabled cg_disabled_background_color_e0e0e0');
+        $cgSellContainer.find('#cgSellContainerSubmitButtonContainer').removeClass('cg_disabled_background_color_e0e0e0');
+        $cgSellContainer.find('#cgSellActions').removeClass('cg_hide');
+        $cgSellContainer.find('#cgSellDeactivateConfirmation').addClass('cg_hide');
+        $cgSellContainer.find('#cgDeactivateSale').attr('aria-expanded','false');
+        $cgSellContainer.find('#cgSellAction').val('');
+        var savedType = $sortableDiv.find('.SaleType').val();
 
         $cgSellContainer.find('#cgDownloadKeysFileRemoveWasClicked').val(0);
         if($sortableDiv.find('.cg_download_keys_csv_url').length){
@@ -492,25 +545,31 @@ jQuery(document).ready(function ($) {
             $cgSellContainer.find('#cgServiceKeysFileRemoveNote').addClass('cg_hide');
         }
 
-        var placeholderValue = 49.99;
-        if(cgJsClassAdmin.gallery.currencyInputFunctions.priceDivider == ','){
-            placeholderValue = '49,99';
+        // Sale settings always use the saved entry or restored draft. The card is display-only.
+        // Seed a missing paid price in the dialog only. Existing positive prices and free offers stay intact.
+        var priceToSet = $.trim($sortableDiv.find('.Price').val() || '');
+        if(!isActiveForSale && !saleDraft.SaleType){priceToSet = '';}
+        var regularPrice = $.trim($sortableDiv.find('.RegularPrice').val() || '0');
+        var isReducedProduct = Number(regularPrice) > Number(priceToSet) && Number(priceToSet) > 0;
+        var reducedPriceToSet = isReducedProduct ? priceToSet : '';
+        if(isReducedProduct){priceToSet = regularPrice;}
+        var isPriceValid = /^\d+(?:[.,]\d{1,2})?$/.test(priceToSet);
+        var isFreeProduct = $sortableDiv.find('.IsFree').val() == '1';
+        if(!isFreeProduct && (!isPriceValid || !(Number(priceToSet.replace(',','.')) > 0))){
+            priceToSet = defaultPaidPrice;
+            isPriceValid = true;
         }
-        debugger
-        if($sortableDiv.find('.Price').val()!='0'){
-            if(cgJsClassAdmin.gallery.currencyInputFunctions.priceDivider=='.'){
-                var valueToSet = $sortableDiv.find('.Price').val().split('.');
-                valueToSet = cgJsClassAdmin.gallery.currencyInputFunctions.codepenFormat(valueToSet[0])+'.'+valueToSet[1];
-            }else{
-                var valueToSet = $sortableDiv.find('.Price').val().split('.');
-                valueToSet = cgJsClassAdmin.gallery.currencyInputFunctions.codepenFormat(valueToSet[0])+','+valueToSet[1];
-            }
-            $cgSellContainer.find('#cgSellPrice').val(valueToSet);
-        }else{
-            $cgSellContainer.find('#cgSellPrice').val(placeholderValue);
-        }
-        debugger
-        cgJsClassAdmin.gallery.currencyInputFunctions.setCurNew($cgSellContainer.find('#cgSellPrice'),true);
+        var $sellPrice = $cgSellContainer.find('#cgSellPrice');
+        $sellPrice.removeData('cg-free-active').removeData('cg-paid-price');
+        $sellPrice.val(isPriceValid ? priceToSet.replace(/[.,]/,cgJsClassAdmin.gallery.currencyInputFunctions.priceDivider) : priceToSet);
+        if(isPriceValid){cgJsClassAdmin.gallery.currencyInputFunctions.setCurNew($sellPrice,true);}
+        $cgSellContainer.find('#cgOfferForFree').prop('checked',!!isFreeProduct).trigger('change');
+        var $reducedPrice = $cgSellContainer.find('#cgSellReducedPrice');
+        $reducedPrice.val(reducedPriceToSet.replace(/[.,]/,cgJsClassAdmin.gallery.currencyInputFunctions.priceDivider));
+        if(/^\d+(?:[.,]\d{1,2})?$/.test(reducedPriceToSet)){cgJsClassAdmin.gallery.currencyInputFunctions.setCurNew($reducedPrice,true);}
+        $cgSellContainer.find('#cgOfferReducedPrice').prop('checked',!!isReducedProduct && !isFreeProduct).trigger('change');
+        $cgSellContainer.find('.cg_offer_reduced_label').toggleClass('cg_hide',savedType === 'upload');
+        $cgSellContainer.find('#cgSellPriceError').text('Enter a price greater than 0 or choose Offer for free.').toggleClass('cg_hide',!!isFreeProduct || !savedType || (isPriceValid && parseFloat(priceToSet.replace(',','.')) > 0));
 
         $cgSellContainer.find('#cgSaleTitle').val(($sortableDiv.find('.SaleTitle').val().length) ? $sortableDiv.find('.SaleTitle').val() : '');
         $cgSellContainer.find('#cgSaleDescription').val(($sortableDiv.find('.SaleDescription').val().length) ? $sortableDiv.find('.SaleDescription').val() : '');
@@ -550,10 +609,11 @@ jQuery(document).ready(function ($) {
         $cgSellContainer.find('#cgSellPreviewContainer').removeClass('cg_hide');
         $cgSellContainer.find('#cgSellTitlePreview').removeClass('cg_hide');
 
-        $cgSellContainer.find('.cg_view_option_radio_multiple_input').addClass('cg_view_option_unchecked').removeClass('cg_view_option_unchecked');
+        $cgSellContainer.find('.cg_sale_type_options .cg_view_option_radio_multiple_input').addClass('cg_view_option_unchecked').removeClass('cg_view_option_checked');
         $cgSellContainer.find('.SaleType').prop('checked',false);
 
-        $cgSellContainer.find('.SaleType_'+saleType).prop('checked',true).closest('.cg_view_option_radio_multiple_input').addClass('cg_view_option_checked');
+        $cgSellContainer.find('.SaleType_'+saleType).prop('checked',true).closest('.cg_view_option_radio_multiple_input').removeClass('cg_view_option_unchecked').addClass('cg_view_option_checked');
+        cgJsClassAdmin.gallery.functions.addRemoveCgProFalse($cgSellContainer,saleType === 'shipping');
 
         cgJsClassAdmin.gallery.vars.cgSellContainer.find('.cg_download_sale').addClass('cg_hide');
         cgJsClassAdmin.gallery.vars.cgSellContainer.find('#SaleAmountContainer').addClass('cg_hide');
@@ -625,6 +685,7 @@ jQuery(document).ready(function ($) {
         // go from here
         if(saleType=='download'){
             cgJsClassAdmin.gallery.functions.initWatermarkSettings($,$cgSellContainer,$sortableDiv,realId);
+            cgJsClassAdmin.gallery.functions.ensureDownloadSaleFile($cgSellContainer);
         }
 
         if(false && cgJsClassAdmin.index.vars.isSellConfTinyMCEInitialized){// not required beeing used in the moment, cause broken load of editor
@@ -644,10 +705,12 @@ jQuery(document).ready(function ($) {
             cgJsClassAdmin.index.vars.isSellConfTinyMCEInitialized = true;
             setTimeout(function (){
                 tinymce.get('cgAllUploadsUsedText').setContent(($sortableDiv.find('.AllUploadsUsedText').val().length) ? $sortableDiv.find('.AllUploadsUsedText').val() : '');
+                tinymce.get('cgAllUploadsUsedText').setDirty(false);
             },2000);
             //$cgSellContainer.find('#cgAllUploadsUsedText').val(($sortableDiv.find('.AllUploadsUsedText').val().length) ? $sortableDiv.find('.AllUploadsUsedText').val() : '');
         }else{
             tinymce.get('cgAllUploadsUsedText').setContent(($sortableDiv.find('.AllUploadsUsedText').val().length) ? $sortableDiv.find('.AllUploadsUsedText').val() : '');
+            tinymce.get('cgAllUploadsUsedText').setDirty(false);
         }
 
         // will be done via click on cg_file_checkbox if firstCheckedImageOrder exists

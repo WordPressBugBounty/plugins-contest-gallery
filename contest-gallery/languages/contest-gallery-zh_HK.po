@@ -3088,3 +3088,112 @@ msgstr "評分及留言"
 #: check-language-ecommerce.php
 msgid "Settings path"
 msgstr "設定路徑"
+
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Free"
+msgstr "免費"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Get for free"
+msgstr "免費獲取"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Order now"
+msgstr "立即訂購"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Place free order"
+msgstr "提交免費訂單"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Placing order…"
+msgstr "正在提交訂單…"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "The order could not be completed. Please try again."
+msgstr "無法完成訂單。請重試。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Enter a valid email address and complete the required fields and agreements."
+msgstr "請輸入有效的電郵地址，填寫必填欄位並接受必要的協議。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "The order was created, but its confirmation could not be saved. Please contact the site administrator."
+msgstr "訂單已建立，但無法儲存確認資料。請聯絡網站管理員。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Your cart is empty."
+msgstr "您的購物車是空的。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Please reload the checkout."
+msgstr "請重新載入結帳頁面。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Please reload the gallery before ordering."
+msgstr "訂購前請重新載入圖庫。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "This product is no longer available."
+msgstr "此產品已無法提供。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "The cart has changed. Please reload the checkout."
+msgstr "購物車內容已變更。請重新載入結帳頁面。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "This product has not been offered for free."
+msgstr "此產品並非免費提供。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Please sign in before ordering."
+msgstr "訂購前請先登入。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "The order summary page is not configured."
+msgstr "尚未設定訂單摘要頁面。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "The order confirmation email is not configured."
+msgstr "尚未設定訂單確認電郵。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Please enable cookies and reload the checkout."
+msgstr "請啟用 Cookie 並重新載入結帳頁面。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Please reopen the checkout."
+msgstr "請重新開啟結帳頁面。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Your order is being processed. Please wait."
+msgstr "正在處理您的訂單。請稍候。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "This order is already being processed. Please check your order confirmation before trying again."
+msgstr "此訂單已在處理中。再次嘗試前請先查看訂單確認資料。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Please accept the checkout agreements."
+msgstr "請接受結帳協議。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Complete the shipping address."
+msgstr "請填寫完整的送貨地址。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Select an allowed shipping country."
+msgstr "請選擇允許送貨的國家或地區。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Select a shipping state."
+msgstr "請選擇送貨的州或省份。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Sandbox checkout is available only to administrators or through a valid Paid Actions sandbox link."
+msgstr "只有管理員或持有有效 Paid Actions 沙盒連結的使用者才能使用沙盒結帳。"
+
+#: functions/ecommerce/general/cg-ecommerce-free-translations.php
+msgid "Available in test mode. Live purchases require PRO."
+msgstr "可在測試模式使用。正式購買需要 PRO。"

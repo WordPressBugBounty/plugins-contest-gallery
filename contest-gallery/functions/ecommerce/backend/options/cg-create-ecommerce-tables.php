@@ -53,6 +53,8 @@ if(!function_exists('cg_create_ecommerce_tables')){
             WpUploadFilesPostMeta TEXT DEFAULT '',
             WpUploadFilesForSale TEXT DEFAULT '',
             Price DECIMAL(65,2) DEFAULT 0,
+            RegularPrice DECIMAL(65,2) DEFAULT 0,
+            IsFree TINYINT DEFAULT 0,
             HasTax TINYINT DEFAULT 0,
             TaxPercentage DECIMAL(65,2) DEFAULT 0,
             AlternativeShipping DECIMAL(65,2) DEFAULT 0,

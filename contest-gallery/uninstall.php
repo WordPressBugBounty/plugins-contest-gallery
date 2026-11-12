@@ -317,6 +317,12 @@ if(!function_exists('cgDropTables')){
 
 	    $tablename_contest_gal1ery_mail_templates = $wpdb->prefix . "contest_gal1ery_mail_templates";
 
+        $sandboxProductOptions = $wpdb->get_col($wpdb->prepare(
+            "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
+            $wpdb->esc_like('cg_ecommerce_test_only_').'%', $wpdb->esc_like('cg_ecommerce_sale_draft_').'%'
+        ));
+        foreach($sandboxProductOptions as $sandboxProductOption){delete_option($sandboxProductOption);}
+
         $sqlWpOptionsDelete = 'DELETE FROM ' . $wpOptions . ' WHERE';
         $sqlWpOptionsDelete .= ' option_name = %s';
 

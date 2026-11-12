@@ -59,13 +59,13 @@ if(!function_exists('cg_sell_ecommerce_container')){
 	    $legacyUploadSaleNote = $isLegacyUploadSaleExistingOnly ? '<b>LEGACY:</b> available only for an existing upload package. Use Pay for uploads for new sales.' : '<b>NOTE:</b> charge users for upload';
 
 	    $cgProFalseSellContainer = '';
-		if($cgProFalse){
+		if(!cg_ecommerce_products_pro_available()){
 			$cgProFalseSellContainer = 'cg-pro-false-sell-container';
 		}
 
 // Sell PayPal container START
         echo "<div id='cgSellContainer'  class='cg_backend_action_container $cgProFalseSellContainer cg_hide'>
-<span class='cg_message_close'></span>";
+<span class='cg_message_close cg_message_close_extra_processing'></span>";
 
 
 
@@ -114,30 +114,12 @@ HEREDOC;
 
         echo '<div id="cgProEcomFalseContainer"  style="border-radius:8px;" >';
 
-        echo "<div class='cg_main_options' style='margin-bottom: 0;margin-top: 40px; box-shadow: unset;'>";
-
-        echo <<<HEREDOC
-    <div class='cg_view_options_row' >
-    
-                    <div  id="cgSellBackendImageContainerOption" class='cg_view_option_33_percent  cg_border_border_top_left_radius_8_px cg_view_option   cg_entry_page_description cg_border_right_none  cg_border_bottom_none '>
-            <div class="cg_view_option_image_display" id="cgSellBackendImage" style="margin-left: auto; ">
-                    <div id='cgSellBackendImageContainer'>
-                    </div>
-                </div>
-        </div>
-        <div  class='cg_view_option cg_view_option_67_percent cg_border_left_none cg_entry_page_description  cg_border_bottom_none cg_border_border_top_right_radius_8_px' id="cgActivateSaleOption">
-            <div class='cg_view_option_title  cg_view_option_title_full_width' style="transform: translateX(-4px);">
-                <p>
-                    Activate selling for ID (<span id="cgSellBackendImageId"></span>)
-                </p>
-            </div>
-            <div class="cg_view_option_checkbox">
-                  <input id="cgActivateSale"  type="checkbox"  name="cgSellContainer[isActivateSale]"  >
-            </div>
-        </div>
-    </div>
-HEREDOC;
-
+        echo "<div class='cg_main_options cg_sell_options'>";
+        echo '<div class="cg_sell_header">';
+        echo '<div id="cgSellBackendImageContainerOption"><div id="cgSellBackendImageContainer"></div></div>';
+        echo '<div class="cg_sell_header_text"><h2>Sales settings</h2><span>Entry ID <span id="cgSellBackendImageId"></span></span></div>';
+        echo '</div>';
+        echo '<p id="cgSellActionError" class="cg_error cg_hide" role="alert"></p>';
 
         $currencies_array = cg_get_ecommerce_currencies_array();
         $CurrencyLong = '';
@@ -166,55 +148,12 @@ HEREDOC;
 			}
 
 	        echo <<<HEREDOC
-	    <div class='cg_view_options_row' >
-	        <div  class='cg_sale_conf cg_view_option cg_entry_page_description cg_view_option_full_width cg_border_bottom_none '>
-	            <div class='cg_view_option_title  cg_view_option_title_full_width'>
-	                <p>
-                    Currency configuration<br>
-                    <span class="cg_view_option_title_note">
-                        <span style="margin-right:10px;"><b>Price decimal separator:</b> $PriceDivider</span>
-                        <span style="margin-right:10px;"><b>Currency:</b> $CurrencyLong</span>
-                        <span><b>Currency position:</b> $CurrencyPosition</span>
-                    </span>
-                </p>
-            </div>
-        </div>
-    </div>
-HEREDOC;
-
-        echo <<<HEREDOC
-    <div class='cg_view_options_row' >
-        <div  class='cg_view_option cg_sale_conf  cg_entry_page_description cg_view_option_full_width cg_border_top_none cg_border_bottom_none '>
-            <div class='cg_view_option_title  cg_view_option_title_full_width'>
-                <p>
-                    Price configuration
-                </p>
-            </div>
-            <div class="cg_view_option_input" style="width: 40%;margin-left: auto; margin-right: auto;">
-                    <input type="text" id="cgSellPrice" name='cgSellContainer[PriceResult]'  class="cg-long-input cg_currency_input cg_text_align_center" value='38.99' maxlength="20">
-            </div>
-        </div>
-    </div>
-HEREDOC;
-
-        echo <<<HEREDOC
-<div class='cg_view_options_row '  >
+<div class='cg_view_options_row cg_sell_type_row'>
                 <div class='cg_view_option cg_sale_conf cg_view_option_full_width cg_border_top_bottom_none' >
-                    <div class='cg_view_option_title cg_hide'>
+                    <div class='cg_view_option_title cg_view_option_title_full_width'>
                     <p>Sale type</p>
                     </div>
                     <div class='cg_view_option_radio_multiple cg_sale_type_options$saleTypeOptionsClass'>
-                        <div class='cg_view_option_radio_multiple_container cg_sale_type_option cg_flex_flow_column' id="SaleType_shipping_option_container">
-                            <div class='cg_view_option_radio_multiple_title cg_sale_type_option_heading' id="SaleType_shipping_option">
-                                <b>Shipping</b>
-                            </div>
-                            <div class='cg_view_option_radio_multiple_input'>
-                                <input type="radio" name="cgSellContainer[SaleType]" class="SaleType SaleType_shipping cg_view_option_radio_multiple_input_field"  value="shipping">
-                            </div>
-                            <div class='cg_view_option_radio_multiple_title cg_sale_type_option_note' id="SaleType_shipping_option">
-                                <span class="cg_view_option_title_note"><b>NOTE:</b> the default shipping<br>which is set in ecommerce options<br>is currently <span id="defaultShippingPriceText" style="font-weight: bold;" ></span> <input type="text" id="defaultShippingPriceInput" class="cg_hide"  /> </span>
-                            </div>
-                        </div>
                         <div class='cg_view_option_radio_multiple_container cg_sale_type_option cg_flex_flow_column' id="SaleType_download_option_container">
                             <div class='cg_view_option_radio_multiple_title cg_sale_type_option_heading' id="SaleType_download_option">
                                 <b>Download</b>
@@ -223,7 +162,7 @@ HEREDOC;
                                 <input type="radio" name="cgSellContainer[SaleType]" class="SaleType SaleType_download cg_view_option_radio_multiple_input_field"  value="download"/>
                             </div>
                             <div class='cg_view_option_radio_multiple_title cg_sale_type_option_note' id="SaleType_download_option">
-                                <span class="cg_view_option_title_note" style="visibility: hidden;"><b>NOTE:</b> required placeholder</span><br><span class="cg_view_option_title_note cg_hide" id="cgDownloadKeysFileRemoveNote">
+                                <span class="cg_view_option_title_note">Sell selected files.</span><br><span class="cg_view_option_title_note cg_hide" id="cgDownloadKeysFileRemoveNote">
                                 <a  id="cgRemoveDownloadKeysFile" href="" class="cg_event_link">Remove</a>
                                 uploaded file<br><a href="" id="cgShowDownloadKeysFile"  class="cg_event_link" >filename</a>
                                 <input type="hidden" id="cgRemoveDownloadKeysFileInput" name="cgSellContainer[RemoveDownloadKeysFile]" value="0" />
@@ -234,6 +173,17 @@ HEREDOC;
                                 </span>
                             </div>
                         </div>
+                        <div class='cg_view_option_radio_multiple_container cg_sale_type_option cg_flex_flow_column' id="SaleType_shipping_option_container">
+                            <div class='cg_view_option_radio_multiple_title cg_sale_type_option_heading' id="SaleType_shipping_option">
+                                <b>Shipping</b>
+                            </div>
+                            <div class='cg_view_option_radio_multiple_input'>
+                                <input type="radio" name="cgSellContainer[SaleType]" class="SaleType SaleType_shipping cg_view_option_radio_multiple_input_field"  value="shipping">
+                            </div>
+                            <div class='cg_view_option_radio_multiple_title cg_sale_type_option_note' id="SaleType_shipping_option">
+                                <span class="cg_view_option_title_note">Default shipping: <span id="defaultShippingPriceText" style="font-weight: bold;" ></span> <input type="text" id="defaultShippingPriceInput" class="cg_hide"  /> </span>
+                            </div>
+                        </div>
                         <div class='cg_view_option_radio_multiple_container cg_sale_type_option cg_flex_flow_column' id="SaleType_service_option_container">
                             <div class='cg_view_option_radio_multiple_title cg_sale_type_option_heading' id="SaleType_service_option">
                                 <b>Service</b>
@@ -242,7 +192,7 @@ HEREDOC;
                                 <input type="radio" name="cgSellContainer[SaleType]" class="SaleType SaleType_service cg_view_option_radio_multiple_input_field"  value="service">
                             </div>
                             <div class='cg_view_option_radio_multiple_title cg_sale_type_option_note' id="SaleType_service_option">
-                                <span class="cg_view_option_title_note"><b>NOTE:</b> some service you can describe</span><br>
+                                <span class="cg_view_option_title_note">Offer a service.</span><br>
                                 <span class="cg_view_option_title_note cg_hide" id="cgServiceKeysFileRemoveNote">
                                 <a  id="cgRemoveServiceKeysFile" href="" class="cg_event_link">Remove</a> uploaded file<br><a href="" id="cgShowServiceKeysFile"  class="cg_event_link" >filename</a>
                                 <input type="hidden" id="cgRemoveServiceKeysFileInput" name="cgSellContainer[RemoveServiceKeysFile]" value="0" />
@@ -268,38 +218,92 @@ HEREDOC;
             </div>
 </div> 
 HEREDOC;
+        $saleCurrencyLabel = esc_html($CurrencyLong);
+        $salePriceDividerLabel = esc_html($PriceDivider);
+        $saleCurrencyPositionLabel = esc_html(ucfirst($CurrencyPosition));
+        $saleCurrencyOptionsUrl = esc_url(add_query_arg(array(
+            'page' => cg_get_version().'/index.php',
+            'edit_options' => 'true',
+            'option_id' => absint($GalleryID),
+            'cg_edit_ecommerce' => 'true'
+        ), admin_url('admin.php')));
+        $saleMembersOptionsUrl = esc_url(add_query_arg(array(
+            'page' => cg_get_version().'/index.php', 'edit_options' => 'true',
+            'option_id' => absint($GalleryID), 'cg_edit_ecommerce' => 'true',
+            'cg_go_to' => 'RegUserPurchaseOnlyContainer'
+        ),admin_url('admin.php')));
+        echo <<<HEREDOC
+    <div class="cg_sell_pricing">
+        <div class="cg_sell_pricing_cards">
+            <div class="cg_sell_pricing_card cg_sell_price_card cg_sale_conf">
+                <div class="cg_sell_price_fields">
+                    <div class="cg_sell_price_field">
+                        <label class="cg_sell_pricing_label" id="cgSellMainPriceLabel" for="cgSellPrice">Price</label>
+                        <input type="text" id="cgSellPrice" name="cgSellContainer[PriceResult]" class="cg-long-input cg_currency_input cg_text_align_center" inputmode="decimal" value="" maxlength="20">
+                        <strong id="cgSellFreeValue" class="cg_hide">Free</strong>
+                    </div>
+                    <div id="cgSellReducedPriceField" class="cg_sell_price_field cg_hide">
+                        <label class="cg_sell_pricing_label" for="cgSellReducedPrice">Reduced price</label>
+                        <input type="text" id="cgSellReducedPrice" name="cgSellContainer[ReducedPrice]" class="cg-long-input cg_currency_input cg_text_align_center" inputmode="decimal" value="" maxlength="20">
+                    </div>
+                </div>
+                <div class="cg_sell_price_options">
+                    <label class="cg_offer_free_label"><input type="checkbox" role="switch" id="cgOfferForFree" name="cgSellContainer[IsFree]" value="1">Offer for free</label>
+                    <label class="cg_offer_free_label cg_offer_reduced_label"><input type="checkbox" role="switch" id="cgOfferReducedPrice" name="cgSellContainer[HasReducedPrice]" value="1" aria-controls="cgSellReducedPriceField">Add discount</label>
+                </div>
+            </div>
+            <div class="cg_sell_pricing_card cg_sell_currency_card">
+                <span class="cg_sell_pricing_label">Currency</span>
+                <strong class="cg_sell_pricing_value">$saleCurrencyLabel</strong>
+            </div>
+            <div class="cg_sell_pricing_card">
+                <span class="cg_sell_pricing_label">Decimal separator</span>
+                <strong class="cg_sell_pricing_value">$salePriceDividerLabel</strong>
+            </div>
+            <div class="cg_sell_pricing_card">
+                <span class="cg_sell_pricing_label">Currency position</span>
+                <strong class="cg_sell_pricing_value">$saleCurrencyPositionLabel</strong>
+            </div>
+        </div>
+        <p id="cgSellPriceError" class="cg_error cg_hide" role="alert">Enter a price greater than 0 or choose Offer for free.</p>
+        <p id="cgSellFreeMembersNote" class="cg_sell_currency_options_note cg_hide">Want to offer this only to members? <a href="$saleMembersOptionsUrl" target="_blank" rel="noopener">Allow only registered users to buy.</a></p>
+        <p class="cg_sell_currency_options_note">Change currency, decimal separator and currency position in <a href="$saleCurrencyOptionsUrl" target="_blank" rel="noopener">General ecommerce options</a> (opens in a new tab).<br>After saving changes, reload this page and reopen Sales settings.</p>
+    </div>
+HEREDOC;
+
 $cgContactFormShortcodeConfigurationAreaLinkPart = '?page='.cg_get_version().'/index.php&edit_options=true&cg_go_to=cgContactFormShortcodeConfigurationArea';
+$saleKeysExampleUrl = esc_url(add_query_arg('contest-gallery-download-keys-example', 'true', $siteURL));
 echo <<<HEREDOC
-        <div class='cg_view_options_row cg_hide' id="DownloadContainerRow">
-                  <div  class='cg_view_option $cgProFalse cg_key_upload_option cg_sale_conf cg_view_option_full_width cg_border_bottom_none  cg_border_top_none' >
-                    <div class='cg_view_option_title  cg_view_option_title_full_width' >
-                        <p>
-                            Upload "Download keys"<br><span class="cg_view_option_title_note"><b>NOTE:</b> customer is able to get key for the download after purchase<br>
-                                Download <a target="_blank" href="$siteURL?contest-gallery-download-keys-example=true">example CSV file</a></span>
-                        </p>
+        <div class="cg_view_options_row cg_sale_keys_row cg_hide" id="DownloadContainerRow">
+                <div class="cg_view_option cg_key_upload_option cg_sale_conf cg_sale_keys_card">
+                    <div class="cg_sale_keys_intro">
+                        <label class="cg_sale_keys_label" for="DownloadKey">Upload download keys</label>
+                        <p>Customers receive a download key after purchase.</p>
+                        <a href="$saleKeysExampleUrl" target="_blank" rel="noopener">Download example CSV</a>
                     </div>
-                    <div class="cg_view_option_input" >
-                          <input id="DownloadKey" class="cg_key_upload"  type="file" name="cgSellContainer[DownloadKey]" style="width: fit-content;font-size: 13px;margin-bottom: 10px;border-radius: unset !important;"  />
+                    <div class="cg_sale_keys_file">
+                        <input id="DownloadKey" class="cg_key_upload" type="file" name="cgSellContainer[DownloadKey]" accept=".csv,text/csv" aria-describedby="cgDownloadKeyFormat cgDownloadKeyTrialNote" />
+                        <p class="cg_sale_keys_format" id="cgDownloadKeyFormat">CSV file &middot; Max. 64 KB</p>
+                        <p class="cg_sale_test_keys_note" id="cgDownloadKeyTrialNote">Use test keys for trial orders.</p>
                     </div>
-                    <p class="cg_error cg_hide cg_key_upload_error_not_csv" >Not a CSV file</p>
-                    <p class="cg_error cg_hide cg_key_upload_error_to_large" >CSV file to large (64000Byte = 64kb)</p>
+                    <p class="cg_error cg_hide cg_key_upload_error_not_csv" role="alert">Please select a CSV file.</p>
+                    <p class="cg_error cg_hide cg_key_upload_error_to_large" role="alert">The CSV file must be 64 KB or smaller.</p>
                 </div>
         </div>
-        <div class='cg_view_options_row cg_hide' id="ServiceContainerRow">
-                  <div  class='cg_view_option $cgProFalse cg_key_upload_option cg_sale_conf cg_view_option_full_width   cg_border_bottom_none  cg_border_top_none' >
-                    <div class='cg_view_option_title  cg_view_option_title_full_width' >
-                        <p>
-                            Upload "Service key"<br><span class="cg_view_option_title_note">
-                                <b>NOTE:</b> customer is able to get key for the service after purchase<br>
-                                Download <a target="_blank" href="$siteURL?contest-gallery-download-keys-example=true">example CSV file</a>
-                            </span>
-                        </p>
+        <div class="cg_view_options_row cg_sale_keys_row cg_hide" id="ServiceContainerRow">
+                <div class="cg_view_option cg_key_upload_option cg_sale_conf cg_sale_keys_card">
+                    <div class="cg_sale_keys_intro">
+                        <label class="cg_sale_keys_label" for="ServiceKey">Upload service keys</label>
+                        <p>Customers receive a service key after purchase.</p>
+                        <a href="$saleKeysExampleUrl" target="_blank" rel="noopener">Download example CSV</a>
                     </div>
-                    <div class="cg_view_option_input" >
-                          <input id="ServiceKey"  class="cg_key_upload"   type="file" name="cgSellContainer[ServiceKey]" style="width: fit-content;font-size: 13px;margin-bottom: 10px;border-radius: unset !important;"  >
+                    <div class="cg_sale_keys_file">
+                        <input id="ServiceKey" class="cg_key_upload" type="file" name="cgSellContainer[ServiceKey]" accept=".csv,text/csv" aria-describedby="cgServiceKeyFormat cgServiceKeyTrialNote" />
+                        <p class="cg_sale_keys_format" id="cgServiceKeyFormat">CSV file &middot; Max. 64 KB</p>
+                        <p class="cg_sale_test_keys_note" id="cgServiceKeyTrialNote">Use test keys for trial orders.</p>
                     </div>
-                    <p class="cg_error cg_hide cg_key_upload_error_not_csv" >Not a CSV file</p>
-                    <p class="cg_error cg_hide cg_key_upload_error_to_large" >CSV file to large (64000Byte = 64kb) <span ></span></p>
+                    <p class="cg_error cg_hide cg_key_upload_error_not_csv" role="alert">Please select a CSV file.</p>
+                    <p class="cg_error cg_hide cg_key_upload_error_to_large" role="alert">The CSV file must be 64 KB or smaller.</p>
                 </div>
         </div>
         <div class='cg_view_options_row cg_hide' id="UploadContainerRow">
@@ -344,34 +348,31 @@ echo <<<HEREDOC
 		            </div>
         		</div>
         </div>
-        <div class='cg_view_options_row cg_hide' id="ShippingContainerRow">
-                  <div  class='cg_view_option cg_sale_conf cg_border_bottom_none cg_view_option_two_third_width cg_view_option_two_third_width_checkbox cg_border_top_none cg_border_right_none' id="IsAlternativeShippingOption" >
-                    <div class='cg_view_option_title  cg_view_option_title_full_width' style="margin-top: 35px;">
-                        <p>
-                            Is alternative shipping<br><span class="cg_view_option_title_note"><b>NOTE:</b> if checked then shipping for this product<br>will be calculated alternative<br>shipping and alternative shipping always uses the default tax</span>
-                        </p>
+        <div class='cg_view_options_row cg_sale_shipping_row cg_hide' id="ShippingContainerRow">
+                <div class='cg_view_option cg_sale_conf cg_sale_shipping_cell' id="IsAlternativeShippingOption">
+                    <div class="cg_sale_shipping_heading">Shipping</div>
+                    <div class="cg_sale_shipping_toggle">
+                        <div class="cg_view_option_checkbox" id="IsAlternativeShippingCheckbox">
+                            <input id="IsAlternativeShipping" type="checkbox" name="cgSellContainer[IsAlternativeShipping]" aria-labelledby="cgCustomShippingLabel" aria-describedby="cgCustomShippingNote">
+                        </div>
+                        <span id="cgCustomShippingLabel">Use custom shipping costs</span>
                     </div>
-                    <div class="cg_view_option_checkbox" id="IsAlternativeShippingCheckbox">
-                          <input id="IsAlternativeShipping"  type="checkbox"  name="cgSellContainer[IsAlternativeShipping]"  >
-                    </div>
+                    <p class="cg_sale_shipping_note" id="cgCustomShippingNote">Set a separate shipping cost for this product. Shipping uses the default tax.</p>
                 </div>
-                <div class='cg_view_option cg_view_option_flex_flow_column cg_border_left_none cg_border_bottom_none cg_border_top_none cg_view_option_one_third_width' id="ShippingContainer" >
-                    <div class='cg_view_option_title cg_view_option_title_full_width'  style="margin-top: 35px;">
-                        <p>Alternative shipping costs<br><span class="cg_view_option_title_note"><b>NOTE:</b> if <b>"0"</b> then <b>"Free shipping"</b></span></p>
+                <div class='cg_view_option cg_sale_shipping_cell' id="ShippingContainer">
+                    <label class="cg_sale_shipping_heading" for="Shipping">Custom shipping costs</label>
+                    <div class="cg_view_option_input">
+                        <input type="text" inputmode="decimal" name="cgSellContainer[Shipping]" id="Shipping" maxlength="20" class="cg_currency_input cg_currency_input_shipping cg_text_align_center" aria-describedby="cgShippingCostNote">
                     </div>
-                    <div class='cg_view_option_input'>
-                        <input type="text" name="cgSellContainer[Shipping]" id="Shipping" maxlength="20" class="cg_currency_input cg_currency_input_shipping cg_text_align_center" style="width: 30%;margin-left: auto; margin-right: auto;"  >
-                    </div>
+                    <p class="cg_sale_shipping_note" id="cgShippingCostNote">Enter 0 for free shipping.</p>
                 </div>
         </div>
 HEREDOC;
 
         echo <<<HEREDOC
-        <div class='cg_view_options_row cg_hide' id="SaleAmountContainer">
-            <div class="cg_view_option cg_border_top_none  cg_sale_conf cg_view_option_50_percent cg_border_right_none cg_view_option_flex_flow_column cg_border_bottom_none" >
-                <div class="cg_view_option_title cg_view_option_title_full_width">
-                    <p>Select min amount to buy</p>
-                </div>
+        <div class='cg_view_options_row cg_sale_quantity_row cg_hide' id="SaleAmountContainer">
+            <div class="cg_view_option cg_sale_conf cg_sale_shipping_cell">
+                <label class="cg_sale_shipping_heading" for="SaleAmountMin">Minimum quantity</label>
                 <div class="cg_view_option_select">
                     <select name='cgSellContainer[SaleAmountMin]' id='SaleAmountMin' class="SaleAmount">
 HEREDOC;
@@ -382,10 +383,8 @@ HEREDOC;
                     </select>
                 </div>
             </div>
-            <div class="cg_view_option cg_border_left_none cg_border_top_none cg_sale_conf cg_view_option_50_percent cg_view_option_flex_flow_column cg_border_bottom_none" >
-                <div class="cg_view_option_title cg_view_option_title_full_width">
-                    <p>Select max amount to buy</p>
-                </div>
+            <div class="cg_view_option cg_sale_conf cg_sale_shipping_cell">
+                <label class="cg_sale_shipping_heading" for="SaleAmountMax">Maximum quantity</label>
                 <div class="cg_view_option_select">
                     <select name='cgSellContainer[SaleAmountMax]' id='SaleAmountMax' class="SaleAmount">
 HEREDOC;
@@ -400,10 +399,14 @@ HEREDOC;
 HEREDOC;
 
         echo <<<HEREDOC
-<div class='cg_view_options_row '  id="TaxRadioContainerRow">
-                <div class='cg_view_option cg_sale_conf cg_view_option_full_width cg_border_bottom_none'>
-                    <div class='cg_view_option_title'>
-                    <p>Tax <br><span class="cg_view_option_title_note"><b>NOTE:</b> the default tax<br>which is set in ecommerce options<br>is currently <span id="defaultTaxText" style="font-weight: bold;" ></span> <input type="text" id="defaultTaxInput" class="cg_hide"  /> </span></p>
+<div class="cg_sale_tax_panel">
+<div class="cg_view_options_row" id="TaxRadioContainerRow">
+                <div class="cg_view_option cg_sale_conf cg_view_option_full_width cg_sale_tax_choice">
+                    <div class="cg_sale_tax_heading">Tax</div>
+                    <div class="cg_sale_tax_default">
+                        <span>Default tax in ecommerce options:</span>
+                        <strong id="defaultTaxText"></strong>
+                        <input type="text" id="defaultTaxInput" class="cg_hide" />
                     </div>
                     <div class='cg_view_option_radio_multiple'>
                         <div class='cg_view_option_radio_multiple_container' id="TaxFreeRadioContainerParent">
@@ -429,24 +432,35 @@ HEREDOC;
 
 echo <<<HEREDOC
         <div class='cg_view_options_row cg_hide' id="TaxContainerRow">
-                <div class='cg_view_option cg_sale_conf cg_view_option_full_width cg_border_top_none cg_border_bottom_none ' id="TaxContainer" >
-                    <div class='cg_view_option_title'>
-                        <p>Tax percentage</p>
-                    </div>
-                    <div class='cg_view_option_input' style="width: 20%;margin-left: auto; margin-right: auto;">
+                <div class="cg_view_option cg_sale_conf cg_view_option_full_width cg_sale_tax_amount" id="TaxContainer">
+                    <label class="cg_sale_tax_heading" for="Tax">Tax percentage</label>
+                    <div class="cg_view_option_input">
                         <input type="text" name="cgSellContainer[Tax]" id="Tax" maxlength="20" class="cg_currency_input cg_currency_input_tax cg_text_align_center" >
                     </div>
                 </div>
         </div>
+</div>
 HEREDOC;
 echo <<<HEREDOC
-	        <div id='cgSellSelectFilesForSale' class='cg_hide cg_sale_conf cg_download_sale $cgProFalse'>
-	                <div class='cg_sell_title' id='cgSellTitlePreview'>Select download files for selling</div>
-	                <p style="margin:10px auto -10px;"><b>NOTE:</b> images will be watermarked</p>
-	                <div id='cgSellEntryWatermarkConflictNotice' class='cg_entry_watermark_ecommerce_conflict_notice cg_hide'>
-	                    <div class='cg_entry_watermark_ecommerce_conflict_text'><b>NOTE:</b> Some files are already watermarked. Unwatermark first to watermark for selling.</div>
-	                    <input type='button' id='cgSellEntryWatermarkConflictButton' class='cg_action_button' value='Unwatermark first'>
-	                </div>
+	        <div id='cgSellSelectFilesForSale' class='cg_hide cg_sale_conf cg_download_sale'>
+	                <div class="cg_sale_files_heading" id="cgSellTitlePreview">Download files</div>
+	                <p class="cg_sale_files_description">Choose the files customers receive after purchase.</p>
+	                <p id="cgSellFilesError" class="cg_error cg_hide" role="alert"></p>
+                    <p id="cgSellFileOwnershipNotice" class="cg_error cg_hide" role="status">These files are managed by another sale. Open the linked sale or add a different file for this download.</p>
+	                <div class="cg_sale_files_layout">
+	                    <div class="cg_sale_files_notes">
+	                        <div class="cg_sale_files_note">
+	                            <strong>Protected files</strong>
+	                            <p>Selected files are stored in a protected folder and become available on the customer's order page after purchase.</p>
+	                        </div>
+	                        <div class="cg_sale_files_note">
+	                            <strong>Image previews</strong>
+	                            <p>Image watermarks are managed using the settings below. Customers download the original files.</p>
+	                        </div>
+	                        <div class="cg_sale_files_note">
+	                            <strong>Past purchases</strong>
+	                            <p>Deleting this entry stops downloads for past buyers. Files added later are also included in their orders.</p>
+	                        </div>
 HEREDOC;
 
 	if(function_exists('cg_render_nginx_upload_protection_notice') && function_exists('cg_get_nginx_upload_deny_rule')){
@@ -459,10 +473,17 @@ HEREDOC;
 	}
 
 	echo <<<HEREDOC
-	                <p style="margin:10px auto;"><b>NOTE:</b> selected files will be moved to inaccessible folder in <br><b>.../wp-content/uploads/contest-gallery/...</b><br> after purchase a customer will be able to download selected files for sale</p>
-	                     <p style="margin:10px auto;max-width: 600px;"><b class="cg_color_red">NOTE:</b> if this entry was sold the selected download files for selling will be downloadable for the customer on the order summary page. This entry will be connected to purchased order.<br>If you remove this entry after purchase then customers will  not be able to download the files on the order summary page. If you add further files to this entry the customers will be able to download the further files on order summary page. <br><b>In short:</b> this entry and all connected files to this entry will be connected to the purchased orders of this entry.</p>
-	                <div id='cgSellSelectFilesForSaleSelectContainer'>
-				</div>
+	                    </div>
+	                    <div class="cg_sale_files_picker">
+	                        <strong class="cg_sale_files_picker_title">Select files for sale</strong>
+	                        <p class="cg_sale_files_picker_hint">Keep at least one file selected. To replace it, select another file first.</p>
+	                        <div id="cgSellEntryWatermarkConflictNotice" class="cg_entry_watermark_ecommerce_conflict_notice cg_hide">
+	                            <div class="cg_entry_watermark_ecommerce_conflict_text">Some files are already watermarked. Unwatermark them before selecting them for sale.</div>
+	                            <input type="button" id="cgSellEntryWatermarkConflictButton" class="cg_action_button" value="Unwatermark first">
+	                        </div>
+	                        <div id="cgSellSelectFilesForSaleSelectContainer"></div>
+	                    </div>
+	                </div>
         </div>
 HEREDOC;
 
@@ -532,6 +553,7 @@ HEREDOC;
 
 		foreach(array(512,256,128,64,32,16,8) as $size){
 			$sizeLabel = function_exists('cg_get_watermark_size_label') ? cg_get_watermark_size_label($size) : $size;
+			$sizeLabel = $size.' px ('.$sizeLabel.($size === 8 ? ', very small' : '').')';
 			echo "<option value='".esc_attr($size)."'>".esc_html($sizeLabel)."</option>";
 		}
 
@@ -598,13 +620,33 @@ HEREDOC;
 
         //echo "<hr>";
 
-        echo '<div id="cgSellContainerSubmitButtonContainer" >
-            <input type="submit" id="cgSetForSell" class="cg_backend_button_gallery_action" value="Save changes">
+        echo '<div id="cgSellContainerSubmitButtonContainer">
+            <div id="cgSellActions" class="cg_sell_actions">
+                <button type="button" id="cgDeactivateSale" class="cg_sell_secondary cg_hide" aria-expanded="false" aria-controls="cgSellDeactivateConfirmation">Deactivate sale</button>
+                <input type="submit" id="cgSetForSell" class="cg_backend_button_gallery_action" value="Activate sale">
+            </div>
+            <div id="cgSellDeactivateConfirmation" class="cg_sell_deactivate_confirmation cg_hide" role="group" aria-labelledby="cgSellDeactivateTitle">
+                <strong id="cgSellDeactivateTitle">Deactivate this sale?</strong>
+                <p id="cgSellDeactivateDownloadNote" class="cg_hide">This stops the sale. Download files return to the media library.</p>
+                <p id="cgSellDeactivateKeysNote" class="cg_hide">Uploaded key files stay protected.</p>
+                <div class="cg_sell_confirmation_actions"><button type="button" id="cgCancelDeactivateSale" class="cg_sell_secondary">Cancel</button>
+                <button type="button" id="cgConfirmDeactivateSale" class="cg_sell_secondary cg_sell_destructive">Deactivate sale</button></div>
+            </div>
         </div>';
         echo '</div>';
 
         echo "</form>";
         echo "</div>";
+        echo '<div id="cgSellDiscardConfirmation" class="cg_hide">
+            <div class="cg_sell_discard_dialog" role="alertdialog" aria-modal="true" aria-labelledby="cgSellDiscardTitle" aria-describedby="cgSellDiscardDescription">
+                <h2 id="cgSellDiscardTitle">Discard sale changes?</h2>
+                <p id="cgSellDiscardDescription">You have unsaved changes. Close sales settings and discard your edits?</p>
+                <div class="cg_sell_discard_actions">
+                    <button type="button" id="cgKeepEditingSale">Keep editing</button>
+                    <button type="button" id="cgDiscardSaleChanges">Discard changes</button>
+                </div>
+            </div>
+        </div>';
 
 // Sell PayPal container END
 

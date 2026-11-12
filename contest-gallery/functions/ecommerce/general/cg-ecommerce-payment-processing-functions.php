@@ -47,12 +47,22 @@ if(!function_exists('cg_ecommerce_get_price_total_net_items')) {
 }
 
 
+if(!function_exists('cg_ecommerce_item_has_alternative_shipping')) {
+    function cg_ecommerce_item_has_alternative_shipping($item){
+        if(isset($item['IsAlternativeShipping'])){
+            return !empty($item['IsAlternativeShipping']);
+        }
+        // Historical orders may lack the flag. The formatted string "0.00" is not empty in PHP.
+        return isset($item['alternative_shipping_amount_value_gross']) && (float)$item['alternative_shipping_amount_value_gross'] != 0;
+    }
+}
+
 if(!function_exists('cg_ecommerce_check_item_has_default_shipping')) {
     function cg_ecommerce_check_item_has_default_shipping($LogForDatabase){
         $itemHasDefaultShipping = 0;
         foreach ($LogForDatabase['purchase_units'][0]['items'] as $key => $item){
             if(!empty($item['IsShipping'])){
-                if(!empty($item['alternative_shipping_amount_value_gross'])){
+                if(cg_ecommerce_item_has_alternative_shipping($item)){
                 }else{
                     $itemHasDefaultShipping = true;
                 }
@@ -310,7 +320,7 @@ if(!function_exists('cg_ecommerce_get_order_by_payment_transaction')) {
 		$providerIdColumn = ($paymentType === 'stripe') ? 'StripePiId' : 'PayPalTransactionId';
 
 		return $wpdb->get_row($wpdb->prepare(
-			"SELECT id, OrderIdHash FROM $tablenameEcommerceOrders
+			"SELECT id, OrderIdHash, IsFullPaid FROM $tablenameEcommerceOrders
 			WHERE PaymentType = %s
 			AND IsTest = %d
 			AND BINARY $providerIdColumn = BINARY %s
@@ -343,9 +353,10 @@ if(!function_exists('cg_ecommerce_begin_payment_transaction_processing')) {
 			return $result;
 		}
 
-		if(cg_ecommerce_get_order_by_payment_transaction($paymentType,$isTest,$providerTransactionId)){
+		$existingOrder = cg_ecommerce_get_order_by_payment_transaction($paymentType,$isTest,$providerTransactionId);
+		if($existingOrder){
 			cg_ecommerce_release_payment_transaction_lock($lockName);
-			$result['code'] = 'already_processed';
+			$result['code'] = empty($existingOrder->IsFullPaid) ? 'incomplete_order' : 'already_processed';
 			return $result;
 		}
 
@@ -356,6 +367,38 @@ if(!function_exists('cg_ecommerce_begin_payment_transaction_processing')) {
 		return $result;
 
 	}
+}
+
+if(!function_exists('cg_ecommerce_payment_lock_is_owned')) {
+    function cg_ecommerce_payment_lock_is_owned($lockName){
+        global $wpdb;
+        return $lockName !== '' && (string)$wpdb->get_var($wpdb->prepare('SELECT IS_USED_LOCK(%s) = CONNECTION_ID()',$lockName)) === '1';
+    }
+}
+
+if(!function_exists('cg_ecommerce_complete_saved_order')) {
+    function cg_ecommerce_complete_saved_order($orderId,$orderHash,$log,$status,$lockName){
+        global $wpdb;
+        $orders = $wpdb->prefix.'contest_gal1ery_ecommerce_orders';
+        $items = $wpdb->prefix.'contest_gal1ery_ecommerce_orders_items';
+        if(!cg_ecommerce_payment_lock_is_owned($lockName) || empty($log['purchase_units'][0]['items']) || $orderHash === ''){return false;}
+        $expectedIds = array();
+        foreach($log['purchase_units'][0]['items'] as $item){
+            if(empty($item['itemId'])){return false;}
+            $expectedIds[] = absint($item['itemId']);
+        }
+        if(count(array_unique($expectedIds)) !== count($expectedIds)){return false;}
+        $savedIds = $wpdb->get_col($wpdb->prepare("SELECT id FROM $items WHERE ParentOrder=%d",$orderId));
+        if(!is_array($savedIds)){return false;}
+        $savedIds = array_map('absint',$savedIds);
+        sort($savedIds);sort($expectedIds);
+        if($savedIds !== $expectedIds){return false;}
+        $serialized = serialize($log);
+        if($wpdb->update($orders,array('LogForDatabase'=>$serialized),array('id'=>$orderId,'OrderIdHash'=>$orderHash)) === false){return false;}
+        $saved = $wpdb->get_row($wpdb->prepare("SELECT OrderIdHash, LogForDatabase FROM $orders WHERE id=%d",$orderId));
+        if(!$saved || $saved->OrderIdHash !== $orderHash || $saved->LogForDatabase !== $serialized || !cg_ecommerce_payment_lock_is_owned($lockName)){return false;}
+        return (int)$wpdb->update($orders,array('IsFullPaid'=>1,'PaymentStatus'=>$status),array('id'=>$orderId,'OrderIdHash'=>$orderHash,'IsFullPaid'=>0)) === 1;
+    }
 }
 
 if(!function_exists('cg_ecommerce_get_authoritative_ecommerce_entry_data')) {
@@ -480,6 +523,13 @@ if(!function_exists('cg_ecommerce_resolve_checkout_environment')) {
 			return array('success'=>true,'is_test'=>1,'environment'=>'sandbox','paid_actions_sandbox'=>0,'visitor_product_sandbox'=>0);
 		}
 
+        if(!empty($authoritativeCart['purchase_units'][0]['items'])){
+            foreach($authoritativeCart['purchase_units'][0]['items'] as $item){
+                if(!empty($item['IsTestOnly'])){
+                    return array('success'=>false,'message'=>cg_ecommerce_test_only_message());
+                }
+            }
+        }
 		return array('success'=>true,'is_test'=>0,'environment'=>'live','paid_actions_sandbox'=>0,'visitor_product_sandbox'=>0);
 	}
 }
@@ -613,6 +663,7 @@ if(!function_exists('cg_ecommerce_build_authoritative_checkout_cart')) {
 				return $return;
 			}
 
+            if(!cg_ecommerce_product_price_is_valid($ecommerceEntryRow)){return $return;}
 			$priceGross = round(floatval($ecommerceEntryRow->Price),2);
 			$taxPercentage = round(floatval($ecommerceEntryRow->TaxPercentage),2);
 			$taxValueUnit = 0;
@@ -663,6 +714,7 @@ if(!function_exists('cg_ecommerce_build_authoritative_checkout_cart')) {
 				unset($normalizedItem['tax']);
 			}
 			$normalizedItem['tax_percentage'] = cg_ecommerce_format_money_value($taxPercentage);
+            $normalizedItem['IsFree'] = !empty($ecommerceEntryRow->IsFree) ? 1 : 0;
 			$normalizedItem['IsDownload'] = $isDownload;
 			$normalizedItem['IsShipping'] = $isShipping;
 			$normalizedItem['IsService'] = $isService;
@@ -673,6 +725,7 @@ if(!function_exists('cg_ecommerce_build_authoritative_checkout_cart')) {
 			$normalizedItem['DownloadKeysCsvName'] = $ecommerceEntryRow->DownloadKeysCsvName;
 			$normalizedItem['ServiceKeysCsvName'] = $ecommerceEntryRow->ServiceKeysCsvName;
 			$normalizedItem['SaleType'] = $ecommerceEntryRow->SaleType;
+            $normalizedItem['IsTestOnly'] = cg_ecommerce_sale_requires_test($ecommerceEntryId,$ecommerceEntryRow->SaleType) ? 1 : 0;
 			if(empty($normalizedItem['name'])){
 				$normalizedItem['name'] = !empty($ecommerceEntryRow->SaleTitle) ? $ecommerceEntryRow->SaleTitle : 'product-title-'.$authoritativeRealId;
 			}
@@ -705,6 +758,8 @@ if(!function_exists('cg_ecommerce_build_authoritative_checkout_cart')) {
 				$isShipping,
 				$isService,
 				$isUpload,
+                $normalizedItem['IsTestOnly'],
+                $normalizedItem['IsFree'],
 				$isAlternativeShipping,
 				cg_ecommerce_format_money_value($alternativeShippingGross)
 			]);
@@ -854,6 +909,7 @@ if(!function_exists('cg_ecommerce_processing_afterwards')) {
 	    if(
 		    empty($Order) ||
 		    !empty($Order->IsFullPaid) ||
+		    $Order->PaymentStatus === $expectedPaidStatus ||
 		    sanitize_key((string)$Order->PaymentType) !== $paymentType ||
 		    (empty($Order->IsTest) ? 0 : 1) !== (empty($isTest) ? 0 : 1)
 	    ){
@@ -871,25 +927,12 @@ if(!function_exists('cg_ecommerce_processing_afterwards')) {
 
 	    include(__DIR__ ."/../../../check-language-ecommerce.php");
 
-	    $Order->IsFullPaid = 1;
 	    $isFullPaid = 1;
 	    $LogForDatabase = unserialize($Order->LogForDatabase);
 	    cg_ecommerce_remove_stripe_client_secret_from_array($LogForDatabase);
 	    $CreateInvoice = $ecommerce_options->CreateInvoice;
 	    $SendInvoice = $ecommerce_options->SendInvoice;
 	    $SendOrderConfirmationMail = $ecommerce_options->SendOrderConfirmationMail;
-
-	    $paymentStatusUpdateResult = $wpdb->update(
-		    "$tablename_ecommerce_orders",
-		    array('IsFullPaid' => 1,'PaymentStatus' => $status),// PaymentStatus must be not completed or succeded before
-		    array('id' => $Order->id),
-		    array('%d','%s'),
-		    array('%d')
-	    );
-	    if((int)$paymentStatusUpdateResult !== 1){
-		    cg_ecommerce_release_payment_transaction_lock($paymentTransactionLockName);
-		    return false;
-	    }
 
 	    $TaxPercentageDefault = $LogForDatabase['TaxPercentageDefault'];
 	    $payer_email = $Order->PayerEmail;
@@ -903,6 +946,11 @@ if(!function_exists('cg_ecommerce_processing_afterwards')) {
 	    $beforeFilter = cg_ecommerce_apply_before_payment_processing_filter($paymentFilterData);
 
 	    $processingData = cg_ecommerce_payment_processing_data($LogForDatabase,$OrderIdHash,$PayerEmail,$Order->PayPalTransactionId,$Order->Tstamp,$LogForDatabase['PriceDivider'],$status,$Order->id, $PriceTotalGrossItemsWithShipping,false,true,$Order->id,$isFullPaid,$OrderNumber,$beforeFilter);
+	    if(is_wp_error($processingData) || !cg_ecommerce_complete_saved_order($Order->id,$OrderIdHash,$processingData['LogForDatabase'],$status,$paymentTransactionLockName)){
+	        cg_ecommerce_release_payment_transaction_lock($paymentTransactionLockName);
+	        return false;
+	    }
+	    $Order->IsFullPaid = 1;
 	    if(function_exists('cg_paid_actions_grant_order')){
 		    cg_paid_actions_grant_order($Order->id);
 	    }

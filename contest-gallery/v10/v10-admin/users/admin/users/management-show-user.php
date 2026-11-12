@@ -101,9 +101,9 @@ $WpUpload = $selectProfileImage ? $wpdb->get_var($wpdb->prepare("SELECT WpUpload
 if(!empty($selectProfileImage) && !empty($WpUpload)){
     $cgHasRegistrationFormData = true;
     $cgCanSaveRegistrationFormData = true;
-    echo "<div style='margin-bottom:10px;'>";
+    echo '<div class="cg-registration-form-field">';
 
-        echo "<div style='display:inline-block;'>";
+        echo '<div class="cg-registration-form-field-title">';
         echo "<strong>$selectProfileImage->Field_Name</strong>";
         echo "</div>";
 
@@ -118,7 +118,7 @@ if(!empty($selectProfileImage) && !empty($WpUpload)){
                     echo "<div id='cg_input_image_upload_file_preview_img' style='background: url($imgSrcLarge) no-repeat;'>";
                     echo "</div>";
                 echo "</div>";
-                echo "<input type='button' id='cg_input_image_upload_file_to_delete_button' class='button cg-button-remove-profile-image cg-button-remove-profile-image-management-show-user' value='$language_RemoveProfileImage'>";
+                echo '<button type="button" id="cg_input_image_upload_file_to_delete_button" class="button cg-button-remove-profile-image cg-button-remove-profile-image-management-show-user">'.esc_html($language_RemoveProfileImage).'</button>';
             }
             echo '<div id="cg_profile_image_removed" class="cg_hide">...</div>';
         }else{
@@ -143,9 +143,9 @@ foreach($userEntriesNew as $entry){
         $userFieldContent = cg_profile_field_value($selectUserFormSorted[$entry->meta_key],get_user_meta($wpUserId,$entry->meta_key,true));
 
 
-        echo "<div style='margin-bottom:10px;'>";
+        echo '<div class="cg-registration-form-field" role="group" aria-labelledby="'.esc_attr($fieldName).'_title">';
 
-            echo "<div style='float:left;display:inline;'>";
+            echo '<div class="cg-registration-form-field-title" id="'.esc_attr($fieldName).'_title">';
             echo "<strong>$fieldTitle:</strong>";
             echo "</div>";
 
@@ -157,9 +157,11 @@ foreach($userEntriesNew as $entry){
         }
 
         if($formFieldType==='user-check-field'){
+            echo '<div class="cg-registration-form-choices">';
             foreach(cg_member_profile_choices($selectUserFormSorted[$entry->meta_key]) as $choice){
-                echo '<label><input type="checkbox" name="'.esc_attr($fieldName).'[]" value="'.esc_attr($choice).'"'.(in_array($choice,$userFieldContent,true) ? ' checked' : '').'> '.esc_html($choice).'</label><br>';
+                echo '<label><input type="checkbox" name="'.esc_attr($fieldName).'[]" value="'.esc_attr($choice).'"'.(in_array($choice,$userFieldContent,true) ? ' checked' : '').'><span class="cg-registration-choice-content"><span class="cg-registration-choice-text">'.esc_html($choice).'</span><span class="cg-registration-choice-icon" aria-hidden="true"></span></span></label>';
             }
+            echo '</div>';
             echo '<input type="hidden" name="cg_profile_present['.absint($selectUserFormSorted[$entry->meta_key]->id).']" value="1">';
         }elseif($formFieldType=="user-comment-field"){
             echo "<textarea name='".esc_attr($fieldName)."' style='width:100%;height:100px;'>".esc_textarea($userFieldContentDisplay)."</textarea>";
@@ -250,8 +252,8 @@ if(!$cgHasRegistrationFormData){
     echo '<p class="cg-registration-details-empty">No registration form data recorded for this user.</p>';
 }
 if($cgCanSaveRegistrationFormData){
-    echo "<div style='height:30px;' id='cg_go_to_save_button'>";
-    echo "<button id='cgRegUserAdminFormSubmit' type='submit' value='Save data' class='cg_backend_button_gallery_action' style='float:right;text-align:center;width:80px;' data-cg-gid='$GalleryID'>Save data</button>";
+    echo "<div class='cg-registration-details-actions' id='cg_go_to_save_button'>";
+    echo "<button id='cgRegUserAdminFormSubmit' type='submit' value='Save data' class='cg_backend_button_gallery_action' data-cg-gid='$GalleryID'>Save data</button>";
     echo "</div>";
 }
 

@@ -1332,11 +1332,15 @@ jQuery(document).ready(function($){
             return;
         }
 
-        if(windowScrollTop>=$cg_main_options_content.offset().top && windowScrollTop>=lastScrollTop){//then Downscroll
+        var isSearchStickyHeader = $cg_main_options_tab.hasClass('cg_options_search_enabled');
+        // Search keeps the header in the flow with CSS sticky, before content reaches the top.
+        var isHeaderAtStickyTop = isSearchStickyHeader && $cg_main_options_tab[0].getBoundingClientRect().top <= heightWpadminbar;
+
+        if(isSearchStickyHeader ? isHeaderAtStickyTop : windowScrollTop>=$cg_main_options_content.offset().top && windowScrollTop>=lastScrollTop){
             $cg_main_options_tab.addClass('cg_sticky').css({'top':heightWpadminbar+'px','border-right':'unset'}).width(cgJsClassAdmin.index.vars.$cg_main_container.width());
         }
 
-        if(windowScrollTop<$cg_main_options_content.offset().top && windowScrollTop<lastScrollTop){//then Downscroll
+        if(isSearchStickyHeader ? !isHeaderAtStickyTop : windowScrollTop<$cg_main_options_content.offset().top && windowScrollTop<lastScrollTop){
             $cg_main_options_tab.removeClass('cg_sticky').removeAttr('style');
             $cg_main_options.find('.cg_short_code_multiple_pics_configuration_buttons').removeClass('cg_sticky');
             $cg_main_options.find('.cg_short_code_galleries_configuration_buttons').removeClass('cg_sticky');

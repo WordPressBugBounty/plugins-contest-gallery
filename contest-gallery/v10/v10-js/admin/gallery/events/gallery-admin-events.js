@@ -716,6 +716,11 @@ debugger
             return;
         }
 
+        if(this.id === 'cgBackendBackgroundDrop' && $('#cgSellContainer').is(':visible')){
+            cgJsClassAdmin.gallery.saleEdit.close(false);
+            return;
+        }
+
         $('body').removeClass('cg_overflow_hidden');
 
         var $cgMultipleFilesForPostContainer = $('#cgMultipleFilesForPostContainer');

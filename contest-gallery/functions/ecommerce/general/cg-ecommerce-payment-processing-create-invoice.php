@@ -60,6 +60,9 @@ if(!function_exists('cg_ecommerce_payment_processing_create_invoice')) {
         $hasTaxToShow = cg_ecommerce_has_tax_to_show($LogForDatabase);
         $itemHasShipping = cg_ecommerce_check_item_has_shipping($LogForDatabase);
         $itemHasDefaultShipping = cg_ecommerce_check_item_has_default_shipping($LogForDatabase);
+        if($itemHasDefaultShipping){
+            $PriceTotalNetItemsWithShipping += $ShippingNet;
+        }
         $currenciesArray = cg_get_ecommerce_currencies_array_formatted_by_short_key();
         $CurrencyShort = $LogForDatabase['purchase_units'][0]['amount']['currency_code'];
         $CurrencyPosition = $LogForDatabase['CurrencyPosition'];
@@ -362,7 +365,7 @@ HEREDOC;
             $taxColumnToShow = ($hasTaxToShow || true) ? '<td  style="text-align:right;">'.$item['TaxPercentageToShow'].'</td>' : '';
 
             $freeShippingStringAlternativeString = '';
-            if(!empty($item['AlternativeShippingGross']) && $item['AlternativeShippingGross']>0){
+            if(!empty($item['IsShipping']) && cg_ecommerce_item_has_alternative_shipping($item) && (float)$item['AlternativeShippingGross']==0){
                 $freeShippingStringAlternativeString = "<br>($language_FreeShipping)";
             }
 
@@ -383,7 +386,7 @@ HEREDOC;
         $isFreeShipping = true;
 
         foreach ($LogForDatabase['purchase_units'][0]['items'] as $item){
-            if(!empty($item['IsShipping']) && !$isDefaultShippingProcessed && empty($item['alternative_shipping_amount_value_gross']) && intval($ShippingNet)!=0){
+            if(!empty($item['IsShipping']) && !$isDefaultShippingProcessed && !cg_ecommerce_item_has_alternative_shipping($item) && (float)$ShippingNet!=0){
                 $isDefaultShippingProcessed = true;
 
                 $totalShipping = $totalShipping + $DefaultShipping;
@@ -420,7 +423,7 @@ HEREDOC;
         if($itemHasShipping){
             foreach ($LogForDatabase['purchase_units'][0]['items'] as $item){
                 // gross not net here because might be 100% tax theoretically
-                if(!empty($item['AlternativeShippingGross']) && intval($item['AlternativeShippingGross'])!=0){
+                if(!empty($item['AlternativeShippingGross']) && (float)$item['AlternativeShippingGross']!=0){
 
                     $alternativeShippingValueNetToShow = cg_ecommerce_price_to_show($currenciesArray,$CurrencyShort,$CurrencyPosition,$PriceDivider,$item['AlternativeShippingNet']);
 
@@ -452,7 +455,7 @@ HEREDOC;
         $TaxesArray = [];
         $TaxesArray[$TaxPercentageDefaultToShow] = 0;
 
-        if($itemHasDefaultShipping && intval($ShippingGross)){
+        if($itemHasDefaultShipping && (float)$ShippingGross!=0){
             $TaxesArray[$TaxPercentageDefaultToShow] = $ShippingTaxValue;
         }
 

@@ -1477,7 +1477,7 @@ if((!empty($isOnlyGalleryEcommerce) || !empty($isOnlyUploadFormEcommerce) || !em
         $ecommerceOptions['AllowedCountriesTranslations'] = unserialize($ecommerceOptions['AllowedCountriesTranslations']);
     }
 
-    $ecommerceFilesData = cg_get_ecommerce_files_data($galeryID);
+    $ecommerceFilesData = cg_get_ecommerce_files_data($galeryID,0,(bool)$isEcommerceTest);
 
     $ecommerceViewerUserId = (!empty($WpUserId)) ? absint($WpUserId) : 0;
     foreach($ecommerceFilesData as $ecommerceRealId => $ecommerceFileData){

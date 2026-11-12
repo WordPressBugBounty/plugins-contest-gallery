@@ -134,7 +134,11 @@ if(empty($Order)){
 		$ecommerceOptions = json_decode(json_encode($ecommerce_options),true);
 		$ecommerceOptions['BorderRadiusOrder'] = 1;
 
-		if($Order->PaymentType == 'stripe'){
+		if($Order->PaymentType == 'free'){
+            $status = $Order->PaymentStatus;
+            $explanation = 'Free order. No payment required.';
+            if(empty($Order->IsFullPaid) || $status!=='COMPLETED'){echo '<p>This order has not been completed.</p>';return;}
+        }elseif($Order->PaymentType == 'stripe'){
 			if($Order->IsTest){
 				$secret = $ecommerceOptions['StripeSandboxSecret'];
 			}else{
@@ -450,7 +454,11 @@ Payment type not set
     $TransactionValue = $PayPalTransactionId;
     $paymentStatusTextAndUrl = "All possible captured payment statuses can be found <a target='_blank' href='https://developer.paypal.com/docs/api/payments/v2/#definition-capture_status'>...developer.paypal.com/docs/api/payments...</a>";
 
-	if($Order->PaymentType == 'stripe'){
+	if($Order->PaymentType == 'free'){
+        $TransactionLabel = 'Free order'.$environment;
+        $TransactionValue = 'No payment required';
+        $paymentStatusTextAndUrl = '';
+    }elseif($Order->PaymentType == 'stripe'){
 		$paymentStatusTextAndUrl = "All possible payment intents statuses can be found <a target='_blank' href='https://docs.stripe.com/payments/paymentintents/lifecycle'>...docs.stripe.com/payments/paymentintents/lifecycle...</a>";
 		$StripePiId = $Order->StripePiId;
 		$StripePiPaymentMethodId = $Order->StripePiPaymentMethodId;

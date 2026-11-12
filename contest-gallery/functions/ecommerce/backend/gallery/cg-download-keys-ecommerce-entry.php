@@ -17,24 +17,14 @@ if(!function_exists('cg_download_keys_ecommerce_entry')){
         $DownloadKeysCsvName = '';
         $ServiceKeysCsvName = '';
 
-/*var_dump($GalleryID);
-var_dump($realId);*/
-        if(!empty($_GET['cg_download_keys_for_ecommerce_sale'])){
-            $DownloadKeysCsvName = $wpdb->get_var("SELECT DownloadKeysCsvName FROM $tablename_ecommerce_entries WHERE pid = '$realId' ");
-        }
-        if(!empty($_GET['cg_service_keys_for_ecommerce_sale'])){
-            $ServiceKeysCsvName = $wpdb->get_var("SELECT ServiceKeysCsvName FROM $tablename_ecommerce_entries WHERE pid = '$realId' ");
-        }
-
-        if(!empty($DownloadKeysCsvName)){
-            $ecommerceFileFolder = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/ecommerce/real-id-'.$realId;
-            $baseName = $ecommerceFileFolder.'/download-keys/'.$DownloadKeysCsvName;
-        }
-
-        if(!empty($ServiceKeysCsvName)){
-            $ecommerceFileFolder = $wp_upload_dir['basedir'].'/contest-gallery/gallery-id-'.$GalleryID.'/ecommerce/real-id-'.$realId;
-            $baseName = $ecommerceFileFolder.'/service-keys/'.$ServiceKeysCsvName;
-        }
+        $entry = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}contest_gal1ery WHERE id = %d AND GalleryID = %d",$realId,$GalleryID));
+        if(!$entry){wp_die('Entry not found.');}
+        $sale = !empty($entry->EcommerceEntry) ? $wpdb->get_row($wpdb->prepare("SELECT * FROM $tablename_ecommerce_entries WHERE id = %d",$entry->EcommerceEntry),ARRAY_A) : cg_ecommerce_sale_draft_get($entry);
+        $isService = !empty($_GET['cg_service_keys_for_ecommerce_sale']);
+        $field = $isService ? 'ServiceKeysCsvName' : 'DownloadKeysCsvName';
+        $folder = $isService ? 'service-keys' : 'download-keys';
+        $baseName = cg_ecommerce_sale_key_file($GalleryID,$realId,$folder,isset($sale[$field]) ? $sale[$field] : '');
+        if(!$baseName){wp_die('Key file not found.');}
 
         //Define header information
         header('Content-Description: File Transfer');

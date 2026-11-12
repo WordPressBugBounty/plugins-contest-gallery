@@ -367,7 +367,7 @@ if(!function_exists('cg_pin_auth_build_challenge')){
 if(!function_exists('cg_pin_auth_request')){
 	function cg_pin_auth_request($email,$source,$context = array()){
 		$email = sanitize_email(strtolower($email));
-		if(!is_email($email)){
+		if(!cg_is_valid_email($email)){
 			return new WP_Error('cg_pin_invalid_email',cg_pin_auth_t('Enter a valid email address.'));
 		}
 		if(cg_pin_auth_source_can_create_user($source) && cg_registration_agreements_active()){
@@ -518,6 +518,9 @@ if(!function_exists('cg_pin_auth_resend')){
 			}
 			$active = cg_security_state_read('pin',cg_pin_auth_active_key($data['email'],$data['source']));
 			if($active && (string)$active!==(string)$requestKey){return new WP_Error('cg_pin_invalid',cg_pin_auth_t('The PIN request is no longer available.'));}
+			if(!cg_is_valid_email($data['email'])){
+				return new WP_Error('cg_pin_invalid_email',cg_pin_auth_t('Enter a valid email address.'));
+			}
 			$reserved = cg_pin_auth_reserve_request($data['email']);
 			if(is_wp_error($reserved)){return $reserved;}
 			return cg_pin_auth_build_challenge($data['email'],$data['source'],$data['context'],$requestKey,!empty($data['activationKey']) ? $data['activationKey'] : '');

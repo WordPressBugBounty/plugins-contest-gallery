@@ -264,7 +264,10 @@ cgJsClassAdmin.gallery.reload = {
             contentType: false,
             processData: false
         }).done(function(response) {
+            // The later var declaration is hoisted into this callback. Initialize it before refreshing per-entry caches.
+            var realId = id;
             debugger
+            if(isReloadAfterSaleSettingsSave && cgJsClassAdmin.gallery.functions.checkSaleErrorResponse(response,!isWithSaveChanges)){return;}
 
             if(NewWpUploadWhichReplace){
                 $('#cgWpUploadToReplace').val('');// reset again
@@ -274,6 +277,10 @@ cgJsClassAdmin.gallery.reload = {
             var $response = jQuery(new DOMParser().parseFromString(response, 'text/html'));
 
             var cgVersionCurrent = $response.find('#cgVersionScripts').val();
+            if(isReloadAfterSaleSettingsSave && (!cgVersionCurrent || !isWithSaveChanges && !$response.find('#div'+id).length)){
+                cgJsClassAdmin.gallery.functions.restoreSaleAfterError(undefined,!isWithSaveChanges);
+                return;
+            }
 
             cgJsClassAdmin.index.functions.cgSetVersionForUrlJs($response.find('#cgGetVersionForUrlJs').val());
 
@@ -282,7 +289,10 @@ cgJsClassAdmin.gallery.reload = {
             }
 
             if(cgJsClassAdmin.index.vars.cgVersion !== 0 && (cgJsClassAdmin.index.vars.cgVersion!=cgVersionCurrent)){
-
+                if(isReloadAfterSaleSettingsSave){
+                    cgJsClassAdmin.gallery.functions.restoreSaleAfterError({responseJSON:{data:{message:'The plugin was updated. Reload this page before saving again.'}}},!isWithSaveChanges);
+                    return;
+                }
                 cgJsClassAdmin.index.functions.newVersionReload();
                 return;
 
@@ -315,6 +325,18 @@ cgJsClassAdmin.gallery.reload = {
                 }
 
                 $('#cgGalleryForm').find('#div'+id).replaceWith($response.find('#div'+id));
+                var $updatedEntry = $('#cgGalleryForm').find('#div'+id);
+                if(cgJsClassAdmin.gallery.vars.$sortableDiv && cgJsClassAdmin.gallery.vars.$sortableDiv.attr('data-cg-real-id') == realId){
+                    cgJsClassAdmin.gallery.vars.$sortableDiv = $updatedEntry;
+                    cgJsClassAdmin.gallery.vars.backgroundUrlToSell = $updatedEntry.find('.cg_image_src_large_to_show').val();
+                    cgJsClassAdmin.gallery.vars.salePreviewGeneration = (cgJsClassAdmin.gallery.vars.salePreviewGeneration || 0)+1;
+                    ['base64andAltFileValues','base64andAltFileTypes'].forEach(function(key){
+                        if(cgJsClassAdmin.gallery.vars[key]){delete cgJsClassAdmin.gallery.vars[key][realId];}
+                    });
+                    cgJsClassAdmin.gallery.vars.WpUploadFilesForSaleArrayLoaded = [];
+                    cgJsClassAdmin.gallery.vars.WpUploadFilesForSaleArrayNew = [];
+                    cgJsClassAdmin.gallery.vars.removedWpUploadIdsFromSale = [];
+                }
 
                 var message = 'Changes saved';
                 if(!isReloadAfterSaveChangesOrCallback && customMessage){
@@ -333,7 +355,7 @@ cgJsClassAdmin.gallery.reload = {
 
             cgJsClassAdmin.index.functions.setCgNonce($);
 
-            var cgPdfPreviewsToCreateString = $response.find('#cgPdfPreviewsToCreateString').val();
+            var cgPdfPreviewsToCreateString = $response.find('#cgPdfPreviewsToCreateString').val() || '';
             debugger
             console.log('cgPdfPreviewsToCreateString');
             console.log(cgPdfPreviewsToCreateString);
@@ -410,6 +432,10 @@ cgJsClassAdmin.gallery.reload = {
             });
 
         }).fail(function(xhr, status, error) {
+            if(isReloadAfterSaleSettingsSave){
+                cgJsClassAdmin.gallery.functions.restoreSaleAfterError(xhr,!isWithSaveChanges);
+                return;
+            }
             cgJsClassAdmin.index.functions.noteIfIsIE();
         }).always(function() {
 

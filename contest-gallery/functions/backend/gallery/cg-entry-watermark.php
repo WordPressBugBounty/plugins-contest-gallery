@@ -376,7 +376,7 @@ if(!function_exists('cg_entry_watermark_get_attachment_type')){
 if(!function_exists('cg_entry_watermark_get_image_url')){
 	function cg_entry_watermark_get_image_url($WpUpload, $size){
 		$url = '';
-		$image = wp_get_attachment_image_src($WpUpload, $size);
+		$image = cg_ecommerce_public_image_src($WpUpload, $size);
 		if(!empty($image[0])){
 			$url = $image[0];
 		}elseif($size === 'full'){
@@ -391,6 +391,11 @@ if(!function_exists('cg_entry_watermark_is_ecommerce_locked')){
 		$WpUpload = absint($WpUpload);
 		if(empty($WpUpload)){
 			return true;
+		}
+
+		if(function_exists('cg_ecommerce_file_context')){
+			$context = cg_ecommerce_file_context($WpUpload);
+			return $context['managed'] || $context['locked'];
 		}
 
 		if(get_post_meta($WpUpload, 'contest_gallery_ecommerce_sale', true)){
@@ -444,6 +449,7 @@ if(!function_exists('cg_entry_watermark_add_file_state')){
 			'watermarked' => !empty($meta),
 			'can_restore' => !empty($meta),
 			'ecommerce_locked' => cg_entry_watermark_is_ecommerce_locked($WpUpload),
+			'sale_context' => cg_ecommerce_file_context($WpUpload,$realId),
 			'settings' => $settings
 		);
 	}

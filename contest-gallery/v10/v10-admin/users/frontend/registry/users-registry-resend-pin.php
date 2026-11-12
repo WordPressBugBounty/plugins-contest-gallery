@@ -47,6 +47,18 @@ if (count($userAccountEntries)) {
         die;
     }
 
+    if(!cg_is_valid_email($cg_main_mail)){
+        ?>
+        <script data-cg-processing="true">
+            cgJsClass.gallery.vars.activationKey = '';
+            cgJsClass.gallery.vars.pinMessage = 'cg_pin_invalid_email';
+            cgJsClass.gallery.vars.pinRetryAfter = 0;
+            cgJsClass.gallery.vars.pinStatusMessage = <?php echo wp_json_encode(cg_pin_auth_t('Enter a valid email address.'));?>;
+        </script>
+        <?php
+        die;
+    }
+
     $cgPinRateLock = cg_pin_auth_acquire_lock('rate',$cg_main_mail);
     if($cgPinRateLock){
         $cgPinRateReservation = cg_pin_auth_reserve_request($cg_main_mail);

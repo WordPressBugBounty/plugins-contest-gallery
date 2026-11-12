@@ -1,5 +1,18 @@
 <?php
 
+if(!function_exists('cg_is_valid_email')){
+    function cg_is_valid_email($email){
+        if(!is_string($email) || !is_email($email)){
+            return false;
+        }
+
+        // WordPress checks dot placement in the domain, but not in the local part.
+        $parts = explode('@',$email,2);
+        $local = $parts[0];
+        return count($parts)===2 && $local!=='' && $local[0]!=='.' && substr($local,-1)!=='.' && strpos($local,'..')===false;
+    }
+}
+
 if(!function_exists('cg_resolve_mail_from_reply')){
     function cg_resolve_mail_from_reply($fromMail,$replyMail){
         $fromMail = sanitize_email(trim(wp_specialchars_decode((string)$fromMail,ENT_QUOTES)));

@@ -6,6 +6,7 @@ global $wpdb;
 $tablenameEcommerceEntries = $wpdb->prefix . "contest_gal1ery_ecommerce_entries";
 
 $wp_upload_dir = wp_upload_dir();
+$isProductSandbox = isset($_POST['isTestEnv']) && in_array($_POST['isTestEnv'],array(true,1,'1','true'),true);
 $viewerUserId = (is_user_logged_in()) ? get_current_user_id() : 0;
 $allowedShortcodes = [
 	'cg_gallery' => true,
@@ -120,12 +121,19 @@ foreach($requestedEntriesByGallery as $GalleryID => $authorizedEntries){
 		$EcommerceFilesDataEachGallery[$GalleryID] = [];
 
 		foreach($ecommerceFilesSQL as $ecommerceFileSQL){
+            if(!$isProductSandbox && cg_ecommerce_sale_requires_test($ecommerceFileSQL->id,$ecommerceFileSQL->SaleType)){
+                wp_send_json_error(array('code'=>'cg_test_only_product','message'=>cg_ecommerce_test_only_message()),409);
+            }
+            if(!cg_ecommerce_product_price_is_valid($ecommerceFileSQL)){
+                wp_send_json_error(array('code'=>'cg_price_unavailable','message'=>'This product is not available for purchase. Please remove it from your cart.'),409);
+            }
 			$pid = absint($ecommerceFileSQL->pid);
 			if(empty($authorizedEntries[$pid])){
 				continue;
 			}
 
 			$EcommerceFilesDataEachGallery[$GalleryID][$pid] = json_decode(json_encode($ecommerceFileSQL),true);
+            $EcommerceFilesDataEachGallery[$GalleryID][$pid]['IsTestOnly'] = cg_ecommerce_sale_requires_test($ecommerceFileSQL->id,$ecommerceFileSQL->SaleType) ? 1 : 0;
 			// has to be unserialized because is unserialized otherwise jsond_decode processing error later
 			$EcommerceFilesDataEachGallery[$GalleryID][$pid]['WpUploadFilesPosts'] = !empty($EcommerceFilesDataEachGallery[$GalleryID][$pid]['WpUploadFilesPosts']) ? unserialize($EcommerceFilesDataEachGallery[$GalleryID][$pid]['WpUploadFilesPosts']) : '';
 			$EcommerceFilesDataEachGallery[$GalleryID][$pid]['WpUploadFilesPostMeta'] = !empty($EcommerceFilesDataEachGallery[$GalleryID][$pid]['WpUploadFilesPostMeta']) ? unserialize($EcommerceFilesDataEachGallery[$GalleryID][$pid]['WpUploadFilesPostMeta']) : '';

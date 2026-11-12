@@ -129,6 +129,7 @@ if(!function_exists('cg_move_file_from_ecommerce_sale_folder')){
 	        //contest-gallery-pro-replaced-3dir-replaced-31lala
 	        //contest-gallery-pro-replaced-3dir-replaced-31lala-replaced
 	        $isRenameSuccess = true;
+            $isUploadRestored = true;
 	        if(file_exists($ecommerceFileFolderWpUploadFolder.'/'.$filename)){
 		        // this processing (when a file will be replaced with file with same name) not for images so far!!! images always new name will be created. Because WordPress creates for images always new link (not like for other file types) despite same name uploaded.
 		        if(file_exists($wp_upload_dir_of_file.'/'.$filename) && empty($WpUploadFilePostMeta['_wp_attachment_metadata']['sizes'])){
@@ -189,9 +190,12 @@ if(!function_exists('cg_move_file_from_ecommerce_sale_folder')){
 			        $isRenameSuccess = rename($ecommerceFileFolderWpUploadFolder.'/'.$filename, $wp_upload_dir_of_file.'/'.$filename);// $sizeArray['file] is without / at the beginning
 		        }
 
-	        }
+	        }elseif(!is_file($wp_upload_dir_of_file.'/'.$filename)){
+                $isRenameSuccess = false;
+            }
 
             if(!$isRenameSuccess){
+                $isUploadRestored = false;
                 $isAllWpUploadsSuccessfulMoved = false;
 	            if($isFromDeleteGalleryOrUninstallPlugin){
 					echo "Following file could not be moved back to WordPress media library: ".$ecommerceFileFolderWpUploadFolder.'/'.$filename;
@@ -235,7 +239,10 @@ if(!function_exists('cg_move_file_from_ecommerce_sale_folder')){
 			                $isReplacedFile = true;
 
 		                }else{
-			                rename($ecommerceFileFolderWpUploadFolder.'/'.$sizeArray['file'], $wp_upload_dir_of_file.'/'.$sizeArray['file']);// $sizeArray['file] is without / at the beginning
+                            if(!rename($ecommerceFileFolderWpUploadFolder.'/'.$sizeArray['file'], $wp_upload_dir_of_file.'/'.$sizeArray['file'])){
+                                $isUploadRestored = false;
+                                $isAllWpUploadsSuccessfulMoved = false;
+                            }
 		                }
 	                }
                 }
@@ -252,7 +259,7 @@ if(!function_exists('cg_move_file_from_ecommerce_sale_folder')){
 				}
             }
 
-            if($isRenameSuccess){
+            if($isUploadRestored){
                 cg_remove_folder_recursively($ecommerceFileFolderWpUploadFolder);
             }
 
@@ -264,7 +271,11 @@ if(!function_exists('cg_move_file_from_ecommerce_sale_folder')){
                 array('%d')
             );
 
+            clean_post_cache($WpUploadId);
         }
+
+        // Keep the restoration metadata if any file could not be returned. A retry still needs it.
+        if(!$isAllWpUploadsSuccessfulMoved){return false;}
 
         if(!empty($removedWpUploadIdsFromSale)){
             //var_dump('in here');

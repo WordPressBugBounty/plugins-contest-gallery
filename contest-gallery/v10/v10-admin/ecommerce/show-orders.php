@@ -274,7 +274,7 @@ HEREDOC;
 				$environment = '<br>(test environment)';
 			}
 
-			$TransactionIdText = 'PayPal:<br>'.$PayPalTransactionId;
+			$TransactionIdText = $saleOrder->PaymentType === 'free' ? 'Free order' : 'PayPal:<br>'.$PayPalTransactionId;
 			if(!empty($StripePiId)){
 				$TransactionIdText = 'Stripe:<br>'.$StripePiId;
 			}

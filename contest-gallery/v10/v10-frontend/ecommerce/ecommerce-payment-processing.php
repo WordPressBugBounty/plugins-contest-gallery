@@ -68,7 +68,8 @@ $StripePiPaymentMethodId = '';
 $StripePiPaymentMethodConfDetailsId = '';
 $PaymentTransactionLockName = '';
 
-$PaymentType = (!empty($_POST['StripePiClientSecret'])) ? 'stripe' : 'paypal';
+$isFreeCheckout = !empty($GLOBALS['cgFreeCheckoutContext']);
+$PaymentType = $isFreeCheckout ? 'free' : ((!empty($_POST['StripePiClientSecret'])) ? 'stripe' : 'paypal');
 
 $ecommerce_options = $wpdb->get_row("SELECT * FROM $tablename_ecommerce_options WHERE GeneralID = 1");
 $ecommerce_options_array = json_decode(json_encode($ecommerce_options),true);
@@ -91,7 +92,7 @@ if(empty($Error)){
 	}
 }
 
-if(empty($Error) && !cg_ecommerce_payment_provider_is_ready($ecommerce_options,$PaymentType,$IsTest)){
+if(empty($Error) && !$isFreeCheckout && !cg_ecommerce_payment_provider_is_ready($ecommerce_options,$PaymentType,$IsTest)){
 	$Error = ucfirst($PaymentType).' is not available for the requested checkout environment.';
 }
 
@@ -104,7 +105,16 @@ if(!empty($Error)){
 	die;
 }
 
-if($PaymentType == 'paypal'){
+if($isFreeCheckout){
+    if((float)$authoritativeCart['PriceTotalGrossItemsWithShipping']!=0 || !cg_hash_equals($GLOBALS['cgFreeCheckoutContext']['cart_hash'],$authoritativeCart['cart_hash'])){
+        cg_ecommerce_free_checkout_error('The cart has changed. Please reopen the checkout.');
+    }
+    cg_ecommerce_apply_authoritative_checkout_cart_to_post($_POST,$authoritativeCart,$ecommerce_options);
+    $_POST['payer']['email_address'] = $GLOBALS['cgFreeCheckoutContext']['email'];
+    $_POST['id'] = '';
+    $PaymentStatus = 'COMPLETED';
+    $IsFullPaid = true;
+}elseif($PaymentType == 'paypal'){
 	$requestedPayPalOrderId = !empty($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
 
 	if($IsTest){
@@ -293,7 +303,7 @@ if($PaymentType == 'paypal'){
 //$IsFullPaid = false;
 
 $selectSQLecommerceOptions = cg_get_ecommerce_options();
-$CreateInvoice = $selectSQLecommerceOptions->CreateInvoice;
+$CreateInvoice = $isFreeCheckout ? 0 : $selectSQLecommerceOptions->CreateInvoice;
 $SendInvoice = $selectSQLecommerceOptions->SendInvoice;
 $PriceDivider = $selectSQLecommerceOptions->PriceDivider;
 $_POST['PriceDivider'] = $PriceDivider;
@@ -305,7 +315,8 @@ $EUshortcodes = cg_get_eu_countries_shortcodes();
 include(__DIR__ ."/../../../check-language-ecommerce.php");
 
 $hasTaxToShow = false;
-$outputTransactionError = function ($Error) {
+$outputTransactionError = function ($Error) use ($isFreeCheckout) {
+    if($isFreeCheckout){cg_ecommerce_free_checkout_error($Error,500);}
 	?>
     <script data-cg-processing="true">
         cgJsClass.gallery.vars.ecommerce.TransactionError = <?php echo json_encode($Error);?>;
@@ -363,7 +374,7 @@ $PriceTotalNetItems = 0;
 foreach ($_POST['purchase_units'][0]['items'] as $key => $item){
 	if(!empty($item['IsShipping'])){
 		$hasShippingAddressRequired = true;
-		if(!empty($item['alternative_shipping_amount_value_gross'])){
+		if(cg_ecommerce_item_has_alternative_shipping($item)){
 		}else{
 			$itemHasDefaultShipping = true;
 		}
@@ -382,7 +393,7 @@ $billingAddressRequiredFields = array(
 	$InvoiceAddressCountryShort
 );
 
-foreach($billingAddressRequiredFields as $billingAddressRequiredField){
+foreach($isFreeCheckout ? array() : $billingAddressRequiredFields as $billingAddressRequiredField){
 	if(trim((string)$billingAddressRequiredField)===''){
 		$outputTransactionError('Please complete the required billing address fields.');
 	}
@@ -438,13 +449,10 @@ if($itemHasDefaultShipping){
 //var_dump('($alternativeShippingTotal)');
 //var_dump(($alternativeShippingTotal));
 
-$PriceTotalNetItemsWithShipping = $PriceTotalNetItems+($alternativeShippingTotal-$alternativeShippingTotalTaxValue);
-$PriceTotalGrossItems = $PriceTotalGrossItemsWithShipping - $alternativeShippingTotal;
-
-if($itemHasDefaultShipping){
-	$PriceTotalNetItemsWithShipping = $PriceTotalNetItemsWithShipping+$ShippingNet;
-	$PriceTotalGrossItems = $PriceTotalGrossItems - $ShippingGross;
-}
+// Persist the same totals that were verified against the payment provider.
+$PriceTotalNetItems = $authoritativeCart['PriceTotalNetItems'];
+$PriceTotalNetItemsWithShipping = $authoritativeCart['PriceTotalNetItemsWithShipping'];
+$PriceTotalGrossItems = $authoritativeCart['PriceTotalGrossItems'];
 
 //var_dump('$PriceTotalNetItemsWithShipping');
 //var_dump($PriceTotalNetItemsWithShipping);
@@ -490,9 +498,11 @@ $LogFilePath = serialize($_POST);
 $OrderId = 0;
 
 $ProviderTransactionId = ($PaymentType === 'stripe') ? $StripePiId : $PayPalTransactionId;
-$paymentTransactionGuard = cg_ecommerce_begin_payment_transaction_processing($PaymentType,$IsTest,$ProviderTransactionId,5);
+$paymentTransactionGuard = $isFreeCheckout ? array('success'=>true,'lock_name'=>'') : cg_ecommerce_begin_payment_transaction_processing($PaymentType,$IsTest,$ProviderTransactionId,5);
 if(empty($paymentTransactionGuard['success'])){
-	if($paymentTransactionGuard['code'] === 'already_processed'){
+	if($paymentTransactionGuard['code'] === 'incomplete_order'){
+		$outputTransactionError('The payment was received, but the order is incomplete. Please contact the site administrator. Do not pay again.');
+	}elseif($paymentTransactionGuard['code'] === 'already_processed'){
 		$outputTransactionError('This payment has already been processed. Please use the order link from your confirmation email.');
 	}elseif($paymentTransactionGuard['code'] === 'transaction_busy'){
 		$outputTransactionError('This payment is currently being processed. Please wait a moment and check your confirmation email before trying again.');
@@ -502,6 +512,8 @@ if(empty($paymentTransactionGuard['success'])){
 }
 
 $PaymentTransactionLockName = $paymentTransactionGuard['lock_name'];
+$orderSaveLockName = $isFreeCheckout ? $GLOBALS['cgFreeCheckoutContext']['lock_name'] : $PaymentTransactionLockName;
+$orderSaveError = $isFreeCheckout ? 'The order could not be completed. Please contact the site administrator.' : 'The payment was received, but the order is incomplete. Please contact the site administrator. Do not pay again.';
 register_shutdown_function('cg_ecommerce_release_payment_transaction_lock',$PaymentTransactionLockName);
 
 $beforeFilter = array();
@@ -525,7 +537,7 @@ if($PaymentType === 'stripe'){
 	$StripePiPaymentMethodName = cg_stripe_get_payment_method($secret,$StripePiPaymentMethodId);
 }
 
-$PaymentOrderType = 'capture';
+$PaymentOrderType = $isFreeCheckout ? 'free' : 'capture';
 
 $captureId = $_POST['id'].time();
 if($Environment=='sandbox'){
@@ -560,7 +572,7 @@ HEREDOC;
 }
 
 //$logName = 'log-'.$year.$month.$day.'-'.date('H').date('i').date('s').'.json';
-$logName = 'log-'.$year.$month.$day.'-'.date('H').date('i').date('s').'-'.$PayerEmail;
+$logName = 'log-'.$year.$month.$day.'-'.date('H').date('i').date('s').'-'.sanitize_file_name($PayerEmail);
 $databaseToSaveLogFilePath = $databaseToSaveLogFilePathPart.'/'.$logName.'-'.$captureId.'.json';
 $logFilePath = $ecommerceLogsFolder.'/'.$logName.'-'.$captureId.'.json';
 $soldDownloadsFolder = $wp_upload_dir['basedir'].'/contest-gallery/ecommerce/sold-downloads';
@@ -602,6 +614,7 @@ file_put_contents($logFilePath,json_encode($_POST));
     $CreatedYear = cg_get_time_based_on_wp_timezone_conf($time,'Y');
 
     // client
+    if(!cg_ecommerce_payment_lock_is_owned($orderSaveLockName)){$outputTransactionError($orderSaveError);}
     $orderInsertResult = $wpdb->query( $wpdb->prepare(
         "
                 INSERT INTO $tablename_ecommerce_orders  
@@ -634,7 +647,7 @@ file_put_contents($logFilePath,json_encode($_POST));
 	    $ShippingNet, $ShippingGross, $ShippingTaxValue, $TaxPercentageDefault,
 	    $CurrencyShort,$CurrencyPosition,$WpUserId,$IP, $IsTest,
 	    '', $StripePiId, $StripePiPaymentMethodId,$StripePiPaymentMethodConfDetailsId,$StripePiPaymentMethodName,
-	    $IsFullPaid,$VersionDb,$VersionForScripts,
+	    0,$VersionDb,$VersionForScripts,
         $PaymentType, $PaymentStatus, $PaymentOrderType, $PayPalTransactionId,'WP_UPLOAD_DIR'.$databaseToSaveLogFilePath,
         serialize($LogForDatabase),'',$time,
         $PayerEmail,$EcommerceTaxNr,
@@ -644,7 +657,7 @@ file_put_contents($logFilePath,json_encode($_POST));
     ));
 
 	if((int)$orderInsertResult !== 1 || empty($wpdb->insert_id)){
-		$outputTransactionError('The payment was verified, but the order could not be created. Please try again. If the problem persists, contact the site administrator.');
+		$outputTransactionError($orderSaveError);
 	}
 
 	//var_dump('$InvoiceAddressFirstName after insert');
@@ -679,13 +692,14 @@ file_put_contents($logFilePath,json_encode($_POST));
         $OrderIdHash = wp_generate_password(32,false,false);
     }
 
-    $wpdb->update(
+    $orderHashUpdateResult = $wpdb->update(
         "$tablename_ecommerce_orders",
         array('OrderIdHash' => $OrderIdHash, 'OrderNumber' => $OrderIdHash),
         array('id' => $OrderId),
         array('%s','%s'),
         array('%d')
     );
+    if((int)$orderHashUpdateResult !== 1){$outputTransactionError($orderSaveError);}
 
     if($PaymentType=='stripe'){
 	    $_POST['payer']['email_address'] = $StripeEmail;
@@ -702,18 +716,13 @@ file_put_contents($logFilePath,json_encode($_POST));
 	    $CurrencySymbol = $currenciesArray[$CurrencyShort];
 
 	    $processingData = cg_ecommerce_payment_processing_data($LogForDatabase, $OrderIdHash,$PayerEmail,$PayPalTransactionId,$time,$PriceDivider,$PaymentStatus,$ParentOrder, $PriceTotalGrossItemsWithShipping,true,false,0,$IsFullPaid,$OrderIdHash,$beforeFilter);
+	    if(is_wp_error($processingData) || !cg_ecommerce_complete_saved_order($OrderId,$OrderIdHash,$processingData['LogForDatabase'],$PaymentStatus,$orderSaveLockName)){
+	        $outputTransactionError($orderSaveError);
+	    }
 
 	    if($IsFullPaid && function_exists('cg_paid_actions_grant_order')){
 		    cg_paid_actions_grant_order($OrderId);
 	    }
-
-	    $wpdb->update(
-		    "$tablename_ecommerce_orders",
-		    array('LogForDatabase' => serialize($processingData['LogForDatabase'])),// LogForDatabase was modified and has to be updated after processing
-		    array('id' => $OrderId),
-		    array('%s'),
-		    array('%d')
-	    );
 
 	    $hasDownload = $processingData['hasDownload'];
         $itemHasShipping = $processingData['itemHasShipping'];
@@ -740,9 +749,12 @@ file_put_contents($logFilePath,json_encode($_POST));
 	    //var_dump(        '$OrderId');
 	    //var_dump(        $OrderId);
 
-	    $SendOrderConfirmationMail = $ecommerce_options->SendOrderConfirmationMail;
+        if($isFreeCheckout){
+            cg_ecommerce_free_checkout_complete($OrderIdHash);
+        }
+        $SendOrderConfirmationMail = $ecommerce_options->SendOrderConfirmationMail;
 
-        $CreateInvoice = $ecommerce_options->CreateInvoice;
+        $CreateInvoice = $isFreeCheckout ? 0 : $ecommerce_options->CreateInvoice;
 
         // to do here
         $mailData = cg_ecommerce_prepare_payment_mail($ecommerce_options, $OrderId, $OrderIdHash, $ordersummaryandpage,$hasDownload,$language_FullOrderDetails,$language_Download);
@@ -764,6 +776,7 @@ file_put_contents($logFilePath,json_encode($_POST));
 			$PaymentTransactionLockName = '';
 		}
 
+		if($isFreeCheckout){wp_send_json_success(cg_ecommerce_free_checkout_result($OrderIdHash));}
 		echo "###ORDERIDHASH###$OrderIdHash###ORDERIDHASH###";
 
 ?>

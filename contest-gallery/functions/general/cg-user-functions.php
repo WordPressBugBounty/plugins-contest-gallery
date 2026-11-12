@@ -667,6 +667,9 @@ if(!function_exists('cg1l_resend_unconfirmed_mail')){
 
 if(!function_exists('cg1l_send_registration_mail')){
     function  cg1l_send_registration_mail($proOptions,$GalleryID,$cg_users_pin,$cg_main_mail,$Subject, $TextEmailConfirmation, $activation_key, $posPin = '', $pin = '', $posUrl = '', $currentPageUrl = '' ){
+        if(!cg_is_valid_email($cg_main_mail)){
+            return false;
+        }
         $RegMailCC = (empty($proOptions->RegMailCC)) ? '' : $proOptions->RegMailCC;
         $ccPlain = $RegMailCC;
         $RegMailBCC = (empty($proOptions->RegMailBCC)) ? '' : $proOptions->RegMailBCC;

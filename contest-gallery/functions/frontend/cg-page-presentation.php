@@ -179,7 +179,7 @@ function cg_page_preview_media($entry){
 		$gid = !empty($entry['GalleryID']) ? absint($entry['GalleryID']) : 0;
 		$pid = !empty($entry['id']) ? absint($entry['id']) : 0;
 		if(!$gid || !$pid || empty($entry['WpUpload'])){return false;}
-		if(!isset($sales[$gid])){$sales[$gid] = cg_get_ecommerce_files_data($gid);}
+		if(!isset($sales[$gid])){$sales[$gid] = cg_get_ecommerce_files_data($gid,0,false);}
 		if(empty($sales[$gid][$pid])){return false;}
 		$sale = $sales[$gid][$pid];
 		if(!empty($sale['IsDownload']) && !empty($sale['WpUploadFilesForSale']) && in_array(absint($entry['WpUpload']),array_map('absint',(array)$sale['WpUploadFilesForSale']),true)){return false;}

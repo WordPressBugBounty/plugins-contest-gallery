@@ -268,6 +268,7 @@ if (!empty($_GET['option_id']) AND !empty($_POST['cg_delete_gallery'])) {
 
     cg_participant_mail_composer_delete($optionID,0);
     $upload_dir = wp_upload_dir();
+    cg_ecommerce_sale_drafts_delete_gallery($optionID);
     cg_remove_folder_recursively($upload_dir['basedir'] . '/contest-gallery/gallery-id-' . $optionID . '');
 
 }

@@ -192,11 +192,54 @@ jQuery(document).ready(function ($) {
         e.preventDefault();
     });
 
-    $(document).on('click','#cgSellContainerFadeBackground.cg_active, #cgSellContainer .cg_message_close',function () {
-        debugger
-        $('#cgSellContainerFadeBackground').addClass('cg_hide').removeClass('cg_active');
-        $('#cgSellContainer').addClass('cg_hide');
+    $(document).on('click','#cgSellContainerFadeBackground.cg_active, #cgSellContainer > .cg_message_close',function () {
+        cgJsClassAdmin.gallery.saleEdit.close(false);
     });
+    $(document).on('click','#cgKeepEditingSale',function(){
+        cgJsClassAdmin.gallery.saleEdit.keepEditing();
+    });
+    $(document).on('click','#cgDiscardSaleChanges',function(){
+        var saleEdit = cgJsClassAdmin.gallery.saleEdit;
+        saleEdit.close(true,saleEdit.afterClose);
+    });
+    // Only actual user input counts. Opening the dialog triggers changes internally.
+    ['input','change'].forEach(function(type){
+        document.addEventListener(type,function(event){
+            if(event.isTrusted && $(event.target).closest('#cgSellForm').length){
+                cgJsClassAdmin.gallery.saleEdit.markChanged();
+            }
+        },true);
+    });
+    document.addEventListener('click',function(event){
+        if(!event.isTrusted || !$(event.target).closest('#cgSellForm').length ||
+            !$(event.target).closest('.cg_view_option,.cg_file_container,#cgRemoveDownloadKeysFile,#cgRemoveServiceKeysFile').length){return;}
+        var saleEdit = cgJsClassAdmin.gallery.saleEdit;
+        var before = saleEdit.selectionState();
+        var generation = saleEdit.generation;
+        setTimeout(function(){
+            if(generation === saleEdit.generation && before !== saleEdit.selectionState()){saleEdit.markChanged();}
+        },0);
+    },true);
+    document.addEventListener('keydown',function(event){
+        var $confirmation = $('#cgSellDiscardConfirmation');
+        if($confirmation.length && !$confirmation.hasClass('cg_hide')){
+            if(event.key === 'Escape'){
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                cgJsClassAdmin.gallery.saleEdit.keepEditing();
+            }else if(event.key === 'Tab'){
+                var $buttons = $confirmation.find('button');
+                if(event.shiftKey && document.activeElement === $buttons[0]){
+                    event.preventDefault();$buttons.last().trigger('focus');
+                }else if(!event.shiftKey && document.activeElement === $buttons[$buttons.length-1]){
+                    event.preventDefault();$buttons.first().trigger('focus');
+                }
+            }
+        }else if(event.key === 'Escape' && $('#cgSellContainer').is(':visible') && !$('#cgBackendBackgroundDrop').hasClass('cg_high_overlay')){
+            event.preventDefault();
+            cgJsClassAdmin.gallery.saleEdit.close(false);
+        }
+    },true);
 
     $(document).on('change','#cgCurrencySelect',function () {
         cgJsClassAdmin.gallery.currencyInputFunctions.cgCurrencySelectSet();
@@ -235,10 +278,6 @@ jQuery(document).ready(function ($) {
         if($(this).val().trim()==''){$(this).val('Contest Gallery');}
         cgJsClassAdmin.gallery.watermark(cgJsClassAdmin.gallery.vars.backgroundUrlToSell,cgJsClassAdmin.gallery.vars.cgSellContainer.find('#cgWatermarkSelectPosition').val(),$(this).val(),cgJsClassAdmin.gallery.vars.cgSellContainer.find('#cgWatermarkSelectSize').val(),false,true,$('#cgSellPreviewContainer .cgSellPreview.active').attr('data-cg-order'));
     });*/
-
-    $(document).on('click','#cgSellBackendImageContainerOption',function () {
-        $('#cgActivateSaleOption').click();
-    });
 
     $(document).on('click','#SaleType_download_option',function () {
         $('#SaleAmountContainer').addClass('cg_hide');

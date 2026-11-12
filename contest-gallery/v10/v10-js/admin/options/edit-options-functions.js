@@ -113,7 +113,7 @@ cgJsClassAdmin.options.functions = {
         cgJsClassAdmin.options.functions.initOptionsClickEvents();
         cgJsClassAdmin.mailDelivery.init($("#cg_main_options_content"));
 
-        var goToArray = ['cgTranslationOther','cgTranslationShippingPossible','cgTranslationLanguageEmail','cgTranslationLanguageEmail','cgEditGalleryNameRow','cgTranslationLanguagePassword','l_ThankVote','l_BackToGallery','l_BackToGalleries','TranslationsCommentFormArea','l_AllVotesUsed','YourCommentWillBeReviewedRow','cgContactFormShortcodeConfigurationArea','l_GalleryDateFormat','cgOpenAiKeyRowColumn','cgRegistrationMailOptions'];
+        var goToArray = ['RegUserPurchaseOnlyContainer','cgTranslationOther','cgTranslationShippingPossible','cgTranslationLanguageEmail','cgTranslationLanguageEmail','cgEditGalleryNameRow','cgTranslationLanguagePassword','l_ThankVote','l_BackToGallery','l_BackToGalleries','TranslationsCommentFormArea','l_AllVotesUsed','YourCommentWillBeReviewedRow','cgContactFormShortcodeConfigurationArea','l_GalleryDateFormat','cgOpenAiKeyRowColumn','cgRegistrationMailOptions'];
         debugger
         $(goToArray).each(function (index,value){
             if(location.hash.indexOf(value) >= 0 || location.search.indexOf(value) >= 0){

@@ -490,4 +490,13 @@ if(!function_exists('cg_ecommerce_show_api_response')){
 }
 
 
+
+if(!function_exists('cg_backend_entry_action_help')){
+    function cg_backend_entry_action_help($entryId,$kind,$label,$text){
+        $tooltipId = 'cgEntryActionHelp-'.absint($entryId).'-'.sanitize_key($kind);
+        echo '<button type="button" class="cg_entry_action_help" aria-label="'.esc_attr('Help: '.$label).'" aria-describedby="'.esc_attr($tooltipId).'" aria-expanded="false"><span aria-hidden="true">i</span></button>';
+        echo '<span id="'.esc_attr($tooltipId).'" class="cg_entry_action_tooltip" role="tooltip" hidden>'.esc_html($text).'</span>';
+    }
+}
+
 ?>

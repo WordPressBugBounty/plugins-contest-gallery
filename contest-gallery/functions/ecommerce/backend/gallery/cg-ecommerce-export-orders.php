@@ -13,6 +13,7 @@ if(!function_exists('cg_ecommerce_export_orders_get_batch')){
 		$orderColumns = "sale_orders.id,
 			sale_orders.OrderNumber,
 			sale_orders.Tstamp,
+			sale_orders.PaymentType,
 			sale_orders.PayPalTransactionId,
 			sale_orders.StripePiId,
 			sale_orders.PayerEmail,
@@ -214,6 +215,7 @@ if(!function_exists('cg_ecommerce_export_orders')){
 		$header = array(
 			"Order number",
 			"Purchase date",
+			"Payment type",
 			"PayPal transaction ID",
 			"Stripe Payment Intent ID",
 			"Payer email",
@@ -303,6 +305,7 @@ if(!function_exists('cg_ecommerce_export_orders')){
 				$orderRow = array(
 					$saleOrder->OrderNumber,
 					$purchaseTime,
+					$saleOrder->PaymentType === 'free' ? 'Free order' : ucfirst($saleOrder->PaymentType),
 					$saleOrder->PayPalTransactionId,
 					$saleOrder->StripePiId,
 					$saleOrder->PayerEmail,

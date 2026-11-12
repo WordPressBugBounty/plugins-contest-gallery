@@ -7,6 +7,7 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
         $currenciesArray = cg_get_ecommerce_currencies_array_formatted_by_short_key();
         $CurrencyShort = $LogForDatabase['purchase_units'][0]['amount']['currency_code'];
         $CurrencyPosition = $LogForDatabase['CurrencyPosition'];
+        $ShippingGross = isset($LogForDatabase['ShippingGross']) ? round(floatval($LogForDatabase['ShippingGross']),2) : 0;
 	    $itemHasShipping = false;
 	    $hasDownload = false;
 	    $itemHasTax = false;
@@ -73,7 +74,7 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
             if(!empty($item['IsShipping'])){
                 $IsShipping = true;
                 $itemHasShipping = true;
-                if(!empty($item['alternative_shipping_amount_value_gross'])){
+                if(cg_ecommerce_item_has_alternative_shipping($item)){
                     $IsAlternativeShipping = true;
                     $AlternativeShippingGross = round(floatval($item['alternative_shipping_amount_value_gross']),2);
                     $AlternativeShippingNet = round(floatval($item['alternative_shipping_amount_value_net']),2);
@@ -130,6 +131,7 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
 		        if($DownloadKey === ''){
 			        if(!empty($DownloadKeysCsvName)){
 				        $DownloadKey = cg_get_set_key($GalleryID,$realId,$DownloadKeysCsvName,'',$PayerEmail,$PayPalTransactionId,$time,$OrderNumber);
+				        if(is_wp_error($DownloadKey)){return $DownloadKey;}
 			        }else{
 				        $filterData = apply_filters( 'cg_filter_get_own_key', $LogForDatabase, $realId);
 				        $DownloadKey = cg_ecommerce_get_own_key_filter_value($filterData);
@@ -138,13 +140,14 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
 
 	            if($isGenerateKeyAfterPurchase){// then was not full paid before at ecommerce-payment-processing.php!!!
 					$itemId = $LogForDatabase['purchase_units'][0]['items'][$key]['itemId'];
-					$wpdb->update(
+						$keyUpdateResult = $wpdb->update(
 						"$tablename_ecommerce_orders_items",
 						array('DownloadKey' => $DownloadKey),
 						array('id' => $itemId),
 						array('%s'),
 						array('%d')
 					);
+						if($keyUpdateResult === false){return new WP_Error('cg_order_item_save_failed','Order item could not be saved.');}
 				}
 
             }
@@ -156,6 +159,7 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
 	            if($ServiceKey === ''){
 		            if(!empty($ServiceKeysCsvName)){
 			            $ServiceKey = cg_get_set_key($GalleryID,$realId,'',$ServiceKeysCsvName,$PayerEmail,$PayPalTransactionId,$time,$OrderNumber);
+				            if(is_wp_error($ServiceKey)){return $ServiceKey;}
 		            }else{
 			            $filterData = apply_filters( 'cg_filter_get_own_key', $LogForDatabase, $realId);
 			            $ServiceKey = cg_ecommerce_get_own_key_filter_value($filterData);
@@ -164,13 +168,14 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
 
 	            if($isGenerateKeyAfterPurchase){// then was not full paid before at ecommerce-payment-processing.php!!!
 		            $itemId = $LogForDatabase['purchase_units'][0]['items'][$key]['itemId'];
-		            $wpdb->update(
+			            $keyUpdateResult = $wpdb->update(
 			            "$tablename_ecommerce_orders_items",
 			            array('ServiceKey' => $ServiceKey),
 			            array('id' => $itemId),
 			            array('%s'),
 			            array('%d')
 		            );
+			            if($keyUpdateResult === false){return new WP_Error('cg_order_item_save_failed','Order item could not be saved.');}
 	            }
 
             }
@@ -248,7 +253,7 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
             $SaleDescription = contest_gal1ery_htmlentities_and_preg_replace($item['description']);
 
             if($isWithSaveToDatabase){
-                $wpdb->query( $wpdb->prepare(
+                $itemInsertResult = $wpdb->query( $wpdb->prepare(
                     "
 					INSERT INTO $tablename_ecommerce_orders_items  
 					(
@@ -273,6 +278,9 @@ if(!function_exists('cg_ecommerce_payment_processing_data')) {
                     $TaxPercentage,
 	                    $DownloadKey,$ServiceKey,$WpUploads,$RawData,$WpUploadFilesForSale,$paidActionType,$paidActionScope
                 ));
+                if((int)$itemInsertResult !== 1 || empty($wpdb->insert_id)){
+                    return new WP_Error('cg_order_item_save_failed','Order item could not be saved.');
+                }
                 //$wpdb->show_errors(); //setting the Show or Display errors option to true
                 //var_dump('$wpdb->print_error();');
                 //var_dump($wpdb->print_error());

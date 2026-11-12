@@ -815,7 +815,7 @@ if(!function_exists('post_cg_paid_actions_email_code_request')){
         $email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : '';
         $galleryId = !empty($_POST['galleryId']) ? absint($_POST['galleryId']) : 0;
         $actionType = cg_paid_actions_normalize_type(isset($_POST['actionType']) ? $_POST['actionType'] : '');
-        if(!is_email($email) || !$galleryId || $actionType===''){
+        if(!cg_is_valid_email($email) || !$galleryId || $actionType===''){
             wp_send_json_error(array('message'=>cg_paid_actions_t('ValidEmailRequired'),'code'=>'cg_paid_action_invalid_email'),400);
         }
 		if(!cg_paid_actions_gallery_is_supported($galleryId)){
